@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2005-02-15 12:17:52 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2005-02-15 12:26:39 gzins Exp $"
 #
 # Makefile of gwt module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/02/15 12:17:52  gzins
+# Added CVS log as file modification history
+#
 # mella     13-Sep-2004  Created
 #
 #*******************************************************************************
@@ -198,9 +201,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___

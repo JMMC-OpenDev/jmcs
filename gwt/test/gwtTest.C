@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.7 2005-02-24 12:40:32 mella Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.8 2005-02-24 13:33:04 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/24 12:40:32  mella
+ * Add a status that give a reason at startup
+ *
  * Revision 1.6  2005/02/15 12:25:28  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -21,7 +24,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.7 2005-02-24 12:40:32 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.8 2005-02-24 13:33:04 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -81,6 +84,7 @@ private:
     gwtTEXTFIELD *textfield1;
     gwtWINDOW *window1; 
     gwtGUI *oneGui;
+    gwtLABEL *label1;
     gwtBUTTON *button1;
     gwtBUTTON *button2;
     gwtBUTTON *button3;
@@ -95,6 +99,7 @@ gwtTestSERVER::gwtTestSERVER()
     textfield1 = new gwtTEXTFIELD();
     window1 = new gwtWINDOW(); 
     oneGui = new gwtGUI();
+    label1 = new gwtLABEL("blah blah blah        ...","I did not place any help ");
     button1 = new gwtBUTTON();
     button2 = new gwtBUTTON("button2", "help for button2");
     button3 = new gwtBUTTON();
@@ -140,6 +145,7 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     window1->SetTitle("First Window");
     window1->AttachAGui(oneGui);
 
+    
     // Prepare a button
     button1->SetHelp("No real interresting help for the button1");
     button1->SetLabel("A button");
@@ -177,6 +183,7 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     table1->SetCellBackground(1,1,"#A8D00F");
     
     // Add elements and and show the window
+    window1->Add(label1);
     window1->Add(button1);
     window1->Add(separator);
     window1->Add(textfield1);

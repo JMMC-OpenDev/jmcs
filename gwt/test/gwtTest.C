@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.12 2005-03-08 12:41:25 mella Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.13 2005-03-08 14:17:28 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/03/08 12:41:25  mella
+ * Add a close command
+ *
  * Revision 1.11  2005/03/02 14:54:17  mella
  * Test dimension change for the table
  *
@@ -36,7 +39,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.12 2005-03-08 12:41:25 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.13 2005-03-08 14:17:28 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -88,6 +91,7 @@ public:
     gwtTestSERVER();
     virtual ~gwtTestSERVER();
     virtual evhCB_COMPL_STAT SocketCB (const int sd,void* obj);
+    mcsCOMPL_STAT WindowCloseCB(void *userData);
     mcsCOMPL_STAT Button1CB(void *userData);
     mcsCOMPL_STAT Button3CB(void *userData);
     virtual mcsCOMPL_STAT AppInit();
@@ -162,7 +166,7 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     
     // Prepare a window
     window1->SetTitle("First Window");
-    window1->SetCloseCommand("window1_closed");
+    window1->SetCloseCommand("window_1_closed");
     window1->AttachAGui(oneGui);
     
     window1->Hide();
@@ -212,6 +216,8 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     window1->Add(textfield1);
     window1->Add(table1);
     
+    // Attach close CB
+    window1->AttachCB(this, (gwtCOMMAND::CB_METHOD) & gwtTestSERVER::WindowCloseCB);
     window1->Show();
    
     /*
@@ -227,6 +233,20 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
   //  button3.AttachCB(this, (gwtCOMMAND::CB_METHOD) &gwtTestSERVER::Button3CB);
  
    return mcsSUCCESS;
+}
+
+/**
+ *  User callback associated to the window closing event. 
+ *  The application exits.
+ */
+mcsCOMPL_STAT gwtTestSERVER::WindowCloseCB(void *)
+{
+    cout<< "Window's close button pressed" << " while the textfield value is:" << textfield1->GetText() <<endl;
+    oneGui->SetStatus(true, "Application exists");
+    
+    window1->Hide();
+    exit(0);
+    return mcsSUCCESS;
 }
 
 /**

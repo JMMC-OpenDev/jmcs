@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtTest.C,v 1.2 2004-11-29 14:43:44 mella Exp $"
+* "@(#) $Id: gwtTest.C,v 1.3 2005-01-28 09:30:52 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.2 2004-11-29 14:43:44 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.3 2005-01-28 09:30:52 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -148,9 +148,12 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     textfield1->SetLabel("A textfield");
     textfield1->SetText("A text for the textfield");
     
-    //with a table
+    //with a table 
     table1->SetHelp("This table was filled adding rown and column");
     table1->SetLabel("A table");
+    // that takes the full window width
+    table1->SetVerticalOrientation(mcsTRUE);
+
     int r,c;
     char str[32];
     for (c=0;c<5;c++)

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTABLE.h,v 1.6 2005-03-02 13:54:33 mella Exp $"
+ * "@(#) $Id: gwtTABLE.h,v 1.7 2005-03-02 14:53:03 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/03/02 13:54:33  mella
+ * Make table updatable using the xml variable attribute
+ *
  * Revision 1.5  2005/02/28 12:59:53  mella
  * Implement SetWidgth and SetHeight
  *
@@ -46,6 +49,7 @@ class gwtTABLE : public gwtWIDGET
 public:
     gwtTABLE(int rows, int columns);
     ~gwtTABLE();
+    virtual void SetDimension(int rows, int columns);
     virtual string GetXmlBlock();
     virtual void SetCell(int row, int column, string value);
     virtual string GetCell(int row, int column);

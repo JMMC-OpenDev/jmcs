@@ -2,7 +2,7 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2004-11-23 09:25:09 sccmgr Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2004-11-23 09:29:16 sccmgr Exp $"
 
  who       when         what
  ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,7 +29,7 @@
 -->
 
 <module name="gwt">
-    <desc>description</desc>
-    <resp>responsible</resp>
-    <package>package</package>
+    <desc>C++ Graphical Widget Toolkit</desc>
+    <resp>G. Mella</resp>
+    <package>MCS</package>
 </module>

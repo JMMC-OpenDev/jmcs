@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtGUI.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtGUI.h,v 1.2 2004-12-22 14:58:39 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -27,7 +27,7 @@
 
 #include "gwtWIDGET.h"
 #include "gwtWINDOW.h"
-
+#include "msgSOCKET_CLIENT.h"
 
 /*
  * Class declaration
@@ -58,7 +58,7 @@ public:
 protected:
     gwtMAP_STRING2PRODUCER _children; 
 private:
-    static int _remoteGuiSd; 
+    msgSOCKET_CLIENT *_clientSocket;
     virtual void DispatchGuiReturn(string widgetid, string data);
 };
 

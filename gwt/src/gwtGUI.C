@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtGUI.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
+* "@(#) $Id: gwtGUI.C,v 1.3 2004-12-22 14:58:40 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gui class declaration file.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtGUI.C,v 1.3 2004-12-22 14:58:40 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -30,6 +30,7 @@ using namespace std;
 #include <netinet/in.h>
 #include <netdb.h>
 #include "stdarg.h"
+#include "msg.h"
 
 /*
  * MCS Headers 
@@ -48,14 +49,14 @@ using namespace std;
 /**
  * Socket descriptor for the remote gui system.
  */
-int gwtGUI::_remoteGuiSd=-1;
 
 /**
  * Class constructor
  */
 gwtGUI::gwtGUI()
 {
-    logExtDbg("gwtGUI::gwtGUI()");    
+    logExtDbg("gwtGUI::gwtGUI()");   
+    _clientSocket = new msgSOCKET_CLIENT();
 }
 
 
@@ -82,78 +83,12 @@ mcsCOMPL_STAT gwtGUI::ConnectToRemoteGui(const string hostname, const int port, 
 
     logDebug("Connection will be done on %s:%d",hostname.data(), port);
 
-    struct hostent    *remoteHostEnt;
-
-    int                sd;
-    struct sockaddr_in addr;
-    mcsINT32           nbRetry;
-    mcsINT32           status;
-
-
-    /* If a connection is already open... */
-    if (_remoteGuiSd != -1)
+    if(_clientSocket->Open(hostname, port)==FAILURE)
     {
-        /* Raise an error */
-        //GM         errAdd(msgERR_PROC_ALREADY_CONNECTED);
-
-        /* Return an error code */
-        //GM return FAILURE;
-        cout << "Erreur1"<<endl;
         return FAILURE;
     }
-
-    remoteHostEnt = gethostbyname(hostname.data());
-    if (remoteHostEnt == (struct hostent *) NULL)
-    {
-        //GM         errAdd(msgERR_GETHOSTBYNAME, strerror(errno));
-        //GM  return FAILURE;
-        cout << "Erreur2"<<endl;
-        return FAILURE;
-     }
- 
-     /* Try to establish the connection, retry otherwise... */
-    nbRetry = 2;
-    do 
-    {
-        /* Create the socket */
-        sd = socket(AF_INET, SOCK_STREAM, 0);
-        if(sd == -1)
-        { 
-            //GM errAdd(msgERR_SOCKET, strerror(errno));
-            //GM return FAILURE; 
-            cout << "Erreur3"<<endl;
-            return FAILURE;
-        }
-
-        /* Initialize sockaddr_in */
-        memset((char *) &addr, 0, sizeof(addr));
-        addr.sin_port = htons(port);
-        memcpy(&(addr.sin_addr), remoteHostEnt->h_addr,remoteHostEnt->h_length);
-        addr.sin_family = AF_INET;
-
-        /* Try to connect to msgManager */
-        status = connect(sd , (struct sockaddr *)&addr, sizeof(addr));
-        if (status == -1)
-        {
-            if (--nbRetry <= 0 )
-            { 
-                //GM errAdd(msgERR_CONNECT, strerror(errno));
-                //GM return FAILURE; 
-                cout << "Erreur4"<<endl;
-                return FAILURE;
-            }
-            else
-            {
-                logWarning("Cannot connect to remote GUI system. Trying again...");
-                sleep(1);
-                close(sd);
-            }
-        }
-    } while (status == -1);
-
-    /* Store the established connection socket */
-    _remoteGuiSd = sd;
-
+    
+    
     string configStr("<config entityName=\"");
     configStr.append(procname);
     configStr.append("\" to=\"JavaGui\"></config>\n");
@@ -177,19 +112,19 @@ mcsCOMPL_STAT gwtGUI::ConnectToRemoteGui(const string hostname, const int port, 
  */
 int gwtGUI::GetSd()
 {
-   return _remoteGuiSd; 
+   return _clientSocket->GetDescriptor(); 
 }
 
 /**
  * Send a XML string to the remote gui over the socket.
  * \param xmlStr XML string to send.
+ * \todo test error cases
  */
 void gwtGUI::Send(string xmlStr)
 {
     logExtDbg("gwtGUI::Send()");
-    
-    write(_remoteGuiSd, xmlStr.data(), xmlStr.length());
-    fflush(NULL); 
+   
+    _clientSocket->Send(xmlStr);
 }
 
 

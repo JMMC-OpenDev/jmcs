@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.9 2005-02-28 12:44:57 mella Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.10 2005-03-02 13:08:09 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/28 12:44:57  mella
+ * Add height test for Table
+ *
  * Revision 1.8  2005/02/24 13:33:04  mella
  * Add gwtLABEL
  *
@@ -27,7 +30,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.9 2005-02-28 12:44:57 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.10 2005-03-02 13:08:09 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -212,11 +215,21 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
 
 /**
  *  User callback associated to the button 1. 
+ *  The panel is updated after the textfield
  */
 mcsCOMPL_STAT gwtTestSERVER::Button1CB(void *)
 {
     cout<< "button1 pressed" << " while the textfield value is:" << textfield1->GetText() <<endl;
     oneGui->SetStatus(true, "");
+    
+    // Modify textfield1 content
+    string newStr;
+    newStr.append(textfield1->GetText());
+    newStr.append("...---'''");
+    textfield1->SetText(newStr);
+    
+    //update the panel
+    window1->Update();
     return mcsSUCCESS;
 }
 

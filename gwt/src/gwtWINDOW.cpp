@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWINDOW.cpp,v 1.3 2005-03-02 13:07:56 mella Exp $"
+ * "@(#) $Id: gwtWINDOW.cpp,v 1.4 2005-03-02 13:18:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/03/02 13:07:56  mella
+ * Implement a basic update mechanism
+ *
  * Revision 1.2  2005/02/15 12:25:28  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -22,7 +25,7 @@
  * Definition of gwtWINDOW class.
  */
 
-static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.3 2005-03-02 13:07:56 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.4 2005-03-02 13:18:56 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -96,11 +99,11 @@ string gwtWINDOW::GetXmlBlock(mcsLOGICAL update)
     string rootTag;
     if( update == mcsTRUE )
     {
-        rootTag.append("gui_desc");
+        rootTag.append("gui_update");
     }
     else
     {
-        rootTag.append("gui_update");
+        rootTag.append("gui_desc");
     }
     
     // append starting tag block

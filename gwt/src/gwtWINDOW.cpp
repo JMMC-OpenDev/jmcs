@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWINDOW.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
+ * "@(#) $Id: gwtWINDOW.cpp,v 1.3 2005-03-02 13:07:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/15 12:25:28  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.1  2005/01/27 18:09:35  gzins
  * Renamed .C to .cpp
  * Added CVS loh as modification history.
@@ -19,7 +22,7 @@
  * Definition of gwtWINDOW class.
  */
 
-static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.3 2005-03-02 13:07:56 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -78,13 +81,32 @@ gwtWINDOW::~gwtWINDOW()
  * Public methods
  */
 
-string gwtWINDOW::GetXmlBlock()
+/** 
+ *  Get the description of the window for creation or update.
+ *
+ * \param update true returns a update document 
+ *
+ *  \returns the xml description
+ */
+string gwtWINDOW::GetXmlBlock(mcsLOGICAL update)
 {
     logExtDbg("gwtWINDOW::GetXmlBlock()");
     string s;
 
+    string rootTag;
+    if( update == mcsTRUE )
+    {
+        rootTag.append("gui_desc");
+    }
+    else
+    {
+        rootTag.append("gui_update");
+    }
+    
     // append starting tag block
-    s.append("<gui_desc");
+    s.append("<");
+    s.append(rootTag);
+    s.append(" ");
     AppendXmlAttributes(s);
     s.append(">");
 
@@ -102,7 +124,9 @@ string gwtWINDOW::GetXmlBlock()
     }
 
     // append closing tag
-    s.append("</gui_desc>\n");
+    s.append("</");
+    s.append(rootTag);
+    s.append(">\n");
 
     return s;
 }
@@ -115,6 +139,16 @@ void gwtWINDOW::Show(void)
 {
    logExtDbg("gwtWINDOW::Show()");
    SendXml(GetXmlBlock());
+}  
+
+/**
+ * Makes the window appear.
+ * \todo replace attachedGui->send() by send().
+ */
+void gwtWINDOW::Update(void)
+{
+   logExtDbg("gwtWINDOW::Update()");
+   SendXml(GetXmlBlock(mcsTRUE));
 }  
 
 /**

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWINDOW.h,v 1.6 2005-02-15 12:33:49 gzins Exp $"
+ * "@(#) $Id: gwtWINDOW.h,v 1.7 2005-03-02 13:07:54 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/15 12:33:49  gzins
+ * Updated file description
+ *
  * Revision 1.5  2005/02/15 12:17:52  gzins
  * Added CVS log as file modification history
  *
@@ -37,8 +40,9 @@ public:
    gwtWINDOW();
    gwtWINDOW(char *title);
    virtual ~gwtWINDOW();
-   virtual string GetXmlBlock();
+   virtual string GetXmlBlock(mcsLOGICAL update = mcsFALSE);
    virtual void Show(void);   
+   virtual void Update(void);   
    virtual void Hide(void);  
    virtual void SetWidgetId(string id);
    virtual void SetProducerId(string id);

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.5 2004-07-05 15:32:15 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.6 2004-07-06 06:44:58 gluck Exp $"
 *
 *
 * who       when         what
@@ -38,9 +38,9 @@
 
 /**
  * \file
- * Brief description of the header file, which ends at this dot.
+ * Brief description of the c procedure file, which ends at this dot.
  * 
- * OPTIONAL detailed description of the c main file follows here.
+ * OPTIONAL detailed description of the c procedure file follows here.
  *
  * \b Files:\n
  * OPTIONAL. If files are used, for each one, name, and usage description.

@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: gwtTest.C,v 1.4 2005-02-07 14:35:27 mella Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* mella     14-Sep-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: gwtTest.C,v 1.5 2005-02-15 12:17:52 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * mella     14-Sep-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file simple test program. It connects on the remotegui, build a gui
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.4 2005-02-07 14:35:27 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.5 2005-02-15 12:17:52 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

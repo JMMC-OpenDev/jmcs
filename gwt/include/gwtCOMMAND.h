@@ -1,22 +1,21 @@
 #ifndef gwtCOMMAND_H
 #define gwtCOMMAND_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: gwtCOMMAND.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* mella     08-Nov-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: gwtCOMMAND.h,v 1.2 2005-02-15 12:17:52 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * mella     08-Nov-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * gwtCOMMAND class declaration.
  */
-
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.8 2005-02-24 13:33:04 mella Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.9 2005-02-28 12:44:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/24 13:33:04  mella
+ * Add gwtLABEL
+ *
  * Revision 1.7  2005/02/24 12:40:32  mella
  * Add a status that give a reason at startup
  *
@@ -24,7 +27,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.8 2005-02-24 13:33:04 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.9 2005-02-28 12:44:57 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -163,6 +166,7 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     //with a table 
     table1->SetHelp("This table was filled adding rown and column");
     table1->SetLabel("A table");
+    table1->SetHeight(200);
     // that takes the full window width
     table1->SetVerticalOrientation(mcsTRUE);
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWIDGET.cpp,v 1.4 2005-02-28 12:48:31 mella Exp $"
+ * "@(#) $Id: gwtWIDGET.cpp,v 1.5 2005-03-08 14:19:01 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/28 12:48:31  mella
+ * Implement SetWidgth and SetHeight
+ *
  * Revision 1.3  2005/02/15 12:33:49  gzins
  * Updated file description
  *
@@ -25,7 +28,7 @@
  * Definition of gwtWIDGET class.
  */
 
-static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.4 2005-02-28 12:48:31 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.5 2005-03-08 14:19:01 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -195,6 +198,13 @@ void gwtWIDGET::SetXmlAttribute(string name, string value)
 string gwtWIDGET::GetXmlAttribute(string name)
 {
     logExtDbg("gwtWIDGET::GetXmlAttribute()");
+
+    if( _xmlAttributes.count(name) == 0 )
+    {
+        logWarning("Can't get '%s' xml attribute",name.data());
+        return NULL;
+    }
+
     gwtNAME2VALUE::iterator i = _xmlAttributes.find(name);
 
     return i->second;
@@ -213,10 +223,14 @@ void gwtWIDGET::AppendXmlAttributes(string &s)
     gwtNAME2VALUE::iterator i = _xmlAttributes.begin();
     while( i != _xmlAttributes.end() ) 
     {
-        s.append(i->first);
-        s.append("=\"");
-        s.append(i->second);
-        s.append("\" ");
+        // append only if value is not empty
+        if(! i->second.empty() )
+        {
+            s.append(i->first);
+            s.append("=\"");
+            s.append(i->second);
+            s.append("\" ");
+        }
         i++;
     }
 }

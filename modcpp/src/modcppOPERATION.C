@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcppOPERATION.C,v 1.4 2004-08-05 14:00:14 gluck Exp $"
+* "@(#) $Id: modcppOPERATION.C,v 1.5 2004-08-06 12:20:18 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -72,13 +72,14 @@
  * \bug For example, description of the first bug
  * \bug For example, description of the second bug
  * 
- * \todo OPTIONAL. Things to forsee list, if needed. For example, add
- * another method.
+ * \todo OPTIONAL. Things to forsee list, if needed. For example, 
+ * \todo add another method.
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppOPERATION.C,v 1.4 2004-08-05 14:00:14 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcppOPERATION.C,v 1.5 2004-08-06 12:20:18 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers 
@@ -245,7 +246,7 @@ mcsCOMPL_STAT modcppOPERATION::Add(mcsINT8 x, mcsINT8 y)
  * \n
  * \sa OPTIONAL. See also section, in witch you can refer other documented
  * entities. Doxygen will create the link automatically. For example
- * modcppOPERATION::Add
+ * \sa modcppOPERATION::Add
  * 
  */
 mcsCOMPL_STAT modcppOPERATION::Divide(mcsINT8 x, mcsINT8 y, mcsFLOAT *z)

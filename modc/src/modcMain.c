@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcMain.c,v 1.10 2004-08-06 15:59:25 gluck Exp $"
+* "@(#) $Id: modcMain.c,v 1.11 2004-08-09 09:59:48 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -91,7 +91,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.10 2004-08-06 15:59:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.11 2004-08-09 09:59:48 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -139,9 +139,9 @@ int main (int argc, char *argv[])
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == FAILURE)
     {
-        // Error handling if necessary
+        /* Error handling if necessary */
         
-        // Exit from the application with FAILURE
+        /* Exit from the application with FAILURE */
         exit (EXIT_FAILURE);
     }
     
@@ -209,10 +209,10 @@ int main (int argc, char *argv[])
 
     /** \todo test stuct, enum and union type */
 
-    // Close MCS services
+    /* Close MCS services */
     mcsExit();
     
-    // Exit from the application with SUCCESS
+    /* Exit from the application with SUCCESS */
     exit (EXIT_SUCCESS);
 }
 

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtPrivate.h,v 1.2 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtPrivate.h,v 1.3 2004-11-30 12:00:22 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -29,7 +29,7 @@ extern "C" {
 /*
  * Module name
  */
-#define MODULE_ID "gui"
+#define MODULE_ID "gwt"
 
  
 

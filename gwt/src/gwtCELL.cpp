@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCELL.cpp,v 1.1 2005-02-07 14:36:24 mella Exp $"
+ * "@(#) $Id: gwtCELL.cpp,v 1.2 2005-02-07 14:45:31 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/07 14:36:24  mella
+ * Add Background color management for cells
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of gwtCELL class.
  */
 
-static char *rcsId="@(#) $Id: gwtCELL.cpp,v 1.1 2005-02-07 14:36:24 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtCELL.cpp,v 1.2 2005-02-07 14:45:31 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -59,7 +62,7 @@ gwtCELL::~gwtCELL()
 
 /** 
  * Set the content of the cell.
- * \param the content to be assigned.
+ * \param content the content to be assigned.
  */
 void gwtCELL::SetContent(string content)
 {

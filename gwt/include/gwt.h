@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwt.h,v 1.2 2004-11-30 12:51:55 mella Exp $"
+* "@(#) $Id: gwt.h,v 1.3 2004-11-30 14:36:16 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -38,6 +38,7 @@
 #include "gwtCONTAINER.h"
 #include "gwtTABLE.h"
 #include "gwtTEXTFIELD.h"
+#include "gwtTEXTAREA.h"
 #include "gwtWIDGET.h"
 #include "gwtWINDOW.h"
 #include "gwtSEPARATOR.h"

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtWINDOW.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
+* "@(#) $Id: gwtWINDOW.C,v 1.3 2004-11-30 14:36:18 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtWINDOW class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtWINDOW.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtWINDOW.C,v 1.3 2004-11-30 14:36:18 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -156,6 +156,17 @@ void gwtWINDOW::ReceiveFromGui(string widgetid, string data)
 {
     logExtDbg("gwtWINDOW::ReceiveFromGui()");
     DispatchGuiReturn(widgetid, data);
+}
+
+/**
+ * Set the title of the window.
+ *
+ * \param title The title of the window. 
+ */
+void gwtWINDOW::SetTitle(string title)
+{
+    logExtDbg ("gwtWINDOW::SetTitle()");
+    SetXmlAttribute("title", title);
 }
 
 

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-11-30 12:51:57 mella Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-11-30 14:36:18 mella Exp $"
 #
 # Makefile of ........
 #
@@ -61,6 +61,7 @@ INCLUDES        = gwt.h \
 				  gwtWINDOW.h \
 				  gwtBUTTON.h \
 				  gwtTEXTFIELD.h \
+				  gwtTEXTAREA.h \
 				  gwtTABLE.h \
 				  gwtMENU.h \
 				  gwtMENUITEM.h \
@@ -84,6 +85,7 @@ gwt_OBJECTS   =	gwtGUI \
 				gwtWINDOW \
 				gwtBUTTON \
 				gwtTEXTFIELD \
+				gwtTEXTAREA \
 				gwtTABLE \
 				gwtMENU \
 				gwtMENUITEM \

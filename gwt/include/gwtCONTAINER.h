@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtCONTAINER.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtCONTAINER.h,v 1.2 2004-11-30 14:36:16 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -43,14 +43,18 @@ public:
     gwtCONTAINER();
     virtual ~gwtCONTAINER(){};
     virtual mcsCOMPL_STAT Add(gwtWIDGET * widget);
-    virtual void SetTitle(string title);
+    virtual mcsCOMPL_STAT AddContainer(gwtCONTAINER * container);
     virtual void DispatchGuiReturn(string widgetid, string data);
     /** 
      * typedef for map of widgets
      */
     typedef map<string, gwtWIDGET *> gwtMAP_STRING2WIDGET;
+    typedef map<string, gwtCONTAINER *> gwtMAP_STRING2CONTAINER;
 protected:
+    /* list of contained widgets */
     gwtMAP_STRING2WIDGET _children;
+    /* list of contained containers */
+    gwtMAP_STRING2CONTAINER _containers;
 private:
 };
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modc.doc,v 1.4 2004-07-08 12:58:19 gluck Exp $"
+* "@(#) $Id: modc.doc,v 1.5 2004-08-05 12:22:22 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -19,14 +19,6 @@
 * your code documentation (about file, functions, define, enumeration, ...) as
 * shown below, in the special documentation blocks (beginning with 1 slash and
 * 2 stars), adding or deleting markers as needed.
-* Special documentation block : with 2 stars at the begining
-*       /**
-*        *
-*        */
-* Normal documentation block : with 1 stars at the begining
-*       /*
-*        *
-*        */
 * Nevertheless, you also have to comment the code as usually.  For more
 * informations, you can report to Programming Standards (JRA4-PRO-2000-0001),
 * or doxygen documentation.
@@ -43,26 +35,28 @@
 /**
 \mainpage modc : c module example
 
-<b>Brief description</b>\n
+\bdesc
 Brief module description. There could be one or more sentences in this short
 module description.
 
-<b>Detailed decription</b>\n
+\ddesc
 Detailed module description.
 
-<b>Used files</b>\n
+\usedfiles
 OPTIONAL. If files are used, for each one, name, and usage description, as
 below. 
-\li \e \<fileName1\> :  usage description of fileName1
-\li \e \<fileName2\> :  usage description of fileName2
+\filename filename 1 :  usage description of fileName1
+\filename filename 2 :  usage description of fileName2
 
-<b>Environment</b>\n
+\n
+\env
 OPTIONAL. If needed, environmental variables accessed by the program. For each
 variable, name, and usage description, as below.
-\li \e \<envVar1\> :  usage description of envVar1
-\li \e \<envVar2\> :  usage description of envVar2
+\envvar envVar1 :  usage description of envVar1
+\envvar envVar2 :  usage description of envVar2
 
-<b>Examples</b>\n
+\n
+\ex
 OPTIONAL but STRONGLY RECOMMENDED. Code examples if needed. You can make an
 example list with the \\li marker.
 \n Brief example description.

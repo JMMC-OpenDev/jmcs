@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.10 2005-03-02 13:08:09 mella Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.11 2005-03-02 14:54:17 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/03/02 13:08:09  mella
+ * Test the window update mechanism
+ *
  * Revision 1.9  2005/02/28 12:44:57  mella
  * Add height test for Table
  *
@@ -30,7 +33,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.10 2005-03-02 13:08:09 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.11 2005-03-02 14:54:17 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -110,7 +113,7 @@ gwtTestSERVER::gwtTestSERVER()
     button2 = new gwtBUTTON("button2", "help for button2");
     button3 = new gwtBUTTON();
     separator = new gwtSEPARATOR();
-    table1 = new gwtTABLE(10,5);
+    table1 = new gwtTABLE(0,0);
 }
 
 gwtTestSERVER::~gwtTestSERVER()
@@ -167,6 +170,7 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     textfield1->SetText("A text for the textfield");
     
     //with a table 
+    table1->SetDimension(10,5);
     table1->SetHelp("This table was filled adding rown and column");
     table1->SetLabel("A table");
     table1->SetHeight(200);

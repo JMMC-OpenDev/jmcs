@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTABLE.cpp,v 1.4 2005-03-02 13:54:34 mella Exp $"
+ * "@(#) $Id: gwtTABLE.cpp,v 1.5 2005-03-02 14:53:42 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/03/02 13:54:34  mella
+ * Make table updatable using the xml variable attribute
+ *
  * Revision 1.3  2005/02/28 12:48:31  mella
  * Implement SetWidgth and SetHeight
  *
@@ -26,7 +29,7 @@
  * Definition of gwtTABLE class.
  */
 
-static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.4 2005-03-02 13:54:34 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.5 2005-03-02 14:53:42 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -66,19 +69,9 @@ using namespace std;
 gwtTABLE::gwtTABLE(int rows, int columns)
 {
     logExtDbg("gwtTABLE::gwtTABLE()");
-    // prepare data two dimension array
-    _rows=rows;
-    _columns=columns;
-    _cells = new  gwtCELL *[rows];
-    int i;
-    // build colums arrays
-    for (i=0;i<_rows;i++)
-    {
-        _cells[i] = new gwtCELL[columns]("");
-    }
-
-    // prepare columnHeader array
-    _columnHeaders = new string[columns];
+    _rows=0;
+    _columns=0;
+    SetDimension(rows, columns);    
 }
 
 /*
@@ -103,6 +96,50 @@ gwtTABLE::~gwtTABLE()
 /*
  * Public methods
  */
+
+/** 
+ *  Reinitialize the table with new dimensions.
+ *
+ * \param rows  number of rows
+ * \param columns  number of columns
+ * 
+ * \warning All data are removed after each change of dimension.
+ */
+void gwtTABLE::SetDimension(int rows, int columns)
+{
+    logExtDbg("gwtTABLE::SetDimension()");
+    int i;
+        
+    // clean previous data if not empty
+    if ( (_rows+_columns)  > 0 )
+    {
+        for (i=0;i<_rows;i++)
+        {
+            delete []_cells[i];
+        }
+        if(_columns!=0)
+        {
+            delete [] _cells;
+            // delete the columnHeaders array
+            delete _columnHeaders;
+        }
+
+    }
+    
+    // prepare data two dimension array
+    _rows=rows;
+    _columns=columns;
+    _cells = new  gwtCELL *[rows];
+ 
+    // build colums arrays
+    for (i=0;i<_rows;i++)
+    {
+        _cells[i] = new gwtCELL[columns]("");
+    }
+
+    // prepare columnHeader array
+    _columnHeaders = new string[columns];
+}
 
 string gwtTABLE::GetXmlBlock()
 {
@@ -167,6 +204,7 @@ void gwtTABLE::SetCell(int row, int column, string value)
  */
 void gwtTABLE::SetCellBackground(int row, int column, string color)
 {
+    // logExtDbg("gwtTABLE::SetCellBackground()");
      _cells[row][column].SetBackgroundColor(color);
 }
 
@@ -189,7 +227,7 @@ string gwtTABLE::GetCell(int row, int column)
  */
 void gwtTABLE::SetColumnHeader(int column, string title)
 {
-    // logExtDbg("gwtTABLE::SetColumnHeader()");
+    logExtDbg("gwtTABLE::SetColumnHeader()");
     _columnHeaders[column]=title;    
 }
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.2 2004-07-02 10:56:40 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.3 2004-07-05 15:03:04 gluck Exp $"
 *
 *
 * who       when         what
@@ -9,11 +9,15 @@
 * gluck     09-Jun-2004  Created
 *
 *
+* IMPORTANT :
+* To make your own documentation, you have to substitute the general or
+* example comments, with your specific comments.
+* 
 * IMPORTANT:
 * To make AUTOMATIC DOCUMENTATION GENERATION by doxygen, you have to insert
 * your code documentation (about file, functions, define, enumeration, ...) as
-* shown below, in the special documentation blocks, adding or deleting markers
-* as needed.
+* shown below, in the special documentation blocks (beginning with 1 slash and
+* 2 stars), adding or deleting markers as needed.
 * Nevertheless, you also have to comment the code as usually.  For more
 * informations, you can report to Programming Standards (JRA4-PRO-2000-0001),
 * or doxygen documentation.
@@ -38,42 +42,36 @@
  * 
  * OPTIONAL detailed description of the c main file follows here.
  *
- * \b Files:
- * \n
- * OPTIONAL. If files are used, for each one, name, and usage
- * description.
+ * \b Files:\n
+ * OPTIONAL. If files are used, for each one, name, and usage description.
  * \li \e \<fileName1\> :  usage description of fileName1
  * \li \e \<fileName2\> :  usage description of fileName2
  *
- * \n
- * \b Environment:
- * \n
- * OPTIONAL. If needed, environmental variables accessed by the program. For each
+ * \b Environment:\n
+ * OPTIONAL. If needed, environmental variables accessed by the program. For
+ * each
  * variable, name, and usage description, as below.
  * \li \e \<envVar1\> :  usage description of envVar1
  * \li \e \<envVar2\> :  usage description of envVar2
  * 
  * \warning OPTIONAL. Warning if any (software requirements, ...)
  *
- * \n
- * \b Code \b Example:
- * \n
+ *  \n \b Code \b Example:\n
  * OPTIONAL. Code example if needed
- *
+ * \n Brief example description.
  * \code
  * Insert your code example here
  * \endcode
  *
  * \sa OPTIONAL. See also section, in which you can refer other documented
  * entities. Doxygen will create the link automatically.
+ * \sa modcMain.c
  * 
- * \bug OPTIONAL. Bugs list if it exists. You can make a list with the \li
- * marker, like below.
- * \bug \li For example, description of the first bug
- * \bug \li For example, description of the second bug
+ * \bug OPTIONAL. Bugs list if it exists.
+ * \bug For example, description of the first bug
+ * \bug For example, description of the second bug
  * 
- * \todo OPTIONAL. Things to forsee list, if needed. You can make a list
- * with the \\li marker, like in the Files section above. For example, add
+ * \todo OPTIONAL. Things to forsee list, if needed. For example, add
  * modcProc3.
  * 
  * \n
@@ -112,9 +110,10 @@ static mcsBYTES8 string;    /**< Brief description of the variable, ends at
  */
 
 /* IMPORTANT : doxygen extracted documentation for local functions is located
- * just below in this file. It's why a normal documentation block is used here
- * with a brief description (just to know a little about the function) and NOT
- * A DOXYGEN DOCUMENTATION BLOCK 
+ * just below in this file. It's why a normal documentation block (beginning
+ * with 1 slash and 1 star) is used here with a brief description (just to
+ * know a little about the function) and NOT A DOXYGEN DOCUMENTATION BLOCK
+ * (beginning with 1 slash and 2 stars).
  */
 
 /* Brief description of the procedure */
@@ -140,9 +139,11 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y);
  */
 static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
 {
+    logExtDbg ("modcSub()");
+        
     mcsINT8 z;
     z=x-y;
-    printf("%d - %d = %d\n", x, y, z);
+    logTest("%d - %d = %d\n", x, y, z);
 
     return SUCCESS;
 }
@@ -159,39 +160,34 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
  *
  * \param a description of parameter a. In the example, a string.
  * \param b description of parameter b. In the example, an integer.
- * 
+ *
  * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \b Files:
- * \n
- * OPTIONAL. If files are used, for each one, name, and usage
- * description.
+ * \n \b Files:\n
+ * OPTIONAL. If files are used, for each one, name, and usage description.
  * \li \e \<fileName1\> :  usage description of fileName1
  * \li \e \<fileName2\> :  usage description of fileName2
  *
- * \b Environment:
- * \n
- * OPTIONAL. If needed, environmental variables accessed by the program. For each
- * variable, name, and usage description, as below.
+ * \b Environment:\n
+ * OPTIONAL. If needed, environmental variables accessed by the program. For
+ * each variable, name, and usage description, as below.
  * \li \e \<envVar1\> :  usage description of envVar1
  * \li \e \<envVar2\> :  usage description of envVar2
  * 
  * \warning OPTIONAL. Warning if any (software requirements, ...). For example
  * parameter b is a 8 bit integer.
  *
- * \n
- * \b Code \b Example: 
- * \n
+ * \n \b Code \b Example:\n 
  * OPTIONAL. Code example if needed
- *
+ * \n Brief example description.
  * \code
  * Insert your code example here
  * \endcode
  *
  * \sa OPTIONAL. See also section, in witch you can refer other documented
  * entities. Doxygen will create the link automatically. For example,
- * modcProc2, modcColor
+ * modcProc2, modcCOLOR
  * 
  * \bug OPTIONAL. Bugs list if it exists. You can make a list with the \li
  * marker, like below.
@@ -208,14 +204,16 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
  */
 mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
 {
+    logExtDbg ("modcProc1()");
+    
     /* Print out parameters */
-    printf("a = %s and b = %i\n", a, b);
+    logTest("a = %s and b = %i\n", a, b);
     /* Use the local function modcSub */
     mcsINT8 integer = 3;
-    printf ("\t=> call modcSub local function : ");
+    logTest ("=> call modcSub local function : ");
     if (modcSub(b, integer) == FAILURE)
     {
-        printf ("ERROR modcSub\n");
+        logTest ("ERROR modcSub\n");
     }
         
     return SUCCESS;
@@ -228,10 +226,11 @@ mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
  * OPTIONAL detailed description of the function follows here.
  *
  * \param c description of parameter c. In the example, a string.
- * 
- * \n
+ *
+ * \n 
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
+ * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
  * entities. Doxygen will create the link automatically. For example
  * modcProc1.
@@ -240,11 +239,13 @@ mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
  */
 mcsCOMPL_STAT modcProc2(mcsBYTES8 c)
 {
+    logExtDbg ("modcProc2()");
+    
     /* Print out the parameter */
-    printf("\t- c = %s\n", c);
+    logTest("c = %s\n", c);
     /* Print out the local variable string */
     strcpy (string, "modcProc2");
-    printf ("\t- modcProc.c local variable string = %s\n", string);
+    logTest ("modcProc.c local variable string = %s\n", string);
         
     return SUCCESS;
 }

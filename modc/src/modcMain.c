@@ -1,18 +1,22 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcMain.c,v 1.2 2004-07-02 10:43:50 gluck Exp $"
+* "@(#) $Id: modcMain.c,v 1.3 2004-07-05 15:03:04 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gluck     11-Jun-2004  Created
 *
 *
+* IMPORTANT :
+* To make your own documentation, you have to substitute the general or
+* example comments, with your specific comments.
+* 
 * IMPORTANT:
 * To make AUTOMATIC DOCUMENTATION GENERATION by doxygen, you have to insert
 * your code documentation (about file, functions, define, enumeration, ...) as
-* shown below, in the special documentation blocks, adding or deleting markers
-* as needed.
+* shown below, in the special documentation blocks (beginning with 1 slash and
+* 2 stars), adding or deleting markers as needed.
 * Nevertheless, you also have to comment the code as usually.  For more
 * informations, you can report to Programming Standards (JRA4-PRO-2000-0001),
 * or doxygen documentation.
@@ -37,53 +41,47 @@
  * \e \<Command Name\> - brief description of the program, which ends at
  * this dot.
  *
- * \b Synopsis:
- * \n
+ * \b Synopsis:\n
  * \e \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
  *                     [\e \<option1\> ... \e \<optionN\>] 
  *
- * \b Details:
- * \n
+ * \b Details:\n
  * OPTIONAL detailed description of the c main file follows here.
  * 
- * \b Files:
- * \n
- * OPTIONAL. If files are used, for each one, name, and usage
- * description.
+ * \b Files:\n
+ * OPTIONAL. If files are used, for each one, name, and usage description.
  * \li \e \<fileName1\> :  usage description of fileName1
  * \li \e \<fileName2\> :  usage description of fileName2
  *
- * \b Environment:
- * \n
- * OPTIONAL. If needed, environmental variables accessed by the program. For each
- * variable, name, and usage description, as below.
+ * \b Environment:\n
+ * OPTIONAL. If needed, environmental variables accessed by the program. For
+ * each variable, name, and usage description, as below.
  * \li \e \<envVar1\> :  usage description of envVar1
  * \li \e \<envVar2\> :  usage description of envVar2
  * 
  * \warning OPTIONAL. Warning if any (software requirements, ...)
  *
- * \n
- * \b Code \b Example:
- * \n
+ * \n \b Code \b Example:\n
  * OPTIONAL. Command example if needed
- *
+ * \n Brief example description.
  * \code
  * Insert your command example here
  * \endcode
  *
  * \sa OPTIONAL. See also section, in which you can refer other documented
  * entities. Doxygen will create the link automatically.
+ * \sa modcProc.c
  * 
- * \bug OPTIONAL. Known bugs list if it exists. You can make a list with the
- * \\li marker, like in the Files section above.
- * 
- * \todo OPTIONAL. Things to forsee list, if needed. You can make a list with
- * the \\li marker, like in the Files section above.
+ * \bug OPTIONAL. Known bugs list if it exists.
+ * \bug Bug 1 : bug 1 description
+ *
+ * \todo OPTIONAL. Things to forsee list.
+ * \todo Action 1 : action 1 description
  * 
  * \n
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.2 2004-07-02 10:43:50 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.3 2004-07-05 15:03:04 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -122,122 +120,79 @@ static mcsINT8 modcId;    /**< Brief description of the variable, ends at
 
 
 /* 
- * Local functions declaration 
- */
-
-/* IMPORTANT : doxygen extracted documentation for local functions is located
- * just below in this file. It's why a normal documentation block is used here
- * with a brief description (just to know a little about the function) and NOT
- * A DOXYGEN DOCUMENTATION BLOCK 
- */
-
-/* Brief description of the procedure */
-static mcsCOMPL_STAT modcAdd(mcsINT8 x, mcsINT8 y);
-
-
-/* 
- * Local functions definition
- */
-
-/**
- * Brief description of the function, which ends at this dot.
- *
- * OPTIONAL detailed description of the function follows here.
- *
- * \param x description of parameter x. In the example, a number.
- * \param y description of parameter y. In the example, a number.
- * 
- * \n
- * \return Description of the return value. In the example, SUCCESS or FAILURE. 
- *
- * \n
- */
-static mcsCOMPL_STAT modcAdd(mcsINT8 x, mcsINT8 y)
-{
-    mcsINT8 z;
-    z=x+y;
-    printf ("%d + %d = %d\n", x, y, z);
-
-    return SUCCESS;
-}
-
-
-/* 
  * Main
  */
 
 int main (int argc, char *argv[])
 {
+    /* Give process name to mcs library*/
+    mcsInit(argv[0]);
+    
+    /* Set verbosity level */
+    logSetVerboseLevel (logEXTDBG);
+    
     /* global variable modcNumber */
     mcsINT8 modcNumber = 34;
-    printf ("\n* modc.h : global variable modcNumber = %i\n", modcNumber);
+    logTest ("modc.h : global variable modcNumber = %i\n", modcNumber);
     
     /* global variable modcReal */
     mcsFLOAT modcReal = 78.23;
-    printf ("\n* modc.h : global variable modcReal = %g\n", modcReal);
+    logTest ("modc.h : global variable modcReal = %g\n", modcReal);
     
     /* constante modcPROCNAME_LENGHT */
-    printf ("\n* modc.h : constante modcPROCNAME_LENGHT = %i\n", \
+    logTest ("modc.h : constante modcPROCNAME_LENGHT = %i\n", \
             modcPROCNAME_LENGHT);
     
     /* constante modcPROCNAME_ID */
-    printf ("\n* modc.h : constante modcPROCNAME_ID = %i\n", \
+    logTest ("modc.h : constante modcPROCNAME_ID = %i\n", \
             modcPROCNAME_ID);
     
     /* constante modcDEFAULT_CHOICE */
-    printf ("\n* modcPrivate.h : constante modcDEFAULT_CHOICE = %s\n", \
+    logTest ("modcPrivate.h : constante modcDEFAULT_CHOICE = %s\n", \
             modcDEFAULT_CHOICE);
     
     /* modcPrintChoice macro */
-    printf ("\n* modcPrivate.h : modcPrintChoice macro\n");
-    printf ("\t=> call public function modcProc2 :\n");
+    logTest ("modcPrivate.h : modcPrintChoice macro\n");
+    logTest ("=> call public function modcProc2 :\n");
     if (modcPrintChoice(modcDEFAULT_CHOICE) == FAILURE)
     {
-       printf ("ERROR modcPrintChoice\n");
+       logTest ("ERROR modcPrintChoice\n");
     }
 
     /* local variable modcId */
     modcId = 5;
-    printf ("\n* modcMain.c : local variable modcId = %i\n", modcId);
-    
-    /* local function modcAdd */
-    printf ("\n* modcMain.c : local function modcAdd : ");
-    mcsINT8 Id2 = 3;
-    if (modcAdd(modcId, Id2) == FAILURE)
-    {
-        printf ("\tERROR modcAdd\n");
-    }
+    logTest ("modcMain.c : local variable modcId = %i\n", modcId);
     
     /* public function modcProc1 */
-    printf ("\n* modcProc.c : public function modcProc1 : ");
+    logTest ("modcProc.c : public function modcProc1 : \n");
     mcsBYTES32 w;
     strcpy (w, "test 1");
     mcsINT8 i = 7;
     if (modcProc1(w, i) == FAILURE)
     {
-        printf ("ERROR modcProc1\n");
+        logTest ("ERROR modcProc1\n");
     }
     
     /* modcPrint macro */
-    printf ("\n* modc.h : modcPrint macro\n");
-    printf ("\t=> call public function modcProc1 : ");
+    logTest ("modc.h : modcPrint macro\n");
+    logTest ("=> call public function modcProc1 : \n");
     if (modcPrint(w, i) == FAILURE)
     {
-        printf ("ERROR modcPrint\n");
+        logTest ("ERROR modcPrint");
     }
     
     /* public function modcProc2 */
-    printf ("\n* modcProc.c : public function modcProc2 : \n");
+    logTest ("modcProc.c : public function modcProc2 : \n");
     mcsBYTES32 word;
     strcpy (word, "test 2");
     if (modcProc2(word) == FAILURE)
     {
-         printf ("ERROR modcProc2\n");
+         logTest ("ERROR modcProc2\n");
     }
 
-        
-    printf ("\n");
-    
+    /** \todo test stuct, enum and union type */
+
+
     exit (EXIT_SUCCESS);
 }
 

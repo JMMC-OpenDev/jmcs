@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modc.doc,v 1.2 2004-07-05 07:46:56 gluck Exp $"
+* "@(#) $Id: modc.doc,v 1.3 2004-07-05 15:03:04 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,8 +17,8 @@
 * IMPORTANT:
 * To make AUTOMATIC DOCUMENTATION GENERATION by doxygen, you have to insert
 * your code documentation (about file, functions, define, enumeration, ...) as
-* shown below, in the special documentation blocks, adding or deleting markers
-* as needed.
+* shown below, in the special documentation blocks (beginning with 1 slash and
+* 2 stars), adding or deleting markers as needed.
 * Special documentation block : with 2 stars at the begining
 *       /**
 *        *
@@ -76,7 +76,7 @@ An example is given below.
 \sa files : modcMain.c, modc.h
 \sa functions : modcProc1, modcProc2
 
-\bug OPTIONAL. Bugs list if it exists.
+\bug OPTIONAL. Known bugs list if it exists.
 \bug Bug 1 : bug 1 description
 \bug Bug 2 : bug 2 description
 

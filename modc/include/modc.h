@@ -3,18 +3,22 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modc.h,v 1.1 2004-06-29 15:21:19 gluck Exp $"
+* "@(#) $Id: modc.h,v 1.2 2004-07-05 15:03:04 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gluck     09-Jun-2004  Created
 *
 *
+* IMPORTANT :
+* To make your own documentation, you have to substitute the general or
+* example comments, with your specific comments.
+* 
 * IMPORTANT:
 * To make AUTOMATIC DOCUMENTATION GENERATION by doxygen, you have to insert
 * your code documentation (about file, functions, define, enumeration, ...) as
-* shown below, in the special documentation blocks, adding or deleting markers
-* as needed.
+* shown below, in the special documentation blocks (beginning with 1 slash and
+* 2 stars), adding or deleting markers as needed.
 * Nevertheless, you also have to comment the body code as usually.  For more
 * informations, you can report to Programming Standards (JRA4-PRO-2000-0001),
 * or doxygen documentation.
@@ -152,8 +156,9 @@ extern mcsFLOAT modcReal;      /**< Brief description of the variable, ends at
 
 /* IMPORTANT : doxygen extracted documentation for public functions is located
  * in the .c file and not in this header file. It's why a normal documentation
- * block is used here with a brief description (just to know a little about
- * the function) and NOT A DOXYGEN DOCUMENTATION BLOCK 
+ * block (beginning with 1 slash and 1 star) is used here with a brief
+ * description (just to know a little about the function) and NOT A DOXYGEN
+ * DOCUMENTATION BLOCK (beginning with 1 slash and 2 stars).
  */
 
 /* Brief description of the procedure */

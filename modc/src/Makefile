@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-06-29 15:12:41 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-07-05 15:03:04 gluck Exp $"
 #
 # Makefile of modc
 #
@@ -41,7 +41,7 @@ EXECUTABLES_L   =
 # <brief description of modcMain program>
 modcMain_OBJECTS   = modcMain
 modcMain_LDFLAGS   =
-modcMain_LIBS      = modc
+modcMain_LIBS      = mcs log modc
 
 #
 # special compilation flags for single c sources

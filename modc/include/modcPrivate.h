@@ -3,17 +3,22 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcPrivate.h,v 1.1 2004-06-29 15:21:19 gluck Exp $"
+* "@(#) $Id: modcPrivate.h,v 1.2 2004-07-05 15:03:04 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gluck     16-Jun-2004  Created
 *
 *
+* IMPORTANT :
+* To make your own documentation, you have to substitute the general or
+* example comments, with your specific comments.
+* 
 * IMPORTANT:
 * To make AUTOMATIC DOCUMENTATION GENERATION by doxygen, you have to insert
 * your code documentation (about file, functions, define, enumeration, ...) as
-* shown below, in the special documentation blocks, adding or deleting markers
+* shown below, in the special documentation blocks (beginning with 1 slash and
+* 2 stars), adding or deleting markers
 * as needed.
 * Nevertheless, you also have to comment the body code as usually.  For more
 * informations, you can report to Programming Standards (JRA4-PRO-2000-0001),
@@ -41,18 +46,16 @@
  * OPTIONAL detailed description of the header file follows here. 
  * 
  * IMPORTANT : This header file is made to share entities inside the module, ie
- * entities which are "local to the module" (even if module concept is
- * entirely artificial, and is only a way to organize things). Therefore,
+ * entities which are "local to the module". Therefore,
  * these entities are not desired to be read through the user standard doxygen
  * extracted documentation, ie user API.  It's why these entities are placed
- * in that "particular" other private header file, since normally, these
+ * in that "particular" private header file, since normally, these
  * entities should only be used by the module developers and not by module
  * users.
  * 
  * REMARK : It is possible to make these entities appear for the module
  * developper, creating or editing (if it already exists) the doxygen
- * configuration file as shown below.changing the EXCLUDE_PATTRERNS marker in
- * the doxygen.
+ * configuration, changing the EXCLUDE_PATTRERNS marker, as shown below.
  * In the ../config/doxyfile file, add the line below
  * EXCLUDE_PATTRERNS =
  *
@@ -66,6 +69,12 @@ functions in C++-code.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+    
+/* 
+ * Module name
+ */
+#define MODULE_ID "modc"
 
 
 /* 

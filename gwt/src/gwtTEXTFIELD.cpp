@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTEXTFIELD.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtTEXTFIELD.cpp,v 1.2 2005-02-24 10:36:46 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     16-Sep-2004  Created
  *
  ******************************************************************************/
@@ -15,7 +19,7 @@
  * Definition of gwtTEXTFIELD class.
  */
 
-static char *rcsId="@(#) $Id: gwtTEXTFIELD.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtTEXTFIELD.cpp,v 1.2 2005-02-24 10:36:46 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -128,6 +132,7 @@ void gwtTEXTFIELD::Changed(string value){
  */
 void gwtTEXTFIELD::SetWidgetId(string id)
 {
+    logExtDbg("gwtTEXTFIELD::SetWidgetId()"); 
     gwtWIDGET::SetWidgetId(id);
     SetXmlAttribute("variable",id);
 }

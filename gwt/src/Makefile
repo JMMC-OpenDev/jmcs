@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2005-02-15 12:26:39 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.10 2005-02-24 10:36:46 mella Exp $"
 #
 # Makefile of gwt module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2005/02/15 12:26:39  gzins
+# Removed unused target
+#
 # Revision 1.8  2005/02/15 12:17:52  gzins
 # Added CVS log as file modification history
 #
@@ -74,6 +77,7 @@ INCLUDES        = gwt.h \
 				  gwtSEPARATOR.h \
 				  gwtCHOICE.h \
 				  gwtCHECKBOX.h \
+				  gwtLABEL.h \
 				  gwtSUBPANEL.h
 
 
@@ -101,6 +105,7 @@ gwt_OBJECTS   =	gwtGUI \
 				gwtSEPARATOR \
 				gwtCHOICE \
 				gwtCHECKBOX \
+				gwtLABEL \
 				gwtSUBPANEL
 
 #

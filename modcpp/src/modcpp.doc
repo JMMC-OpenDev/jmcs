@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcpp.doc,v 1.1 2004-07-22 07:47:08 gluck Exp $"
+* "@(#) $Id: modcpp.doc,v 1.2 2004-08-05 13:32:52 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -36,26 +36,28 @@
 /**
 \mainpage modcpp : C++ module example
 
-<b>Brief description</b>\n
+\bdesc
 Brief module description. There could be one or more sentences in this short
 module description.
 
-<b>Detailed decription</b>\n
+\ddesc
 Detailed module description.
 
-<b>Used files</b>\n
+\usedfiles
 OPTIONAL. If files are used, for each one, name, and usage description, as
 below. 
-\li \e \<fileName1\> :  usage description of fileName1
-\li \e \<fileName2\> :  usage description of fileName2
+\filename filename 1 :  usage description of fileName1
+\filename filename 2 :  usage description of fileName2
 
-<b>Environment</b>\n
+\n
+\env
 OPTIONAL. If needed, environmental variables accessed by the program. For each
 variable, name, and usage description, as below.
-\li \e \<envVar1\> :  usage description of envVar1
-\li \e \<envVar2\> :  usage description of envVar2
+\envvar envVar1 :  usage description of envVar1
+\envvar envVar2 :  usage description of envVar2
 
-<b>Examples</b>\n
+\n
+\ex
 OPTIONAL but STRONGLY RECOMMENDED. Code examples if needed. You can make an
 example list with the \\li marker.
 \n Brief example description.

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcppOPERATION.C,v 1.2 2004-07-23 12:33:50 gluck Exp $"
+* "@(#) $Id: modcppOPERATION.C,v 1.3 2004-08-05 13:32:52 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -41,21 +41,23 @@
  * 
  * OPTIONAL detailed description of the class file follows here.
  *
- * \b Files:\n
+ * \usedfiles
  * OPTIONAL. If files are used, for each one, name, and usage description.
- * \li \e \<fileName1\> :  usage description of fileName1
- * \li \e \<fileName2\> :  usage description of fileName2
+ * \filename fileName1 :  usage description of fileName1
+ * \filename fileName2 :  usage description of fileName2
  *
- * \b Environment:\n
+ * \n
+ * \env
  * OPTIONAL. If needed, environmental variables accessed by the program. For
- * each
- * variable, name, and usage description, as below.
- * \li \e \<envVar1\> :  usage description of envVar1
- * \li \e \<envVar2\> :  usage description of envVar2
+ * each variable, name, and usage description, as below.
+ * \envvar envVar1 :  usage description of envVar1
+ * \envvar envVar2 :  usage description of envVar2
  * 
+ * \n
  * \warning OPTIONAL. Warning if any (software requirements, ...)
  *
- *  \n \b Code \b Example:\n
+ * \n
+ * \ex
  * OPTIONAL. Code example if needed
  * \n Brief example description.
  * \code
@@ -75,7 +77,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppOPERATION.C,v 1.2 2004-07-23 12:33:50 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcppOPERATION.C,v 1.3 2004-08-05 13:32:52 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -114,7 +116,6 @@ using namespace std;
  *
  * OPTIONAL detailed description of the constructor follows here.
  *
- * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
  * entities. Doxygen will create the link automatically.
  * \sa For example modcppPERSON(char *name).
@@ -130,7 +131,6 @@ modcppOPERATION::modcppOPERATION()
  *
  * OPTIONAL detailed description of the constructor follows here.
  *
- * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
  * entities. Doxygen will create the link automatically.
  * \sa For example modcppPERSON(char *name).
@@ -172,26 +172,31 @@ modcppOPERATION::~modcppOPERATION()
  * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n \b Error \b codes:\n
+ * \n
+ * \err
  * If error handling system is used.
  * The possible errors are :
- * \li modcppERR_ERROR_1
- * \li modcppERR_ERROR_2
+ * \errname modcppERR_ERROR_1
+ * \errname modcppERR_ERROR_2
  *
- * \n \b Files:\n
+ * \n
+ * \usedfiles
  * OPTIONAL. If files are used, for each one, name, and usage description.
- * \li \e \<fileName1\> :  usage description of fileName1
- * \li \e \<fileName2\> :  usage description of fileName2
+ * \filename fileName1 :  usage description of fileName1
+ * \filename fileName2 :  usage description of fileName2
  *
- * \b Environment:\n
+ * \n
+ * \env
  * OPTIONAL. If needed, environmental variables accessed by the program. For
  * each variable, name, and usage description, as below.
- * \li \e \<envVar1\> :  usage description of envVar1
- * \li \e \<envVar2\> :  usage description of envVar2
+ * \envvar envVar1 :  usage description of envVar1
+ * \envvar envVar2 :  usage description of envVar2
  * 
+ * \n
  * \warning OPTIONAL. Warning if any (software requirements, ...).
  *
- * \n \b Code \b Example:\n 
+ * \n
+ * \ex 
  * OPTIONAL. Code example if needed
  * \n Brief example description.
  * \code
@@ -234,12 +239,14 @@ mcsCOMPL_STAT modcppOPERATION::Add(mcsINT8 x, mcsINT8 y)
  * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n \b Error \b codes:\n
+ * \n
+ * \err
  * If error handling system is used.
  * The possible errors are :
- * \li modcppERR_ERROR_1
- * \li modcppERR_ERROR_2
+ * \errname modcppERR_ERROR_1
+ * \errname modcppERR_ERROR_2
  *
+ * \n
  * \sa OPTIONAL. See also section, in witch you can refer other documented
  * entities. Doxygen will create the link automatically. For example
  * modcppOPERATION::Add
@@ -271,11 +278,12 @@ mcsCOMPL_STAT modcppOPERATION::Divide(mcsINT8 x, mcsINT8 y, mcsFLOAT *z)
  * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n \b Error \b codes:\n
+ * \n
+ * \err
  * If error handling system is used.
  * The possible errors are :
- * \li modcppERR_ERROR_1
- * \li modcppERR_ERROR_2
+ * \errname modcppERR_ERROR_1
+ * \errname modcppERR_ERROR_2
  *
  * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
@@ -313,11 +321,12 @@ mcsCOMPL_STAT modcppOPERATION::SubAndMultiply(mcsINT8 x, mcsINT8 y)
  * \n
  * \return Description of the return value. In the example, nothing. 
  *
- * \n \b Error \b codes:\n
+ * \n
+ * \err
  * If error handling system is used.
  * The possible errors are :
- * \li modcppERR_ERROR_1
- * \li modcppERR_ERROR_2
+ * \errname modcppERR_ERROR_1
+ * \errname modcppERR_ERROR_2
  *
  * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
@@ -359,11 +368,12 @@ char * modcppOPERATION::GetName()
  * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n \b Error \b codes:\n
+ * \n
+ * \err
  * If error handling system is used.
  * The possible errors are :
- * \li modcppERR_ERROR_1
- * \li modcppERR_ERROR_2
+ * \errname modcppERR_ERROR_1
+ * \errname modcppERR_ERROR_2
  *
  * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
@@ -398,11 +408,12 @@ mcsCOMPL_STAT modcppOPERATION::Sub(mcsINT8 x, mcsINT8 y)
  * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n \b Error \b codes:\n
+ * \n
+ * \err
  * If error handling system is used.
  * The possible errors are :
- * \li modcppERR_ERROR_1
- * \li modcppERR_ERROR_2
+ * \errname modcppERR_ERROR_1
+ * \errname modcppERR_ERROR_2
  *
  * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcppOPERATION.h,v 1.2 2004-07-22 14:19:33 gluck Exp $"
+* "@(#) $Id: modcppOPERATION.h,v 1.3 2004-08-05 13:32:52 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -59,20 +59,23 @@
  * 
  * OPTIONAL detailed description of the class follows here.
  *
- * \b Files:\n
+ * \usedfiles
  * OPTIONAL. If files are used, for each one, name, and usage description.
- * \li \e \<fileName1\> :  usage description of fileName1
- * \li \e \<fileName2\> :  usage description of fileName2
+ * \filename fileName1 :  usage description of fileName1
+ * \filename fileName2 :  usage description of fileName2
  *
- * \b Environment:\n
+ * \n
+ * \env
  * OPTIONAL. If needed, environmental variables accessed by the class. For
  * each variable, name, and usage description, as below.
- * \li \e \<envVar1\> :  usage description of envVar1
- * \li \e \<envVar2\> :  usage description of envVar2
+ * \envvar envVar1 :  usage description of envVar1
+ * \envvar envVar2 :  usage description of envVar2
  * 
+ * \n
  * \warning OPTIONAL. Warning if any (software requirements, ...)
  *
- *  \n \b Code \b Example:\n
+ * \n
+ * \ex
  * OPTIONAL. Code example if needed
  * \n Brief example description.
  * \code

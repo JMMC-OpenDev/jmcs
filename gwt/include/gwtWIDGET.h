@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWIDGET.h,v 1.5 2005-02-15 12:33:49 gzins Exp $"
+ * "@(#) $Id: gwtWIDGET.h,v 1.6 2005-02-28 13:00:11 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/15 12:33:49  gzins
+ * Updated file description
+ *
  * Revision 1.4  2005/02/15 12:17:52  gzins
  * Added CVS log as file modification history
  *
@@ -47,6 +50,7 @@ public:
 
     virtual void SetLabel(string l);
     virtual void SetHelp(string h);
+    virtual void gwtWIDGET::SetAttribute(string name, string value);
     virtual void SetVerticalOrientation(mcsLOGICAL flag);
 
     virtual void Changed(string value);

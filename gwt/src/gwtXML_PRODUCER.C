@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtXML_PRODUCER.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
+* "@(#) $Id: gwtXML_PRODUCER.C,v 1.3 2004-11-30 12:51:57 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtXML_PRODUCER class definition.
  */
 
-static char *rcsId="@(#) $Id: gwtXML_PRODUCER.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtXML_PRODUCER.C,v 1.3 2004-11-30 12:51:57 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -51,6 +51,7 @@ using namespace std;
 gwtXML_PRODUCER::gwtXML_PRODUCER()
 {
     logExtDbg("gwtXML_PRODUCER::gwtXML_PRODUCER()");
+    _attachedGui=NULL;
 }
 
 /*
@@ -87,7 +88,16 @@ void gwtXML_PRODUCER::AttachAGui(gwtGUI * g)
  */
 void gwtXML_PRODUCER::SendXml(string data){
   logExtDbg("gwtXML_PRODUCER::SendXml()");
-  _attachedGui->Send(data);
+  if(_attachedGui == NULL)
+  {
+      // \todo errAdd
+      logWarning("No attached gui");
+  }
+  else
+  {
+      _attachedGui->Send(data);
+  }
+  
 }
 
 

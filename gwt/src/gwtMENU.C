@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtMENU.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
+* "@(#) $Id: gwtMENU.C,v 1.3 2004-11-30 12:51:57 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtMENU class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtMENU.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtMENU.C,v 1.3 2004-11-30 12:51:57 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -93,7 +93,7 @@ void gwtMENU::AddMenu(gwtMENU * menu)
 /**
  * Add a menuitem into the menu.
  *
- * \param menuitem the menuitem to add. 
+ * \param menuItem the menuitem to add. 
  *
  */
 void gwtMENU::AddMenuItem(gwtMENUITEM * menuItem)

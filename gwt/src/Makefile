@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-11-25 14:27:52 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-11-30 12:51:57 mella Exp $"
 #
 # Makefile of ........
 #
@@ -66,8 +66,8 @@ INCLUDES        = gwt.h \
 				  gwtMENUITEM.h \
 				  gwtXML_PRODUCER.h \
 				  gwtCOMMAND.h \
-				  gwtSEPARATOR.h
-
+				  gwtSEPARATOR.h \
+				  gwtSUBPANEL.h
 
 
 #
@@ -89,7 +89,8 @@ gwt_OBJECTS   =	gwtGUI \
 				gwtMENUITEM \
 				gwtCOMMAND \
 				gwtXML_PRODUCER \
-				gwtSEPARATOR
+				gwtSEPARATOR \
+				gwtSUBPANEL
 
 #
 # Scripts (public and local)

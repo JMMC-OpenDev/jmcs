@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtWMODEL.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
+* "@(#) $Id: gwtWMODEL.C,v 1.3 2004-11-30 12:51:57 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtWMODEL class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtWMODEL.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtWMODEL.C,v 1.3 2004-11-30 12:51:57 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -47,20 +47,22 @@ using namespace std;
 
 /** 
  * Constructs the widget.
+ * 
+ */
+gwtWMODEL::gwtWMODEL()
+{
+    logExtDbg("gwtWMODEL::gwtWMODEL()");
+}
+
+
+/** 
+ * Constructs the widget.
  * \param help help of the widget.
  */
 gwtWMODEL::gwtWMODEL(string help)
 {
     logExtDbg("gwtWMODEL::gwtWMODEL()");
-}
-
-/** 
- * Constructs the widget.
- * 
- */
-gwtWMODEL::gwtWMODEL(string help)
-{
-    logExtDbg("gwtWMODEL::gwtWMODEL()");
+    SetHelp(help);
 }
 
 /*

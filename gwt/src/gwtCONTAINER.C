@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtCONTAINER.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtCONTAINER.C,v 1.2 2004-11-30 12:51:57 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,7 @@
  */
 
 static char *rcsId =
-  "@(#) $Id: gwtCONTAINER.C,v 1.1 2004-11-25 14:27:52 gzins Exp $";
+  "@(#) $Id: gwtCONTAINER.C,v 1.2 2004-11-30 12:51:57 mella Exp $";
 static void *use_rcsId = ((void) &use_rcsId, (void *) &rcsId);
 
 
@@ -85,6 +85,9 @@ mcsCOMPL_STAT gwtCONTAINER::Add (gwtWIDGET * widget)
   ostringstream osstring;
   osstring << "widget_" <<_children.size();
   wid = osstring.str();
+  // append ancestor at the end of the widget id
+  wid.append("@");
+  wid.append(this->GetWidgetId());
   widget->SetWidgetId(wid);
   
   logDebug ("add new widget referenced by: %s",wid.data());

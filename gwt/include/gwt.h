@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwt.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwt.h,v 1.2 2004-11-30 12:51:55 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -44,6 +44,7 @@
 #include "gwtMENU.h"
 #include "gwtXML_PRODUCER.h"
 #include "gwtMENUITEM.h"
+#include "gwtSUBPANEL.h"
 
 
 typedef mcsCOMPL_STAT *gwtWIDGET_LISTENER(void* userdata); 

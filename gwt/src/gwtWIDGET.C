@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtWIDGET.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtWIDGET.C,v 1.2 2004-11-30 12:51:57 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: gwtWIDGET.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtWIDGET.C,v 1.2 2004-11-30 12:51:57 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -46,6 +46,11 @@ using namespace std;
 /*
  * Class constructor
  */
+gwtWIDGET::gwtWIDGET(){
+    logExtDbg("gwtWIDGET::gwtWIDGET()");
+    SetWidgetId("default");
+}
+
 
 /*
  * Class destructor

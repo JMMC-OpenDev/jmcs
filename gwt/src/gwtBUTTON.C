@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtBUTTON.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtBUTTON.C,v 1.2 2004-11-30 12:51:57 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtBUTTON class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtBUTTON.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtBUTTON.C,v 1.2 2004-11-30 12:51:57 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -53,7 +53,7 @@ gwtBUTTON::gwtBUTTON()
 }
 
 /** 
- * Constructs a gwtBUTTON with text and help
+ * Constructs a gwtBUTTON with text.
  * \param text the text of the button
  */
 gwtBUTTON::gwtBUTTON(string text)
@@ -115,7 +115,7 @@ void gwtBUTTON::SetWidgetId(string id)
 
 
 /**
- * Call automatically each time the command widget is triggered by the client.
+ * Called automatically each time the command widget is triggered by the client.
  *
  * \param widgetId the value of the widgetid.
  *

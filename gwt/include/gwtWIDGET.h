@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtWIDGET.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtWIDGET.h,v 1.2 2004-11-30 12:51:55 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -31,7 +31,7 @@ typedef map<string, string> gwtNAME2VALUE;
  */
 class gwtWIDGET{
 public:
-    gwtWIDGET(){}; 
+    gwtWIDGET(); 
     virtual ~gwtWIDGET(); 
     // Methods should be virtual pure because there is no sens for a gwtWIDGET
     // instanciation however the container's list doesn't accept virtual

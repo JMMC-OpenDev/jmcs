@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modcppOPERATION.cpp,v 1.3 2005-02-15 10:48:15 gzins Exp $"
+ * "@(#) $Id: modcppOPERATION.cpp,v 1.4 2005-02-22 09:28:40 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/15 10:48:15  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.2  2005/02/15 10:40:17  gzins
  * Added CVS log as file modification history
  *
@@ -80,7 +83,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppOPERATION.cpp,v 1.3 2005-02-15 10:48:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: modcppOPERATION.cpp,v 1.4 2005-02-22 09:28:40 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -170,7 +173,8 @@ modcppOPERATION::~modcppOPERATION()
  * \param y description of parameter y. In the example, an integer.
  *
  * \n
- * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS on
+ * successful completion. Otherwise mcsFAILURE is returned. 
  *
  * \n
  * \err
@@ -237,7 +241,8 @@ mcsCOMPL_STAT modcppOPERATION::Add(mcsINT8 x, mcsINT8 y)
  * \param z description of parameter z. In the example, a float.
  *
  * \n
- * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS on
+ * successful completion. Otherwise mcsFAILURE is returned. 
  *
  * \n
  * \err
@@ -276,7 +281,8 @@ mcsCOMPL_STAT modcppOPERATION::Divide(mcsINT8 x, mcsINT8 y, mcsFLOAT *z)
  * \param y description of parameter y. In the example, an integer.
  *
  * \n
- * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS on
+ * successful completion. Otherwise mcsFAILURE is returned. 
  *
  * \n
  * \err
@@ -366,7 +372,8 @@ char * modcppOPERATION::GetName()
  * \param y description of parameter y. In the example, an integer.
  *
  * \n
- * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS on
+ * successful completion. Otherwise mcsFAILURE is returned. 
  *
  * \n
  * \err
@@ -406,7 +413,8 @@ mcsCOMPL_STAT modcppOPERATION::Sub(mcsINT8 x, mcsINT8 y)
  * \param y description of parameter y. In the example, an integer.
  *
  * \n
- * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS on
+ * successful completion. Otherwise mcsFAILURE is returned. 
  *
  * \n
  * \err

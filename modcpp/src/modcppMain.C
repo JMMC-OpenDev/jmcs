@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcppMain.C,v 1.1 2004-07-22 07:47:08 gluck Exp $"
+* "@(#) $Id: modcppMain.C,v 1.2 2004-07-26 07:53:20 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -80,7 +80,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppMain.C,v 1.1 2004-07-22 07:47:08 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcppMain.C,v 1.2 2004-07-26 07:53:20 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -121,7 +121,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    /* Give process name to mcs library */
+    /* Initialize MCS services */
     mcsInit(argv[0]);
 
     // Set verbosity level

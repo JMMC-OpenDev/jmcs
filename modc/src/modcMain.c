@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcMain.c,v 1.6 2004-07-22 08:07:06 gluck Exp $"
+* "@(#) $Id: modcMain.c,v 1.7 2004-07-26 07:50:44 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -80,7 +80,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.6 2004-07-22 08:07:06 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.7 2004-07-26 07:50:44 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -124,7 +124,7 @@ static mcsINT8 modcId;    /**< Brief description of the variable, ends at
 
 int main (int argc, char *argv[])
 {
-    /* Give process name to mcs library */
+    /* Initializes MCS services */
     mcsInit(argv[0]);
     
     /* Set verbosity level */

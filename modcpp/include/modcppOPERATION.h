@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcppOPERATION.h,v 1.1 2004-07-22 07:47:08 gluck Exp $"
+* "@(#) $Id: modcppOPERATION.h,v 1.2 2004-07-22 14:19:33 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -49,6 +49,10 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+
+/*
+ * Class declaration
+ */
 
 /**
  * Brief description of the class, which ends at this dot.

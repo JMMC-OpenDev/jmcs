@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2005-02-13 17:37:11 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.6 2005-02-15 10:34:28 gzins Exp $"
 #
 # Makefile of modc
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/02/13 17:37:11  gzins
+# Added CVS log as modification history
+#
 # gluck     09-Jun-2004  Created
 #
 #*******************************************************************************
@@ -136,17 +139,10 @@ all:	do_all
 clean : clean_all 
 	@echo " . . . clean done"
 
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
-
 man   : do_man 
 	@echo " . . . man page(s) done"
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___

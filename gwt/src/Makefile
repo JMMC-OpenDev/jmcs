@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2004-12-01 12:06:19 mella Exp $"
+# "@(#) $Id: Makefile,v 1.6 2004-12-01 15:34:46 mella Exp $"
 #
 # Makefile of ........
 #
@@ -69,6 +69,7 @@ INCLUDES        = gwt.h \
 				  gwtCOMMAND.h \
 				  gwtSEPARATOR.h \
 				  gwtCHOICE.h \
+				  gwtCHECKBOX.h \
 				  gwtSUBPANEL.h
 
 
@@ -94,6 +95,7 @@ gwt_OBJECTS   =	gwtGUI \
 				gwtXML_PRODUCER \
 				gwtSEPARATOR \
 				gwtCHOICE \
+				gwtCHECKBOX \
 				gwtSUBPANEL
 
 #

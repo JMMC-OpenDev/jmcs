@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwt.h,v 1.4 2004-12-01 12:06:17 mella Exp $"
+* "@(#) $Id: gwt.h,v 1.5 2004-12-01 15:34:44 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -46,6 +46,7 @@
 #include "gwtXML_PRODUCER.h"
 #include "gwtMENUITEM.h"
 #include "gwtCHOICE.h"
+#include "gwtCHECKBOX.h"
 #include "gwtSUBPANEL.h"
 
 

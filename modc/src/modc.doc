@@ -1,21 +1,35 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modc.doc,v 1.1 2004-06-29 15:21:19 gluck Exp $"
+* "@(#) $Id: modc.doc,v 1.2 2004-07-05 07:46:56 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gluck     15-Jun-2004  Created
 *
 *
+* IMPORTANT :
+* This file contains the GENERAL MODULE DOCUMENTATION, preferably including an
+* example for use of the main functions of this module. To make your own
+* documentation, you have to substitute the general or example comments, with
+* your specific comments.
+*
 * IMPORTANT:
 * To make AUTOMATIC DOCUMENTATION GENERATION by doxygen, you have to insert
 * your code documentation (about file, functions, define, enumeration, ...) as
 * shown below, in the special documentation blocks, adding or deleting markers
 * as needed.
-* Nevertheless, you also have to comment the code as usually.
-* For more informations, you can report to Programming Standards, or doxygen
-* documentation.
+* Special documentation block : with 2 stars at the begining
+*       /**
+*        *
+*        */
+* Normal documentation block : with 1 stars at the begining
+*       /*
+*        *
+*        */
+* Nevertheless, you also have to comment the code as usually.  For more
+* informations, you can report to Programming Standards (JRA4-PRO-2000-0001),
+* or doxygen documentation.
 *
 * REMARKS
 * The documentation below, shows some possibilities of doxygen. The general
@@ -29,69 +43,46 @@
 /**
 \mainpage modc : C module example
 
-\n
-\section description Description
-
-\subsection brief Brief description
+<b>Brief description</b>\n
 Brief module description. There could be one or more sentences in this short
 module description.
 
-\subsection detailed Detailed decription
+<b>Detailed decription</b>\n
 Detailed module description.
 
-\n
-\section files Used files
+<b>Used files</b>\n
 OPTIONAL. If files are used, for each one, name, and usage description, as
 below. 
 \li \e \<fileName1\> :  usage description of fileName1
 \li \e \<fileName2\> :  usage description of fileName2
 
-\n
-\section environment Environment
+<b>Environment</b>\n
 OPTIONAL. If needed, environmental variables accessed by the program. For each
 variable, name, and usage description, as below.
 \li \e \<envVar1\> :  usage description of envVar1
 \li \e \<envVar2\> :  usage description of envVar2
 
-\n
-\section examples Examples
-OPTIONAL. Code examples if needed.
-\n
-\li <b>Example 1</b> :  brief description of example 1.
+<b>Examples</b>\n
+OPTIONAL but STRONGLY RECOMMENDED. Code examples if needed. You can make an
+example list with the \\li marker.
+\n Brief example description.
 \code
-Insert code for example 1
-\endcode
-\n
-\li <b>Example 2</b> :  brief description of example 2.
-\code
-Insert code for example 2
+Insert code for example
 \endcode
 
-\n
-\section references References
-OPTIONAL. See also section in which you can refer other documented entities.
+\sa OPTIONAL. See also section in which you can refer other documented entities.
 Using the \\sa marker, doxygen will create the link automatically.
 An example is given below.
+\sa files : modcMain.c, modc.h
+\sa functions : modcProc1, modcProc2
 
-\sa
-\li files : modcMain.c, modc.h
-\li functions : modcProc1, modcProc2
+\bug OPTIONAL. Bugs list if it exists.
+\bug Bug 1 : bug 1 description
+\bug Bug 2 : bug 2 description
 
-\n
-\section knownBugs Known Bugs
-OPTIONAL. Bugs list if it exists. You can make a list with the \\li marker.
-You can also use the \\bug marker to list bugs AND make this list appear in
-the bug list of the related pages.
-
-\n
-\section todo To Do
-OPTIONAL. Things to forsee list, if needed. You can make a list with the
-\\li marker, like below. As for the \\bug marker, if you want your todo list
-appear in the todo list of the related pages, use the \\todo marker, like
-below.
-\todo
-\li Action 1 : action 1 description
-\li Action 2 : action 2 description
+\todo OPTIONAL. Things to forsee list, if needed.
+\todo Action 1 : action 1 description
+\todo Action 2 : action 2 description
 \n
 
 */

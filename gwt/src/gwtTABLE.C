@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtTABLE.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtTABLE.C,v 1.2 2004-12-03 14:27:01 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtTABLE class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtTABLE.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtTABLE.C,v 1.2 2004-12-03 14:27:01 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -119,12 +119,12 @@ string gwtTABLE::GetXmlBlock()
     s.append("<DATA>");
     for (r=0; r<_rows ; r++)
     {
-        s.append("<TR>\n");
+        s.append("<TR>\n\t");
         for (c=0; c<_columns ; c++)
         {
-            s.append("<TD>\n");
+            s.append("<TD>");
             s.append(_cells[r][c]); 
-            s.append("</TD>\n");
+            s.append("</TD>");
         }  
         s.append("\n</TR>\n");
     }    

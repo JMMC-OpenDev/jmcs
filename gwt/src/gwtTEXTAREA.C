@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtTEXTAREA.C,v 1.2 2004-12-01 12:06:19 mella Exp $"
+* "@(#) $Id: gwtTEXTAREA.C,v 1.3 2004-12-03 14:27:01 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtTEXTAREA class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtTEXTAREA.C,v 1.2 2004-12-01 12:06:19 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTEXTAREA.C,v 1.3 2004-12-03 14:27:01 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -57,6 +57,8 @@ gwtTEXTAREA::gwtTEXTAREA()
 /** 
  * Constructs a gwtTEXTAREA.
  * \param text the text of the widget
+ * \param rows the number of rows
+ * \param columns the number of columns
  * \param help the help of the widget
  */
 gwtTEXTAREA::gwtTEXTAREA(string text, int rows, int columns, string help)

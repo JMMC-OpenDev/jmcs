@@ -1,59 +1,53 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwt.doc,v 1.1 2004-11-23 09:25:09 sccmgr Exp $"
+* "@(#) $Id: gwt.doc,v 1.2 2004-11-25 14:27:52 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* sccmgr    23-Nov-2004  Created
+* mella     13-Sep-2004  Created
 *
 *
 *******************************************************************************/
 
 /**
-\mainpage gwt : Summary module description sentence
+\mainpage Graphical User Interface module.
 
 \bdesc
-Brief module description. There could be one or more sentences in this short
-module description.
+This module aims to provide a GUI feature to your programs.
 
 \ddesc
-Detailed module description.
+It uses a C++ API to build a inner representation of your GUI panels. The
+display is assumed by a remote java process that interprets XML document on
+the fly. The connection is handled on a TCP/IP socket. You can find much more information about the java gui
+in the ( not yet standardized ) XmlBasedGui cvs module.
+Actually, there is no dynamic link to update widgets from the server point of view.
 
-\usedfiles
-OPTIONAL. If files are used, for each one, name, and usage description, as
-below. 
-\filename filename 1 :  usage description of fileName1
-\filename filename 2 :  usage description of fileName2
-
-\n
-\env
-OPTIONAL. If needed, environmental variables accessed by the program. For each
-variable, name, and usage description, as below.
-\envvar envVar1 :  usage description of envVar1
-\envvar envVar2 :  usage description of envVar2
-
-\n
 \ex
-OPTIONAL but STRONGLY RECOMMENDED. Code examples if needed. You can make an
-example list with the \\li marker.
-\n Brief example description.
+This code makes appear a simple window with few widgets.
 \code
-Insert code for example
+// will be updated
 \endcode
 
-\sa OPTIONAL. See also section in which you can refer other documented entities.
-Using the \\sa marker, doxygen will create the link automatically.
-An example is given below.
-\sa \<entity to refer\>
+<h2> Widget's status </h2>
 
-\bug OPTIONAL. Known bugs list if it exists.
-\bug Bug 1 : bug 1 description
-\bug Bug 2 : bug 2 description
+<h3> Running widgets </h3>
+<ul>
+<li> Windows - gwtWINDOW </li>
+<li> Textfields - gwtTEXTFIELD </li>
+<li> Buttons - gwtBUTTON </li>
+<li> Tables - gwtTABLE </li>
+<li> Separator - gwtSEPARATOR </li>
+</ul>
 
-\todo OPTIONAL. Things to forsee list, if needed.
-\todo Action 1 : action 1 description
-\todo Action 2 : action 2 description
+<h3> Comming widgets </h3>
+<ul>
+<li> Menus - gwtMENU gwtMENUITEM </li>
+<li> Labels - gwtLABEL </li>
+<li> Checkboxes - gwtCHECKBOX </li>
+<li> Multichoice </li>
+<li> Slider - gwtSLIDER </li>
+</ul>
+
 \n
-
-*/
+ */

@@ -1,13 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-11-25 14:27:52 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.1 2004-11-25 14:27:52 gzins Exp $"
 #
 # Makefile of ........
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# mella     13-Sep-2004  Created
+# mella     14-Sep-2004  Created
 #
 #
 #*******************************************************************************
@@ -38,14 +38,20 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
-EXECUTABLES_L   = 
+EXECUTABLES     = 
+EXECUTABLES_L   = gwtTest
 
 #
 # <brief description of xxxxx program>
 xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
+xxxxx_LDFLAGS   = 
 xxxxx_LIBS      =
+
+#
+# <brief description of xxxxx program>
+gwtTest_OBJECTS   = gwtTest
+gwtTest_LDFLAGS   = 
+gwtTest_LIBS      = MCS C++ gwt
 
 #
 # special compilation flags for single c sources
@@ -54,42 +60,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = gwt.h \
-				  gwtGUI.h \
-				  gwtWIDGET.h \
-				  gwtCONTAINER.h \
-				  gwtWINDOW.h \
-				  gwtBUTTON.h \
-				  gwtTEXTFIELD.h \
-				  gwtTABLE.h \
-				  gwtMENU.h \
-				  gwtMENUITEM.h \
-				  gwtXML_PRODUCER.h \
-				  gwtCOMMAND.h \
-				  gwtSEPARATOR.h
-
-
+INCLUDES        =
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = gwt
+LIBRARIES       =
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-gwt_OBJECTS   =	gwtGUI \
-				gwtWIDGET \
-				gwtCONTAINER \
-				gwtWINDOW \
-				gwtBUTTON \
-				gwtTEXTFIELD \
-				gwtTABLE \
-				gwtMENU \
-				gwtMENUITEM \
-				gwtCOMMAND \
-				gwtXML_PRODUCER \
-				gwtSEPARATOR
+lllll_OBJECTS   =
 
 #
 # Scripts (public and local)

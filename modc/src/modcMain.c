@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcMain.c,v 1.9 2004-08-05 12:46:56 gluck Exp $"
+* "@(#) $Id: modcMain.c,v 1.10 2004-08-06 15:59:25 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -80,7 +80,7 @@
  * \endcode
  *
  * \sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
+ * entities. Doxygen will create the link automatically. For example, 
  * \sa modcProc.c
  * 
  * \bug OPTIONAL. Known bugs list if it exists.
@@ -91,8 +91,9 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.9 2004-08-05 12:46:56 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.10 2004-08-06 15:59:25 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers 
@@ -136,7 +137,13 @@ static mcsINT8 modcId;    /**< Brief description of the variable, ends at
 int main (int argc, char *argv[])
 {
     /* Initializes MCS services */
-    mcsInit(argv[0]);
+    if (mcsInit(argv[0]) == FAILURE)
+    {
+        // Error handling if necessary
+        
+        // Exit from the application with FAILURE
+        exit (EXIT_FAILURE);
+    }
     
     /* Set stdout log level */
     logSetStdoutLogLevel(logEXTDBG);
@@ -202,7 +209,10 @@ int main (int argc, char *argv[])
 
     /** \todo test stuct, enum and union type */
 
-
+    // Close MCS services
+    mcsExit();
+    
+    // Exit from the application with SUCCESS
     exit (EXIT_SUCCESS);
 }
 

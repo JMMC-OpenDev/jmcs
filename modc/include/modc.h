@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modc.h,v 1.2 2004-07-05 15:03:04 gluck Exp $"
+* "@(#) $Id: modc.h,v 1.3 2004-08-09 09:42:49 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -40,8 +40,6 @@
 /**
  * \file
  * Brief description of the header file, which ends at this dot.
- *
- * OPTIONAL detailed description of the header file follows here.
  */
 
 

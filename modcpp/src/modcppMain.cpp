@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modcppMain.cpp,v 1.2 2005-02-15 10:40:17 gzins Exp $"
+ * "@(#) $Id: modcppMain.cpp,v 1.3 2005-02-15 10:48:15 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/15 10:40:17  gzins
+ * Added CVS log as file modification history
+ *
  * gluck     06-Jul-2004  Created
  *
  * IMPORTANT :
@@ -90,7 +93,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppMain.cpp,v 1.2 2005-02-15 10:40:17 gzins Exp $"; 
+static char *rcsId="@(#) $Id: modcppMain.cpp,v 1.3 2005-02-15 10:48:15 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -138,11 +141,11 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     /* Initialize MCS services */
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
         
-        // Exit from the application with FAILURE
+        // Exit from the application with mcsFAILURE
         exit (EXIT_FAILURE);
     }
 
@@ -157,20 +160,20 @@ int main(int argc, char *argv[])
     mcsINT8 b = 4;
 
     // modcppOPERATION::Add method
-    if (operation.Add(a, b) == FAILURE)
+    if (operation.Add(a, b) == mcsFAILURE)
     {
         logTest("ERROR : modcppOPERATION::Add method");
     }
     
     // modcppOPERATION::SubAndMultiply method
-    if (operation.SubAndMultiply(a, b) == FAILURE)
+    if (operation.SubAndMultiply(a, b) == mcsFAILURE)
     {
         logTest("ERROR : modcppOPERATION::SubAndMultiply method");
     }
     
     // modcppOPERATION::Divide method
     mcsFLOAT c = 0.;
-    if (operation.Divide(a, b, &c) == FAILURE)
+    if (operation.Divide(a, b, &c) == mcsFAILURE)
     {
         logTest("ERROR : modcppOPERATION::Divide method");
     }
@@ -187,7 +190,7 @@ int main(int argc, char *argv[])
     // Close MCS services
     mcsExit();
     
-    // Exit from the application with SUCCESS
+    // Exit from the application with mcsSUCCESS
     exit (EXIT_SUCCESS);
 
 }

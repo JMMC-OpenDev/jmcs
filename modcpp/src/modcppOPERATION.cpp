@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modcppOPERATION.cpp,v 1.2 2005-02-15 10:40:17 gzins Exp $"
+ * "@(#) $Id: modcppOPERATION.cpp,v 1.3 2005-02-15 10:48:15 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/15 10:40:17  gzins
+ * Added CVS log as file modification history
+ *
  * gluck     06-Jul-2004  Created
  *
  * IMPORTANT :
@@ -77,7 +80,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppOPERATION.cpp,v 1.2 2005-02-15 10:40:17 gzins Exp $"; 
+static char *rcsId="@(#) $Id: modcppOPERATION.cpp,v 1.3 2005-02-15 10:48:15 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -167,7 +170,7 @@ modcppOPERATION::~modcppOPERATION()
  * \param y description of parameter y. In the example, an integer.
  *
  * \n
- * \return Description of the return value. In the example, SUCCESS or FAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
  *
  * \n
  * \err
@@ -220,7 +223,7 @@ mcsCOMPL_STAT modcppOPERATION::Add(mcsINT8 x, mcsINT8 y)
     z = x + y;
     logTest("%d + %d = %d\n", x, y, z);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -234,7 +237,7 @@ mcsCOMPL_STAT modcppOPERATION::Add(mcsINT8 x, mcsINT8 y)
  * \param z description of parameter z. In the example, a float.
  *
  * \n
- * \return Description of the return value. In the example, SUCCESS or FAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
  *
  * \n
  * \err
@@ -260,7 +263,7 @@ mcsCOMPL_STAT modcppOPERATION::Divide(mcsINT8 x, mcsINT8 y, mcsFLOAT *z)
     *z = ((float) x) / y;
     logTest("%d / %d = %.2f\n", x, y, *z);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -273,7 +276,7 @@ mcsCOMPL_STAT modcppOPERATION::Divide(mcsINT8 x, mcsINT8 y, mcsFLOAT *z)
  * \param y description of parameter y. In the example, an integer.
  *
  * \n
- * \return Description of the return value. In the example, SUCCESS or FAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
  *
  * \n
  * \err
@@ -293,18 +296,18 @@ mcsCOMPL_STAT modcppOPERATION::SubAndMultiply(mcsINT8 x, mcsINT8 y)
     logExtDbg("modcppOPERATION::SubAndMultiply()");
 
     //Sub method call
-    if (Sub(x, y) == FAILURE)
+    if (Sub(x, y) == mcsFAILURE)
     {
         logTest("ERROR : modcppOPERATION::Sub method");
     }
 
     // Multiply method call
-    if (Multiply(x, y) == FAILURE)
+    if (Multiply(x, y) == mcsFAILURE)
     {
         logTest("ERROR : modcppOPERATION::Multiply method");
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -363,7 +366,7 @@ char * modcppOPERATION::GetName()
  * \param y description of parameter y. In the example, an integer.
  *
  * \n
- * \return Description of the return value. In the example, SUCCESS or FAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
  *
  * \n
  * \err
@@ -386,7 +389,7 @@ mcsCOMPL_STAT modcppOPERATION::Sub(mcsINT8 x, mcsINT8 y)
     z = x - y;
     logTest("%d - %d = %d\n", x, y, z);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -403,7 +406,7 @@ mcsCOMPL_STAT modcppOPERATION::Sub(mcsINT8 x, mcsINT8 y)
  * \param y description of parameter y. In the example, an integer.
  *
  * \n
- * \return Description of the return value. In the example, SUCCESS or FAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
  *
  * \n
  * \err
@@ -426,7 +429,7 @@ mcsCOMPL_STAT modcppOPERATION::Multiply(mcsINT8 x, mcsINT8 y)
     z = x * y;
     logTest("%d * %d = %d\n", x, y, z);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.cpp,v 1.4 2005-02-24 12:34:58 mella Exp $"
+ * "@(#) $Id: gwtGUI.cpp,v 1.5 2005-02-24 13:38:15 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/24 12:34:58  mella
+ * Correct xml syntax error for status
+ *
  * Revision 1.3  2005/02/24 11:08:02  mella
  * Add reason to SetStatus
  *
@@ -25,7 +28,7 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.4 2005-02-24 12:34:58 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.5 2005-02-24 13:38:15 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -145,7 +148,8 @@ void gwtGUI::Send(string xmlStr)
  * then it is recommended to return the status of the application after each
  * callback code.
  * \param valid says if everithing is right or not
- * \param message is the status message
+ * \param status is the status message
+ * \param explanation is the detailled information about the returned status 
  * \todo modify xml api for the command attribute
  */
 void gwtGUI::SetStatus(bool valid, string status, string explanation )

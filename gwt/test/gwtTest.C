@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.6 2005-02-15 12:25:28 gzins Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.7 2005-02-24 12:40:32 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/15 12:25:28  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.5  2005/02/15 12:17:52  gzins
  * Added CVS log as file modification history
  *
@@ -18,7 +21,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.6 2005-02-15 12:25:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.7 2005-02-24 12:40:32 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -228,7 +231,7 @@ void gwtTestSERVER::DoIt()
     // Set a new status message
     string msg("Hello from ");
     msg.append(mcsGetProcName());
-    oneGui->SetStatus(true, msg);
+    oneGui->SetStatus(false, msg, "Because");
     
     // close the window 
     window1->Hide();

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.cpp,v 1.5 2005-02-24 13:38:15 mella Exp $"
+ * "@(#) $Id: gwtGUI.cpp,v 1.6 2005-03-08 11:08:33 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/24 13:38:15  mella
+ * Correct doxygen missing param
+ *
  * Revision 1.4  2005/02/24 12:34:58  mella
  * Correct xml syntax error for status
  *
@@ -28,7 +31,7 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.5 2005-02-24 13:38:15 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.6 2005-03-08 11:08:33 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -135,7 +138,8 @@ int gwtGUI::GetSd()
  */
 void gwtGUI::Send(string xmlStr)
 {
-    logExtDbg("gwtGUI::Send()");
+    // logExtDbg("gwtGUI::Send()");
+    logInfo("gwtGUI::Send %80s",xmlStr.data());    
    
     _clientSocket->Send(xmlStr);
 }
@@ -187,7 +191,8 @@ void gwtGUI::SetStatus(bool valid, string status, string explanation )
  */
 void gwtGUI::ReceiveData(string data)
 {
-    logExtDbg("gwtGUI::receiveData()");    
+    //logExtDbg("gwtGUI::receiveData()");    
+    logInfo("gwtGUI::ReceiveData %80s",data.data());    
    
 
     // do bad job correction : skip the trailing CR at the end of the data

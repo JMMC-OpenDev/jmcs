@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTABLE.cpp,v 1.5 2005-03-02 14:53:42 mella Exp $"
+ * "@(#) $Id: gwtTABLE.cpp,v 1.6 2005-03-03 16:17:11 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/03/02 14:53:42  mella
+ * Handle change for dimensions
+ *
  * Revision 1.4  2005/03/02 13:54:34  mella
  * Make table updatable using the xml variable attribute
  *
@@ -29,7 +32,7 @@
  * Definition of gwtTABLE class.
  */
 
-static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.5 2005-03-02 14:53:42 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.6 2005-03-03 16:17:11 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -90,7 +93,7 @@ gwtTABLE::~gwtTABLE()
     delete [] _cells;
 
     // delete the columnHeaders array
-    delete _columnHeaders;
+    delete [] _columnHeaders;
 }
 
 /*
@@ -121,7 +124,7 @@ void gwtTABLE::SetDimension(int rows, int columns)
         {
             delete [] _cells;
             // delete the columnHeaders array
-            delete _columnHeaders;
+            delete [] _columnHeaders;
         }
 
     }

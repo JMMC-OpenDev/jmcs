@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.6 2004-07-06 06:44:58 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.7 2004-07-07 13:37:57 gluck Exp $"
 *
 *
 * who       when         what
@@ -75,6 +75,9 @@
  * modcProc3.
  * 
  */
+
+static char *rcsId="@(#) $Id: modcProc.c,v 1.7 2004-07-07 13:37:57 gluck Exp $"; 
+static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 

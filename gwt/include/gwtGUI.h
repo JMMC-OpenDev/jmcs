@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.h,v 1.4 2005-02-15 12:33:49 gzins Exp $"
+ * "@(#) $Id: gwtGUI.h,v 1.5 2005-02-24 11:08:01 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 12:33:49  gzins
+ * Updated file description
+ *
  * Revision 1.3  2005/02/15 12:17:52  gzins
  * Added CVS log as file modification history
  *
@@ -49,7 +52,7 @@ public:
     gwtGUI();
     virtual ~gwtGUI();
     virtual mcsCOMPL_STAT ConnectToRemoteGui(const string hostname, const int port, const string procname);
-    virtual void SetStatus(bool valid, string message);
+    virtual void SetStatus(bool valid, string status, string explanation="");
     virtual void Send(string xmlStr);
     virtual int GetSd();
     virtual void RegisterXmlProducer(gwtXML_PRODUCER *producer);

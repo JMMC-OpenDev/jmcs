@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
+ * "@(#) $Id: gwtGUI.cpp,v 1.3 2005-02-24 11:08:02 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/15 12:25:28  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.1  2005/01/27 18:09:35  gzins
  * Renamed .C to .cpp
  * Added CVS loh as modification history.
@@ -19,7 +22,7 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.3 2005-02-24 11:08:02 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -142,7 +145,7 @@ void gwtGUI::Send(string xmlStr)
  * \param message is the status message
  * \todo modify xml api for the command attribute
  */
-void gwtGUI::SetStatus(bool valid, string message)
+void gwtGUI::SetStatus(bool valid, string status, string explanation )
 {
     logExtDbg("gwtGUI::SetStatus()");
     // build the xml string
@@ -154,7 +157,10 @@ void gwtGUI::SetStatus(bool valid, string message)
         s.append("false");
     }
     s.append("\" text=\"");
-    s.append(message);
+    s.append(status);
+    s.append("\">\n");
+    s.append(" reason=\"");
+    s.append(explanation);
     s.append("\">\n");
     s.append("</gui_status>\n");
 

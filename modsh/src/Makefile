@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-09-09 08:30:00 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-09-09 09:01:23 gluck Exp $"
 #
 # Makefile of ........
 #
@@ -65,7 +65,8 @@ lllll_OBJECTS   =
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
+SCRIPTS         = modshExample1.sh \
+				  modshExample2.sh
 SCRIPTS_L       =
 
 #

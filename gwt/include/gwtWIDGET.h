@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtWIDGET.h,v 1.2 2004-11-30 12:51:55 mella Exp $"
+* "@(#) $Id: gwtWIDGET.h,v 1.3 2005-01-28 09:53:47 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -44,6 +44,7 @@ public:
 
     virtual void SetLabel(string l);
     virtual void SetHelp(string h);
+    virtual void SetVerticalOrientation(mcsLOGICAL flag);
 
     virtual void Changed(string value);
 

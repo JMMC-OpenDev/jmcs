@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWIDGET.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtWIDGET.cpp,v 1.2 2005-01-28 09:31:40 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     14-Sep-2004  Created
  *
  ******************************************************************************/
@@ -16,7 +20,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.2 2005-01-28 09:31:40 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -83,6 +87,25 @@ void gwtWIDGET::SetHelp(string help){
    logExtDbg("gwtWIDGET::SetHelp()"); 
    SetXmlAttribute("help",help);
 }
+
+
+
+/** 
+ *  Set Orientation between the real widget and its associated label.
+ *
+ * \param flag true indicates Vertical orientation, else Horizontal. 
+ *
+ */
+void gwtWIDGET::SetVerticalOrientation(mcsLOGICAL flag){
+    logExtDbg("gwtWIDGET::SetVerticalOrientation()"); 
+    if ( flag==mcsTRUE )
+    {
+        SetXmlAttribute("axis","vertical");   
+    }else{
+        SetXmlAttribute("axis","horizontal");   
+    }    
+}
+
 
 /**
  * Assign a new value to the widget.

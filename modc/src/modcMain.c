@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcMain.c,v 1.5 2004-07-06 14:40:00 gluck Exp $"
+* "@(#) $Id: modcMain.c,v 1.6 2004-07-22 08:07:06 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -80,7 +80,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.5 2004-07-06 14:40:00 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.6 2004-07-22 08:07:06 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -132,61 +132,61 @@ int main (int argc, char *argv[])
     
     /* global variable modcNumber */
     mcsINT8 modcNumber = 34;
-    logTest ("modc.h : global variable modcNumber = %i\n", modcNumber);
+    logTest("modc.h : global variable modcNumber = %i\n", modcNumber);
     
     /* global variable modcReal */
     mcsFLOAT modcReal = 78.23;
-    logTest ("modc.h : global variable modcReal = %g\n", modcReal);
+    logTest("modc.h : global variable modcReal = %g\n", modcReal);
     
     /* constante modcPROCNAME_LENGHT */
-    logTest ("modc.h : constante modcPROCNAME_LENGHT = %i\n", \
+    logTest("modc.h : constante modcPROCNAME_LENGHT = %i\n", \
             modcPROCNAME_LENGHT);
     
     /* constante modcPROCNAME_ID */
-    logTest ("modc.h : constante modcPROCNAME_ID = %i\n", \
+    logTest("modc.h : constante modcPROCNAME_ID = %i\n", \
             modcPROCNAME_ID);
     
     /* constante modcDEFAULT_CHOICE */
-    logTest ("modcPrivate.h : constante modcDEFAULT_CHOICE = %s\n", \
+    logTest("modcPrivate.h : constante modcDEFAULT_CHOICE = %s\n", \
             modcDEFAULT_CHOICE);
     
     /* modcPrintChoice macro */
-    logTest ("modcPrivate.h : modcPrintChoice macro\n");
-    logTest ("=> call public function modcProc2 :\n");
+    logTest("modcPrivate.h : modcPrintChoice macro\n");
+    logTest("=> call public function modcProc2 :\n");
     if (modcPrintChoice(modcDEFAULT_CHOICE) == FAILURE)
     {
-       logTest ("ERROR modcPrintChoice\n");
+       logTest("ERROR modcPrintChoice\n");
     }
 
     /* local variable modcId */
     modcId = 5;
-    logTest ("modcMain.c : local variable modcId = %i\n", modcId);
+    logTest("modcMain.c : local variable modcId = %i\n", modcId);
     
     /* public function modcProc1 */
-    logTest ("modcProc.c : public function modcProc1 : \n");
+    logTest("modcProc.c : public function modcProc1 : \n");
     mcsBYTES32 w;
     strcpy (w, "test 1");
     mcsINT8 i = 7;
     if (modcProc1(w, i) == FAILURE)
     {
-        logTest ("ERROR modcProc1\n");
+        logTest("ERROR modcProc1\n");
     }
     
     /* modcPrint macro */
-    logTest ("modc.h : modcPrint macro\n");
-    logTest ("=> call public function modcProc1 : \n");
+    logTest("modc.h : modcPrint macro\n");
+    logTest("=> call public function modcProc1 : \n");
     if (modcPrint(w, i) == FAILURE)
     {
-        logTest ("ERROR modcPrint");
+        logTest("ERROR modcPrint");
     }
     
     /* public function modcProc2 */
-    logTest ("modcProc.c : public function modcProc2 : \n");
+    logTest("modcProc.c : public function modcProc2 : \n");
     mcsBYTES32 word;
     strcpy (word, "test 2");
     if (modcProc2(word) == FAILURE)
     {
-         logTest ("ERROR modcProc2\n");
+         logTest("ERROR modcProc2\n");
     }
 
     /** \todo test stuct, enum and union type */

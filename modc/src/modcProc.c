@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.7 2004-07-07 13:37:57 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.8 2004-07-22 08:07:06 gluck Exp $"
 *
 *
 * who       when         what
@@ -76,7 +76,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcProc.c,v 1.7 2004-07-07 13:37:57 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcProc.c,v 1.8 2004-07-22 08:07:06 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -139,7 +139,7 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y);
  */
 static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
 {
-    logExtDbg ("modcSub()");
+    logExtDbg("modcSub()");
         
     mcsINT8 z;
     z=x-y;
@@ -200,16 +200,16 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
  */
 mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
 {
-    logExtDbg ("modcProc1()");
+    logExtDbg("modcProc1()");
     
     /* Print out parameters */
     logTest("a = %s and b = %i\n", a, b);
     /* Use the local function modcSub */
     mcsINT8 integer = 3;
-    logTest ("=> call modcSub local function : ");
+    logTest("=> call modcSub local function : ");
     if (modcSub(b, integer) == FAILURE)
     {
-        logTest ("ERROR modcSub\n");
+        logTest("ERROR modcSub\n");
     }
         
     return SUCCESS;
@@ -233,13 +233,13 @@ mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
  */
 mcsCOMPL_STAT modcProc2(mcsBYTES8 c)
 {
-    logExtDbg ("modcProc2()");
+    logExtDbg("modcProc2()");
     
     /* Print out the parameter */
     logTest("c = %s\n", c);
     /* Print out the local variable string */
     strcpy (string, "modcProc2");
-    logTest ("modcProc.c local variable string = %s\n", string);
+    logTest("modcProc.c local variable string = %s\n", string);
         
     return SUCCESS;
 }

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCELL.h,v 1.1 2005-02-07 14:36:20 mella Exp $"
+ * "@(#) $Id: gwtCELL.h,v 1.2 2005-02-24 10:35:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/07 14:36:20  mella
+ * Add Background color management for cells
+ *
  ******************************************************************************/
 
 /**
@@ -32,6 +35,7 @@
 
 /**
  * The gwtCELL is used by gwtTABLE to manage its cells.
+ * \warning DO NOT USE THIS CLASS DIRECTLY.
  */
 class gwtCELL
 {

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcppOPERATION.h,v 1.3 2004-08-05 13:32:52 gluck Exp $"
+* "@(#) $Id: modcppOPERATION.h,v 1.4 2004-08-06 13:08:23 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -40,8 +40,6 @@
 /**
  * \file
  * Brief description of the header file, which ends at this dot.
- *
- * OPTIONAL detailed description of the header file follows here.
  */
 
 
@@ -90,8 +88,8 @@
  * \bug For example, description of the first bug
  * \bug For example, description of the second bug
  * 
- * \todo OPTIONAL. Things to forsee list, if needed. For example, add
- * other methods, dealing with.
+ * \todo OPTIONAL. Things to forsee list, if needed. For example, 
+ * \todo add other methods, dealing with operations.
  * 
  */
 class modcppOPERATION 

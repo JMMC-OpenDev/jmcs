@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTABLE.cpp,v 1.2 2005-02-07 14:36:24 mella Exp $"
+ * "@(#) $Id: gwtTABLE.cpp,v 1.3 2005-02-28 12:48:31 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/07 14:36:24  mella
+ * Add Background color management for cells
+ *
  * Revision 1.1  2005/01/27 18:09:35  gzins
  * Renamed .C to .cpp
  * Added CVS loh as modification history.
@@ -20,7 +23,7 @@
  * Definition of gwtTABLE class.
  */
 
-static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.2 2005-02-07 14:36:24 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.3 2005-02-28 12:48:31 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -28,6 +31,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * System Headers 
  */
 #include <iostream>
+#include <sstream>
 #include <vector>
 using namespace std;
 /*
@@ -58,6 +62,7 @@ using namespace std;
  */
 gwtTABLE::gwtTABLE(int rows, int columns)
 {
+    logExtDbg("gwtTABLE::gwtTABLE()");
     // prepare data two dimension array
     _rows=rows;
     _columns=columns;
@@ -79,6 +84,7 @@ gwtTABLE::gwtTABLE(int rows, int columns)
 
 gwtTABLE::~gwtTABLE()
 {
+    logExtDbg("gwtTABLE::~gwtTABLE()");
     // delete the two dimension cell array
     int i;
     for (i=0;i<_rows;i++)
@@ -144,7 +150,7 @@ string gwtTABLE::GetXmlBlock()
  */
 void gwtTABLE::SetCell(int row, int column, string value)
 {
-    logExtDbg("gwtTABLE::SetCell()");
+    // logExtDbg("gwtTABLE::SetCell()");
     _cells[row][column].SetContent(value);
 }
 
@@ -169,7 +175,7 @@ void gwtTABLE::SetCellBackground(int row, int column, string color)
  */
 string gwtTABLE::GetCell(int row, int column)
 {
-    logExtDbg("gwtTABLE::GetCell()");
+    // logExtDbg("gwtTABLE::GetCell()");
     return _cells[row][column].GetContent();
 }
 
@@ -180,7 +186,33 @@ string gwtTABLE::GetCell(int row, int column)
  */
 void gwtTABLE::SetColumnHeader(int column, string title)
 {
+    // logExtDbg("gwtTABLE::SetColumnHeader()");
     _columnHeaders[column]=title;    
+}
+
+/** 
+ *  Set width of table in pixels. 
+ * \param nbPixels number of pixels for the width 
+ */
+void gwtTABLE::SetWidth(int nbPixels)
+{
+    logExtDbg("gwtTABLE::SetWidth()");
+    ostringstream osstring;
+    osstring << nbPixels;
+    SetXmlAttribute("width",osstring.str());
+}
+
+
+/** 
+ *  Set height of table in pixels. 
+ * \param nbPixels number of pixels for the height 
+ */
+void gwtTABLE::SetHeight(int nbPixels)
+{
+    logExtDbg("gwtTABLE::SetHeight()");
+    ostringstream osstring;
+    osstring << nbPixels;
+    SetXmlAttribute("height",osstring.str());
 }
 
 /*

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWIDGET.cpp,v 1.3 2005-02-15 12:33:49 gzins Exp $"
+ * "@(#) $Id: gwtWIDGET.cpp,v 1.4 2005-02-28 12:48:31 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/15 12:33:49  gzins
+ * Updated file description
+ *
  * Revision 1.2  2005/01/28 09:31:40  mella
  * Add vertical axis capability to place the widget on the full window width.
  *
@@ -22,7 +25,7 @@
  * Definition of gwtWIDGET class.
  */
 
-static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.3 2005-02-15 12:33:49 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.4 2005-02-28 12:48:31 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -52,7 +55,8 @@ using namespace std;
 /*
  * Class constructor
  */
-gwtWIDGET::gwtWIDGET(){
+gwtWIDGET::gwtWIDGET()
+{
     logExtDbg("gwtWIDGET::gwtWIDGET()");
     SetWidgetId("default");
 }
@@ -62,7 +66,8 @@ gwtWIDGET::gwtWIDGET(){
  * Class destructor
  */
 
-gwtWIDGET::~gwtWIDGET(){
+gwtWIDGET::~gwtWIDGET()
+{
     logExtDbg("gwtWIDGET::~gwtWIDGET()");
 }
 
@@ -76,7 +81,8 @@ gwtWIDGET::~gwtWIDGET(){
  * the left border.
  * \param label the label string.
  */
-void gwtWIDGET::SetLabel(string label){
+void gwtWIDGET::SetLabel(string label)
+{
    logExtDbg("gwtWIDGET::SetLabel()"); 
    SetXmlAttribute("label",label);
 }
@@ -85,11 +91,24 @@ void gwtWIDGET::SetLabel(string label){
  * Associate one help string to the widget.
  * \param help the help string.
  */
-void gwtWIDGET::SetHelp(string help){
+void gwtWIDGET::SetHelp(string help)
+{
    logExtDbg("gwtWIDGET::SetHelp()"); 
    SetXmlAttribute("help",help);
 }
 
+/**
+ * Set an attribute to the widget. This method must be used only if you know
+ * what are the consequences of attribute modifying. This method acts on the
+ * internal object model.
+ * \param name name of the attribute.
+ * \param value value of the attribute.
+ */
+void gwtWIDGET::SetAttribute(string name, string value)
+{
+    logExtDbg("gwtWIDGET::SetAttribute()"); 
+    SetXmlAttribute(name, value);
+}
 
 
 /** 
@@ -98,7 +117,8 @@ void gwtWIDGET::SetHelp(string help){
  * \param flag true indicates Vertical orientation, else Horizontal. 
  *
  */
-void gwtWIDGET::SetVerticalOrientation(mcsLOGICAL flag){
+void gwtWIDGET::SetVerticalOrientation(mcsLOGICAL flag)
+{
     logExtDbg("gwtWIDGET::SetVerticalOrientation()"); 
     if ( flag==mcsTRUE )
     {
@@ -115,7 +135,8 @@ void gwtWIDGET::SetVerticalOrientation(mcsLOGICAL flag){
  * \param value the new value of the widget assigned by the user. 
  *
  */
-void gwtWIDGET::Changed(string value){
+void gwtWIDGET::Changed(string value)
+{
     logExtDbg("gwtWIDGET::Changed()"); 
     
 }

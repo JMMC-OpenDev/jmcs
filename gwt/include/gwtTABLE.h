@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtTABLE.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtTABLE.h,v 1.2 2005-02-07 14:36:20 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -23,6 +23,7 @@
 #endif
 
 #include "gwtWIDGET.h"
+#include "gwtCELL.h"
 
 /*
  * Class declaration
@@ -39,10 +40,11 @@ public:
     virtual string GetXmlBlock();
     virtual void SetCell(int row, int column, string value);
     virtual string GetCell(int row, int column);
+    virtual void SetCellBackground(int row, int column, string color);
     virtual void SetColumnHeader(int column, string title);
 protected:
 private:    
-    string **_cells;
+    gwtCELL **_cells;
     string *_columnHeaders;
     int _rows;
     int _columns;

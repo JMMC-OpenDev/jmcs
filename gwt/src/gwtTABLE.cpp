@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTABLE.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtTABLE.cpp,v 1.2 2005-02-07 14:36:24 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     16-Sep-2004  Created
  * gzins     12-Dec-2004  Fixed gcc 3.4 error 
  *
@@ -16,7 +20,7 @@
  * Definition of gwtTABLE class.
  */
 
-static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.2 2005-02-07 14:36:24 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -57,12 +61,12 @@ gwtTABLE::gwtTABLE(int rows, int columns)
     // prepare data two dimension array
     _rows=rows;
     _columns=columns;
-    _cells = new  string *[rows];
+    _cells = new  gwtCELL *[rows];
     int i;
     // build colums arrays
     for (i=0;i<_rows;i++)
     {
-        _cells[i] = new string[columns];
+        _cells[i] = new gwtCELL[columns]("");
     }
 
     // prepare columnHeader array
@@ -123,9 +127,7 @@ string gwtTABLE::GetXmlBlock()
         s.append("<TR>\n\t");
         for (c=0; c<_columns ; c++)
         {
-            s.append("<TD>");
-            s.append(_cells[r][c]); 
-            s.append("</TD>");
+            s.append(_cells[r][c].GetXmlBlock());
         }  
         s.append("\n</TR>\n");
     }    
@@ -136,14 +138,27 @@ string gwtTABLE::GetXmlBlock()
 
 /**
  * Set the value of a given cell.
- * \param row
- * \param column
- * \param value
+ * \param row the row index.
+ * \param column the column index.
+ * \param value the content value.
  */
 void gwtTABLE::SetCell(int row, int column, string value)
 {
     logExtDbg("gwtTABLE::SetCell()");
-    _cells[row][column].assign(value);
+    _cells[row][column].SetContent(value);
+}
+
+/**
+ * Set the background color of a given cell.
+ * \param row the row index.
+ * \param column the column index.
+ * \param color the background color.
+ * the color is interpreted as a decimal, octal, or hexidecimal integer into the
+ * RGB system. Example "#0FF3D1" .
+ */
+void gwtTABLE::SetCellBackground(int row, int column, string color)
+{
+     _cells[row][column].SetBackgroundColor(color);
 }
 
 /**
@@ -155,7 +170,7 @@ void gwtTABLE::SetCell(int row, int column, string value)
 string gwtTABLE::GetCell(int row, int column)
 {
     logExtDbg("gwtTABLE::GetCell()");
-    return _cells[row][column];
+    return _cells[row][column].GetContent();
 }
 
 /**

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcppOPERATION.C,v 1.1 2004-07-22 07:47:08 gluck Exp $"
+* "@(#) $Id: modcppOPERATION.C,v 1.2 2004-07-23 12:33:50 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -75,7 +75,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppOPERATION.C,v 1.1 2004-07-22 07:47:08 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcppOPERATION.C,v 1.2 2004-07-23 12:33:50 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -169,7 +169,14 @@ modcppOPERATION::~modcppOPERATION()
  * \param x description of parameter x. In the example, an integer.
  * \param y description of parameter y. In the example, an integer.
  *
+ * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
+ *
+ * \n \b Error \b codes:\n
+ * If error handling system is used.
+ * The possible errors are :
+ * \li modcppERR_ERROR_1
+ * \li modcppERR_ERROR_2
  *
  * \n \b Files:\n
  * OPTIONAL. If files are used, for each one, name, and usage description.
@@ -224,9 +231,15 @@ mcsCOMPL_STAT modcppOPERATION::Add(mcsINT8 x, mcsINT8 y)
  * \param y description of parameter y. In the example, an integer.
  * \param z description of parameter z. In the example, a float.
  *
+ * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n 
+ * \n \b Error \b codes:\n
+ * If error handling system is used.
+ * The possible errors are :
+ * \li modcppERR_ERROR_1
+ * \li modcppERR_ERROR_2
+ *
  * \sa OPTIONAL. See also section, in witch you can refer other documented
  * entities. Doxygen will create the link automatically. For example
  * modcppOPERATION::Add
@@ -255,7 +268,14 @@ mcsCOMPL_STAT modcppOPERATION::Divide(mcsINT8 x, mcsINT8 y, mcsFLOAT *z)
  * \param x description of parameter x. In the example, an integer.
  * \param y description of parameter y. In the example, an integer.
  *
+ * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
+ *
+ * \n \b Error \b codes:\n
+ * If error handling system is used.
+ * The possible errors are :
+ * \li modcppERR_ERROR_1
+ * \li modcppERR_ERROR_2
  *
  * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
@@ -290,7 +310,14 @@ mcsCOMPL_STAT modcppOPERATION::SubAndMultiply(mcsINT8 x, mcsINT8 y)
  * \param name description of parameter name. In the example, a string
  * describing the operation name.
  *
+ * \n
  * \return Description of the return value. In the example, nothing. 
+ *
+ * \n \b Error \b codes:\n
+ * If error handling system is used.
+ * The possible errors are :
+ * \li modcppERR_ERROR_1
+ * \li modcppERR_ERROR_2
  *
  * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
@@ -329,7 +356,14 @@ char * modcppOPERATION::GetName()
  * \param x description of parameter x. In the example, an integer.
  * \param y description of parameter y. In the example, an integer.
  *
+ * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
+ *
+ * \n \b Error \b codes:\n
+ * If error handling system is used.
+ * The possible errors are :
+ * \li modcppERR_ERROR_1
+ * \li modcppERR_ERROR_2
  *
  * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
@@ -361,7 +395,14 @@ mcsCOMPL_STAT modcppOPERATION::Sub(mcsINT8 x, mcsINT8 y)
  * \param x description of parameter x. In the example, an integer.
  * \param y description of parameter y. In the example, an integer.
  *
+ * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
+ *
+ * \n \b Error \b codes:\n
+ * If error handling system is used.
+ * The possible errors are :
+ * \li modcppERR_ERROR_1
+ * \li modcppERR_ERROR_2
  *
  * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented

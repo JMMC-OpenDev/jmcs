@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcppOPERATION.C,v 1.3 2004-08-05 13:32:52 gluck Exp $"
+* "@(#) $Id: modcppOPERATION.C,v 1.4 2004-08-05 14:00:14 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -77,17 +77,13 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppOPERATION.C,v 1.3 2004-08-05 13:32:52 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcppOPERATION.C,v 1.4 2004-08-05 14:00:14 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 
  */
 #include <iostream>
-
-/** 
- * Export standard iostream objects (cin, cout,...)
- */
 using namespace std;
 
 

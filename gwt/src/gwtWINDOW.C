@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtWINDOW.C,v 1.3 2004-11-30 14:36:18 mella Exp $"
+* "@(#) $Id: gwtWINDOW.C,v 1.4 2004-12-01 12:06:19 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtWINDOW class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtWINDOW.C,v 1.3 2004-11-30 14:36:18 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtWINDOW.C,v 1.4 2004-12-01 12:06:19 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -23,6 +23,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * System Headers 
  */
 #include <iostream>
+#include <iterator>
 using namespace std;
 
 
@@ -169,7 +170,20 @@ void gwtWINDOW::SetTitle(string title)
     SetXmlAttribute("title", title);
 }
 
-
+/** 
+ *  Set the string that will have to return the gui if the window is closed by
+ *  the user. Until next revision of this module, the command must be the id
+ *  of one gwtCOMMAND object (eg: one button...)
+ *
+ * \param command  the command to return
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+void gwtWINDOW::SetCloseCommand(string command)
+{
+    logExtDbg ("gwtWINDOW::SetCloseCommand()");
+    SetXmlAttribute("cancelCommand",command); 
+}
 
 /*
  * Protected methods

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtCHOICE.C,v 1.1 2004-12-01 08:57:06 mella Exp $"
+* "@(#) $Id: gwtCHOICE.C,v 1.2 2004-12-01 12:06:19 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtCHOICE class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtCHOICE.C,v 1.1 2004-12-01 08:57:06 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtCHOICE.C,v 1.2 2004-12-01 12:06:19 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -23,7 +23,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * System Headers 
  */
 #include <iostream>
-#include <vector>
 using namespace std;
 
 
@@ -78,6 +77,15 @@ gwtCHOICE::~gwtCHOICE()
  * Public methods
  */
 
+void gwtCHOICE::SetWidgetId(string id)
+{
+    logExtDbg("gwtCHOICE::SetWidgetId()");
+    gwtWIDGET::SetWidgetId(id);
+    SetXmlAttribute("variable",id);
+}
+
+
+
 string gwtCHOICE::GetXmlBlock()
 {
     logExtDbg("gwtCHOICE::GetXmlBlock()");
@@ -96,6 +104,17 @@ string gwtCHOICE::GetXmlBlock()
     return s;
 }
 
+/**
+ * Assign a new value to the widget.
+ *
+ * \param value the new value of the widget assigned by the user. 
+ *
+ */
+void gwtCHOICE::Changed(string value){
+    logExtDbg("gwtCHOICE::Changed()"); 
+    _selectedItem.assign(value); 
+}
+
 /** 
  *  Add an item to the CHOICE menu.
  *
@@ -108,6 +127,57 @@ mcsCOMPL_STAT gwtCHOICE::Add(string item)
     logExtDbg("gwtCHOICE::Add()");
     _items.push_back(item);
     return SUCCESS;
+}
+
+/** 
+ *  Returns the index of the currently selected item.
+ * If no value was modified by user, it returns the first element index (0).
+ *
+ *  \returns the index of the selected item.
+ */
+mcsINT32 gwtCHOICE::GetSelectedItem()
+{
+    logExtDbg("gwtCHOICE::GetSelectedItem()");
+
+    if(_selectedItem.empty())
+    {
+        return 0;
+    }
+    else
+    {
+        unsigned int i;
+        for (i=0; i<_items.size();i++)
+        {
+            if( _selectedItem.find(_items[i]) != string::npos )
+            {
+                return i;
+            }
+        }
+        // if no value was affected return the first index.
+        return 0;
+    }
+    
+}
+
+/** 
+ *  Returns the value of the currently selected item.
+ * If no value was modified by user, it returns the first element.
+ *
+ *  \returns the value of the selected item.
+ */
+string gwtCHOICE::GetSelectedItemValue()
+{
+    logExtDbg("gwtCHOICE::GetSelectedItemValue()");
+
+    if(_selectedItem.empty())
+    {
+        return _items[0];
+    }
+    else
+    {
+        return _selectedItem;
+    }
+    
 }
 
 /*

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtCHOICE.h,v 1.1 2004-12-01 08:57:20 mella Exp $"
+* "@(#) $Id: gwtCHOICE.h,v 1.2 2004-12-01 12:06:17 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -21,6 +21,12 @@
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
+/* 
+ * System Headers 
+ */
+#include <iostream>
+#include <vector>
+using namespace std;
 
 #include "gwtWIDGET.h"
 
@@ -37,13 +43,20 @@ public:
     gwtCHOICE();
     gwtCHOICE(string help);
     ~gwtCHOICE();
+    virtual void SetWidgetId(string id);
     virtual string GetXmlBlock();
+    virtual void Changed(string value);
     virtual mcsCOMPL_STAT Add(string item);
+    virtual mcsINT32 GetSelectedItem();
+    virtual string GetSelectedItemValue();
+    
+
 
 protected:
         
 private:    
-    vector<string> _items;
+    std::vector<string> _items;
+    string _selectedItem;
     
 };
 

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtBUTTON.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtBUTTON.h,v 1.2 2004-12-01 12:06:17 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -44,6 +44,7 @@ public:
     virtual void SetText(string text);
     virtual string GetXmlBlock();
     virtual void Changed(string widgetId);
+    virtual void PlaceAtTop(mcsLOGICAL flag);
 protected:
     void SetWidgetId(string id);
 private:    

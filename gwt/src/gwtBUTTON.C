@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtBUTTON.C,v 1.2 2004-11-30 12:51:57 mella Exp $"
+* "@(#) $Id: gwtBUTTON.C,v 1.3 2004-12-01 12:06:19 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtBUTTON class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtBUTTON.C,v 1.2 2004-11-30 12:51:57 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtBUTTON.C,v 1.3 2004-12-01 12:06:19 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -123,6 +123,23 @@ void gwtBUTTON::SetWidgetId(string id)
 void gwtBUTTON::Changed(string widgetId){
     logExtDbg("gwtBUTTON::Changed()");
     ExecuteCB((void*)(&widgetId));
+}
+
+/** 
+ * Place the button on the window top or leave in place.
+ *
+ * \param flag indicates if the button must be grouped at top. 
+ *
+ */
+void gwtBUTTON::PlaceAtTop(mcsLOGICAL flag)
+{
+    logExtDbg("gwtBUTTON::PlaceAtTop()");
+    if(flag)
+    {
+        SetXmlAttribute("group","true");
+    }else{
+        SetXmlAttribute("group","false");
+    }
 }
 
 /*

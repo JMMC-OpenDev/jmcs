@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtCONTAINER.C,v 1.3 2004-11-30 14:36:18 mella Exp $"
+* "@(#) $Id: gwtCONTAINER.C,v 1.4 2004-12-01 12:06:19 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,7 @@
  */
 
 static char *rcsId =
-  "@(#) $Id: gwtCONTAINER.C,v 1.3 2004-11-30 14:36:18 mella Exp $";
+  "@(#) $Id: gwtCONTAINER.C,v 1.4 2004-12-01 12:06:19 mella Exp $";
 static void *use_rcsId = ((void) &use_rcsId, (void *) &rcsId);
 
 
@@ -67,6 +67,25 @@ gwtCONTAINER::gwtCONTAINER ()
  * Public methods
  */
 
+/** 
+ *  Return a widgetId for the given widget.
+ *
+ * \param widget the widget that request a widgetId. 
+ *
+ *  \returns the widgetId.
+ */
+string gwtCONTAINER::GetNewWidgetId(gwtWIDGET *widget)
+{
+    /* give an id to the wigdet */
+  string wid;
+  ostringstream osstring;
+  // append ancestor at the end of the widget id to make it different in every
+  // conatiners
+  osstring << "widget_" <<_children.size()<<"@"<<this;
+  wid = osstring.str();
+  return wid;
+}
+
 /**
  * Add the given widget into the container. The widget will get a widget id
  * to make retrieval possible and identification. 
@@ -79,15 +98,8 @@ mcsCOMPL_STAT gwtCONTAINER::Add (gwtWIDGET * widget)
 {
   logExtDbg ("gwtCONTAINER::Add()");
 
-  /* give an id to the wigdet */
-  string wid;
-  ostringstream osstring;
-  osstring << "widget_" <<_children.size();
-  wid = osstring.str();
-  // append ancestor at the end of the widget id
-  wid.append("@");
-  wid.append(this->GetWidgetId());
-  widget->SetWidgetId(wid);
+  string wid(GetNewWidgetId(widget));
+   widget->SetWidgetId(wid);
   
   logDebug ("add new widget referenced by: %s",wid.data());
   

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtTEXTAREA.C,v 1.1 2004-11-30 14:36:18 mella Exp $"
+* "@(#) $Id: gwtTEXTAREA.C,v 1.2 2004-12-01 12:06:19 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtTEXTAREA class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtTEXTAREA.C,v 1.1 2004-11-30 14:36:18 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTEXTAREA.C,v 1.2 2004-12-01 12:06:19 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -64,6 +64,8 @@ gwtTEXTAREA::gwtTEXTAREA(string text, int rows, int columns, string help)
      logExtDbg("gwtTEXTAREA::gwtTEXTAREA()");
      SetText(text);
      SetHelp(help);
+     SetRows(rows);
+     SetColumns(columns);
 }
 
 /*
@@ -82,9 +84,10 @@ string gwtTEXTAREA::GetXmlBlock()
 {
     logExtDbg("gwtTEXTAREA::GetXmlBlock()");
     string s;
-    s.append("<CHAIN");
+    s.append("<SHOW");
     AppendXmlAttributes(s);
-    s.append("/>");
+    s.append(">");
+    s.append("</SHOW>");
     return s;
 }
 

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtCONTAINER.h,v 1.2 2004-11-30 14:36:16 mella Exp $"
+* "@(#) $Id: gwtCONTAINER.h,v 1.3 2004-12-01 12:06:17 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -42,6 +42,7 @@ class gwtCONTAINER: public gwtWIDGET
 public:
     gwtCONTAINER();
     virtual ~gwtCONTAINER(){};
+    virtual string GetNewWidgetId(gwtWIDGET *widget);
     virtual mcsCOMPL_STAT Add(gwtWIDGET * widget);
     virtual mcsCOMPL_STAT AddContainer(gwtCONTAINER * container);
     virtual void DispatchGuiReturn(string widgetid, string data);

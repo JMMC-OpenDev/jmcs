@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcPrivate.h,v 1.2 2004-07-05 15:03:04 gluck Exp $"
+* "@(#) $Id: modcPrivate.h,v 1.3 2004-08-09 16:01:32 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -78,7 +78,7 @@ extern "C" {
 
 
 /* 
- * Constants
+ * Constants definition
  */
 
 #define modcDEFAULT_CHOICE "nothing" /**< Brief description of the constant,
@@ -88,7 +88,7 @@ extern "C" {
 
 
 /* 
- * Macro
+ * Macro definition
  */
 
 /**

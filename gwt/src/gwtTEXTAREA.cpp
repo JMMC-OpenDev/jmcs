@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTEXTAREA.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtTEXTAREA.cpp,v 1.2 2005-02-04 10:01:47 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     16-Sep-2004  Created
  * gzins     10-Dec-2004  Fixed doxygen warning
  *
@@ -16,7 +20,7 @@
  * Definition of gwtTEXTAREA class.
  */
 
-static char *rcsId="@(#) $Id: gwtTEXTAREA.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtTEXTAREA.cpp,v 1.2 2005-02-04 10:01:47 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -133,7 +137,7 @@ void gwtTEXTAREA::SetColumns(int columns)
 void gwtTEXTAREA::SetText(string text)
 {
     logExtDbg("gwtTEXTAREA::SetText()"); 
-    SetXmlAttribute("userchain",text); 
+    SetXmlAttribute("text",text); 
 }
 
 /**
@@ -145,7 +149,7 @@ string gwtTEXTAREA::GetText()
 {
     logExtDbg("gwtTEXTAREA::GetText()"); 
 
-    return GetXmlAttribute("userchain"); 
+    return GetXmlAttribute("text"); 
 }
 
 /**
@@ -156,7 +160,7 @@ string gwtTEXTAREA::GetText()
  */
 void gwtTEXTAREA::Changed(string value){
     logExtDbg("gwtTEXTAREA::Changed()"); 
-    SetXmlAttribute("userchain",value); 
+    SetXmlAttribute("text",value); 
 }
 
 /*

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtTest.C,v 1.3 2005-01-28 09:30:52 mella Exp $"
+* "@(#) $Id: gwtTest.C,v 1.4 2005-02-07 14:35:27 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.3 2005-01-28 09:30:52 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.4 2005-02-07 14:35:27 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -166,6 +166,9 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
             table1->SetCell(r,c,str);
         }
     }
+    // Change color for two cells
+    table1->SetCellBackground(0,0,"#0FA8D0");
+    table1->SetCellBackground(1,1,"#A8D00F");
     
     // Add elements and and show the window
     window1->Add(button1);

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCELL.cpp,v 1.2 2005-02-07 14:45:31 mella Exp $"
+ * "@(#) $Id: gwtCELL.cpp,v 1.3 2005-02-15 12:33:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/07 14:45:31  mella
+ * Correct minor doxygen problem
+ *
  * Revision 1.1  2005/02/07 14:36:24  mella
  * Add Background color management for cells
  *
@@ -13,10 +16,10 @@
 
 /**
  * \file
- *  Definition of gwtCELL class.
+ * Definition of gwtCELL class.
  */
 
-static char *rcsId="@(#) $Id: gwtCELL.cpp,v 1.2 2005-02-07 14:45:31 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtCELL.cpp,v 1.3 2005-02-15 12:33:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -3,18 +3,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCHECKBOX.h,v 1.2 2005-02-15 12:17:52 gzins Exp $"
+ * "@(#) $Id: gwtCHECKBOX.h,v 1.3 2005-02-15 12:33:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/15 12:17:52  gzins
+ * Added CVS log as file modification history
+ *
  * mella     16-Sep-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * gwtCHECKBOX class declaration file.
+ * Declaration of gwtCHECKBOX class.
  */
 
 

@@ -3,19 +3,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCONTAINER.h,v 1.4 2005-02-15 12:17:52 gzins Exp $"
+ * "@(#) $Id: gwtCONTAINER.h,v 1.5 2005-02-15 12:33:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 12:17:52  gzins
+ * Added CVS log as file modification history
+ *
  * mella     15-Sep-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * gwtCONTAINER class declaration file.
- *
+ * Declaration of gwtCONTAINER class.
  */
 
 #ifndef __cplusplus

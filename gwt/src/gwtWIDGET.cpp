@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWIDGET.cpp,v 1.2 2005-01-28 09:31:40 mella Exp $"
+ * "@(#) $Id: gwtWIDGET.cpp,v 1.3 2005-02-15 12:33:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/28 09:31:40  mella
+ * Add vertical axis capability to place the widget on the full window width.
+ *
  * Revision 1.1  2005/01/27 18:09:35  gzins
  * Renamed .C to .cpp
  * Added CVS loh as modification history.
@@ -17,10 +20,9 @@
 /**
  * \file
  * Definition of gwtWIDGET class.
- *
  */
 
-static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.2 2005-01-28 09:31:40 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.3 2005-02-15 12:33:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

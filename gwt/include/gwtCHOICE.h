@@ -3,17 +3,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCHOICE.h,v 1.3 2005-02-15 12:17:52 gzins Exp $"
+ * "@(#) $Id: gwtCHOICE.h,v 1.4 2005-02-15 12:33:49 gzins Exp $"
  *
  * History
  * -------
- * $Log: not supported by cvs2svn $* mella     16-Sep-2004  Created
+ * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/15 12:17:52  gzins
+ * Added CVS log as file modification history
+ ** mella     16-Sep-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * gwtCHOICE class declaration file.
+ * Declaration of gwtCHOICE class.
  */
 
 

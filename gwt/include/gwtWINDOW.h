@@ -3,18 +3,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWINDOW.h,v 1.5 2005-02-15 12:17:52 gzins Exp $"
+ * "@(#) $Id: gwtWINDOW.h,v 1.6 2005-02-15 12:33:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/15 12:17:52  gzins
+ * Added CVS log as file modification history
+ *
  * mella     14-Sep-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * gwtWINDOW class declaration file.
+ * Declaration of gwtWINDOW class.
  */
 
 

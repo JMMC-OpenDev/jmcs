@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.8 2004-07-22 08:07:06 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.9 2004-07-23 12:38:35 gluck Exp $"
 *
 *
 * who       when         what
@@ -76,7 +76,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcProc.c,v 1.8 2004-07-22 08:07:06 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcProc.c,v 1.9 2004-07-23 12:38:35 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -136,6 +136,12 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y);
  * 
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
+ * \n \b Error \b codes:\n
+ * If error handling system is used.
+ * The possible errors are :
+ * \li modcERR_ERROR_1
+ * \li modcERR_ERROR_2
+ * 
  */
 static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
 {
@@ -163,6 +169,12 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
  *
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
+ * \n \b Error \b codes:\n
+ * If error handling system is used.
+ * The possible errors are :
+ * \li modcERR_ERROR_1
+ * \li modcERR_ERROR_2
+ * 
  * \n \b Files:\n
  * OPTIONAL. If files are used, for each one, name, and usage description.
  * \li \e \<fileName1\> :  usage description of fileName1
@@ -225,6 +237,12 @@ mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
  *
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
+ * \n \b Error \b codes:\n
+ * If error handling system is used.
+ * The possible errors are :
+ * \li modcERR_ERROR_1
+ * \li modcERR_ERROR_2
+ * 
  * \n 
  * \sa OPTIONAL. See also section, in witch you can refer other documented
  * entities. Doxygen will create the link automatically. For example

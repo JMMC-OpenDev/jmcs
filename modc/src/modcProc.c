@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.1 2004-06-29 15:21:19 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.2 2004-07-02 10:56:40 gluck Exp $"
 *
 *
 * who       when         what
@@ -72,8 +72,8 @@
  * \bug \li For example, description of the first bug
  * \bug \li For example, description of the second bug
  * 
- * \todo \li  OPTIONAL. Things to forsee list, if needed. You can make a list
- * with the \li marker, like in the Files section above. For example, add
+ * \todo OPTIONAL. Things to forsee list, if needed. You can make a list
+ * with the \\li marker, like in the Files section above. For example, add
  * modcProc3.
  * 
  * \n

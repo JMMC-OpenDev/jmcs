@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcMain.c,v 1.1 2004-06-29 15:21:19 gluck Exp $"
+* "@(#) $Id: modcMain.c,v 1.2 2004-07-02 10:43:50 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -75,15 +75,15 @@
  * entities. Doxygen will create the link automatically.
  * 
  * \bug OPTIONAL. Known bugs list if it exists. You can make a list with the
- * \li marker, like in the Files section above.
+ * \\li marker, like in the Files section above.
  * 
  * \todo OPTIONAL. Things to forsee list, if needed. You can make a list with
- * the \li marker, like in the Files section above.
+ * the \\li marker, like in the Files section above.
  * 
  * \n
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.1 2004-06-29 15:21:19 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.2 2004-07-02 10:43:50 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

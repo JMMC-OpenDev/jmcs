@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.cpp,v 1.3 2005-02-24 11:08:02 mella Exp $"
+ * "@(#) $Id: gwtGUI.cpp,v 1.4 2005-02-24 12:34:58 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/24 11:08:02  mella
+ * Add reason to SetStatus
+ *
  * Revision 1.2  2005/02/15 12:25:28  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -22,7 +25,7 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.3 2005-02-24 11:08:02 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.4 2005-02-24 12:34:58 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -158,9 +161,11 @@ void gwtGUI::SetStatus(bool valid, string status, string explanation )
     }
     s.append("\" text=\"");
     s.append(status);
-    s.append("\">\n");
-    s.append(" reason=\"");
-    s.append(explanation);
+    if (! explanation.empty()){
+        s.append("\" ");
+        s.append(" reason=\"");
+        s.append(explanation);
+    }
     s.append("\">\n");
     s.append("</gui_status>\n");
 

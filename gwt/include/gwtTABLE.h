@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTABLE.h,v 1.5 2005-02-28 12:59:53 mella Exp $"
+ * "@(#) $Id: gwtTABLE.h,v 1.6 2005-03-02 13:54:33 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/28 12:59:53  mella
+ * Implement SetWidgth and SetHeight
+ *
  * Revision 1.4  2005/02/15 12:33:49  gzins
  * Updated file description
  *
@@ -51,6 +54,7 @@ public:
     virtual void SetWidth(int nbPixels);
     virtual void SetHeight(int nbPixels);    
 protected:
+    virtual void SetWidgetId(string id);
 private:    
     gwtCELL **_cells;
     string *_columnHeaders;

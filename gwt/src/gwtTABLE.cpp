@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTABLE.cpp,v 1.3 2005-02-28 12:48:31 mella Exp $"
+ * "@(#) $Id: gwtTABLE.cpp,v 1.4 2005-03-02 13:54:34 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/28 12:48:31  mella
+ * Implement SetWidgth and SetHeight
+ *
  * Revision 1.2  2005/02/07 14:36:24  mella
  * Add Background color management for cells
  *
@@ -23,7 +26,7 @@
  * Definition of gwtTABLE class.
  */
 
-static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.3 2005-02-28 12:48:31 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTABLE.cpp,v 1.4 2005-03-02 13:54:34 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -218,8 +221,12 @@ void gwtTABLE::SetHeight(int nbPixels)
 /*
  * Protected methods
  */
-
-
+void gwtTABLE::SetWidgetId(string id)
+{
+    logExtDbg("gwtTABLE::SetWidgetId()");
+    gwtWIDGET::SetWidgetId(id);
+    SetXmlAttribute("variable",id);
+}
 
 /*
  * Private methods

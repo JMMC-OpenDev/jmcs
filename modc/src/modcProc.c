@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: modcProc.c,v 1.12 2005-02-13 17:37:11 gzins Exp $"
+ * "@(#) $Id: modcProc.c,v 1.13 2005-02-22 09:23:00 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/13 17:37:11  gzins
+ * Added CVS log as modification history
+ *
  * gluck     09-Jun-2004  Created
  *
  * IMPORTANT :
@@ -77,7 +80,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcProc.c,v 1.12 2005-02-13 17:37:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: modcProc.c,v 1.13 2005-02-22 09:23:00 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -137,7 +140,7 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y);
  * \param y description of parameter y. In the example, a number.
  * 
  * \n
- * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned. 
  *
  * \n
  * \err
@@ -172,7 +175,7 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
  * \param b description of parameter b. In the example, an integer.
  *
  * \n
- * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned. 
  *
  * \n
  * \err
@@ -246,7 +249,7 @@ mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
  * \param c description of parameter c. In the example, a string.
  *
  * \n
- * \return Description of the return value. In the example, mcsSUCCESS or mcsFAILURE. 
+ * \return Description of the return value. In the example, mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned. 
  *
  * \n
  * \err

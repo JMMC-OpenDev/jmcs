@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcMain.c,v 1.8 2004-08-05 12:21:56 gluck Exp $"
+* "@(#) $Id: modcMain.c,v 1.9 2004-08-05 12:46:56 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -91,7 +91,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.8 2004-08-05 12:21:56 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.9 2004-08-05 12:46:56 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -138,7 +138,7 @@ int main (int argc, char *argv[])
     /* Initializes MCS services */
     mcsInit(argv[0]);
     
-    /* Set verbosity level */
+    /* Set stdout log level */
     logSetStdoutLogLevel(logEXTDBG);
     
     /* global variable modcNumber */

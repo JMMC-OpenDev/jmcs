@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modc.doc,v 1.5 2004-08-05 12:22:22 gluck Exp $"
+* "@(#) $Id: modc.doc,v 1.6 2004-08-05 12:46:56 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -33,7 +33,7 @@
 *******************************************************************************/
 
 /**
-\mainpage modc : c module example
+\mainpage modc : C module example
 
 \bdesc
 Brief module description. There could be one or more sentences in this short

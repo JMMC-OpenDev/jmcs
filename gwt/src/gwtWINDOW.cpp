@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWINDOW.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtWINDOW.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     14-Sep-2004  Created
  *
  ******************************************************************************/
@@ -15,7 +19,7 @@
  * Definition of gwtWINDOW class.
  */
 
-static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -177,7 +181,7 @@ void gwtWINDOW::SetTitle(string title)
  *
  * \param command  the command to return
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 void gwtWINDOW::SetCloseCommand(string command)
 {

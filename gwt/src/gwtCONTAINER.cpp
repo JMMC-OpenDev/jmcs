@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCONTAINER.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtCONTAINER.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     15-Sep-2004  Created
  *
  ******************************************************************************/
@@ -17,7 +21,7 @@
  */
 
 static char *rcsId =
-  "@(#) $Id: gwtCONTAINER.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $";
+  "@(#) $Id: gwtCONTAINER.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $";
 static void *use_rcsId = ((void) &use_rcsId, (void *) &rcsId);
 
 
@@ -92,7 +96,7 @@ string gwtCONTAINER::GetNewWidgetId(gwtWIDGET *widget)
  *
  * \param widget  The widget to add to the container
  *
- * \return SUCCESS or FAILURE in case of error.
+ * \return mcsSUCCESS or mcsFAILURE in case of error.
  */
 mcsCOMPL_STAT gwtCONTAINER::Add (gwtWIDGET * widget)
 {
@@ -105,7 +109,7 @@ mcsCOMPL_STAT gwtCONTAINER::Add (gwtWIDGET * widget)
   
   _children.insert ( make_pair(wid,widget));
 
-  return SUCCESS;
+  return mcsSUCCESS;
 }
 
 /**
@@ -114,7 +118,7 @@ mcsCOMPL_STAT gwtCONTAINER::Add (gwtWIDGET * widget)
  *
  * \param container The container to add to the list of containers.
  *
- * \return SUCCESS or FAILURE in case of error.
+ * \return mcsSUCCESS or mcsFAILURE in case of error.
  */
 mcsCOMPL_STAT gwtCONTAINER::AddContainer(gwtCONTAINER * container)
 {
@@ -124,7 +128,7 @@ mcsCOMPL_STAT gwtCONTAINER::AddContainer(gwtCONTAINER * container)
   string wid = container->GetWidgetId();
   logDebug ("add new container referenced by: %s", wid.data());
   _containers.insert ( make_pair(wid,container));
-  return SUCCESS;
+  return mcsSUCCESS;
 }
 
 

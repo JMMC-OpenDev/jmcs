@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCOMMAND.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtCOMMAND.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     08-Nov-2004  Created
  *
  *
@@ -16,7 +20,7 @@
  * Definition of gwtCOMMAND class.
  */
 
-static char *rcsId="@(#) $Id: gwtCOMMAND.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtCOMMAND.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -90,18 +94,18 @@ mcsCOMPL_STAT gwtCOMMAND::ExecuteCB(void * userData)
 
     if(_cbObj == NULL)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     else if(_cbMethod == NULL)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     else
     {
         logDebug("Calling callback");
         (_cbObj->*(_cbMethod))(userData);   
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*

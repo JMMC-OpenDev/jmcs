@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtGUI.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     14-Sep-2004  Created
  *
  ******************************************************************************/
@@ -15,7 +19,7 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -83,9 +87,9 @@ mcsCOMPL_STAT gwtGUI::ConnectToRemoteGui(const string hostname, const int port, 
 
     logDebug("Connection will be done on %s:%d",hostname.data(), port);
 
-    if(_clientSocket->Open(hostname, port)==FAILURE)
+    if(_clientSocket->Open(hostname, port)==mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     
@@ -94,7 +98,7 @@ mcsCOMPL_STAT gwtGUI::ConnectToRemoteGui(const string hostname, const int port, 
     configStr.append("\" to=\"JavaGui\"></config>\n");
     Send(configStr);
 
-    return SUCCESS;
+    return mcsSUCCESS;
     /* Now the evhHandler should handle socket event */
 }
 

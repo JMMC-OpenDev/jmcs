@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCHOICE.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtCHOICE.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     16-Sep-2004  Created
  *
  ******************************************************************************/
@@ -15,7 +19,7 @@
  * Definition of gwtCHOICE class.
  */
 
-static char *rcsId="@(#) $Id: gwtCHOICE.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtCHOICE.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -120,13 +124,13 @@ void gwtCHOICE::Changed(string value){
  *
  * \param item the item to be added. 
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT gwtCHOICE::Add(string item)
 {
     logExtDbg("gwtCHOICE::Add()");
     _items.push_back(item);
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 

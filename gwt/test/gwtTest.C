@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.5 2005-02-15 12:17:52 gzins Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.6 2005-02-15 12:25:28 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/15 12:17:52  gzins
+ * Added CVS log as file modification history
+ *
  * mella     14-Sep-2004  Created
  *
  ******************************************************************************/
@@ -15,7 +18,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.5 2005-02-15 12:17:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.6 2005-02-15 12:25:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -118,10 +121,10 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     
     // Connect the gwtGUI to the remote system
     status = oneGui->ConnectToRemoteGui(gwtHost,gwtPort, mcsGetProcName());
-    if (status == FAILURE)
+    if (status == mcsFAILURE)
     {
         cout << "connection on " << gwtHost << ":" << gwtPort << " failed" << endl;
-        return FAILURE;
+        return mcsFAILURE;
     }
     cout << "connection on " << gwtHost << ":" << gwtPort << " succeed" << endl;
     
@@ -190,7 +193,7 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     // connects the button3 event to a callback
   //  button3.AttachCB(this, (gwtCOMMAND::CB_METHOD) &gwtTestSERVER::Button3CB);
  
-   return SUCCESS;
+   return mcsSUCCESS;
 }
 
 /**
@@ -200,7 +203,7 @@ mcsCOMPL_STAT gwtTestSERVER::Button1CB(void *)
 {
     cout<< "button1 pressed" << " while the textfield value is:" << textfield1->GetText() <<endl;
     oneGui->SetStatus(true, "");
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -211,7 +214,7 @@ mcsCOMPL_STAT gwtTestSERVER::Button3CB(void *)
     cout<< "button3 pressed" <<endl;
     window1->Hide();
     oneGui->SetStatus(true, "Window closed properly");
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -241,7 +244,7 @@ void gwtTestSERVER::DoIt()
  * \param sd  the socket descriptor
  * \param obj nc
  *
- * \return  SUCCESS or FAILURE
+ * \return  mcsSUCCESS or mcsFAILURE
  */
 evhCB_COMPL_STAT gwtTestSERVER::SocketCB (const int sd,void* obj)
 {
@@ -264,7 +267,7 @@ int main(int argc, char *argv[])
     logInfo("Server initing ..");
 
     // Init server
-    if (gwtTestServer.Init(argc, argv) == FAILURE)
+    if (gwtTestServer.Init(argc, argv) == mcsFAILURE)
     {
         errDisplayStack();
         exit (EXIT_FAILURE);
@@ -274,7 +277,7 @@ int main(int argc, char *argv[])
     gwtTestServer.DoIt();
 
     // Main loop
-    if (gwtTestServer.MainLoop() == FAILURE)
+    if (gwtTestServer.MainLoop() == mcsFAILURE)
     {
         errDisplayStack();
     }

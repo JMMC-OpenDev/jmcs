@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcMain.c,v 1.3 2004-07-05 15:03:04 gluck Exp $"
+* "@(#) $Id: modcMain.c,v 1.4 2004-07-05 15:08:47 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -78,10 +78,9 @@
  * \todo OPTIONAL. Things to forsee list.
  * \todo Action 1 : action 1 description
  * 
- * \n
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.3 2004-07-05 15:03:04 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.4 2004-07-05 15:08:47 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

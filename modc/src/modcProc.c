@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.3 2004-07-05 15:03:04 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.4 2004-07-05 15:08:47 gluck Exp $"
 *
 *
 * who       when         what
@@ -74,7 +74,6 @@
  * \todo OPTIONAL. Things to forsee list, if needed. For example, add
  * modcProc3.
  * 
- * \n
  */
 
 /* 
@@ -132,10 +131,8 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y);
  * \param x description of parameter x. In the example, a number.
  * \param y description of parameter y. In the example, a number.
  * 
- * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n
  */
 static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
 {
@@ -161,7 +158,6 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
  * \param a description of parameter a. In the example, a string.
  * \param b description of parameter b. In the example, an integer.
  *
- * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
  * \n \b Files:\n
@@ -200,7 +196,6 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
  * \todo \li For example, correct bugs.
  * \todo \li For example, extend the function with file1 and file 2.
  *
- * \n
  */
 mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
 {
@@ -227,7 +222,6 @@ mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
  *
  * \param c description of parameter c. In the example, a string.
  *
- * \n 
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
  * \n 
@@ -235,7 +229,6 @@ mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
  * entities. Doxygen will create the link automatically. For example
  * modcProc1.
  * 
- * \n
  */
 mcsCOMPL_STAT modcProc2(mcsBYTES8 c)
 {

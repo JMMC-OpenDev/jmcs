@@ -2,10 +2,11 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2004-07-22 08:12:55 gluck Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2005-02-15 10:40:17 gzins Exp $"
 
- who       when         what
- ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ History
+ ~~~~~~~
+ $Log: not supported by cvs2svn $
  gluck     22-Jul-2004  Created
 
 

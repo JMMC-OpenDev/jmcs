@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcppMain.C,v 1.4 2004-08-05 14:00:14 gluck Exp $"
+* "@(#) $Id: modcppMain.C,v 1.5 2004-08-06 14:19:45 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -34,7 +34,6 @@
 * They will be pointed out with the word OPTIONAL.
 *
 *******************************************************************************/
-
 
 /**
  * \file
@@ -91,8 +90,9 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppMain.C,v 1.4 2004-08-05 14:00:14 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcppMain.C,v 1.5 2004-08-06 14:19:45 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers 
@@ -138,7 +138,13 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     /* Initialize MCS services */
-    mcsInit(argv[0]);
+    if (mcsInit(argv[0]) == FAILURE)
+    {
+        // Error handling if necessary
+        
+        // Exit from the application with FAILURE
+        exit (EXIT_FAILURE);
+    }
 
     // Set stdout log level
     logSetStdoutLogLevel(logEXTDBG);
@@ -177,8 +183,11 @@ int main(int argc, char *argv[])
     char * name;
     name = operation2.GetName();
     logTest("operation 2 name = %s", name);
+      
+    // Close MCS services
+    mcsExit();
     
-
+    // Exit from the application with SUCCESS
     exit (EXIT_SUCCESS);
 
 }

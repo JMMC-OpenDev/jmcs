@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtTABLE.C,v 1.2 2004-12-03 14:27:01 mella Exp $"
+* "@(#) $Id: gwtTABLE.C,v 1.3 2004-12-12 09:25:12 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * mella     16-Sep-2004  Created
+* gzins     12-Dec-2004  Fixed gcc 3.4 error 
 *
 *
 *******************************************************************************/
@@ -15,7 +16,7 @@
  * gwtTABLE class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtTABLE.C,v 1.2 2004-12-03 14:27:01 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTABLE.C,v 1.3 2004-12-12 09:25:12 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -56,7 +57,7 @@ gwtTABLE::gwtTABLE(int rows, int columns)
     // prepare data two dimension array
     _rows=rows;
     _columns=columns;
-    _cells = new ( string * )[rows];
+    _cells = new  string *[rows];
     int i;
     // build colums arrays
     for (i=0;i<_rows;i++)

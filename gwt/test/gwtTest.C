@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtTest.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtTest.C,v 1.2 2004-11-29 14:43:44 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.2 2004-11-29 14:43:44 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,37 +61,139 @@ using namespace std;
  * Signal catching functions  
  */
 
-class gwtTestSERVER : public evhTASK, public fndOBJECT
+class gwtTestSERVER : public evhSERVER
 {
 public:
-    gwtTestSERVER() {};
-    virtual ~gwtTestSERVER() {};
-    virtual mcsCOMPL_STAT PrintAppUsage();
-    virtual mcsCOMPL_STAT ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
-                                          mcsINT32 *optind);
+    gwtTestSERVER();
+    virtual ~gwtTestSERVER();
     virtual evhCB_COMPL_STAT SocketCB (const int sd,void* obj);
-    void go();
     mcsCOMPL_STAT Button1CB(void *userData);
     mcsCOMPL_STAT Button3CB(void *userData);
+    virtual mcsCOMPL_STAT AppInit();
+    void DoIt();
 private:
-    mcsLOGICAL  noTimeout;
-    mcsBYTES256 configFileName;
-    
-    gwtTEXTFIELD textfield1;
-    gwtWINDOW window1; 
-    gwtGUI oneGui;
+    gwtTEXTFIELD *textfield1;
+    gwtWINDOW *window1; 
+    gwtGUI *oneGui;
+    gwtBUTTON *button1;
+    gwtBUTTON *button2;
+    gwtBUTTON *button3;
+    gwtSEPARATOR *separator;
+    gwtTABLE *table1;
 };
 
+gwtTestSERVER::gwtTestSERVER()
+{
+    logExtDbg("gwtTestSERVER::gwtTestSERVER()");
+    
+    textfield1 = new gwtTEXTFIELD();
+    window1 = new gwtWINDOW(); 
+    oneGui = new gwtGUI();
+    button1 = new gwtBUTTON();
+    button2 = new gwtBUTTON("button2", "help for button2");
+    button3 = new gwtBUTTON();
+    separator = new gwtSEPARATOR();
+    table1 = new gwtTABLE(10,5);
+}
 
+gwtTestSERVER::~gwtTestSERVER()
+{
+    logExtDbg("gwtTestSERVER::~gwtTestSERVER()");
+    delete textfield1;
+    delete window1; 
+    delete oneGui;
+    delete button1;
+    delete button2;
+    delete button3;
+    delete separator;
+}
 
+mcsCOMPL_STAT gwtTestSERVER::AppInit()
+{
+    logExtDbg("gwtTestSERVER::AppInit()");
+    
+    mcsCOMPL_STAT status;
+    string gwtHost("localhost");
+    int gwtPort = 1234;
+    
+    // Connect the gwtGUI to the remote system
+    status = oneGui->ConnectToRemoteGui(gwtHost,gwtPort, mcsGetProcName());
+    if (status == FAILURE)
+    {
+        cout << "connection on " << gwtHost << ":" << gwtPort << " failed" << endl;
+        return FAILURE;
+    }
+    cout << "connection on " << gwtHost << ":" << gwtPort << " succeed" << endl;
+    
+    // prepare Event Handling 
+    evhIOSTREAM_CALLBACK cb(this, (evhIOSTREAM_CB_METHOD)&gwtTestSERVER::SocketCB);
+    evhIOSTREAM_KEY key(oneGui->GetSd());
+    AddCallback(key, cb);
+       
+    // Prepare a window
+    window1->SetTitle("First Window");
+    window1->AttachAGui(oneGui);
+
+    // Prepare a button
+    button1->SetHelp("No real interresting help for the button1");
+    button1->SetLabel("A button");
+    // Here one update for label should succeed (second value will be used)
+    button1->SetLabel("A Simple button");
+    // connects the button1 event to a callback
+    button1->AttachCB(this, (gwtCOMMAND::CB_METHOD) &gwtTestSERVER::Button1CB);
+
+    
+    // Prepare a textfiel
+    textfield1->SetHelp("No real interresting help for the textfield1");
+    textfield1->SetLabel("A textfield");
+    textfield1->SetText("A text for the textfield");
+    
+    //with a table
+    table1->SetHelp("This table was filled adding rown and column");
+    table1->SetLabel("A table");
+    int r,c;
+    char str[32];
+    for (c=0;c<5;c++)
+    {
+        sprintf(str,"Header %d",c);
+        table1->SetColumnHeader(c,str);
+        for (r=0;r<10;r++)
+        {
+            sprintf(str,"%d",r+c);
+            table1->SetCell(r,c,str);
+        }
+    }
+    
+    // Add elements and and show the window
+    window1->Add(button1);
+    window1->Add(separator);
+    window1->Add(textfield1);
+    window1->Add(table1);
+    
+    window1->Show();
+   
+    /*
+     * After window1->show() no added widget are added on the real gwt.
+     */
+    
+    // add one button without callback after the window display
+    window1->Add(button2);
+ 
+    
+//    window1->Add(&button3);
+    // connects the button3 event to a callback
+  //  button3.AttachCB(this, (gwtCOMMAND::CB_METHOD) &gwtTestSERVER::Button3CB);
+ 
+   return SUCCESS;
+}
 
 /**
  *  User callback associated to the button 1. 
  */
 mcsCOMPL_STAT gwtTestSERVER::Button1CB(void *)
 {
-    cout<< "button1 pressed" << " while the textfield value is:" << textfield1.GetText() <<endl;
-    oneGui.SetStatus(true, "");
+    cout<< "button1 pressed" << " while the textfield value is:" << textfield1->GetText() <<endl;
+    oneGui->SetStatus(true, "");
     return SUCCESS;
 }
 
@@ -101,114 +203,29 @@ mcsCOMPL_STAT gwtTestSERVER::Button1CB(void *)
 mcsCOMPL_STAT gwtTestSERVER::Button3CB(void *)
 {
     cout<< "button3 pressed" <<endl;
-    window1.Hide();
-    oneGui.SetStatus(true, "Window closed properly");
+    window1->Hide();
+    oneGui->SetStatus(true, "Window closed properly");
     return SUCCESS;
 }
 
-/**
- * Build a simple gwt.
- *
- */
-void gwtTestSERVER::go(){
-    mcsCOMPL_STAT status;
-    string gwtHost("localhost");
-    int gwtPort = 1234;
-    
-    // Connect the gwtGUI to the remote system
-    status = oneGui.ConnectToRemoteGui(gwtHost,gwtPort, mcsGetProcName());
-    if (status == FAILURE)
-    {
-        cout << "connection on " << gwtHost << ":" << gwtPort << " failed" << endl;
-        return ;
-    }
-    cout << "connection on " << gwtHost << ":" << gwtPort << " succeed" << endl;
 
-    // prepare Event Handler 
-    evhHANDLER evhHandler;
-    evhIOSTREAM_CALLBACK cb(this, (evhIOSTREAM_CB_METHOD)&gwtTestSERVER::SocketCB);
-    evhIOSTREAM_KEY key(oneGui.GetSd());
-    evhHandler.AddCallback(key, cb);
+void gwtTestSERVER::DoIt()
+{
+    logExtDbg("gwTestSERVER::DoIt()");
     
-    // Prepare a window
-    window1.SetTitle("First Window");
-    window1.AttachAGui(&oneGui);
-    
-    // Prepare a button
-    gwtBUTTON button1;
-    button1.SetHelp("No real interresting help for the button1");
-    button1.SetLabel("A button");
-    // Here one update for label should succeed (second value will be used)
-    button1.SetLabel("A Simple button");
-    // connects the button1 event to a callback
-    button1.AttachCB(this, (gwtCOMMAND::CB_METHOD) &gwtTestSERVER::Button1CB);
-
-    // Prepare a separator
-    gwtSEPARATOR separator;
-    
-    // Prepare a textfiel
-    textfield1.SetHelp("No real interresting help for the textfield1");
-    textfield1.SetLabel("A textfield");
-    textfield1.SetText("A text for the textfield");
-    
-    //with a table
-    gwtTABLE table1(10,5);
-    table1.SetHelp("This table was filled adding rown and column");
-    table1.SetLabel("A table");
-    int r,c;
-    char str[32];
-    for (c=0;c<5;c++)
-    {
-        sprintf(str,"Header %d",c);
-        table1.SetColumnHeader(c,str);
-        for (r=0;r<10;r++)
-        {
-            sprintf(str,"%d",r+c);
-            table1.SetCell(r,c,str);
-        }
-    }
-    
-    // Add elements and and show the window
-    window1.Add(&button1);
-    window1.Add(&separator);
-    window1.Add(&textfield1);
-    window1.Add(&table1);
-    window1.Show();
-    
-    /*
-     * After window1.show() no added widget are added on the real gwt.
-     */
-    
-    // add one button without callback
-    gwtBUTTON *button2 = new gwtBUTTON("button2", "help for button2");
-    window1.Add(button2);
- 
-    
-    gwtBUTTON button3("close", "Click on this button close the window");
-    window1.Add(&button3);
-    // connects the button3 event to a callback
-    button3.AttachCB(this, (gwtCOMMAND::CB_METHOD) &gwtTestSERVER::Button3CB);
-
+    cout << endl;
+    cout << endl;
+    cout << endl;
     // Set a new status message
     string msg("Hello from ");
     msg.append(mcsGetProcName());
-    oneGui.SetStatus(true, msg);
+    oneGui->SetStatus(true, msg);
     
     // close the window 
-    window1.Hide();
+    window1->Hide();
    
     // and show it again
-    window1.Show();
-  
-    // and wait events
-    if (evhHandler.MainLoop() == FAILURE)
-    {
-        errDisplayStack();
-    }
-    
-    logInfo("Server exiting ..");
-    
-    return ;
+    window1->Show();
 }
 
 /**
@@ -229,76 +246,36 @@ evhCB_COMPL_STAT gwtTestSERVER::SocketCB (const int sd,void* obj)
     size = read(sd, msg,80);
     msg[size]=0;
     string data(msg);
-    oneGui.ReceiveData(data);
+    oneGui->ReceiveData(data);
 
     return evhCB_SUCCESS;
-};
+}
 
 
 int main(int argc, char *argv[])
 {
     gwtTestSERVER gwtTestServer;
+    logInfo("Server initing ..");
 
-    // Parse input parameter
-    if (gwtTestServer.ParseOptions(argc, argv) == FAILURE)
+    // Init server
+    if (gwtTestServer.Init(argc, argv) == FAILURE)
     {
+        errDisplayStack();
         exit (EXIT_FAILURE);
     }
+   
     logInfo("Server starting ..");
+    gwtTestServer.DoIt();
 
-    // Start real process
-    gwtTestServer.go();
+    // Main loop
+    if (gwtTestServer.MainLoop() == FAILURE)
+    {
+        errDisplayStack();
+    }
+    
+    logInfo("Server exiting ..");
+
     exit (EXIT_SUCCESS);
-}
-
-mcsCOMPL_STAT gwtTestSERVER::PrintAppUsage()
-{
-    logExtDbg("gwtTestSERVER::PrintAppUsage()"); 
-
-    cout <<" Other options:    -noTimeout   disable waiting for a reply on "
-        "a CCS message" << endl;
-    cout <<"                   -c <file>    specify application "
-        "configuration file" << endl;
-    return SUCCESS;
-}
-
-mcsCOMPL_STAT gwtTestSERVER::ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
-                                           mcsINT32 *optind)
-{
-    logExtDbg("gwtTestSERVER::ParseAppOptions()"); 
-
-    // No timeout option
-    if(strcmp(argv[*optind], "-noTimeout") == 0)
-    {
-        noTimeout = mcsTRUE;
-        return SUCCESS;
-    }
-    // Application configuration file option
-    else if (strcmp(argv[*optind], "-c") == 0)
-    {
-        if ((*optind + 1) < argc)
-        {
-            *optind += 1;
-            optarg = argv[*optind];
-            if ( sscanf (optarg, "%s", configFileName) != 1)
-            {
-                logWarning ("%s: Argument to option %s is invalid: '%s'",
-                            Name(), argv[*optind-1], optarg);
-                return FAILURE;
-            }
-            return SUCCESS;
-        }
-        else
-        {
-            logWarning ("%s: Option %s requires an argument",
-                        Name(), argv[*optind]);
-            return FAILURE;
-        }
-    }
-
-    // Invalid argument
-    logWarning ("%s: Invalid argument %s", Name(), argv[*optind] );
-    return FAILURE;
 }
 
 /*___oOo___*/

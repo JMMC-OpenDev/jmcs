@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtWMODEL.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtWMODEL.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtWMODEL class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtWMODEL.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtWMODEL.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -78,7 +78,7 @@ gwtWMODEL::~gwtWMODEL()
 string gwtWMODEL::GetXmlBlock()
 {
     logExtDbg("gwtWMODEL::GetXmlBlock()");
-    string s("<gwtWMODEL ");
+    string s("<guiWMODEL ");
     AppendXmlAttributes(s);
     s.append("/>");
     return s;

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtXML_PRODUCER.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtXML_PRODUCER.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtXML_PRODUCER class definition.
  */
 
-static char *rcsId="@(#) $Id: gwtXML_PRODUCER.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtXML_PRODUCER.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -45,13 +45,22 @@ using namespace std;
  * Class constructor
  */
 
-
+/** 
+ * Interface class that define communication with the wgtGUI.
+ */
+gwtXML_PRODUCER::gwtXML_PRODUCER()
+{
+    logExtDbg("gwtXML_PRODUCER::gwtXML_PRODUCER()");
+}
 
 /*
  * Class destructor
  */
 
-
+gwtXML_PRODUCER::~gwtXML_PRODUCER()
+{
+    logExtDbg("gwtXML_PRODUCER::~gwtXML_PRODUCER()");
+}
 
 /*
  * Public methods
@@ -78,22 +87,34 @@ void gwtXML_PRODUCER::AttachAGui(gwtGUI * g)
  */
 void gwtXML_PRODUCER::SendXml(string data){
   logExtDbg("gwtXML_PRODUCER::SendXml()");
-
+  _attachedGui->Send(data);
 }
 
 
 /**
- * This method must be overloaded.
+ * This method must be overloaded to handle properly the events from the gui.
  *
  * \param widgetid  
  * \param data  
  *
  */
-void gwtXML_PRODUCER::DispatchGuiReturn(string widgetid, string data)
+void gwtXML_PRODUCER::ReceiveFromGui(string widgetid, string data)
 {
-  logExtDbg("gwtXML_PRODUCER::DispatchGuiReturn()");
+  logExtDbg("gwtXML_PRODUCER::ReceiveFromGui()");
+
+  logWarning("The xml_producer '%s' has received a not handled message '%s'",widgetid.data(),data.data());
 
 }
+
+/**
+ * This method is called by the gwt during the registration.
+ * \param id the given id associated to this object.
+ */
+void gwtXML_PRODUCER::SetProducerId(string id)
+{
+    logExtDbg("gwtXML_PRODUCER::SetProducerId()");
+}
+
 
 /*
  * Protected methods

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtXML_PRODUCER.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtXML_PRODUCER.h,v 1.2 2004-11-29 14:43:41 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -30,7 +30,8 @@ class gwtGUI;
  */
 
 /**
- * Super classThis class should be used by  
+ * This class should be used by object that can send xml strings and get back
+ * change events.
  */
 class gwtXML_PRODUCER
 {
@@ -45,7 +46,8 @@ public:
     virtual void AttachAGui(gwtGUI * g);
     virtual void SendXml(string data);
     virtual void SetProducerId(string id);
-    virtual void DispatchGuiReturn(string widgetid, string data);
+    virtual void ReceiveFromGui(string widgetid, string data);
+
 protected:
 
     

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtWINDOW.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtWINDOW.h,v 1.2 2004-11-29 14:43:41 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -39,6 +39,8 @@ public:
    virtual void Hide(void);  
    virtual void SetWidgetId(string id);
    virtual void SetProducerId(string id);
+   virtual void ReceiveFromGui(string widgetid, string data);
+
 protected:
 private:
 };

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtMENU.h,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtMENU.h,v 1.2 2004-11-29 14:43:41 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -42,6 +42,7 @@ public:
     virtual void AddMenu(gwtMENU *menu);
     virtual void AddMenuItem(gwtMENUITEM *item);
     virtual void Show();
+    virtual void SetProducerId(string id);
 protected:
 
 private:    

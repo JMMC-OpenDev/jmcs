@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtMENU.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtMENU.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtMENU class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtMENU.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtMENU.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -111,11 +111,22 @@ void gwtMENU::Show()
     logExtDbg("gwtMENU::Show()");
 
     string s;
-    s.append("<gwt_menu>");
+    s.append("<gui_menu>");
     s.append(GetXmlBlock());
-    s.append("</gwt_menu>\n");
+    s.append("</gui_menu>\n");
    
     SendXml(s);
+}
+
+
+/**
+ * This method is called by the gwt during the registration.
+ * \param id the given id associated to this object.
+ */
+void gwtMENU::SetProducerId(string id)
+{
+    logExtDbg("gwtMENU::SetProducerId()");
+    SetWidgetId(id);
 }
 
 /*

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtGUI.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtGUI.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gui class declaration file.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtGUI.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -205,9 +205,10 @@ void gwtGUI::Send(string xmlStr)
  */
 void gwtGUI::SetStatus(bool valid, string message)
 {
+    logExtDbg("gwtGUI::SetStatus()");
     // build the xml string
     string s;
-    s.append("<gwt_status valid=\"");
+    s.append("<gui_status valid=\"");
     if (valid){
         s.append("true");
     }else{
@@ -216,7 +217,7 @@ void gwtGUI::SetStatus(bool valid, string message)
     s.append("\" text=\"");
     s.append(message);
     s.append("\">\n");
-    s.append("</gwt_status>\n");
+    s.append("</gui_status>\n");
 
     // and send it
     Send(s);
@@ -310,7 +311,7 @@ void gwtGUI::DispatchGuiReturn(string widgetid, string data)
     while(i != _children.end())
     {
         gwtXML_PRODUCER * tmpProducer = i->second;
-        tmpProducer->DispatchGuiReturn(widgetid, data); 
+        tmpProducer->ReceiveFromGui(widgetid, data); 
         i++;
     } 
     

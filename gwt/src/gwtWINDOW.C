@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtWINDOW.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"
+* "@(#) $Id: gwtWINDOW.C,v 1.2 2004-11-29 14:43:43 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * gwtWINDOW class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtWINDOW.C,v 1.1 2004-11-25 14:27:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtWINDOW.C,v 1.2 2004-11-29 14:43:43 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -79,7 +79,7 @@ string gwtWINDOW::GetXmlBlock()
     string s;
 
     // append starting tag block
-    s.append("<gwt_desc");
+    s.append("<gui_desc");
     AppendXmlAttributes(s);
     s.append(">");
 
@@ -97,7 +97,7 @@ string gwtWINDOW::GetXmlBlock()
     }
 
     // append closing tag
-    s.append("</gwt_desc>\n");
+    s.append("</gui_desc>\n");
 
     return s;
 }
@@ -120,20 +120,13 @@ void gwtWINDOW::Hide(void)
 {
    logExtDbg("gwtWINDOW::Hide()");
    string s;
-   s.append("<gwt_update>");
-   s.append("<gwt_desc variable=\"");
+   s.append("<gui_update>");
+   s.append("<gui_desc variable=\"");
    s.append(GetXmlAttribute("widgetid"));
-   s.append("\" variableValue=\"false\"></gwt_desc>\n</gwt_update>\n");
+   s.append("\" variableValue=\"false\"></gui_desc>\n</gui_update>\n");
    SendXml(s);
 }
 
-
-
-void gwtWINDOW::SetProducerId(string id)
-{
-    logExtDbg("gwtWINDOW::SetProducerId()");
-    SetWidgetId(id);
-}
 
 void gwtWINDOW::SetWidgetId(string id)
 {
@@ -141,6 +134,31 @@ void gwtWINDOW::SetWidgetId(string id)
     gwtWIDGET::SetWidgetId(id);
     SetXmlAttribute("variable",id);
 }
+
+/**
+ * This method is called by the gwt during the registration.
+ * \param id the given id associated to this object.
+ */
+void gwtWINDOW::SetProducerId(string id)
+{
+    logExtDbg("gwtWINDOW::SetProducerId()");
+    SetWidgetId(id);
+}
+
+/**
+ * This method is automatically called by the gwtGUI for each widget events.
+ *
+ * \param widgetid  the affected widget id
+ * \param data  the new value or empty for a command widget
+ *
+ */
+void gwtWINDOW::ReceiveFromGui(string widgetid, string data)
+{
+    logExtDbg("gwtWINDOW::ReceiveFromGui()");
+    DispatchGuiReturn(widgetid, data);
+}
+
+
 
 /*
  * Protected methods

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWINDOW.cpp,v 1.4 2005-03-02 13:18:56 mella Exp $"
+ * "@(#) $Id: gwtWINDOW.cpp,v 1.5 2005-03-08 14:19:38 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/03/02 13:18:56  mella
+ * Bug correction for to choose between update and creation
+ *
  * Revision 1.3  2005/03/02 13:07:56  mella
  * Implement a basic update mechanism
  *
@@ -25,7 +28,7 @@
  * Definition of gwtWINDOW class.
  */
 
-static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.4 2005-03-02 13:18:56 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.5 2005-03-08 14:19:38 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -60,6 +63,8 @@ using namespace std;
 gwtWINDOW::gwtWINDOW()
 {
     logExtDbg("gwtWINDOW::gwtWINDOW()");
+    // Init a default empty closeCommand
+    SetCloseCommand(""); 
 }
 
 /** 
@@ -197,6 +202,14 @@ void gwtWINDOW::SetProducerId(string id)
 void gwtWINDOW::ReceiveFromGui(string widgetid, string data)
 {
     logExtDbg("gwtWINDOW::ReceiveFromGui()");
+    string closeCommand=GetXmlAttribute("cancelCommand");
+    if(! closeCommand.empty()){
+        // if widgetid equals the closeCommand value, execute callback
+        if( widgetid.find(closeCommand) != string::npos ){
+            ExecuteCB(&data);
+        }
+    }
+    
     DispatchGuiReturn(widgetid, data);
 }
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.4 2004-07-05 15:08:47 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.5 2004-07-05 15:32:15 gluck Exp $"
 *
 *
 * who       when         what
@@ -185,16 +185,14 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
  * entities. Doxygen will create the link automatically. For example,
  * modcProc2, modcCOLOR
  * 
- * \bug OPTIONAL. Bugs list if it exists. You can make a list with the \li
- * marker, like below.
- * \bug \li For example, the function doesn't deal with special characters.
- * \bug \li For example, the function crashes if the buffer size is greater
+ * \bug OPTIONAL. Bugs list if it exists.
+ * \bug For example, the function doesn't deal with special characters.
+ * \bug For example, the function crashes if the buffer size is greater
  * than 1024.
  *
- * \todo OPTIONAL. Things to forsee list, if needed. You can make a list with
- * the \li marker, like below.
- * \todo \li For example, correct bugs.
- * \todo \li For example, extend the function with file1 and file 2.
+ * \todo OPTIONAL. Things to forsee list.
+ * \todo For example, correct bugs.
+ * \todo For example, extend the function with file1 and file 2.
  *
  */
 mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)

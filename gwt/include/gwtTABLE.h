@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTABLE.h,v 1.4 2005-02-15 12:33:49 gzins Exp $"
+ * "@(#) $Id: gwtTABLE.h,v 1.5 2005-02-28 12:59:53 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 12:33:49  gzins
+ * Updated file description
+ *
  * Revision 1.3  2005/02/15 12:17:52  gzins
  * Added CVS log as file modification history
  *
@@ -45,6 +48,8 @@ public:
     virtual string GetCell(int row, int column);
     virtual void SetCellBackground(int row, int column, string color);
     virtual void SetColumnHeader(int column, string title);
+    virtual void SetWidth(int nbPixels);
+    virtual void SetHeight(int nbPixels);    
 protected:
 private:    
     gwtCELL **_cells;

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcMain.c,v 1.7 2004-07-26 07:50:44 gluck Exp $"
+* "@(#) $Id: modcMain.c,v 1.8 2004-08-05 12:21:56 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -38,30 +38,41 @@
 
 /**
  * \file
- * \e \<Command Name\> - brief description of the program, which ends at
- * this dot.
+ * brief description of the program, which ends at this dot.
  *
- * \b Synopsis:\n
+ * \synopsis
  * \e \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
  *                     [\e \<option1\> ... \e \<optionN\>] 
  *
- * \b Details:\n
+ * \param param1 : description of parameter 1
+ * \param paramN : description of parameter N
+ *
+ * \n
+ * \opt
+ * \optname option1 : description of option 1
+ * \optname optionN : description of option N
+ * 
+ * \n
+ * \details
  * OPTIONAL detailed description of the c main file follows here.
  * 
- * \b Files:\n
+ * \usedfiles
  * OPTIONAL. If files are used, for each one, name, and usage description.
- * \li \e \<fileName1\> :  usage description of fileName1
- * \li \e \<fileName2\> :  usage description of fileName2
+ * \filename fileName1 :  usage description of fileName1
+ * \filename fileName2 :  usage description of fileName2
  *
- * \b Environment:\n
+ * \n
+ * \env
  * OPTIONAL. If needed, environmental variables accessed by the program. For
  * each variable, name, and usage description, as below.
- * \li \e \<envVar1\> :  usage description of envVar1
- * \li \e \<envVar2\> :  usage description of envVar2
+ * \envvar envVar1 :  usage description of envVar1
+ * \envvar envVar2 :  usage description of envVar2
  * 
+ * \n
  * \warning OPTIONAL. Warning if any (software requirements, ...)
  *
- * \n \b Code \b Example:\n
+ * \n
+ * \ex
  * OPTIONAL. Command example if needed
  * \n Brief example description.
  * \code
@@ -80,7 +91,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.7 2004-07-26 07:50:44 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.8 2004-08-05 12:21:56 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -128,7 +139,7 @@ int main (int argc, char *argv[])
     mcsInit(argv[0]);
     
     /* Set verbosity level */
-    logSetVerboseLevel (logEXTDBG);
+    logSetStdoutLogLevel(logEXTDBG);
     
     /* global variable modcNumber */
     mcsINT8 modcNumber = 34;

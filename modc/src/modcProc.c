@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.9 2004-07-23 12:38:35 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.10 2004-08-05 12:21:56 gluck Exp $"
 *
 *
 * who       when         what
@@ -42,21 +42,23 @@
  * 
  * OPTIONAL detailed description of the c procedure file follows here.
  *
- * \b Files:\n
+ * \usedfiles
  * OPTIONAL. If files are used, for each one, name, and usage description.
- * \li \e \<fileName1\> :  usage description of fileName1
- * \li \e \<fileName2\> :  usage description of fileName2
- *
- * \b Environment:\n
- * OPTIONAL. If needed, environmental variables accessed by the program. For
- * each
- * variable, name, and usage description, as below.
- * \li \e \<envVar1\> :  usage description of envVar1
- * \li \e \<envVar2\> :  usage description of envVar2
+ * \filename fileName1 :  usage description of fileName1
+ * \filename fileName2 :  usage description of fileName2
  * 
+ * \n
+ * \env
+ * OPTIONAL. If needed, environmental variables accessed by the program. For
+ * each variable, name, and usage description, as below.
+ * \envvar envVar1 :  usage description of envVar1
+ * \envvar envVar2 :  usage description of envVar2
+ * 
+ * \n
  * \warning OPTIONAL. Warning if any (software requirements, ...)
  *
- *  \n \b Code \b Example:\n
+ * \n
+ * \ex
  * OPTIONAL. Code example if needed
  * \n Brief example description.
  * \code
@@ -76,7 +78,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcProc.c,v 1.9 2004-07-23 12:38:35 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcProc.c,v 1.10 2004-08-05 12:21:56 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -134,13 +136,15 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y);
  * \param x description of parameter x. In the example, a number.
  * \param y description of parameter y. In the example, a number.
  * 
+ * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n \b Error \b codes:\n
+ * \n
+ * \err
  * If error handling system is used.
  * The possible errors are :
- * \li modcERR_ERROR_1
- * \li modcERR_ERROR_2
+ * \errname modcERR_ERROR_1
+ * \errname modcERR_ERROR_2
  * 
  */
 static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
@@ -167,29 +171,35 @@ static mcsCOMPL_STAT modcSub(mcsINT8 x, mcsINT8 y)
  * \param a description of parameter a. In the example, a string.
  * \param b description of parameter b. In the example, an integer.
  *
+ * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n \b Error \b codes:\n
+ * \n
+ * \err
  * If error handling system is used.
  * The possible errors are :
- * \li modcERR_ERROR_1
- * \li modcERR_ERROR_2
+ * \errname modcERR_ERROR_1
+ * \errname modcERR_ERROR_3
  * 
- * \n \b Files:\n
+ * \n
+ * \usedfiles
  * OPTIONAL. If files are used, for each one, name, and usage description.
- * \li \e \<fileName1\> :  usage description of fileName1
- * \li \e \<fileName2\> :  usage description of fileName2
+ * \filename fileName1 :  usage description of fileName1
+ * \filename fileName2 :  usage description of fileName2
  *
- * \b Environment:\n
+ * \n
+ * \env
  * OPTIONAL. If needed, environmental variables accessed by the program. For
  * each variable, name, and usage description, as below.
- * \li \e \<envVar1\> :  usage description of envVar1
- * \li \e \<envVar2\> :  usage description of envVar2
+ * \envvar envVar1 :  usage description of envVar1
+ * \envvar envVar2 :  usage description of envVar2
  * 
+ * \n
  * \warning OPTIONAL. Warning if any (software requirements, ...). For example
  * parameter b is a 8 bit integer.
  *
- * \n \b Code \b Example:\n 
+ * \n
+ * \ex 
  * OPTIONAL. Code example if needed
  * \n Brief example description.
  * \code
@@ -235,15 +245,17 @@ mcsCOMPL_STAT modcProc1(mcsBYTES32 a, mcsINT8 b)
  *
  * \param c description of parameter c. In the example, a string.
  *
+ * \n
  * \return Description of the return value. In the example, SUCCESS or FAILURE. 
  *
- * \n \b Error \b codes:\n
+ * \n
+ * \err
  * If error handling system is used.
  * The possible errors are :
- * \li modcERR_ERROR_1
- * \li modcERR_ERROR_2
+ * \errname modcERR_ERROR_2
+ * \errname modcERR_ERROR_3
  * 
- * \n 
+ * \n
  * \sa OPTIONAL. See also section, in witch you can refer other documented
  * entities. Doxygen will create the link automatically. For example
  * modcProc1.

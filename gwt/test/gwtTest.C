@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.11 2005-03-02 14:54:17 mella Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.12 2005-03-08 12:41:25 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/03/02 14:54:17  mella
+ * Test dimension change for the table
+ *
  * Revision 1.10  2005/03/02 13:08:09  mella
  * Test the window update mechanism
  *
@@ -33,7 +36,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.11 2005-03-02 14:54:17 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.12 2005-03-08 12:41:25 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -99,6 +102,8 @@ private:
     gwtBUTTON *button3;
     gwtSEPARATOR *separator;
     gwtTABLE *table1;
+
+    gwtMENU *menu;
 };
 
 gwtTestSERVER::gwtTestSERVER()
@@ -150,10 +155,17 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     evhIOSTREAM_KEY key(oneGui->GetSd());
     AddCallback(key, cb);
        
+    // Prepare a menu 
+    menu = new gwtMENU("menu de test");
+    oneGui->RegisterXmlProducer(menu);
+    menu->Show();
+    
     // Prepare a window
     window1->SetTitle("First Window");
+    window1->SetCloseCommand("window1_closed");
     window1->AttachAGui(oneGui);
-
+    
+    window1->Hide();
     
     // Prepare a button
     button1->SetHelp("No real interresting help for the button1");

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: modcProc.c,v 1.10 2004-08-05 12:21:56 gluck Exp $"
+* "@(#) $Id: modcProc.c,v 1.11 2004-08-06 15:58:42 gluck Exp $"
 *
 *
 * who       when         what
@@ -66,7 +66,7 @@
  * \endcode
  *
  * \sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
+ * entities. Doxygen will create the link automatically. For example, 
  * \sa modcMain.c
  * 
  * \bug OPTIONAL. Bugs list if it exists.
@@ -78,14 +78,16 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcProc.c,v 1.10 2004-08-05 12:21:56 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcProc.c,v 1.11 2004-08-06 15:58:42 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers 
  */
 #include <stdio.h>
 #include <string.h>
+
 
 /*
  * MCS Headers 

@@ -1,13 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-07-08 13:17:51 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-07-22 07:46:22 gluck Exp $"
 #
 # Makefile of ........
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# sccmgr    08-Jul-2004  Created
+# gluck     30-Jun-2004  Created
 #
 #
 #*******************************************************************************
@@ -34,14 +34,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = modcppMain
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+modcppMain_OBJECTS   = modcppMain
+modcppMain_LDFLAGS   = -lxml2 -lgdome -lstdc++
+modcppMain_LIBS      = mcs log err modcpp
 
 #
 # special compilation flags for single c sources
@@ -50,17 +50,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
+INCLUDES        = modcppOPERATION.h
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = modcpp
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-lllll_OBJECTS   =
+modcpp_OBJECTS   = modcppOPERATION
 
 #
 # Scripts (public and local)

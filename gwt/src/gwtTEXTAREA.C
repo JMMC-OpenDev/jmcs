@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: gwtTEXTAREA.C,v 1.3 2004-12-03 14:27:01 mella Exp $"
+* "@(#) $Id: gwtTEXTAREA.C,v 1.4 2004-12-10 07:16:42 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * mella     16-Sep-2004  Created
+* gzins     10-Dec-2004  Fixed doxygen warning
 *
 *
 *******************************************************************************/
@@ -15,7 +16,7 @@
  * gwtTEXTAREA class definition file.
  */
 
-static char *rcsId="@(#) $Id: gwtTEXTAREA.C,v 1.3 2004-12-03 14:27:01 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTEXTAREA.C,v 1.4 2004-12-10 07:16:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -110,7 +111,7 @@ void gwtTEXTAREA::SetRows(int rows)
 /**
  * Set the number of columns.
  *
- * \param columnss the number of columns.
+ * \param columns the number of columns.
  *
  */
 void gwtTEXTAREA::SetColumns(int columns)

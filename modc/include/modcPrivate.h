@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: modcPrivate.h,v 1.3 2004-08-09 16:01:32 gluck Exp $"
+* "@(#) $Id: modcPrivate.h,v 1.4 2004-08-09 16:34:40 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -98,12 +98,14 @@ extern "C" {
  */
 #define modcPrintChoice(choice) modcProc2(choice)
 
-    
+
+
+
 #ifdef __cplusplus
 };
 #endif
   
-#endif /*!modcPrivate_H*/
 
+#endif /*!modcPrivate_H*/
 
 /*___oOo___*/

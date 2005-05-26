@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCHOICE.h,v 1.4 2005-02-15 12:33:49 gzins Exp $"
+ * "@(#) $Id: gwtCHOICE.h,v 1.5 2005-05-26 14:50:10 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 12:33:49  gzins
+ * Updated file description
+ *
  * Revision 1.3  2005/02/15 12:17:52  gzins
  * Added CVS log as file modification history
  ** mella     16-Sep-2004  Created
@@ -49,6 +52,7 @@ public:
     virtual string GetXmlBlock();
     virtual void Changed(string value);
     virtual mcsCOMPL_STAT Add(string item);
+    virtual mcsCOMPL_STAT Remove(string item);
     virtual mcsINT32 GetSelectedItem();
     virtual string GetSelectedItemValue();
     

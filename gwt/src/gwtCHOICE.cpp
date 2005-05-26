@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCHOICE.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
+ * "@(#) $Id: gwtCHOICE.cpp,v 1.3 2005-05-26 14:50:10 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/15 12:25:28  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.1  2005/01/27 18:09:35  gzins
  * Renamed .C to .cpp
  * Added CVS loh as modification history.
@@ -19,7 +22,7 @@
  * Definition of gwtCHOICE class.
  */
 
-static char *rcsId="@(#) $Id: gwtCHOICE.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtCHOICE.cpp,v 1.3 2005-05-26 14:50:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -132,6 +135,45 @@ mcsCOMPL_STAT gwtCHOICE::Add(string item)
     _items.push_back(item);
     return mcsSUCCESS;
 }
+
+/**
+ * Remove an item to the CHOICE menu.
+ *
+ * \param item the item to be removed. 
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT gwtCHOICE::Remove(string item)
+{
+    logExtDbg("gwtCHOICE::Remove()");
+    // create an item vector iterator
+    std::vector<string>::iterator itemsIterator;
+    // put it at the beginning of the vector
+    itemsIterator = _items.begin();
+    // while the iterator is not on the end of the vector
+    // or that the item is not found
+    mcsLOGICAL found = mcsFALSE;
+    while ((itemsIterator != _items.end()) && (found != mcsTRUE))
+    {
+        if (*itemsIterator == item)
+        {
+            found = mcsTRUE;
+        }
+        else
+        {
+            // move to the next element of the vector
+            itemsIterator++;
+        }
+    }
+    if (found == mcsTRUE)
+    {
+        // if item has been found in the vector
+        _items.erase(itemsIterator);
+    }
+
+    return mcsSUCCESS;
+}
+
 
 /** 
  *  Returns the index of the currently selected item.

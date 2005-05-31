@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCOMMAND.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
+ * "@(#) $Id: gwtCOMMAND.cpp,v 1.3 2005-05-31 08:42:00 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/15 12:25:28  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.1  2005/01/27 18:09:35  gzins
  * Renamed .C to .cpp
  * Added CVS loh as modification history.
@@ -20,7 +23,7 @@
  * Definition of gwtCOMMAND class.
  */
 
-static char *rcsId="@(#) $Id: gwtCOMMAND.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: gwtCOMMAND.cpp,v 1.3 2005-05-31 08:42:00 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -73,7 +76,9 @@ gwtCOMMAND::~gwtCOMMAND()
  *
  * \param obj class instance pointer. 
  * \param method  method to be executed on condition arrival.
- *
+ * 
+ * \warning Only one callback per widget can be used. Just recall this method to
+ * connect a new callback.
  */
 void gwtCOMMAND::AttachCB(fndOBJECT *obj, CB_METHOD method)
 {
@@ -81,6 +86,7 @@ void gwtCOMMAND::AttachCB(fndOBJECT *obj, CB_METHOD method)
     _cbObj=obj;
     _cbMethod=method;
 }
+
 
 
 /**
@@ -94,10 +100,12 @@ mcsCOMPL_STAT gwtCOMMAND::ExecuteCB(void * userData)
 
     if(_cbObj == NULL)
     {
+        // \todo add error code
         return mcsFAILURE;
     }
     else if(_cbMethod == NULL)
     {
+        // \todo add error code
         return mcsFAILURE;
     }
     else

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modcppMain.cpp,v 1.3 2005-02-15 10:48:15 gzins Exp $"
+ * "@(#) $Id: modcppMain.cpp,v 1.4 2005-06-20 13:17:52 swmgr Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/15 10:48:15  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.2  2005/02/15 10:40:17  gzins
  * Added CVS log as file modification history
  *
@@ -93,7 +96,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppMain.cpp,v 1.3 2005-02-15 10:48:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: modcppMain.cpp,v 1.4 2005-06-20 13:17:52 swmgr Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -150,7 +153,7 @@ int main(int argc, char *argv[])
     }
 
     // Set stdout log level
-    logSetStdoutLogLevel(logEXTDBG);
+    logSetStdoutLogLevel(logTRACE);
     
     // operation object instanciation
     modcppOPERATION operation;

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modcMain.c,v 1.12 2005-02-13 17:37:11 gzins Exp $"
+ * "@(#) $Id: modcMain.c,v 1.13 2005-06-20 13:17:16 swmgr Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/13 17:37:11  gzins
+ * Added CVS log as modification history
+ *
  * gluck     11-Jun-2004  Created
  *
  *
@@ -92,7 +95,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.12 2005-02-13 17:37:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: modcMain.c,v 1.13 2005-06-20 13:17:16 swmgr Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -147,7 +150,7 @@ int main (int argc, char *argv[])
     }
     
     /* Set stdout log level */
-    logSetStdoutLogLevel(logEXTDBG);
+    logSetStdoutLogLevel(logTRACE);
     
     /* global variable modcNumber */
     mcsINT8 modcNumber = 34;

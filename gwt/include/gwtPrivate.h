@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtPrivate.h,v 1.4 2005-02-15 12:17:52 gzins Exp $"
+ * "@(#) $Id: gwtPrivate.h,v 1.5 2005-08-26 13:01:45 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 12:17:52  gzins
+ * Added CVS log as file modification history
+ *
  * mella     13-Sep-2004  Created
  *
  ******************************************************************************/
@@ -31,7 +34,7 @@ extern "C" {
  */
 #define MODULE_ID "gwt"
 
- 
+#define gwtUNINITIALIZED_WIDGET_NAME "notInitedWidget"
 
 #ifdef __cplusplus
 }

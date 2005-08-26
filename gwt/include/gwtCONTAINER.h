@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCONTAINER.h,v 1.5 2005-02-15 12:33:49 gzins Exp $"
+ * "@(#) $Id: gwtCONTAINER.h,v 1.6 2005-08-26 13:00:52 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/15 12:33:49  gzins
+ * Updated file description
+ *
  * Revision 1.4  2005/02/15 12:17:52  gzins
  * Added CVS log as file modification history
  *
@@ -41,10 +44,11 @@ class gwtCONTAINER: public gwtWIDGET
 public:
     gwtCONTAINER();
     virtual ~gwtCONTAINER(){};
+    virtual string GetXmlBlock();
     virtual string GetNewWidgetId(gwtWIDGET *widget);
     virtual mcsCOMPL_STAT Add(gwtWIDGET * widget);
-    virtual mcsCOMPL_STAT AddContainer(gwtCONTAINER * container);
     virtual void DispatchGuiReturn(string widgetid, string data);
+    virtual mcsLOGICAL IsContainer();
     /** 
      * typedef for map of widgets
      */

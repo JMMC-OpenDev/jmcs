@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCONTAINER.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $"
+ * "@(#) $Id: gwtCONTAINER.cpp,v 1.3 2005-08-26 12:42:23 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/15 12:25:28  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.1  2005/01/27 18:09:35  gzins
  * Renamed .C to .cpp
  * Added CVS loh as modification history.
@@ -21,7 +24,7 @@
  */
 
 static char *rcsId =
-  "@(#) $Id: gwtCONTAINER.cpp,v 1.2 2005-02-15 12:25:28 gzins Exp $";
+  "@(#) $Id: gwtCONTAINER.cpp,v 1.3 2005-08-26 12:42:23 mella Exp $";
 static void *use_rcsId = ((void) &use_rcsId, (void *) &rcsId);
 
 
@@ -71,6 +74,26 @@ gwtCONTAINER::gwtCONTAINER ()
  * Public methods
  */
 
+string gwtCONTAINER::GetXmlBlock()
+{
+    logExtDbg("gwtCONTAINER::GetXmlBlock()");
+    string s;
+    // append children content
+    gwtMAP_STRING2WIDGET::iterator i = _children.begin();
+    while(i != _children.end())
+    {
+        gwtWIDGET * tmpWidget = i->second;
+        string mystring = tmpWidget->GetXmlBlock();
+        if ( ! mystring.empty() )
+        {
+            s.append(mystring);
+        }
+        i++;
+    }
+    return s;
+}
+
+
 /** 
  *  Return a widgetId for the given widget.
  *
@@ -102,36 +125,32 @@ mcsCOMPL_STAT gwtCONTAINER::Add (gwtWIDGET * widget)
 {
   logExtDbg ("gwtCONTAINER::Add()");
 
-  string wid(GetNewWidgetId(widget));
-   widget->SetWidgetId(wid);
-  
+  string wid(widget->GetWidgetId());
+  // check if widget was previously added in one container
+  if ( wid.compare(gwtUNINITIALIZED_WIDGET_NAME) == 0)
+  {
+    wid=GetNewWidgetId(widget);
+    widget->SetWidgetId(wid);
+  }
+  else
+  {
+    logDebug("not inited widget added was %s",widget->GetXmlBlock().data());
+    errAdd(gwtERR_WIDGET_ALREADY_ADDED);
+    return mcsFAILURE;
+  }
   logDebug ("add new widget referenced by: %s",wid.data());
   
   _children.insert ( make_pair(wid,widget));
 
+  // If the widget is a container, add it to the container list
+  if ( widget->IsContainer() == mcsTRUE )
+  {
+      logDebug ("add new container referenced by: %s", wid.data());
+      _containers.insert ( make_pair(wid,(gwtCONTAINER *)widget));
+  }
+
   return mcsSUCCESS;
 }
-
-/**
- * Add the given container into the container map. This method must be used
- * instead of Add one for every containers to make retrieval possible and identification. 
- *
- * \param container The container to add to the list of containers.
- *
- * \return mcsSUCCESS or mcsFAILURE in case of error.
- */
-mcsCOMPL_STAT gwtCONTAINER::AddContainer(gwtCONTAINER * container)
-{
-  logExtDbg ("gwtCONTAINER::AddContainer()");
-  Add(container);
-  // the container should now have a widget id
-  string wid = container->GetWidgetId();
-  logDebug ("add new container referenced by: %s", wid.data());
-  _containers.insert ( make_pair(wid,container));
-  return mcsSUCCESS;
-}
-
-
 
 /**
  * Dispach the Gui return to the widgets. 
@@ -163,9 +182,16 @@ void gwtCONTAINER::DispatchGuiReturn(string widgetid, string data)
     }
 }
 
+
+mcsLOGICAL gwtCONTAINER::IsContainer()
+{
+   return mcsTRUE;
+}
+
 /*
  * Protected methods
  */
+
 
 
 

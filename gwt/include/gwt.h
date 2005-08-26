@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwt.h,v 1.7 2005-02-24 13:26:59 mella Exp $"
+ * "@(#) $Id: gwt.h,v 1.8 2005-08-26 12:59:37 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/24 13:26:59  mella
+ * Add gwtLABEL
+ *
  * Revision 1.6  2005/02/15 12:17:52  gzins
  * Added CVS log as file modification history
  *
@@ -27,13 +30,8 @@
 
 
 /* will be replaced by evh.h */
-#include "evhCALLBACK.h"
-#include "evhCMD_CALLBACK.h"
-#include "evhIOSTREAM_CALLBACK.h"
-#include "evhHANDLER.h"
-#include "evhKEY.h"
-#include "evhCMD_KEY.h"
-#include "evhIOSTREAM_KEY.h"
+#include "evh.h"
+#include "gwtErrors.h"
 
 #include "gwtGUI.h"
 #include "gwtCOMMAND.h"

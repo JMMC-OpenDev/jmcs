@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWIDGET.cpp,v 1.5 2005-03-08 14:19:01 mella Exp $"
+ * "@(#) $Id: gwtWIDGET.cpp,v 1.6 2005-08-26 12:58:38 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/03/08 14:19:01  mella
+ * Add better handling for xml attributes
+ *
  * Revision 1.4  2005/02/28 12:48:31  mella
  * Implement SetWidgth and SetHeight
  *
@@ -28,7 +31,7 @@
  * Definition of gwtWIDGET class.
  */
 
-static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.5 2005-03-08 14:19:01 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.6 2005-08-26 12:58:38 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -61,7 +64,7 @@ using namespace std;
 gwtWIDGET::gwtWIDGET()
 {
     logExtDbg("gwtWIDGET::gwtWIDGET()");
-    SetWidgetId("default");
+    SetWidgetId(gwtUNINITIALIZED_WIDGET_NAME);
 }
 
 
@@ -167,6 +170,12 @@ void gwtWIDGET::SetWidgetId(string id)
     SetXmlAttribute("widgetid",id);
 }
 
+/** Indicates if the widget is a container.
+ * returns mcsFALSE.
+ */
+mcsLOGICAL gwtWIDGET::IsContainer(){
+    return mcsFALSE;
+}
 
 
 /*
@@ -234,6 +243,7 @@ void gwtWIDGET::AppendXmlAttributes(string &s)
         i++;
     }
 }
+
 
 /*
  * Private methods

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWIDGET.h,v 1.6 2005-02-28 13:00:11 mella Exp $"
+ * "@(#) $Id: gwtWIDGET.h,v 1.7 2005-08-26 13:02:04 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/28 13:00:11  mella
+ * Implement SetAttribute
+ *
  * Revision 1.5  2005/02/15 12:33:49  gzins
  * Updated file description
  *
@@ -58,13 +61,13 @@ public:
     virtual string GetWidgetId();
     // \todo try to make it friend for gwtCONTAINER only 
     virtual void SetWidgetId(string id);
+    virtual mcsLOGICAL IsContainer();
 protected:
+    virtual void SetXmlAttribute(string name, string value);
     virtual string GetXmlAttribute(string name);
     virtual void AppendXmlAttributes(string &s);
-    virtual void SetXmlAttribute(string name, string value);
 private:
     map<string, string> _xmlAttributes;
-
 };
 
 #endif /*!gwtWIDGET_H*/

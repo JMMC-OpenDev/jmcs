@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCONTAINER.cpp,v 1.3 2005-08-26 12:42:23 mella Exp $"
+ * "@(#) $Id: gwtCONTAINER.cpp,v 1.4 2005-08-30 07:33:59 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/08/26 12:42:23  mella
+ * Remove AddContainer() and make Add() generic
+ * add IsContainer()
+ *
  * Revision 1.2  2005/02/15 12:25:28  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -24,7 +28,7 @@
  */
 
 static char *rcsId =
-  "@(#) $Id: gwtCONTAINER.cpp,v 1.3 2005-08-26 12:42:23 mella Exp $";
+  "@(#) $Id: gwtCONTAINER.cpp,v 1.4 2005-08-30 07:33:59 mella Exp $";
 static void *use_rcsId = ((void) &use_rcsId, (void *) &rcsId);
 
 
@@ -115,7 +119,8 @@ string gwtCONTAINER::GetNewWidgetId(gwtWIDGET *widget)
 
 /**
  * Add the given widget into the container. The widget will get a widget id
- * to make retrieval possible and identification. 
+ * to make retrieval possible and identification. Containers can also contain
+ * containers using this method. 
  *
  * \param widget  The widget to add to the container
  *
@@ -151,6 +156,24 @@ mcsCOMPL_STAT gwtCONTAINER::Add (gwtWIDGET * widget)
 
   return mcsSUCCESS;
 }
+
+/**
+ * Add the given container into the container map. This method must be used
+ * instead of Add one for every containers to make retrieval possible and identi
+fication.
+ *
+ * \param container The container to add to the list of containers.
+ *
+ * \return mcsSUCCESS or mcsFAILURE in case of error.
+ * \warning Deprecated: Add method must be used to handle simple or container
+ * widgets.
+ */
+mcsCOMPL_STAT gwtCONTAINER::AddContainer(gwtCONTAINER * container)
+{
+  logWarning ("gwtCONTAINER::AddContainer() used instead of Add()");
+  return Add(container);
+}
+
 
 /**
  * Dispach the Gui return to the widgets. 

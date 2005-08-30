@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCONTAINER.h,v 1.6 2005-08-26 13:00:52 mella Exp $"
+ * "@(#) $Id: gwtCONTAINER.h,v 1.7 2005-08-30 07:34:24 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/08/26 13:00:52  mella
+ * Add IsContainer that returns true
+ * And add GetXmlBlock to make possible to add a Container to a Window
+ *
  * Revision 1.5  2005/02/15 12:33:49  gzins
  * Updated file description
  *
@@ -47,6 +51,8 @@ public:
     virtual string GetXmlBlock();
     virtual string GetNewWidgetId(gwtWIDGET *widget);
     virtual mcsCOMPL_STAT Add(gwtWIDGET * widget);
+    virtual mcsCOMPL_STAT AddContainer(gwtCONTAINER * container);
+
     virtual void DispatchGuiReturn(string widgetid, string data);
     virtual mcsLOGICAL IsContainer();
     /** 

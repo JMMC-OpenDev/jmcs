@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.13 2005-03-08 14:17:28 mella Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.14 2005-09-27 07:29:12 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/03/08 14:17:28  mella
+ * Add window's close event handling
+ *
  * Revision 1.12  2005/03/08 12:41:25  mella
  * Add a close command
  *
@@ -39,7 +42,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.13 2005-03-08 14:17:28 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.14 2005-09-27 07:29:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -135,6 +138,9 @@ gwtTestSERVER::~gwtTestSERVER()
     delete button2;
     delete button3;
     delete separator;
+    delete label1;
+    delete table1;
+    delete menu;
 }
 
 mcsCOMPL_STAT gwtTestSERVER::AppInit()
@@ -143,7 +149,7 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
     
     mcsCOMPL_STAT status;
     string gwtHost("localhost");
-    int gwtPort = 1234;
+    int gwtPort = 1235;
     
     // Connect the gwtGUI to the remote system
     status = oneGui->ConnectToRemoteGui(gwtHost,gwtPort, mcsGetProcName());
@@ -326,27 +332,28 @@ evhCB_COMPL_STAT gwtTestSERVER::SocketCB (const int sd,void* obj)
 
 int main(int argc, char *argv[])
 {
-    gwtTestSERVER gwtTestServer;
-    logInfo("Server initing ..");
-
-    // Init server
-    if (gwtTestServer.Init(argc, argv) == mcsFAILURE)
     {
-        errDisplayStack();
-        exit (EXIT_FAILURE);
-    }
-   
-    logInfo("Server starting ..");
-    gwtTestServer.DoIt();
+        gwtTestSERVER gwtTestServer;
+        logInfo("Server initing ..");
 
-    // Main loop
-    if (gwtTestServer.MainLoop() == mcsFAILURE)
-    {
-        errDisplayStack();
-    }
-    
-    logInfo("Server exiting ..");
+        // Init server
+        if (gwtTestServer.Init(argc, argv) == mcsFAILURE)
+        {
+            errDisplayStack();
+            exit (EXIT_FAILURE);
+        }
 
+        logInfo("Server starting ..");
+        gwtTestServer.DoIt();
+
+        // Main loop
+        if (gwtTestServer.MainLoop() == mcsFAILURE)
+        {
+            errDisplayStack();
+        }
+
+        logInfo("Server exiting ..");
+    }
     exit (EXIT_SUCCESS);
 }
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWINDOW.cpp,v 1.5 2005-03-08 14:19:38 mella Exp $"
+ * "@(#) $Id: gwtWINDOW.cpp,v 1.6 2005-09-28 14:02:48 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/03/08 14:19:38  mella
+ * Add closing callback support
+ *
  * Revision 1.4  2005/03/02 13:18:56  mella
  * Bug correction for to choose between update and creation
  *
@@ -28,7 +31,7 @@
  * Definition of gwtWINDOW class.
  */
 
-static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.5 2005-03-08 14:19:38 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.6 2005-09-28 14:02:48 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -82,6 +85,7 @@ gwtWINDOW::gwtWINDOW(char *title)
 gwtWINDOW::~gwtWINDOW()
 {
     logExtDbg("gwtWINDOW::~gwtWINDOW()");
+    Hide();
 }
 
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.cpp,v 1.7 2005-03-08 11:22:27 mella Exp $"
+ * "@(#) $Id: gwtGUI.cpp,v 1.8 2005-09-28 14:02:10 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/03/08 11:22:27  mella
+ * Change %80 into %.80 for logInfo
+ *
  * Revision 1.6  2005/03/08 11:08:33  mella
  * Place logInfo for message exchanges with Xml Java Side
  *
@@ -34,7 +37,7 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.7 2005-03-08 11:22:27 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.8 2005-09-28 14:02:10 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -85,6 +88,7 @@ gwtGUI::gwtGUI()
 gwtGUI::~gwtGUI()
 {
     logExtDbg("gwtGUI::~gwtGUI()");    
+    delete _clientSocket;
 }
 
 /**

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.h,v 1.5 2005-02-24 11:08:01 mella Exp $"
+ * "@(#) $Id: gwtGUI.h,v 1.6 2005-10-07 06:56:11 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/24 11:08:01  mella
+ * Add reason to SetStatus
+ *
  * Revision 1.4  2005/02/15 12:33:49  gzins
  * Updated file description
  *
@@ -33,7 +36,7 @@
 
 #include "gwtWIDGET.h"
 #include "gwtWINDOW.h"
-#include "msgSOCKET_CLIENT.h"
+#include "evh.h"
 
 /*
  * Class declaration
@@ -46,26 +49,28 @@
  * It is linked to the remote displayer using a socket connection. This
  * connection is used by the event handler.
  */
-class gwtGUI
+class gwtGUI: public evhSERVER
 {
 public:
     gwtGUI();
     virtual ~gwtGUI();
-    virtual mcsCOMPL_STAT ConnectToRemoteGui(const string hostname, const int port, const string procname);
+
+    virtual mcsCOMPL_STAT AddionalInit();
     virtual void SetStatus(bool valid, string status, string explanation="");
     virtual void Send(string xmlStr);
-    virtual int GetSd();
     virtual void RegisterXmlProducer(gwtXML_PRODUCER *producer);
-    virtual void ReceiveData(string data);
     /** 
      * typedef for map of windows
      */
     typedef map<string, gwtXML_PRODUCER *> gwtMAP_STRING2PRODUCER;
 protected:
+    virtual evhCB_COMPL_STAT ReceiveDataCB(const int sd, void *userData);
+
     gwtMAP_STRING2PRODUCER _children; 
 private:
     msgSOCKET_CLIENT *_clientSocket;
     virtual void DispatchGuiReturn(string widgetid, string data);
+    virtual mcsCOMPL_STAT ConnectToRemoteGui(const string hostname, const int port, const string procname);
 };
 
 #endif /*!gwtGUI_H*/

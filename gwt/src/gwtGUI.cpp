@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.cpp,v 1.8 2005-09-28 14:02:10 mella Exp $"
+ * "@(#) $Id: gwtGUI.cpp,v 1.9 2005-10-07 06:56:11 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/09/28 14:02:10  mella
+ * Improve memory deallocation into destructor
+ *
  * Revision 1.7  2005/03/08 11:22:27  mella
  * Change %80 into %.80 for logInfo
  *
@@ -37,7 +40,7 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.8 2005-09-28 14:02:10 mella Exp $"; 
+static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.9 2005-10-07 06:56:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -92,6 +95,38 @@ gwtGUI::~gwtGUI()
 }
 
 /**
+ * Initialization of servers.
+ * 
+ * It established connection with the remote GUI server.
+ *
+ * \return mcsSUCCESS on successful completion or mcsFAILURE otherwise. 
+ */
+mcsCOMPL_STAT gwtGUI::AddionalInit()
+{
+    logTrace("gwtGUI::AddionalInit()");
+
+    // Registers application to MCS services and parses the command-line
+    // parameters
+    if (evhSERVER::AddionalInit() == mcsFAILURE)
+    {
+        return (mcsFAILURE);
+    }
+
+    // Retrieve port number used to communicate with GUI server
+    mcsINT32    port;
+    if (miscGetEnvVarIntValue("GILDASGUIPORT", &port) == mcsFAILURE)
+    {
+        return (mcsFAILURE);
+    }
+
+    if (ConnectToRemoteGui("localhost", port, mcsGetProcName()) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+/**
  * Set the location of the remote GUI system and connect. After this call, the
  * evh Handler can trig event on the socket descriptor.
  *
@@ -111,11 +146,17 @@ mcsCOMPL_STAT gwtGUI::ConnectToRemoteGui(const string hostname, const int port, 
         return mcsFAILURE;
     }
     
-    
+
     string configStr("<config entityName=\"");
     configStr.append(procname);
     configStr.append("\" to=\"JavaGui\"></config>\n");
     Send(configStr);
+
+    // Prepare Event Handling for reception of messages from the gui
+    evhIOSTREAM_CALLBACK ioStreamCB
+        (this, (evhIOSTREAM_CB_METHOD)&gwtGUI::ReceiveDataCB);
+    evhIOSTREAM_KEY ioStreamKey(_clientSocket->GetDescriptor());
+    AddCallback(ioStreamKey, ioStreamCB);
 
     return mcsSUCCESS;
     /* Now the evhHandler should handle socket event */
@@ -127,26 +168,14 @@ mcsCOMPL_STAT gwtGUI::ConnectToRemoteGui(const string hostname, const int port, 
 
 
 /**
- * Return the socket descriptor
- *
- * \return 
- * \b Errors codes: 
- * The possible errors are:
- */
-int gwtGUI::GetSd()
-{
-   return _clientSocket->GetDescriptor(); 
-}
-
-/**
  * Send a XML string to the remote gui over the socket.
  * \param xmlStr XML string to send.
  * \todo test error cases
  */
 void gwtGUI::Send(string xmlStr)
 {
-    // logExtDbg("gwtGUI::Send()");
-    logInfo("gwtGUI::Send %.80s",xmlStr.data());    
+    logTrace("gwtGUI::Send()");    
+    logInfo("Send '%.80s' to Xml Gui server",xmlStr.data());    
    
     _clientSocket->Send(xmlStr);
 }
@@ -169,14 +198,18 @@ void gwtGUI::SetStatus(bool valid, string status, string explanation )
     // build the xml string
     string s;
     s.append("<gui_status valid=\"");
-    if (valid){
+    if (valid)
+    {
         s.append("true");
-    }else{
+    }
+    else
+    {
         s.append("false");
     }
     s.append("\" text=\"");
     s.append(status);
-    if (! explanation.empty()){
+    if (! explanation.empty())
+    {
         s.append("\" ");
         s.append(" reason=\"");
         s.append(explanation);
@@ -196,14 +229,19 @@ void gwtGUI::SetStatus(bool valid, string status, string explanation )
  *
  * \param data the received buffer 
  */
-void gwtGUI::ReceiveData(string data)
+evhCB_COMPL_STAT  gwtGUI::ReceiveDataCB (const int sd,void* obj)
 {
-    //logExtDbg("gwtGUI::receiveData()");    
-    logInfo("gwtGUI::ReceiveData %.80s",data.data());    
+    logTrace("gwtGUI::ReceiveDataCB()");    
    
+    // Read message coming from XML server
+    int size;
+    char msg[1024];
+    size = read(sd, msg,1024);
+    msg[size]=0;
+    string data(msg);
 
     // do bad job correction : skip the trailing CR at the end of the data
-    int size = data.size();
+    size = data.size();
     char c =  data.at(size-1);
     if(c=='\n'){
         data = data.substr(0,size-1);
@@ -222,13 +260,16 @@ void gwtGUI::ReceiveData(string data)
         string widgetStr = afterSpaceStr.substr(0,secondSpaceIdx);
         string afterWidgetStr = afterSpaceStr.substr(secondSpaceIdx+1);
         DispatchGuiReturn(widgetStr, afterWidgetStr);
-    }else{
+    }
+    else
+    {
         /* it is a command widget (buttons) */
         logDebug("gwtGUI has received for command: %s" , data.data());
 
         DispatchGuiReturn(data.data(),"");
     }
     
+    return evhCB_SUCCESS;
 }
 
 

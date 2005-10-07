@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.14 2005-09-27 07:29:12 scetre Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.15 2005-10-07 06:56:55 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/09/27 07:29:12  scetre
+ * Add delete of class member
+ *
  * Revision 1.13  2005/03/08 14:17:28  mella
  * Add window's close event handling
  *
@@ -42,7 +45,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.14 2005-09-27 07:29:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: gwtTest.C,v 1.15 2005-10-07 06:56:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -88,12 +91,11 @@ using namespace std;
  * Signal catching functions  
  */
 
-class gwtTestSERVER : public evhSERVER
+class gwtTestSERVER : public gwtGUI
 {
 public:
     gwtTestSERVER();
     virtual ~gwtTestSERVER();
-    virtual evhCB_COMPL_STAT SocketCB (const int sd,void* obj);
     mcsCOMPL_STAT WindowCloseCB(void *userData);
     mcsCOMPL_STAT Button1CB(void *userData);
     mcsCOMPL_STAT Button3CB(void *userData);
@@ -102,7 +104,6 @@ public:
 private:
     gwtTEXTFIELD *textfield1;
     gwtWINDOW *window1; 
-    gwtGUI *oneGui;
     gwtLABEL *label1;
     gwtBUTTON *button1;
     gwtBUTTON *button2;
@@ -119,7 +120,6 @@ gwtTestSERVER::gwtTestSERVER()
     
     textfield1 = new gwtTEXTFIELD();
     window1 = new gwtWINDOW(); 
-    oneGui = new gwtGUI();
     label1 = new gwtLABEL("blah blah blah        ...","I did not place any help ");
     button1 = new gwtBUTTON();
     button2 = new gwtBUTTON("button2", "help for button2");
@@ -133,7 +133,6 @@ gwtTestSERVER::~gwtTestSERVER()
     logExtDbg("gwtTestSERVER::~gwtTestSERVER()");
     delete textfield1;
     delete window1; 
-    delete oneGui;
     delete button1;
     delete button2;
     delete button3;
@@ -147,33 +146,15 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
 {
     logExtDbg("gwtTestSERVER::AppInit()");
     
-    mcsCOMPL_STAT status;
-    string gwtHost("localhost");
-    int gwtPort = 1235;
-    
-    // Connect the gwtGUI to the remote system
-    status = oneGui->ConnectToRemoteGui(gwtHost,gwtPort, mcsGetProcName());
-    if (status == mcsFAILURE)
-    {
-        cout << "connection on " << gwtHost << ":" << gwtPort << " failed" << endl;
-        return mcsFAILURE;
-    }
-    cout << "connection on " << gwtHost << ":" << gwtPort << " succeed" << endl;
-    
-    // prepare Event Handling 
-    evhIOSTREAM_CALLBACK cb(this, (evhIOSTREAM_CB_METHOD)&gwtTestSERVER::SocketCB);
-    evhIOSTREAM_KEY key(oneGui->GetSd());
-    AddCallback(key, cb);
-       
     // Prepare a menu 
     menu = new gwtMENU("menu de test");
-    oneGui->RegisterXmlProducer(menu);
+    RegisterXmlProducer(menu);
     menu->Show();
     
     // Prepare a window
     window1->SetTitle("First Window");
     window1->SetCloseCommand("window_1_closed");
-    window1->AttachAGui(oneGui);
+    window1->AttachAGui(this);
     
     window1->Hide();
     
@@ -248,7 +229,7 @@ mcsCOMPL_STAT gwtTestSERVER::AppInit()
 mcsCOMPL_STAT gwtTestSERVER::WindowCloseCB(void *)
 {
     cout<< "Window's close button pressed" << " while the textfield value is:" << textfield1->GetText() <<endl;
-    oneGui->SetStatus(true, "Application exists");
+    SetStatus(true, "Application exists");
     
     window1->Hide();
     exit(0);
@@ -262,7 +243,7 @@ mcsCOMPL_STAT gwtTestSERVER::WindowCloseCB(void *)
 mcsCOMPL_STAT gwtTestSERVER::Button1CB(void *)
 {
     cout<< "button1 pressed" << " while the textfield value is:" << textfield1->GetText() <<endl;
-    oneGui->SetStatus(true, "");
+    SetStatus(true, "");
     
     // Modify textfield1 content
     string newStr;
@@ -282,7 +263,7 @@ mcsCOMPL_STAT gwtTestSERVER::Button3CB(void *)
 {
     cout<< "button3 pressed" <<endl;
     window1->Hide();
-    oneGui->SetStatus(true, "Window closed properly");
+    SetStatus(true, "Window closed properly");
     return mcsSUCCESS;
 }
 
@@ -297,36 +278,13 @@ void gwtTestSERVER::DoIt()
     // Set a new status message
     string msg("Hello from ");
     msg.append(mcsGetProcName());
-    oneGui->SetStatus(false, msg, "Because");
+    SetStatus(false, msg, "Because");
     
     // close the window 
     window1->Hide();
    
     // and show it again
     window1->Show();
-}
-
-/**
- *  Main callback used to get back events from the GUI. Actually there must be
- *  only one evh callbak to inform the gwt. 
- *
- * \param sd  the socket descriptor
- * \param obj nc
- *
- * \return  mcsSUCCESS or mcsFAILURE
- */
-evhCB_COMPL_STAT gwtTestSERVER::SocketCB (const int sd,void* obj)
-{
-    logExtDbg("gwtTestSERVER::SocketCB()");
-
-    int size;
-    mcsSTRING80 msg;
-    size = read(sd, msg,80);
-    msg[size]=0;
-    string data(msg);
-    oneGui->ReceiveData(data);
-
-    return evhCB_SUCCESS;
 }
 
 

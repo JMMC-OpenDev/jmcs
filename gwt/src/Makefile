@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2005-02-24 10:36:46 mella Exp $"
+# "@(#) $Id: Makefile,v 1.11 2005-11-29 09:27:04 mella Exp $"
 #
 # Makefile of gwt module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2005/02/24 10:36:46  mella
+# Add new LABEL Widget
+#
 # Revision 1.9  2005/02/15 12:26:39  gzins
 # Removed unused target
 #
@@ -111,7 +114,8 @@ gwt_OBJECTS   =	gwtGUI \
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
+SCRIPTS         = gwtStart \
+				  gwtStop
 SCRIPTS_L       =
 
 #
@@ -185,7 +189,7 @@ CSOURCENAMES = \
 
 #
 #>>>>> END OF standard rules
-
+JAVA_JAR = GuiClient.jar
 #
 # INCLUDE STANDARDS
 # -----------------
@@ -195,8 +199,14 @@ include $(MAKEDIR)/mkfMakefile
 #
 # TARGETS
 # -------
-all:	do_all
+all:	copy_local_jar do_all
 	@echo " . . . 'all' done" 
+
+copy_local_jar:
+	@echo "Copy local JAR files into ../lib"
+	@$(foreach file, $(JAVA_JAR), echo "        $(file)" ;\
+	cp -f ../jar/$(file) ../lib;)
+	@echo ""
 
 clean : clean_all 
 	@echo " . . . clean done"
@@ -204,7 +214,12 @@ clean : clean_all
 man   : do_man 
 	@echo " . . . man page(s) done"
 
-install : install_all
+install : install_all install_local_jar
 	@echo " . . . installation done"
 
+install_local_jar:
+	@echo "Copy local JAR files into $(INSTALL_ROOT)/lib"
+	@$(foreach file, $(JAVA_JAR), echo "        $(file)" ;\
+	      cp -f ../lib/$(file) $(INSTALL_ROOT)/lib;)
+	@echo ""
 #___oOo___

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: modcProc.c,v 1.13 2005-02-22 09:23:00 gluck Exp $"
+ * "@(#) $Id: modcProc.c,v 1.14 2006-01-10 14:40:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/02/22 09:23:00  gluck
+ * Updated \return comment
+ *
  * Revision 1.12  2005/02/13 17:37:11  gzins
  * Added CVS log as modification history
  *
@@ -80,8 +83,8 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcProc.c,v 1.13 2005-02-22 09:23:00 gluck Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: modcProc.c,v 1.14 2006-01-10 14:40:39 mella Exp $"; 
+
 
 
 /* 

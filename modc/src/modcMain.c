@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modcMain.c,v 1.13 2005-06-20 13:17:16 swmgr Exp $"
+ * "@(#) $Id: modcMain.c,v 1.14 2006-01-10 14:40:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/06/20 13:17:16  swmgr
+ * Changed logEXTDBG with logTRACE
+ *
  * Revision 1.12  2005/02/13 17:37:11  gzins
  * Added CVS log as modification history
  *
@@ -95,8 +98,8 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcMain.c,v 1.13 2005-06-20 13:17:16 swmgr Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: modcMain.c,v 1.14 2006-01-10 14:40:39 mella Exp $"; 
+
 
 
 /* 

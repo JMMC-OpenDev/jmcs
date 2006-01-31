@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: mthBesselK.c,v 1.1 2006-01-31 10:35:18 gzins Exp $"
+ * "@(#) $Id: mthBesselK.c,v 1.2 2006-01-31 16:46:25 lsauge Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/01/31 10:35:18  gzins
+ * Implemented mthBessKO function
+ *
  ******************************************************************************/
 
 /**
@@ -16,7 +19,7 @@
  * Bessel Functions (McDonald functions). 
  */
 
-static char *rcsId="@(#) $Id: mthBesselK.c,v 1.1 2006-01-31 10:35:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: mthBesselK.c,v 1.2 2006-01-31 16:46:25 lsauge Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -166,5 +169,131 @@ mcsDOUBLE mthBessK0(const mcsDOUBLE x)
     
     return bessK0;
 } 
+
+/**
+ * This function returns Modified Bessel function of X of the first kind of
+ * order 1.
+ */
+mcsDOUBLE mthBessK1(const mcsDOUBLE x)
+{
+    /* Initilized local data */
+    const mcsDOUBLE xsmall = 7.9e-10;
+    const mcsDOUBLE xbig   = 707.1;
+    const mcsDOUBLE xsest  = 5.9e-39;
+
+    /* Local variables */
+    mcsDOUBLE g, t, y;
+    
+    /* Returned Bessel value */
+    mcsDOUBLE bessK1;
+   
+    /* if x is negative */
+    if (x <= 0.) 
+    {
+	    bessK1 = 0.;
+    }
+    /* if x argument is smaller that 1/maxreal */
+    else if (x <= xsest) 
+    {
+	    bessK1 = 1. / xsest;
+    } 
+    /* else if x is larger than xbig where xbig is the largest rounded-up
+     * real such that (exp(-x)/sqrt(x))>minreal.  
+     * */
+    else if (x >= xbig) 
+    {
+	    bessK1 = 0.;
+    } 
+    /* else if x argument is too small */
+    else if (x <= xsmall) 
+    {
+	    bessK1 = 1. / x;
+    }
+    /* else if x<=1 */
+    else if (x <= 1.) 
+    {
+	    t = 2.0*x*x - 1.;
+        /* EXPANSION (0046) EVALUATED AS G(T)  --PRECISION 17E.18 */
+	    g = t * (t * (t * (t * (t * (t * (t * 1.189649624399104e-15 + 
+		    5.33888268665658944e-13) + 1.79784792380155752e-10) + 
+		    4.32764823642997753e-8) + 6.95300274548206237e-6) + 
+		    6.71642805873498653e-4) + .0325725988137110495) + 
+		    .531907865913352762;
+        /* EXPANSION (0047) EVALUATED AS Y(T)  --PRECISION 17E.18 */
+	    y = t * (t * (t * (t * (t * (t * (t * 3.298810580198656e-15 + 
+		    1.40917103024514301e-12) + 4.46828628435618679e-10) + 
+		    9.96686689273781531e-8) + 1.44612432533006139e-5) + 
+		    .00120333585658219028) + .0450490442966943726) + 
+		    .351825828289325536;
+	    /* returned value */
+        bessK1 = 1./x + x*(log(x)*g - y);
+    }
+    /* else if x<=2 (lower middle x) */
+    else if (x <= 2.)
+    {
+            t = 2.0*x - 3.;
+            /* EXPANSION (0048) EVALUATED AS Y(T)  --PRECISION 17E.18 */
+            y = t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (
+                t * (t * (t * (t * (t * (t * (t * (t * (t * (t * 
+                -1.46639291782948454e-11 + 4.27404330568767242e-11) - 
+                4.02591066627023831e-11) + 1.28044023949946257e-10) - 
+                6.15211416898895086e-10) + 1.82808381381205361e-9) - 
+                5.13783508140332214e-9) + 1.54456653909012693e-8) - 
+                4.66928912168020101e-8) + 1.40138351985185509e-7) - 
+                4.20507152338934956e-7) + 1.26265578331941923e-6) - 
+                3.79227698821142908e-6) + 1.13930169202553526e-5) - 
+                3.42424912211942134e-5) + 1.0298274670006073e-4) - 
+                3.10007681013626626e-4) + 9.3459415438764294e-4) - 
+                .00282450787841655951) + .00857388087067410089) - 
+                .0262545818729427417) + .0820250220860693888) - 
+                .271910714388689413) + 1.24316587355255299;
+            /* returned value */
+            bessK1 = exp(-(x)) * y;
+    }
+    /* else if x<=4 (upper middle x) */
+    else if (x <= 4.)
+    {
+    	t = x - 3.;
+        /* EXPANSION (0049) EVALUATED AS Y(T)  --PRECISION 17E.18 */
+        y = t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (
+            t * (t * (t * (t * (t * (t * (t * (t * (t * (t * 
+            -7.36478297050421658e-12 + 2.1473675106513322e-11) - 
+            2.02680401514735862e-11) + 6.44913423545894175e-11) - 
+            3.09667392343245062e-10) + 9.20781685906110546e-10) - 
+            2.59039399308009059e-9) + 7.79421651144832709e-9) - 
+            2.35855618461025265e-8) + 7.0872336669656988e-8) - 
+            2.12969229346310343e-7) + 6.40581814037398274e-7) - 
+            1.92794586996432593e-6) + 5.80692311842296724e-6) - 
+            1.75089594354079944e-5) + 5.28712919123131781e-5) - 
+            1.59994873621599146e-4) + 4.85707174778663652e-4) - 
+            .00148185472032688523) + .00455865751206724687) - 
+            .0142363136684423646) + .0458591528414023064) - 
+            .160052611291327173) + .806563480128786903;
+        /* returned value */
+        bessK1 = exp(-(x)) * y;
+    } 
+    /* else, for large value of argument x */
+    else
+    {
+        t = 10. / (x + 1.) - 1.;
+        /* EXPANSION (0050) EVALUATED AS Y(T)  --PRECISION 17E.18 */
+        y = t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (t * (
+            t * (t * (t * -4.7785023811158016e-14 + 
+            1.3932112294060032e-13) - 2.19287104441802752e-13) + 
+            8.58211523713560576e-13) - 2.60774502020271104e-12) + 
+            1.72026097285930936e-11) + 6.97075379117731379e-12) + 
+            6.77688943857588882e-10) + 3.82717692121438315e-9) + 
+            4.86651420008153956e-8) + 4.07563856931843484e-7) + 
+            4.32776409784235211e-6) + 4.0472063152849502e-5) + 
+            4.29973970898766831e-4) + .00431639434283445364) + 
+            .0544845254318931612) + 1.30387573604230402;
+        /* returned value */
+        bessK1 = exp(-(x)) * y / sqrt(x);
+    }
+    
+    /* Return value and exit */
+    return bessK1;
+    
+}
 
 /*___oOo___*/

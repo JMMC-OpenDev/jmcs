@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2006-01-31 01:13:28 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2006-01-31 10:34:54 gzins Exp $"
 #
 # Makefile of mth module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2006/01/31 01:13:28  sccmgr
+# Fix directory structure and add additional files
+#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -52,17 +55,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
+INCLUDES        = mth.h
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = mth
 LIBRARIES_L     =
 
 #
-# <brief description of lllll library>
-lllll_OBJECTS   =
+# Mathematical library 
+mth_OBJECTS   = mthBesselK
 
 #
 # Scripts (public and local)

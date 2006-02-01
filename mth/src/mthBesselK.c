@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: mthBesselK.c,v 1.3 2006-02-01 00:18:21 gzins Exp $"
+ * "@(#) $Id: mthBesselK.c,v 1.4 2006-02-01 00:24:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/02/01 00:18:21  gzins
+ * Minor changes
+ *
  * Revision 1.2  2006/01/31 16:46:25  lsauge
  * Added function mthBessK1
  *
@@ -22,7 +25,7 @@
  * Bessel Functions (McDonald functions). 
  */
 
-static char *rcsId="@(#) $Id: mthBesselK.c,v 1.3 2006-02-01 00:18:21 gzins Exp $"; 
+static char *rcsId="@(#) $Id: mthBesselK.c,v 1.4 2006-02-01 00:24:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -172,6 +175,8 @@ mcsDOUBLE mthBessK0(const mcsDOUBLE x)
 } 
 
 /**
+ * Second Modified Bessel function.
+ *
  * This function returns Modified Bessel function of X of the first kind of
  * order 1.
  */

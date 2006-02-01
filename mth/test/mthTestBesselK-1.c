@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mthTestBesselK-1.c,v 1.1 2006-02-01 11:46:04 lsauge Exp $"
+ * "@(#) $Id: mthTestBesselK-1.c,v 1.2 2006-02-01 11:57:23 lsauge Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/02/01 11:46:04  lsauge
+ * Rename file mthTest1.c to mthTestBesselK-1.c
+ *
  * Revision 1.2  2006/02/01 08:41:44  lsauge
  * Test code now permit evaluation of the function on a log-log scale.
  *
@@ -23,7 +26,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: mthTestBesselK-1.c,v 1.1 2006-02-01 11:46:04 lsauge Exp $"; 
+static char *rcsId="@(#) $Id: mthTestBesselK-1.c,v 1.2 2006-02-01 11:57:23 lsauge Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -80,7 +83,7 @@ int main (int argc, char *argv[])
    
     /* Functions are firstly evaluated on a standard equally spaced decimal
      * ladder */
-    status = EvalFunctionAndSave("bessK-func-dec.dat",
+    status = EvalFunctionAndSave("mthTestBesselK-dec.dat",
                                  0.0 , 4.0 , 1000, 
                                  mcsFALSE);
     if(status==EXIT_FAILURE)
@@ -88,8 +91,8 @@ int main (int argc, char *argv[])
         errCloseStack();
         exit(EXIT_FAILURE);
     }
-    /* and then, secondly functions are now evlauted on a log-log scale */
-    status = EvalFunctionAndSave("bessK-func-log.dat", 
+    /* and then, secondly functions are now evaluated on a log-log scale */
+    status = EvalFunctionAndSave("mthTestBesselK-log.dat",
                                  -10.0 , 2.0 , 1000, 
                                  mcsTRUE);
     if(status==EXIT_FAILURE)

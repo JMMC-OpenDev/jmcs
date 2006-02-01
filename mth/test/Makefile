@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2006-02-01 07:45:57 lsauge Exp $"
+# "@(#) $Id: Makefile,v 1.2 2006-02-01 11:57:23 lsauge Exp $"
 #
 # Makefile of mth module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2006/02/01 07:45:57  lsauge
+# Add first relaese of test file
+#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -36,12 +39,12 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = mthTest1
-EXECUTABLES_L   = 
+EXECUTABLES     = 
+EXECUTABLES_L   =  mthTestBesselK-1
 
 #
 # Test code Test1 
-mthTest1_OBJECTS   = mthTest1
+mthTest1_OBJECTS   = mthTestBesselK-1.c
 mthTest1_LDFLAGS   = 
 mthTest1_LIBS      = MCS mth m
 

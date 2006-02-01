@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mthTest1.c,v 1.1 2006-02-01 07:45:57 lsauge Exp $"
+ * "@(#) $Id: mthTest1.c,v 1.2 2006-02-01 08:41:44 lsauge Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/02/01 07:45:57  lsauge
+ * Add first relaese of test file
+ *
  ******************************************************************************/
 
 /**
@@ -13,11 +16,11 @@
  * Test program in order to check the mth library (McDonald funxtions K1 and K0)
  *
  * @synopsis
- * This piece of code 
+ * Code could help the user to represent sampled mthBessK0 and mthBessK1 - 
  * 
  */
 
-static char *rcsId="@(#) $Id: mthTest1.c,v 1.1 2006-02-01 07:45:57 lsauge Exp $"; 
+static char *rcsId="@(#) $Id: mthTest1.c,v 1.2 2006-02-01 08:41:44 lsauge Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -26,6 +29,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 
 /*
@@ -42,6 +46,17 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "mth.h"
 #include "mthPrivate.h"
 
+
+/*
+ * Function prototypes 
+ * */
+mcsINT16
+EvalFunctionAndSave(const char*, 
+                    const mcsDOUBLE, 
+                    const mcsDOUBLE, 
+                    const mcsINT16, 
+                    const mcsLOGICAL); 
+
 /* 
  * Main
  */
@@ -51,16 +66,70 @@ int main (int argc, char *argv[])
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        /* Error handling if necessary */
-        
         /* Exit from the application with FAILURE */
         exit (EXIT_FAILURE);
     }
 
+    /* =================================================================== */ 
+    
     /* Local variables */
-    const mcsINT16  nbOfData = 1000 ;
-    const mcsDOUBLE xMax     =    4.0 ;
-    const mcsDOUBLE xMin     =    0.0 ;
+    mcsINT16 status; /*  returned status from function evaluation */ 
+   
+    /* Functions are firstly evaluated on a standard equally spaced decimal
+     * ladder */
+    status = EvalFunctionAndSave("bessK-func-dec.dat",
+                                 0.0 , 4.0 , 1000, 
+                                 mcsFALSE);
+    if(status==EXIT_FAILURE)
+    {
+        errCloseStack();
+        exit(EXIT_FAILURE);
+    }
+    /* and then, secondly functions are now evlauted on a log-log scale */
+    status = EvalFunctionAndSave("bessK-func-log.dat", 
+                                 -10.0 , 2.0 , 1000, 
+                                 mcsTRUE);
+    if(status==EXIT_FAILURE)
+    {
+        errCloseStack();
+        exit(EXIT_FAILURE);
+    }
+    
+    /* =================================================================== */ 
+
+    /* Close MCS services */
+    mcsExit();
+    
+    /* Exit from the application with SUCCESS */
+    exit (EXIT_SUCCESS);
+}
+
+
+/*
+ * Function definition
+ * */
+mcsINT16
+EvalFunctionAndSave(filename,xMin,xMax,nbOfData,logScale)
+/* 
+ * Evaluating function for test of the implementation of BessK0 and BessK1
+ * McDonald function (modified Bessel function of the first kind).
+ *
+ * Functions could be evaluated on a standard dec-dec scale or on a log-log one
+ * and sampled on a equally spaced set of values in their respective
+ * representation. 
+ * Note that in the log-log case, the lower/upper bounds refer to their value 
+ * in the log-log scale.
+ *
+ * RETURN VALUE : The function return EXIT_SUCCES upon successful completion or 
+ *                EXIT_FAILURE otherwise. 
+ * */
+    const char      *filename ; /* filename */
+    const mcsDOUBLE  xMin     ; /* value of the lower bound*/
+    const mcsDOUBLE  xMax     ; /* value of the upper bound*/
+    const mcsINT16   nbOfData ; /* number of data */
+    const mcsLOGICAL logScale ; /* logarithm scale (geometrical ladder) */
+{
+    /* Local variables */
     mcsDOUBLE xIncr = (xMax-xMin)/((mcsDOUBLE)(nbOfData-1));
 
     mcsDOUBLE *x;
@@ -75,15 +144,14 @@ int main (int argc, char *argv[])
     yK1=(mcsDOUBLE*)malloc(nbOfData*sizeof(mcsDOUBLE));
     
     /* Open file for output */
-    fprintf(stdout,"Creating file ..."); 
+    fprintf(stdout,"Creating file %s ...",filename); 
     fflush(stdout);
-    fDesc=fopen("besselK-func.dat","w");
+    fDesc=fopen(filename,"w");
     if(fDesc==NULL)
     {
         fprintf(stderr,"Error creating/opening file.\n");
         fflush(stderr);
-        errCloseStack();
-        exit(EXIT_FAILURE);
+        return(EXIT_FAILURE);
     }
     fprintf(stdout," done\n"); 
     fflush(stdout);
@@ -97,8 +165,20 @@ int main (int argc, char *argv[])
     for( i=0 ; i<nbOfData ; i++)
     {
        *( x +i) = xMin + ((mcsDOUBLE)i)*xIncr ;
-       *(yK0+i) = mthBessK0(*(x+i)) ;
-       *(yK1+i) = mthBessK1(*(x+i)) ;
+       /* user require evaluation on a geometrical ladder */
+       if(logScale==mcsTRUE)
+       {
+           mcsDOUBLE xDec = pow(10.0,*(x+i));
+           *(yK0+i) = log10(mthBessK0( xDec )) ;
+           *(yK1+i) = log10(mthBessK1( xDec )) ;
+       }
+       /* otherwise, evaluation are made on an 
+        * equally spaced decimal ladder */
+       else
+       {
+           *(yK0+i) = mthBessK0(*(x+i)) ;
+           *(yK1+i) = mthBessK1(*(x+i)) ;
+       }
         fprintf(fDesc,"% 5.2e  % 5.2e  % 5.2e\n",
                *( x +i),
                *(yK0+i),
@@ -114,12 +194,9 @@ int main (int argc, char *argv[])
     free(yK0);
     free(yK1);
 
-    /* Close MCS services */
-    mcsExit();
-    
-    /* Exit from the application with SUCCESS */
-    exit (EXIT_SUCCESS);
+    return(EXIT_SUCCESS);
 }
+
 
 
 /*___oOo___*/

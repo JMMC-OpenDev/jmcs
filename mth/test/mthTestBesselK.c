@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mthTestBesselK.c,v 1.1 2006-02-01 13:08:40 lsauge Exp $"
+ * "@(#) $Id: mthTestBesselK.c,v 1.2 2006-02-01 13:31:07 lsauge Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/02/01 13:08:40  lsauge
+ * Rename mthTestBesselK-1.c to mthTestBesselK.c
+ *
  * Revision 1.2  2006/02/01 11:57:23  lsauge
  * Minor Changes
  *
@@ -29,7 +32,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: mthTestBesselK.c,v 1.1 2006-02-01 13:08:40 lsauge Exp $"; 
+static char *rcsId="@(#) $Id: mthTestBesselK.c,v 1.2 2006-02-01 13:31:07 lsauge Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -96,7 +99,7 @@ int main (int argc, char *argv[])
     }
     /* and then, secondly functions are now evaluated on a log-log scale */
     status = EvalFunctionAndSave("mthTestBesselK-log.dat",
-                                 -10.0 , 2.0 , 1000, 
+                                 -10.0 , 3.0 , 1000, 
                                  mcsTRUE);
     if(status==EXIT_FAILURE)
     {
@@ -139,6 +142,7 @@ EvalFunctionAndSave(filename,xMin,xMax,nbOfData,logScale)
     const mcsLOGICAL logScale ; /* logarithm scale (geometrical ladder) */
 {
     /* Local variables */
+    const mcsDOUBLE dTiny = 1.0e-99; 
     mcsDOUBLE xIncr = (xMax-xMin)/((mcsDOUBLE)(nbOfData-1));
 
     mcsDOUBLE *x;
@@ -178,8 +182,8 @@ EvalFunctionAndSave(filename,xMin,xMax,nbOfData,logScale)
        if(logScale==mcsTRUE)
        {
            mcsDOUBLE xDec = pow(10.0,*(x+i));
-           *(yK0+i) = log10(mthBessK0( xDec )) ;
-           *(yK1+i) = log10(mthBessK1( xDec )) ;
+           *(yK0+i) = log10(mthBessK0( xDec )+dTiny) ;
+           *(yK1+i) = log10(mthBessK1( xDec )+dTiny) ;
        }
        /* otherwise, evaluation are made on an 
         * equally spaced decimal ladder */

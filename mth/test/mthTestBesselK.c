@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mthTestBesselK-1.c,v 1.2 2006-02-01 11:57:23 lsauge Exp $"
+ * "@(#) $Id: mthTestBesselK.c,v 1.1 2006-02-01 13:08:40 lsauge Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/02/01 11:57:23  lsauge
+ * Minor Changes
+ *
  * Revision 1.1  2006/02/01 11:46:04  lsauge
  * Rename file mthTest1.c to mthTestBesselK-1.c
  *
@@ -26,7 +29,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: mthTestBesselK-1.c,v 1.2 2006-02-01 11:57:23 lsauge Exp $"; 
+static char *rcsId="@(#) $Id: mthTestBesselK.c,v 1.1 2006-02-01 13:08:40 lsauge Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

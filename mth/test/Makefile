@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2006-02-01 11:57:23 lsauge Exp $"
+# "@(#) $Id: Makefile,v 1.3 2006-02-01 13:09:57 lsauge Exp $"
 #
 # Makefile of mth module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2006/02/01 11:57:23  lsauge
+# Minor Changes
+#
 # Revision 1.1  2006/02/01 07:45:57  lsauge
 # Add first relaese of test file
 #
@@ -40,13 +43,13 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = 
-EXECUTABLES_L   =  mthTestBesselK-1
+EXECUTABLES_L   = mthTestBesselK
 
 #
-# Test code Test1 
-mthTest1_OBJECTS   = mthTestBesselK-1.c
-mthTest1_LDFLAGS   = 
-mthTest1_LIBS      = MCS mth m
+# Test code mthTestBesselK
+mthTestBesselK_OBJECTS   = mthTestBesselK
+mthTestBesselK_LDFLAGS   = 
+mthTestBesselK_LIBS      = MCS mth m
 
 #
 # special compilation flags for single c sources

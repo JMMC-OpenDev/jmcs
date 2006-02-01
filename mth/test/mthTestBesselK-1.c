@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mthTest1.c,v 1.2 2006-02-01 08:41:44 lsauge Exp $"
+ * "@(#) $Id: mthTestBesselK-1.c,v 1.1 2006-02-01 11:46:04 lsauge Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/02/01 08:41:44  lsauge
+ * Test code now permit evaluation of the function on a log-log scale.
+ *
  * Revision 1.1  2006/02/01 07:45:57  lsauge
  * Add first relaese of test file
  *
@@ -20,7 +23,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: mthTest1.c,v 1.2 2006-02-01 08:41:44 lsauge Exp $"; 
+static char *rcsId="@(#) $Id: mthTestBesselK-1.c,v 1.1 2006-02-01 11:46:04 lsauge Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

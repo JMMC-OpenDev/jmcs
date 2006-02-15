@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modcppOPERATION.cpp,v 1.4 2005-02-22 09:28:40 gluck Exp $"
+ * "@(#) $Id: modcppOPERATION.cpp,v 1.5 2006-02-15 15:10:00 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/22 09:28:40  gluck
+ * Updated \return comment
+ *
  * Revision 1.3  2005/02/15 10:48:15  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -83,7 +86,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppOPERATION.cpp,v 1.4 2005-02-22 09:28:40 gluck Exp $"; 
+static char *rcsId="@(#) $Id: modcppOPERATION.cpp,v 1.5 2006-02-15 15:10:00 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -263,7 +266,8 @@ mcsCOMPL_STAT modcppOPERATION::Divide(mcsINT8 x, mcsINT8 y, mcsFLOAT *z)
 
     if (y == 0)
     {
-        errAdd(modcppERR_DIVISION_BY_ZERO,y);
+        errAdd(modcppERR_DIVISION_BY_ZERO,x);
+        return mcsFAILURE
     }
     *z = ((float) x) / y;
     logTest("%d / %d = %.2f\n", x, y, *z);

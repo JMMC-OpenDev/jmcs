@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: mthBesselK.c,v 1.4 2006-02-01 00:24:41 gzins Exp $"
+ * "@(#) $Id: mthBesselK.c,v 1.5 2006-03-03 13:03:48 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/02/01 00:24:41  gzins
+ * Updated documentation
+ *
  * Revision 1.3  2006/02/01 00:18:21  gzins
  * Minor changes
  *
@@ -25,8 +28,7 @@
  * Bessel Functions (McDonald functions). 
  */
 
-static char *rcsId="@(#) $Id: mthBesselK.c,v 1.4 2006-02-01 00:24:41 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthBesselK.c,v 1.5 2006-03-03 13:03:48 scetre Exp $"; 
 
 /* 
  * System Headers

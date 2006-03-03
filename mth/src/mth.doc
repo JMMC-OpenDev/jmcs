@@ -1,0 +1,23 @@
+/*******************************************************************************
+ * JMMC project
+ *
+ * "@(#) $Id: mth.doc,v 1.2 2006-02-01 00:24:41 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/01/31 01:13:28  sccmgr
+ * Fix directory structure and add additional files
+ *
+ ******************************************************************************/
+
+/**
+\mainpage mth : Mathematical Libray 
+
+\bdesc
+The mth module provides developper a set of mathematical functions.
+
+\ddesc
+This module contains.
+@li mthBesselK.c - Modified Bessel functions.
+*/

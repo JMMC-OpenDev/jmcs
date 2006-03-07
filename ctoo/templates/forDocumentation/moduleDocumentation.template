@@ -1,0 +1,89 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: moduleDocumentation.template,v 1.8 2005-02-21 15:50:22 gluck Exp $"
+#%# 
+#%# Template for module documentation          
+#%# 
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
+#%# Revision 1.7  2005/02/15 15:51:22  gluck
+#%# Change module name pattern for module documentation file: moduleName -> <moduleName>
+#%#
+#%# Revision 1.6  2005/01/24 11:17:40  gluck
+#%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.7  2005/02/15 15:51:22  gluck
+#%# Correct bug when add log message automatic insertion (Change module name pattern for module documentation file: moduleName -> <moduleName>
+#%# Correct bug when add log message automatic insertion ()
+#%#
+#%# Revision 1.5  2005/01/21 16:13:10  gluck
+#%# - Correct alignment for generated files header from templates
+#%# - Add log message automatic insertion ($Log)
+#%#
+#%# gluck      10-Aug-2004  Created
+#%# 
+#%# 
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+/*******************************************************************************
+ * <INSTITUTE> project
+ *
+ * "@(#) $I>-<d$"
+ *
+ * History
+ * -------
+ * $>-Log-<$
+ ******************************************************************************/
+
+/**
+\mainpage <moduleName> : Summary module description sentence
+
+\bdesc
+Brief module description. There could be one or more sentences in this short
+module description.
+
+\ddesc
+Detailed module description.
+
+\usedfiles
+OPTIONAL. If files are used, for each one, name, and usage description, as
+below. 
+\filename filename 1 :  usage description of fileName1
+\filename filename 2 :  usage description of fileName2
+
+\n
+\env
+OPTIONAL. If needed, environmental variables accessed by the program. For each
+variable, name, and usage description, as below.
+\envvar envVar1 :  usage description of envVar1
+\envvar envVar2 :  usage description of envVar2
+
+\n
+\ex
+OPTIONAL but STRONGLY RECOMMENDED. Code examples if needed. You can make an
+example list with the \\li marker.
+\n Brief example description.
+\code
+Insert code for example
+\endcode
+
+\sa OPTIONAL. See also section in which you can refer other documented entities.
+Using the \\sa marker, doxygen will create the link automatically.
+An example is given below.
+\sa \<entity to refer\>
+
+\bug OPTIONAL. Known bugs list if it exists.
+\bug Bug 1 : bug 1 description
+\bug Bug 2 : bug 2 description
+
+\todo OPTIONAL. Things to forsee list, if needed.
+\todo Action 1 : action 1 description
+\todo Action 2 : action 2 description
+\n
+
+*/

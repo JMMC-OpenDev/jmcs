@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Complex.java,v 1.1 2006-03-07 14:13:37 lafrasse Exp $"
+ * "@(#) $Id: Complex.java,v 1.2 2006-03-07 14:20:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/03/07 14:13:37  lafrasse
+ * initial release
+ *
  ******************************************************************************/
 
 package jmmc.mcs.modjava;
@@ -48,7 +51,7 @@ public class Complex {
      *
      * @return the result of the addition.
      */
-    public Complex Add(Complex z) {  
+    public Complex add(Complex z) {  
 
         Complex temp = new Complex();
 

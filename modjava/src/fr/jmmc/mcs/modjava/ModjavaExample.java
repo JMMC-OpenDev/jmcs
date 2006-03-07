@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModjavaExample.java,v 1.1 2006-03-07 14:13:37 lafrasse Exp $"
+ * "@(#) $Id: ModjavaExample.java,v 1.2 2006-03-07 14:20:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/03/07 14:13:37  lafrasse
+ * initial release
+ *
  ******************************************************************************/
 
 package jmmc.mcs.modjava;
@@ -77,8 +80,9 @@ public class ModjavaExample {
 
         Complex z1 = new Complex(1.0, 1.0);
         Complex z2 = new Complex(2.0, 2.0);
+        Complex z3 = z1.add(z2);
 
-        System.out.println(z1 + " + " + z2 + " = " + z1.Add(z2));
+        System.out.println(z1 + " + " + z2 + " = " + z3);
     }
 }
 

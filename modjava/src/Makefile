@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2006-03-07 09:55:50 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2006-03-07 14:13:37 lafrasse Exp $"
 #
 # Makefile of modjava module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2006/03/07 09:55:50  sccmgr
+# Fix directory structure and add additional files
+#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -101,21 +104,21 @@ PY_SCRIPTS_L   =
 #
 # Jarfiles and their directories
 # ---------------------------------
-JARFILES        =
+JARFILES        = modjava
 
 #
-# <brief description of jjjfff jar files>
-jjjfff_DIRS     =
+# <brief description of modjava jar files>
+modjava_DIRS    = jmmc
 jjjfff_EXTRAS   = 
 
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES=
+JAVA_EXECUTABLES=modjavaExample
 
 #
-# <brief description of jjjjjj java program>
-jjjjjj_CLASS    =
+# <brief description of modjavaExample java program>
+modjavaExample_CLASS = jmmc.mcs.modjava.ModjavaExample
 
 #
 # Command Definition Files (CDF)

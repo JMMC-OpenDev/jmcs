@@ -1,57 +1,83 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modjava.doc,v 1.1 2006-03-07 09:55:50 sccmgr Exp $"
+ * "@(#) $Id: modjava.doc,v 1.2 2006-03-07 14:13:37 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/03/07 09:55:50  sccmgr
+ * Fix directory structure and add additional files
+ *
+ * IMPORTANT :
+ * This file contains the GENERAL MODULE DOCUMENTATION, preferably including an
+ * example for use of the main functions of this module. To make your own
+ * documentation, you have to substitute the general or example comments, with
+ * your specific comments.
+ *
+ * IMPORTANT:
+ * To make AUTOMATIC DOCUMENTATION GENERATION by doxygen, you have to insert
+ * your code documentation (about file, functions, define, enumeration, ...) as
+ * shown below, in the special documentation blocks (beginning with 1 slash and
+ * 2 stars), adding or deleting markers as needed.
+ *
+ * Nevertheless, you also have to comment the code as usually.  For more
+ * informations, you can report to Programming Standards (JRA4-PRO-2000-0001),
+ * or doxygen documentation.
+ *
+ * REMARKS
+ * The documentation below, shows some possibilities of doxygen. The general
+ * format of this documentation is recommended to make the documentation
+ * easily. Some documentation lines are strongly recommended to get rapidly a
+ * quite good documentation. Some others are optinonal, depending on the need.
+ * They will be pointed out with the word OPTIONAL.
+ *
  ******************************************************************************/
 
 /**
-\mainpage modjava : Summary module description sentence
+@mainpage modjava : Summary module description sentence
 
-\bdesc
+@bdesc
 Brief module description. There could be one or more sentences in this short
 module description.
 
-\ddesc
+@ddesc
 Detailed module description.
 
-\usedfiles
+@usedfiles
 OPTIONAL. If files are used, for each one, name, and usage description, as
 below. 
-\filename filename 1 :  usage description of fileName1
-\filename filename 2 :  usage description of fileName2
+@filename filename 1 :  usage description of fileName1
+@filename filename 2 :  usage description of fileName2
 
 \n
-\env
+@env
 OPTIONAL. If needed, environmental variables accessed by the program. For each
 variable, name, and usage description, as below.
-\envvar envVar1 :  usage description of envVar1
-\envvar envVar2 :  usage description of envVar2
+@envvar envVar1 :  usage description of envVar1
+@envvar envVar2 :  usage description of envVar2
 
 \n
-\ex
+@ex
 OPTIONAL but STRONGLY RECOMMENDED. Code examples if needed. You can make an
-example list with the \\li marker.
+example list with the \@li marker.
 \n Brief example description.
-\code
+@code
 Insert code for example
-\endcode
+@endcode
 
-\sa OPTIONAL. See also section in which you can refer other documented entities.
-Using the \\sa marker, doxygen will create the link automatically.
+@sa OPTIONAL. See also section in which you can refer other documented entities.
+Using the \@sa marker, doxygen will create the link automatically.
 An example is given below.
-\sa \<entity to refer\>
+@sa \<entity to refer\>
 
-\bug OPTIONAL. Known bugs list if it exists.
-\bug Bug 1 : bug 1 description
-\bug Bug 2 : bug 2 description
+@bug OPTIONAL. Known bugs list if it exists.
+@bug Bug 1 : bug 1 description
+@bug Bug 2 : bug 2 description
 
-\todo OPTIONAL. Things to forsee list, if needed.
-\todo Action 1 : action 1 description
-\todo Action 2 : action 2 description
+@todo OPTIONAL. Things to forsee list, if needed.
+@todo Action 1 : action 1 description
+@todo Action 2 : action 2 description
 \n
 
 */

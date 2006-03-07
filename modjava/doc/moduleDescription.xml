@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+ JMMC project
+
+ "@(#) $Id: moduleDescription.xml,v 1.2 2006-03-07 14:13:37 lafrasse Exp $"
+
+ History
+ ~~~~~~~
+ $Log: not supported by cvs2svn $
+ Revision 1.1  2006/03/07 09:55:50  sccmgr
+ Fix directory structure and add additional files
+
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="modjava">
+    <desc>Java module example</desc>
+    <resp>Sylvain Lafrasse</resp>
+    <package>MCS</package>
+</module>

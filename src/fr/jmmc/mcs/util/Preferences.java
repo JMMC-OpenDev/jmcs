@@ -1,21 +1,28 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.1 2006-03-27 11:59:58 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.2 2006-03-31 08:52:29 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/03/27 11:59:58  lafrasse
+ * Added new experimental Java GUI
+ *
  ******************************************************************************/
 package jmmc.mcs.util;
+
+import java.awt.Color;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.util.Enumeration;
 import java.util.Observable;
 import java.util.Properties;
+import java.util.Vector;
 
 
 /**
@@ -148,6 +155,55 @@ public class Preferences extends Observable
     final public String getPreference(String preferenceName)
     {
         return myProperties.getProperty(preferenceName);
+    }
+
+    /**
+     * Get a preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return the preference value.
+     */
+    final public Color getPreferenceAsColor(String preferenceName)
+        throws PreferencesException
+    {
+        Color c;
+
+        try
+        {
+            c = Color.decode(myProperties.getProperty(preferenceName));
+        }
+        catch (Exception e)
+        {
+            throw new PreferencesException("Can't convert preference value to color",
+                e);
+        }
+
+        return c;
+    }
+
+    /**
+     * Returns an Enumeration of preference names which start with given
+     * string. One given empty string make all preference entries returned.
+     * object.
+     * @return Enumeration a string enumeration of preference names
+     */
+    public Enumeration getPreferences(String prefix)
+    {
+        Vector      v = new Vector();
+        Enumeration e = myProperties.propertyNames();
+
+        while (e.hasMoreElements())
+        {
+            String propertyName = (String) e.nextElement();
+
+            if (propertyName.startsWith(prefix))
+            {
+                v.add(propertyName);
+            }
+        }
+
+        return v.elements();
     }
 
     /**

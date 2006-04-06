@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.2 2006-03-31 08:52:29 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.3 2006-04-06 14:44:07 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/03/31 08:52:29  mella
+ * Add color handling
+ *
  * Revision 1.1  2006/03/27 11:59:58  lafrasse
  * Added new experimental Java GUI
  *
@@ -221,10 +224,13 @@ public class Preferences extends Observable
      * Restore default values to preferences. Use save method to store default
      * values into the preferences file.
      */
-    private void resetToDefaultPreferences()
+    public void resetToDefaultPreferences()
     {
         myProperties = (Properties) _defaultProperties.clone();
         myProperties.put("content", "default");
+        // Notify all preferences listener.
+        setChanged();
+        notifyObservers();
     }
 
     /**

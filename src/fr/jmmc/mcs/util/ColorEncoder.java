@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ColorEncoder.java,v 1.1 2006-03-31 14:29:53 mella Exp $"
+ * "@(#) $Id: ColorEncoder.java,v 1.2 2006-04-06 14:23:08 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/03/31 14:29:53  mella
+ * First Revision
+ *
  *
  ******************************************************************************/
 package jmmc.mcs.util;
@@ -17,8 +20,8 @@ import java.awt.Color;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.1 $
-  */
+ * @version $Revision: 1.2 $
+ */
 public class ColorEncoder
 {
     /**

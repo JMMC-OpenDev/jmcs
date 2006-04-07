@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.3 2006-04-06 14:44:07 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.4 2006-04-07 08:24:33 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/04/06 14:44:07  mella
+ * Add feature to restore to default preferences
+ *
  * Revision 1.2  2006/03/31 08:52:29  mella
  * Add color handling
  *
@@ -54,7 +57,7 @@ public class Preferences extends Observable
      * Class that herits from this one should overload this variable to return specific file name.
      * It must not include any file separator.
      */
-    String _shortPreferenceFilename = "preferences.properties";
+    protected String _shortPreferenceFilename = "preferences.properties";
 
     /**
      * Creates a new Preferences object.

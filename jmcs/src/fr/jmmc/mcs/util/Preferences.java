@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.4 2006-04-07 08:24:33 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.5 2006-04-07 11:04:46 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/04/07 08:24:33  mella
+ * Make pref filename protected
+ *
  * Revision 1.3  2006/04/06 14:44:07  mella
  * Add feature to restore to default preferences
  *
@@ -40,6 +43,13 @@ import java.util.Vector;
  */
 public class Preferences extends Observable
 {
+    /**
+     * Store shortPreferenceFilename.
+     * Class that herits from this one should overload this variable to return specific file name.
+     * It must not include any file separator.
+     */
+    protected static String _shortPreferenceFilename = "preferences.properties";
+
     // Preferences are saved using Properties object.
 
     /**
@@ -51,13 +61,6 @@ public class Preferences extends Observable
      * Store default properties.
      */
     private Properties _defaultProperties = new Properties();
-
-    /**
-     * Store shortPreferenceFilename.
-     * Class that herits from this one should overload this variable to return specific file name.
-     * It must not include any file separator.
-     */
-    protected String _shortPreferenceFilename = "preferences.properties";
 
     /**
      * Creates a new Preferences object.
@@ -76,6 +79,21 @@ public class Preferences extends Observable
     {
         _shortPreferenceFilename = shortPreferenceFilename;
         loadFromFile();
+    }
+
+    /* Set short preference filename.
+     * @param shortPreferenceFilename the filename to store on disk this preference.
+     */
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param shortPreferenceFilename DOCUMENT ME!
+     */
+    public static void setShortPreferenceFilename(
+        String shortPreferenceFilename)
+    {
+        _shortPreferenceFilename = shortPreferenceFilename;
     }
 
     /**

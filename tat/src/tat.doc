@@ -1,0 +1,23 @@
+/*******************************************************************************
+ * JMMC project
+ *
+ * "@(#) $Id: tat.doc,v 1.2 2006-03-22 19:39:12 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/03/22 06:58:28  sccmgr
+ * Fix directory structure and add additional files
+ *
+ ******************************************************************************/
+
+/**
+\mainpage tat : Tools for Automatic Testing 
+
+\bdesc
+This modules contains tools for automatic testing.
+
+\ddesc
+These tools have been developped by ESO for VLT/ALMA projects, and adapted for
+MCS environment.
+*/

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.5 2006-04-07 11:04:46 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.6 2006-04-12 12:30:02 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/04/07 11:04:46  mella
+ * *** empty log message ***
+ *
  * Revision 1.4  2006/04/07 08:24:33  mella
  * Make pref filename protected
  *
@@ -258,7 +261,7 @@ public class Preferences extends Observable
      * Set the default properties used to reset default preferences.
      * This method should be used to adjust specific application preferences.
      *
-     * @defaultProperties the default properties to set for this application.
+     * @param defaultProperties the default properties to set for this application.
      */
     protected void setDefaultPreferences(Properties defaultProperties)
     {

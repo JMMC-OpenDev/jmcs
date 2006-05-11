@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWIDGET.cpp,v 1.6 2005-08-26 12:58:38 mella Exp $"
+ * "@(#) $Id: gwtWIDGET.cpp,v 1.7 2006-05-11 13:04:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/08/26 12:58:38  mella
+ * Add IsContainer and set default widgetid with constant
+ *
  * Revision 1.5  2005/03/08 14:19:01  mella
  * Add better handling for xml attributes
  *
@@ -31,9 +34,7 @@
  * Definition of gwtWIDGET class.
  */
 
-static char *rcsId="@(#) $Id: gwtWIDGET.cpp,v 1.6 2005-08-26 12:58:38 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtWIDGET.cpp,v 1.7 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCELL.cpp,v 1.3 2005-02-15 12:33:49 gzins Exp $"
+ * "@(#) $Id: gwtCELL.cpp,v 1.4 2006-05-11 13:04:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/15 12:33:49  gzins
+ * Updated file description
+ *
  * Revision 1.2  2005/02/07 14:45:31  mella
  * Correct minor doxygen problem
  *
@@ -19,9 +22,7 @@
  * Definition of gwtCELL class.
  */
 
-static char *rcsId="@(#) $Id: gwtCELL.cpp,v 1.3 2005-02-15 12:33:49 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtCELL.cpp,v 1.4 2006-05-11 13:04:55 mella Exp $";
 /* 
  * System Headers 
  */

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modcppOPERATION.cpp,v 1.6 2006-02-15 15:10:56 mella Exp $"
+ * "@(#) $Id: modcppOPERATION.cpp,v 1.7 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/02/15 15:10:56  mella
+ * Add missing ; (
+ *
  * Revision 1.5  2006/02/15 15:10:00  mella
  * Return mcsFAILURE after divededbyzero error and changed errAdd parameter
  *
@@ -89,9 +92,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppOPERATION.cpp,v 1.6 2006-02-15 15:10:56 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: modcppOPERATION.cpp,v 1.7 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtLABEL.cpp,v 1.1 2005-02-24 10:36:46 mella Exp $"
+ * "@(#) $Id: gwtLABEL.cpp,v 1.2 2006-05-11 13:04:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/24 10:36:46  mella
+ * Add new LABEL Widget
+ *
  *
  ******************************************************************************/
 
@@ -14,9 +17,7 @@
  * Definition of gwtLABEL class.
  */
 
-static char *rcsId="@(#) $Id: gwtLABEL.cpp,v 1.1 2005-02-24 10:36:46 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtLABEL.cpp,v 1.2 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

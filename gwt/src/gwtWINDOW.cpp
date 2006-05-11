@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtWINDOW.cpp,v 1.6 2005-09-28 14:02:48 mella Exp $"
+ * "@(#) $Id: gwtWINDOW.cpp,v 1.7 2006-05-11 13:04:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/09/28 14:02:48  mella
+ * Hide window inside destructor
+ *
  * Revision 1.5  2005/03/08 14:19:38  mella
  * Add closing callback support
  *
@@ -31,9 +34,7 @@
  * Definition of gwtWINDOW class.
  */
 
-static char *rcsId="@(#) $Id: gwtWINDOW.cpp,v 1.6 2005-09-28 14:02:48 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtWINDOW.cpp,v 1.7 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

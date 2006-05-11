@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.cpp,v 1.9 2005-10-07 06:56:11 gzins Exp $"
+ * "@(#) $Id: gwtGUI.cpp,v 1.10 2006-05-11 13:04:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/10/07 06:56:11  gzins
+ * Inherited from evhSERVER class; handled connection to XML GUI server, and reception and dispatching of messages from this server.
+ *
  * Revision 1.8  2005/09/28 14:02:10  mella
  * Improve memory deallocation into destructor
  *
@@ -40,9 +43,7 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId="@(#) $Id: gwtGUI.cpp,v 1.9 2005-10-07 06:56:11 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtGUI.cpp,v 1.10 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

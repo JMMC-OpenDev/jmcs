@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtXML_PRODUCER.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"
+ * "@(#) $Id: gwtXML_PRODUCER.cpp,v 1.2 2006-05-11 13:04:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 18:09:35  gzins
+ * Renamed .C to .cpp
+ * Added CVS loh as modification history.
+ *
  * mella     09-Nov-2004  Created
  *
  ******************************************************************************/
@@ -15,9 +19,7 @@
  * Definition of gwtXML_PRODUCER class.
  */
 
-static char *rcsId="@(#) $Id: gwtXML_PRODUCER.cpp,v 1.1 2005-01-27 18:09:35 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtXML_PRODUCER.cpp,v 1.2 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

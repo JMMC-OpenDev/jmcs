@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTest.C,v 1.15 2005-10-07 06:56:55 gzins Exp $"
+ * "@(#) $Id: gwtTest.C,v 1.16 2006-05-11 13:04:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/10/07 06:56:55  gzins
+ * Updated according to the inheritance change
+ *
  * Revision 1.14  2005/09/27 07:29:12  scetre
  * Add delete of class member
  *
@@ -45,9 +48,7 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId="@(#) $Id: gwtTest.C,v 1.15 2005-10-07 06:56:55 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtTest.C,v 1.16 2006-05-11 13:04:55 mella Exp $";
 /* 
  * System Headers 
  */

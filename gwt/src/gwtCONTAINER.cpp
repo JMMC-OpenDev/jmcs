@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCONTAINER.cpp,v 1.4 2005-08-30 07:33:59 mella Exp $"
+ * "@(#) $Id: gwtCONTAINER.cpp,v 1.5 2006-05-11 13:04:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/08/30 07:33:59  mella
+ * Add previous AddContainer for backward compatibility
+ *
  * Revision 1.3  2005/08/26 12:42:23  mella
  * Remove AddContainer() and make Add() generic
  * add IsContainer()
@@ -27,10 +30,8 @@
  * 
  */
 
-static char *rcsId =
-  "@(#) $Id: gwtCONTAINER.cpp,v 1.4 2005-08-30 07:33:59 mella Exp $";
-static void *use_rcsId = ((void) &use_rcsId, (void *) &rcsId);
-
+  "@(#) $Id: gwtCONTAINER.cpp,v 1.5 2006-05-11 13:04:55 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtCONTAINER.cpp,v 1.5 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

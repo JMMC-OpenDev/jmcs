@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mthTestBesselK.c,v 1.2 2006-02-01 13:31:07 lsauge Exp $"
+ * "@(#) $Id: mthTestBesselK.c,v 1.3 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/02/01 13:31:07  lsauge
+ * Add dTiny value in order to avoid infinity in the log calculation of BesselK1
+ * and BesselK0 for large argument value.
+ *
  * Revision 1.1  2006/02/01 13:08:40  lsauge
  * Rename mthTestBesselK-1.c to mthTestBesselK.c
  *
@@ -32,9 +36,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: mthTestBesselK.c,v 1.2 2006-02-01 13:31:07 lsauge Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: mthTestBesselK.c,v 1.3 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

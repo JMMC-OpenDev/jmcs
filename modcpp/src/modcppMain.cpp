@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: modcppMain.cpp,v 1.4 2005-06-20 13:17:52 swmgr Exp $"
+ * "@(#) $Id: modcppMain.cpp,v 1.5 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/06/20 13:17:52  swmgr
+ * Changed logEXTDBG with logTRACE
+ *
  * Revision 1.3  2005/02/15 10:48:15  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -96,9 +99,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: modcppMain.cpp,v 1.4 2005-06-20 13:17:52 swmgr Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: modcppMain.cpp,v 1.5 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

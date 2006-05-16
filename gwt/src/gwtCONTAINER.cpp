@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCONTAINER.cpp,v 1.5 2006-05-11 13:04:55 mella Exp $"
+ * "@(#) $Id: gwtCONTAINER.cpp,v 1.6 2006-05-16 08:49:44 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/05/11 13:04:55  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.4  2005/08/30 07:33:59  mella
  * Add previous AddContainer for backward compatibility
  *
@@ -30,8 +33,7 @@
  * 
  */
 
-  "@(#) $Id: gwtCONTAINER.cpp,v 1.5 2006-05-11 13:04:55 mella Exp $";
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtCONTAINER.cpp,v 1.5 2006-05-11 13:04:55 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtCONTAINER.cpp,v 1.6 2006-05-16 08:49:44 mella Exp $";
 
 /* 
  * System Headers 

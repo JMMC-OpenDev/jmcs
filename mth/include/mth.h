@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mth.h,v 1.2 2006-01-31 01:21:22 gzins Exp $"
+ * "@(#) $Id: mth.h,v 1.3 2006-06-02 13:33:03 lsauge Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/01/31 01:21:22  gzins
+ * Added Bessel function declarations
+ *
  * Revision 1.1  2006/01/31 01:13:28  sccmgr
  * Fix directory structure and add additional files
  *
@@ -18,9 +21,8 @@
  * Mathematical header file.
  */
 
-/* Modified Bessel Functions */
-mcsDOUBLE mthBessK0(mcsDOUBLE x);
-mcsDOUBLE mthBessK1(mcsDOUBLE x);
+#include "mthBesselK.h"
+#include "mthNORM.h"
 
 #endif /*!mth_H*/
 

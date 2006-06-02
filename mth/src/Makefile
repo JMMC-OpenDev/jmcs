@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2006-01-31 10:34:54 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2006-06-02 13:25:35 lsauge Exp $"
 #
 # Makefile of mth module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2006/01/31 10:34:54  gzins
+# Implemented mthBessKO function
+#
 # Revision 1.1  2006/01/31 01:13:28  sccmgr
 # Fix directory structure and add additional files
 #
@@ -55,7 +58,7 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = mth.h
+INCLUDES        = 
 
 #
 # Libraries (public and local)
@@ -65,7 +68,8 @@ LIBRARIES_L     =
 
 #
 # Mathematical library 
-mth_OBJECTS   = mthBesselK
+mth_OBJECTS   = mthBesselK	\
+				mthNORM
 
 #
 # Scripts (public and local)

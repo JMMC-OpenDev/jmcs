@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.6 2006-04-12 12:30:02 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.7 2006-06-08 11:41:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/04/12 12:30:02  lafrasse
+ * Updated some Doxygen tags to fix previous documentation generation errors
+ *
  * Revision 1.5  2006/04/07 11:04:46  mella
  * *** empty log message ***
  *
@@ -173,6 +176,23 @@ public class Preferences extends Observable
     }
 
     /**
+     * Set a preference value with boolean content.
+     *
+     * @param preferenceName the preference name.
+     * @param preferenceValue the boolean preference value.
+     */
+    final public void setPreference(String preferenceName,
+        boolean preferenceValue)
+    {
+        myProperties.setProperty(preferenceName,
+            Boolean.toString(preferenceValue));
+        myProperties.put("content", "user");
+        // Notify all preferences listener.
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
      * Get a preference value.
      *
      * @param preferenceName the preference name.
@@ -185,11 +205,11 @@ public class Preferences extends Observable
     }
 
     /**
-     * Get a preference value.
+     * Get a color preference value.
      *
      * @param preferenceName the preference name.
      *
-     * @return the preference value.
+     * @return one Color object representing the preference value.
      */
     final public Color getPreferenceAsColor(String preferenceName)
         throws PreferencesException
@@ -207,6 +227,21 @@ public class Preferences extends Observable
         }
 
         return c;
+    }
+
+    /**
+     * Get a boolean preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return one boolean representing the preference value.
+     */
+    final public boolean getPreferenceAsBoolean(String preferenceName)
+    {
+        boolean b;
+        String  value = myProperties.getProperty(preferenceName);
+
+        return Boolean.valueOf(value).booleanValue();
     }
 
     /**

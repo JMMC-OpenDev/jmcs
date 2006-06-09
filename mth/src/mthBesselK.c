@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: mthBesselK.c,v 1.5 2006-03-03 13:03:48 scetre Exp $"
+ * "@(#) $Id: mthBesselK.c,v 1.6 2006-06-09 12:14:35 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/03/03 13:03:48  scetre
+ * changed rcsId to rcsId __attribute__  ((unused))
+ *
  * Revision 1.4  2006/02/01 00:24:41  gzins
  * Updated documentation
  *
@@ -28,8 +31,6 @@
  * Bessel Functions (McDonald functions). 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthBesselK.c,v 1.5 2006-03-03 13:03:48 scetre Exp $"; 
-
 /* 
  * System Headers
  */
@@ -46,7 +47,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthBesselK.c,v 1.5 2006
 /* 
  * Local Headers
  */
-#include "mth.h"
+#include "mthBesselK.h"
 #include "mthPrivate.h"
 
 /*

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2006-06-02 13:25:35 lsauge Exp $"
+# "@(#) $Id: Makefile,v 1.4 2006-06-09 12:15:24 gzins Exp $"
 #
 # Makefile of mth module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2006/06/02 13:25:35  lsauge
+# Add class mthGAUSSIAN_RANDOM
+#
 # Revision 1.2  2006/01/31 10:34:54  gzins
 # Implemented mthBessKO function
 #
@@ -69,7 +72,7 @@ LIBRARIES_L     =
 #
 # Mathematical library 
 mth_OBJECTS   = mthBesselK	\
-				mthNORM
+				mthGAUSSIAN_RANDOM
 
 #
 # Scripts (public and local)

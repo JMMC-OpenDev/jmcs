@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2006-06-05 10:58:27 lsauge Exp $"
+# "@(#) $Id: Makefile,v 1.5 2006-06-09 12:17:49 gzins Exp $"
 #
 # Makefile of mth module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2006/06/05 10:58:27  lsauge
+# Add rules for mthNORM test code
+#
 # Revision 1.3  2006/02/01 13:09:57  lsauge
 # Update of the Makefile script after renaming the example code
 #
@@ -46,8 +49,8 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = 
-EXECUTABLES_L   = mthTestBesselK	\
-		  		  mthNORMTest
+EXECUTABLES_L   = mthTestBesselK    	 \
+		  		  mthTestGAUSSIAN_RANDOM
 
 #
 # Test code mthTestBesselK
@@ -55,10 +58,10 @@ mthTestBesselK_OBJECTS   = mthTestBesselK
 mthTestBesselK_LDFLAGS   = 
 mthTestBesselK_LIBS      = MCS mth m C++
 
-# Test code mthNORMTest
-mthNORMTest_OBJECTS   = mthNORMTest
-mthNORMTest_LDFLAGS   = 
-mthNORMTest_LIBS      = MCS mth C++ m
+# Test code mthTestGAUSSIAN_RANDOM
+mthTestGAUSSIAN_RANDOM_OBJECTS   = mthTestGAUSSIAN_RANDOM
+mthTestGAUSSIAN_RANDOM_LDFLAGS   = 
+mthTestGAUSSIAN_RANDOM_LIBS      = MCS mth C++ m
 
 #
 # special compilation flags for single c sources

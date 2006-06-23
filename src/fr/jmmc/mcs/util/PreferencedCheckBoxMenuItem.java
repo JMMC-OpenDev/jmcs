@@ -1,25 +1,31 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedCheckBoxMenuItem.java,v 1.1 2006-06-22 12:32:45 lafrasse Exp $"
+ * "@(#) $Id: PreferencedCheckBoxMenuItem.java,v 1.2 2006-06-23 09:19:35 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/06/22 12:32:45  lafrasse
+ * Creation
+ *
  ******************************************************************************/
 package jmmc.mcs.util;
 
-import java.util.*;
 import java.awt.event.*;
+
+import java.util.*;
+
 import javax.swing.JCheckBoxMenuItem;
+
 
 /**
  * Menu item with a check box representing a MCS preference boolean property
  * state.
  */
-
-public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem implements Observer, ActionListener {
-
+public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem
+    implements Observer, ActionListener
+{
     /** Menu item corresponding preference property */
     private String _preferenceProperty;
 
@@ -32,15 +38,17 @@ public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem implements Ob
      * title a string containing the label to be displayed in the menu
      * preferenceProperty a string containing the reference to the boolean property to handle
      */
-    public PreferencedCheckBoxMenuItem(String title, Preferences preferences, String preferenceProperty) {
+    public PreferencedCheckBoxMenuItem(String title, Preferences preferences,
+        String preferenceProperty)
+    {
         // Set the label of the Menu Item widget
         super(title);
 
         // Store the Preference shared instance of the main application
-        _preferences = preferences;
+        _preferences            = preferences;
 
         // Store the property name for later use
-        _preferenceProperty = preferenceProperty;
+        _preferenceProperty     = preferenceProperty;
         // Retrieve the property boolean value and set the widget accordinaly
         setSelected(_preferences.getPreferenceAsBoolean(_preferenceProperty));
 
@@ -68,5 +76,4 @@ public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem implements Ob
         setSelected(_preferences.getPreferenceAsBoolean(_preferenceProperty));
     }
 }
-
 /*___oOo___*/

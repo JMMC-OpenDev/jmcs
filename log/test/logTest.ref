@@ -60,27 +60,27 @@
 1 - ###############################################################
 1 - *** Stdout logging verbosity level is : 0
 1 - *** Stdout logging verbosity level is : 1
-1 - default - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:71 - logging warning
 1 - *** Stdout logging verbosity level is : 2
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
 1 - *** Stdout logging verbosity level is : 3
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
-1 - default - logTest - log - - logTest.c:73 - logging test
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:73 - logging test
 1 - *** Stdout logging verbosity level is : 4
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
-1 - default - logTest - log - - logTest.c:73 - logging test
-1 - default - logTest - log - - logTest.c:74 - logging debug
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:73 - logging test
+1 - logTest - log - - logTest.c:74 - logging debug
 1 - *** Stdout logging verbosity level is : 5
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
-1 - default - logTest - log - - logTest.c:73 - logging test
-1 - default - logTest - log - - logTest.c:74 - logging debug
-1 - default - logTest - log - - logTest.c:75 - logging trace
-1 - default - logTest - log - - logTest.c:155 - EXIT_FUNC test1
-1 - default - logTest - log - - logTest.c:124 - ENTER_FUNC test1
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:73 - logging test
+1 - logTest - log - - logTest.c:74 - logging debug
+1 - logTest - log - - logTest.c:75 - logging trace
+1 - logTest - log - - logTest.c:155 - EXIT_FUNC test1
+1 - logTest - log - - logTest.c:124 - ENTER_FUNC test1
 1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 1 - File logging switched OFF
 1 - Stdout logging switched ON
@@ -99,26 +99,26 @@
 1 - ###############################################################
 1 - *** Stdout logging verbosity level is : 0
 1 - *** Stdout logging verbosity level is : 1
-1 - default - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:71 - logging warning
 1 - *** Stdout logging verbosity level is : 2
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
 1 - *** Stdout logging verbosity level is : 3
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
-1 - default - logTest - log - - logTest.c:73 - logging test
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:73 - logging test
 1 - *** Stdout logging verbosity level is : 4
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
-1 - default - logTest - log - - logTest.c:73 - logging test
-1 - default - logTest - log - - logTest.c:74 - logging debug
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:73 - logging test
+1 - logTest - log - - logTest.c:74 - logging debug
 1 - *** Stdout logging verbosity level is : 5
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
-1 - default - logTest - log - - logTest.c:73 - logging test
-1 - default - logTest - log - - logTest.c:74 - logging debug
-1 - default - logTest - log - - logTest.c:75 - logging trace
-1 - default - logTest - log - - logTest.c:155 - EXIT_FUNC test1
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:73 - logging test
+1 - logTest - log - - logTest.c:74 - logging debug
+1 - logTest - log - - logTest.c:75 - logging trace
+1 - logTest - log - - logTest.c:155 - EXIT_FUNC test1
 1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 1 - Accept log messages from 'mcs' module only 
 1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
@@ -147,7 +147,7 @@
 1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 1 - Clear list of allowed modules. All modules can log messages!!
 1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - default - logTest - log - - logTest.c:124 - ENTER_FUNC test1
+1 - logTest - log - - logTest.c:124 - ENTER_FUNC test1
 1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 1 - File logging switched OFF
 1 - Stdout logging switched ON
@@ -166,27 +166,27 @@
 1 - ###############################################################
 1 - *** Stdout logging verbosity level is : 0
 1 - *** Stdout logging verbosity level is : 1
-1 - default - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:71 - logging warning
 1 - *** Stdout logging verbosity level is : 2
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
 1 - *** Stdout logging verbosity level is : 3
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
-1 - default - logTest - log - - logTest.c:73 - logging test
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:73 - logging test
 1 - *** Stdout logging verbosity level is : 4
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
-1 - default - logTest - log - - logTest.c:73 - logging test
-1 - default - logTest - log - - logTest.c:74 - logging debug
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:73 - logging test
+1 - logTest - log - - logTest.c:74 - logging debug
 1 - *** Stdout logging verbosity level is : 5
-1 - default - logTest - log - - logTest.c:71 - logging warning
-1 - default - logTest - log - - logTest.c:72 - logging info
-1 - default - logTest - log - - logTest.c:73 - logging test
-1 - default - logTest - log - - logTest.c:74 - logging debug
-1 - default - logTest - log - - logTest.c:75 - logging trace
-1 - default - logTest - log - - logTest.c:155 - EXIT_FUNC test1
-1 - default - logTest - log - - logTest.c:161 - ENTER_FUNC testNoFileLine
-1 - default - logTest - log - - FileLine must not appear
-1 - default - logTest - log - - logTest.c:167 - FileLine must appear
-1 - default - logTest - log - - logTest.c:169 - EXIT_FUNC testNoFileLine
+1 - logTest - log - - logTest.c:71 - logging warning
+1 - logTest - log - - logTest.c:72 - logging info
+1 - logTest - log - - logTest.c:73 - logging test
+1 - logTest - log - - logTest.c:74 - logging debug
+1 - logTest - log - - logTest.c:75 - logging trace
+1 - logTest - log - - logTest.c:155 - EXIT_FUNC test1
+1 - logTest - log - - logTest.c:161 - ENTER_FUNC testNoFileLine
+1 - logTest - log - - FileLine must not appear
+1 - logTest - log - - logTest.c:167 - FileLine must appear
+1 - logTest - log - - logTest.c:169 - EXIT_FUNC testNoFileLine

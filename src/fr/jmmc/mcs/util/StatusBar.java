@@ -1,13 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.1 2006-07-12 14:27:51 lafrasse Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.2 2006-07-12 15:49:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/07/12 14:27:51  lafrasse
+ * Creation
+ *
  ******************************************************************************/
-package jmmc.scalib.sclgui;
+package jmmc.mcs.util;
 
 import jmmc.mcs.log.MCSLogger;
 
@@ -15,7 +18,7 @@ import javax.swing.*;
 
 
 /**
- * Class description goes here.
+ * A status bar that can be shared all along an application.
  */
 public class StatusBar extends JPanel
 {
@@ -23,7 +26,9 @@ public class StatusBar extends JPanel
     static JLabel _statusLabel = new JLabel();
 
     /**
-     * ...constructor StatusBar documentation comment...
+     * Constructor.
+     *
+     * Should be call at least one in order to allow usage.
      */
     public StatusBar()
     {

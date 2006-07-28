@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedButtonModel.java,v 1.1 2006-07-07 09:16:23 mella Exp $"
+ * "@(#) $Id: PreferencedButtonModel.java,v 1.2 2006-07-28 08:41:20 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/07/07 09:16:23  mella
+ * First revision
+ *
  *
  ******************************************************************************/
 package jmmc.mcs.util;
@@ -31,7 +34,10 @@ import javax.swing.DefaultButtonModel;
 public class PreferencedButtonModel extends DefaultButtonModel
     implements Observer, ActionListener
 {
-    /** Menu item corresponding preference property */
+    /** Store PreferencedButtonModel instances for a given preference name */
+    protected static Hashtable _instancesHashtable = new Hashtable();
+
+    /** Preference property */
     private String _preferenceProperty;
 
     /** Shared instance */
@@ -46,7 +52,7 @@ public class PreferencedButtonModel extends DefaultButtonModel
      * title a string containing the label to be displayed in the menu
      * preferenceProperty a string containing the reference to the boolean property to handle
      */
-    public PreferencedButtonModel(Preferences preferences,
+    protected PreferencedButtonModel(Preferences preferences,
         String preferenceProperty)
     {
         // Store the Preference shared instance of the main application
@@ -64,15 +70,61 @@ public class PreferencedButtonModel extends DefaultButtonModel
     }
 
     /**
+     * DOCUMENT ME!
+     *
+     * @param preferences DOCUMENT ME!
+     * @param preferenceProperty DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public static PreferencedButtonModel getInstance(Preferences preferences,
+        String preferenceProperty)
+    {
+        PreferencedButtonModel bm;
+
+        if (_instancesHashtable.containsKey(preferenceProperty))
+        {
+            bm = (PreferencedButtonModel) _instancesHashtable.get(preferenceProperty);
+        }
+        else
+        {
+            bm = new PreferencedButtonModel(preferences, preferenceProperty);
+            _instancesHashtable.put(preferenceProperty, bm);
+        }
+
+        return bm;
+    }
+
+    /**
      * Triggerd if the button has been clicked.
      */
     public void actionPerformed(ActionEvent evt)
     {
-        // If the widget changed, update the property value
-
-        // Because actionPerformed is called before selectin flag change :
+        // Because actionPerformed is called before selected flag change :
         // invert isSelected returned value
         boolean nextValue = ! isSelected();
+
+        // If the widget changed due to user action,
+        // update the property value
+        if (evt.getActionCommand() != null)
+        {
+            if (evt.getActionCommand().equals("internalUpdate"))
+            {
+                _logger.fine("This event is due to a preference update");
+
+                return;
+
+                /*_logger.fine("Setting preference '" + _preferenceProperty + "' to " +
+                   nextValue);
+                   _requireSetSelected=false;
+                   _preferences.setPreference(_preferenceProperty, nextValue);
+                   _logger.fine("This is a internal update");
+                   _requireSetSelected=true;
+                 */
+            }
+        }
+
+        _logger.fine("This event is due to a user interaction");
         _logger.fine("Setting preference '" + _preferenceProperty + "' to " +
             nextValue);
         _preferences.setPreference(_preferenceProperty, nextValue);
@@ -83,8 +135,15 @@ public class PreferencedButtonModel extends DefaultButtonModel
      */
     public void update(Observable o, Object arg)
     {
-        // Update the widget status if the property value changed
-        setSelected(_preferences.getPreferenceAsBoolean(_preferenceProperty));
+        // Notify event Listener (telling this that it is an internal update)
+        _logger.fine("Fire action listeners ");
+
+        fireActionPerformed(new ActionEvent(this, SELECTED, "internalUpdate"));
+
+        // Update the widget view according property value changed
+        boolean nextValue = _preferences.getPreferenceAsBoolean(_preferenceProperty);
+        _logger.fine("Setting selected to " + nextValue);
+        setSelected(nextValue);
     }
 }
 /*___oOo___*/

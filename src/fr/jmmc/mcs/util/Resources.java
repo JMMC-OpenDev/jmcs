@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.1 2006-07-28 06:36:11 mella Exp $"
+ * "@(#) $Id: Resources.java,v 1.2 2006-08-03 14:47:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/07/28 06:36:11  mella
+ * First revision
+ *
  *
  ******************************************************************************/
 package jmmc.mcs.util;
@@ -143,7 +146,7 @@ public abstract class Resources
      */
     public static ImageIcon getActionIcon(String actionName)
     {
-        String iconPath = getActionIconPath(actionName);
+        String    iconPath  = getActionIconPath(actionName);
 
         ImageIcon imageIcon = createImageIcon(iconPath,
                 "Icon of action '" + actionName + "'");

@@ -17,11 +17,11 @@ import javax.swing.plaf.FileChooserUI;
  */
 public class ReportDialog extends javax.swing.JDialog
 {
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     /**
      * DOCUMENT ME!
      */
-    private javax.swing.JTextArea     detailMsgTextArea;
+    private javax.swing.JTextArea detailMsgTextArea;
 
     /**
      * DOCUMENT ME!
@@ -229,11 +229,11 @@ public class ReportDialog extends javax.swing.JDialog
      * @param evt DOCUMENT ME!
      */
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt)
-    { //GEN-FIRST:event_jToggleButton1ActionPerformed
+    {//GEN-FIRST:event_jToggleButton1ActionPerformed
         detailsScrollPane.setVisible(jToggleButton1.isSelected());
         pack();
         pack();
-    } //GEN-LAST:event_jToggleButton1ActionPerformed
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -251,11 +251,11 @@ public class ReportDialog extends javax.swing.JDialog
                     }
                     catch (Exception e)
                     {
-                        new ErrorDialog(new javax.swing.JFrame(), true, e).setVisible(true);
+                        new ReportDialog(new javax.swing.JFrame(), true, e).setVisible(true);
                     }
                 }
             });
     }
 
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 }

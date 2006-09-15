@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.7 2006-06-08 11:41:18 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.8 2006-09-15 14:14:55 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/06/08 11:41:18  mella
+ * Add Boolean preference handling
+ *
  * Revision 1.6  2006/04/12 12:30:02  lafrasse
  * Updated some Doxygen tags to fix previous documentation generation errors
  *
@@ -87,14 +90,11 @@ public class Preferences extends Observable
         loadFromFile();
     }
 
-    /* Set short preference filename.
-     * @param shortPreferenceFilename the filename to store on disk this preference.
-     */
-
     /**
-     * DOCUMENT ME!
+     * Set short preference filename.
      *
-     * @param shortPreferenceFilename DOCUMENT ME!
+     * @param shortPreferenceFilename the filename to store on disk this
+     * preference.
      */
     public static void setShortPreferenceFilename(
         String shortPreferenceFilename)
@@ -103,7 +103,7 @@ public class Preferences extends Observable
     }
 
     /**
-     * Save preferences into preferences  file.
+     * Save preferences into preferences file.
      *
      * @throws PreferencesException indicates a problem during save process.
      */
@@ -193,6 +193,23 @@ public class Preferences extends Observable
     }
 
     /**
+     * Set a preference value with boolean content.
+     *
+     * @param preferenceName the preference name.
+     * @param preferenceValue the double preference value.
+     */
+    final public void setPreference(String preferenceName,
+        double preferenceValue)
+    {
+        myProperties.setProperty(preferenceName,
+            Double.toString(preferenceValue));
+        myProperties.put("content", "user");
+        // Notify all preferences listener.
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
      * Get a preference value.
      *
      * @param preferenceName the preference name.
@@ -238,10 +255,23 @@ public class Preferences extends Observable
      */
     final public boolean getPreferenceAsBoolean(String preferenceName)
     {
-        boolean b;
-        String  value = myProperties.getProperty(preferenceName);
+        String value = myProperties.getProperty(preferenceName);
 
         return Boolean.valueOf(value).booleanValue();
+    }
+
+    /**
+     * Get a double preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return one double representing the preference value.
+     */
+    final public double getPreferenceAsDouble(String preferenceName)
+    {
+        String value = myProperties.getProperty(preferenceName);
+
+        return Double.valueOf(value).doubleValue();
     }
 
     /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedButtonModel.java,v 1.2 2006-07-28 08:41:20 mella Exp $"
+ * "@(#) $Id: PreferencedButtonModel.java,v 1.3 2006-09-28 15:23:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/07/28 08:41:20  mella
+ * factory one shared model per preference
+ *
  * Revision 1.1  2006/07/07 09:16:23  mella
  * First revision
  *
@@ -127,7 +130,15 @@ public class PreferencedButtonModel extends DefaultButtonModel
         _logger.fine("This event is due to a user interaction");
         _logger.fine("Setting preference '" + _preferenceProperty + "' to " +
             nextValue);
-        _preferences.setPreference(_preferenceProperty, nextValue);
+
+        try
+        {
+            _preferences.setPreference(_preferenceProperty, nextValue);
+        }
+        catch (Exception e)
+        {
+            // @TODO
+        }
     }
 
     /**

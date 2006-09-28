@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.8 2006-09-15 14:14:55 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.9 2006-09-28 15:22:25 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/09/15 14:14:55  lafrasse
+ * Added Double value support.
+ * Documentation refinments.
+ *
  * Revision 1.7  2006/06/08 11:41:18  mella
  * Add Boolean preference handling
  *
@@ -30,6 +34,8 @@
  ******************************************************************************/
 package jmmc.mcs.util;
 
+import jmmc.mcs.log.MCSLogger;
+
 import java.awt.Color;
 
 import java.io.File;
@@ -37,7 +43,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Observable;
 import java.util.Properties;
 import java.util.Vector;
@@ -59,15 +67,18 @@ public class Preferences extends Observable
      */
     protected static String _shortPreferenceFilename = "preferences.properties";
 
-    // Preferences are saved using Properties object.
+    /**
+     * Store hidden properties index prefix.
+     */
+    protected static String _indexPrefix = "MCSPropertyIndexes.";
 
     /**
      * Internal storage of preferences.
      */
-    private Properties myProperties = new Properties();
+    private Properties _currentProperties = new Properties();
 
     /**
-     * Store default properties.
+     * Default propertiy values.
      */
     private Properties _defaultProperties = new Properties();
 
@@ -86,8 +97,28 @@ public class Preferences extends Observable
      */
     public Preferences(String shortPreferenceFilename)
     {
+        MCSLogger.trace();
+
         _shortPreferenceFilename = shortPreferenceFilename;
         loadFromFile();
+    }
+
+    /**
+     * Returns the name of file to store preferences into.
+     * Try to return an absolute pathName.
+     *
+     * @return $USER/getShortPreferenceFilename()
+     */
+    public String getPreferenceFilename()
+    {
+        MCSLogger.trace();
+
+        // TODO : must be specialized in order to properly retrieved each
+        // specifc path for the different platforms (mac, linux, win).
+        String userHome = System.getProperty("user.home");
+        String cfgName  = userHome + File.separator + _shortPreferenceFilename;
+
+        return cfgName;
     }
 
     /**
@@ -99,27 +130,9 @@ public class Preferences extends Observable
     public static void setShortPreferenceFilename(
         String shortPreferenceFilename)
     {
-        _shortPreferenceFilename = shortPreferenceFilename;
-    }
+        MCSLogger.trace();
 
-    /**
-     * Save preferences into preferences file.
-     *
-     * @throws PreferencesException indicates a problem during save process.
-     */
-    final public void saveToFile() throws PreferencesException
-    {
-        try
-        {
-            String           cfgName    = getPreferenceFilename();
-            FileOutputStream outputFile = new FileOutputStream(cfgName);
-            myProperties.store(outputFile, "SCALIB GUI PROPERTIES...");
-            outputFile.close();
-        }
-        catch (Exception e)
-        {
-            throw new PreferencesException("Can't store preferences to file", e);
-        }
+        _shortPreferenceFilename = shortPreferenceFilename;
     }
 
     /**
@@ -127,12 +140,14 @@ public class Preferences extends Observable
      */
     public void loadFromFile()
     {
+        MCSLogger.trace();
+
         String cfgName = getPreferenceFilename();
 
         try
         {
             resetToDefaultPreferences();
-            myProperties.load(new FileInputStream(cfgName));
+            _currentProperties.load(new FileInputStream(cfgName));
             // Notify all preferences listener of maybe new values coming from file.
             setChanged();
             notifyObservers();
@@ -144,19 +159,25 @@ public class Preferences extends Observable
     }
 
     /**
-     * Returns the name of file to store preferences into.
-     * Try to return an absolute pathName.
+     * Save preferences into preferences file.
      *
-     * @return $USER/getShortPreferenceFilename()
+     * @throws PreferencesException indicates a problem during save process.
      */
-    public String getPreferenceFilename()
+    final public void saveToFile() throws PreferencesException
     {
-        // TODO : must be specialized in order to properly retrieved each
-        // specifc path for the different platforms (mac, linux, win).
-        String userHome = System.getProperty("user.home");
-        String cfgName  = userHome + File.separator + _shortPreferenceFilename;
+        MCSLogger.trace();
 
-        return cfgName;
+        try
+        {
+            String           cfgName    = getPreferenceFilename();
+            FileOutputStream outputFile = new FileOutputStream(cfgName);
+            _currentProperties.store(outputFile, "SCALIB GUI PROPERTIES...");
+            outputFile.close();
+        }
+        catch (Exception e)
+        {
+            throw new PreferencesException("Can't store preferences to file", e);
+        }
     }
 
     /**
@@ -166,47 +187,132 @@ public class Preferences extends Observable
      * @param preferenceValue the preference value.
      */
     final public void setPreference(String preferenceName,
-        String preferenceValue)
+        Object preferenceValue) throws PreferencesException
     {
-        myProperties.setProperty(preferenceName, preferenceValue);
-        myProperties.put("content", "user");
+        MCSLogger.trace();
+
+        int order = getPreferenceOrder(preferenceName);
+
+        try
+        {
+            setPreference(preferenceName, order, preferenceValue);
+        }
+        catch (PreferencesException e)
+        {
+            throw e;
+        }
+    }
+
+    /**
+     * Set a preference.
+     *
+     * @param preferenceName the preference name.
+     * @param preferenceIndex the order number for the property (-1 for no order).
+     * @param preferenceValue the preference value.
+     */
+    final public void setPreference(String preferenceName, int preferenceIndex,
+        Object preferenceValue) throws PreferencesException
+    {
+        MCSLogger.trace();
+
+        // If the constraint is a String object
+        if (preferenceValue.getClass() == java.lang.String.class)
+        {
+            _currentProperties.setProperty(preferenceName,
+                (String) preferenceValue);
+        }
+
+        // Else if the constraint is a Boolean object
+        else if (preferenceValue.getClass() == java.lang.Boolean.class)
+        {
+            _currentProperties.setProperty(preferenceName,
+                ((Boolean) preferenceValue).toString());
+        }
+
+        // Else if the constraint is a Double object
+        else if (preferenceValue.getClass() == java.lang.Double.class)
+        {
+            _currentProperties.setProperty(preferenceName,
+                ((Double) preferenceValue).toString());
+        }
+
+        // Else if the constraint is a Color object
+        else if (preferenceValue.getClass() == java.awt.Color.class)
+        {
+            _currentProperties.setProperty(preferenceName,
+                jmmc.mcs.util.ColorEncoder.encode((Color) preferenceValue));
+        }
+
+        // Otherwise we don't know how to handle the gven object type
+        else
+        {
+            throw new PreferencesException(
+                "Can't handle the given preference value");
+        }
+
+        // Add property index for order if needed
+        setPreferenceOrder(preferenceName, preferenceIndex);
+
         // Notify all preferences listener.
         setChanged();
         notifyObservers();
     }
 
     /**
-     * Set a preference value with boolean content.
+     * Set a preference order.
      *
      * @param preferenceName the preference name.
-     * @param preferenceValue the boolean preference value.
+     * @param preferenceIndex the order number for the property (-1 for no order).
      */
-    final public void setPreference(String preferenceName,
-        boolean preferenceValue)
+    final public void setPreferenceOrder(String preferenceName,
+        int preferenceIndex)
     {
-        myProperties.setProperty(preferenceName,
-            Boolean.toString(preferenceValue));
-        myProperties.put("content", "user");
+        MCSLogger.trace();
+
+        // Add property index for order if needed
+        if (preferenceIndex > -1)
+        {
+            _currentProperties.setProperty(_indexPrefix + preferenceName,
+                Integer.toString(preferenceIndex));
+        }
+        else
+        {
+            _currentProperties.setProperty(_indexPrefix + preferenceName,
+                Integer.toString(-1));
+        }
+
         // Notify all preferences listener.
         setChanged();
         notifyObservers();
     }
 
     /**
-     * Set a preference value with boolean content.
+     * Get a preference order.
      *
      * @param preferenceName the preference name.
-     * @param preferenceValue the double preference value.
+     *
+     * @return the order number for the property (-1 for no order).
      */
-    final public void setPreference(String preferenceName,
-        double preferenceValue)
+    final public int getPreferenceOrder(String preferenceName)
     {
-        myProperties.setProperty(preferenceName,
-            Double.toString(preferenceValue));
-        myProperties.put("content", "user");
-        // Notify all preferences listener.
-        setChanged();
-        notifyObservers();
+        MCSLogger.trace();
+
+        // -1 is the flag value for no order found, so its the default value.
+        int result = -1;
+
+        // If the asked order is NOT about an internal MCS index property
+        if (preferenceName.startsWith(_indexPrefix) == false)
+        {
+            // Get the corresponding order as a String
+            String orderString = _currentProperties.getProperty(_indexPrefix +
+                    preferenceName);
+
+            // Convert the String in an int
+            Integer orderInteger = Integer.valueOf(orderString);
+            result = orderInteger.intValue();
+        }
+
+        return result;
     }
 
     /**
@@ -218,32 +324,9 @@ public class Preferences extends Observable
      */
     final public String getPreference(String preferenceName)
     {
-        return myProperties.getProperty(preferenceName);
-    }
+        MCSLogger.trace();
 
-    /**
-     * Get a color preference value.
-     *
-     * @param preferenceName the preference name.
-     *
-     * @return one Color object representing the preference value.
-     */
-    final public Color getPreferenceAsColor(String preferenceName)
-        throws PreferencesException
-    {
-        Color c;
-
-        try
-        {
-            c = Color.decode(myProperties.getProperty(preferenceName));
-        }
-        catch (Exception e)
-        {
-            throw new PreferencesException("Can't convert preference value to color",
-                e);
-        }
-
-        return c;
+        return _currentProperties.getProperty(preferenceName);
     }
 
     /**
@@ -255,7 +338,9 @@ public class Preferences extends Observable
      */
     final public boolean getPreferenceAsBoolean(String preferenceName)
     {
-        String value = myProperties.getProperty(preferenceName);
+        MCSLogger.trace();
+
+        String value = _currentProperties.getProperty(preferenceName);
 
         return Boolean.valueOf(value).booleanValue();
     }
@@ -269,33 +354,97 @@ public class Preferences extends Observable
      */
     final public double getPreferenceAsDouble(String preferenceName)
     {
-        String value = myProperties.getProperty(preferenceName);
+        MCSLogger.trace();
+
+        String value = _currentProperties.getProperty(preferenceName);
 
         return Double.valueOf(value).doubleValue();
     }
 
     /**
-     * Returns an Enumeration of preference names which start with given
-     * string. One given empty string make all preference entries returned.
-     * object.
+     * Get a color preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return one Color object representing the preference value.
+     */
+    final public Color getPreferenceAsColor(String preferenceName)
+        throws PreferencesException
+    {
+        MCSLogger.trace();
+
+        String stringValue = _currentProperties.getProperty(preferenceName);
+        Color  colorValue;
+
+        try
+        {
+            colorValue     = Color.decode(stringValue);
+        }
+        catch (Exception e)
+        {
+            throw new PreferencesException("Can't convert preference '" +
+                preferenceName + "'value '" + stringValue + "' to a Color.", e);
+        }
+
+        return colorValue;
+    }
+
+    /**
+     * Returns an Enumeration (ordered if possible) of preference names which
+     * start with given string. One given empty string make all preference
+     * entries returned.
+     *
      * @return Enumeration a string enumeration of preference names
      */
     public Enumeration getPreferences(String prefix)
     {
-        Vector      v = new Vector();
-        Enumeration e = myProperties.propertyNames();
+        MCSLogger.trace();
 
+        int         size               = 0;
+        Enumeration e                  = _currentProperties.propertyNames();
+        Vector      shuffledProperties = new Vector();
+
+        // Count the number of properties for the given index and store them
         while (e.hasMoreElements())
         {
             String propertyName = (String) e.nextElement();
 
             if (propertyName.startsWith(prefix))
             {
-                v.add(propertyName);
+                size++;
+                shuffledProperties.add(propertyName);
             }
         }
 
-        return v.elements();
+        String[] orderedProperties = new String[size];
+        e = shuffledProperties.elements();
+
+        // Order the stored properties if needed
+        while (e.hasMoreElements())
+        {
+            String propertyName  = (String) e.nextElement();
+
+            int    propertyOrder = getPreferenceOrder(propertyName);
+
+            // If the property is ordered
+            if (propertyOrder > -1)
+            {
+                // Store it at the right position
+                orderedProperties[propertyOrder] = propertyName;
+            }
+            else
+            {
+                // Break and return the shuffled enumeration
+                return shuffledProperties.elements();
+            }
+        }
+
+        // Get an enumaration by converting the array -> List -> Vector -> Enumeration
+        List        orderedList        = Arrays.asList(orderedProperties);
+        Vector      orderedVector      = new Vector(orderedList);
+        Enumeration orderedEnumeration = orderedVector.elements();
+
+        return orderedEnumeration;
     }
 
     /**
@@ -305,8 +454,10 @@ public class Preferences extends Observable
      */
     public String toString()
     {
+        MCSLogger.trace();
+
         return "Preferences stored into [" + getPreferenceFilename() + "] : " +
-        myProperties;
+        _currentProperties;
     }
 
     /**
@@ -315,8 +466,10 @@ public class Preferences extends Observable
      */
     public void resetToDefaultPreferences()
     {
-        myProperties = (Properties) _defaultProperties.clone();
-        myProperties.put("content", "default");
+        MCSLogger.trace();
+
+        _currentProperties = (Properties) _defaultProperties.clone();
+
         // Notify all preferences listener.
         setChanged();
         notifyObservers();
@@ -328,9 +481,15 @@ public class Preferences extends Observable
      *
      * @param defaultProperties the default properties to set for this application.
      */
-    protected void setDefaultPreferences(Properties defaultProperties)
+    protected void setDefaultPreferences(Preferences defaults)
     {
-        _defaultProperties = defaultProperties;
+        MCSLogger.trace();
+
+        _defaultProperties = defaults._currentProperties;
+
+        // Notify all preferences listener.
+        setChanged();
+        notifyObservers();
     }
 
     /**

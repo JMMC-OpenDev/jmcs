@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.9 2006-09-28 15:22:25 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.10 2006-10-03 14:10:35 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2006/09/28 15:22:25  lafrasse
+ * Added ordered properties support.
+ * Added error management with exceptionx.
+ *
  * Revision 1.8  2006/09/15 14:14:55  lafrasse
  * Added Double value support.
  * Documentation refinments.
@@ -148,14 +152,15 @@ public class Preferences extends Observable
         {
             resetToDefaultPreferences();
             _currentProperties.load(new FileInputStream(cfgName));
-            // Notify all preferences listener of maybe new values coming from file.
-            setChanged();
-            notifyObservers();
         }
         catch (IOException e)
         {
             // Do nothing just default values will be into the preferences.
         }
+
+        // Notify all preferences listener of maybe new values coming from file.
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -191,6 +196,7 @@ public class Preferences extends Observable
     {
         MCSLogger.trace();
 
+        // Wiil automatically get -1 for a yet undefined preference
         int order = getPreferenceOrder(preferenceName);
 
         try
@@ -243,11 +249,11 @@ public class Preferences extends Observable
                 jmmc.mcs.util.ColorEncoder.encode((Color) preferenceValue));
         }
 
-        // Otherwise we don't know how to handle the gven object type
+        // Otherwise we don't know how to handle the given object type
         else
         {
             throw new PreferencesException(
-                "Can't handle the given preference value");
+                "Can't handle the given preference value.");
         }
 
         // Add property index for order if needed
@@ -297,7 +303,7 @@ public class Preferences extends Observable
     {
         MCSLogger.trace();
 
-        // -1 is the flag value for no order found, so its the default value.
+        // -1 is the flag value for no order found, so it is the default value.
         int result = -1;
 
         // If the asked order is NOT about an internal MCS index property
@@ -307,9 +313,15 @@ public class Preferences extends Observable
             String orderString = _currentProperties.getProperty(_indexPrefix +
                     preferenceName);
 
-            // Convert the String in an int
-            Integer orderInteger = Integer.valueOf(orderString);
-            result = orderInteger.intValue();
+            // If an order token was found
+            if (orderString != null)
+            {
+                // Convert the String in an int
+                Integer orderInteger = Integer.valueOf(orderString);
+                result = orderInteger.intValue();
+            }
+
+            // Otherwise the default -1 value will be returned
         }
 
         return result;
@@ -357,6 +369,9 @@ public class Preferences extends Observable
         MCSLogger.trace();
 
         String value = _currentProperties.getProperty(preferenceName);
+
+        System.out.println("value('" + preferenceName + "') = '" + value +
+            "'.");
 
         return Double.valueOf(value).doubleValue();
     }
@@ -448,19 +463,6 @@ public class Preferences extends Observable
     }
 
     /**
-     * String representation. Print filename and preferences.
-     *
-     * @return the representation.
-     */
-    public String toString()
-    {
-        MCSLogger.trace();
-
-        return "Preferences stored into [" + getPreferenceFilename() + "] : " +
-        _currentProperties;
-    }
-
-    /**
      * Restore default values to preferences. Use save method to store default
      * values into the preferences file.
      */
@@ -485,7 +487,7 @@ public class Preferences extends Observable
     {
         MCSLogger.trace();
 
-        _defaultProperties = defaults._currentProperties;
+        _defaultProperties = (Properties) defaults._currentProperties.clone();
 
         // Notify all preferences listener.
         setChanged();
@@ -493,10 +495,22 @@ public class Preferences extends Observable
     }
 
     /**
+     * String representation. Print filename and preferences.
+     *
+     * @return the representation.
+     */
+    public String toString()
+    {
+        MCSLogger.trace();
+
+        return "Preferences stored into [" + getPreferenceFilename() + "] : " +
+        _currentProperties;
+    }
+
+    /**
      * main method used to test this class.
      *
      * @param args command line arguments
-     *
      */
     public static void main(String[] args)
     {

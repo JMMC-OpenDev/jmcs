@@ -66,6 +66,7 @@ public class ReportDialog extends javax.swing.JDialog {
     private void init(String errorMsg, String detailMsg){
         MCSLogger.trace();
         
+        _logger.warning(errorMsg); 
         errorMsgTextField.setText(errorMsg);
         detailMsgTextArea.setText(detailMsg);
         emailTextField.setText(defaultEmail);

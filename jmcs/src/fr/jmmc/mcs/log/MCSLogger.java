@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSLogger.java,v 1.3 2006-10-10 09:09:35 lafrasse Exp $"
+ * "@(#) $Id: MCSLogger.java,v 1.4 2006-10-16 14:16:47 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/10/10 09:09:35  lafrasse
+ * Updated MCSLogger APIs to more tightly reflect standard MCS 'log' module levels.
+ *
  * Revision 1.2  2006/07/12 14:15:10  lafrasse
  * Added doxygen documentation
  *
@@ -15,7 +18,8 @@
  ******************************************************************************/
 package jmmc.mcs.log;
 
-import java.util.logging.Logger;
+import java.util.*;
+import java.util.logging.*;
 
 
 /**
@@ -26,16 +30,61 @@ public class MCSLogger
     /**
      * Application-wide shared instance logger.
      */
-    static Logger myLogger = Logger.getLogger("fr.jmmc.mcs");
+    static Logger _logger = Logger.getLogger("fr.jmmc.mcs");
 
     /**
-     * Give back the logger shared instance
-     *
-     * @return the logger shared instance
+     * Application-wide shared instance console handler.
      */
-    static public Logger getLogger()
+    static ConsoleHandler _handler = new ConsoleHandler();
+
+    /**
+     * Set the logger level.
+     *
+     * @warning Must at least be called once to enable STDOUT logging.
+     *
+     * "0" :  all logs turned OFF.
+     * "1" : 'error' logs only.
+     * "2" : 'error' and 'warning' logs.
+     * "3" : 'error', 'warning' and 'info' logs.
+     * "4" : 'error', 'warning', 'info' and 'test' logs.
+     * "5" :  all logs turned ON ('error','warning','info','test' and 'debug').
+     *
+     * @param the logger level, as a String amongst values described above.
+     */
+    static public void setLevel(String stringLevel)
     {
-        return myLogger;
+        MCSLogger.trace();
+
+        // Define 'string to Level' conversion table
+        Hashtable levels = new Hashtable();
+        levels.put("0", java.util.logging.Level.OFF);
+        levels.put("1", java.util.logging.Level.SEVERE);
+        levels.put("2", java.util.logging.Level.WARNING);
+        levels.put("3", java.util.logging.Level.INFO);
+        levels.put("4", java.util.logging.Level.FINE);
+        levels.put("5", java.util.logging.Level.ALL);
+
+        // Convert the given string in the corresponding Level object
+        Level level = (Level) levels.get(stringLevel);
+
+        // If the given string was recognized
+        if (level != null)
+        {
+            System.out.println("Log level set to '" + stringLevel + "' (" +
+                level + ").");
+
+            // Set the logger level
+            _logger.setLevel(level);
+
+            // Ensures that log message are logged on STDOUT
+            _logger.setUseParentHandlers(false);
+            _handler.setLevel(level);
+            _logger.addHandler(_handler);
+        }
+        else
+        {
+            MCSLogger.error("Bad log level value '" + stringLevel + "'.");
+        }
     }
 
     /**
@@ -45,7 +94,7 @@ public class MCSLogger
      */
     public static void error(String log)
     {
-        myLogger.severe(log);
+        _logger.severe(log);
     }
 
     /**
@@ -55,7 +104,7 @@ public class MCSLogger
      */
     public static void warning(String log)
     {
-        myLogger.warning(log);
+        _logger.warning(log);
     }
 
     /**
@@ -65,7 +114,7 @@ public class MCSLogger
      */
     public static void info(String log)
     {
-        myLogger.info(log);
+        _logger.info(log);
     }
 
     /**
@@ -75,7 +124,7 @@ public class MCSLogger
      */
     public static void test(String log)
     {
-        myLogger.fine(log);
+        _logger.fine(log);
     }
 
     /**
@@ -85,7 +134,7 @@ public class MCSLogger
      */
     public static void debug(String log)
     {
-        myLogger.finest(log);
+        _logger.finest(log);
     }
 
     /**
@@ -95,7 +144,7 @@ public class MCSLogger
     {
         Throwable         t      = new Throwable();
         StackTraceElement caller = t.getStackTrace()[1];
-        myLogger.entering(caller.getClassName(), caller.getMethodName());
+        _logger.entering(caller.getClassName(), caller.getMethodName());
     }
 }
 /*___oOo___*/

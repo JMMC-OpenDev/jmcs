@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedButtonModel.java,v 1.3 2006-09-28 15:23:20 lafrasse Exp $"
+ * "@(#) $Id: PreferencedButtonModel.java,v 1.4 2006-10-16 14:29:49 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/09/28 15:23:20  lafrasse
+ * Updated to handle jmmc.util.Preferences API modifications.
+ *
  * Revision 1.2  2006/07/28 08:41:20  mella
  * factory one shared model per preference
  *
@@ -45,9 +48,6 @@ public class PreferencedButtonModel extends DefaultButtonModel
 
     /** Shared instance */
     private Preferences _preferences;
-
-    /** Shared logger */
-    private Logger _logger = MCSLogger.getLogger();
 
     /**
      * PreferencedButtonModel constructor
@@ -113,22 +113,22 @@ public class PreferencedButtonModel extends DefaultButtonModel
         {
             if (evt.getActionCommand().equals("internalUpdate"))
             {
-                _logger.fine("This event is due to a preference update");
+                MCSLogger.info("This event is due to a preference update");
 
                 return;
 
-                /*_logger.fine("Setting preference '" + _preferenceProperty + "' to " +
+                /*MCSLogger.info("Setting preference '" + _preferenceProperty + "' to " +
                    nextValue);
                    _requireSetSelected=false;
                    _preferences.setPreference(_preferenceProperty, nextValue);
-                   _logger.fine("This is a internal update");
+                   MCSLogger.info("This is a internal update");
                    _requireSetSelected=true;
                  */
             }
         }
 
-        _logger.fine("This event is due to a user interaction");
-        _logger.fine("Setting preference '" + _preferenceProperty + "' to " +
+        MCSLogger.info("This event is due to a user interaction");
+        MCSLogger.info("Setting preference '" + _preferenceProperty + "' to " +
             nextValue);
 
         try
@@ -147,13 +147,13 @@ public class PreferencedButtonModel extends DefaultButtonModel
     public void update(Observable o, Object arg)
     {
         // Notify event Listener (telling this that it is an internal update)
-        _logger.fine("Fire action listeners ");
+        MCSLogger.info("Fire action listeners ");
 
         fireActionPerformed(new ActionEvent(this, SELECTED, "internalUpdate"));
 
         // Update the widget view according property value changed
         boolean nextValue = _preferences.getPreferenceAsBoolean(_preferenceProperty);
-        _logger.fine("Setting selected to " + nextValue);
+        MCSLogger.info("Setting selected to " + nextValue);
         setSelected(nextValue);
     }
 }

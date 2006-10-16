@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.10 2006-10-03 14:10:35 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.11 2006-10-16 14:29:49 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/10/03 14:10:35  lafrasse
+ * Corrected a bug in getPreferenceOrder() that prevented initial preferences
+ * set.
+ *
  * Revision 1.9  2006/09/28 15:22:25  lafrasse
  * Added ordered properties support.
  * Added error management with exceptionx.
@@ -369,9 +373,6 @@ public class Preferences extends Observable
         MCSLogger.trace();
 
         String value = _currentProperties.getProperty(preferenceName);
-
-        System.out.println("value('" + preferenceName + "') = '" + value +
-            "'.");
 
         return Double.valueOf(value).doubleValue();
     }

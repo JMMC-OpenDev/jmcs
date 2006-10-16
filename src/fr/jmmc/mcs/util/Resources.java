@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.2 2006-08-03 14:47:24 lafrasse Exp $"
+ * "@(#) $Id: Resources.java,v 1.3 2006-10-16 14:29:49 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/08/03 14:47:24  lafrasse
+ * Jalopyzation
+ *
  * Revision 1.1  2006/07/28 06:36:11  mella
  * First revision
  *
@@ -41,9 +44,6 @@ public abstract class Resources
     /** resource filename  that must be overloaded by subclasses */
     protected static String _resourceName = "jmmc/mcs/util/Resources";
 
-    /** logger */
-    private static Logger _logger = MCSLogger.getLogger();
-
     /** Properties */
     private static ResourceBundle _resources = null;
 
@@ -57,7 +57,7 @@ public abstract class Resources
     public static void setResourceName(String name)
     {
         MCSLogger.trace();
-        _logger.fine("Application will grab resources from '" + name + "'");
+        MCSLogger.info("Application will grab resources from '" + name + "'");
         _resourceName = name;
     }
 
@@ -80,14 +80,14 @@ public abstract class Resources
             }
             catch (Exception e)
             {
-                _logger.warning("Resource bundle can't be found :" +
+                MCSLogger.warning("Resource bundle can't be found :" +
                     e.getMessage());
 
                 return null;
             }
         }
 
-        _logger.fine("getResource for " + resourceName);
+        MCSLogger.info("getResource for " + resourceName);
 
         try
         {
@@ -95,7 +95,7 @@ public abstract class Resources
         }
         catch (Exception e)
         {
-            _logger.warning("Entry not found :" + e.getMessage());
+            MCSLogger.warning("Entry not found :" + e.getMessage());
         }
 
         return null;
@@ -172,7 +172,7 @@ public abstract class Resources
         }
         else
         {
-            _logger.warning("Couldn't find file: '" + path + "'");
+            MCSLogger.warning("Couldn't find file: '" + path + "'");
 
             return null;
         }

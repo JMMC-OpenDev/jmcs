@@ -27,7 +27,8 @@ public class ReportDialog extends javax.swing.JDialog
     /**
      * DOCUMENT ME!
      */
-    protected static Logger _logger = MCSLogger.getLogger();
+    protected static Logger _logger =
+        Logger.getLogger("jmmc.mcs.gui.ReportDialog");
 
     /**
      * DOCUMENT ME!

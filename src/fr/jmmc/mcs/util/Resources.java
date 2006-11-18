@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.3 2006-10-16 14:29:49 lafrasse Exp $"
+ * "@(#) $Id: Resources.java,v 1.4 2006-11-18 22:58:03 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/10/16 14:29:49  lafrasse
+ * Updated to reflect MCSLogger API changes.
+ *
  * Revision 1.2  2006/08/03 14:47:24  lafrasse
  * Jalopyzation
  *
@@ -21,6 +24,9 @@ import jmmc.mcs.log.MCSLogger;
 import org.w3c.dom.*;
 
 import org.xml.sax.*;
+
+import java.awt.*;
+import java.awt.event.*;
 
 import java.io.*;
 
@@ -110,6 +116,8 @@ public abstract class Resources
      */
     public static String getActionText(String actionName)
     {
+        MCSLogger.trace();
+
         return getResource("actions.action." + actionName + ".text");
     }
 
@@ -122,6 +130,8 @@ public abstract class Resources
      */
     public static String getActionDescription(String actionName)
     {
+        MCSLogger.trace();
+
         return getResource("actions.action." + actionName + ".description");
     }
 
@@ -134,11 +144,13 @@ public abstract class Resources
      */
     public static String getActionIconPath(String actionName)
     {
+        MCSLogger.trace();
+
         return getResource("actions.action." + actionName + ".icon");
     }
 
     /**
-     * Get the icon  of an action .
+     * Get the icon of an action .
      *
      * @param actionName the actionInstanceName
      *
@@ -146,6 +158,8 @@ public abstract class Resources
      */
     public static ImageIcon getActionIcon(String actionName)
     {
+        MCSLogger.trace();
+
         String    iconPath  = getActionIconPath(actionName);
 
         ImageIcon imageIcon = createImageIcon(iconPath,
@@ -155,16 +169,42 @@ public abstract class Resources
     }
 
     /**
+     * Get the accelerator (aka. keyboard short cut) of an action .
+     *
+     * @param actionName the actionInstanceName
+     *
+     * @return the associated accelerator
+     */
+    public static KeyStroke getActionAccelerator(String actionName)
+    {
+        MCSLogger.trace();
+
+        // Get the accelerator string description from the Resource.properties file
+        String keyString = getResource("actions.action." + actionName +
+                ".accelerator");
+
+        // Get and return the KeyStroke from the accelerator string description
+        KeyStroke accelerator = KeyStroke.getKeyStroke(keyString);
+
+        MCSLogger.debug("keyString['" + actionName + "'] = '" + keyString +
+            "' -> accelerator = '" + accelerator + "'.");
+
+        return accelerator;
+    }
+
+    /**
      * Returns an ImageIcon, or null if the path was invalid.
      */
     protected static ImageIcon createImageIcon(String path, String description)
     {
+        MCSLogger.trace();
+
         if (path == null)
         {
             return null;
         }
 
-        java.net.URL imgURL = Resources.class.getResource("./" + path);
+        URL imgURL = Resources.class.getResource("./" + path);
 
         if (imgURL != null)
         {
@@ -187,6 +227,8 @@ public abstract class Resources
      */
     public static String getToolTipText(String widgetName)
     {
+        MCSLogger.trace();
+
         return getResource("widgets.widget." + widgetName + ".tooltip");
     }
 }

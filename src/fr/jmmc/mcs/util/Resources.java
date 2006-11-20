@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.4 2006-11-18 22:58:03 lafrasse Exp $"
+ * "@(#) $Id: Resources.java,v 1.5 2006-11-20 15:41:23 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/11/18 22:58:03  lafrasse
+ * Added support for Key Accelerator (keyboard shortcut).
+ *
  * Revision 1.3  2006/10/16 14:29:49  lafrasse
  * Updated to reflect MCSLogger API changes.
  *
@@ -108,7 +111,7 @@ public abstract class Resources
     }
 
     /**
-     * Get the text of an action .
+     * Get the text of an action.
      *
      * @param actionName the actionInstanceName
      *
@@ -122,7 +125,7 @@ public abstract class Resources
     }
 
     /**
-     * Get the description of an action .
+     * Get the description of an action.
      *
      * @param actionName the actionInstanceName
      *
@@ -136,36 +139,17 @@ public abstract class Resources
     }
 
     /**
-     * Get the icon path of an action .
+     * Get the tooltip text of widget related to the common widget group.
      *
-     * @param actionName the actionInstanceName
+     * @param widgetName the widgetInstanceName
      *
-     * @return the associated icon path
+     * @return the tooltip text
      */
-    public static String getActionIconPath(String actionName)
+    public static String getToolTipText(String widgetName)
     {
         MCSLogger.trace();
 
-        return getResource("actions.action." + actionName + ".icon");
-    }
-
-    /**
-     * Get the icon of an action .
-     *
-     * @param actionName the actionInstanceName
-     *
-     * @return the associated icon
-     */
-    public static ImageIcon getActionIcon(String actionName)
-    {
-        MCSLogger.trace();
-
-        String    iconPath  = getActionIconPath(actionName);
-
-        ImageIcon imageIcon = createImageIcon(iconPath,
-                "Icon of action '" + actionName + "'");
-
-        return imageIcon;
+        return getResource("widgets.widget." + widgetName + ".tooltip");
     }
 
     /**
@@ -183,6 +167,11 @@ public abstract class Resources
         String keyString = getResource("actions.action." + actionName +
                 ".accelerator");
 
+        if (keyString == null)
+        {
+            return null;
+        }
+
         // Get and return the KeyStroke from the accelerator string description
         KeyStroke accelerator = KeyStroke.getKeyStroke(keyString);
 
@@ -193,43 +182,37 @@ public abstract class Resources
     }
 
     /**
-     * Returns an ImageIcon, or null if the path was invalid.
+     * Get the icon of an action .
+     *
+     * @param actionName the actionInstanceName
+     *
+     * @return the associated icon
      */
-    protected static ImageIcon createImageIcon(String path, String description)
+    public static ImageIcon getActionIcon(String actionName)
     {
         MCSLogger.trace();
 
-        if (path == null)
+        // Get back the icon image path
+        String iconPath = getResource("actions.action." + actionName + ".icon");
+
+        if (iconPath == null)
         {
             return null;
         }
 
-        URL imgURL = Resources.class.getResource("./" + path);
+        // Get the image from path
+        String fullIconPath = "./" + iconPath;
+        URL    imgURL       = Resources.class.getResource(fullIconPath);
 
-        if (imgURL != null)
+        if (imgURL == null)
         {
-            return new ImageIcon(imgURL, description);
-        }
-        else
-        {
-            MCSLogger.warning("Couldn't find file: '" + path + "'");
+            MCSLogger.warning("Could not load icon '" + iconPath +
+                "' for action '" + actionName + "'.");
 
             return null;
         }
-    }
 
-    /**
-     * Get the tooltip text of widget related to the common widget group.
-     *
-     * @param widgetName the widgetInstanceName
-     *
-     * @return the tooltip text
-     */
-    public static String getToolTipText(String widgetName)
-    {
-        MCSLogger.trace();
-
-        return getResource("widgets.widget." + widgetName + ".tooltip");
+        return new ImageIcon(imgURL);
     }
 }
 /*___oOo___*/

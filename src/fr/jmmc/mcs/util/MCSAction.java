@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSAction.java,v 1.1 2006-11-18 22:56:03 lafrasse Exp $"
+ * "@(#) $Id: MCSAction.java,v 1.2 2006-11-20 15:41:23 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/11/18 22:56:03  lafrasse
+ * Moved from jmmc.scalib.sclgui and renamed from SCAction.java .
+ * Added support for Key Accelerators (keyboard shortcut).
+ *
  * Revision 1.2  2006/07/28 08:33:55  mella
  * add import to make it compile
  *
@@ -35,6 +39,13 @@ public abstract class MCSAction extends AbstractAction
     {
         MCSLogger.trace();
 
+        /*
+           if ((actionName == null) || (Resources.actionExists(actionName) == false))
+           {
+                   throws(new Execption());
+           }
+         */
+
         // Collect action info
         String    text        = Resources.getActionText(actionName);
         String    desc        = Resources.getActionDescription(actionName);
@@ -42,11 +53,25 @@ public abstract class MCSAction extends AbstractAction
         KeyStroke accelerator = Resources.getActionAccelerator(actionName);
 
         // Init action    
-        // @TODO check if null must be checked...
-        putValue(Action.NAME, text);
-        putValue(Action.SHORT_DESCRIPTION, desc);
-        putValue(Action.SMALL_ICON, icon);
-        putValue(Action.ACCELERATOR_KEY, accelerator);
+        if (text != null)
+        {
+            putValue(Action.NAME, text);
+        }
+
+        if (desc != null)
+        {
+            putValue(Action.SHORT_DESCRIPTION, desc);
+        }
+
+        if (icon != null)
+        {
+            putValue(Action.SMALL_ICON, icon);
+        }
+
+        if (accelerator != null)
+        {
+            putValue(Action.ACCELERATOR_KEY, accelerator);
+        }
     }
 }
 /*___oOo___*/

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.11 2006-10-16 14:29:49 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.12 2006-11-30 14:53:34 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2006/10/16 14:29:49  lafrasse
+ * Updated to reflect MCSLogger API changes.
+ *
  * Revision 1.10  2006/10/03 14:10:35  lafrasse
  * Corrected a bug in getPreferenceOrder() that prevented initial preferences
  * set.
@@ -109,6 +112,18 @@ public class Preferences extends Observable
 
         _shortPreferenceFilename = shortPreferenceFilename;
         loadFromFile();
+    }
+
+    /**
+     * Truly notifies all registered Observers.
+     */
+    public void trulyNotifyObservers()
+    {
+        MCSLogger.trace();
+
+        // Notify all preferences listener of maybe new values coming from file.
+        setChanged();
+        notifyObservers();
     }
 
     /**

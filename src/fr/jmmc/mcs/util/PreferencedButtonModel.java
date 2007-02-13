@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedButtonModel.java,v 1.4 2006-10-16 14:29:49 lafrasse Exp $"
+ * "@(#) $Id: PreferencedButtonModel.java,v 1.5 2007-02-13 13:48:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/10/16 14:29:49  lafrasse
+ * Updated to reflect MCSLogger API changes.
+ *
  * Revision 1.3  2006/09/28 15:23:20  lafrasse
  * Updated to handle jmmc.util.Preferences API modifications.
  *
@@ -17,9 +20,9 @@
  *
  *
  ******************************************************************************/
-package jmmc.mcs.util;
+package fr.jmmc.mcs.util;
 
-import jmmc.mcs.log.MCSLogger;
+import fr.jmmc.mcs.log.MCSLogger;
 
 import java.awt.event.*;
 

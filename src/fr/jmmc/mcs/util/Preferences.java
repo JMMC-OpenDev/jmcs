@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.12 2006-11-30 14:53:34 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.13 2007-02-13 13:48:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2006/11/30 14:53:34  lafrasse
+ * Added a method to really trigger all observers updates.
+ *
  * Revision 1.11  2006/10/16 14:29:49  lafrasse
  * Updated to reflect MCSLogger API changes.
  *
@@ -43,9 +46,9 @@
  * Added new experimental Java GUI
  *
  ******************************************************************************/
-package jmmc.mcs.util;
+package fr.jmmc.mcs.util;
 
-import jmmc.mcs.log.MCSLogger;
+import fr.jmmc.mcs.log.MCSLogger;
 
 import java.awt.Color;
 
@@ -265,7 +268,7 @@ public class Preferences extends Observable
         else if (preferenceValue.getClass() == java.awt.Color.class)
         {
             _currentProperties.setProperty(preferenceName,
-                jmmc.mcs.util.ColorEncoder.encode((Color) preferenceValue));
+                fr.jmmc.mcs.util.ColorEncoder.encode((Color) preferenceValue));
         }
 
         // Otherwise we don't know how to handle the given object type

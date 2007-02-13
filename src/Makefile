@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2007-02-13 10:31:40 ccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2007-02-13 13:48:51 lafrasse Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2007/02/13 10:31:40  ccmgr
+# Fix directory structure and add additional files
+#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -101,12 +104,12 @@ PY_SCRIPTS_L   =
 #
 # Jarfiles and their directories
 # ---------------------------------
-JARFILES        =
+JARFILES        = jmcs
 
 #
-# <brief description of jjjfff jar files>
-jjjfff_DIRS     =
-jjjfff_EXTRAS   = 
+# <brief description of jmcs jar files>
+jmcs_DIRS     = fr
+jmcs_EXTRAS   = 
 
 #
 # Java programs

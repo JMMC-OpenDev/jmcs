@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.1 2006-11-18 22:52:56 lafrasse Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.2 2007-02-13 13:48:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/11/18 22:52:56  lafrasse
+ * Moved from jmmc.mcs.util .
+ *
  * Revision 1.2  2006/07/12 15:49:21  lafrasse
  * Added class documentation
  *
@@ -13,9 +16,9 @@
  * Creation
  *
  ******************************************************************************/
-package jmmc.mcs.gui;
+package fr.jmmc.mcs.gui;
 
-import jmmc.mcs.log.*;
+import fr.jmmc.mcs.log.*;
 
 import javax.swing.*;
 

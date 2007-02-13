@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSLogger.java,v 1.4 2006-10-16 14:16:47 lafrasse Exp $"
+ * "@(#) $Id: MCSLogger.java,v 1.5 2007-02-13 13:48:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/10/16 14:16:47  lafrasse
+ * Added log level setter from a given String.
+ * Code refinements.
+ *
  * Revision 1.3  2006/10/10 09:09:35  lafrasse
  * Updated MCSLogger APIs to more tightly reflect standard MCS 'log' module levels.
  *
@@ -16,7 +20,7 @@
  * Added new experimental Java GUI
  *
  ******************************************************************************/
-package jmmc.mcs.log;
+package fr.jmmc.mcs.log;
 
 import java.util.*;
 import java.util.logging.*;

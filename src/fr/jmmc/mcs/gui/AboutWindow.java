@@ -1,15 +1,18 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutWindow.java,v 1.1 2006-11-18 22:51:33 lafrasse Exp $"
+ * "@(#) $Id: AboutWindow.java,v 1.2 2007-02-13 13:48:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/11/18 22:51:33  lafrasse
+ * Creation.
+ *
  ******************************************************************************/
-package jmmc.mcs.gui;
+package fr.jmmc.mcs.gui;
 
-import jmmc.mcs.log.MCSLogger;
+import fr.jmmc.mcs.log.MCSLogger;
 
 import java.awt.*;
 

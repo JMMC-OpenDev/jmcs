@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSAction.java,v 1.2 2006-11-20 15:41:23 lafrasse Exp $"
+ * "@(#) $Id: MCSAction.java,v 1.3 2007-02-13 13:48:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/11/20 15:41:23  lafrasse
+ * Added error handling code.
+ *
  * Revision 1.1  2006/11/18 22:56:03  lafrasse
  * Moved from jmmc.scalib.sclgui and renamed from SCAction.java .
  * Added support for Key Accelerators (keyboard shortcut).
@@ -17,11 +20,10 @@
  * *** empty log message ***
  *
  ******************************************************************************/
-package jmmc.mcs.util;
+package fr.jmmc.mcs.util;
 
-import jmmc.mcs.log.*;
-
-import jmmc.mcs.util.*;
+import fr.jmmc.mcs.log.*;
+import fr.jmmc.mcs.util.*;
 
 import javax.swing.*;
 

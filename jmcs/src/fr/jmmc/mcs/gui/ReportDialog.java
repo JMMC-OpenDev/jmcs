@@ -3,9 +3,9 @@
  *
  * Created on 6 septembre 2006, 13:52
  */
-package jmmc.mcs.gui;
+package fr.jmmc.mcs.gui;
 
-import jmmc.mcs.log.MCSLogger;
+import fr.jmmc.mcs.log.MCSLogger;
 
 import java.awt.Dimension;
 

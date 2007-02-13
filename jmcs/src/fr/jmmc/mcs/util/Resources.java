@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.5 2006-11-20 15:41:23 lafrasse Exp $"
+ * "@(#) $Id: Resources.java,v 1.6 2007-02-13 13:48:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/11/20 15:41:23  lafrasse
+ * Added error handling code.
+ *
  * Revision 1.4  2006/11/18 22:58:03  lafrasse
  * Added support for Key Accelerator (keyboard shortcut).
  *
@@ -20,9 +23,9 @@
  *
  *
  ******************************************************************************/
-package jmmc.mcs.util;
+package fr.jmmc.mcs.util;
 
-import jmmc.mcs.log.MCSLogger;
+import fr.jmmc.mcs.log.MCSLogger;
 
 import org.w3c.dom.*;
 

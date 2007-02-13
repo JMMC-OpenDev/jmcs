@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.2 2007-02-13 13:48:51 lafrasse Exp $"
+ * "@(#) $Id: HelpView.java,v 1.3 2007-02-13 15:35:39 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/02/13 13:48:51  lafrasse
+ * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
+ *
  * Revision 1.1  2006/11/18 23:13:06  lafrasse
  * Creation.
  *
@@ -14,7 +17,6 @@
 package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.log.*;
-
 import fr.jmmc.mcs.util.*;
 
 import java.awt.*;

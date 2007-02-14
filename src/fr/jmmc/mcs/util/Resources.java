@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.6 2007-02-13 13:48:51 lafrasse Exp $"
+ * "@(#) $Id: Resources.java,v 1.7 2007-02-14 10:14:22 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2007/02/13 13:48:51  lafrasse
+ * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
+ *
  * Revision 1.5  2006/11/20 15:41:23  lafrasse
  * Added error handling code.
  *
@@ -54,7 +57,7 @@ import javax.xml.parsers.*;
 public abstract class Resources
 {
     /** resource filename  that must be overloaded by subclasses */
-    protected static String _resourceName = "jmmc/mcs/util/Resources";
+    protected static String _resourceName = "fr.jmmc.mcs/util/Resources";
 
     /** Properties */
     private static ResourceBundle _resources = null;

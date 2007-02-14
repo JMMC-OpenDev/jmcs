@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2007-02-13 13:48:51 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.3 2007-02-14 09:58:09 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2007/02/13 13:48:51  lafrasse
+# Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
+#
 # Revision 1.1  2007/02/13 10:31:40  ccmgr
 # Fix directory structure and add additional files
 #
@@ -109,7 +112,7 @@ JARFILES        = jmcs
 #
 # <brief description of jmcs jar files>
 jmcs_DIRS     = fr
-jmcs_EXTRAS   = 
+jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png
 
 #
 # Java programs

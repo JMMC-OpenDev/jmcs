@@ -346,7 +346,7 @@ public class ReportDialog extends javax.swing.JDialog
 
         infoPanel.setAlignmentX(0.0F);
         jButton1.setIcon(new javax.swing.ImageIcon(getClass()
-                                                       .getResource("/jmmc/mcs/gui/bug_error.png")));
+                                                       .getResource("/fr/jmmc/mcs/gui/bug_error.png")));
         jButton1.setBorder(null);
         jButton1.setContentAreaFilled(false);
         jButton1.setFocusPainted(false);
@@ -372,14 +372,14 @@ public class ReportDialog extends javax.swing.JDialog
 
         jPanel1.setAlignmentX(0.0F);
         jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass()
-                                                             .getResource("/jmmc/mcs/gui/rightarrow.png")));
+                                                             .getResource("/fr/jmmc/mcs/gui/rightarrow.png")));
         jToggleButton1.setBorder(null);
         jToggleButton1.setBorderPainted(false);
         jToggleButton1.setContentAreaFilled(false);
         jToggleButton1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jToggleButton1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         jToggleButton1.setSelectedIcon(new javax.swing.ImageIcon(
-                getClass().getResource("/jmmc/mcs/gui/downarrow.png")));
+                getClass().getResource("/fr/jmmc/mcs/gui/downarrow.png")));
         jToggleButton1.addActionListener(new java.awt.event.ActionListener()
             {
                 public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -421,14 +421,14 @@ public class ReportDialog extends javax.swing.JDialog
 
         jPanel5.setAlignmentX(0.0F);
         jToggleButton2.setIcon(new javax.swing.ImageIcon(getClass()
-                                                             .getResource("/jmmc/mcs/gui/rightarrow.png")));
+                                                             .getResource("/fr/jmmc/mcs/gui/rightarrow.png")));
         jToggleButton2.setBorder(null);
         jToggleButton2.setBorderPainted(false);
         jToggleButton2.setContentAreaFilled(false);
         jToggleButton2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jToggleButton2.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         jToggleButton2.setSelectedIcon(new javax.swing.ImageIcon(
-                getClass().getResource("/jmmc/mcs/gui/downarrow.png")));
+                getClass().getResource("/fr/jmmc/mcs/gui/downarrow.png")));
         jToggleButton2.addActionListener(new java.awt.event.ActionListener()
             {
                 public void actionPerformed(java.awt.event.ActionEvent evt)

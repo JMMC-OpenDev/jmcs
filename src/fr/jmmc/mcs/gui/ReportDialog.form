@@ -31,7 +31,7 @@
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/jmmc/mcs/gui/bug_error.png"/>
+              <Image iconType="3" name="/fr/jmmc/mcs/gui/bug_error.png"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
@@ -76,7 +76,7 @@
             <Component class="javax.swing.JToggleButton" name="jToggleButton1">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/jmmc/mcs/gui/rightarrow.png"/>
+                  <Image iconType="3" name="/fr/jmmc/mcs/gui/rightarrow.png"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="null"/>
@@ -86,7 +86,7 @@
                 <Property name="horizontalAlignment" type="int" value="2"/>
                 <Property name="horizontalTextPosition" type="int" value="2"/>
                 <Property name="selectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/jmmc/mcs/gui/downarrow.png"/>
+                  <Image iconType="3" name="/fr/jmmc/mcs/gui/downarrow.png"/>
                 </Property>
               </Properties>
               <Events>
@@ -157,7 +157,7 @@
             <Component class="javax.swing.JToggleButton" name="jToggleButton2">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/jmmc/mcs/gui/rightarrow.png"/>
+                  <Image iconType="3" name="/fr/jmmc/mcs/gui/rightarrow.png"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="null"/>
@@ -167,7 +167,7 @@
                 <Property name="horizontalAlignment" type="int" value="2"/>
                 <Property name="horizontalTextPosition" type="int" value="2"/>
                 <Property name="selectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/jmmc/mcs/gui/downarrow.png"/>
+                  <Image iconType="3" name="/fr/jmmc/mcs/gui/downarrow.png"/>
                 </Property>
               </Properties>
               <Events>

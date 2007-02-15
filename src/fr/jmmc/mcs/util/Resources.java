@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.7 2007-02-14 10:14:22 mella Exp $"
+ * "@(#) $Id: Resources.java,v 1.8 2007-02-15 08:28:46 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2007/02/14 10:14:22  mella
+ * change jmmc into fr/jmmc
+ *
  * Revision 1.6  2007/02/13 13:48:51  lafrasse
  * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
  *
@@ -27,13 +30,11 @@
  *
  ******************************************************************************/
 package fr.jmmc.mcs.util;
-
-import fr.jmmc.mcs.log.MCSLogger;
-
+/*
 import org.w3c.dom.*;
 
 import org.xml.sax.*;
-
+*/
 import java.awt.*;
 import java.awt.event.*;
 
@@ -54,8 +55,11 @@ import javax.xml.parsers.*;
  * Applications must start to set the resource file name before
  * any gui construction.
  */
-public abstract class Resources
-{
+public abstract class Resources {
+    static String className_="Resources";
+    protected static java.util.logging.Logger logger_ = java.util.logging.Logger.getLogger(
+            "jmmc.mcs.gui.ReportDialog");
+
     /** resource filename  that must be overloaded by subclasses */
     protected static String _resourceName = "fr.jmmc.mcs/util/Resources";
 
@@ -69,10 +73,10 @@ public abstract class Resources
      *
      * @param name Indicates property file to use.
      */
-    public static void setResourceName(String name)
-    {
-        MCSLogger.trace();
-        MCSLogger.info("Application will grab resources from '" + name + "'");
+    public static void setResourceName(String name) {        
+        logger_.entering(className_, "setResourceName");
+        
+        logger_.info("Application will grab resources from '" + name + "'");
         _resourceName = name;
     }
 
@@ -83,34 +87,26 @@ public abstract class Resources
      *
      * @return the content of the resource or null indicating error
      */
-    public static String getResource(String resourceName)
-    {
-        MCSLogger.trace();
-
-        if (_resources == null)
-        {
-            try
-            {
+    public static String getResource(String resourceName) {
+        logger_.entering(className_, "getResource");
+        
+        if (_resources == null) {
+            try {
                 _resources = java.util.ResourceBundle.getBundle(_resourceName);
-            }
-            catch (Exception e)
-            {
-                MCSLogger.warning("Resource bundle can't be found :" +
+            } catch (Exception e) {
+                logger_.warning("Resource bundle can't be found :" +
                     e.getMessage());
 
                 return null;
             }
         }
 
-        MCSLogger.info("getResource for " + resourceName);
+        logger_.info("getResource for " + resourceName);
 
-        try
-        {
+        try {
             return _resources.getString(resourceName);
-        }
-        catch (Exception e)
-        {
-            MCSLogger.warning("Entry not found :" + e.getMessage());
+        } catch (Exception e) {
+            logger_.warning("Entry not found :" + e.getMessage());
         }
 
         return null;
@@ -123,9 +119,8 @@ public abstract class Resources
      *
      * @return the associated text
      */
-    public static String getActionText(String actionName)
-    {
-        MCSLogger.trace();
+    public static String getActionText(String actionName) {
+        logger_.entering(className_, "getActionText");
 
         return getResource("actions.action." + actionName + ".text");
     }
@@ -137,9 +132,8 @@ public abstract class Resources
      *
      * @return the associated description
      */
-    public static String getActionDescription(String actionName)
-    {
-        MCSLogger.trace();
+    public static String getActionDescription(String actionName) {
+        logger_.entering(className_, "getActionDescription");
 
         return getResource("actions.action." + actionName + ".description");
     }
@@ -151,9 +145,8 @@ public abstract class Resources
      *
      * @return the tooltip text
      */
-    public static String getToolTipText(String widgetName)
-    {
-        MCSLogger.trace();
+    public static String getToolTipText(String widgetName) {
+        logger_.entering(className_, "getToolTipText");
 
         return getResource("widgets.widget." + widgetName + ".tooltip");
     }
@@ -165,23 +158,21 @@ public abstract class Resources
      *
      * @return the associated accelerator
      */
-    public static KeyStroke getActionAccelerator(String actionName)
-    {
-        MCSLogger.trace();
+    public static KeyStroke getActionAccelerator(String actionName) {
+        logger_.entering(className_, "getActionAccelerator");
 
         // Get the accelerator string description from the Resource.properties file
         String keyString = getResource("actions.action." + actionName +
                 ".accelerator");
 
-        if (keyString == null)
-        {
+        if (keyString == null) {
             return null;
         }
 
         // Get and return the KeyStroke from the accelerator string description
         KeyStroke accelerator = KeyStroke.getKeyStroke(keyString);
 
-        MCSLogger.debug("keyString['" + actionName + "'] = '" + keyString +
+        logger_.fine("keyString['" + actionName + "'] = '" + keyString +
             "' -> accelerator = '" + accelerator + "'.");
 
         return accelerator;
@@ -194,25 +185,22 @@ public abstract class Resources
      *
      * @return the associated icon
      */
-    public static ImageIcon getActionIcon(String actionName)
-    {
-        MCSLogger.trace();
+    public static ImageIcon getActionIcon(String actionName) {
+        logger_.entering(className_, "getActionIcon");
 
         // Get back the icon image path
         String iconPath = getResource("actions.action." + actionName + ".icon");
 
-        if (iconPath == null)
-        {
+        if (iconPath == null) {
             return null;
         }
 
         // Get the image from path
         String fullIconPath = "./" + iconPath;
-        URL    imgURL       = Resources.class.getResource(fullIconPath);
+        URL imgURL = Resources.class.getResource(fullIconPath);
 
-        if (imgURL == null)
-        {
-            MCSLogger.warning("Could not load icon '" + iconPath +
+        if (imgURL == null) {
+            logger_.warning("Could not load icon '" + iconPath +
                 "' for action '" + actionName + "'.");
 
             return null;

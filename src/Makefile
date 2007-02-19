@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2007-02-14 09:58:09 mella Exp $"
+# "@(#) $Id: Makefile,v 1.4 2007-02-19 08:52:39 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2007/02/14 09:58:09  mella
+# Add missing pngs
+#
 # Revision 1.2  2007/02/13 13:48:51  lafrasse
 # Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
 #
@@ -141,7 +144,7 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES =
+INSTALL_FILES = ../lib/logGui.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

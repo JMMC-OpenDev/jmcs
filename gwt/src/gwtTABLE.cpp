@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtTABLE.cpp,v 1.7 2006-05-11 13:04:55 mella Exp $"
+ * "@(#) $Id: gwtTABLE.cpp,v 1.8 2007-02-22 12:47:22 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/05/11 13:04:55  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.6  2005/03/03 16:17:11  mella
  * Implement better deletion for columnHeaders for resizing
  *
@@ -35,7 +38,7 @@
  * Definition of gwtTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtTABLE.cpp,v 1.7 2006-05-11 13:04:55 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtTABLE.cpp,v 1.8 2007-02-22 12:47:22 gzins Exp $";
 
 /* 
  * System Headers 
@@ -138,7 +141,8 @@ void gwtTABLE::SetDimension(int rows, int columns)
     // build colums arrays
     for (i=0;i<_rows;i++)
     {
-        _cells[i] = new gwtCELL[columns]("");
+        gwtCELL cell("");
+        _cells[i] = new gwtCELL[columns];
     }
 
     // prepare columnHeader array

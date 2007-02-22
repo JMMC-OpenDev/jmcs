@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtCELL.h,v 1.2 2005-02-24 10:35:18 mella Exp $"
+ * "@(#) $Id: gwtCELL.h,v 1.3 2007-02-22 12:50:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/24 10:35:18  mella
+ * Minor info
+ *
  * Revision 1.1  2005/02/07 14:36:20  mella
  * Add Background color management for cells
  *
@@ -42,7 +45,7 @@ class gwtCELL
 
 public:
     // Class constructor
-    gwtCELL(string textContent);
+    gwtCELL(string textContent="");
 
     // Class destructor
     virtual ~gwtCELL();

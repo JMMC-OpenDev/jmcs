@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: gwtGUI.cpp,v 1.10 2006-05-11 13:04:55 mella Exp $"
+ * "@(#) $Id: gwtGUI.cpp,v 1.11 2007-02-22 12:49:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/05/11 13:04:55  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.9  2005/10/07 06:56:11  gzins
  * Inherited from evhSERVER class; handled connection to XML GUI server, and reception and dispatching of messages from this server.
  *
@@ -43,7 +46,7 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtGUI.cpp,v 1.10 2006-05-11 13:04:55 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtGUI.cpp,v 1.11 2007-02-22 12:49:10 gzins Exp $";
 
 /* 
  * System Headers 
@@ -228,9 +231,10 @@ void gwtGUI::SetStatus(bool valid, string status, string explanation )
  * better handled with xml(this point is in the wish list of the XMLBASEDGUI
  * module).
  *
- * \param data the received buffer 
+ * \param sd descriptor of socket where the data come from
+ * \param userData pointer to user data (not used)
  */
-evhCB_COMPL_STAT  gwtGUI::ReceiveDataCB (const int sd,void* obj)
+evhCB_COMPL_STAT  gwtGUI::ReceiveDataCB (const int sd, void* userData)
 {
     logTrace("gwtGUI::ReceiveDataCB()");    
    
@@ -244,14 +248,14 @@ evhCB_COMPL_STAT  gwtGUI::ReceiveDataCB (const int sd,void* obj)
     // do bad job correction : skip the trailing CR at the end of the data
     size = data.size();
     char c =  data.at(size-1);
-    if(c=='\n'){
+    if(c=='\n')
+    {
         data = data.substr(0,size-1);
     }
 
-    
     /* check if data is the return of a variable associated widget */
     string letStr = data.substr(3);
-    if(data.compare(0, 3, "let") == 0)
+    if (data.compare(0, 3, "let") == 0)
     {
         /* it is a value associated widget */
         logDebug("gwtGUI has received for value: %s" , data.data());
@@ -290,9 +294,9 @@ void gwtGUI::RegisterXmlProducer(gwtXML_PRODUCER *producer)
     id = osstring.str();
     producer->SetProducerId(id);
 
-    logDebug ("register new xml producer referenced by: %s",id.data());
+    logDebug ("register new xml producer referenced by: %s", id.data());
 
-    _children.insert ( make_pair(id,producer));
+    _children.insert (make_pair(id, producer));
 }
 /*
  * Protected methods

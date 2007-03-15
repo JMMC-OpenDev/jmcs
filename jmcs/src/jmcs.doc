@@ -1,0 +1,33 @@
+/*******************************************************************************
+ * JMMC project
+ *
+ * "@(#) $Id: jmcs.doc,v 1.3 2007-03-14 10:27:30 mella Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/03/12 14:09:54  mella
+ * Added some informations
+ *
+ * Revision 1.1  2007/02/13 10:31:40  ccmgr
+ * Fix directory structure and add additional files
+ *
+ ******************************************************************************/
+
+/**
+\mainpage jmcs : General module used to collect and use common classes
+final location of most classes are subject to change under othe specific
+modules.
+
+lib includes external jars:
+
+Adjust logging facilities:
+(http://www.informatrix.ch/loggui/index.html)
+loggui.jar 
+
+2D plots:
+(http://ptolemy.eecs.berkeley.edu/java/ptplot5.6/ptolemy/plot/doc/index.htm)
+plot*.jar microstar_xml.jar
+
+
+*/

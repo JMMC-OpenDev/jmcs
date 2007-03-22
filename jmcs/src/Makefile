@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2007-02-26 10:21:07 mella Exp $"
+# "@(#) $Id: Makefile,v 1.6 2007-03-22 15:07:52 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2007/02/26 10:21:07  mella
+# Replace LogGui jar file
+#
 # Revision 1.4  2007/02/19 08:52:39  mella
 # Append logGui.jar
 #
@@ -147,7 +150,8 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../lib/loggui.jar
+INSTALL_FILES = ../lib/loggui.jar \
+				../lib/ptplot5.6.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.8 2007-02-15 08:28:46 mella Exp $"
+ * "@(#) $Id: Resources.java,v 1.9 2007-06-19 15:18:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2007/02/15 08:28:46  mella
+ * Replace MCSLogger by java.util.logging.Logger
+ *
  * Revision 1.7  2007/02/14 10:14:22  mella
  * change jmmc into fr/jmmc
  *
@@ -30,11 +33,7 @@
  *
  ******************************************************************************/
 package fr.jmmc.mcs.util;
-/*
-import org.w3c.dom.*;
 
-import org.xml.sax.*;
-*/
 import java.awt.*;
 import java.awt.event.*;
 
@@ -55,16 +54,24 @@ import javax.xml.parsers.*;
  * Applications must start to set the resource file name before
  * any gui construction.
  */
-public abstract class Resources {
-    static String className_="Resources";
+public abstract class Resources
+{
+    /** the logger facility */
     protected static java.util.logging.Logger logger_ = java.util.logging.Logger.getLogger(
             "jmmc.mcs.gui.ReportDialog");
+
+    /** Contains the class nale for logging */
+    static String _loggerClassName = "Resources";
 
     /** resource filename  that must be overloaded by subclasses */
     protected static String _resourceName = "fr.jmmc.mcs/util/Resources";
 
     /** Properties */
     private static ResourceBundle _resources = null;
+
+    /** Store whether the execution platform is a Mac or not */
+    public static boolean MAC_OS_X = (System.getProperty("os.name").toLowerCase()
+                                            .startsWith("mac os x"));
 
     /**
      * Indicates the property file where informations will be exctracted.
@@ -73,9 +80,10 @@ public abstract class Resources {
      *
      * @param name Indicates property file to use.
      */
-    public static void setResourceName(String name) {        
-        logger_.entering(className_, "setResourceName");
-        
+    public static void setResourceName(String name)
+    {
+        logger_.entering(_loggerClassName, "setResourceName");
+
         logger_.info("Application will grab resources from '" + name + "'");
         _resourceName = name;
     }
@@ -87,13 +95,18 @@ public abstract class Resources {
      *
      * @return the content of the resource or null indicating error
      */
-    public static String getResource(String resourceName) {
-        logger_.entering(className_, "getResource");
-        
-        if (_resources == null) {
-            try {
+    public static String getResource(String resourceName)
+    {
+        logger_.entering(_loggerClassName, "getResource");
+
+        if (_resources == null)
+        {
+            try
+            {
                 _resources = java.util.ResourceBundle.getBundle(_resourceName);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 logger_.warning("Resource bundle can't be found :" +
                     e.getMessage());
 
@@ -103,9 +116,12 @@ public abstract class Resources {
 
         logger_.info("getResource for " + resourceName);
 
-        try {
+        try
+        {
             return _resources.getString(resourceName);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             logger_.warning("Entry not found :" + e.getMessage());
         }
 
@@ -119,8 +135,9 @@ public abstract class Resources {
      *
      * @return the associated text
      */
-    public static String getActionText(String actionName) {
-        logger_.entering(className_, "getActionText");
+    public static String getActionText(String actionName)
+    {
+        logger_.entering(_loggerClassName, "getActionText");
 
         return getResource("actions.action." + actionName + ".text");
     }
@@ -132,8 +149,9 @@ public abstract class Resources {
      *
      * @return the associated description
      */
-    public static String getActionDescription(String actionName) {
-        logger_.entering(className_, "getActionDescription");
+    public static String getActionDescription(String actionName)
+    {
+        logger_.entering(_loggerClassName, "getActionDescription");
 
         return getResource("actions.action." + actionName + ".description");
     }
@@ -145,8 +163,9 @@ public abstract class Resources {
      *
      * @return the tooltip text
      */
-    public static String getToolTipText(String widgetName) {
-        logger_.entering(className_, "getToolTipText");
+    public static String getToolTipText(String widgetName)
+    {
+        logger_.entering(_loggerClassName, "getToolTipText");
 
         return getResource("widgets.widget." + widgetName + ".tooltip");
     }
@@ -158,15 +177,29 @@ public abstract class Resources {
      *
      * @return the associated accelerator
      */
-    public static KeyStroke getActionAccelerator(String actionName) {
-        logger_.entering(className_, "getActionAccelerator");
+    public static KeyStroke getActionAccelerator(String actionName)
+    {
+        logger_.entering(_loggerClassName, "getActionAccelerator");
 
         // Get the accelerator string description from the Resource.properties file
         String keyString = getResource("actions.action." + actionName +
                 ".accelerator");
 
-        if (keyString == null) {
+        if (keyString == null)
+        {
             return null;
+        }
+
+        // If the execution is on Mac OS X
+        if (MAC_OS_X == true)
+        {
+            // The 'command' key (aka Apple key) is used
+            keyString = "meta " + keyString;
+        }
+        else
+        {
+            // The 'control' key ise used elsewhere
+            keyString = "ctrl " + keyString;
         }
 
         // Get and return the KeyStroke from the accelerator string description
@@ -185,23 +218,27 @@ public abstract class Resources {
      *
      * @return the associated icon
      */
-    public static ImageIcon getActionIcon(String actionName) {
-        logger_.entering(className_, "getActionIcon");
+    public static ImageIcon getActionIcon(String actionName)
+    {
+        logger_.entering(_loggerClassName, "getActionIcon");
 
         // Get back the icon image path
         String iconPath = getResource("actions.action." + actionName + ".icon");
 
-        if (iconPath == null) {
+        if (iconPath == null)
+        {
+            logger_.warning("No resource found for action name '" + actionName +
+                "'.");
+
             return null;
         }
 
         // Get the image from path
-        String fullIconPath = "./" + iconPath;
-        URL imgURL = Resources.class.getResource(fullIconPath);
+        URL imgURL = Resources.class.getResource(iconPath);
 
-        if (imgURL == null) {
-            logger_.warning("Could not load icon '" + iconPath +
-                "' for action '" + actionName + "'.");
+        if (imgURL == null)
+        {
+            logger_.warning("Could not load icon '" + iconPath + "'.");
 
             return null;
         }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.3 2007-05-16 14:34:43 lafrasse Exp $"
+ * "@(#) $Id: ALX.java,v 1.4 2007-06-21 07:38:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/05/16 14:34:43  lafrasse
+ * Removed the dependency on the Java 1.5 'Scanner' class.
+ *
  * Revision 1.2  2007/02/13 13:48:51  lafrasse
  * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
  *
@@ -53,16 +56,15 @@ public class ALX
         try
         {
             /* !!! Replace by the code below to remove dependency on Java 1.5
-            Scanner s = new Scanner(raHms).useDelimiter(" ");
-            hh     = s.nextDouble();
-            hm     = s.nextDouble();
-            hs     = s.nextDouble();
-            s.close(); */
+               Scanner s = new Scanner(raHms).useDelimiter(" ");
+               hh     = s.nextDouble();
+               hm     = s.nextDouble();
+               hs     = s.nextDouble();
+               s.close(); */
             String[] tokens = raHms.split(" ");
             hh     = Double.parseDouble(tokens[0]);
             hm     = Double.parseDouble(tokens[1]);
             hs     = Double.parseDouble(tokens[2]);
-
         }
         catch (Exception e)
         {
@@ -113,11 +115,11 @@ public class ALX
         try
         {
             /* !!! Replace by the code below to remove dependency on Java 1.5
-            Scanner s = new Scanner(decDms).useDelimiter(" ");
-            dd     = s.nextDouble();
-            dm     = s.nextDouble();
-            ds     = s.nextDouble();
-            s.close(); */
+               Scanner s = new Scanner(decDms).useDelimiter(" ");
+               dd     = s.nextDouble();
+               dm     = s.nextDouble();
+               ds     = s.nextDouble();
+               s.close(); */
             String[] tokens = decDms.split(" ");
             dd     = Double.parseDouble(tokens[0]);
             dm     = Double.parseDouble(tokens[1]);

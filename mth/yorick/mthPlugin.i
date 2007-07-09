@@ -3,11 +3,14 @@
 *
 * Yorick plugin for MCS mathematical library
 *
-* "@(#) $Id: mthPlugin.i,v 1.1 2007-07-09 12:52:42 gzins Exp $"
+* "@(#) $Id: mthPlugin.i,v 1.2 2007-07-09 15:09:30 gluck Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.1  2007/07/09 12:52:42  gzins
+* Added
+*
 */
 
 local package_mthPlugin;
@@ -34,7 +37,7 @@ func mthPlugin(void)
     mth plugin low level routines
 
   VERSION
-    $Revision: 1.1 $
+    $Revision: 1.2 $
     
   FUNCTIONS
     - _mthLinInterp : Performs linear interpolation 
@@ -43,7 +46,7 @@ func mthPlugin(void)
     mth
 */
 {
-    version = strpart(strtok("$Revision: 1.1 $",":")(2),2:-2);
+    version = strpart(strtok("$Revision: 1.2 $",":")(2),2:-2);
     if (am_subroutine())
     {
         help, mthPlugin;
@@ -56,8 +59,8 @@ func mthPlugin(void)
 
 /************************************************************************/
 
-func mthInterp(x, y, xp)
-/* DOCUMENT mthInterp(x, y, xp)
+func mthInterp(y, x, xp)
+/* DOCUMENT mthInterp(y, x, xp)
 
   DESCRIPTION
     Returns the list of interpolated values corresponding to xp abscissae, and
@@ -70,20 +73,25 @@ func mthInterp(x, y, xp)
     monotonically increasing
 
   PARAMETERS
-    - x  : abscissae of curve
     - y  : ordinates of curve 
+    - x  : abscissae of curve
     - xp : abscissae to be interpolated
 
   RETURN VALUES
     List of interpolated values 
 
   EXAMPLES
-    > x = array(double, 1000);
-    > y = array(double, 1000);
-    > xp = array(double, 1000);
-    > ...
-    > yp = mthInterp(x, y, xp);
-    ...
+    > nbPoints = 1000
+    > x = double(indgen(nbPoints));
+    > y = random(nbPoints) * 100.0;
+    > xrand = random(nbPoints) * 0.5;
+    > xp = x - xrand;
+    > xp(1) = 1.0;
+    > xp(nbPoints) = nbPoints;
+    > yp = mthInterp(y, x, xp);
+    > ..
+    > plg, y, x
+    > plp, yp, xp
 
   SEE ALSO
     interp

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2006-06-09 12:17:49 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.6 2007-07-09 15:31:33 gluck Exp $"
 #
 # Makefile of mth module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2006/06/09 12:17:49  gzins
+# Moved mthNORMTest to mthTestGAUSSIAN_RANDOM
+#
 # Revision 1.4  2006/06/05 10:58:27  lsauge
 # Add rules for mthNORM test code
 #
@@ -50,7 +53,8 @@
 # -----------------------------
 EXECUTABLES     = 
 EXECUTABLES_L   = mthTestBesselK    	 \
-		  		  mthTestGAUSSIAN_RANDOM
+		  		  mthTestGAUSSIAN_RANDOM \
+				  mthTestInterp
 
 #
 # Test code mthTestBesselK
@@ -62,6 +66,11 @@ mthTestBesselK_LIBS      = MCS mth m C++
 mthTestGAUSSIAN_RANDOM_OBJECTS   = mthTestGAUSSIAN_RANDOM
 mthTestGAUSSIAN_RANDOM_LDFLAGS   = 
 mthTestGAUSSIAN_RANDOM_LIBS      = MCS mth C++ m
+
+# Test code mthTestInterp
+mthTestInterp_OBJECTS   = mthTestInterp
+mthTestInterp_LDFLAGS   =
+mthTestInterp_LIBS      = MCS mth C++
 
 #
 # special compilation flags for single c sources

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2006-06-09 12:15:24 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2007-07-09 12:52:06 gzins Exp $"
 #
 # Makefile of mth module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2006/06/09 12:15:24  gzins
+# Moved mthNORM to mthGAUSSIAN_RANDOM
+#
 # Revision 1.3  2006/06/02 13:25:35  lsauge
 # Add class mthGAUSSIAN_RANDOM
 #
@@ -61,7 +64,10 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = 
+INCLUDES        = mth.h                  \
+                  mthBesselK.h           \
+                  mthGAUSSIAN_RANDOM.h   \
+                  mthInterp.h
 
 #
 # Libraries (public and local)
@@ -71,7 +77,8 @@ LIBRARIES_L     =
 
 #
 # Mathematical library 
-mth_OBJECTS   = mthBesselK	\
+mth_OBJECTS   = mthBesselK	        \
+				mthInterp           \
 				mthGAUSSIAN_RANDOM
 
 #
@@ -177,5 +184,34 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
+
+#
+# Targets related to yorick plugin
+# --------------------------------
+YORICK := $(shell which yorick 2> /dev/null)
+do_plugin:
+	@if [ "$(YORICK)" == "" ]; then \
+	    echo "ERROR - yorick program not found in your PATH"; \
+	    echo "Please check your installation"; \
+	    exit 1; \
+	fi
+	@(cd ../yorick; yorick -batch make.i; make all)
+
+clean_plugin:
+	@if [ "$(YORICK)" == "" ]; then \
+	    echo "ERROR - yorick program not found in your PATH"; \
+	    echo "Please check your installation"; \
+	    exit 1; \
+	fi
+	@(cd ../yorick; yorick -batch make.i; make clean)
+
+install_plugin:
+	@if [ "$(YORICK)" == "" ]; then \
+	    echo "ERROR - yorick program not found in your PATH"; \
+	    echo "Please check your installation"; \
+	    exit 1; \
+	fi
+	@(cd ../yorick; yorick -batch make.i; make install)
+
 
 #___oOo___

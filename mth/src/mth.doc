@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mth.doc,v 1.4 2006-06-09 12:15:09 gzins Exp $"
+ * "@(#) $Id: mth.doc,v 1.5 2007-07-09 15:31:01 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/06/09 12:15:09  gzins
+ * Moved mthNORM to mthGAUSSIAN_RANDOM
+ *
  * Revision 1.3  2006/06/05 10:07:44  lsauge
  * Add mthGAUSSIAN_RANDOM class description
  *
@@ -27,4 +30,5 @@ The mth module provides developper a set of mathematical functions.
 This module contains.
 @li mthBesselK.c - Modified Bessel functions.
 @li mthGAUSSIAN_RANDOM.cpp  - Normal (Gaussian) variate generator. 
+@li mthInterp.c  - Interpolation functions. 
 */

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * LAOG project
  * 
- * "@(#) $Id: mthInterp.c,v 1.1 2007-07-09 15:29:15 gluck Exp $"
+ * "@(#) $Id: mthInterp.c,v 1.2 2007-07-09 15:41:33 gluck Exp $"
  *
  * History
  * -------
@@ -16,7 +16,7 @@
  *  - linear interpolation
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.1 2007-07-09 15:29:15 gluck Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.2 2007-07-09 15:41:33 gluck Exp $"; 
 
 
 /* 
@@ -38,19 +38,6 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.1 2007-
  * MCS header
  */
 #include "mcs.h"
-
-
-
-/*
- * Structure type definition
- */
-
-/* Segment caracteristics */
-typedef struct
-{
-    mcsDOUBLE a;      /* segment slope */
-    mcsDOUBLE b;      /* ordinate at the origin of the segment */
-} mthSEGMENT;
 
 
 
@@ -122,10 +109,6 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
     
     /* index loop */
     mcsINT32 i, j;
-    /* Number of segments: if there are x points -> there are x-1 segments */
-    const mcsINT32 nbOfSegments = nbOfCurvePoints - 1;
-    /* Segment list: if there are x points -> there are x-1 segments */
-    mthSEGMENT segmentList[nbOfSegments];
 
     /* Check whether the x to interpolate are on the curve */
     /* Check whether the x to interpolate is not lower than the minimum
@@ -145,14 +128,6 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
                xToInterpList[nbOfPointsToInterp - 1], xList[0], 
                xList[nbOfCurvePoints - 1]);
         return mcsFAILURE;
-    }
-
-    /* Compute segment caracteristics: ai (slope) and bi (ordinate at the
-     * origin) */
-    for (i = 0; i < nbOfCurvePoints; i++)
-    {
-        segmentList[i].a = (yList[i+1] - yList[i]) / (xList[i+1] - xList[i]);
-        segmentList[i].b = yList[i];
     }
 
 
@@ -183,9 +158,9 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
         }
         /* a segment has been found */
         /* interpolate x */
-        yInterpolatedList[i] = segmentList[j].a * 
-                               (xToInterpList[i] - xList[j]) + 
-                               segmentList[j].b;
+        yInterpolatedList[i] = (yList[j+1] - yList[j]) / 
+                               (xList[j+1] - xList[j]) * 
+                               (xToInterpList[i] - xList[j]) + yList[j];
     }
     
     return mcsSUCCESS;

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * LAOG project
  * 
- * "@(#) $Id: mthInterp.c,v 1.4 2007-07-11 07:41:10 gluck Exp $"
+ * "@(#) $Id: mthInterp.c,v 1.5 2007-07-11 14:22:24 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2007/07/11 07:41:10  gluck
+ * Modified implementation at the limits: blanking value added for points out of range
+ *
  * Revision 1.3  2007/07/11 06:47:33  gluck
  * - Changed prototype: array length transmission
  * - implementation at the limits: out of range x are set to y of the curve extremities
@@ -23,7 +26,7 @@
  *  - linear interpolation
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.4 2007-07-11 07:41:10 gluck Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.5 2007-07-11 14:22:24 gluck Exp $"; 
 
 
 /* 
@@ -215,5 +218,24 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
     
     return mcsSUCCESS;
 }
+
+mcsCOMPL_STAT mthDopplerShift(mcsDOUBLE radVeloc,
+                              mcsDOUBLE nbOflbda,
+                              mcsDOUBLE * lbdaList,
+                              mcsDOUBLE * shiftedLbdaList)
+{
+    /* index loop */
+    mcsINT32 i;
+    /* Light speed */
+    const mcsDOUBLE C = 299735961;
+
+    for (i = 0; i < nbOflbda; i++)
+    {
+        shiftedLbdaList[i] = lbdaList[i] * ((radVeloc / C) + 1);
+    }
+
+    return mcsSUCCESS;
+}
+
 
 /*___oOo___*/

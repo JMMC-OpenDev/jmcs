@@ -1,11 +1,15 @@
 /*******************************************************************************
  * LAOG project
  * 
- * "@(#) $Id: mthInterp.c,v 1.3 2007-07-11 06:47:33 gluck Exp $"
+ * "@(#) $Id: mthInterp.c,v 1.4 2007-07-11 07:41:10 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/07/11 06:47:33  gluck
+ * - Changed prototype: array length transmission
+ * - implementation at the limits: out of range x are set to y of the curve extremities
+ *
  * Revision 1.2  2007/07/09 15:41:33  gluck
  * segment list (based on segment structure) not used anymore for optimisation/performance reasons
  *
@@ -19,7 +23,7 @@
  *  - linear interpolation
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.3 2007-07-11 06:47:33 gluck Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.4 2007-07-11 07:41:10 gluck Exp $"; 
 
 
 /* 
@@ -80,12 +84,20 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.3 2007-
  *  - ai is the slope: ai = (yi+1 - yi) / (xi+1 - xi)
  *  - bi is the ordinate at the origin: bi = yi
  * 
+ * Behaviour at the limit: point to interpolate which are out of the segment
+ * curve range are set to 
+ * - the blanking value if this one is provided (the blanking value pointer is
+ * then different from NULL)
+ * - y value of the first and last segment points for the x value lower and
+ * greater than the first and last segment points respectively
+ * 
  * @param nbOfCurvePoints number of points defining the segment curve
  * @param xList abscissae array of the points which constitute the segments
  * @param yList ordinates array of the points which constitute the segments
  * @param nbOfPointsToInterp number of points to interpolate
  * @param xToInterpList abscissae array of the points to interpolate
  * @param yInterpolatedList ordinate array of points that have been interpolated
+ * @param blankingVal pointer on a blanking value
  *
  * @warning
  * For optimisation reason, hypothesis or prerequisites has been taken for the
@@ -107,7 +119,8 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
                            const mcsDOUBLE * yList, 
                            const mcsINT32 nbOfPointsToInterp, 
                            const mcsDOUBLE * xToInterpList, 
-                           mcsDOUBLE * const yInterpolatedList)
+                           mcsDOUBLE * const yInterpolatedList,
+                           mcsDOUBLE * blankingVal)
 {
     
     /* index loop */
@@ -117,7 +130,6 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
     mcsINT32 stopSearchIdx = nbOfPointsToInterp;
     /* Set real number of points to interpolate, that is all points except those
      * out of the segment curve */
-    
     
     /* Check whether the x to interpolate are on the curve */
     /* For all points to interpolate which are out of segment curve range, set
@@ -130,8 +142,15 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
     i = 0;
     while ((xToInterpList[i] < xList[0]) && (i < nbOfPointsToInterp))
     {
-        /* Set yi to y of the first curve point */
-        yInterpolatedList[i] = yList[0];
+        if (blankingVal == NULL)
+        {
+            /* Set yi to y of the first curve point */
+            yInterpolatedList[i] = yList[0];
+        }
+        else
+        {
+            yInterpolatedList[i]  = *blankingVal;
+        }
         /* Set real number of points to interpolate, that is all points except
          * those before the segment curve */
         i++;
@@ -144,8 +163,15 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
     i= nbOfPointsToInterp - 1;
     while ((xToInterpList[i] > xList[nbOfCurvePoints - 1]) && (i >= 0))
     {
-        /* Set yi to y of the last curve point */
-        yInterpolatedList[i] = yList[nbOfCurvePoints - 1];
+        if (blankingVal == NULL)
+        {
+            /* Set yi to y of the last curve point */
+            yInterpolatedList[i] = yList[nbOfCurvePoints - 1];
+        }
+        else
+        {
+            yInterpolatedList[i]  = *blankingVal;
+        }
         /* Set real number of points to interpolate, that is all points except
          * those after the segment curve */
         i--;

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * LAOG project
  *
- * "@(#) $Id: mthTestInterp.c,v 1.2 2007-07-11 06:45:04 gluck Exp $"
+ * "@(#) $Id: mthTestInterp.c,v 1.3 2007-07-11 07:41:55 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/07/11 06:45:04  gluck
+ * - Better declaration of yInterpolatedList
+ * - Minor details
+ *
  * Revision 1.1  2007/07/09 15:29:15  gluck
  * Added
  *
@@ -16,7 +20,7 @@
  * Interpolation function tests.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthTestInterp.c,v 1.2 2007-07-11 06:45:04 gluck Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthTestInterp.c,v 1.3 2007-07-11 07:41:55 gluck Exp $"; 
 
 
 /* 
@@ -78,7 +82,10 @@ int main (int argc, char *argv[])
                                         sizeof(xToInterpolateList[0]);
     /* Result y ordinate list */
     mcsDOUBLE yInterpolatedList[nbOfPointsToInterp];
+    /* Blanking value */
+    mcsDOUBLE * blankingVal = NULL;
 
+    
     /* Print data set */    
     printf("-----------------------------------\n");
     printf("DATA SET\n\n");
@@ -96,18 +103,19 @@ int main (int argc, char *argv[])
         printf("(%f, ?)\n", xToInterpolateList[i]);
     }
 
-
-    /* Interpolate y list */ 
+    
+    /* Test interpolation */
     printf("\n-----------------------------------\n");
-    printf("INTERPOLATION\n\n");
+    printf("INTERPOLATION with blanking value = NULL\n\n");
+    
+    /* Interpolate y list */ 
     if (mthLinInterp(nbOfCurvePoints, xList, yList, nbOfPointsToInterp,
-                     xToInterpolateList, yInterpolatedList) == mcsFAILURE)
+                     xToInterpolateList, yInterpolatedList, blankingVal) == 
+        mcsFAILURE)
     {
         printf("ERROR : mthInterp() failed\n");
         exit(EXIT_FAILURE);
     }
-        
-    
     /* Print interpolated y list */    
     printf("-----------------------------------\n");
     printf("RESULTS\n\n");
@@ -117,10 +125,41 @@ int main (int argc, char *argv[])
                                         yInterpolatedList[i]);
     }
 
+    printf("\n-----------------------------------\n");
+    printf("INTERPOLATION with blanking value different from NULL\n\n");
+    blankingVal = malloc(sizeof(mcsDOUBLE));
+    if (blankingVal == NULL)
+    {
+        printf("ERROR : malloc failed !");
+        exit(EXIT_FAILURE);
+    }
+    *blankingVal = 0.00000;
+    printf("blankingVal = %f\n", *blankingVal);
+
+    /* Interpolate y list */ 
+    if (mthLinInterp(nbOfCurvePoints, xList, yList, nbOfPointsToInterp,
+                     xToInterpolateList, yInterpolatedList, blankingVal) == 
+        mcsFAILURE)
+    {
+        printf("ERROR : mthInterp() failed\n");
+        /* Free pointers */
+        free(blankingVal);
+        exit(EXIT_FAILURE);
+    }
+    /* Print interpolated y list */    
+    printf("\n-----------------------------------\n");
+    printf("RESULTS\n\n");
+    for (i = 0; i < nbOfPointsToInterp; i++)
+    {
+        printf("P%d : (%f, %f)\n", i+1, xToInterpolateList[i], 
+                                        yInterpolatedList[i]);
+    }
     printf("\nInterp tests ended\n");
     printf("*********************************************\n");
 
 
+    /* Free pointers */
+    free(blankingVal);
     /* Exit from the application with SUCCESS */
     exit(EXIT_SUCCESS);
 }

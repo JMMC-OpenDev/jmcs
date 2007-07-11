@@ -1,11 +1,14 @@
 /*******************************************************************************
  * LAOG project
  *
- * "@(#) $Id: mthTestInterp.c,v 1.1 2007-07-09 15:29:15 gluck Exp $"
+ * "@(#) $Id: mthTestInterp.c,v 1.2 2007-07-11 06:45:04 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2007/07/09 15:29:15  gluck
+ * Added
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  * Interpolation function tests.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthTestInterp.c,v 1.1 2007-07-09 15:29:15 gluck Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthTestInterp.c,v 1.2 2007-07-11 06:45:04 gluck Exp $"; 
 
 
 /* 
@@ -67,13 +70,14 @@ int main (int argc, char *argv[])
     /* number of points defining the segment curve */
     const mcsINT32 nbOfCurvePoints = sizeof(xList) / sizeof(xList[0]);
     /* Input x to interpolate list */
-    const mcsDOUBLE xToInterpolateList[13] = {1, 1.5, 2, 2.5, 3, 3.5, 4, 4.25, 
-                                              4.5, 4.75, 5, 5.5, 6};
+    const mcsDOUBLE xToInterpolateList[18] = {-0.3, 0.2, 0.5, 1, 1.5, 2, 2.5, 
+                                              3, 3.5, 4, 4.25, 4.5, 4.75, 5, 
+                                              5.5, 6, 8, 21};
     /* number of of points to interpolate */
     const mcsINT32 nbOfPointsToInterp = sizeof(xToInterpolateList) / 
                                         sizeof(xToInterpolateList[0]);
     /* Result y ordinate list */
-    mcsDOUBLE yInterpolatedList[18];
+    mcsDOUBLE yInterpolatedList[nbOfPointsToInterp];
 
     /* Print data set */    
     printf("-----------------------------------\n");

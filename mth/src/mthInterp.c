@@ -1,11 +1,14 @@
 /*******************************************************************************
  * LAOG project
  * 
- * "@(#) $Id: mthInterp.c,v 1.2 2007-07-09 15:41:33 gluck Exp $"
+ * "@(#) $Id: mthInterp.c,v 1.3 2007-07-11 06:47:33 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/07/09 15:41:33  gluck
+ * segment list (based on segment structure) not used anymore for optimisation/performance reasons
+ *
  ******************************************************************************/
 
 /**
@@ -16,7 +19,7 @@
  *  - linear interpolation
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.2 2007-07-09 15:41:33 gluck Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.3 2007-07-11 06:47:33 gluck Exp $"; 
 
 
 /* 
@@ -109,28 +112,49 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
     
     /* index loop */
     mcsINT32 i, j;
-
+    /* start and stop index for segment search loop */  
+    mcsINT32 startSearchIdx = 0;
+    mcsINT32 stopSearchIdx = nbOfPointsToInterp;
+    /* Set real number of points to interpolate, that is all points except those
+     * out of the segment curve */
+    
+    
     /* Check whether the x to interpolate are on the curve */
-    /* Check whether the x to interpolate is not lower than the minimum
-     * value of the curve */
-    if (xToInterpList[0] < xList[0])
+    /* For all points to interpolate which are out of segment curve range, set
+     * them to
+     * - either y value of the first point of the first segment, for x lower
+     * than x value of the first point of the first segment
+     * - either y value of the last point of the last segment, for x greater
+     * than x value of the last point of the last segment
+     */
+    i = 0;
+    while ((xToInterpList[i] < xList[0]) && (i < nbOfPointsToInterp))
     {
-        printf("ERROR : x1 = %f is out of x curve range [%f, %f]\n", 
-               xToInterpList[0], xList[0], xList[nbOfCurvePoints - 1]);
-        return mcsFAILURE;
+        /* Set yi to y of the first curve point */
+        yInterpolatedList[i] = yList[0];
+        /* Set real number of points to interpolate, that is all points except
+         * those before the segment curve */
+        i++;
     }
+    /* Set index from which the following segment search will start */
+    startSearchIdx = i;
+
     /* Check if the x to interpolate is greater than the maximum value of the
      * curve */
-    if (xToInterpList[nbOfPointsToInterp - 1] > xList[nbOfCurvePoints - 1])
+    i= nbOfPointsToInterp - 1;
+    while ((xToInterpList[i] > xList[nbOfCurvePoints - 1]) && (i >= 0))
     {
-        printf("ERROR : x%d = %f is out of x curve range [%f, %f]\n", 
-               nbOfPointsToInterp, 
-               xToInterpList[nbOfPointsToInterp - 1], xList[0], 
-               xList[nbOfCurvePoints - 1]);
-        return mcsFAILURE;
+        /* Set yi to y of the last curve point */
+        yInterpolatedList[i] = yList[nbOfCurvePoints - 1];
+        /* Set real number of points to interpolate, that is all points except
+         * those after the segment curve */
+        i--;
     }
+    /* Set index at which the following segment search will stop */
+    stopSearchIdx = i;
 
 
+    /* Segment search */
     /* For each x to interpolate
      * - get the corresponding segment to which it belongs
      * - interpolate x with the segment parameters */
@@ -141,7 +165,7 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
      * beginning of the list, and so to gain time
      */
     j = 0;
-    for (i = 0; i < nbOfPointsToInterp; i++)
+    for (i = startSearchIdx; i <= stopSearchIdx; i++)
     {
         /* While the x to interpolate does not belong to a segment, go to the
          * following segment */
@@ -165,7 +189,5 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
     
     return mcsSUCCESS;
 }
-
-
 
 /*___oOo___*/

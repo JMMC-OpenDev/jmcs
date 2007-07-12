@@ -1,11 +1,14 @@
 /*******************************************************************************
  * LAOG project
  *
- * "@(#) $Id: mthTestInterp.c,v 1.4 2007-07-11 14:27:35 gluck Exp $"
+ * "@(#) $Id: mthTestInterp.c,v 1.5 2007-07-12 15:16:38 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2007/07/11 14:27:35  gluck
+ * Updated to test mthDopplerShift
+ *
  * Revision 1.3  2007/07/11 07:41:55  gluck
  * Updated tests for blanking value (behaviour at the limits)
  *
@@ -23,7 +26,7 @@
  * Interpolation function tests.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthTestInterp.c,v 1.4 2007-07-11 14:27:35 gluck Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthTestInterp.c,v 1.5 2007-07-12 15:16:38 gluck Exp $"; 
 
 
 /* 
@@ -66,11 +69,11 @@ int main (int argc, char *argv[])
     printf("--> Testing mthLinInterp function ...\n\n");
 
     /* index */
-    mcsINT32 i;
+    mcsINT32 i, j;
     /* Number of points defining the segment curve */
     const mcsINT32 nbOfCurvePoints = 362268;
     /* Number of points to interpolate */
-    const mcsINT32 nbOfPointsToInterp = 362268;
+    const mcsINT32 nbOfPointsToInterp = nbOfCurvePoints;
     /* wavelength */
     mcsDOUBLE lbdaMin = 380;
     mcsDOUBLE lbdaMax = 690;
@@ -79,28 +82,59 @@ int main (int argc, char *argv[])
     mcsDOUBLE newLbdaMax = 700;
     mcsDOUBLE curveDeltaLbda = (newLbdaMax - newLbdaMin) / nbOfCurvePoints;
     /* Input x list */
-    mcsDOUBLE *xList=malloc (nbOfPointsToInterp * sizeof(mcsDOUBLE));
+    mcsDOUBLE * xList = malloc(nbOfPointsToInterp * sizeof(mcsDOUBLE));
+    if (xList == NULL)
+    {
+        printf("ERROR : malloc() for xList failled !\n");
+        exit(EXIT_FAILURE);
+    }
     /* Shifted x list */
-    mcsDOUBLE *shiftedLbdaList=malloc (nbOfPointsToInterp * sizeof(mcsDOUBLE));
+    /*mcsDOUBLE *shiftedLbdaList=malloc (nbOfPointsToInterp * sizeof(mcsDOUBLE));*/
     /* Input y list */
-    mcsDOUBLE *yList=malloc (nbOfPointsToInterp * sizeof(mcsDOUBLE));
+    mcsDOUBLE * yList = malloc(nbOfPointsToInterp * sizeof(mcsDOUBLE));
+    if (yList == NULL)
+    {
+        printf("ERROR : malloc() for yList failled !\n");
+        exit(EXIT_FAILURE);
+    }
     /* x to interpolate list */
-    mcsDOUBLE *xToInterpolateList=malloc (nbOfPointsToInterp * sizeof(mcsDOUBLE));
+    mcsDOUBLE * xToInterpolateList = 
+        malloc(nbOfPointsToInterp * sizeof(mcsDOUBLE));
+    if (yList == NULL)
+    {
+        printf("ERROR : malloc() for xToInterpolateList failled !\n");
+        exit(EXIT_FAILURE);
+    }
     /* Result y ordinate list */
-    mcsDOUBLE yInterpolatedList[nbOfPointsToInterp];
+    /*mcsDOUBLE yInterpolatedList[nbOfPointsToInterp];*/
     /* Blanking value */
     mcsDOUBLE blankingVal = 0.0;
     /* Radial velocity */
     mcsDOUBLE radVeloc = 1265;
 
+    mcsDOUBLE radVelocForVisibleCell = 2691; 
+    mcsINT32 nbOflbda = nbOfCurvePoints; 
+    mcsDOUBLE rForVisibleCell = 0.56;
+    mcsDOUBLE projAreaForVisibleCell = 333544;
+    mcsINT32 tacheForVisibleCell = 0;
+    mcsDOUBLE tPh = 789;
+    mcsDOUBLE tSp = 7444;
+    mcsDOUBLE *starSpectrum = calloc(nbOflbda, sizeof(mcsDOUBLE));
+    mcsDOUBLE *cellFlxSpectrum = calloc(nbOflbda, sizeof(mcsDOUBLE));
+    if (cellFlxSpectrum == NULL)
+    {
+        printf("ERROR : malloc() for cellFlxSpectrum failled !\n");
+        exit(EXIT_FAILURE);
+    }
+    
     /* Data set definition */
     /* Input x list */
-    for (i = 0; i < nbOfCurvePoints; i++)
+    for (i = 0; i < nbOflbda; i++)
     {
         xList[i] = newLbdaMin + (i * curveDeltaLbda);
     }
     /* Input y list */
-    for (i = 0; i < nbOfCurvePoints; i++)
+    for (i = 0; i < nbOflbda; i++)
     {
         yList[i] = rand() / 100;
     }
@@ -111,7 +145,7 @@ int main (int argc, char *argv[])
         xToInterpolateList[i] = lbdaMin + (i * deltaLbda);
     }
 
-
+#if 0
     /* Print data set */    
     printf("-----------------------------------\n");
     printf("DATA SET\n\n");
@@ -131,7 +165,7 @@ int main (int argc, char *argv[])
     printf("(xToInterpolateList[362267] = %f, ?)\n", 
            xToInterpolateList[362267]);
 
-    
+#endif    
     /* Interpolation test */
 #if 0
     /* test 1 */ 
@@ -155,9 +189,8 @@ int main (int argc, char *argv[])
            yInterpolatedList[362266]);
     printf("P362268 : (%f, %f)\n", xToInterpolateList[362267], 
            yInterpolatedList[362267]);
-
 #endif
-    
+#if 0    
     /* test 2 */ 
     printf("\n-----------------------------------\n");
     printf("DOPPLER SHIFT + INTERPOLATION\n\n");
@@ -193,6 +226,43 @@ int main (int argc, char *argv[])
            yInterpolatedList[362266]);
     printf("P362268 : (%f, %f)\n", xToInterpolateList[362267], 
            yInterpolatedList[362267]);
+#endif    
+
+    /* test 3 */ 
+    printf("\n-----------------------------------\n");
+    printf("COMPUTE CELL SPECTRUM\n\n");
+    system("date");
+    for (i = 0; i < 1024; i++)
+    {
+        tacheForVisibleCell = !(i % 8);
+        if (mthComputeCellSpectrum(radVelocForVisibleCell, 
+                                   nbOflbda, 
+                                   xList, 
+                                   yList, 
+                                   xToInterpolateList, 
+                                   rForVisibleCell, 
+                                   projAreaForVisibleCell, 
+                                   tacheForVisibleCell, 
+                                   tPh, 
+                                   tSp, 
+                                   cellFlxSpectrum) == mcsFAILURE)
+        {
+            printf("ERROR : mthComputeCellSpectrum() !\n");
+        }
+#if 1
+        for (j = 0; j < nbOflbda; j++)
+        {
+            starSpectrum[j] += cellFlxSpectrum[j];
+        }
+#endif
+    }
+    system("date");
+
+    /* Free pointers; */
+    free(xList);
+    free(yList);
+    free(xToInterpolateList);
+    free(cellFlxSpectrum);
     
     printf("\nInterp tests ended\n");
     printf("*********************************************\n");

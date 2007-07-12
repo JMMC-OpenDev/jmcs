@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2007-07-09 15:31:01 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.7 2007-07-12 15:12:53 gluck Exp $"
 #
 # Makefile of mth module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2007/07/09 15:31:01  gluck
+# Added mthInterp
+#
 # Revision 1.5  2007/07/09 12:52:06  gzins
 # Added mthInterp
 # Added targets related to Yorick plugin
@@ -33,7 +36,7 @@
 #
 # user definable C-compilation flags
 #USER_CFLAGS = 
-#OPTIMIZE=3
+OPTIMIZE=3
 
 #
 # user definable javac compilation flags

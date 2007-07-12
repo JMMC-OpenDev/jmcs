@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mthInterp.h,v 1.1 2007-07-09 15:29:15 gluck Exp $"
+ * "@(#) $Id: mthInterp.h,v 1.2 2007-07-12 15:14:55 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2007/07/09 15:29:15  gluck
+ * Added
+ *
  ******************************************************************************/
 
 /**
@@ -67,9 +70,27 @@ mcsCOMPL_STAT mthLinInterp(const mcsINT32 nbOfCurvePoints,
                            const mcsDOUBLE * yList, 
                            const mcsINT32 nbOfPointsToInterp, 
                            const mcsDOUBLE * xToInterpList, 
-                           mcsDOUBLE * const yInterpolatedList);
+                           mcsDOUBLE * const yInterpolatedList,
+                           mcsDOUBLE * blankingVal);
 
 
+mcsCOMPL_STAT mthDopplerShift(mcsDOUBLE radVeloc,
+                              mcsDOUBLE nbOflbda,
+                              mcsDOUBLE * lbdaList,
+                              mcsDOUBLE * shiftedLbdaList);
+                              
+
+mcsCOMPL_STAT mthComputeCellSpectrum(mcsDOUBLE radVelocForVisibleCell, 
+                                     mcsINT32 nbOflbda,
+                                     mcsDOUBLE * lbdaList, 
+                                     mcsDOUBLE * flxList, 
+                                     mcsDOUBLE * lbdaToInterpList, 
+                                     mcsDOUBLE rForVisibleCell, 
+                                     mcsDOUBLE projAreaForVisibleCell,
+                                     mcsINT32 tacheForVisibleCell,
+                                     mcsDOUBLE tPh,
+                                     mcsDOUBLE tSp,
+                                     mcsDOUBLE * cellFlxSpectrum);
 
 #ifdef __cplusplus
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutWindow.java,v 1.3 2007-08-17 11:05:41 lafrasse Exp $"
+ * "@(#) $Id: AboutWindow.java,v 1.4 2007-08-17 12:12:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/08/17 11:05:41  lafrasse
+ * Added scrolling capacty to the TextArea.
+ *
  * Revision 1.2  2007/02/13 13:48:51  lafrasse
  * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
  *
@@ -56,6 +59,7 @@ public class AboutWindow extends JFrame
 
             JTextArea greetingsTextArea = new JTextArea(greetings, 3, 40);
             greetingsTextArea.setEditable(false);
+            greetingsTextArea.setLineWrap(true);
 
             // Add scrolling capacity to the TextArea
             JScrollPane scrollPane = new JScrollPane(greetingsTextArea);

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.9 2007-06-19 15:18:10 lafrasse Exp $"
+ * "@(#) $Id: Resources.java,v 1.10 2008-02-13 05:30:12 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2007/06/19 15:18:10  lafrasse
+ * Added Mac OS X command key handling for menu short cuts.
+ *
  * Revision 1.8  2007/02/15 08:28:46  mella
  * Replace MCSLogger by java.util.logging.Logger
  *
@@ -58,7 +61,7 @@ public abstract class Resources
 {
     /** the logger facility */
     protected static java.util.logging.Logger logger_ = java.util.logging.Logger.getLogger(
-            "jmmc.mcs.gui.ReportDialog");
+            "fr.jmmc.mcs.util.Resources");
 
     /** Contains the class nale for logging */
     static String _loggerClassName = "Resources";
@@ -114,7 +117,7 @@ public abstract class Resources
             }
         }
 
-        logger_.info("getResource for " + resourceName);
+        logger_.fine("getResource for " + resourceName);
 
         try
         {

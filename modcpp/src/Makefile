@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2005-02-15 10:40:17 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.6 2008-02-13 07:56:24 mella Exp $"
 #
 # Makefile of C++ example module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/02/15 10:40:17  gzins
+# Added CVS log as file modification history
+#
 # gluck     30-Jun-2004  Created
 #
 #*******************************************************************************
@@ -40,7 +43,7 @@ EXECUTABLES_L   =
 #
 # <brief description of xxxxx program>
 modcppMain_OBJECTS   = modcppMain
-modcppMain_LDFLAGS   = -lxml2 -lgdome -lstdc++
+modcppMain_LDFLAGS   = $(MCSSTD_LIBLIST) -lstdc++
 modcppMain_LIBS      = mcs log err modcpp
 
 #

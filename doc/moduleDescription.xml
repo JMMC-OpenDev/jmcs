@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2007-02-13 10:31:39 ccmgr Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2008-03-10 08:07:41 lafrasse Exp $"
 
  History
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.1  2007/02/13 10:31:39  ccmgr
+ Fix directory structure and add additional files
+
 ********************************************************************************
  NAME
  moduleDescription.xml - Give module informations
@@ -30,8 +33,8 @@
 -->
 
 <module name="jmcs">
-    <desc>description</desc>
-    <resp>responsible</resp>
+    <desc>Common Java tools and libraries</desc>
+    <resp>Sylvain Lafrasse</resp>
     <institute>JMMC</institute>
-    <package>package</package>
+    <package>MCS</package>
 </module>

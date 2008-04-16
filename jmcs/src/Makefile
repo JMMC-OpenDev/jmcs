@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2008-04-16 14:15:27 fgalland Exp $"
+# "@(#) $Id: Makefile,v 1.9 2008-04-16 14:24:11 fgalland Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2008/04/16 14:15:27  fgalland
+# Creation.
+#
 # Revision 1.7  2008/01/28 12:19:32  mella
 # add jfits jar to installed files
 #
@@ -160,8 +163,7 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/ptplot5.6.jar \
 		../lib/jfits-0.93.jar \
 		../lib/castor.jar \
-		../lib/BrowserLauncher2-1_3.jar \
-		../lib/AppFramework-1.03.jar
+		../lib/BrowserLauncher2-1_3.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

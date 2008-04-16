@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2008-01-28 12:19:32 mella Exp $"
+# "@(#) $Id: Makefile,v 1.8 2008-04-16 14:15:27 fgalland Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2008/01/28 12:19:32  mella
+# add jfits jar to installed files
+#
 # Revision 1.6  2007/03/22 15:07:52  mella
 # Added ptplot jar into file to install
 #
@@ -85,7 +88,7 @@ lllll_OBJECTS   =
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
+SCRIPTS         = jmcsGenerateJavaFromXsd
 SCRIPTS_L       =
 
 #
@@ -124,16 +127,16 @@ JARFILES        = jmcs
 #
 # <brief description of jmcs jar files>
 jmcs_DIRS     = fr
-jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png
+jmcs_EXTRAS   = fr/jmmc/mcs/gui/logo.jpg
 
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES=
+JAVA_EXECUTABLES =
 
 #
-# <brief description of jjjjjj java program>
-jjjjjj_CLASS    =
+# <brief description of jmcsGUITest java program>
+jmcsGUIAboutBoxTest_CLASS    = 
 
 #
 # Command Definition Files (CDF)
@@ -154,8 +157,11 @@ MAN8 =
 # other files to be installed
 #----------------------------
 INSTALL_FILES = ../lib/loggui.jar \
-				../lib/ptplot5.6.jar \
-				../lib/jfits-0.93.jar
+		../lib/ptplot5.6.jar \
+		../lib/jfits-0.93.jar \
+		../lib/castor.jar \
+		../lib/BrowserLauncher2-1_3.jar \
+		../lib/AppFramework-1.03.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

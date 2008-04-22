@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2008-04-16 14:24:11 fgalland Exp $"
+# "@(#) $Id: Makefile,v 1.10 2008-04-22 09:15:56 bcolucci Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2008/04/16 14:24:11  fgalland
+# Removed installation of AppFramework-1.03.jar
+#
 # Revision 1.8  2008/04/16 14:15:27  fgalland
 # Creation.
 #
@@ -163,7 +166,12 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/ptplot5.6.jar \
 		../lib/jfits-0.93.jar \
 		../lib/castor.jar \
-		../lib/BrowserLauncher2-1_3.jar
+		../lib/BrowserLauncher2-1_3.jar \
+		../lib/xercesImpl.jar \
+		../lib/xmlParserAPIs.jar \
+		../lib/commons-httpclient-3.1.jar \
+		../lib/commons-logging-1.1.1.jar \
+		../lib/commons-codec-1.3.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

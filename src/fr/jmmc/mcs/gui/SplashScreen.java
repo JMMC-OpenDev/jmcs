@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SplashScreen.java,v 1.1 2008-04-16 14:15:27 fgalland Exp $"
+ * "@(#) $Id: SplashScreen.java,v 1.2 2008-04-22 09:14:15 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/04/16 14:15:27  fgalland
+ * Creation.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
@@ -175,8 +178,8 @@ public class SplashScreen extends JFrame
             setUndecorated(true);
             setTitle(programName);
             pack();
-            setVisible(true);
             WindowCenterer.centerOnMainScreen(this);
+            setVisible(true);
         }
         catch (Exception ex)
         {

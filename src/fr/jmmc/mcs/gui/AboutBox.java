@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.1 2008-04-16 14:15:27 fgalland Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.2 2008-04-22 09:14:15 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/04/16 14:15:27  fgalland
+ * Creation.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
@@ -531,7 +534,6 @@ public class AboutBox extends JFrame implements HyperlinkListener
             getContentPane().add(_textareaSplit, BorderLayout.CENTER);
             getContentPane().add(_copyrightLabel, BorderLayout.PAGE_END);
             setResizable(false);
-            setLocationRelativeTo(null);
             setTitle(title);
             pack();
             WindowCenterer.centerOnMainScreen(this);

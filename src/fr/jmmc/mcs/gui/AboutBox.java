@@ -1,12 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.2 2008-04-22 09:14:15 bcolucci Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.3 2008-04-22 09:17:36 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * Revision 1.1  2008/04/16 14:15:27  fgalland
+ * Revision 1.2  2008/04/22 09:14:15  bcolucci
+ * Removed unused setRelativePosition().
+ *
+ * Revision 1.1  2008/04/16 14:15:27  bcolucci
  * Creation.
  *
  ******************************************************************************/

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2008-04-22 09:15:56 bcolucci Exp $"
+# "@(#) $Id: Makefile,v 1.11 2008-04-22 12:57:35 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2008/04/22 09:15:56  bcolucci
+# Created FeedbackReport.
+#
 # Revision 1.9  2008/04/16 14:24:11  fgalland
 # Removed installation of AppFramework-1.03.jar
 #
@@ -192,11 +195,17 @@ include $(MAKEDIR)/mkfMakefile
 #
 # TARGETS
 # -------
-all:	do_all
+all:	do_castor do_all
 	@echo " . . . 'all' done" 
 
-clean : clean_all 
+do_castor:
+	./jmcsGenerateJavaFromXsd.sh
+	
+clean : clean_castor clean_all 
 	@echo " . . . clean done"
+
+clean_castor:
+	rm -rf fr/jmmc/mcs/gui/castor
 
 man   : do_man 
 	@echo " . . . man page(s) done"

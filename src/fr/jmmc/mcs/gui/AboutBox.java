@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.3 2008-04-22 09:17:36 bcolucci Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.4 2008-04-23 21:17:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/04/22 09:17:36  bcolucci
+ * Corrected user name to bcolucci in CVS $Log (was fgalland).
+ *
  * Revision 1.2  2008/04/22 09:14:15  bcolucci
  * Removed unused setRelativePosition().
  *
@@ -48,10 +51,10 @@ public class AboutBox extends JFrame implements HyperlinkListener
     private JLabel _copyrightLabel = new JLabel();
 
     /** Container of the textarea */
-    private JScrollPane _textareaContainer = new JScrollPane();
+    private JScrollPane _descriptionScrollPane = new JScrollPane();
 
     /** Textarea (html) */
-    private JEditorPane _textarea = new JEditorPane();
+    private JEditorPane _descriptionEditorPane = new JEditorPane();
 
     /** Label of compilation info (date and compilator) */
     private JLabel _compilationInfoLabel = new JLabel();
@@ -62,28 +65,35 @@ public class AboutBox extends JFrame implements HyperlinkListener
     /** Label of program info (name and version) */
     private JLabel _programInfoLabel = new JLabel();
 
-    /** Help : jframe design
+    /** Help : JFrame design
      *
-     *                contentPane()------------------------------------------------------------|
-     *                | _logoLabel                                                             |
-     *                | _textareaSplit--------------------------------------------------------||
-     *                | | _upSpaceSplit------------------------------------------------------|||
-     *                | | | space                                                            |||
-     *                | | | _downSpaceSplit-------------------------------------------------||||
-     *                | | | | _compilationInfoSplit----------------------------------------|||||
-     *                | | | | | _linkAndProgramSplit--------------------------------------||||||
-     *                | | | | | | _linkLabel                                              ||||||
-     *                | | | | | | _programInfoLabel                                       ||||||
-     *                | | | | | -----------------------------------------------------------|||||
-     *                | | | | | _compilationInfoLabel                                      |||||
-     *                | | | | --------------------------------------------------------------||||
-     *                | | | | space                                                         ||||
-     *                | | | -----------------------------------------------------------------|||
-     *                | | --------------------------------------------------------------------||
-     *                | | _textareaContainer                                                  ||
-     *                | -----------------------------------------------------------------------|
-     *                | _copyrightLabel                                                        |
-     *                --------------------------------------------------------------------------
+     *  +-[contentPane()]----------------------------------------------------+
+     *  |  _logoLabel                                                        |
+     *  +--------------------------------------------------------------------+
+     *  |  +-[_descriptionSplit]------------------------------------------+  |
+     *  |  |  +-[_upSpaceSplit]----------------------------------------+  |  |
+     *  |  |  |  space                                                 |  |  |
+     *  |  |  +--------------------------------------------------------+  |  |
+     *  |  |  |  +-[_downSpaceSplit]--------------------------------+  |  |  |
+     *  |  |  |  |  +-[_compilationInfoSplit]--------------------+  |  |  |  |
+     *  |  |  |  |  |  +-[_linkAndProgramSplit]---------------+  |  |  |  |  |
+     *  |  |  |  |  |  | _linkLabel                           |  |  |  |  |  |
+     *  |  |  |  |  |  +--------------------------------------+  |  |  |  |  |
+     *  |  |  |  |  |  | _programInfoLabel                    |  |  |  |  |  |
+     *  |  |  |  |  |  +--------------------------------------+  |  |  |  |  |
+     *  |  |  |  |  +--------------------------------------------+  |  |  |  |
+     *  |  |  |  |  |  _compilationInfoLabel                     |  |  |  |  |
+     *  |  |  |  |  +--------------------------------------------+  |  |  |  |
+     *  |  |  |  +--------------------------------------------------+  |  |  |
+     *  |  |  |  |  space                                           |  |  |  |
+     *  |  |  |  +--------------------------------------------------+  |  |  |
+     *  |  |  +--------------------------------------------------------+  |  |
+     *  |  +--------------------------------------------------------------+  |
+     *  |  |  _descriptionScrollPane                                      |  |
+     *  |  +--------------------------------------------------------------+  |
+     *  +--------------------------------------------------------------------+
+     *  |  _copyrightLabel                                                   |
+     *  +--------------------------------------------------------------------+
      */
 
     /** Split with _link and program */
@@ -101,9 +111,12 @@ public class AboutBox extends JFrame implements HyperlinkListener
     /** Split with ((((link and program split) and compilation)
      * and space) and space) and textarea container
      */
-    private JSplitPane _textareaSplit = new JSplitPane();
+    private JSplitPane _descriptionSplit = new JSplitPane();
 
-    /** Constructor */
+    /**
+     * Load the application information from ApplicationDataModel and display
+     * its content in the window.
+     */
     public AboutBox()
     {
         try
@@ -112,7 +125,10 @@ public class AboutBox extends JFrame implements HyperlinkListener
             _applicationDataModel = new ApplicationDataModel();
 
             // Launch all methods which set properties of components
-            setAllTheProperties();
+            setAllProperties();
+
+            // Show window
+            setVisible(true);
         }
         catch (Exception ex)
         {
@@ -121,154 +137,126 @@ public class AboutBox extends JFrame implements HyperlinkListener
     }
 
     /**
-     * Launch all "set properties" methods.
-     *
-     * So this method should initialize all of the jframe components
+     * Instantiate and draw all the GUI.
      */
-    private void setAllTheProperties()
+    private void setAllProperties()
     {
-        // Components
-        setLogoLabelProperties();
-        setProgramInfoLabelProperties();
-        setLinkLabelProperties();
-        setCompilationInfoLabelProperties();
-        setTextareaProperties();
-        setCopyrightLabelProperties();
+        // Widgets Setup
+        setupLogo();
+        setupProgramInfoLabel();
+        setupLinkLabel();
+        setupCompilationInfoLabel();
+        setupDescriptionTextarea();
+        setupCopyrightLabel();
 
-        // JFrame design
+        // Layout Setup
         setTextareaSplitProperties();
         setUpSpaceSplitProperties();
         setDownSpaceSplitProperties();
         setCompilationInfoSplitProperties();
         setLinkAndProgramSplitProperties();
 
-        // Main frame
-        setFrameProperties();
+        // Window setup
+        setupWindow();
 
-        _logger.fine("All of the properties of the frame have been initialized");
+        _logger.fine("All the properties of the frame have been initialized");
     }
 
     /** Sets logo label properties */
-    private void setLogoLabelProperties()
+    private void setupLogo()
     {
-        try
-        {
-            // Center label content
-            _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        // Center label content
+        _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _logoLabel.setOpaque(false);
 
-            // Create the Icon with the image which should be named logo.jpg in src folder
-            String    logoURL = _applicationDataModel.getLogoURL();
-            ImageIcon logo    = new ImageIcon(getClass().getResource(logoURL));
-            _logoLabel.setIcon(logo);
+        // Create the Icon with the image which should be named logo.jpg in src folder
+        String    logoURL = _applicationDataModel.getLogoURL();
+        ImageIcon logo    = new ImageIcon(getClass().getResource(logoURL));
+        _logoLabel.setIcon(logo);
 
-            _logger.fine(
-                "All of the logo label properties have been initialized");
+        _logger.fine("All the logo label properties have been initialized");
 
-            // Launch the default browser with the given link
-            _logoLabel.addMouseListener(new MouseAdapter()
+        // Launch the default browser with the given link
+        _logoLabel.addMouseListener(new MouseAdapter()
+            {
+                public void mouseClicked(MouseEvent evt)
                 {
-                    public void mouseClicked(MouseEvent evt)
+                    try
                     {
-                        try
-                        {
-                            BrowserLauncher launcher       = new BrowserLauncher();
-                            String          mainWebPageURL = _applicationDataModel.getMainWebPageURL();
-                            launcher.openURLinBrowser(mainWebPageURL);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.log(Level.WARNING,
-                                "Cannot launch web browser", ex);
-                        }
+                        BrowserLauncher launcher       = new BrowserLauncher();
+                        String          mainWebPageURL = _applicationDataModel.getMainWebPageURL();
+                        launcher.openURLinBrowser(mainWebPageURL);
                     }
-                });
+                    catch (Exception ex)
+                    {
+                        _logger.log(Level.WARNING, "Cannot launch web browser",
+                            ex);
+                    }
+                }
+            });
 
-            _logger.fine("Mouse click event placed on logo label");
+        _logger.fine("Mouse click event placed on logo label");
 
-            // Show hand cursor when mouse is moving on logo
-            _logoLabel.addMouseMotionListener(new MouseMotionAdapter()
+        // Show hand cursor when mouse is moving on logo
+        _logoLabel.addMouseMotionListener(new MouseMotionAdapter()
+            {
+                public void mouseMoved(MouseEvent evt)
                 {
-                    public void mouseMoved(MouseEvent evt)
+                    try
                     {
-                        try
-                        {
-                            _logoLabel.setCursor(Cursor.getPredefinedCursor(
-                                    Cursor.HAND_CURSOR));
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.log(Level.WARNING, "Cannot change cursor",
-                                ex);
-                        }
+                        _logoLabel.setCursor(Cursor.getPredefinedCursor(
+                                Cursor.HAND_CURSOR));
                     }
-                });
+                    catch (Exception ex)
+                    {
+                        _logger.log(Level.WARNING, "Cannot change cursor", ex);
+                    }
+                }
+            });
 
-            _logger.fine("Mouse move event placed on logo label");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot set logo label properties", ex);
-        }
+        _logger.fine("Mouse move event placed on logo label");
     }
 
     /** Sets copyright label properties */
-    private void setCopyrightLabelProperties()
+    private void setupCopyrightLabel()
     {
-        try
-        {
-            _copyrightLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            _copyrightLabel.setText(_applicationDataModel.getCopyrightValue());
-            _logger.fine(
-                "All of the copyright label properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot set copyright label properties",
-                ex);
-        }
+        _copyrightLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _copyrightLabel.setText(_applicationDataModel.getCopyrightValue());
+        _logger.fine("All the copyright label properties have been initialized");
     }
 
     /** Sets textarea (SWING html) properties */
-    private void setTextareaProperties()
+    private void setupDescriptionTextarea()
     {
-        try
+        _descriptionEditorPane.setEditable(false);
+        _descriptionEditorPane.setMargin(new Insets(5, 5, 5, 5));
+        _descriptionEditorPane.setContentType("text/html");
+        _descriptionEditorPane.addHyperlinkListener(this);
+
+        // The textarea should have the same width than the logo
+        Dimension textareaDimension = new Dimension(_logoLabel.getWidth(), 170);
+        _descriptionEditorPane.setPreferredSize(textareaDimension);
+        _logger.fine("All the textarea properties have been initialized");
+
+        // HTML generation
+        String generatedHtml = "<html><head></head><body>" +
+            _applicationDataModel.getTextValue() + "<br><br>";
+
+        // Generate a HTML string with each package informations
+        String[] packagesInfo = _applicationDataModel.getPackagesInfo();
+        String   packageHtml  = "";
+
+        for (int i = 0; i < packagesInfo.length; i++)
         {
-            _textarea.setEditable(false);
-            _textarea.setMargin(new Insets(5, 5, 5, 5));
-            _textarea.setContentType("text/html");
-            _textarea.addHyperlinkListener(this);
-
-            // The textarea should have the same width than the logo
-            Dimension textareaDimension = new Dimension(_logoLabel.getWidth(),
-                    170);
-            _textarea.setPreferredSize(textareaDimension);
-            _logger.fine("All of the textarea properties have been initialized");
-
-            // HTML generation
-            String generatedHtml = "<html><head></head><body>" +
-                _applicationDataModel.getTextValue() + "<br><br>";
-
-            // Generate a HTML string with each package informations
-            String[] packagesInfo = _applicationDataModel.getPackagesInfo();
-            String   packageHtml  = "";
-
-            for (int i = 0; i < packagesInfo.length; i++)
-            {
-                packageHtml += (packagesInfo[i] + "<br>");
-            }
-
-            generatedHtml += (packageHtml + "</body></html>");
-
-            _textarea.setText(generatedHtml);
-            _logger.fine("The text of textarea has been inserted");
-
-            _textareaContainer.setViewportView(_textarea);
-            _logger.fine("textarea imported in textarea container");
+            packageHtml += (packagesInfo[i] + "<br>");
         }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot set textarea properties", ex);
-        }
+
+        generatedHtml += (packageHtml + "</body></html>");
+
+        _descriptionEditorPane.setText(generatedHtml);
+        _logger.fine("The content of textarea has been inserted");
+
+        _descriptionScrollPane.setViewportView(_descriptionEditorPane);
     }
 
     /**
@@ -281,6 +269,7 @@ public class AboutBox extends JFrame implements HyperlinkListener
         // When a link is clicked
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
         {
+            // Get the clicked URL
             String clickedURL = event.getURL().toExternalForm();
 
             try
@@ -301,252 +290,140 @@ public class AboutBox extends JFrame implements HyperlinkListener
     }
 
     /** Sets link label properties */
-    private void setLinkLabelProperties()
+    private void setupLinkLabel()
     {
-        try
-        {
-            _linkLabel.setEditable(false);
-            _linkLabel.setOpaque(false);
-            _linkLabel.addHyperlinkListener(this);
-            _linkLabel.setContentType("text/html");
+        _linkLabel.setEditable(false);
+        _linkLabel.setOpaque(false);
+        _linkLabel.addHyperlinkListener(this);
+        _linkLabel.setContentType("text/html");
 
-            String link     = _applicationDataModel.getLinkValue();
-            String linkHTML = "<a href='" + link + "'>" + link + "</a>";
+        String link     = _applicationDataModel.getLinkValue();
+        String linkHTML = "<a href='" + link + "'>" + link + "</a>";
 
-            _linkLabel.setText("<html><head></head><body><center>" + linkHTML +
-                "</center></body></html>");
+        _linkLabel.setText("<html><head></head><body><center>" + linkHTML +
+            "</center></body></html>");
 
-            _logger.fine(
-                "All of the link label properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot set link label properties", ex);
-        }
+        _logger.fine("All the link label properties have been initialized");
+    }
+
+    /** Sets program info label properties */
+    private void setupProgramInfoLabel()
+    {
+        String name    = _applicationDataModel.getProgramName();
+        String version = _applicationDataModel.getProgramVersion();
+        String pInfo   = name + " v" + version;
+
+        _programInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _programInfoLabel.setText(pInfo);
+
+        _logger.fine(
+            "All the program info label properties have been initialized");
+    }
+
+    /** Sets compilation info label properties */
+    private void setupCompilationInfoLabel()
+    {
+        String compilationDate   = _applicationDataModel.getCompilationDate();
+        String compilatorVersion = _applicationDataModel.getCompilatorVersion();
+        String compilationInfo   = "Build the " + compilationDate + " with " +
+            compilatorVersion;
+
+        _compilationInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _compilationInfoLabel.setText(compilationInfo);
+
+        _logger.fine(
+            "All the compilation info label properties have been initialized");
     }
 
     /** Set link and program split properties */
     private void setLinkAndProgramSplitProperties()
     {
-        /*
-         * _linkAndProgramSplit-------------------
-         * | _linkLabel                          |
-         * |-------------------------------------|
-         * | _programInfoLabel                   |
-         * |-------------------------------------|
-         */
-        try
-        {
-            _linkAndProgramSplit.setBorder(null);
-            _linkAndProgramSplit.setDividerSize(0);
-            _linkAndProgramSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            _linkAndProgramSplit.setRightComponent(_linkLabel);
-            _linkAndProgramSplit.setLeftComponent(_programInfoLabel);
+        _linkAndProgramSplit.setBorder(null);
+        _linkAndProgramSplit.setDividerSize(0);
+        _linkAndProgramSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        _linkAndProgramSplit.setRightComponent(_linkLabel);
+        _linkAndProgramSplit.setLeftComponent(_programInfoLabel);
 
-            _logger.fine(
-                "All of the link and program split properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot set link and program split properties", ex);
-        }
+        _logger.fine(
+            "All the link and program split properties have been initialized");
     }
 
     /** Set compilation info split properties */
     private void setCompilationInfoSplitProperties()
     {
-        /*
-         * _compilationInfoSplit------------------
-         * | _linkAndProgramSplit                |
-         * |-------------------------------------|
-         * | _compilationInfoLabel               |
-         * |-------------------------------------|
-         */
-        try
-        {
-            _compilationInfoSplit.setBorder(null);
-            _compilationInfoSplit.setDividerSize(0);
-            _compilationInfoSplit.setDividerLocation(-1);
-            _compilationInfoSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            _compilationInfoSplit.setTopComponent(_linkAndProgramSplit);
-            _compilationInfoSplit.setRightComponent(_compilationInfoLabel);
+        _compilationInfoSplit.setBorder(null);
+        _compilationInfoSplit.setDividerSize(0);
+        _compilationInfoSplit.setDividerLocation(-1);
+        _compilationInfoSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        _compilationInfoSplit.setTopComponent(_linkAndProgramSplit);
+        _compilationInfoSplit.setRightComponent(_compilationInfoLabel);
 
-            _logger.fine(
-                "All of the compilation info split properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot set compilation info split properties", ex);
-        }
+        _logger.fine(
+            "All the compilation info split properties have been initialized");
     }
 
     /** Set down space split properties */
     private void setDownSpaceSplitProperties()
     {
-        /*
-         * _downSpaceSplit------------------------
-         * | _compilationInfoSplit               |
-         * |-------------------------------------|
-         * | space                               |
-         * |-------------------------------------|
-         */
-        try
-        {
-            _downSpaceSplit.setBorder(null);
-            _downSpaceSplit.setDividerSize(0);
-            _downSpaceSplit.setDividerLocation(-1);
-            _downSpaceSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            _downSpaceSplit.setTopComponent(_compilationInfoSplit);
-            _downSpaceSplit.setRightComponent(new JLabel(" "));
+        _downSpaceSplit.setBorder(null);
+        _downSpaceSplit.setDividerSize(0);
+        _downSpaceSplit.setDividerLocation(-1);
+        _downSpaceSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        _downSpaceSplit.setTopComponent(_compilationInfoSplit);
+        _downSpaceSplit.setRightComponent(new JLabel(" "));
 
-            _logger.fine(
-                "All of the down space split properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot set down space split properties", ex);
-        }
+        _logger.fine(
+            "All the down space split properties have been initialized");
     }
 
     /** Set up space split properties */
     private void setUpSpaceSplitProperties()
     {
-        /*
-         * _upSpaceSplit--------------------------
-         * | space                               |
-         * |-------------------------------------|
-         * | _downSpaceSplit                     |
-         * |-------------------------------------|
-         */
-        try
-        {
-            _upSpaceSplit.setBorder(null);
-            _upSpaceSplit.setDividerSize(0);
-            _upSpaceSplit.setDividerLocation(-1);
-            _upSpaceSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            _upSpaceSplit.setTopComponent(new JLabel(" "));
-            _upSpaceSplit.setRightComponent(_downSpaceSplit);
+        _upSpaceSplit.setBorder(null);
+        _upSpaceSplit.setDividerSize(0);
+        _upSpaceSplit.setDividerLocation(-1);
+        _upSpaceSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        _upSpaceSplit.setTopComponent(new JLabel(" "));
+        _upSpaceSplit.setRightComponent(_downSpaceSplit);
 
-            _logger.fine(
-                "All of the up space split properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot set up space split properties",
-                ex);
-        }
+        _logger.fine("All the up space split properties have been initialized");
     }
 
     /** Set textarea split properties */
     private void setTextareaSplitProperties()
     {
-        /*
-         * _textareaSplit-------------------------
-         * | _upSpaceSplit                       |
-         * |-------------------------------------|
-         * | _textareaContainer                  |
-         * |-------------------------------------|
-         */
-        try
-        {
-            _textareaSplit.setBorder(null);
-            _textareaSplit.setDividerSize(0);
-            _textareaSplit.setDividerLocation(-1);
-            _textareaSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            _textareaSplit.setTopComponent(_upSpaceSplit);
-            _textareaSplit.setRightComponent(_textareaContainer);
+        _descriptionSplit.setBorder(null);
+        _descriptionSplit.setDividerSize(0);
+        _descriptionSplit.setDividerLocation(-1);
+        _descriptionSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        _descriptionSplit.setTopComponent(_upSpaceSplit);
+        _descriptionSplit.setRightComponent(_descriptionScrollPane);
 
-            _logger.fine(
-                "All of the textarea split properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot set textarea split properties",
-                ex);
-        }
+        _logger.fine("All the textarea split properties have been initialized");
     }
 
-    /** Sets program info label properties */
-    private void setProgramInfoLabelProperties()
+    /** Sets frame properties and make the window visible */
+    private void setupWindow()
     {
-        try
-        {
-            String name    = _applicationDataModel.getProgramName();
-            String version = _applicationDataModel.getProgramVersion();
-            String pInfo   = name + " v" + version;
+        // Set the window title
+        String programName = _applicationDataModel.getProgramName();
+        String windowTitle = "About " + programName + "...";
+        setTitle(windowTitle);
 
-            _programInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            _programInfoLabel.setText(pInfo);
+        // Disable window resizing
+        setResizable(false);
 
-            _logger.fine(
-                "All of the program info label properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot set program info label properties", ex);
-        }
-    }
+        // Window layout
+        Container contentPane = getContentPane();
+        contentPane.add(_logoLabel, BorderLayout.PAGE_START);
+        contentPane.add(_descriptionSplit, BorderLayout.CENTER);
+        contentPane.add(_copyrightLabel, BorderLayout.PAGE_END);
+        pack();
 
-    /** Sets compilation info label properties */
-    private void setCompilationInfoLabelProperties()
-    {
-        try
-        {
-            String date              = _applicationDataModel.getCompilationDate();
-            String compilatorVersion = _applicationDataModel.getCompilatorVersion();
-            String cInfo             = "Build the " + date + " with " +
-                compilatorVersion;
+        // Center window on main screen
+        WindowCenterer.centerOnMainScreen(this);
 
-            _compilationInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            _compilationInfoLabel.setText(cInfo);
-
-            _logger.fine(
-                "All of the compilation info label properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot set compilation info label properties", ex);
-        }
-    }
-
-    /** Sets frame properties and make the window
-     * visible
-     */
-    private void setFrameProperties()
-    {
-        /*
-         * getContentPane()-----------------------
-         * | _logoLabel                          |
-         * |-------------------------------------|
-         * | _textareaSplit                      |
-         * |-------------------------------------|
-         * | _copyrightLabel                     |
-         * |-------------------------------------|
-         */
-        try
-        {
-            String programName = _applicationDataModel.getProgramName();
-            String title       = "About " + programName + "...";
-
-            getContentPane().add(_logoLabel, BorderLayout.PAGE_START);
-            getContentPane().add(_textareaSplit, BorderLayout.CENTER);
-            getContentPane().add(_copyrightLabel, BorderLayout.PAGE_END);
-            setResizable(false);
-            setTitle(title);
-            pack();
-            WindowCenterer.centerOnMainScreen(this);
-
-            _logger.fine("All of the frame properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.SEVERE, "Cannot set frame properties", ex);
-        }
+        _logger.fine("All the frame properties have been initialized");
     }
 }
 /*___oOo___*/

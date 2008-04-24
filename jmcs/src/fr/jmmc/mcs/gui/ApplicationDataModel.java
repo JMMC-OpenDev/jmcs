@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.1 2008-04-16 14:15:27 fgalland Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.2 2008-04-24 15:57:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/04/16 14:15:27  fgalland
+ * Creation.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
@@ -30,9 +33,6 @@ public class ApplicationDataModel
     /** The JAVA class which castor has generated with the XSD file */
     private ApplicationData _applicationDataCastorModel = null;
 
-    /** File loaded from the JAR */
-    private String _xmlFileName = "ApplicationData.xml";
-
     /** Logo file name */
     private String _logoFileName = "logo.jpg";
 
@@ -40,20 +40,14 @@ public class ApplicationDataModel
     private String _mainWebPageURL = "http://www.jmmc.fr/";
 
     /** Constructor */
-    public ApplicationDataModel()
+    public ApplicationDataModel(URL dataModelURL) throws Exception
     {
-        try
-        {
-            _logger.fine("Loading Application data model...");
+        _logger.fine("Loading Application data model from " + dataModelURL);
 
-            InputStreamReader inputStreamReader = getInputStreamReader();
-            _applicationDataCastorModel = ApplicationData.unmarshal(inputStreamReader);
-            _logger.fine("Application data model loaded.");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.SEVERE, "Cannot load Application data model.", ex);
-        }
+        InputStreamReader inputStreamReader;
+        inputStreamReader               = new InputStreamReader(dataModelURL.openStream());
+        _applicationDataCastorModel     = ApplicationData.unmarshal(inputStreamReader);
+        _logger.fine("Application data model loaded.");
     }
 
     /**
@@ -63,6 +57,8 @@ public class ApplicationDataModel
      */
     public String getLogoURL()
     {
+        _logger.fine("logoUrl=" + _logoFileName);
+
         return _logoFileName;
     }
 
@@ -183,7 +179,7 @@ public class ApplicationDataModel
         try
         {
             compilation               = _applicationDataCastorModel.getCompilation();
-            compilationCompilator     = compilation.getCompilator();
+            compilationCompilator     = compilation.getCompiler();
             _logger.fine("Compilation compilator has been taken on model");
         }
         catch (Exception ex)
@@ -276,44 +272,6 @@ public class ApplicationDataModel
         }
 
         return copyright;
-    }
-
-    /**
-     * Returns the inputStreamReader of the XML file
-     *
-     * @return the inputStreamReader of the XML file
-     */
-    private InputStreamReader getInputStreamReader()
-    {
-        InputStreamReader isr = null;
-
-        try
-        {
-            // Get full class name (fr.jmmc.xxx.yyy)
-            Throwable           tmp                      = new Throwable();
-            StackTraceElement[] callStack                = tmp.getStackTrace();
-            int                 callingClassIndexInStack = callStack.length -
-                1;
-            String              callingClassName         = callStack[callingClassIndexInStack].getClassName();
-            Class               callingClass             = Class.forName(callingClassName);
-
-            // Replace '.' by '/' in full class name
-            String xmlLocation = callingClass.getPackage().getName();
-            xmlLocation = xmlLocation.replace(".", "/") + "/" + _xmlFileName;
-
-            // Open XML file at path
-            URL xmlURL = callingClass.getClassLoader().getResource(xmlLocation);
-            _logger.fine("XML URL constructed");
-
-            isr = new InputStreamReader(xmlURL.openStream());
-            _logger.fine("Input stream reader constructed");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.SEVERE, "Cannot return inputStreamReader", ex);
-        }
-
-        return isr;
     }
 }
 /*___oOo___*/

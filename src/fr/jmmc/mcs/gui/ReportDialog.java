@@ -1,7 +1,7 @@
 /*
  * ReportDialog.java
  *
- * Created on 16 février 2007, 13:04
+ * Created on 16 fevrier 2007, 13:04
  */
 package fr.jmmc.mcs.gui;
 

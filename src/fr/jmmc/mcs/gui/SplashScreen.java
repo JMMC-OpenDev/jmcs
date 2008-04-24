@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SplashScreen.java,v 1.3 2008-04-22 09:17:36 bcolucci Exp $"
+ * "@(#) $Id: SplashScreen.java,v 1.4 2008-04-24 15:55:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/04/22 09:17:36  bcolucci
+ * Corrected user name to bcolucci in CVS $Log (was fgalland).
+ *
  * Revision 1.2  2008/04/22 09:14:15  bcolucci
  * Removed unused setRelativePosition().
  *
@@ -17,6 +20,8 @@ package fr.jmmc.mcs.gui;
 
 import java.awt.*;
 import java.awt.event.*;
+
+import java.net.URL;
 
 import java.util.logging.*;
 
@@ -53,23 +58,16 @@ public class SplashScreen extends JFrame
      *
      * The file should be located in "src", named "AboutBoxData.xml", following schema "src/AboutBoxSchema.xsd"
      */
-    public SplashScreen()
+    public SplashScreen(ApplicationDataModel applicationDataModel)
     {
-        // Instantiate model
-        try
-        {
-            // Calls the model
-            _applicationDataModel = new ApplicationDataModel();
-            _logger.fine("Application data model constructed");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.SEVERE,
-                "Cannot instantiate ApplicationDataModel object", ex);
-        }
+        // Calls the model
+        _applicationDataModel = applicationDataModel;
 
         // Draw window
         setAllTheProperties();
+
+        // Show window
+        setVisible(true);
     }
 
     /**
@@ -174,15 +172,14 @@ public class SplashScreen extends JFrame
         try
         {
             String programName = _applicationDataModel.getProgramName();
-
             getContentPane().add(_panel, BorderLayout.CENTER);
 
             setResizable(false);
             setUndecorated(true);
             setTitle(programName);
+            setAlwaysOnTop(true);
             pack();
             WindowCenterer.centerOnMainScreen(this);
-            setVisible(true);
         }
         catch (Exception ex)
         {

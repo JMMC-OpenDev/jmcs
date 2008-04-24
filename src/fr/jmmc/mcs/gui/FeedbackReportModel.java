@@ -1,18 +1,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.1 2008-04-22 09:15:56 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.2 2008-04-24 15:55:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/04/22 09:15:56  bcolucci
+ * Created FeedbackReport.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.*;
-
-import java.io.*;
 
 import java.util.*;
 import java.util.logging.*;
@@ -31,7 +32,7 @@ public class FeedbackReportModel
     private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
 
     /** ApplicationData model */
-    public static ApplicationDataModel _applicationDataModel = new ApplicationDataModel();
+    public static ApplicationDataModel _applicationDataModel;
 
     /** Feedback report type definition array */
     private static String[] _types = new String[]
@@ -64,16 +65,18 @@ public class FeedbackReportModel
     private String _applicationSpecificInformation = "None";
 
     /** Creates a new FeedbackReportModel object */
-    public FeedbackReportModel()
+    public FeedbackReportModel(ApplicationDataModel applicationDataModel)
     {
         _typeDataModel = new DefaultComboBoxModel(_types);
         _logger.fine("TypeDataModel constructed");
 
-        // Informations to send with the report
-        _programVersion     = _applicationDataModel.getProgramVersion();
-        _programName        = _applicationDataModel.getProgramName();
-        _systemConfig       = getSystemConfig();
-        _applicationLog     = App.getLogOutput();
+        _applicationDataModel     = applicationDataModel;
+        // Get informations to send with the report
+        _programVersion           = _applicationDataModel.getProgramVersion();
+        _programName              = _applicationDataModel.getProgramName();
+
+        _systemConfig             = getSystemConfig();
+        _applicationLog           = App.getLogOutput();
         _logger.fine("All generated report informations have been collected");
     }
 

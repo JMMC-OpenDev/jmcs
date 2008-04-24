@@ -16,7 +16,7 @@
 				<xsd:element name="compilation">
 					<xsd:complexType>
 						<xsd:attribute name="date" type="xsd:string"/>
-						<xsd:attribute name="compilator" type="xsd:string"/>
+						<xsd:attribute name="compiler" type="xsd:string"/>
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:element name="text" type="xsd:string"/>

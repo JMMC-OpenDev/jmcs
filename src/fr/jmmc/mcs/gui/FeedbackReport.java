@@ -1,16 +1,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.1 2008-04-22 09:15:56 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.2 2008-04-24 15:55:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/04/22 09:15:56  bcolucci
+ * Created FeedbackReport.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.*;
+
+import java.net.URL;
 
 import java.util.logging.*;
 
@@ -84,36 +89,28 @@ public class FeedbackReport extends JFrame
     private JButton _submitButton = new JButton();
 
     /** Constructor */
-    public FeedbackReport()
+    public FeedbackReport(ApplicationDataModel applicationDataModel)
     {
-        try
-        {
-            // Instantiate FeedbackReportModel object
-            _feedbackReportModel = new FeedbackReportModel();
+        _feedbackReportModel = new FeedbackReportModel(applicationDataModel);
 
-            // Draw the widgets
-            setSplitsProperties();
-            setMailProperties();
-            setTypeProperties();
-            setDescriptionProperties();
-            setButtonsProperties();
-            setFrameProperties();
-            _logger.fine("All feedback report properties have been set");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.SEVERE,
-                "Cannot instantiate FeedbackReportView object", ex);
-        }
+        // Draw the widgets
+        setSplitsProperties();
+        setMailProperties();
+        setTypeProperties();
+        setDescriptionProperties();
+        setButtonsProperties();
+        setFrameProperties();
+        _logger.fine("All feedback report properties have been set");
     }
 
     /** Enhanced constructor
      *
      * @param information application-specific information to be sent.
      */
-    public FeedbackReport(String information)
+    public FeedbackReport(ApplicationDataModel applicationDataModel,
+        String information)
     {
-        this();
+        this(applicationDataModel);
         _feedbackReportModel.setApplicationSpecificInformation(information);
     }
 

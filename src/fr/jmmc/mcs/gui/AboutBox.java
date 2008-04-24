@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.4 2008-04-23 21:17:20 lafrasse Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.5 2008-04-24 15:55:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/04/23 21:17:20  lafrasse
+ * Code review and refinments.
+ *
  * Revision 1.3  2008/04/22 09:17:36  bcolucci
  * Corrected user name to bcolucci in CVS $Log (was fgalland).
  *
@@ -117,23 +120,15 @@ public class AboutBox extends JFrame implements HyperlinkListener
      * Load the application information from ApplicationDataModel and display
      * its content in the window.
      */
-    public AboutBox()
+    public AboutBox(ApplicationDataModel applicationDataModel)
     {
-        try
-        {
-            // Instantiate ApplicationDataModel object
-            _applicationDataModel = new ApplicationDataModel();
+        _applicationDataModel = applicationDataModel;
 
-            // Launch all methods which set properties of components
-            setAllProperties();
+        // Launch all methods which set properties of components
+        setAllProperties();
 
-            // Show window
-            setVisible(true);
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.SEVERE, "Cannot instantiate AboutBox object", ex);
-        }
+        // Show window
+        setVisible(true);
     }
 
     /**
@@ -169,7 +164,7 @@ public class AboutBox extends JFrame implements HyperlinkListener
         _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _logoLabel.setOpaque(false);
 
-        // Create the Icon with the image which should be named logo.jpg in src folder
+        // Create the Icon with the image which should be named logo.jpg in src folder       
         String    logoURL = _applicationDataModel.getLogoURL();
         ImageIcon logo    = new ImageIcon(getClass().getResource(logoURL));
         _logoLabel.setIcon(logo);

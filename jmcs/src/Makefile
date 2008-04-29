@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2008-04-22 12:57:35 mella Exp $"
+# "@(#) $Id: Makefile,v 1.12 2008-04-29 14:28:58 bcolucci Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2008/04/22 12:57:35  mella
+# Add castor handling
+#
 # Revision 1.10  2008/04/22 09:15:56  bcolucci
 # Created FeedbackReport.
 #
@@ -97,7 +100,8 @@ lllll_OBJECTS   =
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = jmcsGenerateJavaFromXsd
+SCRIPTS         = jmcsGenerateJavaFromXsd \
+				  jmcsHTML2HelpSet
 SCRIPTS_L       =
 
 #
@@ -141,11 +145,11 @@ jmcs_EXTRAS   = fr/jmmc/mcs/gui/logo.jpg
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES =
+JAVA_EXECUTABLES = jmcsGenerateHelpsetFromHtml
 
 #
-# <brief description of jmcsGUITest java program>
-jmcsGUIAboutBoxTest_CLASS    = 
+# <brief description of jmcsGenerateHelpsetFromHtml java program>
+jmcsGenerateHelpsetFromHtml_CLASS    = fr.jmmc.mcs.gui.jmcsGenerateHelpsetFromHtml
 
 #
 # Command Definition Files (CDF)
@@ -174,7 +178,10 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/xmlParserAPIs.jar \
 		../lib/commons-httpclient-3.1.jar \
 		../lib/commons-logging-1.1.1.jar \
-		../lib/commons-codec-1.3.jar
+		../lib/commons-codec-1.3.jar \
+		../lib/xmlenc.jar \
+		../lib/jhall.jar \
+		../lib/jhelpdev.jar \
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

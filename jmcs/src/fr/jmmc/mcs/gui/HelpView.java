@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.3 2007-02-13 15:35:39 lafrasse Exp $"
+ * "@(#) $Id: HelpView.java,v 1.4 2008-04-29 14:28:58 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/02/13 15:35:39  lafrasse
+ * Jalopization.
+ *
  * Revision 1.2  2007/02/13 13:48:51  lafrasse
  * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
  *
@@ -16,172 +19,35 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import fr.jmmc.mcs.log.*;
-import fr.jmmc.mcs.util.*;
+import java.net.URL;
 
-import java.awt.*;
+import java.util.logging.*;
 
-import javax.swing.*;
-import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.help.*;
 
 
-/**
- * About window.
- */
-public class HelpView extends JFrame
+/** Show the help window */
+public class HelpView
 {
-    /** Tutorial action */
-    public TutorialAction _tutorialAction;
+    /** Logger */
+    private static final Logger _logger = Logger.getLogger(HelpView.class.getName());
 
-    /** Tutorial action */
-    public FAQAction _faqAction;
-
-    /** Tutorial action */
-    public HelpAction _helpAction;
-
-    /** Tutorial action */
-    public FeedbackAction _feedbackAction;
-
-    // Panel
-    /**
-     * DOCUMENT ME!
-     */
-    JPanel _panel;
-
-    /**
-     * Constructor.
-     */
+    /** Show the help window */
     public HelpView()
     {
-        _tutorialAction     = new TutorialAction();
-        _faqAction          = new FAQAction();
-        _helpAction         = new HelpAction();
-        _feedbackAction     = new FeedbackAction();
-
         try
         {
-            setTitle("Help");
+            // Get the helpset file and create the help broker
+            URL        url        = HelpSet.findHelpSet(null, "documentation.hs");
+            HelpSet    helpSet    = new HelpSet(null, url);
+            HelpBroker helpBroker = helpSet.createHelpBroker();
 
-            // Window size
-            setSize(480, 360);
-            setResizable(false);
-
-            // Window screen position (centered)
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension frameSize  = getSize();
-            setLocation((screenSize.width - frameSize.width) / 2,
-                (screenSize.height - frameSize.height) / 2);
-
-            _panel = new JPanel();
-            _panel.setLayout(new BoxLayout(_panel, BoxLayout.Y_AXIS));
-
-            Container contentPane = getContentPane();
-            contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-            contentPane.add(_panel);
-
-            // Set the GUI up
-            pack();
-            setVisible(false);
+            // Show the window
+            helpBroker.setDisplayed(true);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Called to show the tutorial.
-     *
-     * @throws java.lang.Exception << TODO a mettre !!!
-     */
-    protected class TutorialAction extends MCSAction
-    {
-        public TutorialAction()
-        {
-            super("tutorial");
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent e)
-        {
-            MCSLogger.trace();
-
-            _panel.removeAll();
-
-            JLabel label = new JLabel("TutorialAction");
-            _panel.add(label);
-            setVisible(true);
-        }
-    }
-
-    /**
-     * Called to show the FAQ.
-     *
-     * @throws java.lang.Exception << TODO a mettre !!!
-     */
-    protected class FAQAction extends MCSAction
-    {
-        public FAQAction()
-        {
-            super("FAQ");
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent e)
-        {
-            MCSLogger.trace();
-
-            _panel.removeAll();
-
-            JLabel label = new JLabel("FAQAction");
-            _panel.add(label);
-            setVisible(true);
-        }
-    }
-
-    /**
-     * Called to show the help.
-     *
-     * @throws java.lang.Exception << TODO a mettre !!!
-     */
-    protected class HelpAction extends MCSAction
-    {
-        public HelpAction()
-        {
-            super("help");
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent e)
-        {
-            MCSLogger.trace();
-
-            _panel.removeAll();
-
-            JLabel label = new JLabel("HelpAction");
-            _panel.add(label);
-            setVisible(true);
-        }
-    }
-
-    /**
-     * Called to show the feedback.
-     *
-     * @throws java.lang.Exception << TODO a mettre !!!
-     */
-    protected class FeedbackAction extends MCSAction
-    {
-        public FeedbackAction()
-        {
-            super("feedback");
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent e)
-        {
-            MCSLogger.trace();
-
-            _panel.removeAll();
-
-            JLabel label = new JLabel("FeedbackAction");
-            _panel.add(label);
-            setVisible(true);
+            _logger.log(Level.SEVERE, "Cannot instantiate HelpView object", ex);
         }
     }
 }

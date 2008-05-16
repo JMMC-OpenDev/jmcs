@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SplashScreen.java,v 1.4 2008-04-24 15:55:57 mella Exp $"
+ * "@(#) $Id: SplashScreen.java,v 1.5 2008-05-16 12:44:54 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/04/24 15:55:57  mella
+ * Added applicationDataModel to constructor.
+ *
  * Revision 1.3  2008/04/22 09:17:36  bcolucci
  * Corrected user name to bcolucci in CVS $Log (was fgalland).
  *
@@ -21,6 +24,8 @@ package fr.jmmc.mcs.gui;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.io.File;
+
 import java.net.URL;
 
 import java.util.logging.*;
@@ -33,7 +38,7 @@ import javax.swing.*;
  * from XML file which should be named ApplicationData.xml in
  * the src folder
  */
-public class SplashScreen extends JFrame
+public class SplashScreen extends JFrame implements Runnable
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(SplashScreen.class.getName());
@@ -54,20 +59,42 @@ public class SplashScreen extends JFrame
     private JLabel _programVersionLabel = new JLabel();
 
     /**
+     * Creates a new SplashScreen object.
+     */
+    public SplashScreen()
+    {
+        _applicationDataModel = App.getSharedApplicationDataModel();
+
+        if (_applicationDataModel != null)
+        {
+            // Display the splashscreen
+            run();
+        }
+    }
+
+    /**
      * Create the window fullfilled with all the information included in the XML file.
      *
      * The file should be located in "src", named "AboutBoxData.xml", following schema "src/AboutBoxSchema.xsd"
      */
-    public SplashScreen(ApplicationDataModel applicationDataModel)
+    public void run()
     {
-        // Calls the model
-        _applicationDataModel = applicationDataModel;
-
         // Draw window
         setAllTheProperties();
 
         // Show window
         setVisible(true);
+
+        // Minimum waiting
+        try
+        {
+            Thread.sleep(2500);
+        }
+        catch (Exception ex)
+        {
+            _logger.severe("Cannot wait 1500ms");
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -87,104 +114,66 @@ public class SplashScreen extends JFrame
     /** Sets panel properties */
     private void setPanelProperties()
     {
-        try
-        {
-            _panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-            _panel.setLayout(new BorderLayout());
-            _panel.add(_logoLabel, BorderLayout.PAGE_START);
-            _panel.add(_programNameLabel, BorderLayout.CENTER);
-            _panel.add(_programVersionLabel, BorderLayout.PAGE_END);
+        _panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        _panel.setLayout(new BorderLayout());
+        _panel.add(_logoLabel, BorderLayout.PAGE_START);
+        _panel.add(_programNameLabel, BorderLayout.CENTER);
+        _panel.add(_programVersionLabel, BorderLayout.PAGE_END);
 
-            _logger.fine("All of the panel properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot set panel properties", ex);
-        }
+        _logger.fine("All of the panel properties have been initialized");
     }
 
     /** Sets logo properties */
     private void setLogoLabelProperties()
     {
-        try
-        {
-            _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            ImageIcon logo = new ImageIcon(getClass()
-                                               .getResource(_applicationDataModel.getLogoURL()));
-            _logoLabel.setIcon(logo);
+        ImageIcon logo = new ImageIcon(getClass()
+                                           .getResource(_applicationDataModel.getLogoURL()));
+        _logoLabel.setIcon(logo);
 
-            _logger.fine(
-                "All of the logo label properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot set logo label properties", ex);
-        }
+        _logger.fine("All of the logo label properties have been initialized");
     }
 
     /** Sets program name label properties */
     private void setProgramNameLabelProperties()
     {
-        try
-        {
-            _programNameLabel.setFont(new Font(null, 1, 30));
-            _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _programNameLabel.setFont(new Font(null, 1, 30));
+        _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            String name = _applicationDataModel.getProgramName();
-            _programNameLabel.setText(name);
+        String name = _applicationDataModel.getProgramName();
+        _programNameLabel.setText(name);
 
-            _logger.fine(
-                "All of the program name label properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot set program name label properties", ex);
-        }
+        _logger.fine(
+            "All of the program name label properties have been initialized");
     }
 
     /** Sets program version label properties */
     private void setProgramVersionLabelProperties()
     {
-        try
-        {
-            _programVersionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _programVersionLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            // Pattern : "v{version} - {copyright}"
-            String version = _applicationDataModel.getProgramVersion();
-            version += (" - " + _applicationDataModel.getCopyrightValue());
-            _programVersionLabel.setText("v" + version);
+        // Pattern : "v{version} - {copyright}"
+        String version = _applicationDataModel.getProgramVersion();
+        version += (" - " + _applicationDataModel.getCopyrightValue());
+        _programVersionLabel.setText("v" + version);
 
-            _logger.fine(
-                "All of the program version label properties have been initialized");
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot set program version label properties", ex);
-        }
+        _logger.fine(
+            "All of the program version label properties have been initialized");
     }
 
     /** Sets frame properties */
     private void setFrameProperties()
     {
-        try
-        {
-            String programName = _applicationDataModel.getProgramName();
-            getContentPane().add(_panel, BorderLayout.CENTER);
+        String programName = _applicationDataModel.getProgramName();
+        getContentPane().add(_panel, BorderLayout.CENTER);
 
-            setResizable(false);
-            setUndecorated(true);
-            setTitle(programName);
-            setAlwaysOnTop(true);
-            pack();
-            WindowCenterer.centerOnMainScreen(this);
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.SEVERE, "Cannot set frame properties", ex);
-        }
+        setResizable(false);
+        setUndecorated(true);
+        setTitle(programName);
+        setAlwaysOnTop(true);
+        pack();
+        WindowCenterer.centerOnMainScreen(this);
     }
 }
 /*___oOo___*/

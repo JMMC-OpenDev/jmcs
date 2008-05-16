@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.4 2008-04-29 14:28:58 bcolucci Exp $"
+ * "@(#) $Id: HelpView.java,v 1.5 2008-05-16 12:53:43 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/04/29 14:28:58  bcolucci
+ * Added JavaHelp support and automatic documentation generation from HTML.
+ *
  * Revision 1.3  2007/02/13 15:35:39  lafrasse
  * Jalopization.
  *
@@ -35,20 +38,37 @@ public class HelpView
     /** Show the help window */
     public HelpView()
     {
+        // Get the helpset file and create the help broker
+        URL url = HelpSet.findHelpSet(null, "documentation.hs");
+
+        if (url == null)
+        {
+            _logger.severe("Cannot find helpset");
+
+            return;
+        }
+
+        HelpSet helpSet = null;
+
         try
         {
-            // Get the helpset file and create the help broker
-            URL        url        = HelpSet.findHelpSet(null, "documentation.hs");
-            HelpSet    helpSet    = new HelpSet(null, url);
-            HelpBroker helpBroker = helpSet.createHelpBroker();
-
-            // Show the window
-            helpBroker.setDisplayed(true);
+            helpSet = new HelpSet(null, url);
         }
         catch (Exception ex)
         {
-            _logger.log(Level.SEVERE, "Cannot instantiate HelpView object", ex);
+            _logger.log(Level.SEVERE, "Cannot build helpset", ex);
         }
+
+        if (helpSet == null)
+        {
+            _logger.severe("Cannot build helpset");
+
+            return;
+        }
+
+        // Show the window
+        HelpBroker helpBroker = helpSet.createHelpBroker();
+        helpBroker.setDisplayed(true);
     }
 }
 /*___oOo___*/

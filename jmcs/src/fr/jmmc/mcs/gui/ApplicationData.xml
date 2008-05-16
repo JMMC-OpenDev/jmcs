@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ApplicationData link="Application URL">
+	<program name="Application name" version="Program version"/>
+	<compilation date="Compilation date" compilator="Compilator"/>
+	<text>Text</text>
+	<copyright>Copyrights</copyright>
+	<dependences>
+	</dependences>
+</ApplicationData>

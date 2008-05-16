@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2008-04-29 14:28:58 bcolucci Exp $"
+# "@(#) $Id: Makefile,v 1.13 2008-05-16 12:31:49 bcolucci Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2008/04/29 14:28:58  bcolucci
+# Added JavaHelp support and automatic documentation generation from HTML.
+#
 # Revision 1.11  2008/04/22 12:57:35  mella
 # Add castor handling
 #
@@ -140,7 +143,8 @@ JARFILES        = jmcs
 #
 # <brief description of jmcs jar files>
 jmcs_DIRS     = fr
-jmcs_EXTRAS   = fr/jmmc/mcs/gui/logo.jpg
+jmcs_EXTRAS   = fr/jmmc/mcs/gui/logo.png \
+				fr/jmmc/mcs/gui/ApplicationData.xml
 
 #
 # Java programs
@@ -182,6 +186,7 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/xmlenc.jar \
 		../lib/jhall.jar \
 		../lib/jhelpdev.jar \
+		../lib/Tidy.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

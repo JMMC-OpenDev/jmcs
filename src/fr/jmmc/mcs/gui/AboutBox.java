@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.5 2008-04-24 15:55:57 mella Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.6 2008-05-16 12:24:57 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/04/24 15:55:57  mella
+ * Added applicationDataModel to constructor.
+ *
  * Revision 1.4  2008/04/23 21:17:20  lafrasse
  * Code review and refinments.
  *
@@ -306,7 +309,7 @@ public class AboutBox extends JFrame implements HyperlinkListener
     {
         String name    = _applicationDataModel.getProgramName();
         String version = _applicationDataModel.getProgramVersion();
-        String pInfo   = name + " v" + version;
+        String pInfo   = name + " - " + version;
 
         _programInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programInfoLabel.setText(pInfo);

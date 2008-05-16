@@ -1,19 +1,24 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.2 2008-04-24 15:55:57 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.3 2008-05-16 13:01:34 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2008/04/24 15:55:57  mella
+ * Added applicationDataModel to constructor.
+ *
  * Revision 1.1  2008/04/22 09:15:56  bcolucci
  * Created FeedbackReport.
  *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.*;
+
+import java.lang.Thread;
 
 import java.net.URL;
 
@@ -27,6 +32,24 @@ public class FeedbackReport extends JFrame
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
+
+    /** Load bar */
+    private static JProgressBar _loadBar = new JProgressBar();
+
+    /** Kind of error/bug */
+    private static JComboBox _typeComboBox = new JComboBox();
+
+    /** User bug description */
+    private static JTextArea _description = new JTextArea();
+
+    /** User mail */
+    private static JTextField _mail = new JTextField();
+
+    /** Cancel button */
+    private static JButton _cancelButton = new JButton();
+
+    /** Submit button */
+    private static JButton _submitButton = new JButton();
 
     /** Model of the feedback report box */
     private FeedbackReportModel _feedbackReportModel = null;
@@ -49,9 +72,6 @@ public class FeedbackReport extends JFrame
     /** Space and mail split */
     private JSplitPane _spaceAndMailSplit = new JSplitPane();
 
-    /** Kind of error/bug */
-    private JComboBox _typeComboBox = new JComboBox();
-
     /** Type label */
     private JLabel _typeLabel = new JLabel();
 
@@ -60,9 +80,6 @@ public class FeedbackReport extends JFrame
 
     /** Type split */
     private JSplitPane _typeSplit = new JSplitPane();
-
-    /** User bug description */
-    private JTextArea _description = new JTextArea();
 
     /** Description and buttons split */
     private JSplitPane _descriptionAndButtonsSplit = new JSplitPane();
@@ -76,42 +93,29 @@ public class FeedbackReport extends JFrame
     /** Description split */
     private JSplitPane _descriptionSplit = new JSplitPane();
 
-    /** User mail */
-    private JTextField _mail = new JTextField();
-
     /** Cancel and Submit buttons panel */
     private JPanel _buttonsPanel = new JPanel();
 
-    /** Cancel button */
-    private JButton _cancelButton = new JButton();
-
-    /** Submit button */
-    private JButton _submitButton = new JButton();
-
     /** Constructor */
-    public FeedbackReport(ApplicationDataModel applicationDataModel)
+    public FeedbackReport()
     {
-        _feedbackReportModel = new FeedbackReportModel(applicationDataModel);
+        ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
-        // Draw the widgets
-        setSplitsProperties();
-        setMailProperties();
-        setTypeProperties();
-        setDescriptionProperties();
-        setButtonsProperties();
-        setFrameProperties();
-        _logger.fine("All feedback report properties have been set");
-    }
+        if (applicationDataModel != null)
+        {
+            _feedbackReportModel = new FeedbackReportModel(applicationDataModel,
+                    this);
+            _feedbackReportModel.start();
 
-    /** Enhanced constructor
-     *
-     * @param information application-specific information to be sent.
-     */
-    public FeedbackReport(ApplicationDataModel applicationDataModel,
-        String information)
-    {
-        this(applicationDataModel);
-        _feedbackReportModel.setApplicationSpecificInformation(information);
+            // Draw the widgets
+            setSplitsProperties();
+            setMailProperties();
+            setTypeProperties();
+            setDescriptionProperties();
+            setButtonsProperties();
+            setFrameProperties();
+            _logger.fine("All feedback report properties have been set");
+        }
     }
 
     /** Set frame properties */
@@ -190,6 +194,7 @@ public class FeedbackReport extends JFrame
             {
                 public void actionPerformed(ActionEvent evt)
                 {
+                    _feedbackReportModel.stop();
                     dispose();
                 }
             });
@@ -201,15 +206,12 @@ public class FeedbackReport extends JFrame
             {
                 public void actionPerformed(ActionEvent evt)
                 {
-                    _feedbackReportModel.setMail(_mail.getText());
+                    activateLoadBarProperties();
 
-                    DefaultComboBoxModel comboBoxModel = (DefaultComboBoxModel) _typeComboBox.getModel();
-                    _feedbackReportModel.setTypeDataModel(comboBoxModel);
+                    // Sends report
+                    _feedbackReportModel.setReadyToSend(true);
 
-                    _feedbackReportModel.setDescription(_description.getText());
-
-                    _feedbackReportModel.sendReport();
-                    dispose();
+                    _submitButton.setEnabled(false);
                 }
             });
         _buttonsPanel.add(_submitButton, BorderLayout.LINE_END);
@@ -255,6 +257,65 @@ public class FeedbackReport extends JFrame
 
         _mailAndTypeSplit.setLeftComponent(_mailAndDescriptionSplit);
         _logger.fine("Splits properties have been set");
+    }
+
+    /** Set load bar properties */
+    private void activateLoadBarProperties()
+    {
+        _submitButton.setText("Submit");
+        _loadBar.setStringPainted(true);
+        _loadBar.setIndeterminate(true);
+        _loadBar.setString("Sending report...");
+
+        _buttonsPanel.add(_loadBar, BorderLayout.CENTER);
+        _buttonsPanel.revalidate();
+    }
+
+    /** Update progress bar according to report sending completion state */
+    public void setReportSend(boolean succes)
+    {
+        _cancelButton.setText("Close");
+        _loadBar.setIndeterminate(false);
+
+        if (succes == true)
+        {
+            _loadBar.setString("Thank you for your feedback.");
+        }
+        else
+        {
+            _loadBar.setString("Error during report sending.");
+            _submitButton.setEnabled(true);
+        }
+    }
+
+    /**
+     * Return the mail value
+     *
+     * @return mail value
+     */
+    public static String getMail()
+    {
+        return _mail.getText();
+    }
+
+    /**
+     * Return the default combo box model
+     *
+     * @return default combo box model
+     */
+    public static DefaultComboBoxModel getDefaultComboBoxModel()
+    {
+        return (DefaultComboBoxModel) _typeComboBox.getModel();
+    }
+
+    /**
+     * Return the description value
+     *
+     * @return description value
+     */
+    public static String getDescription()
+    {
+        return _description.getText();
     }
 }
 /*___oOo___*/

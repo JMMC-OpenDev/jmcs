@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.6 2008-05-16 12:24:57 lafrasse Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.7 2008-05-16 13:04:01 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/05/16 12:24:57  lafrasse
+ * Changed version label generation.
+ *
  * Revision 1.5  2008/04/24 15:55:57  mella
  * Added applicationDataModel to constructor.
  *
@@ -24,9 +27,8 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import edu.stanford.ejalbert.BrowserLauncher;
-
 import java.awt.*;
+import java.awt.Font;
 import java.awt.event.*;
 
 import java.net.*;
@@ -66,7 +68,7 @@ public class AboutBox extends JFrame implements HyperlinkListener
     private JLabel _compilationInfoLabel = new JLabel();
 
     /** Link label */
-    JEditorPane _linkLabel = new JEditorPane();
+    private JEditorPane _linkLabel = new JEditorPane();
 
     /** Label of program info (name and version) */
     private JLabel _programInfoLabel = new JLabel();
@@ -123,15 +125,20 @@ public class AboutBox extends JFrame implements HyperlinkListener
      * Load the application information from ApplicationDataModel and display
      * its content in the window.
      */
-    public AboutBox(ApplicationDataModel applicationDataModel)
+    public AboutBox()
     {
-        _applicationDataModel = applicationDataModel;
+        ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
-        // Launch all methods which set properties of components
-        setAllProperties();
+        if (applicationDataModel != null)
+        {
+            _applicationDataModel = applicationDataModel;
 
-        // Show window
-        setVisible(true);
+            // Launch all methods which set properties of components
+            setAllProperties();
+
+            // Show window
+            setVisible(true);
+        }
     }
 
     /**
@@ -168,9 +175,13 @@ public class AboutBox extends JFrame implements HyperlinkListener
         _logoLabel.setOpaque(false);
 
         // Create the Icon with the image which should be named logo.jpg in src folder       
-        String    logoURL = _applicationDataModel.getLogoURL();
-        ImageIcon logo    = new ImageIcon(getClass().getResource(logoURL));
-        _logoLabel.setIcon(logo);
+        String logoURL = _applicationDataModel.getLogoURL();
+
+        if (logoURL != null)
+        {
+            ImageIcon logo = new ImageIcon(getClass().getResource(logoURL));
+            _logoLabel.setIcon(logo);
+        }
 
         _logger.fine("All the logo label properties have been initialized");
 
@@ -179,17 +190,10 @@ public class AboutBox extends JFrame implements HyperlinkListener
             {
                 public void mouseClicked(MouseEvent evt)
                 {
-                    try
-                    {
-                        BrowserLauncher launcher       = new BrowserLauncher();
-                        String          mainWebPageURL = _applicationDataModel.getMainWebPageURL();
-                        launcher.openURLinBrowser(mainWebPageURL);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.log(Level.WARNING, "Cannot launch web browser",
-                            ex);
-                    }
+                    String mainWebPageURL = _applicationDataModel.getMainWebPageURL();
+
+                    // Open the url in web browser
+                    BrowserLauncher.openURL(mainWebPageURL);
                 }
             });
 
@@ -200,15 +204,8 @@ public class AboutBox extends JFrame implements HyperlinkListener
             {
                 public void mouseMoved(MouseEvent evt)
                 {
-                    try
-                    {
-                        _logoLabel.setCursor(Cursor.getPredefinedCursor(
-                                Cursor.HAND_CURSOR));
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.log(Level.WARNING, "Cannot change cursor", ex);
-                    }
+                    _logoLabel.setCursor(Cursor.getPredefinedCursor(
+                            Cursor.HAND_CURSOR));
                 }
             });
 
@@ -270,20 +267,8 @@ public class AboutBox extends JFrame implements HyperlinkListener
             // Get the clicked URL
             String clickedURL = event.getURL().toExternalForm();
 
-            try
-            {
-                // Launch the URL in the default browser
-                _logger.fine("Launch '" + clickedURL +
-                    "' in the default browser");
-
-                BrowserLauncher launcher = new BrowserLauncher();
-                launcher.openURLinBrowser(clickedURL);
-            }
-            catch (Exception ex)
-            {
-                _logger.log(Level.WARNING,
-                    "Cannot launch '" + clickedURL + "' web browser", ex);
-            }
+            // Open the url in web browser
+            BrowserLauncher.openURL(clickedURL);
         }
     }
 
@@ -313,6 +298,7 @@ public class AboutBox extends JFrame implements HyperlinkListener
 
         _programInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programInfoLabel.setText(pInfo);
+        _programInfoLabel.setFont(new Font("Dialog", 1, 23));
 
         _logger.fine(
             "All the program info label properties have been initialized");

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.3 2008-05-16 13:01:34 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.4 2008-05-19 14:56:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/05/16 13:01:34  bcolucci
+ * Removed unecessary try/catch, and added argument checks.
+ * Threaded it.
+ *
  * Revision 1.2  2008/04/24 15:55:57  mella
  * Added applicationDataModel to constructor.
  *
@@ -99,23 +103,17 @@ public class FeedbackReport extends JFrame
     /** Constructor */
     public FeedbackReport()
     {
-        ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        _feedbackReportModel = new FeedbackReportModel(this);
+        _feedbackReportModel.start();
 
-        if (applicationDataModel != null)
-        {
-            _feedbackReportModel = new FeedbackReportModel(applicationDataModel,
-                    this);
-            _feedbackReportModel.start();
-
-            // Draw the widgets
-            setSplitsProperties();
-            setMailProperties();
-            setTypeProperties();
-            setDescriptionProperties();
-            setButtonsProperties();
-            setFrameProperties();
-            _logger.fine("All feedback report properties have been set");
-        }
+        // Draw the widgets
+        setSplitsProperties();
+        setMailProperties();
+        setTypeProperties();
+        setDescriptionProperties();
+        setButtonsProperties();
+        setFrameProperties();
+        _logger.fine("All feedback report properties have been set");
     }
 
     /** Set frame properties */

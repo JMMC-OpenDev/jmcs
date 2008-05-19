@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.3 2008-05-16 13:13:31 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.4 2008-05-19 14:34:03 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/05/16 13:13:31  bcolucci
+ * Added automatic splashscreen display.
+ * Added preliminary command-line option parsing.
+ * Removed unecessary try/catch, and added argument checks.
+ *
  * Revision 1.2  2008/04/24 16:00:02  mella
  * Added inner management of application data model.
  * Added static methods for SplashScreen, FeedbackReport and AboutBox.
@@ -63,7 +68,7 @@ public abstract class App
     private String _defaultApplicationDataURL = "fr/jmmc/mcs/gui/ApplicationData.xml";
 
     /** Creates a new App object */
-    protected App(String[] args)
+    protected App(String[] args, boolean waitBeforeExecution)
     {
         SimpleFormatter simpleFormatter = new SimpleFormatter();
         _streamHandler = new StreamHandler(_byteArrayOutputStream,
@@ -112,8 +117,11 @@ public abstract class App
         // Interpret arguments
         interpretArguments(args);
 
-        // Run the application
-        run();
+        if (waitBeforeExecution == false)
+        {
+            // Run the application
+            run();
+        }
     }
 
     /** Creates the action which launch exit method */
@@ -251,7 +259,7 @@ public abstract class App
     protected abstract void exit();
 
     /** Describe the life cycle of the application */
-    private void run()
+    protected void run()
     {
         // Show splash screen if we have to
         if (_showSplashScreen)

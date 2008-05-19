@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.7 2008-05-16 13:04:01 bcolucci Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.8 2008-05-19 14:44:23 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2008/05/16 13:04:01  bcolucci
+ * Removed unecessary try/catch, and added argument checks.
+ *
  * Revision 1.6  2008/05/16 12:24:57  lafrasse
  * Changed version label generation.
  *
@@ -294,7 +297,7 @@ public class AboutBox extends JFrame implements HyperlinkListener
     {
         String name    = _applicationDataModel.getProgramName();
         String version = _applicationDataModel.getProgramVersion();
-        String pInfo   = name + " - " + version;
+        String pInfo   = name + " - v" + version;
 
         _programInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programInfoLabel.setText(pInfo);

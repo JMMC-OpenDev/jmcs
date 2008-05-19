@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.3 2008-05-16 13:01:34 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.4 2008-05-19 14:55:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/05/16 13:01:34  bcolucci
+ * Removed unecessary try/catch, and added argument checks.
+ * Threaded it.
+ *
  * Revision 1.2  2008/04/24 15:55:57  mella
  * Added applicationDataModel to constructor.
  *
@@ -34,40 +38,42 @@ public class FeedbackReportModel extends Thread
     private static final Logger _logger = Logger.getLogger(FeedbackReportModel.class.getName());
 
     /** URL of the PHP script that handles form parameters */
-    private static final String _phpScriptURL = "http://jmmc.fr/~bcolucci/feedback/feedback.php";
+    private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
+    //private static final String _phpScriptURL = "http://jmmc.fr/~lafrasse/feedback/feedback.php";
 
     /** ApplicationData model */
     public static ApplicationDataModel _applicationDataModel;
 
     /** Feedback report type definition array */
-    private static String[] _types = new String[]
+    private static String[] _feedbackTypes = new String[]
         {
-            "Bug", "Evolution", "Documentation", "Support"
+            "Bug Report", "Documentation Typo", "Evolution Request",
+            "Support Request"
         };
 
     /** Program version */
-    private String _programVersion = "None";
+    private String _applicationVersion = "Unknown";
 
     /** Program name */
-    private String _programName = "None";
+    private String _applicationName = "Unknown";
 
     /** User system configuration */
-    private String _systemConfig = "None";
+    private String _systemConfig = "Unknown";
 
     /** Application logs */
-    private String _applicationLog = "None";
+    private String _applicationLog = "Unknown";
 
     /** User mail */
-    private String _mail = "None";
+    private String _mail = "Unknown";
 
     /** The default combo box model */
-    private DefaultComboBoxModel _typeDataModel;
+    private DefaultComboBoxModel _feedbackTypeDataModel;
 
     /** The user bug description */
-    private String _description = "None";
+    private String _comments = "Unknown";
 
     /** Application-specific information */
-    private String _applicationSpecificInformation = "None";
+    private String _applicationSpecificInformation = "Unknown";
 
     /**
      * DOCUMENT ME!
@@ -80,23 +86,22 @@ public class FeedbackReportModel extends Thread
     private boolean readyToSend = false;
 
     /** Creates a new FeedbackReportModel object */
-    public FeedbackReportModel(ApplicationDataModel applicationDataModel,
-        FeedbackReport feedbackReport)
+    public FeedbackReportModel(FeedbackReport feedbackReport)
     {
-        _feedbackReport = feedbackReport;
+        _feedbackReport           = feedbackReport;
+        _applicationDataModel     = App.getSharedApplicationDataModel();
 
-        if (applicationDataModel != null)
+        if (_applicationDataModel != null)
         {
-            _typeDataModel = new DefaultComboBoxModel(_types);
+            _feedbackTypeDataModel = new DefaultComboBoxModel(_feedbackTypes);
             _logger.fine("TypeDataModel constructed");
 
-            _applicationDataModel     = applicationDataModel;
             // Get informations to send with the report
-            _programVersion           = _applicationDataModel.getProgramVersion();
-            _programName              = _applicationDataModel.getProgramName();
+            _applicationVersion     = _applicationDataModel.getProgramVersion();
+            _applicationName        = _applicationDataModel.getProgramName();
 
-            _systemConfig             = getSystemConfig();
-            _applicationLog           = App.getLogOutput();
+            _systemConfig           = getSystemConfig();
+            _applicationLog         = App.getLogOutput();
             _logger.fine(
                 "All generated report informations have been collected");
         }
@@ -124,13 +129,13 @@ public class FeedbackReportModel extends Thread
     }
 
     /**
-     * Set value of description
+     * Set value of feedback report description
      *
-     * @param description value of description
+     * @param comments value of feedback report description
      */
-    public void setDescription(String description)
+    public void setDescription(String comments)
     {
-        _description = description;
+        _comments = comments;
         _logger.fine("Description value has been set");
     }
 
@@ -152,7 +157,7 @@ public class FeedbackReportModel extends Thread
      */
     public DefaultComboBoxModel getTypeDataModel()
     {
-        return _typeDataModel;
+        return _feedbackTypeDataModel;
     }
 
     /**
@@ -164,7 +169,7 @@ public class FeedbackReportModel extends Thread
     {
         if (typeDataModel != null)
         {
-            _typeDataModel = typeDataModel;
+            _feedbackTypeDataModel = typeDataModel;
             _logger.fine("Type data model value has been set");
         }
     }
@@ -198,15 +203,16 @@ public class FeedbackReportModel extends Thread
                         "Http client and post method have been created");
 
                     // Compose HTML form parameters
-                    method.addParameter("programName", _programName);
-                    method.addParameter("programVersion", _programVersion);
+                    method.addParameter("applicationName", _applicationName);
+                    method.addParameter("applicationVersion",
+                        _applicationVersion);
                     method.addParameter("systemConfig", _systemConfig);
                     method.addParameter("applicationLog", _applicationLog);
                     method.addParameter("userEmail", _mail);
 
-                    String type = (String) _typeDataModel.getSelectedItem();
-                    method.addParameter("reportClass", type);
-                    method.addParameter("description", _description);
+                    String feedbackType = (String) _feedbackTypeDataModel.getSelectedItem();
+                    method.addParameter("feedbackType", feedbackType);
+                    method.addParameter("comments", _comments);
                     method.addParameter("applicationSpecificInformation",
                         _applicationSpecificInformation);
                     _logger.fine("All post parameters have been set");

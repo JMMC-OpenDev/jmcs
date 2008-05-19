@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.3 2008-05-16 13:08:26 bcolucci Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.4 2008-05-19 14:45:30 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/05/16 13:08:26  bcolucci
+ * Removed unecessary try/catch, and added argument checks.
+ * Changed logo.
+ *
  * Revision 1.2  2008/04/24 15:57:55  mella
  * Grab application data from given url.
  * Remove not used try catch.
@@ -22,6 +26,9 @@ import java.io.*;
 
 import java.net.URL;
 
+import java.text.SimpleDateFormat;
+
+import java.util.*;
 import java.util.logging.*;
 
 
@@ -97,7 +104,7 @@ public class ApplicationDataModel
     public String getProgramName()
     {
         Program program     = null;
-        String  programName = null;
+        String  programName = "Unknown";
 
         if (_applicationDataCastorModel != null)
         {
@@ -121,7 +128,7 @@ public class ApplicationDataModel
     public String getProgramVersion()
     {
         Program program        = null;
-        String  programVersion = null;
+        String  programVersion = "?.?";
 
         if (_applicationDataCastorModel != null)
         {
@@ -144,7 +151,7 @@ public class ApplicationDataModel
      */
     public String getLinkValue()
     {
-        String mainWebPageURL = null;
+        String mainWebPageURL = _mainWebPageURL;
 
         if (_applicationDataCastorModel != null)
         {
@@ -277,15 +284,31 @@ public class ApplicationDataModel
      */
     public String getCopyrightValue()
     {
-        String copyright = "Copyright JMMC";
+        int    year            = 0;
+        String compilationDate = getCompilationDate();
 
-        if (_applicationDataCastorModel != null)
+        try
         {
-            copyright = _applicationDataCastorModel.getCopyright();
-            _logger.fine("Copyright value has been taken on model");
+            // Try to get the year from the compilation date
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Date             date      = formatter.parse(compilationDate);
+            Calendar         cal       = Calendar.getInstance();
+            cal.setTime(date);
+            year = cal.get(Calendar.YEAR);
+        }
+        catch (Exception ex)
+        {
+            _logger.log(Level.WARNING,
+                "Cannot parse date '" + compilationDate +
+                "' will use current year instead.", ex);
+
+            // Otherwise use the current year
+            Calendar cal = new GregorianCalendar();
+            year = cal.get(Calendar.YEAR);
         }
 
-        return copyright;
+        // return _applicationDataCastorModel.getCopyright();
+        return "Copyright \u00A9 1999–" + year + ", JMMC.";
     }
 }
 /*___oOo___*/

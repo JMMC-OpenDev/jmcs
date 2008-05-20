@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.4 2008-05-19 14:34:03 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.5 2008-05-20 08:48:47 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/05/19 14:34:03  lafrasse
+ * Added an option to delay execution for further initialisation of the inheriting
+ * class.
+ *
  * Revision 1.3  2008/05/16 13:13:31  bcolucci
  * Added automatic splashscreen display.
  * Added preliminary command-line option parsing.
@@ -20,6 +24,8 @@
  *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
+
+import gnu.getopt.*;
 
 import java.awt.event.ActionEvent;
 
@@ -62,14 +68,40 @@ public abstract class App
     private static SplashScreen _splashScreen = null;
 
     /** Show the splash screen? */
-    private boolean _showSplashScreen = true;
+    private static boolean _showSplashScreen = true;
 
-    /** Default XML file URL to avoid null objects if there is not ApplicationData.xml */
-    private String _defaultApplicationDataURL = "fr/jmmc/mcs/gui/ApplicationData.xml";
+    /** Creates a new App object
+     *
+     * @param args command-line arguments
+     */
+    protected App(String[] args)
+    {
+        // Start application imediatly, with splashscreen
+        this(args, false, true);
+    }
 
-    /** Creates a new App object */
+    /** Creates a new App object, with possibility to delay execution
+     *
+     * @param args command-line arguments
+     * @param waitBeforeExecution if true, do not launch run() automatically
+     */
     protected App(String[] args, boolean waitBeforeExecution)
     {
+        // Start application with splashscreen
+        this(args, waitBeforeExecution, true);
+    }
+
+    /** Constructor whith possibility to specify if the splashscreen should be shown
+     *
+     * @param args command-line arguments
+     * @param waitBeforeExecution if true, do not launch run() automatically
+     * @param showSplashScreen if false, do not display splashscreen
+     */
+    protected App(String[] args, boolean waitBeforeExecution,
+        boolean showSplashScreen)
+    {
+        _showSplashScreen = showSplashScreen;
+
         SimpleFormatter simpleFormatter = new SimpleFormatter();
         _streamHandler = new StreamHandler(_byteArrayOutputStream,
                 simpleFormatter);
@@ -78,49 +110,91 @@ public abstract class App
         _logger.addHandler(_consoleHandler);
         _logger.addHandler(_streamHandler);
         _logger.setLevel(Level.INFO);
+        _logger.fine("Logger properties set");
 
         _logger.fine(
             "Memory and console handler created and fixed to feedbackLogger");
         _logger.fine("App object instantiated and logger created");
 
-        // Init _applicationDataModel
-        Package p = getClass().getPackage();
+        // Set the application data attribute
+        setApplicationData();
+        _logger.fine("Application data set");
+
+        // Interpret arguments
+        interpretArguments(args);
+        _logger.fine("Application arguments interpreted");
+
+        // If execution should not be delayed
+        if (waitBeforeExecution == false)
+        {
+            // Run the application imediatly
+            run();
+        }
+    }
+
+    /**
+     * Set the application data if Applicationdata.xml
+     * exists into the module. Else, taking the
+     * default ApplicationData.xml.
+     */
+    private void setApplicationData()
+    {
+        // The data file name
+        String dataFileName = "ApplicationData.xml";
+
+        // The class which is extended from App
+        Class actualClass = getClass();
+
+        // It's package
+        Package p = actualClass.getPackage();
 
         // Replace '.' by '/' of package name
-        String packageName = p.getName().replace(".", "/");
-        String xmlLocation = packageName + "/ApplicationData.xml";
-
-        File   xmlFile     = new File("fr/jmmc/test/ApplicationData.xml");
-
-        if (! xmlFile.exists())
-        {
-            xmlLocation = _defaultApplicationDataURL;
-            _logger.warning("Taking default ApplicationData.xml");
-        }
-
-        _logger.fine("xmlLocation='" + xmlLocation + "'");
+        String packageName = p.getName().replace(".", File.separator);
+        String xmlLocation = packageName + File.separator + dataFileName;
 
         try
         {
             // Open XML file at path
-            URL xmlURL = getClass().getClassLoader().getResource(xmlLocation);
+            URL xmlURL = actualClass.getClassLoader().getResource(xmlLocation);
 
             _applicationDataModel = new ApplicationDataModel(xmlURL);
         }
         catch (Exception ex)
         {
-            _logger.log(Level.SEVERE,
-                "Cannot retrieve application data from xml", ex);
-            System.exit(-1);
-        }
+            _logger.log(Level.WARNING, "Cannot unmarshal ApplicationData.xml",
+                ex);
 
-        // Interpret arguments
-        interpretArguments(args);
+            /* If we cannot load ApplicationData.xml from the module,
+               we try to load the default one from App package */
+            try
+            {
+                // The App class
+                Class app = Class.forName("fr.jmmc.mcs.gui.App");
 
-        if (waitBeforeExecution == false)
-        {
-            // Run the application
-            run();
+                // The App package
+                Package defaultPackage = app.getPackage();
+
+                // Replace '.' by '/' of package name
+                String defaultPackageName = defaultPackage.getName()
+                                                          .replace(".",
+                        File.separator);
+
+                // Default XML location
+                String defaultXmlLocation = defaultPackageName +
+                    File.separator + dataFileName;
+
+                URL    defaultXmlURL      = app.getClassLoader()
+                                               .getResource(defaultXmlLocation);
+
+                // We reinstantiate the application data model
+                _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
+            }
+            catch (Exception ex2)
+            {
+                _logger.log(Level.WARNING,
+                    "Cannot unmarshal default ApplicationData.xml", ex2);
+                System.exit(-1);
+            }
         }
     }
 
@@ -166,85 +240,135 @@ public abstract class App
             };
     }
 
+    /** Creates the helpview action which open the helpview window */
+    public static Action helpViewAction()
+    {
+        return new AbstractAction("Show Help View")
+            {
+                public void actionPerformed(ActionEvent evt)
+                {
+                    if (_applicationDataModel != null)
+                    {
+                        new HelpView();
+                    }
+                }
+            };
+    }
+
     /**
      * Interpret command line arguments
      *
-     * @param args DOCUMENT ME!
+     * @param args arguments
      */
-    private void interpretArguments(String[] args)
+    protected void interpretArguments(String[] args)
     {
-        // Number of arguments
-        int nbArguments = args.length;
+        // Array for long arguments (help & version)
+        LongOpt[] longopts = new LongOpt[2];
+        longopts[0]     = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 0);
+        longopts[1]     = new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1);
 
-        // Check if the number is pair
-        boolean validArguments = ((nbArguments % 2) == 0);
+        // Instantiate the getopt object
+        Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(),
+                args, "-:hv:", longopts, true);
 
-        if (validArguments)
+        int    c; // argument key
+        String arg; // argument value
+
+        // While there is a argument key
+        while ((c = getOpt.getopt()) != -1)
         {
-            // While we have (key, value)
-            while (nbArguments >= 2)
+            switch (c)
             {
-                String key   = args[nbArguments - 2];
-                String value = args[nbArguments - 1];
+            // Show the arguments help
+            case 'h':
+                showArgumentsHelp();
 
-                value        = value.toUpperCase();
+                break;
 
-                /* Options interpreted here */
-                // Show splash screen?
-                if (key.equals("-s") || key.equals("-splashscreen"))
+            // Show the arguments help
+            case 0:
+                showArgumentsHelp();
+
+                break;
+
+            // Show the name and the version of the program
+            case 1:
+
+                String name = _applicationDataModel.getProgramName();
+                String version = _applicationDataModel.getProgramVersion();
+
+                System.out.println(name + " v" + version);
+
+                System.exit(0);
+
+                break;
+
+            // Set the logger level
+            case 'v':
+                arg = getOpt.getOptarg();
+
+                if (arg != null)
                 {
-                    if (value.equals("TRUE") || value.equals("FALSE"))
+                    _logger.info("Set logger level to " + arg);
+
+                    if (arg.equals("1"))
                     {
-                        _showSplashScreen = Boolean.valueOf(value);
+                        _logger.setLevel(Level.SEVERE);
+                    }
+                    else if (arg.equals("2"))
+                    {
+                        _logger.setLevel(Level.WARNING);
+                    }
+                    else if (arg.equals("3"))
+                    {
+                        _logger.setLevel(Level.INFO);
+                    }
+                    else if (arg.equals("4"))
+                    {
+                        _logger.setLevel(Level.CONFIG);
+                    }
+                    else if (arg.equals("5"))
+                    {
+                        _logger.setLevel(Level.FINEST);
                     }
                     else
                     {
                         showArgumentsHelp();
-                    } // We don't regonize this value for this key
-                }
-
-                // Level of consol handler logging?
-                else if (key.equals("-l") || key.equals("-level"))
-                {
-                    if (value.equals("SEVERE") || value.equals("WARNING") ||
-                            value.equals("INFO") || value.equals("CONFIG") ||
-                            value.equals("FINE") || value.equals("FINER") ||
-                            value.equals("FINEST"))
-                    {
-                        _logger.setLevel(Level.parse(value));
                     }
-                    else
-                    {
-                        showArgumentsHelp();
-                    } // We don't regonize this value for this key
                 }
 
-                nbArguments -= 2;
+                break;
+
+            // Show the arguments help
+            case '?':
+                showArgumentsHelp();
+
+                break;
             }
         }
-        else
-        {
-            showArgumentsHelp();
-        } // We don't have a pair number of arguments
     }
 
     /** Show command arguments help */
-    public void showArgumentsHelp()
+    public static void showArgumentsHelp()
     {
         System.out.println(
             "------------- Arguments help --------------------------------------------");
         System.out.println(
-            "| Key                  Value               Description                  |");
+            "| Key          Value           Description                              |");
         System.out.println(
             "|-----------------------------------------------------------------------|");
         System.out.println(
-            "| [-s | -splashscreen] [true | false]      Show splash screen or not    |");
+            "| [-h]                         Show the options help                    |");
         System.out.println(
-            "| [-l | -level]        [LEVEL]             Define console logging level |");
+            "| [-v]         [1|2|3|4|5]     Define console logging level             |");
+        System.out.println(
+            "| [-version]                   Show application name and version        |");
+        System.out.println(
+            "| [-h|-help]                   Show arguments help                      |");
         System.out.println(
             "-------------------------------------------------------------------------");
         System.out.println(
-            "LEVEL = (SEVERE | WARNING | INFO | CONFIG | FINE | FINER | FINEST)\n");
+            "LEVEL : 1=SEVERE, 2=WARNING, 3=INFO, 4=CONFIG, 5=FINEST\n");
 
         System.exit(0);
     }
@@ -294,7 +418,7 @@ public abstract class App
     }
 
     /** Show splash screen */
-    public static void showSplashScreen()
+    private static void showSplashScreen()
     {
         if (_applicationDataModel != null)
         {
@@ -309,19 +433,13 @@ public abstract class App
     }
 
     /** Close splash screen and stop the thread */
-    public static void closeSplashScreen()
+    private static void closeSplashScreen()
     {
         _logger.fine("Close splashscreen");
         _splashScreen.dispose();
 
         // Stop the splash screen thread
         _splashScreenThread.stop();
-    }
-
-    /** Show help view */
-    public static void showHelpView()
-    {
-        new HelpView();
     }
 
     /**

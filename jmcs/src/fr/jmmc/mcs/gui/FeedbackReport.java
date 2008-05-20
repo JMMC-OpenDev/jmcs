@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.4 2008-05-19 14:56:21 lafrasse Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.5 2008-05-20 08:52:16 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/05/19 14:56:21  lafrasse
+ * Updated according to FeedbackReportModel() API changes.
+ *
  * Revision 1.3  2008/05/16 13:01:34  bcolucci
  * Removed unecessary try/catch, and added argument checks.
  * Threaded it.
@@ -26,13 +29,15 @@ import java.lang.Thread;
 
 import java.net.URL;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.*;
 
 import javax.swing.*;
 
 
 /** View of feedback report box */
-public class FeedbackReport extends JFrame
+public class FeedbackReport extends JFrame implements Observer
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
@@ -100,11 +105,17 @@ public class FeedbackReport extends JFrame
     /** Cancel and Submit buttons panel */
     private JPanel _buttonsPanel = new JPanel();
 
+    /** Feedback report thread */
+    private Thread _feedbackReportThread = null;
+
     /** Constructor */
     public FeedbackReport()
     {
-        _feedbackReportModel = new FeedbackReportModel(this);
-        _feedbackReportModel.start();
+        _feedbackReportModel = new FeedbackReportModel();
+        _feedbackReportModel.addObserver(this);
+
+        _feedbackReportThread = new Thread(_feedbackReportModel);
+        _feedbackReportThread.start();
 
         // Draw the widgets
         setSplitsProperties();
@@ -192,7 +203,7 @@ public class FeedbackReport extends JFrame
             {
                 public void actionPerformed(ActionEvent evt)
                 {
-                    _feedbackReportModel.stop();
+                    _feedbackReportThread.stop();
                     dispose();
                 }
             });
@@ -228,6 +239,7 @@ public class FeedbackReport extends JFrame
 
         _descriptionAndButtonsSplit.setLeftComponent(_descriptionPane);
         _descriptionAndButtonsSplit.setRightComponent(_buttonsPanel);
+        _buttonsPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
 
         _mailAndTypeSplit.setBottomComponent(_descriptionAndButtonsSplit);
 
@@ -254,6 +266,8 @@ public class FeedbackReport extends JFrame
         _mailAndDescriptionSplit.setRightComponent(_descriptionSplit);
 
         _mailAndTypeSplit.setLeftComponent(_mailAndDescriptionSplit);
+        _mailAndTypeSplit.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+
         _logger.fine("Splits properties have been set");
     }
 
@@ -270,19 +284,34 @@ public class FeedbackReport extends JFrame
     }
 
     /** Update progress bar according to report sending completion state */
-    public void setReportSend(boolean succes)
+    public void update(Observable observable, Object object)
     {
-        _cancelButton.setText("Close");
         _loadBar.setIndeterminate(false);
 
-        if (succes == true)
+        FeedbackReportModel feedbackReportModel = (FeedbackReportModel) object;
+
+        if (feedbackReportModel.isReportSend())
         {
             _loadBar.setString("Thank you for your feedback.");
+
+            // Wait before closing
+            int delay = 2000;
+
+            try
+            {
+                Thread.sleep(delay);
+            }
+            catch (Exception ex)
+            {
+                _logger.log(Level.WARNING, "Cannot wait " + delay + "ms", ex);
+            }
+
+            dispose();
         }
         else
         {
-            _loadBar.setString("Error during report sending.");
             _submitButton.setEnabled(true);
+            _loadBar.setString("Error during report sending.");
         }
     }
 

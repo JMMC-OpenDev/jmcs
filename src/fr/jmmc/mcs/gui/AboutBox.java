@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.8 2008-05-19 14:44:23 lafrasse Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.9 2008-05-20 08:45:51 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2008/05/19 14:44:23  lafrasse
+ * Changed application version format.
+ *
  * Revision 1.7  2008/05/16 13:04:01  bcolucci
  * Removed unecessary try/catch, and added argument checks.
  *
@@ -36,6 +39,7 @@ import java.awt.event.*;
 
 import java.net.*;
 
+import java.util.Vector;
 import java.util.logging.*;
 
 import javax.swing.*;
@@ -237,16 +241,42 @@ public class AboutBox extends JFrame implements HyperlinkListener
         _logger.fine("All the textarea properties have been initialized");
 
         // HTML generation
-        String generatedHtml = "<html><head></head><body>" +
+        String         generatedHtml = "<html><head></head><body>" +
             _applicationDataModel.getTextValue() + "<br><br>";
 
         // Generate a HTML string with each package informations
-        String[] packagesInfo = _applicationDataModel.getPackagesInfo();
-        String   packageHtml  = "";
+        Vector<String> packagesInfo  = _applicationDataModel.getPackagesInfo();
+        String         packageHtml   = "";
 
-        for (int i = 0; i < packagesInfo.length; i++)
+        // For each package
+        int nbElems = packagesInfo.size();
+
+        /* We have a step of 3 because for each
+           package we have a name, a link and a description */
+        for (int i = 0; i < nbElems; i += 3)
         {
-            packageHtml += (packagesInfo[i] + "<br>");
+            String name        = packagesInfo.get(i);
+            String link        = packagesInfo.get(i + 1);
+            String description = packagesInfo.get(i + 2);
+
+            // We check if there is a link
+            if (link == null)
+            {
+                packageHtml += name;
+            }
+            else
+            {
+                packageHtml += ("<a href='" + link + "'>" + name + "</a>");
+            }
+
+            packageHtml += (" : " + description + "<br>");
+
+            /* We add a <br> only if it's
+               not the last package */
+            if (i < (nbElems - 3))
+            {
+                packageHtml += "<br>";
+            }
         }
 
         generatedHtml += (packageHtml + "</body></html>");

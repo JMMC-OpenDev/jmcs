@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.4 2008-05-19 14:55:24 lafrasse Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.5 2008-05-20 08:52:16 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/05/19 14:55:24  lafrasse
+ * Updated field names.
+ * Updated default values.
+ * Added use of App.getSharedApplicationDataModel() instead of receivng it through
+ * constructor parameter.
+ *
  * Revision 1.3  2008/05/16 13:01:34  bcolucci
  * Removed unecessary try/catch, and added argument checks.
  * Threaded it.
@@ -25,6 +31,7 @@ import org.apache.commons.httpclient.methods.*;
 import java.lang.Thread;
 
 import java.util.*;
+import java.util.Observable;
 import java.util.logging.*;
 
 import javax.swing.DefaultComboBoxModel;
@@ -32,7 +39,7 @@ import javax.swing.JOptionPane;
 
 
 /** Model of FeedbackView class */
-public class FeedbackReportModel extends Thread
+public class FeedbackReportModel extends Observable implements Runnable
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReportModel.class.getName());
@@ -61,7 +68,7 @@ public class FeedbackReportModel extends Thread
     private String _systemConfig = "Unknown";
 
     /** Application logs */
-    private String _applicationLog = "Unknown";
+    private String _applicationLog = "None";
 
     /** User mail */
     private String _mail = "Unknown";
@@ -70,51 +77,42 @@ public class FeedbackReportModel extends Thread
     private DefaultComboBoxModel _feedbackTypeDataModel;
 
     /** The user bug description */
-    private String _comments = "Unknown";
+    private String _comments = "";
 
     /** Application-specific information */
-    private String _applicationSpecificInformation = "Unknown";
+    private String _applicationSpecificInformation = "None";
 
-    /**
-     * DOCUMENT ME!
-     */
-    FeedbackReport _feedbackReport = null;
+    /** Report send? */
+    private boolean _send = false;
 
-    /**
-     * DOCUMENT ME!
-     */
-    private boolean readyToSend = false;
+    /** Ready to send report? */
+    private boolean _readyToSend = false;
 
     /** Creates a new FeedbackReportModel object */
-    public FeedbackReportModel(FeedbackReport feedbackReport)
+    public FeedbackReportModel()
     {
-        _feedbackReport           = feedbackReport;
-        _applicationDataModel     = App.getSharedApplicationDataModel();
+        _applicationDataModel      = App.getSharedApplicationDataModel();
 
-        if (_applicationDataModel != null)
-        {
-            _feedbackTypeDataModel = new DefaultComboBoxModel(_feedbackTypes);
-            _logger.fine("TypeDataModel constructed");
+        _feedbackTypeDataModel     = new DefaultComboBoxModel(_feedbackTypes);
+        _logger.fine("TypeDataModel constructed");
 
-            // Get informations to send with the report
-            _applicationVersion     = _applicationDataModel.getProgramVersion();
-            _applicationName        = _applicationDataModel.getProgramName();
+        // Get informations to send with the report
+        _applicationVersion     = _applicationDataModel.getProgramVersion();
+        _applicationName        = _applicationDataModel.getProgramName();
 
-            _systemConfig           = getSystemConfig();
-            _applicationLog         = App.getLogOutput();
-            _logger.fine(
-                "All generated report informations have been collected");
-        }
+        _systemConfig           = getSystemConfig();
+        _applicationLog         = App.getLogOutput();
+        _logger.fine("All generated report informations have been collected");
     }
 
     /**
-     * Creates a new setReadyToSend object.
+     * Set ready to send to true or false
      *
-     * @param ready DOCUMENT ME!
+     * @param ready ready to send report
      */
     public void setReadyToSend(boolean ready)
     {
-        readyToSend = ready;
+        _readyToSend = ready;
     }
 
     /**
@@ -177,17 +175,17 @@ public class FeedbackReportModel extends Thread
     /** Send the report peer mail */
     public void run()
     {
-        while (! isInterrupted())
+        while (1 == 1)
         {
             try
             {
-                sleep(10);
+                Thread.sleep(10);
             }
             catch (Exception ex)
             {
             }
 
-            if (readyToSend)
+            if (_readyToSend)
             {
                 setMail(FeedbackReport.getMail());
                 setTypeDataModel(FeedbackReport.getDefaultComboBoxModel());
@@ -224,13 +222,13 @@ public class FeedbackReportModel extends Thread
                     // Get PHP script result (either SUCCESS or FAILURE)
                     String response = method.getResponseBodyAsString();
 
-                    System.out.println(response);
+                    _send = ! response.contains(
+                            "The requested URL was not found on this server.");
 
-                    if (response.contains(
-                                "The requested URL was not found on this server."))
+                    if (! _send)
                     {
                         _logger.fine("The PHP response is FAILURE");
-                        _feedbackReport.setReportSend(false);
+                        _send = false;
 
                         String errorMessage = "Feedback Report message has not been sent.\nPlease check your internet connection.";
                         JOptionPane.showMessageDialog(null, errorMessage,
@@ -238,18 +236,29 @@ public class FeedbackReportModel extends Thread
                     }
                     else
                     {
-                        _feedbackReport.setReportSend(true);
                         _logger.fine("The PHP response is SUCCESS");
                     }
+
+                    // Set state to changed
+                    setChanged();
+
+                    // Notify feedback report
+                    notifyObservers(this);
                 }
                 catch (Exception ex)
                 {
                     _logger.log(Level.SEVERE, "Cannot send feedback report", ex);
                 }
 
-                readyToSend = false;
+                _readyToSend = false;
             }
         }
+    }
+
+    /** Return if report has been send */
+    public boolean isReportSend()
+    {
+        return _send;
     }
 
     /**

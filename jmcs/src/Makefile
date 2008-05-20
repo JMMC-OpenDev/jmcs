@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2008-05-16 12:31:49 bcolucci Exp $"
+# "@(#) $Id: Makefile,v 1.14 2008-05-20 08:43:10 bcolucci Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2008/05/16 12:31:49  bcolucci
+# Added default Application Data Model values.
+#
 # Revision 1.12  2008/04/29 14:28:58  bcolucci
 # Added JavaHelp support and automatic documentation generation from HTML.
 #
@@ -186,7 +189,8 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/xmlenc.jar \
 		../lib/jhall.jar \
 		../lib/jhelpdev.jar \
-		../lib/Tidy.jar
+		../lib/Tidy.jar \
+		../lib/java-getopt-1.0.13.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

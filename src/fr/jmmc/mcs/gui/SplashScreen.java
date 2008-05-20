@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SplashScreen.java,v 1.5 2008-05-16 12:44:54 bcolucci Exp $"
+ * "@(#) $Id: SplashScreen.java,v 1.6 2008-05-20 08:49:24 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/05/16 12:44:54  bcolucci
+ * Threaded it.
+ * Removed unecessary try/cath.
+ *
  * Revision 1.4  2008/04/24 15:55:57  mella
  * Added applicationDataModel to constructor.
  *
@@ -86,13 +90,15 @@ public class SplashScreen extends JFrame implements Runnable
         setVisible(true);
 
         // Minimum waiting
+        int delay = 2500;
+
         try
         {
-            Thread.sleep(2500);
+            Thread.sleep(delay);
         }
         catch (Exception ex)
         {
-            _logger.severe("Cannot wait 1500ms");
+            _logger.severe("Cannot wait " + delay + "ms");
             ex.printStackTrace();
         }
     }

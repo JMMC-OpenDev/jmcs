@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.4 2008-05-19 14:45:30 lafrasse Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.5 2008-05-20 08:45:51 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/05/19 14:45:30  lafrasse
+ * Added default values.
+ * Changed copyright text generation to reflect current year if not available from
+ * XML file.
+ *
  * Revision 1.3  2008/05/16 13:08:26  bcolucci
  * Removed unecessary try/catch, and added argument checks.
  * Changed logo.
@@ -29,6 +34,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 
 import java.util.*;
+import java.util.Vector;
 import java.util.logging.*;
 
 
@@ -51,27 +57,16 @@ public class ApplicationDataModel
     private String _mainWebPageURL = "http://www.jmmc.fr/";
 
     /** Constructor */
-    public ApplicationDataModel(URL dataModelURL)
+    public ApplicationDataModel(URL dataModelURL) throws Exception
     {
-        if (dataModelURL != null)
-        {
-            _logger.fine("Loading Application data model from " + dataModelURL);
+        _logger.fine("Loading Application data model from " + dataModelURL);
 
-            InputStreamReader inputStreamReader;
+        InputStreamReader inputStreamReader;
 
-            try
-            {
-                inputStreamReader               = new InputStreamReader(dataModelURL.openStream());
-                _applicationDataCastorModel     = ApplicationData.unmarshal(inputStreamReader);
-            }
-            catch (Exception ex)
-            {
-                _logger.log(Level.WARNING,
-                    "Cannot unmarshal ApplicationData.xml", ex);
-            }
+        inputStreamReader               = new InputStreamReader(dataModelURL.openStream());
+        _applicationDataCastorModel     = ApplicationData.unmarshal(inputStreamReader);
 
-            _logger.fine("Application data model loaded.");
-        }
+        _logger.fine("Application data model loaded.");
     }
 
     /**
@@ -106,15 +101,12 @@ public class ApplicationDataModel
         Program program     = null;
         String  programName = "Unknown";
 
-        if (_applicationDataCastorModel != null)
-        {
-            program = _applicationDataCastorModel.getProgram();
+        program             = _applicationDataCastorModel.getProgram();
 
-            if (program != null)
-            {
-                programName = program.getName();
-                _logger.fine("Program name has been taken on model");
-            }
+        if (program != null)
+        {
+            programName = program.getName();
+            _logger.fine("Program name has been taken on model");
         }
 
         return programName;
@@ -130,15 +122,12 @@ public class ApplicationDataModel
         Program program        = null;
         String  programVersion = "?.?";
 
-        if (_applicationDataCastorModel != null)
-        {
-            program = _applicationDataCastorModel.getProgram();
+        program                = _applicationDataCastorModel.getProgram();
 
-            if (program != null)
-            {
-                programVersion = program.getVersion();
-                _logger.fine("Program version has been taken on model");
-            }
+        if (program != null)
+        {
+            programVersion = program.getVersion();
+            _logger.fine("Program version has been taken on model");
         }
 
         return programVersion;
@@ -153,11 +142,8 @@ public class ApplicationDataModel
     {
         String mainWebPageURL = _mainWebPageURL;
 
-        if (_applicationDataCastorModel != null)
-        {
-            mainWebPageURL = _applicationDataCastorModel.getLink();
-            _logger.fine("MainWebPageURL value has been taken on model");
-        }
+        mainWebPageURL = _applicationDataCastorModel.getLink();
+        _logger.fine("MainWebPageURL value has been taken on model");
 
         return mainWebPageURL;
     }
@@ -172,15 +158,12 @@ public class ApplicationDataModel
         Compilation compilation     = null;
         String      compilationDate = "Unknown";
 
-        if (_applicationDataCastorModel != null)
-        {
-            compilation = _applicationDataCastorModel.getCompilation();
+        compilation                 = _applicationDataCastorModel.getCompilation();
 
-            if (compilation != null)
-            {
-                compilationDate = compilation.getDate();
-                _logger.fine("Compilation date has been taken on model");
-            }
+        if (compilation != null)
+        {
+            compilationDate = compilation.getDate();
+            _logger.fine("Compilation date has been taken on model");
         }
 
         return compilationDate;
@@ -196,15 +179,12 @@ public class ApplicationDataModel
         Compilation compilation           = null;
         String      compilationCompilator = "Unknown";
 
-        if (_applicationDataCastorModel != null)
-        {
-            compilation = _applicationDataCastorModel.getCompilation();
+        compilation                       = _applicationDataCastorModel.getCompilation();
 
-            if (compilation != null)
-            {
-                compilationCompilator = compilation.getCompiler();
-                _logger.fine("Compilation compilator has been taken on model");
-            }
+        if (compilation != null)
+        {
+            compilationCompilator = compilation.getCompiler();
+            _logger.fine("Compilation compilator has been taken on model");
         }
 
         return compilationCompilator;
@@ -219,11 +199,8 @@ public class ApplicationDataModel
     {
         String text = "";
 
-        if (_applicationDataCastorModel != null)
-        {
-            text = _applicationDataCastorModel.getText();
-            _logger.fine("Text value has been taken on model");
-        }
+        text = _applicationDataCastorModel.getText();
+        _logger.fine("Text value has been taken on model");
 
         return text;
     }
@@ -231,48 +208,24 @@ public class ApplicationDataModel
     /**
      * Return the informations about "packages" taken from the XML file
      *
-     * @return the informations about packages taken from the XML file
+     * @return vector template [name, link, description], [name, link, description]...
      */
-    public String[] getPackagesInfo()
+    public Vector<String> getPackagesInfo()
     {
-        String[] packagesInfo = null;
+        Vector<String>                     packagesInfo = new Vector<String>();
 
-        if (_applicationDataCastorModel != null)
+        fr.jmmc.mcs.gui.castor.Dependences dependences  = _applicationDataCastorModel.getDependences();
+        fr.jmmc.mcs.gui.castor.Package[]   packages     = dependences.get_package();
+
+        // For each package
+        for (int i = 0; i < packages.length; i++)
         {
-            fr.jmmc.mcs.gui.castor.Dependences dependences = _applicationDataCastorModel.getDependences();
-            fr.jmmc.mcs.gui.castor.Package[]   packages    = dependences.get_package();
-
-            packagesInfo                                   = new String[packages.length];
-
-            // For each package found
-            for (int i = 0; i < packages.length; i++)
-            {
-                String link    = packages[i].getLink();
-                String pkgInfo = "";
-
-                if (link != null)
-                {
-                    // Generate a string with format "<a href='{link}'>{name}</a> : {description} <br>"
-                    pkgInfo += ("<a href = '" + link + "'>");
-                    pkgInfo += (packages[i].getName() + "</a> : ");
-                }
-                else
-                {
-                    pkgInfo += (packages[i].getName() + " : ");
-                }
-
-                pkgInfo += (packages[i].getDescription());
-
-                if (i < (packages.length - 1))
-                {
-                    pkgInfo += "<br>";
-                }
-
-                packagesInfo[i] = pkgInfo;
-            }
-
-            _logger.fine("Packages informations have been taken and formated");
+            packagesInfo.add(packages[i].getName());
+            packagesInfo.add(packages[i].getLink());
+            packagesInfo.add(packages[i].getDescription());
         }
+
+        _logger.fine("Packages informations have been taken and formated");
 
         return packagesInfo;
     }
@@ -308,7 +261,7 @@ public class ApplicationDataModel
         }
 
         // return _applicationDataCastorModel.getCopyright();
-        return "Copyright \u00A9 1999–" + year + ", JMMC.";
+        return "Copyright \u00A9 1999 - " + year + ", JMMC.";
     }
 }
 /*___oOo___*/

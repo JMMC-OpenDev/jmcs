@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.14 2008-05-20 08:43:10 bcolucci Exp $"
+# "@(#) $Id: Makefile,v 1.15 2008-05-26 11:26:45 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2008/05/20 08:43:10  bcolucci
+# Added Tidy and getopt jars.
+#
 # Revision 1.13  2008/05/16 12:31:49  bcolucci
 # Added default Application Data Model values.
 #
@@ -107,7 +110,8 @@ lllll_OBJECTS   =
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         = jmcsGenerateJavaFromXsd \
-				  jmcsHTML2HelpSet
+				  jmcsHTML2HelpSet \
+				  jmcsDeployJnlp
 SCRIPTS_L       =
 
 #

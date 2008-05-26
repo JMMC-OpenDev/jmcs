@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.3 2008-05-26 14:02:37 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.4 2008-05-26 14:24:47 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2008/05/26 14:02:37  mella
+# fix error redirection
+#
 # Revision 1.2  2008/05/26 11:26:07  mella
 # Remove some error lines
 #
@@ -61,6 +64,11 @@ shllibSetDebugOn()
 shllibSetDebugOff()
 {
     unset ECHOTRACEON
+}
+shllibEchoInfo ()
+{
+    ARGS=$*
+    echo -e "$ARGS"
 }
 shllibEchoDebug ()
 {
@@ -204,9 +212,8 @@ copyJnlpAndRelated()
             # since jarpath can be on the form dir/dir/toto.jar , we have to ensure that
             # $destDir/dir/dir does exist
             mkdir -p $(dirname $destjar) &>/dev/null
-            shllibEchoDebug "Copying '$srcjar' into '$destjar'"
+            shllibEchoInfo "Copying/signing '$srcjar' into '$destjar'"
             cp $srcjar  $destjar  
-            shllibEchoDebug "Signing '$destjar'"
             if ! echo "$MYKEY" | jarsigner -keystore $KEYSTOREFILE $destjar mykey &> /dev/null
             then
                 echo "ERROR: Can't sign '$destjar'"

@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.1 2008-04-29 12:56:12 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.2 2008-05-26 11:26:07 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2008/04/29 12:56:12  mella
+# first revision
+#
 #
 #
 #*******************************************************************************
@@ -20,7 +23,7 @@ CODEBASE="http://$(uname -n)/~$USER"
 WEBROOT="$HOME/public_html"
 
 # define script name
-SCRIPTNAME=$(basename $0)
+SCRIPTNAME=$(basename "$0" &> /dev/null)
 
 # define ModuleArea
 SCRIPTROOT=$(cd ..; pwd)
@@ -28,7 +31,7 @@ SCRIPTROOT=$(cd ..; pwd)
 _usage()
 {
     echo
-    echo "Usage: $(basename $0) [--codebase <url>] [--webroot <dir>] [--help] <JNLP file>"
+    echo "Usage: $SCRIPTNAME [--codebase <url>] [--webroot <dir>] [--help] <JNLP file>"
     echo "  --codebase <url> : optional - specify code base attribute of the generated JNLP file."
     echo "                     (default value: http://<hostname>/~<username>/<software name>')"
     echo "  --webroot  <dir> : optional - specify directory were JNLP file and related jar will be copied."
@@ -40,8 +43,8 @@ _usage()
     echo "  This command try to install material described by given JNLP file. One directory that takes JNLP file name (without extension) is created under the WEBROOT. The associated application should be delivered over network (then some xml attributes will be changed on fly by this script)."
     echo ""
     echo "  Examples:"
-    echo "    # $(basename $0) App.jnlp"
-    echo "    # $(basename $0) --codebase $CODEBASE --webroot $WEBROOT App.jnlp"
+    echo "    # $SCRIPTNAME App.jnlp"
+    echo "    # $SCRIPTNAME --codebase $CODEBASE --webroot $WEBROOT App.jnlp"
     echo -n "    ( On this machine both examples creates one new directory '$WEBROOT/App' that" 
     echo " should be reached from '$CODEBASE/App') " 
     echo "" 
@@ -98,19 +101,21 @@ done
 
 # Check input file
 # Change to directory of given jnlp file and use its parent as MODULEROOT
-cd $(dirname $1)
+cd $(dirname "$1")
 MODULEROOT=$(cd ..;pwd)
-JNLPFILE=$(basename $1)
+JNLPFILE=$(basename "$1" &> /dev/null)
 if [ ! -f  "$JNLPFILE" ]
 then
     echo "Missing JNLP file"
     _usage
     exit 1
 fi
-# define application name from given jnlp
-APPNAME=$(basename $JNLPFILE .jnlp)
 
-if [ "$APPNAME" == "$(basename $JNLPFILE)" ]
+
+# define application name from given jnlp
+APPNAME=$(basename $JNLPFILE .jnlp &> /dev/null)
+
+if [ "$APPNAME" == "$(basename $JNLPFILE &> /dev/null)" ]
 then
     echo "Given JNLP file does not end with '.jnlp' extension"
     exit 1
@@ -137,7 +142,7 @@ then
         OLDAPP_WEBROOT=$APP_WEBROOT.$(date +"%Y.%m.%d.%m.%S")
         mv $APP_WEBROOT $OLDAPP_WEBROOT
         echo 
-        echo "WARNING: '$APP_WEBROOT' already exists, renamed '$(basename $OLDAPP_WEBROOT)'" 
+        echo "WARNING: '$APP_WEBROOT' already exists, renamed '$(basename $OLDAPP_WEBROOT &> /dev/null)'" 
         echo
     fi
     mkdir "$APP_WEBROOT"
@@ -152,7 +157,7 @@ fi
 copyJnlpAndRelated()
 {
     local LONGGIVENJNLP=$1
-    local SHORTGIVENJNLP=$(basename $1)
+    local SHORTGIVENJNLP=$(basename $1 &> /dev/null)
     local destDir=$2
     local destCodeBase=$3
     
@@ -167,7 +172,7 @@ copyJnlpAndRelated()
     -u "/jnlp/@href" -v "$SHORTGIVENJNLP" \
     $LONGGIVENJNLP > $destJnlp
     
-    cd $(dirname $LONGGIVENJNLP)
+    cd $(dirname $LONGGIVENJNLP &> /dev/null)
     
     # transformation builds shell variables : 
     # eval command source them into into bash world
@@ -189,7 +194,7 @@ copyJnlpAndRelated()
     
     for jar in $INCLUDEDJARLIST
     do
-        jarname=$(basename $jar) 
+        jarname=$(basename $jar &> /dev/null) 
         if srcjar=$(miscLocateFile "$jarname" "../lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib")
         then
             destjar=$destDir/$jar
@@ -214,7 +219,7 @@ copyJnlpAndRelated()
     for jnlp in $INCLUDEDJNLPLIST
     do
         shllibEchoDebug "Found '$jnlp' into '$SHORTGIVENJNLP' rep='$destDir'"
-        relativePath=$(dirname $jnlp)
+        relativePath=$(dirname $jnlp &> /dev/null)
         if [ "$relativePath" = "." ]
         then
             relativePath=""

@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.2 2008-05-26 11:26:07 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.3 2008-05-26 14:02:37 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2008/05/26 11:26:07  mella
+# Remove some error lines
+#
 # Revision 1.1  2008/04/29 12:56:12  mella
 # first revision
 #
@@ -23,7 +26,7 @@ CODEBASE="http://$(uname -n)/~$USER"
 WEBROOT="$HOME/public_html"
 
 # define script name
-SCRIPTNAME=$(basename "$0" &> /dev/null)
+SCRIPTNAME=$(basename "$0" 2> /dev/null)
 
 # define ModuleArea
 SCRIPTROOT=$(cd ..; pwd)
@@ -103,7 +106,7 @@ done
 # Change to directory of given jnlp file and use its parent as MODULEROOT
 cd $(dirname "$1")
 MODULEROOT=$(cd ..;pwd)
-JNLPFILE=$(basename "$1" &> /dev/null)
+JNLPFILE=$(basename "$1" 2> /dev/null)
 if [ ! -f  "$JNLPFILE" ]
 then
     echo "Missing JNLP file"
@@ -113,9 +116,9 @@ fi
 
 
 # define application name from given jnlp
-APPNAME=$(basename $JNLPFILE .jnlp &> /dev/null)
+APPNAME=$(basename $JNLPFILE .jnlp 2> /dev/null)
 
-if [ "$APPNAME" == "$(basename $JNLPFILE &> /dev/null)" ]
+if [ "$APPNAME" == "$(basename $JNLPFILE 2> /dev/null)" ]
 then
     echo "Given JNLP file does not end with '.jnlp' extension"
     exit 1
@@ -142,7 +145,7 @@ then
         OLDAPP_WEBROOT=$APP_WEBROOT.$(date +"%Y.%m.%d.%m.%S")
         mv $APP_WEBROOT $OLDAPP_WEBROOT
         echo 
-        echo "WARNING: '$APP_WEBROOT' already exists, renamed '$(basename $OLDAPP_WEBROOT &> /dev/null)'" 
+        echo "WARNING: '$APP_WEBROOT' already exists, renamed '$(basename $OLDAPP_WEBROOT 2> /dev/null)'" 
         echo
     fi
     mkdir "$APP_WEBROOT"
@@ -157,12 +160,12 @@ fi
 copyJnlpAndRelated()
 {
     local LONGGIVENJNLP=$1
-    local SHORTGIVENJNLP=$(basename $1 &> /dev/null)
+    local SHORTGIVENJNLP=$(basename $1 2> /dev/null)
     local destDir=$2
     local destCodeBase=$3
     
     shllibEchoDebug "Copy '$LONGGIVENJNLP' into '$destDir'"
-    mkdir -p $destDir &> /dev/null
+    mkdir -p $destDir 2> /dev/null
     cp $LONGGIVENJNLP $destDir
 
     local destJnlp=$destDir/$SHORTGIVENJNLP
@@ -172,7 +175,7 @@ copyJnlpAndRelated()
     -u "/jnlp/@href" -v "$SHORTGIVENJNLP" \
     $LONGGIVENJNLP > $destJnlp
     
-    cd $(dirname $LONGGIVENJNLP &> /dev/null)
+    cd $(dirname $LONGGIVENJNLP 2> /dev/null)
     
     # transformation builds shell variables : 
     # eval command source them into into bash world
@@ -188,13 +191,13 @@ copyJnlpAndRelated()
     for icon in $INCLUDEDICONLIST
     do
         shllibEchoDebug "Copying '$icon' into '$destDir/$icon'"
-        mkdir -p $(dirname $destDir/$icon) &> /dev/null
+        mkdir -p $(dirname $destDir/$icon) 2> /dev/null
         cp $icon $destDir/$icon
     done
     
     for jar in $INCLUDEDJARLIST
     do
-        jarname=$(basename $jar &> /dev/null) 
+        jarname=$(basename $jar 2> /dev/null) 
         if srcjar=$(miscLocateFile "$jarname" "../lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib")
         then
             destjar=$destDir/$jar
@@ -219,7 +222,7 @@ copyJnlpAndRelated()
     for jnlp in $INCLUDEDJNLPLIST
     do
         shllibEchoDebug "Found '$jnlp' into '$SHORTGIVENJNLP' rep='$destDir'"
-        relativePath=$(dirname $jnlp &> /dev/null)
+        relativePath=$(dirname $jnlp 2> /dev/null)
         if [ "$relativePath" = "." ]
         then
             relativePath=""

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.15 2008-05-26 11:26:45 mella Exp $"
+# "@(#) $Id: Makefile,v 1.16 2008-05-27 14:21:55 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2008/05/26 11:26:45  mella
+# Add jmcsDeployJnlp script
+#
 # Revision 1.14  2008/05/20 08:43:10  bcolucci
 # Added Tidy and getopt jars.
 #
@@ -212,6 +215,8 @@ CSOURCENAMES = \
 MAKEDIR = $(MCSROOT)/include
 include $(MAKEDIR)/mkfMakefile
 
+
+
 #
 # TARGETS
 # -------
@@ -231,6 +236,9 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
+	@echo "Deploy Jmcs.jnlp and install Jmcs.jar"
+	jmcsDeployJnlp Jmcs.jnlp
+	@cp $$HOME/public_html/Jmcs/Jmcs.jar $(INSTALL_ROOT)/lib
 	@echo " . . . installation done"
 
 #___oOo___

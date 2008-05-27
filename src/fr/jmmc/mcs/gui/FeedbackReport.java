@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.5 2008-05-20 08:52:16 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.6 2008-05-27 12:06:48 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/05/20 08:52:16  bcolucci
+ * Changed communication between View and Model to Observer/Observable pattern.
+ *
  * Revision 1.4  2008/05/19 14:56:21  lafrasse
  * Updated according to FeedbackReportModel() API changes.
  *
@@ -34,6 +37,7 @@ import java.util.Observer;
 import java.util.logging.*;
 
 import javax.swing.*;
+import javax.swing.JOptionPane;
 
 
 /** View of feedback report box */
@@ -306,10 +310,20 @@ public class FeedbackReport extends JFrame implements Observer
                 _logger.log(Level.WARNING, "Cannot wait " + delay + "ms", ex);
             }
 
+            _logger.info("Feedback report sent");
+
+            _submitButton.setEnabled(true);
             dispose();
+
+            // Stop the thread in background
+            _feedbackReportThread.stop();
         }
         else
         {
+            String errorMessage = "Feedback Report message has not been sent.\nPlease check your internet connection.";
+            JOptionPane.showMessageDialog(null, errorMessage,
+                "Feedback Report Failed", JOptionPane.ERROR_MESSAGE);
+
             _submitButton.setEnabled(true);
             _loadBar.setString("Error during report sending.");
         }

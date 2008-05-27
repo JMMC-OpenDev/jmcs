@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	    targetNamespace="http://xml.netbeans.org/schema/newXMLSchema"
-	    xmlns:tns="http://xml.netbeans.org/schema/newXMLSchema"
-	    elementFormDefault="qualified">
-	<xsd:element name="ApplicationData">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="program">
-					<xsd:complexType>
-						<xsd:attribute name="name" type="xsd:string"/>
-						<xsd:attribute name="version" type="xsd:string"/>
-					</xsd:complexType>
-				</xsd:element>
-				<xsd:element name="compilation">
-					<xsd:complexType>
-						<xsd:attribute name="date" type="xsd:string"/>
-						<xsd:attribute name="compiler" type="xsd:string"/>
-					</xsd:complexType>
-				</xsd:element>
-				<xsd:element name="text" type="xsd:string"/>
-				<xsd:element name="copyright" type="xsd:string"/>
-				<xsd:element name="dependences">
-					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:element name="package" maxOccurs="unbounded" minOccurs="0">
-								<xsd:complexType>
-									<xsd:attribute name="name" type="xsd:string"/>
-									<xsd:attribute name="description" type="xsd:string"/>
-									<xsd:attribute name="link" type="xsd:string"/>
-								</xsd:complexType>
-							</xsd:element>
-						</xsd:sequence>
-					</xsd:complexType>
-				</xsd:element>
-			</xsd:sequence>
-			<xsd:attribute name="link" type="xsd:string"/>
-		</xsd:complexType>
-	</xsd:element>
+            targetNamespace="http://xml.netbeans.org/schema/newXMLSchema"
+            xmlns:tns="http://xml.netbeans.org/schema/newXMLSchema"
+            elementFormDefault="qualified">
+    <xsd:element name="ApplicationData">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="program">
+                    <xsd:complexType>
+                        <xsd:attribute name="name" type="xsd:string"/>
+                        <xsd:attribute name="version" type="xsd:string"/>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="compilation">
+                    <xsd:complexType>
+                        <xsd:attribute name="date" type="xsd:string"/>
+                        <xsd:attribute name="compiler" type="xsd:string"/>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="text" type="xsd:string"/>
+                <xsd:element name="copyright" type="xsd:string"/>
+                <xsd:element name="dependences">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="package" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:attribute name="name" type="xsd:string"/>
+                                    <xsd:attribute name="description" type="xsd:string"/>
+                                    <xsd:attribute name="link" type="xsd:string"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="link" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
 </xsd:schema>

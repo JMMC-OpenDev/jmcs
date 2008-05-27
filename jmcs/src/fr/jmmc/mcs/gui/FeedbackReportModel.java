@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.5 2008-05-20 08:52:16 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.6 2008-05-27 12:09:17 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/05/20 08:52:16  bcolucci
+ * Changed communication between View and Model to Observer/Observable pattern.
+ *
  * Revision 1.4  2008/05/19 14:55:24  lafrasse
  * Updated field names.
  * Updated default values.
@@ -35,7 +38,6 @@ import java.util.Observable;
 import java.util.logging.*;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 
 
 /** Model of FeedbackView class */
@@ -46,7 +48,8 @@ public class FeedbackReportModel extends Observable implements Runnable
 
     /** URL of the PHP script that handles form parameters */
     private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
-    //private static final String _phpScriptURL = "http://jmmc.fr/~lafrasse/feedback/feedback.php";
+
+    //private static final String _phpScriptURL = "http://jmmc.fr/~bcolucci/feedback/feedback.php";
 
     /** ApplicationData model */
     public static ApplicationDataModel _applicationDataModel;
@@ -222,22 +225,10 @@ public class FeedbackReportModel extends Observable implements Runnable
                     // Get PHP script result (either SUCCESS or FAILURE)
                     String response = method.getResponseBodyAsString();
 
-                    _send = ! response.contains(
-                            "The requested URL was not found on this server.");
+                    _logger.info(response);
 
-                    if (! _send)
-                    {
-                        _logger.fine("The PHP response is FAILURE");
-                        _send = false;
-
-                        String errorMessage = "Feedback Report message has not been sent.\nPlease check your internet connection.";
-                        JOptionPane.showMessageDialog(null, errorMessage,
-                            "Feedback Report Failed", JOptionPane.ERROR_MESSAGE);
-                    }
-                    else
-                    {
-                        _logger.fine("The PHP response is SUCCESS");
-                    }
+                    _send = (! response.contains("FAILED")) &&
+                        (method.isRequestSent());
 
                     // Set state to changed
                     setChanged();

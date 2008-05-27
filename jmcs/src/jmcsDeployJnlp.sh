@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.4 2008-05-26 14:24:47 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.5 2008-05-27 05:50:42 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2008/05/26 14:24:47  mella
+# Fix better output messages
+#
 # Revision 1.3  2008/05/26 14:02:37  mella
 # fix error redirection
 #
@@ -64,6 +67,11 @@ shllibSetDebugOn()
 shllibSetDebugOff()
 {
     unset ECHOTRACEON
+}
+shllibEchoError ()
+{
+    ARGS=$*
+    echo -e "ERROR>: $ARGS"
 }
 shllibEchoInfo ()
 {
@@ -158,7 +166,7 @@ then
     fi
     mkdir "$APP_WEBROOT"
 else
-    echo "ERROR: Can't install application into '$APP_WEBROOT' directory." 
+    shllibEchoError "Can't install application into '$APP_WEBROOT' directory." 
     echo "'$WEBROOT' directory does not exist, please create it before." 
     exit 1
 fi
@@ -174,7 +182,11 @@ copyJnlpAndRelated()
     
     shllibEchoDebug "Copy '$LONGGIVENJNLP' into '$destDir'"
     mkdir -p $destDir 2> /dev/null
-    cp $LONGGIVENJNLP $destDir
+    if ! cp $LONGGIVENJNLP $destDir
+    then
+        shllibEchoError "Can't find '$LONGGIVENJNLP'"
+        return 1
+    fi
 
     local destJnlp=$destDir/$SHORTGIVENJNLP
     shllibEchoDebug "Set new codebase attribute of '$destJnlp' : '$destCodeBase'"
@@ -216,11 +228,11 @@ copyJnlpAndRelated()
             cp $srcjar  $destjar  
             if ! echo "$MYKEY" | jarsigner -keystore $KEYSTOREFILE $destjar mykey &> /dev/null
             then
-                echo "ERROR: Can't sign '$destjar'"
+                shllibEchoError "Can't sign '$destjar'"
                 exit 1
             fi
         else
-            echo "ERROR: Can't find '$jar'"
+            shllibEchoError "Can't find '$jar'"
             exit 1
         fi
     done
@@ -264,8 +276,8 @@ cd ..
 echo "Main-class: $MAINCLASS" > MANIFEST.MF
 if [ -e "$APPNAME.jar" ]
 then
-  echo -en "\nERROR: '$APPNAME.jar' already exists : can't build new "
-  echo -e "application jar with same name\n" 
+  shllibEchoError "'$APPNAME.jar' already exists"
+  shllibEchoError "  Can't build new application jar with same name\n" 
   exit 1
 fi
 jar cfm $APPNAME.jar MANIFEST.MF -C tmpbigjar/ . 

@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.5 2008-05-20 08:48:47 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.6 2008-05-27 06:36:27 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/05/20 08:48:47  bcolucci
+ * Added a constructor to show/hide splashscreen on startup.
+ * Updated command-line argument handling to use getopt.
+ * Added an action to show the Help View.
+ * Changed way to retrieve the ApplicationData.xml file.
+ *
  * Revision 1.4  2008/05/19 14:34:03  lafrasse
  * Added an option to delay execution for further initialisation of the inheriting
  * class.
@@ -149,8 +155,8 @@ public abstract class App
         Package p = actualClass.getPackage();
 
         // Replace '.' by '/' of package name
-        String packageName = p.getName().replace(".", File.separator);
-        String xmlLocation = packageName + File.separator + dataFileName;
+        String packageName = p.getName().replace(".", "/");
+        String xmlLocation = packageName + "/" + dataFileName;
 
         try
         {
@@ -176,12 +182,11 @@ public abstract class App
 
                 // Replace '.' by '/' of package name
                 String defaultPackageName = defaultPackage.getName()
-                                                          .replace(".",
-                        File.separator);
+                                                          .replace(".", "/");
 
                 // Default XML location
-                String defaultXmlLocation = defaultPackageName +
-                    File.separator + dataFileName;
+                String defaultXmlLocation = defaultPackageName + "/" +
+                    dataFileName;
 
                 URL    defaultXmlURL      = app.getClassLoader()
                                                .getResource(defaultXmlLocation);

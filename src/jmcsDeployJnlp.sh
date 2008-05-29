@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.5 2008-05-27 05:50:42 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.6 2008-05-29 15:09:11 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2008/05/27 05:50:42  mella
+# exit if any jar is not found
+#
 # Revision 1.4  2008/05/26 14:24:47  mella
 # Fix better output messages
 #
@@ -212,7 +215,11 @@ copyJnlpAndRelated()
     do
         shllibEchoDebug "Copying '$icon' into '$destDir/$icon'"
         mkdir -p $(dirname $destDir/$icon) 2> /dev/null
-        cp $icon $destDir/$icon
+        if ! cp $icon $destDir/$icon &> /dev/null
+        then
+            shllibEchoError "Can't find file '$icon'"
+            exit 1
+        fi
     done
     
     for jar in $INCLUDEDJARLIST

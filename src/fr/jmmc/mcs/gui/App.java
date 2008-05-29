@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.6 2008-05-27 06:36:27 mella Exp $"
+ * "@(#) $Id: App.java,v 1.7 2008-05-29 10:11:29 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/05/27 06:36:27  mella
+ * Fix getResource Separator
+ *
  * Revision 1.5  2008/05/20 08:48:47  bcolucci
  * Added a constructor to show/hide splashscreen on startup.
  * Updated command-line argument handling to use getopt.
@@ -128,7 +131,6 @@ public abstract class App
 
         // Interpret arguments
         interpretArguments(args);
-        _logger.fine("Application arguments interpreted");
 
         // If execution should not be delayed
         if (waitBeforeExecution == false)
@@ -267,6 +269,12 @@ public abstract class App
      */
     protected void interpretArguments(String[] args)
     {
+        // Just leave method if no argument has been given
+        if (args == null)
+        {
+            return;
+        }
+
         // Array for long arguments (help & version)
         LongOpt[] longopts = new LongOpt[2];
         longopts[0]     = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 0);
@@ -351,6 +359,8 @@ public abstract class App
                 break;
             }
         }
+
+        _logger.fine("Application arguments interpreted");
     }
 
     /** Show command arguments help */

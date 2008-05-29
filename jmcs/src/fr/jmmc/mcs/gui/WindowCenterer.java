@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: WindowCenterer.java,v 1.2 2008-05-16 12:37:05 bcolucci Exp $"
+ * "@(#) $Id: WindowCenterer.java,v 1.3 2008-05-29 10:00:10 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2008/05/16 12:37:05  bcolucci
+ * Removed unnecessary try/catch.
+ *
  * Revision 1.1  2008/04/16 14:15:27  bcolucci
  * Creation.
  *
@@ -36,24 +39,31 @@ public class WindowCenterer
      */
     public static void centerOnMainScreen(JFrame frameToCenter)
     {
-        // Get main screen size
-        GraphicsEnvironment ge           = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice      gs           = ge.getDefaultScreenDevice();
-        DisplayMode         dm           = gs.getDisplayMode();
-        int                 screenWidth  = dm.getWidth();
-        int                 screenHeight = dm.getHeight();
+        try
+        {
+            // Get main screen size
+            GraphicsEnvironment ge           = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice      gs           = ge.getDefaultScreenDevice();
+            DisplayMode         dm           = gs.getDisplayMode();
+            int                 screenWidth  = dm.getWidth();
+            int                 screenHeight = dm.getHeight();
 
-        // Dimension of the JFrame
-        Dimension frameSize = frameToCenter.getSize();
+            // Dimension of the JFrame
+            Dimension frameSize = frameToCenter.getSize();
 
-        int       xPosition = (screenWidth - frameSize.width) / 2;
-        xPosition           = Math.max(xPosition, 0);
+            int       xPosition = (screenWidth - frameSize.width) / 2;
+            xPosition           = Math.max(xPosition, 0);
 
-        int yPosition       = (screenHeight - frameSize.height) / 2;
-        yPosition           = Math.max(yPosition, 0);
+            int yPosition       = (screenHeight - frameSize.height) / 2;
+            yPosition           = Math.max(yPosition, 0);
 
-        frameToCenter.setLocation(xPosition, yPosition);
-        _logger.fine("The window has been centered");
+            frameToCenter.setLocation(xPosition, yPosition);
+            _logger.fine("The window has been centered");
+        }
+        catch (Exception ex)
+        {
+            _logger.warning("Could not center window");
+        }
     }
 }
 /*___oOo___*/

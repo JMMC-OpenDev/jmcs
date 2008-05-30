@@ -1,11 +1,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.7 2008-05-30 12:24:50 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.8 2008-05-30 13:14:06 ccmgr Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2008/05/30 12:24:50  mella
+# Build a MANIFEST.MF file that accumulate entries from previous jar
+# Use {CommandLine}/lib working directory to search jars into
+#
 # Revision 1.6  2008/05/29 15:09:11  mella
 # Exit if icon file can't be found
 #
@@ -274,7 +278,7 @@ createAppJar(){
     # sign each jar and make a big jar file to build final APPNAME.jar file
     echo "Creating '$APPNAME.jar' ... "
     # BIGMANIFEST file will content of previous entries
-    BIGMANIFEST=$APP_WEBROOT/BIG_MANIFEST.MF
+    #BIGMANIFEST=$APP_WEBROOT/BIG_MANIFEST.MF
     cd $APP_WEBROOT
     mkdir tmpbigjar
     cd tmpbigjar
@@ -283,7 +287,7 @@ createAppJar(){
     do
         shllibEchoDebug " Add '$jarpath' content into tmpbigjar"
         jar xf $jarpath
-        cat META-INF/MANIFEST.MF | awk '{if ( match($1,"Name: *") == 1 )p=1; if( length($1) == 0 ){p=0; print} ; if (p==1)print ;}' >> $BIGMANIFEST
+      #  cat META-INF/MANIFEST.MF | awk '{if ( match($1,"Name: *") == 1 )p=1; if( length($1) == 0 ){p=0; print} ; if (p==1)print ;}' >> $BIGMANIFEST
         rm -rf META-INF
     done
 
@@ -292,8 +296,8 @@ createAppJar(){
     MAINCLASS=$(xml sel -t -v "//application-desc/@main-class"  $APP_WEBROOT/$JNLPFILE)
     cd ..
     echo "Main-class: $MAINCLASS" > MANIFEST.MF
-    echo "" >> MANIFEST.MF
-    cat $BIGMANIFEST >> MANIFEST.MF
+    #echo "" >> MANIFEST.MF
+    #cat $BIGMANIFEST >> MANIFEST.MF
     if [ -e "$APPNAME.jar" ]
     then
         shllibEchoError "'$APPNAME.jar' already exists"

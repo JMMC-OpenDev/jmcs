@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.6 2008-05-29 15:09:11 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.7 2008-05-30 12:24:50 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2008/05/29 15:09:11  mella
+# Exit if icon file can't be found
+#
 # Revision 1.5  2008/05/27 05:50:42  mella
 # exit if any jar is not found
 #
@@ -39,6 +42,9 @@ SCRIPTNAME=$(basename "$0" 2> /dev/null)
 
 # define ModuleArea
 SCRIPTROOT=$(cd ..; pwd)
+
+# define command root
+COMMANDROOT=$(pwd)
 
 _usage()
 {
@@ -225,7 +231,7 @@ copyJnlpAndRelated()
     for jar in $INCLUDEDJARLIST
     do
         jarname=$(basename $jar 2> /dev/null) 
-        if srcjar=$(miscLocateFile "$jarname" "../lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib")
+        if srcjar=$(miscLocateFile "$jarname" "../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib")
         then
             destjar=$destDir/$jar
             # since jarpath can be on the form dir/dir/toto.jar , we have to ensure that
@@ -265,32 +271,39 @@ done
 copyJnlpAndRelated $JNLPFILE $APP_WEBROOT $APP_CODEBASE || exit $?
 
 createAppJar(){
-# sign each jar and make a big jar file to build final APPNAME.jar file
-echo "Creating '$APPNAME.jar' ... "
-cd $APP_WEBROOT
-mkdir tmpbigjar
-cd tmpbigjar
-for jarpath in  $(find $APP_WEBROOT -name '*.jar')
-do
-    shllibEchoDebug " Add '$jarpath' content into tmpbigjar"
-    jar xf $jarpath
-done
+    # sign each jar and make a big jar file to build final APPNAME.jar file
+    echo "Creating '$APPNAME.jar' ... "
+    # BIGMANIFEST file will content of previous entries
+    BIGMANIFEST=$APP_WEBROOT/BIG_MANIFEST.MF
+    cd $APP_WEBROOT
+    mkdir tmpbigjar
+    cd tmpbigjar
+    shllibEchoDebug "Working dirtectory is $PWD "
+    for jarpath in  $(find $APP_WEBROOT -name '*.jar')
+    do
+        shllibEchoDebug " Add '$jarpath' content into tmpbigjar"
+        jar xf $jarpath
+        cat META-INF/MANIFEST.MF | awk '{if ( match($1,"Name: *") == 1 )p=1; if( length($1) == 0 ){p=0; print} ; if (p==1)print ;}' >> $BIGMANIFEST
+        rm -rf META-INF
+    done
 
-# remove old META-INF of previous jar if any and build new MANIFEST file
-rm -rf META-INF
-MAINCLASS=$(xml sel -t -v "//application-desc/@main-class"  $APP_WEBROOT/$JNLPFILE)
-cd ..
-echo "Main-class: $MAINCLASS" > MANIFEST.MF
-if [ -e "$APPNAME.jar" ]
-then
-  shllibEchoError "'$APPNAME.jar' already exists"
-  shllibEchoError "  Can't build new application jar with same name\n" 
-  exit 1
-fi
-jar cfm $APPNAME.jar MANIFEST.MF -C tmpbigjar/ . 
-rm MANIFEST.MF
-echo "    done"
-rm -rf tmpbigjar
+    # remove old META-INF of previous jar if any and build new MANIFEST file
+    rm -rf META-INF
+    MAINCLASS=$(xml sel -t -v "//application-desc/@main-class"  $APP_WEBROOT/$JNLPFILE)
+    cd ..
+    echo "Main-class: $MAINCLASS" > MANIFEST.MF
+    echo "" >> MANIFEST.MF
+    cat $BIGMANIFEST >> MANIFEST.MF
+    if [ -e "$APPNAME.jar" ]
+    then
+        shllibEchoError "'$APPNAME.jar' already exists"
+        shllibEchoError "  Can't build new application jar with same name\n" 
+        exit 1
+    fi
+    jar cfm $APPNAME.jar MANIFEST.MF -C tmpbigjar/ . 
+    rm MANIFEST.MF
+    echo "    done"
+    rm -rf tmpbigjar
 }
 
 createAppJar
@@ -321,4 +334,5 @@ ${APPNAME}.jnlp > index.html
 echo "    done"
 
 echo
+echo "Deployement has been made into '$APP_WEBROOT'" 
 echo "Please test deployement onto: $APP_CODEBASE"

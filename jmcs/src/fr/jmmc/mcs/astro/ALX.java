@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.4 2007-06-21 07:38:51 lafrasse Exp $"
+ * "@(#) $Id: ALX.java,v 1.5 2008-05-30 12:31:11 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2007/06/21 07:38:51  lafrasse
+ * Jalopization.
+ *
  * Revision 1.3  2007/05/16 14:34:43  lafrasse
  * Removed the dependency on the Java 1.5 'Scanner' class.
  *
@@ -38,7 +41,7 @@ public class ALX
      *
      * @return the right ascension as a double in degrees.
      */
-    public static double convertRA(String raHms)
+    public static double parseRA(String raHms)
     {
         MCSLogger.trace();
 
@@ -97,7 +100,7 @@ public class ALX
      *
      * @return the declinaison as a double in degrees.
      */
-    public static double convertDEC(String decDms)
+    public static double parseDEC(String decDms)
     {
         MCSLogger.trace();
 
@@ -233,6 +236,62 @@ public class ALX
         }
 
         return foundLuminosityClasses;
+    }
+
+    /**
+     * Convert an arc-minute value to minutes.
+     *
+     * @param arcmin the arc-minute value to convert.
+     *
+     * @return a double containing the converted value.
+     */
+    public static double arcmin2minutes(double arcmin)
+    {
+        double minutes = (arcmin / 15);
+
+        return minutes;
+    }
+
+    /**
+     * Convert a value in minutes to arc-minute.
+     *
+     * @param minutes the value in minutes to convert.
+     *
+     * @return a double containing the converted value.
+     */
+    public static double minutes2arcmin(double minutes)
+    {
+        double arcmin = (minutes * 15);
+
+        return arcmin;
+    }
+
+    /**
+     * Convert an arc-minute value to degrees.
+     *
+     * @param arcmin the arc-minute value to convert.
+     *
+     * @return a double containing the converted value.
+     */
+    public static double arcmin2degrees(double arcmin)
+    {
+        double degrees = (arcmin / 60);
+
+        return degrees;
+    }
+
+    /**
+     * Convert a value in degrees to arc-minute.
+     *
+     * @param degrees the value in degrees to convert.
+     *
+     * @return a double containing the converted value.
+     */
+    public static double degrees2arcmin(double degrees)
+    {
+        double arcmin = (degrees * 60);
+
+        return arcmin;
     }
 }
 /*___oOo___*/

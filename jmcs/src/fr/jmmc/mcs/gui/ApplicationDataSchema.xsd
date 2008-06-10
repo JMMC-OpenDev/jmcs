@@ -33,6 +33,29 @@
                         </xsd:sequence>
                     </xsd:complexType>
                 </xsd:element>
+                <xsd:element name="menu" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="submenu" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="subsubmenu" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:attribute name="classpath" type="xsd:string"/>
+                                                <xsd:attribute name="action" type="xsd:string"/>
+                                                <xsd:attribute name="checkbox" type="xsd:string"/>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                    <xsd:attribute name="classpath" type="xsd:string"/>
+                                    <xsd:attribute name="action" type="xsd:string"/>
+                                    <xsd:attribute name="checkbox" type="xsd:string"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                        <xsd:attribute name="label" type="xsd:string"/>
+                    </xsd:complexType>
+                </xsd:element>
             </xsd:sequence>
             <xsd:attribute name="link" type="xsd:string"/>
         </xsd:complexType>

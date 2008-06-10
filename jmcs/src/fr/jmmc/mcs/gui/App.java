@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.8 2008-06-10 09:14:58 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.9 2008-06-10 09:19:18 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2008/06/10 09:14:58  bcolucci
+ * Modify the action which show aboutbox window in order to not show it
+ * many times in the same application.
+ * Implement a solution for generate menus.
+ *
  * Revision 1.7  2008/05/29 10:11:29  mella
  * Accept null as App argument
  *
@@ -166,7 +171,7 @@ public abstract class App
 
         // Replace '.' by '/' of package name
         String packageName = p.getName().replace(".", "/");
-        String xmlLocation = packageName + "/" + dataFileName;
+        String xmlLocation = packageName + "/" + "ApplicationData.xml";
 
         /* Take the defaultData XML in order
            to take the default menus */

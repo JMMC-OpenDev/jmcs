@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: WindowCenterer.java,v 1.3 2008-05-29 10:00:10 mella Exp $"
+ * "@(#) $Id: WindowCenterer.java,v 1.4 2008-06-10 09:12:02 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/05/29 10:00:10  mella
+ * Fix bug when null is returned for the DisplayMode (was in VirtualBox)
+ *
  * Revision 1.2  2008/05/16 12:37:05  bcolucci
  * Removed unnecessary try/catch.
  *
@@ -30,6 +33,29 @@ public class WindowCenterer
     /** Logger */
     private static final Logger _logger = Logger.getLogger(WindowCenterer.class.getName());
 
+    /** X position */
+    public static int _XPOSITION = 0;
+
+    /** Y position */
+    public static int _YPOSITION = 0;
+
+    /** Screen width */
+    public static int _screenWidth = 0;
+
+    /** Screen height */
+    public static int _screenHeight = 0;
+
+    /** Constructor */
+    public static void getScreenProperties()
+    {
+        // Get main screen size
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice      gs = ge.getDefaultScreenDevice();
+        DisplayMode         dm = gs.getDisplayMode();
+        _screenWidth           = dm.getWidth();
+        _screenHeight          = dm.getHeight();
+    }
+
     /**
      * Center the given JFrame on the main screen realestate.
      *
@@ -39,31 +65,37 @@ public class WindowCenterer
      */
     public static void centerOnMainScreen(JFrame frameToCenter)
     {
-        try
-        {
-            // Get main screen size
-            GraphicsEnvironment ge           = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice      gs           = ge.getDefaultScreenDevice();
-            DisplayMode         dm           = gs.getDisplayMode();
-            int                 screenWidth  = dm.getWidth();
-            int                 screenHeight = dm.getHeight();
+        getScreenProperties();
 
-            // Dimension of the JFrame
-            Dimension frameSize = frameToCenter.getSize();
+        // Dimension of the JFrame
+        Dimension frameSize  = frameToCenter.getSize();
 
-            int       xPosition = (screenWidth - frameSize.width) / 2;
-            xPosition           = Math.max(xPosition, 0);
+        int       _XPOSITION = (_screenWidth - frameSize.width) / 2;
+        _XPOSITION           = Math.max(_XPOSITION, 0);
 
-            int yPosition       = (screenHeight - frameSize.height) / 2;
-            yPosition           = Math.max(yPosition, 0);
+        int _YPOSITION       = (_screenHeight - frameSize.height) / 2;
+        _YPOSITION           = Math.max(_YPOSITION, 0);
 
-            frameToCenter.setLocation(xPosition, yPosition);
-            _logger.fine("The window has been centered");
-        }
-        catch (Exception ex)
-        {
-            _logger.warning("Could not center window");
-        }
+        frameToCenter.setLocation(_XPOSITION, _YPOSITION);
+        _logger.fine("The window has been centered");
+    }
+
+    /**
+     * Returns the centered point in order
+     * to center a frame on the screen
+     * @return centered point
+     */
+    public static Point getCenteredPoint(Dimension frameDimension)
+    {
+        getScreenProperties();
+
+        int _XPOSITION = (_screenWidth - frameDimension.width) / 2;
+        _XPOSITION = Math.max(_XPOSITION, 0);
+
+        int _YPOSITION = (_screenHeight - frameDimension.height) / 2;
+        _YPOSITION = Math.max(_YPOSITION, 0);
+
+        return new Point(_XPOSITION, _YPOSITION);
     }
 }
 /*___oOo___*/

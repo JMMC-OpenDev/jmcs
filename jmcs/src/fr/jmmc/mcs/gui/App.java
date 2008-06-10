@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.9 2008-06-10 09:19:18 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.10 2008-06-10 09:24:12 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2008/06/10 09:19:18  bcolucci
+ * *** empty log message ***
+ *
  * Revision 1.8  2008/06/10 09:14:58  bcolucci
  * Modify the action which show aboutbox window in order to not show it
  * many times in the same application.
@@ -208,11 +211,10 @@ public abstract class App
 
             // Replace '.' by '/' of package name
             String defaultPackageName = defaultPackage.getName()
-                                                      .replace(".",
-                    File.separator);
+                                                      .replace(".", "/");
 
             // Default XML location
-            defaultXmlLocation = defaultPackageName + File.separator +
+            defaultXmlLocation = defaultPackageName + "/" +
                 "ApplicationData.xml";
 
             URL defaultXmlURL = app.getClassLoader()

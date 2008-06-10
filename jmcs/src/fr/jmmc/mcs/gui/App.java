@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.7 2008-05-29 10:11:29 mella Exp $"
+ * "@(#) $Id: App.java,v 1.8 2008-06-10 09:14:58 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2008/05/29 10:11:29  mella
+ * Accept null as App argument
+ *
  * Revision 1.6  2008/05/27 06:36:27  mella
  * Fix getResource Separator
  *
@@ -45,8 +48,7 @@ import java.net.URL;
 import java.util.Vector;
 import java.util.logging.*;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.*;
 
 
 /** Represents the main application class */
@@ -78,6 +80,15 @@ public abstract class App
 
     /** Show the splash screen? */
     private static boolean _showSplashScreen = true;
+
+    /** AboutBox */
+    private static AboutBox _aboutBox = null;
+
+    /** Default menu components (file, edit...) */
+    private Vector<JComponent> _defaultMenuComponents = null;
+
+    /** Application's menubar */
+    private JMenuBar _menuBar = new JMenuBar();
 
     /** Creates a new App object
      *
@@ -147,9 +158,6 @@ public abstract class App
      */
     private void setApplicationData()
     {
-        // The data file name
-        String dataFileName = "ApplicationData.xml";
-
         // The class which is extended from App
         Class actualClass = getClass();
 
@@ -160,49 +168,139 @@ public abstract class App
         String packageName = p.getName().replace(".", "/");
         String xmlLocation = packageName + "/" + dataFileName;
 
+        /* Take the defaultData XML in order
+           to take the default menus */
+        takeDefaultApplicationData();
+
         try
         {
             // Open XML file at path
             URL xmlURL = actualClass.getClassLoader().getResource(xmlLocation);
 
             _applicationDataModel = new ApplicationDataModel(xmlURL);
+
+            // Add application's menus
+            buildMenu();
         }
         catch (Exception ex)
         {
-            _logger.log(Level.WARNING, "Cannot unmarshal ApplicationData.xml",
-                ex);
+            _logger.log(Level.WARNING, "Cannot unmarshal " + xmlLocation, ex);
+        }
+    }
 
-            /* If we cannot load ApplicationData.xml from the module,
-               we try to load the default one from App package */
-            try
+    /** Take the default ApplicationData.xml */
+    private void takeDefaultApplicationData()
+    {
+        String defaultXmlLocation = "";
+
+        try
+        {
+            // The App class
+            Class app = Class.forName("fr.jmmc.mcs.gui.App");
+
+            // The App package
+            Package defaultPackage = app.getPackage();
+
+            // Replace '.' by '/' of package name
+            String defaultPackageName = defaultPackage.getName()
+                                                      .replace(".",
+                    File.separator);
+
+            // Default XML location
+            defaultXmlLocation = defaultPackageName + File.separator +
+                "ApplicationData.xml";
+
+            URL defaultXmlURL = app.getClassLoader()
+                                   .getResource(defaultXmlLocation);
+
+            // We reinstantiate the application data model
+            _applicationDataModel      = new ApplicationDataModel(defaultXmlURL);
+
+            // Take default menus
+            _defaultMenuComponents     = new Vector<JComponent>();
+
+            JComponent[] jComponents   = _applicationDataModel.getMenusComponents();
+
+            for (JComponent jComponent : jComponents)
             {
-                // The App class
-                Class app = Class.forName("fr.jmmc.mcs.gui.App");
-
-                // The App package
-                Package defaultPackage = app.getPackage();
-
-                // Replace '.' by '/' of package name
-                String defaultPackageName = defaultPackage.getName()
-                                                          .replace(".", "/");
-
-                // Default XML location
-                String defaultXmlLocation = defaultPackageName + "/" +
-                    dataFileName;
-
-                URL    defaultXmlURL      = app.getClassLoader()
-                                               .getResource(defaultXmlLocation);
-
-                // We reinstantiate the application data model
-                _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
-            }
-            catch (Exception ex2)
-            {
-                _logger.log(Level.WARNING,
-                    "Cannot unmarshal default ApplicationData.xml", ex2);
-                System.exit(-1);
+                _defaultMenuComponents.add(jComponent);
             }
         }
+        catch (Exception ex2)
+        {
+            _logger.log(Level.WARNING,
+                "Cannot unmarshal default " + defaultXmlLocation, ex2);
+            System.exit(-1);
+        }
+    }
+
+    /** Build Menubar */
+    private void buildMenu()
+    {
+        JComponent[] menuComponentsTaken = _applicationDataModel.getMenusComponents();
+
+        for (JComponent jComponent : menuComponentsTaken)
+        {
+            _defaultMenuComponents.add(jComponent);
+        }
+
+        _logger.fine(_defaultMenuComponents.size() + " menu elements found");
+
+        Vector<JComponent> orderMenuItems = ordererMenuItems(_defaultMenuComponents);
+
+        for (JComponent jComponent : orderMenuItems)
+        {
+            _menuBar.add(jComponent);
+        }
+    }
+
+    /**
+     * Orderer menu items according to
+     * pattern : [File][Edit][...][...][Help]
+     *
+     * @param menu menus vector to orderer
+     *
+     * @return menus vector according to pattern
+     */
+    private Vector<JComponent> ordererMenuItems(Vector<JComponent> menu)
+    {
+        Vector<JComponent> ordererMenuItems = new Vector<JComponent>();
+
+        for (JComponent comp : menu)
+        {
+            if (comp.getName().equals("File"))
+            {
+                ordererMenuItems.add(comp);
+            }
+        }
+
+        for (JComponent comp : menu)
+        {
+            if (comp.getName().equals("Edit"))
+            {
+                ordererMenuItems.add(comp);
+            }
+        }
+
+        for (JComponent comp : menu)
+        {
+            if (! comp.getName().equals("File") &&
+                    ! comp.getName().equals("Edit") &&
+                    ! comp.getName().equals("Help"))
+            {
+                ordererMenuItems.add(comp);
+            }
+        }
+
+        for (JComponent comp : menu)
+        {
+            if (comp.getName().equals("Help"))
+            {
+                ordererMenuItems.add(comp);
+            }
+        }
+
+        return ordererMenuItems;
     }
 
     /** Creates the action which launch exit method */
@@ -226,7 +324,17 @@ public abstract class App
                 {
                     if (_applicationDataModel != null)
                     {
-                        new AboutBox();
+                        if (_aboutBox != null)
+                        {
+                            if (! _aboutBox.isVisible())
+                            {
+                                _aboutBox.setVisible(true);
+                            }
+                        }
+                        else
+                        {
+                            _aboutBox = new AboutBox();
+                        }
                     }
                 }
             };
@@ -455,6 +563,16 @@ public abstract class App
 
         // Stop the splash screen thread
         _splashScreenThread.stop();
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    protected JMenuBar getMenuBar()
+    {
+        return _menuBar;
     }
 
     /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.5 2008-05-16 12:53:43 bcolucci Exp $"
+ * "@(#) $Id: HelpView.java,v 1.6 2008-06-10 08:25:06 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/05/16 12:53:43  bcolucci
+ * Removed unecessary try/catch, and added argument checks.
+ *
  * Revision 1.4  2008/04/29 14:28:58  bcolucci
  * Added JavaHelp support and automatic documentation generation from HTML.
  *
@@ -52,7 +55,7 @@ public class HelpView
 
         try
         {
-            helpSet = new HelpSet(null, url);
+            helpSet = new HelpSet(getClass().getClassLoader(), url);
         }
         catch (Exception ex)
         {
@@ -68,6 +71,8 @@ public class HelpView
 
         // Show the window
         HelpBroker helpBroker = helpSet.createHelpBroker();
+        helpBroker.setLocation(WindowCenterer.getCenteredPoint(
+                helpBroker.getSize()));
         helpBroker.setDisplayed(true);
     }
 }

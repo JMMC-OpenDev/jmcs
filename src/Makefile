@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.16 2008-05-27 14:21:55 mella Exp $"
+# "@(#) $Id: Makefile,v 1.17 2008-06-11 08:17:19 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2008/05/27 14:21:55  mella
+# Add jnlp deployement into install target
+#
 # Revision 1.15  2008/05/26 11:26:45  mella
 # Add jmcsDeployJnlp script
 #
@@ -153,7 +156,7 @@ JARFILES        = jmcs
 #
 # <brief description of jmcs jar files>
 jmcs_DIRS     = fr
-jmcs_EXTRAS   = fr/jmmc/mcs/gui/logo.png \
+jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png \
 				fr/jmmc/mcs/gui/ApplicationData.xml
 
 #

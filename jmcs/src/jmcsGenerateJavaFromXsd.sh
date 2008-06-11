@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsGenerateJavaFromXsd.sh,v 1.3 2008-06-11 07:02:33 mella Exp $"
+# "@(#) $Id: jmcsGenerateJavaFromXsd.sh,v 1.4 2008-06-11 07:13:53 mella Exp $"
 #
 # History
 # -------
@@ -25,13 +25,12 @@
 
 #MODEL_SCHEMA=$(miscLocateFile mfmdl.xsd)
 MODEL_SCHEMA=fr/jmmc/mcs/gui/ApplicationDataSchema.xsd
-MODEL_SCHEMA=admtooDatabase.xsd
 if [ "$MODEL_SCHEMA" -nt "fr/jmmc/mcs/gui/castor" ]
 then
     # generate model java source from xml schema
     echo "Generating classes for $MODEL_SCHEMA"
     echo " Using classpath : $(mkfMakeJavaClasspath)"
-    java -classpath $(mkfMakeJavaClasspath) org.exolab.castor.builder.SourceGenerator -i ${MODEL_SCHEMA} -f -package fr.admtoo $*
+    java -classpath $(mkfMakeJavaClasspath) org.exolab.castor.builder.SourceGenerator -i ${MODEL_SCHEMA} -f -package fr.jmmc.mcs.gui.castor $*
 else
     echo "Generated classes for $MODEL_SCHEMA up-to-date"
 fi

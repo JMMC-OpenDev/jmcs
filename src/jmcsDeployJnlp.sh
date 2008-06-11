@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.8 2008-05-30 13:14:06 ccmgr Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.9 2008-06-11 07:52:24 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2008/05/30 13:14:06  ccmgr
+# Remove bigManfistest creation since it creates security pbs on Mac OS X
+#
 # Revision 1.7  2008/05/30 12:24:50  mella
 # Build a MANIFEST.MF file that accumulate entries from previous jar
 # Use {CommandLine}/lib working directory to search jars into
@@ -198,7 +201,7 @@ copyJnlpAndRelated()
     if ! cp $LONGGIVENJNLP $destDir
     then
         shllibEchoError "Can't find '$LONGGIVENJNLP'"
-        return 1
+        exit 1
     fi
 
     local destJnlp=$destDir/$SHORTGIVENJNLP

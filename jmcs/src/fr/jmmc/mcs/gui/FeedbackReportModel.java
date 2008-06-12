@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.6 2008-05-27 12:09:17 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.7 2008-06-12 11:33:23 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/05/27 12:09:17  bcolucci
+ * Updating the way to verify the HTTP response of the feedback.
+ *
  * Revision 1.5  2008/05/20 08:52:16  bcolucci
  * Changed communication between View and Model to Observer/Observable pattern.
  *
@@ -83,7 +86,7 @@ public class FeedbackReportModel extends Observable implements Runnable
     private String _comments = "";
 
     /** Application-specific information */
-    private String _applicationSpecificInformation = "None";
+    private String _applicationSpecificInformation = null;
 
     /** Report send? */
     private boolean _send = false;
@@ -94,6 +97,16 @@ public class FeedbackReportModel extends Observable implements Runnable
     /** Creates a new FeedbackReportModel object */
     public FeedbackReportModel()
     {
+        this("None");
+    }
+
+    /** Creates a new FeedbackReportModel object
+      * with the possibility to define a specific information
+      */
+    public FeedbackReportModel(String specificInformation)
+    {
+        _applicationSpecificInformation = specificInformation;
+
         _applicationDataModel      = App.getSharedApplicationDataModel();
 
         _feedbackTypeDataModel     = new DefaultComboBoxModel(_feedbackTypes);

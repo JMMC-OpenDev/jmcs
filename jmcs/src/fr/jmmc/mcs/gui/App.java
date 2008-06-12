@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.10 2008-06-10 09:24:12 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.11 2008-06-12 07:42:08 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2008/06/10 09:24:12  bcolucci
+ * Replace "File.separator" by "/" in order to load ressources.
+ *
  * Revision 1.9  2008/06/10 09:19:18  bcolucci
  * *** empty log message ***
  *
@@ -95,8 +98,8 @@ public abstract class App
     /** Default menu components (file, edit...) */
     private Vector<JComponent> _defaultMenuComponents = null;
 
-    /** Application's menubar */
-    private JMenuBar _menuBar = new JMenuBar();
+    /** If it's true, exit the application after the exit method */
+    private boolean _exitApplicationWhenClosed = false;
 
     /** Creates a new App object
      *
@@ -128,10 +131,28 @@ public abstract class App
     protected App(String[] args, boolean waitBeforeExecution,
         boolean showSplashScreen)
     {
-        _showSplashScreen = showSplashScreen;
+        /* Start application and define that the it will
+           not stop itself when exit method will be called */
+        this(args, waitBeforeExecution, showSplashScreen, false);
+    }
+
+    /**
+     * Constructor whith possibility to specify if the application should be
+     * stopped when the exit method is called
+     *
+     * @param args command-line arguments
+     * @param waitBeforeExecution if true, do not launch run() automatically
+     * @param showSplashScreen if false, do not display splashscreen
+     * @param exitWhenClosed if true, the application will close when exit method is called
+     */
+    protected App(String[] args, boolean waitBeforeExecution,
+        boolean showSplashScreen, boolean exitWhenClosed)
+    {
+        _showSplashScreen              = showSplashScreen;
+        _exitApplicationWhenClosed     = exitWhenClosed;
 
         SimpleFormatter simpleFormatter = new SimpleFormatter();
-        _streamHandler = new StreamHandler(_byteArrayOutputStream,
+        _streamHandler                 = new StreamHandler(_byteArrayOutputStream,
                 simpleFormatter);
 
         // We add the memory handler created and the console one to the logger
@@ -186,9 +207,6 @@ public abstract class App
             URL xmlURL = actualClass.getClassLoader().getResource(xmlLocation);
 
             _applicationDataModel = new ApplicationDataModel(xmlURL);
-
-            // Add application's menus
-            buildMenu();
         }
         catch (Exception ex)
         {
@@ -221,17 +239,7 @@ public abstract class App
                                    .getResource(defaultXmlLocation);
 
             // We reinstantiate the application data model
-            _applicationDataModel      = new ApplicationDataModel(defaultXmlURL);
-
-            // Take default menus
-            _defaultMenuComponents     = new Vector<JComponent>();
-
-            JComponent[] jComponents   = _applicationDataModel.getMenusComponents();
-
-            for (JComponent jComponent : jComponents)
-            {
-                _defaultMenuComponents.add(jComponent);
-            }
+            _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
         }
         catch (Exception ex2)
         {
@@ -239,87 +247,6 @@ public abstract class App
                 "Cannot unmarshal default " + defaultXmlLocation, ex2);
             System.exit(-1);
         }
-    }
-
-    /** Build Menubar */
-    private void buildMenu()
-    {
-        JComponent[] menuComponentsTaken = _applicationDataModel.getMenusComponents();
-
-        for (JComponent jComponent : menuComponentsTaken)
-        {
-            _defaultMenuComponents.add(jComponent);
-        }
-
-        _logger.fine(_defaultMenuComponents.size() + " menu elements found");
-
-        Vector<JComponent> orderMenuItems = ordererMenuItems(_defaultMenuComponents);
-
-        for (JComponent jComponent : orderMenuItems)
-        {
-            _menuBar.add(jComponent);
-        }
-    }
-
-    /**
-     * Orderer menu items according to
-     * pattern : [File][Edit][...][...][Help]
-     *
-     * @param menu menus vector to orderer
-     *
-     * @return menus vector according to pattern
-     */
-    private Vector<JComponent> ordererMenuItems(Vector<JComponent> menu)
-    {
-        Vector<JComponent> ordererMenuItems = new Vector<JComponent>();
-
-        for (JComponent comp : menu)
-        {
-            if (comp.getName().equals("File"))
-            {
-                ordererMenuItems.add(comp);
-            }
-        }
-
-        for (JComponent comp : menu)
-        {
-            if (comp.getName().equals("Edit"))
-            {
-                ordererMenuItems.add(comp);
-            }
-        }
-
-        for (JComponent comp : menu)
-        {
-            if (! comp.getName().equals("File") &&
-                    ! comp.getName().equals("Edit") &&
-                    ! comp.getName().equals("Help"))
-            {
-                ordererMenuItems.add(comp);
-            }
-        }
-
-        for (JComponent comp : menu)
-        {
-            if (comp.getName().equals("Help"))
-            {
-                ordererMenuItems.add(comp);
-            }
-        }
-
-        return ordererMenuItems;
-    }
-
-    /** Creates the action which launch exit method */
-    public Action exitAction()
-    {
-        return new AbstractAction("Exit")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    exit();
-                }
-            };
     }
 
     /** Creates the action which open the about box window */
@@ -373,6 +300,19 @@ public abstract class App
                     {
                         new HelpView();
                     }
+                }
+            };
+    }
+
+    /** Creates the exit action which properly exit the application (applet) */
+    public static Action exitAction()
+    {
+        return new AbstractAction("Quit")
+            {
+                public void actionPerformed(ActionEvent evt)
+                {
+                    // TODO : est-ce que ca appelle la methode de la classe fille ?????
+                    exit();
                 }
             };
     }
@@ -510,7 +450,15 @@ public abstract class App
     protected abstract void execute();
 
     /** Execute operations before closing application */
-    protected abstract void exit();
+    protected static void exit()
+    {
+        boolean isNotAnApplet = true;
+
+        if (isNotAnApplet == true)
+        {
+            System.exit(-1);
+        }
+    }
 
     /** Describe the life cycle of the application */
     protected void run()
@@ -570,16 +518,6 @@ public abstract class App
 
         // Stop the splash screen thread
         _splashScreenThread.stop();
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
-    protected JMenuBar getMenuBar()
-    {
-        return _menuBar;
     }
 
     /**

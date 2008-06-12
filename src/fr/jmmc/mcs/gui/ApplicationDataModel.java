@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.6 2008-06-10 09:16:05 bcolucci Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.7 2008-06-12 07:39:07 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/06/10 09:16:05  bcolucci
+ * Implement a first solution about menus generation.
+ *
  * Revision 1.5  2008/05/20 08:45:51  bcolucci
  * Changed way to get packages informations.
  *
@@ -31,9 +34,6 @@ package fr.jmmc.mcs.gui;
 import fr.jmmc.mcs.gui.castor.*;
 
 import java.io.*;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import java.net.URL;
 
@@ -273,215 +273,13 @@ public class ApplicationDataModel
     }
 
     /**
-     * Returns the menu components from
-     * ApplicationData.xml
+     * DOCUMENT ME!
      *
-     * @return jcomponents of XML menu
+     * @return DOCUMENT ME!
      */
-    public JComponent[] getMenusComponents()
+    public fr.jmmc.mcs.gui.castor.Menubar getMenubar()
     {
-        String actionTypeName = "javax.swing.Action";
-
-        // Take menus from ApplicationData.xml
-        Menu[] castorMenus = _applicationDataCastorModel.getMenu();
-        int    nbMenus     = castorMenus.length;
-
-        _logger.fine("Get " + nbMenus + " menu(s) from XML");
-
-        JComponent[] menuComponents = new JComponent[nbMenus];
-
-        // For each menu taken
-        for (int i = 0; i < nbMenus; i++)
-        {
-            Menu castorMenu = castorMenus[i];
-
-            // Verify if the label is not null
-            String menuLabel = castorMenu.getLabel();
-
-            if (menuLabel != null)
-            {
-                // Create the SWING menu
-                JMenu jMenu = new JMenu(menuLabel);
-                jMenu.setName(menuLabel);
-                _logger.fine("Menu " + menuLabel + " created");
-
-                // Take menu's submenus
-                Submenu[] subMenus   = castorMenu.getSubmenu();
-                int       nbSubMenus = subMenus.length;
-
-                for (int j = 0; j < nbSubMenus; j++)
-                {
-                    // Get classpath and action string value from XML
-                    String subMenuClasspath = subMenus[j].getClasspath();
-                    String subMenuAction    = subMenus[j].getAction();
-
-                    /* Check if this two fields are not empty because
-                       they are used together */
-                    if ((subMenuClasspath != null) && (subMenuAction != null))
-                    {
-                        Class actionClass = null;
-
-                        _logger.fine("Trying to configure (" +
-                            subMenuClasspath + ", " + subMenuAction + ")");
-
-                        try
-                        {
-                            // Try to get the class according to XML classpath
-                            actionClass = Class.forName(subMenuClasspath);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.info("Cannot find " + subMenuClasspath +
-                                " class");
-                        }
-
-                        // If we find the class
-                        if (actionClass != null)
-                        {
-                            /* Get class methods and class fields in order
-                               to find the action link */
-                            Method[] actionClassMethods    = actionClass.getMethods();
-                            Field[]  actionClassAttributes = actionClass.getFields();
-
-                            /* Action class method and
-                               field (that we are looking for) */
-                            Method actionClassMethod = null;
-                            Field  actionClassField  = null;
-
-                            // In order to check what we found
-                            boolean findAMethod = false;
-                            boolean findAField  = false;
-
-                            // Search in the class methods
-                            for (Method method : actionClassMethods)
-                            {
-                                String methodName = method.getName();
-
-                                if (methodName.equals(subMenuAction))
-                                {
-                                    _logger.fine("Method " + methodName +
-                                        " was found");
-                                    actionClassMethod     = method;
-                                    findAMethod           = true;
-                                }
-                            }
-
-                            /* Search in the class fields only if we
-                               didn't find a method */
-                            if (! findAMethod)
-                            {
-                                for (Field field : actionClassAttributes)
-                                {
-                                    String fieldName = field.getName();
-
-                                    if (fieldName.equals(subMenuAction))
-                                    {
-                                        _logger.fine("Field " + fieldName +
-                                            " was found");
-                                        actionClassField     = field;
-                                        findAField           = true;
-                                    }
-                                }
-                            }
-
-                            /* If we find a method or a field corresponding
-                               to the XML action name */
-                            if (findAMethod && (actionClassMethod != null))
-                            {
-                                // Check if the method returns an Action
-                                Class returnType = actionClassMethod.getReturnType();
-
-                                if (returnType.getName().equals(actionTypeName))
-                                {
-                                    try
-                                    {
-                                        /* Get the value of the method
-                                           invoked from the action class */
-                                        Object returnedObject = actionClassMethod.invoke(actionClass.newInstance(),
-                                                new Object[] {  });
-
-                                        // Cast returned object
-                                        Action    action    = (Action) returnedObject;
-
-                                        JMenuItem jMenuItem = new JMenuItem(action);
-                                        jMenuItem.setName(subMenuAction);
-                                        _logger.fine("Create menu item '" +
-                                            jMenuItem.getName() + "'");
-
-                                        jMenu.add(jMenuItem);
-                                        _logger.fine(
-                                            "Action method linked to (" +
-                                            subMenuClasspath + ", " +
-                                            subMenuAction + ")");
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        _logger.log(Level.WARNING,
-                                            "Cannot invoke " +
-                                            actionClassMethod.getName(), ex);
-                                    }
-                                }
-                            }
-                            else if (findAField)
-                            {
-                                // Check if the return type is an action
-                                Class returnType = actionClassField.getType();
-
-                                if (returnType.getName().equals(actionTypeName))
-                                {
-                                    try
-                                    {
-                                        Object fieldValue = actionClassField.get(actionClass.newInstance());
-
-                                        // Cast returned object
-                                        Action    action    = (Action) fieldValue;
-
-                                        JMenuItem jMenuItem = new JMenuItem(action);
-                                        jMenuItem.setName(subMenuAction);
-                                        _logger.fine("Create menu item '" +
-                                            jMenuItem.getName() + "'");
-
-                                        jMenu.add(jMenuItem);
-                                        _logger.fine("Action field linked to (" +
-                                            subMenuClasspath + ", " +
-                                            subMenuAction + ")");
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        _logger.log(Level.WARNING,
-                                            "Cannot get " +
-                                            actionClassField.getName() +
-                                            " value", ex);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                _logger.fine(
-                                    "Cannot find a method/field according to " +
-                                    subMenuAction);
-                            }
-                        }
-                    }
-                    else // It's a separator
-                    {
-                        JSeparator jSeparator = new JSeparator();
-                        jSeparator.setName("separator");
-
-                        jMenu.add(jSeparator);
-                        _logger.fine("Create menu item '" +
-                            jSeparator.getName() + "'");
-                        _logger.fine(
-                            "Put a separator in the menu components array");
-                    }
-
-                    // Add SWING menu to the tab
-                    menuComponents[i] = jMenu;
-                }
-            }
-        }
-
-        return menuComponents;
+        return _applicationDataCastorModel.getMenubar();
     }
 }
 /*___oOo___*/

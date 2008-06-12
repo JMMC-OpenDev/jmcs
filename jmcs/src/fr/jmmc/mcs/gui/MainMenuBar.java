@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.3 2008-06-12 09:31:53 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.4 2008-06-12 11:34:25 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/06/12 09:31:53  bcolucci
+ * Truly added support for complete menubar creation from XML file (last commit was about first introspection version).
+ *
  * Revision 1.2  2008/06/12 07:40:54  bcolucci
  * Create functions to generate File, Edit, [Other] and Help menus with
  * some variations when we are running the application on a MAC OS X.
@@ -26,7 +29,7 @@ import javax.swing.text.DefaultEditorKit;
 /** This class is used to build menubar
  * according to the OS
  */
-public class MainMenuBar
+public class MainMenuBar extends JMenuBar
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger("fr.jmmc");
@@ -36,11 +39,8 @@ public class MainMenuBar
                                              .toLowerCase()
                                              .startsWith("mac os x"));
 
-    /** Menubar */
-    private static JMenuBar _jMenuBar = new JMenuBar();
-
     /** JMenus */
-    private static Hashtable<String, Vector<JComponent>> _jMenus = null;
+    private Hashtable<String, Vector<JComponent>> _jMenus = null;
 
     /**
      *      HASTABLE
@@ -56,12 +56,8 @@ public class MainMenuBar
      * In this way, we can manipulate JMenuItems
      */
 
-    /**
-     * Set the JMenuBar on a JFrame
-     *
-     * @param jFrame jFrame
-     */
-    public static void setMenuBar(JFrame jFrame)
+    /** Set the JMenuBar */
+    public MainMenuBar()
     {
         // Instantiate hashtable of menus
         _jMenus = new Hashtable<String, Vector<JComponent>>();
@@ -104,14 +100,11 @@ public class MainMenuBar
 
             // Create help menu
             createHelpMenu();
-
-            // Add JMenuBar to the JFrame
-            jFrame.setJMenuBar(_jMenuBar);
         }
     }
 
     /** Create file menu */
-    private static void createFileMenu()
+    private void createFileMenu()
     {
         // Create file menu
         JMenu fileMenu = new JMenu("File");
@@ -153,11 +146,11 @@ public class MainMenuBar
         }
 
         // Add file menu to the menubar
-        _jMenuBar.add(fileMenu);
+        add(fileMenu);
     }
 
     /** Create edit menu */
-    private static void createEditMenu()
+    private void createEditMenu()
     {
         // Create edit menu
         JMenu editMenu = new JMenu("Edit");
@@ -220,11 +213,11 @@ public class MainMenuBar
         }
 
         // Add edit menu to the menubar
-        _jMenuBar.add(editMenu);
+        add(editMenu);
     }
 
     /** Create other menus */
-    private static void createOthersMenu()
+    private void createOthersMenu()
     {
         // Get all keys
         Enumeration    keys      = _jMenus.keys();
@@ -272,12 +265,12 @@ public class MainMenuBar
             }
 
             // Add menu to the menubar
-            _jMenuBar.add(menu);
+            add(menu);
         }
     }
 
     /** Create help menu */
-    private static void createHelpMenu()
+    private void createHelpMenu()
     {
         // Create edit menu
         JMenu helpMenu = new JMenu("Help");
@@ -324,7 +317,7 @@ public class MainMenuBar
         }
 
         // Add help menu to the menubar
-        _jMenuBar.add(helpMenu);
+        add(helpMenu);
     }
 
     /**
@@ -335,7 +328,7 @@ public class MainMenuBar
      *
      * @return components vector
      */
-    private static Vector<JComponent> getMenuItems(
+    private Vector<JComponent> getMenuItems(
         fr.jmmc.mcs.gui.castor.Menu menu)
     {
         // Create components vetor of current menu

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.7 2008-06-12 11:33:23 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.8 2008-06-12 11:57:55 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2008/06/12 11:33:23  bcolucci
+ * Add a new constructor which permits to add directly a specific information
+ * about the application to the feedback report.
+ *
  * Revision 1.6  2008/05/27 12:09:17  bcolucci
  * Updating the way to verify the HTTP response of the feedback.
  *
@@ -101,15 +105,15 @@ public class FeedbackReportModel extends Observable implements Runnable
     }
 
     /** Creates a new FeedbackReportModel object
-      * with the possibility to define a specific information
-      */
+     * with the possibility to define a specific information
+     */
     public FeedbackReportModel(String specificInformation)
     {
-        _applicationSpecificInformation = specificInformation;
+        _applicationSpecificInformation     = specificInformation;
 
-        _applicationDataModel      = App.getSharedApplicationDataModel();
+        _applicationDataModel               = App.getSharedApplicationDataModel();
 
-        _feedbackTypeDataModel     = new DefaultComboBoxModel(_feedbackTypes);
+        _feedbackTypeDataModel              = new DefaultComboBoxModel(_feedbackTypes);
         _logger.fine("TypeDataModel constructed");
 
         // Get informations to send with the report
@@ -287,6 +291,16 @@ public class FeedbackReportModel extends Observable implements Runnable
         }
 
         return allHostProperties;
+    }
+
+    /**
+     * Set application specific information
+     *
+     * @param specificInformation specific information
+     */
+    public void setSecificInformation(String specificInformation)
+    {
+        _applicationSpecificInformation = specificInformation;
     }
 }
 /*___oOo___*/

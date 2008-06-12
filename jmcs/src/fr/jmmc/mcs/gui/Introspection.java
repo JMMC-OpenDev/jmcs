@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Introspection.java,v 1.1 2008-06-12 09:30:06 bcolucci Exp $"
+ * "@(#) $Id: Introspection.java,v 1.2 2008-06-12 11:54:11 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/06/12 09:30:06  bcolucci
+ * *** empty log message ***
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
@@ -228,6 +231,57 @@ public class Introspection
         }
 
         return value;
+    }
+
+    /**
+     * Executes a method but don't returns it's value
+     *
+     * @param className class name
+     * @param methodName method name
+     */
+    public static void executeMethod(String className, String methodName)
+    {
+        executeMethod(className, methodName, new Class[] {  });
+    }
+
+    /**
+     * Executes a method but don't returns it's value
+     *
+     * @param className class name
+     * @param methodName method name
+     * @param arguments arguments
+     */
+    public static void executeMethod(String className, String methodName,
+        Object[] arguments)
+    {
+        executeMethod(className, methodName, new Class[] {  }, arguments);
+    }
+
+    /**
+     * Executes a method but don't returns it's value
+     *
+     * @param className class name
+     * @param methodName method name
+     * @param parameters parameters
+     */
+    public static void executeMethod(String className, String methodName,
+        Class[] parameters)
+    {
+        executeMethod(className, methodName, parameters, new Object[] {  });
+    }
+
+    /**
+     * Executes a method but don't returns it's value
+     *
+     * @param className class name
+     * @param methodName method name
+     * @param parameters parameters
+     * @param arguments arguments
+     */
+    public static void executeMethod(String className, String methodName,
+        Class[] parameters, Object[] arguments)
+    {
+        getMethodValue(className, methodName, parameters, arguments);
     }
 
     /**

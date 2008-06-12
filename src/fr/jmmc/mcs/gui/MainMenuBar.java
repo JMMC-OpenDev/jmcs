@@ -1,541 +1,442 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.2 2008-06-12 07:40:54 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.3 2008-06-12 09:31:53 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2008/06/12 07:40:54  bcolucci
+ * Create functions to generate File, Edit, [Other] and Help menus with
+ * some variations when we are running the application on a MAC OS X.
+ *
  * Revision 1.1  2008/06/10 12:22:37  bcolucci
  * Created.
  *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.lang.reflect.Method;
+import java.util.*;
+import java.util.logging.*;
 
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
 
 
-/**
-   /!\ Introspective searches /!\
-   ------------------------------
-   The used class name is "MainMenubar.java"
+/** This class is used to build menubar
+ * according to the OS
  */
-
-/** Generate menubar from classes */
 public class MainMenuBar
 {
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(MainMenuBar.class.getName());
+    private static final Logger _logger = Logger.getLogger("fr.jmmc");
 
-    /** Action delimiter */
-    private static final String ACTION_DELIM = "Action";
+    /** Store whether the execution platform is a Mac or not */
+    private static boolean MAC_OS_X = (System.getProperty("os.name")
+                                             .toLowerCase()
+                                             .startsWith("mac os x"));
 
-    /** Menu delimiter */
-    private static final String MENU_DELIM = "Menu";
+    /** Menubar */
+    private static JMenuBar _jMenuBar = new JMenuBar();
 
-    /** REGEX Patern for valid methods */
-    private static final String ACTIONS_REGEX = ".*" + ACTION_DELIM;
-
-    /** Default class for menu "File" */
-    private String _defaultFileMenu = null;
-
-    /** Default class for menu "Help" */
-    private String _defaultHelpMenu = null;
-
-    /** Menubar generated */
-    private JMenuBar _menuBar = new JMenuBar();
-
-    /** MenuNode vector */
-    private Vector<MenuNode> _menus = new Vector<MenuNode>();
-
-    /** MethodNode vector */
-    private Vector<MethodNode> _classToParseMethods = new Vector<MethodNode>();
-
-    /** Menus generated */
-    private Vector<JMenu> _jMenus = new Vector<JMenu>();
-
-    /** Menus' name already generated */
-    private Vector<String> _menusNameAdded = new Vector<String>();
-
-    /** Frame to link to the menubar */
-    private JFrame _jFrame = null;
-
-    /** Class scanned for actions */
-    private Vector<String> _classNames = new Vector<String>();
-
-    /** We have to add default menus? */
-    private boolean _insertDefaultMenus = true;
+    /** JMenus */
+    private static Hashtable<String, Vector<JComponent>> _jMenus = null;
 
     /**
-     * Constructor
+     *      HASTABLE
+     *      Key =>      |File|Edit |...|Help|
+     *      Vector=>    |Save|Cut  |
+     *                  |Exit|Copy |
+     *                   ----|Paste|
+     *                        -----
      *
-     * @param jFrame frame to link to the menubar generated
+     * A key references a vector of JComponent
+     * Ex : File => [Save, Exit]
+     *
+     * In this way, we can manipulate JMenuItems
      */
-    public MainMenuBar(JFrame jFrame)
-    {
-        _jFrame = jFrame;
-    }
 
     /**
-     * Insert menus corresponding to actions
-     * found in the class passed in argument.
+     * Set the JMenuBar on a JFrame
      *
-     * @param className class' name
+     * @param jFrame jFrame
      */
-    public void insertActions(String className)
+    public static void setMenuBar(JFrame jFrame)
     {
-        Vector<String> tmpClassNames = new Vector<String>();
-        _jMenus.removeAllElements();
+        // Instantiate hashtable of menus
+        _jMenus = new Hashtable<String, Vector<JComponent>>();
 
-        tmpClassNames.add(className);
+        // Get application data model
+        ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
-        for (String previousClassName : _classNames)
+        // Check if the application data model is not null
+        if (applicationDataModel == null)
         {
-            tmpClassNames.add(previousClassName);
-        }
-
-        Object[] classToParseNames       = tmpClassNames.toArray();
-        int      nbClassNames            = classToParseNames.length;
-
-        String[] classToParseStringNames = new String[nbClassNames];
-
-        for (int i = 0; i < nbClassNames; i++)
-        {
-            classToParseStringNames[i] = (String) classToParseNames[i];
-        }
-
-        insertActions(_insertDefaultMenus, classToParseStringNames);
-    }
-
-    /**
-     * Insert menus corresponding to actions
-     * found in classes passed in argument and
-     * default menus too.
-     *
-     * @param classToParseNames DOCUMENT ME!
-     */
-    public void insertActions(String[] classToParseNames)
-    {
-        insertActions(_insertDefaultMenus, classToParseNames);
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param location DOCUMENT ME!
-     */
-    public void setDefaultFileMenuLocation(String location)
-    {
-        _defaultFileMenu = location;
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param location DOCUMENT ME!
-     */
-    public void setDefaultHelpMenuLocation(String location)
-    {
-        _defaultHelpMenu = location;
-    }
-
-    /**
-     * Insert menus corresponding to actions
-     * found in classes passed in argument.
-     *
-     * @param insertDefaultMenus if true, insert default menus
-     * @param classToParseNames class' names
-     */
-    public void insertActions(boolean insertDefaultMenus,
-        String[] classToParseNames)
-    {
-        _insertDefaultMenus = insertDefaultMenus;
-
-        if (_insertDefaultMenus)
-        {
-            _classNames.add(_defaultFileMenu);
-        }
-
-        for (String className : classToParseNames)
-        {
-            _classNames.add(className);
-        }
-
-        if (_insertDefaultMenus)
-        {
-            _classNames.add(_defaultHelpMenu);
-        }
-
-        int nbClassNames = _classNames.size();
-
-        for (int i = 0; i < nbClassNames; i++)
-        {
-            String className = _classNames.get(i);
-            parseMethods(getClassFromClassName(className));
-        }
-
-        makeMenuBar();
-        _jFrame.setJMenuBar(_menuBar);
-    }
-
-    /**
-     * Return the class corresponding to the
-     * name passed in argument.
-     *
-     * @param className class' name
-     *
-     * @return class corresponding to the name
-     */
-    private Class getClassFromClassName(String className)
-    {
-        Class searchedClass = null;
-
-        try
-        {
-            searchedClass = Class.forName(className);
-        }
-        catch (ClassNotFoundException ex)
-        {
-            _logger.log(Level.SEVERE, "Cannot find " + className + " class", ex);
-        }
-
-        System.out.println("I find the class : " + searchedClass.getName());
-
-        return searchedClass;
-    }
-
-    /**
-     * Parse each method of a class
-     * and keep only the methods corresponding
-     * to the REGEX Patern.
-     *
-     * @param classToParse class to parse
-     */
-    private void parseMethods(Class classToParse)
-    {
-        Method[] classToParseMethods = classToParse.getMethods();
-
-        for (Method method : classToParseMethods)
-        {
-            getSplittedMethodNameIfValid(classToParse, method);
-        }
-    }
-
-    /**
-     * Check if the method of a class corresponding
-     * to the REGEX Patern.
-     *
-     * @param classToParse class to parse
-     * @param method method to check
-     */
-    private void getSplittedMethodNameIfValid(Class classToParse, Method method)
-    {
-        String methodName   = method.getName();
-        String menuName     = null;
-        String menuItemName = null;
-
-        if (methodName.matches(ACTIONS_REGEX))
-        {
-            String[] splittedMenu = methodName.split(MENU_DELIM);
-
-            if (splittedMenu.length == 2)
-            {
-                menuName = checkMaj(splittedMenu[0]);
-
-                String[] splittedAction = splittedMenu[1].split(ACTION_DELIM);
-
-                if (splittedAction.length == 1)
-                {
-                    menuItemName = splittedAction[0];
-                }
-            }
-
-            MethodNode methodNode = new MethodNode(classToParse, method);
-            _classToParseMethods.add(methodNode);
-
-            insertMenu(menuName, menuItemName);
-        }
-    }
-
-    /**
-     * If the method corresponding to the REGEX Pattern, we verify and
-     * put the first letter to uppercase if it's not already done.
-     *
-     * @param string string to check
-     *
-     * @return string with first letter in uppercase
-     */
-    private String checkMaj(String string)
-    {
-        char[]  stringArray = string.toCharArray();
-        char    firstChar   = stringArray[0];
-        boolean isMaj       = ((firstChar >= 'A') && (firstChar <= 'Z'));
-        int     majMask     = (isMaj ? 0 : 32);
-        stringArray[0]      = (char) (firstChar - majMask);
-
-        return (new String(stringArray));
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param menu DOCUMENT ME!
-     */
-    private void setMethodAction(MenuNode menu)
-    {
-        for (MethodNode methodNode : _classToParseMethods)
-        {
-            String methodName       = methodNode.getMethod().getName();
-            String menuMethodName   = menu.getMethodName();
-            String methodNameLC     = methodName.toLowerCase();
-            String menuMethodNameLC = menuMethodName.toLowerCase();
-
-            if (methodNameLC.equals(menuMethodNameLC))
-            {
-                try
-                {
-                    Method methodToAdd = methodNode.getClassEntity()
-                                                   .getMethod(methodName,
-                            new Class[] {  });
-
-                    if (isMethodReturnTypeValid(methodToAdd.getReturnType()))
-                    {
-                        Object value = methodToAdd.invoke(methodNode.getClassEntity()
-                                                                    .newInstance(),
-                                new Object[] {  });
-
-                        menu.setAction((Action) value);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.getLogger(MainMenuBar.class.getName())
-                          .log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param returnType DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
-    private boolean isMethodReturnTypeValid(Class<?> returnType)
-    {
-        return (returnType.equals(Action.class) ? true : false);
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param menuName DOCUMENT ME!
-     * @param menuItemName DOCUMENT ME!
-     */
-    private void insertMenu(String menuName, String menuItemName)
-    {
-        if (! isMenuExists(menuName))
-        {
-            MenuNode menu = new MenuNode(menuName, menuItemName);
-            setMethodAction(menu);
-            _menus.add(menu);
+            _logger.warning("Cannot get shared application data model");
         }
         else
         {
-            insertMenuItem(menuName, menuItemName);
-        }
-    }
+            // Get menus from ApplicationData.xml
+            fr.jmmc.mcs.gui.castor.Menubar menuBar = applicationDataModel.getMenubar();
+            fr.jmmc.mcs.gui.castor.Menu[]  menus   = menuBar.getMenu();
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param menuName DOCUMENT ME!
-     * @param menuItemName DOCUMENT ME!
-     */
-    private void insertMenuItem(String menuName, String menuItemName)
-    {
-        if (! isMenuItemExists(menuName, menuItemName))
-        {
-            MenuNode menu = new MenuNode(menuName, menuItemName);
-            setMethodAction(menu);
-
-            _menus.add(menu);
-        }
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param menuName DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
-    private boolean isMenuExists(String menuName)
-    {
-        for (MenuNode menu : _menus)
-        {
-            if (menu.getMenuName().equals(menuName))
+            // For each menu
+            for (fr.jmmc.mcs.gui.castor.Menu menu : menus)
             {
-                return true;
+                // Get label
+                String             menuLabel        = menu.getLabel();
+
+                // Get menu items from menu
+                Vector<JComponent> currentMenuItems = getMenuItems(menu);
+
+                // Put the menu with it's menu items
+                _jMenus.put(menuLabel, currentMenuItems);
             }
-        }
 
-        return false;
+            // Create file menu
+            createFileMenu();
+
+            // Create edit menu
+            createEditMenu();
+
+            // Create other menus
+            createOthersMenu();
+
+            // Create help menu
+            createHelpMenu();
+
+            // Add JMenuBar to the JFrame
+            jFrame.setJMenuBar(_jMenuBar);
+        }
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param menuName DOCUMENT ME!
-     * @param menuItemName DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
-    private boolean isMenuItemExists(String menuName, String menuItemName)
+    /** Create file menu */
+    private static void createFileMenu()
     {
-        for (MenuNode menu : _menus)
+        // Create file menu
+        JMenu fileMenu = new JMenu("File");
+        _logger.fine("Create file menu");
+
+        // Add file menu items from XML
+        Vector<JComponent> fileVector = _jMenus.get("File");
+
+        // Check if there is file menu in XML
+        if (fileVector != null)
         {
-            if (menu.getMenuName().equals(menuName) &&
-                    menu.getMenuItemName().equals(menuItemName))
+            // There are items?
+            if (fileVector.size() > 0)
             {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * DOCUMENT ME!
-     */
-    private void makeMenuBar()
-    {
-        for (MenuNode menu : _menus)
-        {
-            String menuName = menu.getMenuName();
-
-            if (isMenuNameAdded(menuName, _menusNameAdded))
-            {
-                for (JMenu jMenu : _jMenus)
+                // Add all components
+                for (JComponent jComp : fileVector)
                 {
-                    String jMenuName = jMenu.getText();
+                    // Add component to the menu
+                    fileMenu.add(jComp);
+                    _logger.fine("Add " + jComp);
+                }
 
-                    if (jMenuName.equals(menuName))
+                // If not running under Mac OS X
+                if (MAC_OS_X == false)
+                {
+                    // Add a mandatory separator
+                    fileMenu.add(new JSeparator());
+                    _logger.fine("Add mandatory separator");
+                }
+            }
+        }
+
+        // If not running under Mac OS X
+        if (MAC_OS_X == false)
+        {
+            // Add exit menu /!\ Mac OS X
+            fileMenu.add(App.exitAction());
+            _logger.fine("Add exit action");
+        }
+
+        // Add file menu to the menubar
+        _jMenuBar.add(fileMenu);
+    }
+
+    /** Create edit menu */
+    private static void createEditMenu()
+    {
+        // Create edit menu
+        JMenu editMenu = new JMenu("Edit");
+        _logger.fine("Create edit menu");
+
+        // The following 3 actions come from the default editor kit.
+        // The 'control' key is used on Linux and Windows
+        // If the execution is on Mac OS X
+        String keyStringPrefix = "ctrl ";
+
+        // If running under Mac OS X
+        if (MAC_OS_X == true)
+        {
+            // The 'command' key (aka Apple key) is used
+            keyStringPrefix = "meta ";
+        }
+
+        // Cut menu item
+        Action cutAction = new DefaultEditorKit.CutAction();
+        cutAction.putValue(Action.NAME, "Cut");
+        cutAction.putValue(Action.ACCELERATOR_KEY,
+            KeyStroke.getKeyStroke(keyStringPrefix + "X"));
+        editMenu.add(cutAction);
+
+        // Copy menu item
+        Action copyAction = new DefaultEditorKit.CopyAction();
+        copyAction.putValue(Action.NAME, "Copy");
+        copyAction.putValue(Action.ACCELERATOR_KEY,
+            KeyStroke.getKeyStroke(keyStringPrefix + "C"));
+        editMenu.add(copyAction);
+
+        // Paste menu item
+        Action pasteAction = new DefaultEditorKit.PasteAction();
+        pasteAction.putValue(Action.NAME, "Paste");
+        pasteAction.putValue(Action.ACCELERATOR_KEY,
+            KeyStroke.getKeyStroke(keyStringPrefix + "V"));
+        editMenu.add(pasteAction);
+
+        // Add edit menu items from XML
+        Vector<JComponent> editVector = _jMenus.get("Edit");
+
+        // Check if there is edit menu in XML
+        if (editVector != null)
+        {
+            // There are items?
+            if (editVector.size() > 0)
+            {
+                // Add a mandatory separator
+                editMenu.add(new JSeparator());
+                _logger.fine("Add mandatory separator");
+
+                // Add all components
+                for (JComponent jComp : editVector)
+                {
+                    // Add component to the menu
+                    editMenu.add(jComp);
+                    _logger.fine("Add " + jComp);
+                }
+            }
+        }
+
+        // Add edit menu to the menubar
+        _jMenuBar.add(editMenu);
+    }
+
+    /** Create other menus */
+    private static void createOthersMenu()
+    {
+        // Get all keys
+        Enumeration    keys      = _jMenus.keys();
+
+        // Keys except file, edit and help
+        Vector<String> otherKeys = new Vector<String>();
+
+        // Get keys except file, edit and help
+        while (keys.hasMoreElements())
+        {
+            // Get current key
+            String keyValue = (String) keys.nextElement();
+
+            // Check if it's an other key
+            if (! keyValue.equals("File") && ! keyValue.equals("Edit") &&
+                    ! keyValue.equals("Help"))
+            {
+                otherKeys.add(keyValue);
+            }
+        }
+
+        // Create and add other menus
+        for (String key : otherKeys)
+        {
+            // Create the key menu
+            JMenu              menu   = new JMenu(key);
+
+            // Add current key menu items from XML
+            Vector<JComponent> vector = _jMenus.get(key);
+
+            // Check if there is key menu in XML
+            if (vector != null)
+            {
+                // There are items?
+                if (vector.size() > 0)
+                {
+                    // Add all components
+                    for (JComponent jComp : vector)
                     {
-                        JMenuItem jMenuItem = new JMenuItem(menu.getAction());
-                        jMenu.add(jMenuItem);
+                        // Add component to the menu
+                        menu.add(jComp);
+                        _logger.fine("Add " + jComp);
                     }
                 }
             }
-            else
+
+            // Add menu to the menubar
+            _jMenuBar.add(menu);
+        }
+    }
+
+    /** Create help menu */
+    private static void createHelpMenu()
+    {
+        // Create edit menu
+        JMenu helpMenu = new JMenu("Help");
+        _logger.fine("Create help menu");
+
+        // Feedback menu item
+        helpMenu.add(App.feedbackReportAction());
+
+        // Help menu item
+        helpMenu.add(App.helpViewAction());
+
+        // Add help menu items from XML
+        Vector<JComponent> helpVector = _jMenus.get("Help");
+
+        // Check if there is help menu in XML
+        if (helpVector != null)
+        {
+            // There are items?
+            if (helpVector.size() > 0)
             {
-                JMenu     jMenu     = new JMenu(menuName);
+                // Add a mandatory separator
+                helpMenu.add(new JSeparator());
+                _logger.fine("Add mandatory separator");
 
-                JMenuItem jMenuItem = new JMenuItem(menu.getAction());
-                jMenu.add(jMenuItem);
-
-                _jMenus.add(jMenu);
-                _menusNameAdded.add(menuName);
+                // Add all components
+                for (JComponent jComp : helpVector)
+                {
+                    // Add component to the menu
+                    helpMenu.add(jComp);
+                    _logger.fine("Add " + jComp);
+                }
             }
         }
 
-        for (JMenu jMenu : _jMenus)
+        // If not running under Mac OS X
+        if (MAC_OS_X == false)
         {
-            _menuBar.add(jMenu);
+            // Add a mandatory separator
+            helpMenu.add(new JSeparator());
+            _logger.fine("Add mandatory separator");
+
+            // About menu item
+            helpMenu.add(App.aboutBoxAction());
         }
+
+        // Add help menu to the menubar
+        _jMenuBar.add(helpMenu);
     }
 
     /**
-     * DOCUMENT ME!
+     * Return the components vector according
+     * to the menu given by castor
      *
-     * @param menuName DOCUMENT ME!
-     * @param menusName DOCUMENT ME!
+     * @param menu castor menu
      *
-     * @return DOCUMENT ME!
+     * @return components vector
      */
-    private boolean isMenuNameAdded(String menuName, Vector<String> menusName)
+    private static Vector<JComponent> getMenuItems(
+        fr.jmmc.mcs.gui.castor.Menu menu)
     {
-        for (String menuNameSearched : menusName)
+        // Create components vetor of current menu
+        Vector<JComponent> currentMenuItems = new Vector<JComponent>();
+
+        // Get menu items of current menu
+        fr.jmmc.mcs.gui.castor.Menuitem[] menuItems = menu.getMenuitem();
+
+        // For each menu item
+        for (fr.jmmc.mcs.gui.castor.Menuitem menuItem : menuItems)
         {
-            if (menuName.equals(menuNameSearched))
+            // Get label
+            String menuLabel = menuItem.getLabel();
+
+            // Get class name where we can find action
+            String className = menuItem.getClasspath();
+
+            // Get method name which returns the action
+            String actionMethodName = menuItem.getActionMethod();
+
+            // Get accelerator
+            String accelerator = menuItem.getAccelerator();
+
+            // The 'control' key is used on Linux and Windows
+            // If the execution is on Mac OS X
+            String keyStringPrefix = "ctrl ";
+
+            // If running under Mac OS X
+            if (MAC_OS_X == true)
             {
-                return true;
+                // The 'command' key (aka Apple key) is used
+                keyStringPrefix = "meta ";
+            }
+
+            // If there is no label, it's a separator
+            if (menuLabel == null)
+            {
+                currentMenuItems.add(new JSeparator());
+            }
+            else
+            {
+                // If the method exists in the class
+                if (Introspection.isMethodExists(className, actionMethodName))
+                {
+                    // Get value of the method
+                    Object value = Introspection.getMethodValue(className,
+                            actionMethodName);
+
+                    // The menu item is a checkbox?
+                    if (menuItem.getCheckbox() == null)
+                    {
+                        // Create the action
+                        Action action = (Action) value;
+
+                        // Put the accelerator
+                        if (accelerator != null)
+                        {
+                            // Create the keystroke and link it
+                            String keyStroke = keyStringPrefix + accelerator;
+                            action.putValue(Action.ACCELERATOR_KEY,
+                                KeyStroke.getKeyStroke(keyStroke));
+                        }
+
+                        // Create the component with the action
+                        JMenuItem jComp = new JMenuItem(action);
+
+                        // set the label
+                        jComp.setLabel(menuLabel);
+
+                        // Put the component into the vector
+                        currentMenuItems.add(jComp);
+                    }
+                    else
+                    {
+                        // Create the action
+                        Action action = (Action) value;
+
+                        // Put the accelerator
+                        if (accelerator != null)
+                        {
+                            // Create the keystroke and link it
+                            String keyStroke = keyStringPrefix + accelerator;
+                            action.putValue(Action.ACCELERATOR_KEY,
+                                KeyStroke.getKeyStroke(keyStroke));
+                        }
+
+                        // Create the component with the action
+                        JCheckBoxMenuItem jComp = new JCheckBoxMenuItem(action);
+
+                        // set the label
+                        jComp.setLabel(menuLabel);
+
+                        // Put the component into the vector
+                        currentMenuItems.add(jComp);
+                    }
+                }
             }
         }
 
-        return false;
-    }
-
-    public class MenuNode
-    {
-        private String _menuName     = null;
-        private String _menuItemName = null;
-        private Action _action       = null;
-
-        public MenuNode(String menuName, String menuItemName)
-        {
-            _menuName         = menuName;
-            _menuItemName     = menuItemName;
-        }
-
-        public String getMenuName()
-        {
-            return _menuName;
-        }
-
-        public String getMenuItemName()
-        {
-            return _menuItemName;
-        }
-
-        public Action getAction()
-        {
-            return _action;
-        }
-
-        public void setAction(Action action)
-        {
-            _action = action;
-        }
-
-        public String getMethodName()
-        {
-            return (_menuName + MENU_DELIM + _menuItemName + ACTION_DELIM);
-        }
-    }
-
-    public class MethodNode
-    {
-        private Class  _classEntity = null;
-        private Method _method      = null;
-
-        public MethodNode(Class classEntity, Method method)
-        {
-            _classEntity     = classEntity;
-            _method          = method;
-        }
-
-        public Class getClassEntity()
-        {
-            return _classEntity;
-        }
-
-        public Method getMethod()
-        {
-            return _method;
-        }
+        // Return the components vector
+        return currentMenuItems;
     }
 }
 /*___oOo___*/

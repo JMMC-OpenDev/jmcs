@@ -2,30 +2,10 @@
 
 <ApplicationData link="Application URL">
 	<program name="Application name" version="Program version"/>
-	<compilation date="Compilation date" compiler="Compilator"/>
+	<compilation date="10/10/2010" compiler="Compilator"/>
 	<text>Text</text>
 	<copyright>Copyrights</copyright>
 	<dependences>
     </dependences>
-    <menu label="File">
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="save"/>
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="load"/>
-      <submenu/>
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="importMethod"/>
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="export"/>
-      <submenu/>
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="exit"/>
-    </menu>
-    <menu label="Edit">
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="cut"/>
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="copy"/>
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="paste"/>
-      <submenu/>
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="find"/>
-    </menu>
-    <menu label="Help">
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="manual"/>
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="feedback"/>
-      <submenu classpath="fr.jmmc.mcs.gui.DefaultActions" action="about"/>
-    </menu>
+    <!-- do not define menu here (see MainMenubar.java) -->
 </ApplicationData>

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.4 2008-06-12 11:34:25 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.5 2008-06-12 12:34:52 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/06/12 11:34:25  bcolucci
+ * Extend the class from JMenuBar and remove static context.
+ *
  * Revision 1.3  2008/06/12 09:31:53  bcolucci
  * Truly added support for complete menubar creation from XML file (last commit was about first introspection version).
  *
@@ -38,6 +41,9 @@ public class MainMenuBar extends JMenuBar
     private static boolean MAC_OS_X = (System.getProperty("os.name")
                                              .toLowerCase()
                                              .startsWith("mac os x"));
+
+    /** Other menu keys */
+    private Vector<String> _otherMenuKeys = new Vector<String>();
 
     /** JMenus */
     private Hashtable<String, Vector<JComponent>> _jMenus = null;
@@ -80,7 +86,16 @@ public class MainMenuBar extends JMenuBar
             for (fr.jmmc.mcs.gui.castor.Menu menu : menus)
             {
                 // Get label
-                String             menuLabel        = menu.getLabel();
+                String menuLabel = menu.getLabel();
+
+                /* In order to sort other menu items later, we have to
+                   keep the order from XML file. So we will access to the
+                   hashtable with the key in the good order */
+                if (! menuLabel.equals("File") && ! menuLabel.equals("Edit") &&
+                        ! menuLabel.equals("Help"))
+                {
+                    _otherMenuKeys.add(menuLabel);
+                }
 
                 // Get menu items from menu
                 Vector<JComponent> currentMenuItems = getMenuItems(menu);
@@ -100,6 +115,8 @@ public class MainMenuBar extends JMenuBar
 
             // Create help menu
             createHelpMenu();
+
+            macOSXRegistration();
         }
     }
 
@@ -219,28 +236,9 @@ public class MainMenuBar extends JMenuBar
     /** Create other menus */
     private void createOthersMenu()
     {
-        // Get all keys
-        Enumeration    keys      = _jMenus.keys();
-
-        // Keys except file, edit and help
-        Vector<String> otherKeys = new Vector<String>();
-
-        // Get keys except file, edit and help
-        while (keys.hasMoreElements())
-        {
-            // Get current key
-            String keyValue = (String) keys.nextElement();
-
-            // Check if it's an other key
-            if (! keyValue.equals("File") && ! keyValue.equals("Edit") &&
-                    ! keyValue.equals("Help"))
-            {
-                otherKeys.add(keyValue);
-            }
-        }
-
         // Create and add other menus
-        for (String key : otherKeys)
+        // We have the good order thanks to _otherMenuKeys vector
+        for (String key : _otherMenuKeys)
         {
             // Create the key menu
             JMenu              menu   = new JMenu(key);
@@ -328,8 +326,7 @@ public class MainMenuBar extends JMenuBar
      *
      * @return components vector
      */
-    private Vector<JComponent> getMenuItems(
-        fr.jmmc.mcs.gui.castor.Menu menu)
+    private Vector<JComponent> getMenuItems(fr.jmmc.mcs.gui.castor.Menu menu)
     {
         // Create components vetor of current menu
         Vector<JComponent> currentMenuItems = new Vector<JComponent>();
@@ -430,6 +427,25 @@ public class MainMenuBar extends JMenuBar
 
         // Return the components vector
         return currentMenuItems;
+    }
+
+    /**
+     * Generic registration with the Mac OS X application menu.
+     *
+     * Checks the platform, then attempts.
+     */
+    public void macOSXRegistration()
+    {
+        // If running under Mac OS X
+        if (MAC_OS_X == true)
+        {
+            String OSXClassName  = "fr.jmmc.mcs.gui.OSXAdapter";
+            String OSXMethodName = "registerMacOSXApplication";
+
+            // main window ???
+            Introspection.executeMethod(OSXClassName, OSXMethodName,
+                new Object[] { null });
+        }
     }
 }
 /*___oOo___*/

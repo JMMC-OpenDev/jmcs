@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.1 2008-06-10 12:22:37 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.2 2008-06-12 07:40:54 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/06/10 12:22:37  bcolucci
+ * Created.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
@@ -21,6 +24,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+
+/**
+   /!\ Introspective searches /!\
+   ------------------------------
+   The used class name is "MainMenubar.java"
+ */
 
 /** Generate menubar from classes */
 public class MainMenuBar

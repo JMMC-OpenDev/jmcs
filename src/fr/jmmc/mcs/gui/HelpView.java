@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.6 2008-06-10 08:25:06 bcolucci Exp $"
+ * "@(#) $Id: HelpView.java,v 1.7 2008-06-13 08:16:59 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/06/10 08:25:06  bcolucci
+ * Center the frame on the screen.
+ *
  * Revision 1.5  2008/05/16 12:53:43  bcolucci
  * Removed unecessary try/catch, and added argument checks.
  *
@@ -71,8 +74,17 @@ public class HelpView
 
         // Show the window
         HelpBroker helpBroker = helpSet.createHelpBroker();
-        helpBroker.setLocation(WindowCenterer.getCenteredPoint(
-                helpBroker.getSize()));
+
+        try
+        {
+            helpBroker.setLocation(WindowCenterer.getCenteringPoint(
+                    helpBroker.getSize()));
+        }
+        catch (Exception ex)
+        {
+            _logger.warning("Cannot center window on the main screen");
+        }
+
         helpBroker.setDisplayed(true);
     }
 }

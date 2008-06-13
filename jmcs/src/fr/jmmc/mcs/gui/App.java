@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.11 2008-06-12 07:42:08 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.12 2008-06-13 08:46:35 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2008/06/12 07:42:08  bcolucci
+ * Modify the way to access to the exit method (we have to check if when we call
+ * the exit method from App, it calls exit from child class too).
+ *
  * Revision 1.10  2008/06/10 09:24:12  bcolucci
  * Replace "File.separator" by "/" in order to load ressources.
  *
@@ -317,6 +321,18 @@ public abstract class App
             };
     }
 
+    /** Creates the action which open logGui */
+    public static Action logGuiAction()
+    {
+        return new AbstractAction("LogGui")
+            {
+                public void actionPerformed(ActionEvent evt)
+                {
+                    imx.loggui.LogMaster.startLogGui();
+                }
+            };
+    }
+
     /**
      * Interpret command line arguments
      *
@@ -340,7 +356,7 @@ public abstract class App
                 args, "-:hv:", longopts, true);
 
         int    c; // argument key
-        String arg; // argument value
+        String arg    = null; // argument value
 
         // While there is a argument key
         while ((c = getOpt.getopt()) != -1)
@@ -362,11 +378,14 @@ public abstract class App
             // Show the name and the version of the program
             case 1:
 
-                String name = _applicationDataModel.getProgramName();
+                // Get application name and version
+                String name    = _applicationDataModel.getProgramName();
                 String version = _applicationDataModel.getProgramVersion();
 
+                // Show it on the shell
                 System.out.println(name + " v" + version);
 
+                // Exit the application
                 System.exit(0);
 
                 break;
@@ -410,6 +429,12 @@ public abstract class App
             // Show the arguments help
             case '?':
                 showArgumentsHelp();
+
+                break;
+
+            default:
+                System.out.println("Unknow command");
+                System.exit(-1);
 
                 break;
             }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: WindowCenterer.java,v 1.6 2008-06-13 08:13:43 bcolucci Exp $"
+ * "@(#) $Id: WindowCenterer.java,v 1.7 2008-06-13 08:25:00 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/06/13 08:13:43  bcolucci
+ * Fix getDisplayMode null pointer exception.
+ *
  * Revision 1.5  2008/06/13 06:14:38  mella
  * Fix again bug (with comments in code ;)
  *
@@ -85,7 +88,7 @@ public class WindowCenterer
             // Get centering point
             Point point = getCenteringPoint(frameSize);
 
-            frameToCenter.setLocation(_XPOSITION, _YPOSITION);
+            frameToCenter.setLocation(point);
             _logger.fine("The window has been centered");
         }
         catch (Exception ex)

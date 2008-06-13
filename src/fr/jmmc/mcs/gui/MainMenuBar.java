@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.5 2008-06-12 12:34:52 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.6 2008-06-13 08:16:10 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/06/12 12:34:52  bcolucci
+ * Fix the order of menu items thanks to a vector which keep
+ * the order from XML file.
+ * Begin to implement OSXAdapter.
+ *
  * Revision 1.4  2008/06/12 11:34:25  bcolucci
  * Extend the class from JMenuBar and remove static context.
  *
@@ -48,6 +53,9 @@ public class MainMenuBar extends JMenuBar
     /** JMenus */
     private Hashtable<String, Vector<JComponent>> _jMenus = null;
 
+    /** Application JFrame */
+    private JFrame _jFrame = null;
+
     /**
      *      HASTABLE
      *      Key =>      |File|Edit |...|Help|
@@ -63,10 +71,13 @@ public class MainMenuBar extends JMenuBar
      */
 
     /** Set the JMenuBar */
-    public MainMenuBar()
+    public MainMenuBar(JFrame jFrame)
     {
+        // Set JFrame
+        _jFrame     = jFrame;
+
         // Instantiate hashtable of menus
-        _jMenus = new Hashtable<String, Vector<JComponent>>();
+        _jMenus     = new Hashtable<String, Vector<JComponent>>();
 
         // Get application data model
         ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
@@ -116,6 +127,7 @@ public class MainMenuBar extends JMenuBar
             // Create help menu
             createHelpMenu();
 
+            // Use OSXAdapter
             macOSXRegistration();
         }
     }
@@ -344,10 +356,17 @@ public class MainMenuBar extends JMenuBar
             String className = menuItem.getClasspath();
 
             // Get method name which returns the action
-            String actionMethodName = menuItem.getActionMethod();
+            String actionName = menuItem.getAction();
 
             // Get accelerator
             String accelerator = menuItem.getAccelerator();
+
+            // Get description
+            String description = menuItem.getDescription();
+
+            // Get icon
+            String icon = menuItem.getIcon();
+            icon = (icon == null) ? "" : icon;
 
             // The 'control' key is used on Linux and Windows
             // If the execution is on Mac OS X
@@ -368,11 +387,11 @@ public class MainMenuBar extends JMenuBar
             else
             {
                 // If the method exists in the class
-                if (Introspection.isMethodExists(className, actionMethodName))
+                if (Introspection.isMethodExists(className, actionName))
                 {
                     // Get value of the method
                     Object value = Introspection.getMethodValue(className,
-                            actionMethodName);
+                            actionName);
 
                     // The menu item is a checkbox?
                     if (menuItem.getCheckbox() == null)
@@ -387,6 +406,29 @@ public class MainMenuBar extends JMenuBar
                             String keyStroke = keyStringPrefix + accelerator;
                             action.putValue(Action.ACCELERATOR_KEY,
                                 KeyStroke.getKeyStroke(keyStroke));
+                        }
+
+                        // Get tooltip action
+                        String actionTooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
+
+                        // Check if we have to set the tooltip
+                        if (actionTooltip == null)
+                        {
+                            // Set and link action tooltip
+                            String tooltip = (description != null)
+                                ? description : null;
+                            action.putValue(Action.SHORT_DESCRIPTION, tooltip);
+                        }
+
+                        // Get action icon
+                        String actionIcon = (String) action.getValue(Action.SMALL_ICON);
+
+                        // Check if we have to set the icon
+                        if (actionIcon == null)
+                        {
+                            // Set action icon
+                            action.putValue(Action.SMALL_ICON,
+                                new ImageIcon(icon));
                         }
 
                         // Create the component with the action
@@ -412,6 +454,29 @@ public class MainMenuBar extends JMenuBar
                                 KeyStroke.getKeyStroke(keyStroke));
                         }
 
+                        // Get action tooltip
+                        String actionTooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
+
+                        // Check if we have to set the tooltip
+                        if (actionTooltip == null)
+                        {
+                            // Set and link action tooltip
+                            String tooltip = (description != null)
+                                ? description : null;
+                            action.putValue(Action.SHORT_DESCRIPTION, tooltip);
+                        }
+
+                        // Get action icon
+                        String actionIcon = (String) action.getValue(Action.SMALL_ICON);
+
+                        // Check if we have to set the icon
+                        if (actionIcon == null)
+                        {
+                            // Set action icon
+                            action.putValue(Action.SMALL_ICON,
+                                new ImageIcon(icon));
+                        }
+
                         // Create the component with the action
                         JCheckBoxMenuItem jComp = new JCheckBoxMenuItem(action);
 
@@ -421,6 +486,10 @@ public class MainMenuBar extends JMenuBar
                         // Put the component into the vector
                         currentMenuItems.add(jComp);
                     }
+                }
+                else
+                {
+                    currentMenuItems.add(new JMenuItem(menuLabel + " [no action]"));
                 }
             }
         }
@@ -439,12 +508,9 @@ public class MainMenuBar extends JMenuBar
         // If running under Mac OS X
         if (MAC_OS_X == true)
         {
-            String OSXClassName  = "fr.jmmc.mcs.gui.OSXAdapter";
-            String OSXMethodName = "registerMacOSXApplication";
-
-            // main window ???
-            Introspection.executeMethod(OSXClassName, OSXMethodName,
-                new Object[] { null });
+            // Execute registerMacOSXApplication method
+            Introspection.executeMethod("fr.jmmc.mcs.gui.OSXAdapter",
+                "registerMacOSXApplication", new Object[] { _jFrame });
         }
     }
 }

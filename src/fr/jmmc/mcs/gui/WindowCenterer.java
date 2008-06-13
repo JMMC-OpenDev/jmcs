@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: WindowCenterer.java,v 1.4 2008-06-10 09:12:02 bcolucci Exp $"
+ * "@(#) $Id: WindowCenterer.java,v 1.5 2008-06-13 06:14:38 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/06/10 09:12:02  bcolucci
+ * Create a function which returns a centered point on the screen in order
+ * to center the helpview window.
+ *
  * Revision 1.3  2008/05/29 10:00:10  mella
  * Fix bug when null is returned for the DisplayMode (was in VirtualBox)
  *
@@ -65,19 +69,27 @@ public class WindowCenterer
      */
     public static void centerOnMainScreen(JFrame frameToCenter)
     {
-        getScreenProperties();
+        // next try catch is mandatory to catach null pointer excpetion that
+        // can occure on some virtual machine emulation (at least virtualBox)
+        try{
+            getScreenProperties();
 
-        // Dimension of the JFrame
-        Dimension frameSize  = frameToCenter.getSize();
+            // Dimension of the JFrame
+            Dimension frameSize  = frameToCenter.getSize();
 
-        int       _XPOSITION = (_screenWidth - frameSize.width) / 2;
-        _XPOSITION           = Math.max(_XPOSITION, 0);
+            int       _XPOSITION = (_screenWidth - frameSize.width) / 2;
+            _XPOSITION           = Math.max(_XPOSITION, 0);
 
-        int _YPOSITION       = (_screenHeight - frameSize.height) / 2;
-        _YPOSITION           = Math.max(_YPOSITION, 0);
+            int _YPOSITION       = (_screenHeight - frameSize.height) / 2;
+            _YPOSITION           = Math.max(_YPOSITION, 0);
 
-        frameToCenter.setLocation(_XPOSITION, _YPOSITION);
-        _logger.fine("The window has been centered");
+            frameToCenter.setLocation(_XPOSITION, _YPOSITION);
+            _logger.fine("The window has been centered");
+        }
+        catch (Exception ex)
+        {
+            _logger.warning("Could not center window");
+        }
     }
 
     /**

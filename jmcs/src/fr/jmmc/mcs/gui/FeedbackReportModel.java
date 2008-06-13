@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.8 2008-06-12 11:57:55 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.9 2008-06-13 08:17:49 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2008/06/12 11:57:55  bcolucci
+ * Add a setter for application specific information.
+ *
  * Revision 1.7  2008/06/12 11:33:23  bcolucci
  * Add a new constructor which permits to add directly a specific information
  * about the application to the feedback report.
@@ -291,16 +294,6 @@ public class FeedbackReportModel extends Observable implements Runnable
         }
 
         return allHostProperties;
-    }
-
-    /**
-     * Set application specific information
-     *
-     * @param specificInformation specific information
-     */
-    public void setSecificInformation(String specificInformation)
-    {
-        _applicationSpecificInformation = specificInformation;
     }
 }
 /*___oOo___*/

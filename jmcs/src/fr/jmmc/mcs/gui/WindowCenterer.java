@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: WindowCenterer.java,v 1.5 2008-06-13 06:14:38 mella Exp $"
+ * "@(#) $Id: WindowCenterer.java,v 1.6 2008-06-13 08:13:43 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/06/13 06:14:38  mella
+ * Fix again bug (with comments in code ;)
+ *
  * Revision 1.4  2008/06/10 09:12:02  bcolucci
  * Create a function which returns a centered point on the screen in order
  * to center the helpview window.
@@ -49,8 +52,8 @@ public class WindowCenterer
     /** Screen height */
     public static int _screenHeight = 0;
 
-    /** Constructor */
-    public static void getScreenProperties()
+    /** Get screen properties */
+    public static void getScreenProperties() throws NullPointerException
     {
         // Get main screen size
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -68,20 +71,19 @@ public class WindowCenterer
      * @param frameToCenter the JFrame we want to center
      */
     public static void centerOnMainScreen(JFrame frameToCenter)
+        throws NullPointerException
     {
         // next try catch is mandatory to catach null pointer excpetion that
         // can occure on some virtual machine emulation (at least virtualBox)
-        try{
+        try
+        {
             getScreenProperties();
 
             // Dimension of the JFrame
-            Dimension frameSize  = frameToCenter.getSize();
+            Dimension frameSize = frameToCenter.getSize();
 
-            int       _XPOSITION = (_screenWidth - frameSize.width) / 2;
-            _XPOSITION           = Math.max(_XPOSITION, 0);
-
-            int _YPOSITION       = (_screenHeight - frameSize.height) / 2;
-            _YPOSITION           = Math.max(_YPOSITION, 0);
+            // Get centering point
+            Point point = getCenteringPoint(frameSize);
 
             frameToCenter.setLocation(_XPOSITION, _YPOSITION);
             _logger.fine("The window has been centered");
@@ -97,7 +99,8 @@ public class WindowCenterer
      * to center a frame on the screen
      * @return centered point
      */
-    public static Point getCenteredPoint(Dimension frameDimension)
+    public static Point getCenteringPoint(Dimension frameDimension)
+        throws NullPointerException
     {
         getScreenProperties();
 

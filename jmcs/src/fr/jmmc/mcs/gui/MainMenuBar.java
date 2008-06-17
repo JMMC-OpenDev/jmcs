@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.6 2008-06-13 08:16:10 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.7 2008-06-17 11:16:04 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/06/13 08:16:10  bcolucci
+ * Add possibility to specify icon and tooltip and keep action properties.
+ * Improve menus generation and use OSXAdapter.
+ *
  * Revision 1.5  2008/06/12 12:34:52  bcolucci
  * Fix the order of menu items thanks to a vector which keep
  * the order from XML file.
@@ -26,6 +30,8 @@
  *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
+
+import java.awt.*;
 
 import java.util.*;
 import java.util.logging.*;
@@ -53,7 +59,7 @@ public class MainMenuBar extends JMenuBar
     /** JMenus */
     private Hashtable<String, Vector<JComponent>> _jMenus = null;
 
-    /** Application JFrame */
+    /** Application frame */
     private JFrame _jFrame = null;
 
     /**
@@ -489,7 +495,8 @@ public class MainMenuBar extends JMenuBar
                 }
                 else
                 {
-                    currentMenuItems.add(new JMenuItem(menuLabel + " [no action]"));
+                    currentMenuItems.add(new JMenuItem(menuLabel +
+                            " [no action]"));
                 }
             }
         }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.7 2008-06-12 07:39:07 bcolucci Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.8 2008-06-17 11:10:37 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2008/06/12 07:39:07  bcolucci
+ * Removing function about menus generation.
+ *
  * Revision 1.6  2008/06/10 09:16:05  bcolucci
  * Implement a first solution about menus generation.
  *
@@ -268,7 +271,6 @@ public class ApplicationDataModel
             year = cal.get(Calendar.YEAR);
         }
 
-        // return _applicationDataCastorModel.getCopyright();
         return "Copyright \u00A9 1999 - " + year + ", JMMC.";
     }
 

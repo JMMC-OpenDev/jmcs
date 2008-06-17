@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.9 2008-06-13 08:17:49 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.10 2008-06-17 07:55:05 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2008/06/13 08:17:49  bcolucci
+ * Remove unused specific information settor.
+ *
  * Revision 1.8  2008/06/12 11:57:55  bcolucci
  * Add a setter for application specific information.
  *
@@ -112,11 +115,12 @@ public class FeedbackReportModel extends Observable implements Runnable
      */
     public FeedbackReportModel(String specificInformation)
     {
-        _applicationSpecificInformation     = specificInformation;
+        _applicationSpecificInformation = specificInformation;
+        _logger.fine("Specific information has been set");
 
-        _applicationDataModel               = App.getSharedApplicationDataModel();
+        _applicationDataModel      = App.getSharedApplicationDataModel();
 
-        _feedbackTypeDataModel              = new DefaultComboBoxModel(_feedbackTypes);
+        _feedbackTypeDataModel     = new DefaultComboBoxModel(_feedbackTypes);
         _logger.fine("TypeDataModel constructed");
 
         // Get informations to send with the report
@@ -124,7 +128,9 @@ public class FeedbackReportModel extends Observable implements Runnable
         _applicationName        = _applicationDataModel.getProgramName();
 
         _systemConfig           = getSystemConfig();
-        _applicationLog         = App.getLogOutput();
+        _logger.fine("system configuration has been saved");
+
+        _applicationLog = App.getLogOutput();
         _logger.fine("All generated report informations have been collected");
     }
 
@@ -210,6 +216,8 @@ public class FeedbackReportModel extends Observable implements Runnable
 
             if (_readyToSend)
             {
+                _logger.fine("Ready to send is true");
+
                 setMail(FeedbackReport.getMail());
                 setTypeDataModel(FeedbackReport.getDefaultComboBoxModel());
                 setDescription(FeedbackReport.getDescription());
@@ -245,16 +253,21 @@ public class FeedbackReportModel extends Observable implements Runnable
                     // Get PHP script result (either SUCCESS or FAILURE)
                     String response = method.getResponseBodyAsString();
 
-                    _logger.info(response);
+                    _logger.fine("HTTP response : " + response);
 
                     _send = (! response.contains("FAILED")) &&
                         (method.isRequestSent());
 
+                    _logger.fine("Report sent : " + (_send ? "YES" : "NO"));
+
                     // Set state to changed
                     setChanged();
+                    _logger.fine("The model has changed");
 
                     // Notify feedback report
                     notifyObservers(this);
+                    _logger.fine(
+                        "Observers have been notified that the model has changed");
                 }
                 catch (Exception ex)
                 {
@@ -262,6 +275,7 @@ public class FeedbackReportModel extends Observable implements Runnable
                 }
 
                 _readyToSend = false;
+                _logger.fine("Set ready to send to false");
             }
         }
     }

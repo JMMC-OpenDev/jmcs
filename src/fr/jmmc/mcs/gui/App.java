@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.16 2008-06-17 12:39:06 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.17 2008-06-17 13:04:18 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2008/06/17 12:39:06  bcolucci
+ * Improve the way to catch the exception while application creation and
+ * send the exception to the feedback report.
+ *
  * Revision 1.15  2008/06/17 11:33:04  bcolucci
  * Add the possibility to access to the arguments from the init abstract method.
  *
@@ -220,12 +224,10 @@ public abstract class App
         }
         catch (Exception ex)
         {
-            _logger.log(Level.SEVERE,
-                "Error during creation of the application", ex);
+            _logger.severe("Error during creation of the application");
 
-            String errorMessage = "Application error";
-            JOptionPane.showMessageDialog(null, errorMessage,
-                "An error was occured while the application creation",
+            String errorMessage = "An error was occured while the application creation";
+            JOptionPane.showMessageDialog(null, errorMessage, "Error",
                 JOptionPane.ERROR_MESSAGE);
 
             // Show feedback report

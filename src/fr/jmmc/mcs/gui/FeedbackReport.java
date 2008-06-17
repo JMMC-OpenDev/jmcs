@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.8 2008-06-17 11:13:05 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.9 2008-06-17 12:37:40 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2008/06/17 11:13:05  bcolucci
+ * Add tabbed pane in the window and the fact that the exception trace
+ * is put in a textarea.
+ *
  * Revision 1.7  2008/06/17 07:53:30  bcolucci
  * Extend from JDialog instead of JFrame in order to set it modal.
  * Reload progress bar after that a report has been sent.
@@ -127,6 +131,9 @@ public class FeedbackReport extends JDialog implements Observer
     /** Tabbed pane */
     private JTabbedPane _tabbedPane = null;
 
+    /** Exception */
+    private Exception _exception = null;
+
     /** Creates a new FeedbackReport object */
     public FeedbackReport()
     {
@@ -153,11 +160,28 @@ public class FeedbackReport extends JDialog implements Observer
      */
     public FeedbackReport(Frame frame, boolean modal)
     {
+        this(frame, modal, null);
+    }
+
+    /**
+     * Creates a new FeedbackReport object
+     * Set the parent frame and specify if this dialog is modal or not.
+     *
+     * @param frame parent frame
+     * @param modal if true, this dialog is modal
+     * @param exception exception
+     */
+    public FeedbackReport(Frame frame, boolean modal, Exception exception)
+    {
         super(frame, modal);
 
-        _feedbackReportModel = new FeedbackReportModel();
+        _exception               = exception;
+
+        // Create the model and add the observer
+        _feedbackReportModel     = new FeedbackReportModel();
         _feedbackReportModel.addObserver(this);
 
+        // Launch the model as thread
         _feedbackReportThread = new Thread(_feedbackReportModel);
         _feedbackReportThread.start();
 
@@ -178,24 +202,47 @@ public class FeedbackReport extends JDialog implements Observer
         // Create tabbed pane
         _tabbedPane = new JTabbedPane();
 
-        // Add user tab
+        // Add send report tab
         _tabbedPane.addTab("Send report", _mailAndTypeSplit);
 
-        // Create scoll pane and textarea
-        JScrollPane jScrollPane = new JScrollPane();
-        JTextArea   jTextArea   = new JTextArea();
+        // Create panel for scroll panes
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
 
-        // Set not editable
-        jTextArea.setEditable(false);
+        // Create scoll pane and textarea for the system properties
+        JScrollPane systemScrollPane = new JScrollPane();
+        JTextArea   systemTextArea   = new JTextArea();
 
-        // Put the exception trace in the textarea
-        jTextArea.setText(App.getLogOutput());
+        systemScrollPane.setAutoscrolls(true);
+        systemScrollPane.setBorder(BorderFactory.createTitledBorder(
+                "System properties :"));
+        systemTextArea.setEditable(false);
+        systemTextArea.setLineWrap(true);
+        systemTextArea.setRows(15);
+        systemTextArea.setText(_feedbackReportModel.getSystemConfig());
+        systemScrollPane.setViewportView(systemTextArea);
 
-        // Link scoll pane with textarea
-        jScrollPane.setViewportView(jTextArea);
+        // Add scroll pane in panel
+        panel.add(systemScrollPane, BorderLayout.PAGE_START);
 
-        // Add scoll pane to the tabbed pane
-        _tabbedPane.addTab("Application trace", jScrollPane);
+        // Create scoll pane and textarea for the exception message
+        JScrollPane exceptionScrollPane = new JScrollPane();
+        JTextArea   exceptionTextArea   = new JTextArea();
+
+        exceptionScrollPane.setAutoscrolls(true);
+        exceptionScrollPane.setBorder(BorderFactory.createTitledBorder(
+                "Exception message :"));
+        exceptionTextArea.setEditable(false);
+        exceptionTextArea.setLineWrap(true);
+        exceptionTextArea.setText((_exception != null) ? _exception.toString()
+                                                       : "None");
+        exceptionScrollPane.setViewportView(exceptionTextArea);
+
+        // Add scroll pane in panel
+        panel.add(exceptionScrollPane, BorderLayout.CENTER);
+
+        // Add panel to the tabbed pane
+        _tabbedPane.addTab("Details", panel);
     }
 
     /** Set frame properties */

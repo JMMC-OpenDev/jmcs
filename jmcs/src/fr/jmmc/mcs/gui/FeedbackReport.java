@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.6 2008-05-27 12:06:48 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.7 2008-06-17 07:53:30 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/05/27 12:06:48  bcolucci
+ * Moving the JOptionPane to view from model.
+ * Stopping the report thread in background.
+ * Reactivating the submit button after a report.
+ *
  * Revision 1.5  2008/05/20 08:52:16  bcolucci
  * Changed communication between View and Model to Observer/Observable pattern.
  *
@@ -41,7 +46,7 @@ import javax.swing.JOptionPane;
 
 
 /** View of feedback report box */
-public class FeedbackReport extends JFrame implements Observer
+public class FeedbackReport extends JDialog implements Observer
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
@@ -115,6 +120,15 @@ public class FeedbackReport extends JFrame implements Observer
     /** Constructor */
     public FeedbackReport()
     {
+        this(null);
+    }
+
+    /** Constructor */
+    public FeedbackReport(Frame frame)
+    {
+        // Set modal
+        super(frame, true);
+
         _feedbackReportModel = new FeedbackReportModel();
         _feedbackReportModel.addObserver(this);
 
@@ -139,8 +153,8 @@ public class FeedbackReport extends JFrame implements Observer
         setTitle("Feedback Report");
         setResizable(false);
         pack();
-        setVisible(true);
         WindowCenterer.centerOnMainScreen(this);
+        setVisible(true);
         _logger.fine("Frame properties have been set");
     }
 
@@ -278,7 +292,6 @@ public class FeedbackReport extends JFrame implements Observer
     /** Set load bar properties */
     private void activateLoadBarProperties()
     {
-        _submitButton.setText("Submit");
         _loadBar.setStringPainted(true);
         _loadBar.setIndeterminate(true);
         _loadBar.setString("Sending report...");
@@ -290,6 +303,8 @@ public class FeedbackReport extends JFrame implements Observer
     /** Update progress bar according to report sending completion state */
     public void update(Observable observable, Object object)
     {
+        activateLoadBarProperties();
+
         _loadBar.setIndeterminate(false);
 
         FeedbackReportModel feedbackReportModel = (FeedbackReportModel) object;

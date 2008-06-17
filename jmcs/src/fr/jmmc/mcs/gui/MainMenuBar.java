@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.7 2008-06-17 11:16:04 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.8 2008-06-17 11:59:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2008/06/17 11:16:04  bcolucci
+ * Fix some comments.
+ *
  * Revision 1.6  2008/06/13 08:16:10  bcolucci
  * Add possibility to specify icon and tooltip and keep action properties.
  * Improve menus generation and use OSXAdapter.
@@ -97,28 +100,33 @@ public class MainMenuBar extends JMenuBar
         {
             // Get menus from ApplicationData.xml
             fr.jmmc.mcs.gui.castor.Menubar menuBar = applicationDataModel.getMenubar();
-            fr.jmmc.mcs.gui.castor.Menu[]  menus   = menuBar.getMenu();
-
-            // For each menu
-            for (fr.jmmc.mcs.gui.castor.Menu menu : menus)
+            if (menuBar != null)
             {
-                // Get label
-                String menuLabel = menu.getLabel();
-
-                /* In order to sort other menu items later, we have to
-                   keep the order from XML file. So we will access to the
-                   hashtable with the key in the good order */
-                if (! menuLabel.equals("File") && ! menuLabel.equals("Edit") &&
-                        ! menuLabel.equals("Help"))
+                fr.jmmc.mcs.gui.castor.Menu[]  menus   = menuBar.getMenu();
+                if (menus != null)
                 {
-                    _otherMenuKeys.add(menuLabel);
+                    // For each menu
+                    for (fr.jmmc.mcs.gui.castor.Menu menu : menus)
+                    {
+                        // Get label
+                        String menuLabel = menu.getLabel();
+                        
+                        /* In order to sort other menu items later, we have to
+                         keep the order from XML file. So we will access to the
+                         hashtable with the key in the good order */
+                        if (! menuLabel.equals("File") && ! menuLabel.equals("Edit") &&
+                            ! menuLabel.equals("Help"))
+                        {
+                            _otherMenuKeys.add(menuLabel);
+                        }
+                        
+                        // Get menu items from menu
+                        Vector<JComponent> currentMenuItems = getMenuItems(menu);
+                        
+                        // Put the menu with it's menu items
+                        _jMenus.put(menuLabel, currentMenuItems);
+                    }
                 }
-
-                // Get menu items from menu
-                Vector<JComponent> currentMenuItems = getMenuItems(menu);
-
-                // Put the menu with it's menu items
-                _jMenus.put(menuLabel, currentMenuItems);
             }
 
             // Create file menu

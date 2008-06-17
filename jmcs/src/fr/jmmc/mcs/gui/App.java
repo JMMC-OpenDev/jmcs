@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.12 2008-06-13 08:46:35 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.13 2008-06-17 08:01:53 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2008/06/13 08:46:35  bcolucci
+ * Add the default case in argument interpretation function.
+ * Modify the exit method for applet.
+ * Add logGui action method.
+ *
  * Revision 1.11  2008/06/12 07:42:08  bcolucci
  * Modify the way to access to the exit method (we have to check if when we call
  * the exit method from App, it calls exit from child class too).
@@ -54,6 +59,7 @@ package fr.jmmc.mcs.gui;
 
 import gnu.getopt.*;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 import java.io.*;
@@ -98,6 +104,9 @@ public abstract class App
 
     /** AboutBox */
     private static AboutBox _aboutBox = null;
+
+    /** Main frame of the application */
+    private static JFrame _applicationFrame = new JFrame();
 
     /** Default menu components (file, edit...) */
     private Vector<JComponent> _defaultMenuComponents = null;
@@ -271,7 +280,8 @@ public abstract class App
                         }
                         else
                         {
-                            _aboutBox = new AboutBox();
+                            // Set about box dialog to modal
+                            _aboutBox = new AboutBox(_applicationFrame);
                         }
                     }
                 }
@@ -287,7 +297,8 @@ public abstract class App
                 {
                     if (_applicationDataModel != null)
                     {
-                        new FeedbackReport();
+                        // Set feedback report dialog to modal
+                        new FeedbackReport(_applicationFrame);
                     }
                 }
             };
@@ -494,8 +505,16 @@ public abstract class App
             showSplashScreen();
         }
 
+        // Set JMenuBar
+        MainMenuBar mainMenuBar = new MainMenuBar(_applicationFrame);
+        _applicationFrame.setJMenuBar(mainMenuBar);
+
         // Call abstract init method
         init();
+
+        // Set application frame common properties
+        _applicationFrame.pack();
+        _applicationFrame.setLocationRelativeTo(null);
 
         // Close the splash screen if we have to
         if (_showSplashScreen)
@@ -553,6 +572,26 @@ public abstract class App
     public static ApplicationDataModel getSharedApplicationDataModel()
     {
         return _applicationDataModel;
+    }
+
+    /**
+     * Return the application frame
+     *
+     * @return application frame
+     */
+    protected static Frame getFrame()
+    {
+        return _applicationFrame;
+    }
+
+    /**
+     * Return the application frame panel
+     *
+     * @return application frame panel
+     */
+    protected static Container getFramePanel()
+    {
+        return _applicationFrame.getContentPane();
     }
 }
 /*___oOo___*/

@@ -1,11 +1,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.13 2008-06-17 08:01:53 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.14 2008-06-17 11:15:36 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2008/06/17 08:01:53  bcolucci
+ * Add the application main frame as attribute.
+ * Add getter for the application frame and another for it's panel.
+ * Import creation of the menubar in App instead of the application class
+ * because App has got the application frame.
+ * Set common properties on application frame (pack and setLocation).
+ * Call the new constructors of aboutbox and feedbackReport in order
+ * to set them modal.
+ *
  * Revision 1.12  2008/06/13 08:46:35  bcolucci
  * Add the default case in argument interpretation function.
  * Modify the exit method for applet.
@@ -161,35 +170,50 @@ public abstract class App
     protected App(String[] args, boolean waitBeforeExecution,
         boolean showSplashScreen, boolean exitWhenClosed)
     {
-        _showSplashScreen              = showSplashScreen;
-        _exitApplicationWhenClosed     = exitWhenClosed;
-
-        SimpleFormatter simpleFormatter = new SimpleFormatter();
-        _streamHandler                 = new StreamHandler(_byteArrayOutputStream,
-                simpleFormatter);
-
-        // We add the memory handler created and the console one to the logger
-        _logger.addHandler(_consoleHandler);
-        _logger.addHandler(_streamHandler);
-        _logger.setLevel(Level.INFO);
-        _logger.fine("Logger properties set");
-
-        _logger.fine(
-            "Memory and console handler created and fixed to feedbackLogger");
-        _logger.fine("App object instantiated and logger created");
-
-        // Set the application data attribute
-        setApplicationData();
-        _logger.fine("Application data set");
-
-        // Interpret arguments
-        interpretArguments(args);
-
-        // If execution should not be delayed
-        if (waitBeforeExecution == false)
+        try
         {
-            // Run the application imediatly
-            run();
+            _showSplashScreen              = showSplashScreen;
+            _exitApplicationWhenClosed     = exitWhenClosed;
+
+            SimpleFormatter simpleFormatter = new SimpleFormatter();
+            _streamHandler                 = new StreamHandler(_byteArrayOutputStream,
+                    simpleFormatter);
+
+            // We add the memory handler created and the console one to the logger
+            _logger.addHandler(_consoleHandler);
+            _logger.addHandler(_streamHandler);
+            _logger.setLevel(Level.INFO);
+            _logger.fine("Logger properties set");
+
+            _logger.fine(
+                "Memory and console handler created and fixed to feedbackLogger");
+            _logger.fine("App object instantiated and logger created");
+
+            // Set the application data attribute
+            setApplicationData();
+            _logger.fine("Application data set");
+
+            // Interpret arguments
+            interpretArguments(args);
+
+            // If execution should not be delayed
+            if (waitBeforeExecution == false)
+            {
+                // Run the application imediatly
+                run();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.log(Level.SEVERE,
+                "Error during creation of the application", ex);
+
+            String errorMessage = "Error during creation of the application";
+            JOptionPane.showMessageDialog(null, errorMessage,
+                "Application cannot be launched", JOptionPane.ERROR_MESSAGE);
+
+            // Show feedback report
+            new FeedbackReport(null, false);
         }
     }
 
@@ -277,18 +301,21 @@ public abstract class App
                             {
                                 _aboutBox.setVisible(true);
                             }
+                            else
+                            {
+                                _aboutBox.toFront();
+                            }
                         }
                         else
                         {
-                            // Set about box dialog to modal
-                            _aboutBox = new AboutBox(_applicationFrame);
+                            _aboutBox = new AboutBox();
                         }
                     }
                 }
             };
     }
 
-    /** Creates the action which open the feedback report window */
+    /** Creates the feedback action which open the feedback window */
     public static Action feedbackReportAction()
     {
         return new AbstractAction("Show Feedback Report")
@@ -297,8 +324,7 @@ public abstract class App
                 {
                     if (_applicationDataModel != null)
                     {
-                        // Set feedback report dialog to modal
-                        new FeedbackReport(_applicationFrame);
+                        new FeedbackReport(_applicationFrame, true);
                     }
                 }
             };

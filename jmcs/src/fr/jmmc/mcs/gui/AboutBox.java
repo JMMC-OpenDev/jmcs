@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.9 2008-05-20 08:45:51 bcolucci Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.10 2008-06-17 07:49:08 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2008/05/20 08:45:51  bcolucci
+ * Changed way to get packages informations.
+ *
  * Revision 1.8  2008/05/19 14:44:23  lafrasse
  * Changed application version format.
  *
@@ -51,7 +54,7 @@ import javax.swing.event.HyperlinkListener;
  * Open a new About window with informations
  * from XML file which should be named "ApplicationData.xml" in src folder
  */
-public class AboutBox extends JFrame implements HyperlinkListener
+public class AboutBox extends JDialog implements HyperlinkListener
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(AboutBox.class.getName());
@@ -134,6 +137,18 @@ public class AboutBox extends JFrame implements HyperlinkListener
      */
     public AboutBox()
     {
+        this(null);
+    }
+
+    /**
+     * Load the application information from ApplicationDataModel and display
+     * its content in the window with possibility to make it modal.
+     */
+    public AboutBox(Frame frame)
+    {
+        // Set modal
+        super(frame, true);
+
         ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
         if (applicationDataModel != null)

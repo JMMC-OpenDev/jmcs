@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.10 2008-06-17 07:49:08 bcolucci Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.11 2008-06-17 11:09:49 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2008/06/17 07:49:08  bcolucci
+ * Extend from JDialog instead of JFrame in order to set it modal.
+ *
  * Revision 1.9  2008/05/20 08:45:51  bcolucci
  * Changed way to get packages informations.
  *
@@ -137,17 +140,32 @@ public class AboutBox extends JDialog implements HyperlinkListener
      */
     public AboutBox()
     {
-        this(null);
+        this(null, false);
     }
 
     /**
      * Load the application information from ApplicationDataModel and display
-     * its content in the window with possibility to make it modal.
+     * its content in the window.
+     * Set the parent frame.
+     *
+     * @param frame parent frame
      */
     public AboutBox(Frame frame)
     {
-        // Set modal
-        super(frame, true);
+        this(frame, false);
+    }
+
+    /**
+     * Load the application information from ApplicationDataModel and display
+     * its content in the window.
+     * Set the parent frame and specify if this dialog is modal or not.
+     *
+     * @param frame parent frame
+     * @param modal if true, this dialog is modal
+     */
+    public AboutBox(Frame frame, boolean modal)
+    {
+        super(frame, modal);
 
         ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 

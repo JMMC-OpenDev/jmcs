@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.15 2008-06-17 11:33:04 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.16 2008-06-17 12:39:06 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2008/06/17 11:33:04  bcolucci
+ * Add the possibility to access to the arguments from the init abstract method.
+ *
  * Revision 1.14  2008/06/17 11:15:36  bcolucci
  * Catch exception during all the creation of the application
  * and show the feedback report window.
@@ -209,7 +212,7 @@ public abstract class App
             interpretArguments(args);
 
             // If execution should not be delayed
-            if (waitBeforeExecution == false)
+            if ((waitBeforeExecution == false))
             {
                 // Run the application imediatly
                 run();
@@ -220,12 +223,13 @@ public abstract class App
             _logger.log(Level.SEVERE,
                 "Error during creation of the application", ex);
 
-            String errorMessage = "Error during creation of the application";
+            String errorMessage = "Application error";
             JOptionPane.showMessageDialog(null, errorMessage,
-                "Application cannot be launched", JOptionPane.ERROR_MESSAGE);
+                "An error was occured while the application creation",
+                JOptionPane.ERROR_MESSAGE);
 
             // Show feedback report
-            new FeedbackReport(null, false);
+            new FeedbackReport(null, false, ex);
         }
     }
 
@@ -330,13 +334,19 @@ public abstract class App
     /** Creates the feedback action which open the feedback window */
     public static Action feedbackReportAction()
     {
+        return feedbackReportAction(null);
+    }
+
+    /** Creates the feedback action which open the feedback window */
+    public static Action feedbackReportAction(final Exception ex)
+    {
         return new AbstractAction("Show Feedback Report")
             {
                 public void actionPerformed(ActionEvent evt)
                 {
                     if (_applicationDataModel != null)
                     {
-                        new FeedbackReport(_applicationFrame, true);
+                        new FeedbackReport(_applicationFrame, true, ex);
                     }
                 }
             };

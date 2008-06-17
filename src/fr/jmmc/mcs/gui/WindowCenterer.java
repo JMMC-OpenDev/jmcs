@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: WindowCenterer.java,v 1.7 2008-06-13 08:25:00 bcolucci Exp $"
+ * "@(#) $Id: WindowCenterer.java,v 1.8 2008-06-17 07:50:52 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2008/06/13 08:25:00  bcolucci
+ * Use point returned by getCenteringPoint in setLocation instead of x and y.
+ *
  * Revision 1.6  2008/06/13 08:13:43  bcolucci
  * Fix getDisplayMode null pointer exception.
  *
@@ -73,7 +76,7 @@ public class WindowCenterer
      *
      * @param frameToCenter the JFrame we want to center
      */
-    public static void centerOnMainScreen(JFrame frameToCenter)
+    public static void centerOnMainScreen(Window frameToCenter)
         throws NullPointerException
     {
         // next try catch is mandatory to catach null pointer excpetion that

@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.7 2008-06-17 07:53:30 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.8 2008-06-17 11:13:05 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2008/06/17 07:53:30  bcolucci
+ * Extend from JDialog instead of JFrame in order to set it modal.
+ * Reload progress bar after that a report has been sent.
+ * Set the dialog visible after that it has been centered.
+ *
  * Revision 1.6  2008/05/27 12:06:48  bcolucci
  * Moving the JOptionPane to view from model.
  * Stopping the report thread in background.
@@ -32,6 +37,8 @@ package fr.jmmc.mcs.gui;
 
 import java.awt.*;
 import java.awt.event.*;
+
+import java.io.*;
 
 import java.lang.Thread;
 
@@ -117,17 +124,36 @@ public class FeedbackReport extends JDialog implements Observer
     /** Feedback report thread */
     private Thread _feedbackReportThread = null;
 
-    /** Constructor */
+    /** Tabbed pane */
+    private JTabbedPane _tabbedPane = null;
+
+    /** Creates a new FeedbackReport object */
     public FeedbackReport()
     {
-        this(null);
+        this(null, false);
     }
 
-    /** Constructor */
+    /**
+     * Creates a new FeedbackReport object
+     * Set the parent frame.
+     *
+     * @param frame parent frame
+     */
     public FeedbackReport(Frame frame)
     {
-        // Set modal
-        super(frame, true);
+        this(frame, false);
+    }
+
+    /**
+     * Creates a new FeedbackReport object
+     * Set the parent frame and specify if this dialog is modal or not.
+     *
+     * @param frame parent frame
+     * @param modal if true, this dialog is modal
+     */
+    public FeedbackReport(Frame frame, boolean modal)
+    {
+        super(frame, modal);
 
         _feedbackReportModel = new FeedbackReportModel();
         _feedbackReportModel.addObserver(this);
@@ -141,15 +167,42 @@ public class FeedbackReport extends JDialog implements Observer
         setTypeProperties();
         setDescriptionProperties();
         setButtonsProperties();
+        setTabbedProperties();
         setFrameProperties();
         _logger.fine("All feedback report properties have been set");
+    }
+
+    /** Set tabbed pane properties */
+    private void setTabbedProperties()
+    {
+        // Create tabbed pane
+        _tabbedPane = new JTabbedPane();
+
+        // Add user tab
+        _tabbedPane.addTab("Send report", _mailAndTypeSplit);
+
+        // Create scoll pane and textarea
+        JScrollPane jScrollPane = new JScrollPane();
+        JTextArea   jTextArea   = new JTextArea();
+
+        // Set not editable
+        jTextArea.setEditable(false);
+
+        // Put the exception trace in the textarea
+        jTextArea.setText(App.getLogOutput());
+
+        // Link scoll pane with textarea
+        jScrollPane.setViewportView(jTextArea);
+
+        // Add scoll pane to the tabbed pane
+        _tabbedPane.addTab("Application trace", jScrollPane);
     }
 
     /** Set frame properties */
     private void setFrameProperties()
     {
         // Finish window configuration and draw it
-        getContentPane().add(_mailAndTypeSplit, BorderLayout.CENTER);
+        getContentPane().add(_tabbedPane, BorderLayout.CENTER);
         setTitle("Feedback Report");
         setResizable(false);
         pack();

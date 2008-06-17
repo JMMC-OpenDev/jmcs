@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.9 2008-06-17 12:37:40 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.10 2008-06-17 13:03:17 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2008/06/17 12:37:40  bcolucci
+ * Improve tabbed component conception.
+ * Add the possibility to put an exception in the constructor.
+ *
  * Revision 1.8  2008/06/17 11:13:05  bcolucci
  * Add tabbed pane in the window and the fact that the exception trace
  * is put in a textarea.
@@ -199,6 +203,9 @@ public class FeedbackReport extends JDialog implements Observer
     /** Set tabbed pane properties */
     private void setTabbedProperties()
     {
+        // Get exception trace
+        String exceptionTrace = getExceptionTrace();
+
         // Create tabbed pane
         _tabbedPane = new JTabbedPane();
 
@@ -234,8 +241,7 @@ public class FeedbackReport extends JDialog implements Observer
                 "Exception message :"));
         exceptionTextArea.setEditable(false);
         exceptionTextArea.setLineWrap(true);
-        exceptionTextArea.setText((_exception != null) ? _exception.toString()
-                                                       : "None");
+        exceptionTextArea.setText(exceptionTrace);
         exceptionScrollPane.setViewportView(exceptionTextArea);
 
         // Add scroll pane in panel
@@ -472,6 +478,31 @@ public class FeedbackReport extends JDialog implements Observer
     public static String getDescription()
     {
         return _description.getText();
+    }
+
+    /**
+     * Return exception trace as a string
+     *
+     * @return exception trace
+     */
+    private String getExceptionTrace()
+    {
+        String exceptionTrace = "None";
+
+        // Check if the exception is not null
+        if (_exception != null)
+        {
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter  printWriter  = new PrintWriter(stringWriter);
+
+            _exception.printStackTrace(printWriter);
+
+            exceptionTrace = stringWriter.toString();
+
+            //_exception.printStackTrace();
+        }
+
+        return exceptionTrace;
     }
 }
 /*___oOo___*/

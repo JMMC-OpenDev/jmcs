@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.14 2008-06-17 11:15:36 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.15 2008-06-17 11:33:04 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2008/06/17 11:15:36  bcolucci
+ * Catch exception during all the creation of the application
+ * and show the feedback report window.
+ * Put the aboutbox in front of screen if it is in background when we click
+ * on the button a second time.
+ *
  * Revision 1.13  2008/06/17 08:01:53  bcolucci
  * Add the application main frame as attribute.
  * Add getter for the application frame and another for it's panel.
@@ -117,6 +123,9 @@ public abstract class App
     /** Main frame of the application */
     private static JFrame _applicationFrame = new JFrame();
 
+    /** Arguments */
+    private static String[] _args;
+
     /** Default menu components (file, edit...) */
     private Vector<JComponent> _defaultMenuComponents = null;
 
@@ -172,11 +181,14 @@ public abstract class App
     {
         try
         {
+            // Attributes affectations
+            _args                          = args;
             _showSplashScreen              = showSplashScreen;
             _exitApplicationWhenClosed     = exitWhenClosed;
 
+            // Logger's stream handler creation
             SimpleFormatter simpleFormatter = new SimpleFormatter();
-            _streamHandler                 = new StreamHandler(_byteArrayOutputStream,
+            _streamHandler = new StreamHandler(_byteArrayOutputStream,
                     simpleFormatter);
 
             // We add the memory handler created and the console one to the logger
@@ -390,7 +402,7 @@ public abstract class App
 
         // Instantiate the getopt object
         Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(),
-                args, "-:hv:", longopts, true);
+                args, "hv:", longopts, true);
 
         int    c; // argument key
         String arg    = null; // argument value
@@ -506,7 +518,7 @@ public abstract class App
     }
 
     /** Initialize application objects */
-    protected abstract void init();
+    protected abstract void init(String[] args);
 
     /** Execute application body */
     protected abstract void execute();
@@ -535,8 +547,8 @@ public abstract class App
         MainMenuBar mainMenuBar = new MainMenuBar(_applicationFrame);
         _applicationFrame.setJMenuBar(mainMenuBar);
 
-        // Call abstract init method
-        init();
+        // Call abstract init method with arguments
+        init(_args);
 
         // Set application frame common properties
         _applicationFrame.pack();

@@ -19,7 +19,6 @@
                     </xsd:complexType>
                 </xsd:element>
                 <xsd:element name="text" type="xsd:string"/>
-                <xsd:element name="copyright" type="xsd:string"/>
                 <xsd:element name="dependences">
                     <xsd:complexType>
                         <xsd:sequence>

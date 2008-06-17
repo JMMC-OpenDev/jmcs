@@ -4,8 +4,6 @@
 	<program name="Application name" version="Program version"/>
 	<compilation date="10/10/2010" compiler="Compilator"/>
 	<text>Text</text>
-	<copyright>Copyrights</copyright>
 	<dependences>
     </dependences>
-    <!-- do not define menu here (see MainMenubar.java) -->
 </ApplicationData>

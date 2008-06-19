@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.10 2008-06-17 13:03:17 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.11 2008-06-19 13:10:50 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2008/06/17 13:03:17  bcolucci
+ * Create a function which returns an exception trace as a string.
+ *
  * Revision 1.9  2008/06/17 12:37:40  bcolucci
  * Improve tabbed component conception.
  * Add the possibility to put an exception in the constructor.
@@ -225,7 +228,7 @@ public class FeedbackReport extends JDialog implements Observer
                 "System properties :"));
         systemTextArea.setEditable(false);
         systemTextArea.setLineWrap(true);
-        systemTextArea.setRows(15);
+        systemTextArea.setRows(10);
         systemTextArea.setText(_feedbackReportModel.getSystemConfig());
         systemScrollPane.setViewportView(systemTextArea);
 
@@ -240,6 +243,7 @@ public class FeedbackReport extends JDialog implements Observer
         exceptionScrollPane.setBorder(BorderFactory.createTitledBorder(
                 "Exception message :"));
         exceptionTextArea.setEditable(false);
+        exceptionTextArea.setRows(10);
         exceptionTextArea.setLineWrap(true);
         exceptionTextArea.setText(exceptionTrace);
         exceptionScrollPane.setViewportView(exceptionTextArea);

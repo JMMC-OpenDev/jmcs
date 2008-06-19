@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.10 2008-06-19 13:11:47 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.11 2008-06-19 13:32:33 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2008/06/19 13:11:47  bcolucci
+ * Modify the way to generate the menubar. Use
+ * circular references into XSD schema.
+ *
  * Revision 1.9  2008/06/17 12:36:04  bcolucci
  * Merge fix about "null-pointer exceptions in case no menu is defined in the XML file".
  *
@@ -77,63 +81,51 @@ public class MainMenuBar extends JMenuBar
         // Get the application data model
         ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
-        // If it's null, we exit
-        if (applicationDataModel == null)
-        {
-            _logger.warning("Cannot get application data model");
-
-            return;
-        }
-
-        // Get the menubar element from XML
-        fr.jmmc.mcs.gui.castor.Menubar menuBar = applicationDataModel.getMenubar();
-
-        // If it's null, we exit
-        if (menuBar == null)
-        {
-            _logger.warning(
-                "Cannot get menubar element from ApplicationData.xml");
-
-            return;
-        }
-
-        // Get the menu elements from menubar
-        fr.jmmc.mcs.gui.castor.Menu[] menus = menuBar.getMenu();
-
-        // If it's null, we exit
-        if (menus == null)
-        {
-            _logger.warning("Cannot get menu elements from menubar");
-
-            return;
-        }
-
         // Contains the name of the others menus
-        Vector<String> otherMenus = new Vector<String>();
+        Vector<String>       otherMenus           = new Vector<String>();
 
-        for (fr.jmmc.mcs.gui.castor.Menu menu : menus)
+        // If it's null, we exit
+        if (applicationDataModel != null)
         {
-            // Get menu label
-            String currentMenuLabel = menu.getLabel();
-            _logger.fine("Make " + currentMenuLabel + " menu");
+            // Get the menubar element from XML
+            fr.jmmc.mcs.gui.castor.Menubar menuBar = applicationDataModel.getMenubar();
 
-            // Keep it if it's an other menu
-            if (! currentMenuLabel.equals("File") &&
-                    ! currentMenuLabel.equals("Edit") &&
-                    ! currentMenuLabel.equals("Help"))
+            // If it's null, we exit
+            if (menuBar != null)
             {
-                otherMenus.add(currentMenuLabel);
-                _logger.fine("Add " + currentMenuLabel +
-                    " to other menus vector");
+                // Get the menu elements from menubar
+                fr.jmmc.mcs.gui.castor.Menu[] menus = menuBar.getMenu();
+
+                // If it's null, we exit
+                if (menus != null)
+                {
+                    for (fr.jmmc.mcs.gui.castor.Menu menu : menus)
+                    {
+                        // Get menu label
+                        String currentMenuLabel = menu.getLabel();
+                        _logger.fine("Make " + currentMenuLabel + " menu");
+
+                        // Keep it if it's an other menu
+                        if (! currentMenuLabel.equals("File") &&
+                                ! currentMenuLabel.equals("Edit") &&
+                                ! currentMenuLabel.equals("Help"))
+                        {
+                            otherMenus.add(currentMenuLabel);
+                            _logger.fine("Add " + currentMenuLabel +
+                                " to other menus vector");
+                        }
+
+                        // Get the component according to the castor menu object
+                        JMenu completeMenu = (JMenu) recursiveParser(menu,
+                                null, true);
+
+                        // Put it in the menu table
+                        _menusTable.put(currentMenuLabel, completeMenu);
+                        _logger.fine("Put " + completeMenu.getName() +
+                            " into the menus table");
+                    }
+                }
             }
-
-            // Get the component according to the castor menu object
-            JMenu completeMenu = (JMenu) recursiveParser(menu, null, true);
-
-            // Put it in the menu table
-            _menusTable.put(currentMenuLabel, completeMenu);
-            _logger.fine("Put " + completeMenu.getName() +
-                " into the menus table");
         }
 
         // Create file menu

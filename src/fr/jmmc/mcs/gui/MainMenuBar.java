@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.11 2008-06-19 13:32:33 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.12 2008-06-19 14:35:07 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2008/06/19 13:32:33  bcolucci
+ * Fix : generate default menus even if there is no menubar element
+ * in the ApplicationData.xml
+ *
  * Revision 1.10  2008/06/19 13:11:47  bcolucci
  * Modify the way to generate the menubar. Use
  * circular references into XSD schema.
@@ -154,6 +158,9 @@ public class MainMenuBar extends JMenuBar
         // Create menu
         JMenu fileMenu = new JMenu("File");
 
+        // There is one menu item at least
+        boolean haveMenu = false;
+
         // Get file menu from table
         JMenu file = _menusTable.get("File");
 
@@ -163,6 +170,8 @@ public class MainMenuBar extends JMenuBar
 
             if (components.length > 0)
             {
+                haveMenu = true;
+
                 // Add each component
                 for (Component currentComponent : components)
                 {
@@ -179,11 +188,15 @@ public class MainMenuBar extends JMenuBar
         if (! MAC_OS_X)
         {
             fileMenu.add(App.exitAction());
+            haveMenu = true;
         }
 
-        // Add menu to menubar
-        add(fileMenu);
-        _logger.fine("Add file into the menubar");
+        // Add menu to menubar if there is a menuitem at least
+        if (haveMenu)
+        {
+            add(fileMenu);
+            _logger.fine("Add file into the menubar");
+        }
     }
 
     /** Create edit menu */

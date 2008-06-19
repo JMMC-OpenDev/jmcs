@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.8 2008-06-17 11:10:37 bcolucci Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.9 2008-06-19 13:09:54 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2008/06/17 11:10:37  bcolucci
+ * Fix little bugs in menus generation.
+ *
  * Revision 1.7  2008/06/12 07:39:07  bcolucci
  * Removing function about menus generation.
  *
@@ -275,9 +278,9 @@ public class ApplicationDataModel
     }
 
     /**
-     * DOCUMENT ME!
+     * Return menubar from XML
      *
-     * @return DOCUMENT ME!
+     * @return menubar
      */
     public fr.jmmc.mcs.gui.castor.Menubar getMenubar()
     {

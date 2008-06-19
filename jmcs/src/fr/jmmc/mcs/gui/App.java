@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.17 2008-06-17 13:04:18 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.18 2008-06-19 13:09:03 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2008/06/17 13:04:18  bcolucci
+ * Change a log level and the creation error window message.
+ *
  * Revision 1.16  2008/06/17 12:39:06  bcolucci
  * Improve the way to catch the exception while application creation and
  * send the exception to the feedback report.
@@ -226,12 +229,22 @@ public abstract class App
         {
             _logger.severe("Error during creation of the application");
 
+            // In order to see the error window
+            if (_splashScreen != null)
+            {
+                if (_splashScreen.isVisible())
+                {
+                    _splashScreen.setVisible(false);
+                }
+            }
+
             String errorMessage = "An error was occured while the application creation";
             JOptionPane.showMessageDialog(null, errorMessage, "Error",
                 JOptionPane.ERROR_MESSAGE);
 
             // Show feedback report
-            new FeedbackReport(null, false, ex);
+            new FeedbackReport(((_applicationFrame != null) ? _applicationFrame
+                                                            : null), true, ex);
         }
     }
 
@@ -348,7 +361,7 @@ public abstract class App
                 {
                     if (_applicationDataModel != null)
                     {
-                        new FeedbackReport(_applicationFrame, true, ex);
+                        new FeedbackReport(_applicationFrame, false, ex);
                     }
                 }
             };

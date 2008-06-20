@@ -1,23 +1,35 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Introspection.java,v 1.2 2008-06-12 11:54:11 bcolucci Exp $"
+ * "@(#) $Id: Introspection.java,v 1.3 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2008/06/12 11:54:11  bcolucci
+ * Add functions in order to simply execute a method without get it's value.
+ *
  * Revision 1.1  2008/06/12 09:30:06  bcolucci
  * *** empty log message ***
  *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 
-/** This class is used for introspection */
+/**
+ * This class provides functions in order to use
+ * Java introspection.
+ *
+ * For example, you can easily execute a method of
+ * a class with the class name and the method name.
+ * Or you can know if a field exists, get a method
+ * value etc...
+ */
 public class Introspection
 {
     /** Logger */

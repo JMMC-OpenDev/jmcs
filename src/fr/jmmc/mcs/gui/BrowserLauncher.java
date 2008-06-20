@@ -1,18 +1,27 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: BrowserLauncher.java,v 1.1 2008-05-16 12:33:30 bcolucci Exp $"
+ * "@(#) $Id: BrowserLauncher.java,v 1.2 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/05/16 12:33:30  bcolucci
+ * Creation.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.util.logging.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
-/** Use the BrowserLauncher of edu.stanford.ejalbert package. */
+/**
+ * This class provides a function to open a web page
+ * with the default web browser of the user system.
+ *
+ * It uses <b>BrowserLauncher</b>.
+ */
 public class BrowserLauncher
 {
     /** Logger */

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: jmcsGenerateHelpsetFromHtml.java,v 1.2 2008-05-16 12:40:09 bcolucci Exp $"
+ * "@(#) $Id: jmcsGenerateHelpsetFromHtml.java,v 1.3 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2008/05/16 12:40:09  bcolucci
+ * Added argument checks and updated output.
+ *
  * Revision 1.1  2008/04/29 14:28:58  bcolucci
  * Added JavaHelp support and automatic documentation generation from HTML.
  *
@@ -21,10 +24,19 @@ import net.sourceforge.jhelpdev.settings.FileName;
 
 import java.io.File;
 
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 
-/** Generates a HelpSet file of a HTML folder */
+/**
+ * This class is used in order to generate TOC, JHM and HS files
+ * from a <b>JHelpDev</b> configuration project XML file. It use static
+ * methods from the graphical application.
+ *
+ * These files are compressed into a Jar file called <b>[module_name]-doc.jar
+ * by the bash script <b>jmcsHTML2HelpSet.sh</b>. This Jar file will be used
+ * by <b>HelpView</b> class in order to show the help window thanks
+ * to <b>JavaHelp</b> system.
+ */
 public class jmcsGenerateHelpsetFromHtml
 {
     /** Logger */

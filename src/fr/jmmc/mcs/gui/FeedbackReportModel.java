@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.10 2008-06-17 07:55:05 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.11 2008-06-20 08:42:25 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2008/06/17 07:55:05  bcolucci
+ * Add more logs.
+ *
  * Revision 1.9  2008/06/13 08:17:49  bcolucci
  * Remove unused specific information settor.
  *
@@ -42,18 +45,23 @@
 package fr.jmmc.mcs.gui;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.methods.PostMethod;
 
-import java.lang.Thread;
-
-import java.util.*;
+import java.util.Enumeration;
 import java.util.Observable;
-import java.util.logging.*;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultComboBoxModel;
 
 
-/** Model of FeedbackView class */
+/**
+ * This class takes the informations from the view called
+ * <b>FeedbackReport</b>, the user system informations and
+ * the application logs and send all by a HTTP POST request
+ * to the jmmc team via a PHP script.
+ */
 public class FeedbackReportModel extends Observable implements Runnable
 {
     /** Logger */

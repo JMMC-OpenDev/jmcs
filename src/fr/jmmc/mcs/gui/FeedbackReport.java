@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.11 2008-06-19 13:10:50 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.12 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2008/06/19 13:10:50  bcolucci
+ * Fix the height of the exception textarea.
+ *
  * Revision 1.10  2008/06/17 13:03:17  bcolucci
  * Create a function which returns an exception trace as a string.
  *
@@ -46,24 +49,41 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import java.io.*;
-
-import java.lang.Thread;
-
-import java.net.URL;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 
-/** View of feedback report box */
+/**
+ * This class opens a new feedback report window. It uses the model
+ * called <b>FeedbackReportModel</b> to take the user informations,
+ * the user system informations and the application logs and send all
+ * using a HTTP POST request.
+ */
 public class FeedbackReport extends JDialog implements Observer
 {
     /** Logger */

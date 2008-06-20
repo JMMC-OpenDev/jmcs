@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: jmcs.doc,v 1.3 2007-03-14 10:27:30 mella Exp $"
+ * "@(#) $Id: jmcs.doc,v 1.4 2008-06-20 07:09:37 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/03/14 10:27:30  mella
+ * Add information about jar for plotting
+ *
  * Revision 1.2  2007/03/12 14:09:54  mella
  * Added some informations
  *
@@ -29,5 +32,56 @@ loggui.jar
 (http://ptolemy.eecs.berkeley.edu/java/ptplot5.6/ptolemy/plot/doc/index.htm)
 plot*.jar microstar_xml.jar
 
+Create Java classes from XSD schema :
+(http://www.castor.org/)
+castor.jar
+
+Permit to use the default web browser :
+(http://browserlaunch2.sourceforge.net/)
+BrowserLauncher2-1_3.jar
+
+TODO :
+(WEBSITE)
+xercesImpl.jar
+
+TODO :
+(WEBSITE)
+xmlParserAPIs.jar
+
+Use to send HTTP POST request :
+(http://hc.apache.org/httpclient-3.x/)
+commons-httpclient-3.1.jar
+
+TODO :
+(http://commons.apache.org/logging/)
+commons-logging-1.1.1.jar
+
+TODO :
+(http://commons.apache.org/codec/)
+commons-codec-1.3.jar
+
+TODO :
+(WEBSITE)
+xmlenc.jar
+
+Show a help window from JavaHelp Jar file :
+(http://java.sun.com/javase/technologies/desktop/javahelp/)
+jhall.jar
+
+Generate TOC, JHM and HS files from HTML files :
+(http://jhelpdev.sourceforge.net/)
+jhelpdev.jar
+
+Parse and validate HTML file :
+(http://tidy.sourceforge.net/)
+Tidy.jar
+
+Permit to interpret command line arguments :
+(http://www.urbanophile.com/arenn/hacking/download.html)
+java-getopt-1.0.13.jar
+
+Permit to adapt menus for MAC OC X :
+(http://developer.apple.com/samplecode/AppleJavaExtensions/index.html)
+AppleJavaExtensions.jar
 
 */

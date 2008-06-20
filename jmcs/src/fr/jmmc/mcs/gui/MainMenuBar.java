@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.12 2008-06-19 14:35:07 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.13 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2008/06/19 14:35:07  bcolucci
+ * If you are on MAC OS X and if there is not one menuitem at least for
+ * "File", you don't create the "File" menu. On Windows, we always create
+ * it because there is always "Exit" menuitem.
+ *
  * Revision 1.11  2008/06/19 13:32:33  bcolucci
  * Fix : generate default menus even if there is no menubar element
  * in the ApplicationData.xml
@@ -48,19 +53,35 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.awt.*;
+import java.awt.Component;
 
-import java.util.*;
-import java.util.logging.*;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.util.logging.Logger;
 
-import javax.swing.*;
-import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 
 
 /**
- * Create a menubar from ApplicationData.xml
- * and make the default menus
+ * This class which extends from JMenuBar, generates
+ * all menus from the <b>ApplicationData.xml</b> file.
+ *
+ * In all cases, it generates default menus.
+ *
+ * To acces to the XML informations, this class uses
+ * <b>ApplicationDataModel</b> class. It's a class which has got getters
+ * in order to do that and which has been written to abstract the way
+ * to acces to these informations.
  */
 public class MainMenuBar extends JMenuBar
 {

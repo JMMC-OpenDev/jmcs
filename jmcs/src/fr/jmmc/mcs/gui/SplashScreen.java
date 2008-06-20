@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SplashScreen.java,v 1.6 2008-05-20 08:49:24 bcolucci Exp $"
+ * "@(#) $Id: SplashScreen.java,v 1.7 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/05/20 08:49:24  bcolucci
+ * Improved thread delay definition.
+ *
  * Revision 1.5  2008/05/16 12:44:54  bcolucci
  * Threaded it.
  * Removed unecessary try/cath.
@@ -25,22 +28,31 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 
-import java.io.File;
+import java.util.logging.Logger;
 
-import java.net.URL;
-
-import java.util.logging.*;
-
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 
 /**
- * Open a new Splash screen with informations
- * from XML file which should be named ApplicationData.xml in
- * the src folder
+ * This class opens a new splashscreen window. Informations of this window
+ * have been taken from the XML file called <b>ApplicationData.xml</b>.
+ * This file is saved into the application module which extends <b>App</b>
+ * class. There is a default XML file which having the same name and which is
+ * saved into the <b>App</b> module in order to avoid important bugs.
+ *
+ * To acces to the XML informations, this class uses
+ * <b>ApplicationDataModel</b> class. It's a class which has got getters
+ * in order to do that and which has been written to abstract the way
+ * to acces to these informations.
  */
 public class SplashScreen extends JFrame implements Runnable
 {

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.9 2008-06-19 13:09:54 bcolucci Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.10 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2008/06/19 13:09:54  bcolucci
+ * Fix comments and log messages.
+ *
  * Revision 1.8  2008/06/17 11:10:37  bcolucci
  * Fix little bugs in menus generation.
  *
@@ -37,24 +40,34 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import fr.jmmc.mcs.gui.castor.*;
+import fr.jmmc.mcs.gui.castor.ApplicationData;
+import fr.jmmc.mcs.gui.castor.Compilation;
+import fr.jmmc.mcs.gui.castor.Program;
 
-import java.io.*;
+import java.io.InputStreamReader;
 
 import java.net.URL;
 
 import java.text.SimpleDateFormat;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Vector;
-import java.util.logging.*;
-
-import javax.swing.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
- * This class get informations from XML file
- * and returns values of field to the View Class
+ * This class is the link between the application
+ * XML file which stocked the application informations like
+ * it's name, version, compiler etc... called <b>ApplicationData.xml</b>,
+ * which is saved into the application module, and the others classes
+ * which use it to acces to the informations like <b>AboutBox</b>,
+ * <b>SplashScreen</b> etc...
+ *
+ * This class uses <b>Castor</b> classes to acces to these informations
+ * and provides the good getters for each field of the XML file.
  */
 public class ApplicationDataModel
 {

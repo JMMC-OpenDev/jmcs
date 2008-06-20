@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: WindowCenterer.java,v 1.8 2008-06-17 07:50:52 bcolucci Exp $"
+ * "@(#) $Id: WindowCenterer.java,v 1.9 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2008/06/17 07:50:52  bcolucci
+ * Take a Window object instead of a JFrame object in order to use it on JDialog.
+ *
  * Revision 1.7  2008/06/13 08:25:00  bcolucci
  * Use point returned by getCenteringPoint in setLocation instead of x and y.
  *
@@ -31,15 +34,19 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Window;
 
-import java.util.logging.*;
-
-import javax.swing.*;
+import java.util.logging.Logger;
 
 
 /**
- * Facility static class to properly center a window on the main screen (handle multiple screen setups).
+ * Facility static class to properly center a window
+ * on the main screen (handle multiple screen setups).
  */
 public class WindowCenterer
 {

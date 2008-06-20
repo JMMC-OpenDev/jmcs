@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.18 2008-06-19 13:09:03 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.19 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2008/06/19 13:09:03  bcolucci
+ * Hide the splashscreen if it's opened if there is an error during the application creation.
+ *
  * Revision 1.17  2008/06/17 13:04:18  bcolucci
  * Change a log level and the creation error window message.
  *
@@ -82,22 +85,43 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import gnu.getopt.*;
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
 
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
 
 import java.net.URL;
 
-import java.util.Vector;
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 import javax.swing.*;
 
 
-/** Represents the main application class */
+/**
+ * This class represents an application. In order to use
+ * fonctionnalities that are implemented here, you have to
+ * extend your application from this class.
+ *
+ * This class is a singleton with abstract methods. If you extend
+ * a class from this one, you can have a splashscreen, an about
+ * window, the menubar generation, the possibility to have a help
+ * window using <b>jmcsGenerateHelpSetFromHtml</b> from the bash
+ * script called <b>jmcsHTML2HelpSet.sh</b> located into the src
+ * folder of jmcs, the feedback report etc...
+ *
+ * To acces to the XML informations, this class uses
+ * <b>ApplicationDataModel</b> class. It's a class which has got getters
+ * in order to do that and which has been written to abstract the way
+ * to acces to these informations.
+ */
 public abstract class App
 {
     /** Logger */
@@ -135,9 +159,6 @@ public abstract class App
 
     /** Arguments */
     private static String[] _args;
-
-    /** Default menu components (file, edit...) */
-    private Vector<JComponent> _defaultMenuComponents = null;
 
     /** If it's true, exit the application after the exit method */
     private boolean _exitApplicationWhenClosed = false;
@@ -655,6 +676,16 @@ public abstract class App
     protected static Container getFramePanel()
     {
         return _applicationFrame.getContentPane();
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public static App getSharedInstance()
+    {
+        return _sharedInstance;
     }
 }
 /*___oOo___*/

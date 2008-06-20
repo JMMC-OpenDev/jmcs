@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.11 2008-06-17 11:09:49 bcolucci Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.12 2008-06-20 08:41:45 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2008/06/17 11:09:49  bcolucci
+ * Set the about box not modal.
+ *
  * Revision 1.10  2008/06/17 07:49:08  bcolucci
  * Extend from JDialog instead of JFrame in order to set it modal.
  *
@@ -39,23 +42,43 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.*;
-
-import java.net.*;
+import java.awt.Frame;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import java.util.Vector;
-import java.util.logging.*;
+import java.util.logging.Logger;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 
 /**
- * Open a new About window with informations
- * from XML file which should be named "ApplicationData.xml" in src folder
+ * This class opens a new About window. Informations of this window
+ * have been taken from the XML file called <b>ApplicationData.xml</b>.
+ * This file is saved into the application module which extends <b>App</b>
+ * class. There is a default XML file which having the same name and which is
+ * saved into the <b>App</b> module in order to avoid important bugs.
+ *
+ * To acces to the XML informations, this class uses
+ * <b>ApplicationDataModel</b> class. It's a class which has got getters
+ * in order to do that and which has been written to abstract the way
+ * to acces to these informations.
  */
 public class AboutBox extends JDialog implements HyperlinkListener
 {
@@ -228,6 +251,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         // Launch the default browser with the given link
         _logoLabel.addMouseListener(new MouseAdapter()
             {
+                @Override
                 public void mouseClicked(MouseEvent evt)
                 {
                     String mainWebPageURL = _applicationDataModel.getMainWebPageURL();
@@ -242,6 +266,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         // Show hand cursor when mouse is moving on logo
         _logoLabel.addMouseMotionListener(new MouseMotionAdapter()
             {
+                @Override
                 public void mouseMoved(MouseEvent evt)
                 {
                     _logoLabel.setCursor(Cursor.getPredefinedCursor(

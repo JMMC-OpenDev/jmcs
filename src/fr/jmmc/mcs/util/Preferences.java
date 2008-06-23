@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.13 2007-02-13 13:48:51 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.14 2008-06-23 07:49:30 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2007/02/13 13:48:51  lafrasse
+ * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
+ *
  * Revision 1.12  2006/11/30 14:53:34  lafrasse
  * Added a method to really trigger all observers updates.
  *
@@ -49,6 +52,8 @@
 package fr.jmmc.mcs.util;
 
 import fr.jmmc.mcs.log.MCSLogger;
+
+import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Color;
 
@@ -141,8 +146,8 @@ public class Preferences extends Observable
 
         // TODO : must be specialized in order to properly retrieved each
         // specifc path for the different platforms (mac, linux, win).
-        String userHome = System.getProperty("user.home");
-        String cfgName  = userHome + File.separator + _shortPreferenceFilename;
+        String cfgName = SystemUtils.USER_HOME + File.separator +
+            _shortPreferenceFilename;
 
         return cfgName;
     }

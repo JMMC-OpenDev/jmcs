@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.13 2008-06-20 08:41:45 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.14 2008-06-23 07:47:32 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2008/06/20 08:41:45  bcolucci
+ * Remove unused imports and add class comments.
+ *
  * Revision 1.12  2008/06/19 14:35:07  bcolucci
  * If you are on MAC OS X and if there is not one menuitem at least for
  * "File", you don't create the "File" menu. On Windows, we always create
@@ -53,6 +56,8 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
+import org.apache.commons.lang.SystemUtils;
+
 import java.awt.Component;
 
 import java.util.Hashtable;
@@ -87,11 +92,6 @@ public class MainMenuBar extends JMenuBar
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(MainMenuBar.class.getName());
-
-    /** Store whether the execution platform is a Mac or not */
-    private static boolean MAC_OS_X = (System.getProperty("os.name")
-                                             .toLowerCase()
-                                             .startsWith("mac os x"));
 
     /** Table where are stocked the menus */
     private Hashtable<String, JMenu> _menusTable = new Hashtable<String, JMenu>();
@@ -199,14 +199,14 @@ public class MainMenuBar extends JMenuBar
                     fileMenu.add(currentComponent);
                 }
 
-                if (! MAC_OS_X)
+                if (! SystemUtils.IS_OS_MAC_OSX)
                 {
                     fileMenu.add(new JSeparator());
                 }
             }
         }
 
-        if (! MAC_OS_X)
+        if (! SystemUtils.IS_OS_MAC_OSX)
         {
             fileMenu.add(App.exitAction());
             haveMenu = true;
@@ -302,7 +302,7 @@ public class MainMenuBar extends JMenuBar
             }
         }
 
-        if (! MAC_OS_X)
+        if (! SystemUtils.IS_OS_MAC_OSX)
         {
             helpMenu.add(new JSeparator());
 
@@ -483,7 +483,7 @@ public class MainMenuBar extends JMenuBar
     public void macOSXRegistration(JFrame frame)
     {
         // If running under Mac OS X
-        if (MAC_OS_X)
+        if (SystemUtils.IS_OS_MAC_OSX)
         {
             // Execute registerMacOSXApplication method
             Introspection.executeMethod("fr.jmmc.mcs.gui.OSXAdapter",
@@ -498,7 +498,7 @@ public class MainMenuBar extends JMenuBar
      */
     private String getPrefixKey()
     {
-        return (MAC_OS_X) ? "meta " : "ctrl ";
+        return (SystemUtils.IS_OS_MAC_OSX) ? "meta " : "ctrl ";
     }
 }
 /*___oOo___*/

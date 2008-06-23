@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.18 2008-06-13 08:11:18 bcolucci Exp $"
+# "@(#) $Id: Makefile,v 1.19 2008-06-23 07:45:49 bcolucci Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.18  2008/06/13 08:11:18  bcolucci
+# *** empty log message ***
+#
 # Revision 1.17  2008/06/11 08:17:19  mella
 # Get all png file from fr/jmmc/mcs/gui dir
 #
@@ -204,7 +207,8 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/jhelpdev.jar \
 		../lib/Tidy.jar \
 		../lib/java-getopt-1.0.13.jar \
-		../lib/AppleJavaExtensions.jar
+		../lib/AppleJavaExtensions.jar \
+		../lib/commons-lang-2.4.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

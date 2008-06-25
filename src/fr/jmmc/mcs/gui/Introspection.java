@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Introspection.java,v 1.3 2008-06-20 08:41:45 bcolucci Exp $"
+ * "@(#) $Id: Introspection.java,v 1.4 2008-06-25 08:12:22 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/06/20 08:41:45  bcolucci
+ * Remove unused imports and add class comments.
+ *
  * Revision 1.2  2008/06/12 11:54:11  bcolucci
  * Add functions in order to simply execute a method without get it's value.
  *
@@ -69,6 +72,61 @@ public class Introspection
     public static boolean isClassExists(String className)
     {
         return (getClass(className) != null);
+    }
+
+    /**
+     * Returns the package which contains the class
+     * according to the class name
+     *
+     * @param className class name
+     *
+     * @return class package
+     */
+    public static Package getClassPackage(String className)
+    {
+        Package packageSearched = null;
+        packageSearched = getClass(className).getPackage();
+
+        return packageSearched;
+    }
+
+    /**
+     * Returns the package which contains the class
+     * according to the class
+     *
+     * @param c class
+     *
+     * @return class package
+     */
+    public static Package getClassPackage(Class c)
+    {
+        return c.getPackage();
+    }
+
+    /**
+     * Returns the package name which contains the class
+     * according to the class name
+     *
+     * @param className class name
+     *
+     * @return class package name
+     */
+    public static String getClassPackageName(String className)
+    {
+        return getClassPackage(className).getName();
+    }
+
+    /**
+     * Returns the package name which contains the class
+     * according to the class
+     *
+     * @param c class
+     *
+     * @return class package name
+     */
+    public static String getClassPackageName(Class c)
+    {
+        return c.getPackage().getName();
     }
 
     /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.19 2008-06-20 08:41:45 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.20 2008-06-25 08:22:52 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2008/06/20 08:41:45  bcolucci
+ * Remove unused imports and add class comments.
+ *
  * Revision 1.18  2008/06/19 13:09:03  bcolucci
  * Hide the splashscreen if it's opened if there is an error during the application creation.
  *
@@ -85,6 +88,8 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.util.Preferences;
+
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
@@ -96,6 +101,8 @@ import java.io.ByteArrayOutputStream;
 
 import java.net.URL;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -122,7 +129,7 @@ import javax.swing.*;
  * in order to do that and which has been written to abstract the way
  * to acces to these informations.
  */
-public abstract class App
+public abstract class App implements Observer
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger("fr.jmmc");
@@ -162,6 +169,9 @@ public abstract class App
 
     /** If it's true, exit the application after the exit method */
     private boolean _exitApplicationWhenClosed = false;
+
+    /** Application preferences */
+    private Preferences _preferences = null;
 
     /** Creates a new App object
      *
@@ -472,14 +482,8 @@ public abstract class App
 
             // Show the name and the version of the program
             case 1:
-
-                // Get application name and version
-                String name    = _applicationDataModel.getProgramName();
-                String version = _applicationDataModel.getProgramVersion();
-
-                // Show it on the shell
-                System.out.println(name + " v" + version);
-
+                // Show the application name on the shell
+                System.out.println(getProgramName());
                 // Exit the application
                 System.exit(0);
 
@@ -589,6 +593,14 @@ public abstract class App
             showSplashScreen();
         }
 
+        // Get preferences
+        String      packageName    = getClass().getPackage().getName();
+        String      preferenceName = packageName + ".Preferences";
+        Preferences _preferences   = (Preferences) Introspection.getMethodValue(preferenceName,
+                "getInstance");
+        _preferences.addObserver(this);
+        _logger.fine("Preferences have been load\n" + _preferences);
+
         // Set JMenuBar
         MainMenuBar mainMenuBar = new MainMenuBar(_applicationFrame);
         _applicationFrame.setJMenuBar(mainMenuBar);
@@ -608,6 +620,26 @@ public abstract class App
 
         // Call abstract execute method
         execute();
+
+        // Save the preferences
+        try
+        {
+            _preferences.saveToFile(getProgramName());
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+
+    /**
+     * Observer abstract method
+     *
+     * @param o observable object
+     * @param arg argument
+     */
+    public void update(Observable o, Object arg)
+    {
+        _logger.fine("Preferences have been changed");
     }
 
     /**
@@ -679,13 +711,28 @@ public abstract class App
     }
 
     /**
-     * DOCUMENT ME!
+     * Return App shared instance
      *
-     * @return DOCUMENT ME!
+     * @return shared instance
      */
     public static App getSharedInstance()
     {
         return _sharedInstance;
+    }
+
+    /**
+     * Return a string according to the
+     * pattern : [programName] v[programVersion]
+     *
+     * @return program name
+     */
+    public static String getProgramName()
+    {
+        // Get application name and version
+        String name    = _applicationDataModel.getProgramName();
+        String version = _applicationDataModel.getProgramVersion();
+
+        return name + " v" + version;
     }
 }
 /*___oOo___*/

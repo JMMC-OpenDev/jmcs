@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.16 2008-06-25 08:20:54 bcolucci Exp $"
+ * "@(#) $Id: Preferences.java,v 1.17 2008-06-25 12:04:18 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2008/06/25 08:20:54  bcolucci
+ * Add a surcharge method of saveToFile in order to permit to specify
+ * a comment.
+ *
  * Revision 1.15  2008/06/25 08:11:51  bcolucci
  * Improve the way to get the properties file in function of
  * the OS.
@@ -161,7 +165,7 @@ public class Preferences extends Observable
             cfgName = "~Library/Preferences/" + _shortPreferenceFilename;
         }
 
-        return cfgName + ".properties";
+        return cfgName;
     }
 
     /**

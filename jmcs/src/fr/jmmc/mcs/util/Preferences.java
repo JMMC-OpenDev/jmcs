@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.14 2008-06-23 07:49:30 bcolucci Exp $"
+ * "@(#) $Id: Preferences.java,v 1.15 2008-06-25 08:11:51 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2008/06/23 07:49:30  bcolucci
+ * Use SystemUtils class from apache common lang library
+ * instead of user.home property in order to know
+ * the default user home directory according to the OS.
+ *
  * Revision 1.13  2007/02/13 13:48:51  lafrasse
  * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
  *
@@ -144,12 +149,15 @@ public class Preferences extends Observable
     {
         MCSLogger.trace();
 
-        // TODO : must be specialized in order to properly retrieved each
-        // specifc path for the different platforms (mac, linux, win).
-        String cfgName = SystemUtils.USER_HOME + File.separator +
+        String cfgName = SystemUtils.USER_HOME + File.separator + '.' +
             _shortPreferenceFilename;
 
-        return cfgName;
+        if (SystemUtils.IS_OS_MAC_OSX)
+        {
+            cfgName = "~Library/Preferences/" + _shortPreferenceFilename;
+        }
+
+        return cfgName + ".properties";
     }
 
     /**

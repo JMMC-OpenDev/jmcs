@@ -1,11 +1,18 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.20 2008-06-25 08:22:52 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.21 2008-06-25 12:06:35 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2008/06/25 08:22:52  bcolucci
+ * Implement Observer for preferences.
+ * Add a preferences attribute.
+ * Get preferences in the run method according
+ * to the Preferences class in the application
+ * module.
+ *
  * Revision 1.19  2008/06/20 08:41:45  bcolucci
  * Remove unused imports and add class comments.
  *
@@ -167,11 +174,11 @@ public abstract class App implements Observer
     /** Arguments */
     private static String[] _args;
 
+    /** Application preferences */
+    private static Preferences _preferences = new Preferences();
+
     /** If it's true, exit the application after the exit method */
     private boolean _exitApplicationWhenClosed = false;
-
-    /** Application preferences */
-    private Preferences _preferences = null;
 
     /** Creates a new App object
      *
@@ -249,6 +256,10 @@ public abstract class App implements Observer
             // Interpret arguments
             interpretArguments(args);
 
+            // Set shared instance
+            _sharedInstance = this;
+            _logger.fine("Shared instance affected");
+
             // If execution should not be delayed
             if ((waitBeforeExecution == false))
             {
@@ -275,7 +286,8 @@ public abstract class App implements Observer
 
             // Show feedback report
             new FeedbackReport(((_applicationFrame != null) ? _applicationFrame
-                                                            : null), true, ex);
+                                                            : null), true, ex,
+                true);
         }
     }
 
@@ -321,7 +333,7 @@ public abstract class App implements Observer
         try
         {
             // The App class
-            Class app = Class.forName("fr.jmmc.mcs.gui.App");
+            Class app = Introspection.getClass("fr.jmmc.mcs.gui.App");
 
             // The App package
             Package defaultPackage = app.getPackage();
@@ -436,6 +448,66 @@ public abstract class App implements Observer
                     imx.loggui.LogMaster.startLogGui();
                 }
             };
+    }
+
+    /** Creates the action which save preferences */
+    public static Action savePreferencesAction()
+    {
+        return new AbstractAction("Save preferences")
+            {
+                public void actionPerformed(ActionEvent evt)
+                {
+                    savePreferences();
+                }
+            };
+    }
+
+    /** Creates the action which load preferences */
+    public static Action loadPreferencesAction()
+    {
+        return new AbstractAction("Load preferences")
+            {
+                public void actionPerformed(ActionEvent evt)
+                {
+                    loadPreferences();
+                }
+            };
+    }
+
+    /** Save preferences */
+    private static void savePreferences()
+    {
+        try
+        {
+            _preferences.saveToFile(getProgramName());
+
+            _logger.config("Preferences have been saved\n" + _preferences);
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+
+    /** Load preferences */
+    private static void loadPreferences()
+    {
+        savePreferences();
+
+        // Get default preferences class name
+        Class  c              = getSharedInstance().getClass();
+        String packageName    = c.getPackage().getName();
+        String preferenceName = packageName + ".Preferences";
+
+        _logger.config("Default preferences class name : " + preferenceName);
+
+        // Get preferences instance
+        Preferences _preferences = (Preferences) Introspection.getMethodValue(preferenceName,
+                "getInstance");
+
+        _logger.config("Preferences have been loaded\n" + _preferences);
+
+        // Add app observer as observer for preferences
+        _preferences.addObserver(getSharedInstance());
     }
 
     /**
@@ -593,14 +665,6 @@ public abstract class App implements Observer
             showSplashScreen();
         }
 
-        // Get preferences
-        String      packageName    = getClass().getPackage().getName();
-        String      preferenceName = packageName + ".Preferences";
-        Preferences _preferences   = (Preferences) Introspection.getMethodValue(preferenceName,
-                "getInstance");
-        _preferences.addObserver(this);
-        _logger.fine("Preferences have been load\n" + _preferences);
-
         // Set JMenuBar
         MainMenuBar mainMenuBar = new MainMenuBar(_applicationFrame);
         _applicationFrame.setJMenuBar(mainMenuBar);
@@ -612,6 +676,9 @@ public abstract class App implements Observer
         _applicationFrame.pack();
         _applicationFrame.setLocationRelativeTo(null);
 
+        // Load preferences
+        loadPreferences();
+
         // Close the splash screen if we have to
         if (_showSplashScreen)
         {
@@ -621,25 +688,8 @@ public abstract class App implements Observer
         // Call abstract execute method
         execute();
 
-        // Save the preferences
-        try
-        {
-            _preferences.saveToFile(getProgramName());
-        }
-        catch (Exception ex)
-        {
-        }
-    }
-
-    /**
-     * Observer abstract method
-     *
-     * @param o observable object
-     * @param arg argument
-     */
-    public void update(Observable o, Object arg)
-    {
-        _logger.fine("Preferences have been changed");
+        // Save preferences
+        //savePreferences();
     }
 
     /**
@@ -733,6 +783,27 @@ public abstract class App implements Observer
         String version = _applicationDataModel.getProgramVersion();
 
         return name + " v" + version;
+    }
+
+    /**
+     * Observer abstract method
+     *
+     * @param o observable object
+     * @param arg argument
+     */
+    public void update(Observable o, Object arg)
+    {
+        _logger.config("Preferences have been changed");
+    }
+
+    /**
+     * Return preferences
+     *
+     * @return preferences
+     */
+    protected Preferences getPreferences()
+    {
+        return _preferences;
     }
 }
 /*___oOo___*/

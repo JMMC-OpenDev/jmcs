@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.15 2008-06-25 08:11:51 bcolucci Exp $"
+ * "@(#) $Id: Preferences.java,v 1.16 2008-06-25 08:20:54 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2008/06/25 08:11:51  bcolucci
+ * Improve the way to get the properties file in function of
+ * the OS.
+ *
  * Revision 1.14  2008/06/23 07:49:30  bcolucci
  * Use SystemUtils class from apache common lang library
  * instead of user.home property in order to know
@@ -205,13 +209,25 @@ public class Preferences extends Observable
      */
     final public void saveToFile() throws PreferencesException
     {
+        saveToFile("SCALIB GUI PROPERTIES...");
+    }
+
+    /**
+     * Save preferences into preferences file.
+     *
+     * @param comment comment
+     *
+     * @throws PreferencesException DOCUMENT ME!
+     */
+    final public void saveToFile(String comment) throws PreferencesException
+    {
         MCSLogger.trace();
 
         try
         {
             String           cfgName    = getPreferenceFilename();
             FileOutputStream outputFile = new FileOutputStream(cfgName);
-            _currentProperties.store(outputFile, "SCALIB GUI PROPERTIES...");
+            _currentProperties.store(outputFile, comment);
             outputFile.close();
         }
         catch (Exception e)

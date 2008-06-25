@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.12 2008-06-20 08:41:45 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.13 2008-06-25 12:05:21 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2008/06/20 08:41:45  bcolucci
+ * Remove unused imports and add class comments.
+ *
  * Revision 1.11  2008/06/19 13:10:50  bcolucci
  * Fix the height of the exception textarea.
  *
@@ -161,6 +164,9 @@ public class FeedbackReport extends JDialog implements Observer
     /** Exception */
     private Exception _exception = null;
 
+    /** Exit the application? */
+    private boolean _exit = false;
+
     /** Creates a new FeedbackReport object */
     public FeedbackReport()
     {
@@ -200,9 +206,25 @@ public class FeedbackReport extends JDialog implements Observer
      */
     public FeedbackReport(Frame frame, boolean modal, Exception exception)
     {
+        this(frame, modal, exception, false);
+    }
+
+    /**
+     * Creates a new FeedbackReport object
+     * Set the parent frame and specify if this dialog is modal or not.
+     *
+     * @param frame parent frame
+     * @param modal if true, this dialog is modal
+     * @param exception exception
+     * @param exit if true, exit the application
+     */
+    public FeedbackReport(Frame frame, boolean modal, Exception exception,
+        boolean exit)
+    {
         super(frame, modal);
 
         _exception               = exception;
+        _exit                    = exit;
 
         // Create the model and add the observer
         _feedbackReportModel     = new FeedbackReportModel();
@@ -352,6 +374,10 @@ public class FeedbackReport extends JDialog implements Observer
                 public void actionPerformed(ActionEvent evt)
                 {
                     _feedbackReportThread.stop();
+
+                    // Exit or not the application
+                    exit();
+
                     dispose();
                 }
             });
@@ -462,6 +488,9 @@ public class FeedbackReport extends JDialog implements Observer
 
             // Stop the thread in background
             _feedbackReportThread.stop();
+
+            // Exit or not the application
+            exit();
         }
         else
         {
@@ -527,6 +556,16 @@ public class FeedbackReport extends JDialog implements Observer
         }
 
         return exceptionTrace;
+    }
+
+    /** Exit the application if there was a fatal error */
+    private void exit()
+    {
+        // Exit or not the application
+        if (_exit)
+        {
+            System.exit(-1);
+        }
     }
 }
 /*___oOo___*/

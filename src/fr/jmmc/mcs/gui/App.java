@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.21 2008-06-25 12:06:35 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.22 2008-06-27 11:30:03 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2008/06/25 12:06:35  bcolucci
+ * Add save/load properties functions and actions.
+ * Improve the way to load properties.
+ * Fix some logs.
+ *
  * Revision 1.20  2008/06/25 08:22:52  bcolucci
  * Implement Observer for preferences.
  * Add a preferences attribute.
@@ -96,18 +101,23 @@
 package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.util.Preferences;
+import fr.jmmc.mcs.util.PreferencesException;
 
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import java.io.ByteArrayOutputStream;
 
+import java.lang.reflect.Method;
+
 import java.net.URL;
 
+import java.util.Enumeration;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.ConsoleHandler;
@@ -475,10 +485,11 @@ public abstract class App implements Observer
     }
 
     /** Save preferences */
-    private static void savePreferences()
+    public static void savePreferences()
     {
         try
         {
+            // Save preferences with the application name
             _preferences.saveToFile(getProgramName());
 
             _logger.config("Preferences have been saved\n" + _preferences);
@@ -489,10 +500,8 @@ public abstract class App implements Observer
     }
 
     /** Load preferences */
-    private static void loadPreferences()
+    public static void loadPreferences()
     {
-        savePreferences();
-
         // Get default preferences class name
         Class  c              = getSharedInstance().getClass();
         String packageName    = c.getPackage().getName();
@@ -500,11 +509,21 @@ public abstract class App implements Observer
 
         _logger.config("Default preferences class name : " + preferenceName);
 
-        // Get preferences instance
-        Preferences _preferences = (Preferences) Introspection.getMethodValue(preferenceName,
-                "getInstance");
+        // Instantiate preferences
+        _preferences = new Preferences();
 
-        _logger.config("Preferences have been loaded\n" + _preferences);
+        try
+        {
+            // Get preferences instance
+            _preferences = (Preferences) Introspection.getMethodValue(preferenceName,
+                    "getInstance");
+
+            _logger.config("Preferences have been loaded\n" + _preferences);
+        }
+        catch (Exception ex)
+        {
+            _logger.warning("Cannot load preferences");
+        }
 
         // Add app observer as observer for preferences
         _preferences.addObserver(getSharedInstance());
@@ -685,11 +704,11 @@ public abstract class App implements Observer
             closeSplashScreen();
         }
 
+        // Check program version (preferences)
+        checkProgramVersion();
+
         // Call abstract execute method
         execute();
-
-        // Save preferences
-        //savePreferences();
     }
 
     /**
@@ -804,6 +823,231 @@ public abstract class App implements Observer
     protected Preferences getPreferences()
     {
         return _preferences;
+    }
+
+    /**
+     * Set a preference
+     *
+     * @param preferenceName the preference name.
+     * @param preferenceValue the preference value.
+     */
+    final public void setPreference(String preferenceName,
+        Object preferenceValue) throws PreferencesException
+    {
+        _preferences.setPreference(preferenceName, preferenceValue);
+    }
+
+    /**
+     * Set a preference.
+     *
+     * @param preferenceName the preference name.
+     * @param preferenceIndex the order number for the property (-1 for no order).
+     * @param preferenceValue the preference value.
+     */
+    final public void setPreference(String preferenceName, int preferenceIndex,
+        Object preferenceValue) throws PreferencesException
+    {
+        _preferences.setPreference(preferenceName, preferenceIndex,
+            preferenceValue);
+    }
+
+    /**
+     * Set a preference order.
+     *
+     * @param preferenceName the preference name.
+     * @param preferenceIndex the order number for the property (-1 for no order).
+     */
+    final public void setPreferenceOrder(String preferenceName,
+        int preferenceIndex)
+    {
+        _preferences.setPreferenceOrder(preferenceName, preferenceIndex);
+    }
+
+    /**
+     * Get a preference order.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return the order number for the property (-1 for no order).
+     */
+    final public int getPreferenceOrder(String preferenceName)
+    {
+        return _preferences.getPreferenceOrder(preferenceName);
+    }
+
+    /**
+     * Get a preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return the preference value.
+     */
+    final public String getPreference(String preferenceName)
+    {
+        return _preferences.getPreference(preferenceName);
+    }
+
+    /**
+     * Get a boolean preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return one boolean representing the preference value.
+     */
+    final public boolean getPreferenceAsBoolean(String preferenceName)
+    {
+        return _preferences.getPreferenceAsBoolean(preferenceName);
+    }
+
+    /**
+     * Get a double preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return one double representing the preference value.
+     */
+    final public double getPreferenceAsDouble(String preferenceName)
+    {
+        return _preferences.getPreferenceAsDouble(preferenceName);
+    }
+
+    /**
+     * Get a color preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return one Color object representing the preference value.
+     */
+    final public Color getPreferenceAsColor(String preferenceName)
+        throws PreferencesException
+    {
+        return _preferences.getPreferenceAsColor(preferenceName);
+    }
+
+    /**
+     * Returns an Enumeration (ordered if possible) of preference names which
+     * start with given string. One given empty string make all preference
+     * entries returned.
+     *
+     * @return Enumeration a string enumeration of preference names
+     */
+    public Enumeration getPreferences(String prefix)
+    {
+        return _preferences.getPreferences(prefix);
+    }
+
+    /**
+     * Return a double according to a string
+     * which represents a version like "1.0.02.1"
+     *
+     * @param version version string
+     *
+     * @return version double
+     */
+    private double getVersionAsDouble(String version)
+    {
+        String   finalString = "";
+
+        String[] tmpString   = version.split("\\.");
+        finalString += (tmpString[0] + '.');
+
+        if (tmpString.length > 1)
+        {
+            for (int i = 1; i < tmpString.length; i++)
+            {
+                finalString += tmpString[i];
+            }
+        }
+
+        return Double.parseDouble(finalString);
+    }
+
+    /** Check version of preferences file and application version */
+    private void checkProgramVersion()
+    {
+        // Get application informations
+        String appName              = _applicationDataModel.getProgramName();
+        String appVersionString     = _applicationDataModel.getProgramVersion();
+        String appFileVersionString = _preferences.getPreference(
+                "application.version");
+
+        // In order to compare versions
+        double appVersion     = 0.0;
+        double appFileVersion = 0.0;
+
+        if (appVersionString != null)
+        {
+            appVersion = getVersionAsDouble(appVersionString);
+        }
+
+        if (appFileVersionString != null)
+        {
+            appFileVersion = getVersionAsDouble(appFileVersionString);
+        }
+
+        /*System.out.println("APP : " + appVersion + "\tFILE : " +
+           appFileVersion);*/
+
+        // Some comments for dialogs
+        String com1 = "Your application preferences file corresponding\nto an ";
+        String com2 = "\nDo you want to correct it now?";
+        String com3 = " preferences file version";
+
+        // If the file version is older than application version
+        if (appFileVersion < appVersion)
+        {
+            String infoMessage = com1 + "older application version." + com2;
+            int    n           = JOptionPane.showConfirmDialog(null,
+                    infoMessage, "Older" + com3, JOptionPane.YES_NO_OPTION);
+
+            // TODO to correct the problem
+            if (n == JOptionPane.YES_OPTION)
+            {
+                try
+                {
+                    _preferences.resetToDefaultPreferences();
+                    _preferences.setPreference("application.version", appVersion);
+                }
+                catch (Exception ex)
+                {
+                }
+
+                // Save preferences
+                savePreferences();
+            }
+        }
+        else if (appFileVersion > appVersion)
+        {
+            String infoMessage = com1 + "newer application version." + com2;
+            int    n           = JOptionPane.showConfirmDialog(null,
+                    infoMessage, "Newer" + com3, JOptionPane.YES_NO_OPTION);
+
+            // TODO to correct the problem
+            if (n == JOptionPane.YES_OPTION)
+            {
+                _preferences.resetToDefaultPreferences();
+
+                try
+                {
+                    _preferences.setPreference("application.version", appVersion);
+                }
+                catch (Exception ex)
+                {
+                }
+
+                // Save preferences
+                savePreferences();
+            }
+        }
+
+        // Set the application name property
+        try
+        {
+            _preferences.setPreference("application.name", appName);
+        }
+        catch (Exception ex)
+        {
+        }
     }
 }
 /*___oOo___*/

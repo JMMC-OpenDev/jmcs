@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.10 2008-06-20 08:41:45 bcolucci Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.11 2008-06-27 11:23:00 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2008/06/20 08:41:45  bcolucci
+ * Remove unused imports and add class comments.
+ *
  * Revision 1.9  2008/06/19 13:09:54  bcolucci
  * Fix comments and log messages.
  *
@@ -88,6 +91,7 @@ public class ApplicationDataModel
     {
         _logger.fine("Loading Application data model from " + dataModelURL);
 
+        // Read the XML file
         InputStreamReader inputStreamReader;
 
         inputStreamReader               = new InputStreamReader(dataModelURL.openStream());
@@ -128,7 +132,8 @@ public class ApplicationDataModel
         Program program     = null;
         String  programName = "Unknown";
 
-        program             = _applicationDataCastorModel.getProgram();
+        // Get program
+        program = _applicationDataCastorModel.getProgram();
 
         if (program != null)
         {
@@ -149,7 +154,8 @@ public class ApplicationDataModel
         Program program        = null;
         String  programVersion = "?.?";
 
-        program                = _applicationDataCastorModel.getProgram();
+        // Get program
+        program = _applicationDataCastorModel.getProgram();
 
         if (program != null)
         {
@@ -185,7 +191,8 @@ public class ApplicationDataModel
         Compilation compilation     = null;
         String      compilationDate = "Unknown";
 
-        compilation                 = _applicationDataCastorModel.getCompilation();
+        // Get compilation
+        compilation = _applicationDataCastorModel.getCompilation();
 
         if (compilation != null)
         {
@@ -206,7 +213,8 @@ public class ApplicationDataModel
         Compilation compilation           = null;
         String      compilationCompilator = "Unknown";
 
-        compilation                       = _applicationDataCastorModel.getCompilation();
+        // Get compilation
+        compilation = _applicationDataCastorModel.getCompilation();
 
         if (compilation != null)
         {

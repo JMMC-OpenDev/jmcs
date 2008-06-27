@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.17 2008-06-25 12:04:18 bcolucci Exp $"
+ * "@(#) $Id: Preferences.java,v 1.18 2008-06-27 11:22:32 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2008/06/25 12:04:18  bcolucci
+ * Fix properties file name bug.
+ *
  * Revision 1.16  2008/06/25 08:20:54  bcolucci
  * Add a surcharge method of saveToFile in order to permit to specify
  * a comment.
@@ -157,13 +160,27 @@ public class Preferences extends Observable
     {
         MCSLogger.trace();
 
-        String cfgName = SystemUtils.USER_HOME + File.separator + '.' +
-            _shortPreferenceFilename;
+        // [USER_HOME]/
+        String cfgName = SystemUtils.USER_HOME + File.separator;
 
         if (SystemUtils.IS_OS_MAC_OSX)
         {
-            cfgName = "~Library/Preferences/" + _shortPreferenceFilename;
+            // ~Library/Preferences/
+            cfgName = "~Library" + File.separator + "Preferences" +
+                File.separator;
         }
+        else if (SystemUtils.IS_OS_WINDOWS)
+        {
+            // [USER_HOME]/Local Settings/Application Data/
+            cfgName += ("Local Settings" + File.separator + "Application Data" +
+            File.separator);
+        }
+
+        // Windows : [USER_HOME]/Local Settings/Application Data/.fr.jmmc...properties
+        // UNIX : [USER_HOME]/.fr.jmmc...properties
+        // MAC OS X : ~Library/Preferences/.fr.jmmc...properties
+        cfgName += ('.' + _shortPreferenceFilename);
+        System.out.println("Properties file path : " + cfgName);
 
         return cfgName;
     }

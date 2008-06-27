@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.12 2008-06-20 08:41:45 bcolucci Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.13 2008-06-27 11:23:21 bcolucci Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2008/06/20 08:41:45  bcolucci
+ * Remove unused imports and add class comments.
+ *
  * Revision 1.11  2008/06/17 11:09:49  bcolucci
  * Set the about box not modal.
  *
@@ -190,6 +193,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
     {
         super(frame, modal);
 
+        // Get application data model
         ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
         if (applicationDataModel != null)
@@ -282,12 +286,14 @@ public class AboutBox extends JDialog implements HyperlinkListener
     {
         _copyrightLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _copyrightLabel.setText(_applicationDataModel.getCopyrightValue());
+
         _logger.fine("All the copyright label properties have been initialized");
     }
 
     /** Sets textarea (SWING html) properties */
     private void setupDescriptionTextarea()
     {
+        // Set properties
         _descriptionEditorPane.setEditable(false);
         _descriptionEditorPane.setMargin(new Insets(5, 5, 5, 5));
         _descriptionEditorPane.setContentType("text/html");
@@ -342,6 +348,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         _descriptionEditorPane.setText(generatedHtml);
         _logger.fine("The content of textarea has been inserted");
 
+        // Link pane
         _descriptionScrollPane.setViewportView(_descriptionEditorPane);
     }
 
@@ -366,6 +373,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
     /** Sets link label properties */
     private void setupLinkLabel()
     {
+        // Set properties
         _linkLabel.setEditable(false);
         _linkLabel.setOpaque(false);
         _linkLabel.addHyperlinkListener(this);
@@ -383,6 +391,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
     /** Sets program info label properties */
     private void setupProgramInfoLabel()
     {
+        // Get program informations
         String name    = _applicationDataModel.getProgramName();
         String version = _applicationDataModel.getProgramVersion();
         String pInfo   = name + " - v" + version;
@@ -398,6 +407,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
     /** Sets compilation info label properties */
     private void setupCompilationInfoLabel()
     {
+        // Get compilation information
         String compilationDate   = _applicationDataModel.getCompilationDate();
         String compilatorVersion = _applicationDataModel.getCompilatorVersion();
         String compilationInfo   = "Build the " + compilationDate + " with " +
@@ -413,6 +423,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
     /** Set link and program split properties */
     private void setLinkAndProgramSplitProperties()
     {
+        // Set properties
         _linkAndProgramSplit.setBorder(null);
         _linkAndProgramSplit.setDividerSize(0);
         _linkAndProgramSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -426,6 +437,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
     /** Set compilation info split properties */
     private void setCompilationInfoSplitProperties()
     {
+        // Set properties
         _compilationInfoSplit.setBorder(null);
         _compilationInfoSplit.setDividerSize(0);
         _compilationInfoSplit.setDividerLocation(-1);
@@ -440,6 +452,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
     /** Set down space split properties */
     private void setDownSpaceSplitProperties()
     {
+        // Set properties
         _downSpaceSplit.setBorder(null);
         _downSpaceSplit.setDividerSize(0);
         _downSpaceSplit.setDividerLocation(-1);
@@ -454,6 +467,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
     /** Set up space split properties */
     private void setUpSpaceSplitProperties()
     {
+        // Set properties
         _upSpaceSplit.setBorder(null);
         _upSpaceSplit.setDividerSize(0);
         _upSpaceSplit.setDividerLocation(-1);
@@ -467,6 +481,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
     /** Set textarea split properties */
     private void setTextareaSplitProperties()
     {
+        // Set properties
         _descriptionSplit.setBorder(null);
         _descriptionSplit.setDividerSize(0);
         _descriptionSplit.setDividerLocation(-1);

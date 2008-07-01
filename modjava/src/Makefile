@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2008-07-01 08:58:13 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.4 2008-07-01 09:12:08 lafrasse Exp $"
 #
 # Makefile of modjava module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2008/07/01 08:58:13  lafrasse
+# Added jmcs test application from bcolucci.
+#
 # Revision 1.2  2006/03/07 14:13:37  lafrasse
 # initial release
 #
@@ -107,13 +110,12 @@ PY_SCRIPTS_L   =
 #
 # Jarfiles and their directories
 # ---------------------------------
-JARFILES        = modjava modjavaTest
+JARFILES        = modjava
 
 #
 # <brief description of modjava jar files>
-modjava_DIRS    = jmmc
-modjavaTest_DIRS     = fr
-modjavaTest_EXTRAS   = fr/jmmc/mcs/modjava/ApplicationData.xml
+modjava_DIRS         = fr
+modjava_EXTRAS       = fr/jmmc/mcs/modjava/ApplicationData.xml
 
 #
 # Java programs
@@ -122,7 +124,7 @@ JAVA_EXECUTABLES=modjavaExample modjavaTest
 
 #
 # <brief description of modjavaExample java program>
-modjavaExample_CLASS = jmmc.mcs.modjava.ModjavaExample
+modjavaExample_CLASS = fr.jmmc.mcs.modjava.ModjavaExample
 modjavaTest_CLASS    = fr.jmmc.mcs.modjava.Main
 
 #

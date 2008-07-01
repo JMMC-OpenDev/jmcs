@@ -1,17 +1,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Complex.java,v 1.2 2006-03-07 14:20:58 lafrasse Exp $"
+ * "@(#) $Id: Complex.java,v 1.3 2008-07-01 09:12:08 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/03/07 14:20:58  lafrasse
+ * Corrected typos
+ *
  * Revision 1.1  2006/03/07 14:13:37  lafrasse
  * initial release
  *
  ******************************************************************************/
 
-package jmmc.mcs.modjava;
+package fr.jmmc.mcs.modjava;
 
 /**
  * Complex numbers.

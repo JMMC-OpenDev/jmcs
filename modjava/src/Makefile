@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2006-03-07 14:13:37 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.3 2008-07-01 08:58:13 lafrasse Exp $"
 #
 # Makefile of modjava module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2006/03/07 14:13:37  lafrasse
+# initial release
+#
 # Revision 1.1  2006/03/07 09:55:50  sccmgr
 # Fix directory structure and add additional files
 #
@@ -104,21 +107,23 @@ PY_SCRIPTS_L   =
 #
 # Jarfiles and their directories
 # ---------------------------------
-JARFILES        = modjava
+JARFILES        = modjava modjavaTest
 
 #
 # <brief description of modjava jar files>
 modjava_DIRS    = jmmc
-jjjfff_EXTRAS   = 
+modjavaTest_DIRS     = fr
+modjavaTest_EXTRAS   = fr/jmmc/mcs/modjava/ApplicationData.xml
 
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES=modjavaExample
+JAVA_EXECUTABLES=modjavaExample modjavaTest
 
 #
 # <brief description of modjavaExample java program>
 modjavaExample_CLASS = jmmc.mcs.modjava.ModjavaExample
+modjavaTest_CLASS    = fr.jmmc.mcs.modjava.Main
 
 #
 # Command Definition Files (CDF)
@@ -138,7 +143,7 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES =
+INSTALL_FILES = ../lib/test-doc.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

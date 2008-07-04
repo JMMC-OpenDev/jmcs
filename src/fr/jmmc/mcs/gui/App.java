@@ -1,11 +1,22 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.22 2008-06-27 11:30:03 bcolucci Exp $"
+ * "@(#) $Id: App.java,v 1.23 2008-07-04 14:32:12 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2008/06/27 11:30:03  bcolucci
+ * Set save/load methods to public instead of private in order
+ * to not oblige programmer to use the action if he doesn't need.
+ * Add a method to manage the versions differences between the
+ * application and the properties file.
+ * Add a method to convert a string representing a version like
+ * "1.00.12" to a double like 1.0012 to permit to compare it.
+ * Add methods getters of preferences in order to not oblige
+ * programmer to call preferences getter each time he wants
+ * to call a preferences function.
+ *
  * Revision 1.21  2008/06/25 12:06:35  bcolucci
  * Add save/load properties functions and actions.
  * Improve the way to load properties.
@@ -120,6 +131,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -184,11 +196,11 @@ public abstract class App implements Observer
     /** Arguments */
     private static String[] _args;
 
+    /** If it's true, exit the application after the exit method */
+    private static boolean _exitApplicationWhenClosed = false;
+
     /** Application preferences */
     private static Preferences _preferences = new Preferences();
-
-    /** If it's true, exit the application after the exit method */
-    private boolean _exitApplicationWhenClosed = false;
 
     /** Creates a new App object
      *
@@ -444,6 +456,11 @@ public abstract class App implements Observer
                 {
                     // TODO : est-ce que ca appelle la methode de la classe fille ?????
                     exit();
+
+                    if (_exitApplicationWhenClosed == true)
+                    {
+                        System.exit(-1);
+                    }
                 }
             };
     }
@@ -667,12 +684,6 @@ public abstract class App implements Observer
     /** Execute operations before closing application */
     protected static void exit()
     {
-        boolean isNotAnApplet = true;
-
-        if (isNotAnApplet == true)
-        {
-            System.exit(-1);
-        }
     }
 
     /** Describe the life cycle of the application */

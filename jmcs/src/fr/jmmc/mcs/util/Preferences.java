@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.18 2008-06-27 11:22:32 bcolucci Exp $"
+ * "@(#) $Id: Preferences.java,v 1.19 2008-07-25 14:12:02 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2008/06/27 11:22:32  bcolucci
+ * Improve again the way to get the properties file path according
+ * to the user OS.
+ *
  * Revision 1.17  2008/06/25 12:04:18  bcolucci
  * Fix properties file name bug.
  *
@@ -165,9 +169,9 @@ public class Preferences extends Observable
 
         if (SystemUtils.IS_OS_MAC_OSX)
         {
-            // ~Library/Preferences/
-            cfgName = "~Library" + File.separator + "Preferences" +
-                File.separator;
+            // [USER_HOME]/Library/Preferences/
+            cfgName += ("Library" + File.separator + "Preferences" +
+            File.separator);
         }
         else if (SystemUtils.IS_OS_WINDOWS)
         {
@@ -175,11 +179,16 @@ public class Preferences extends Observable
             cfgName += ("Local Settings" + File.separator + "Application Data" +
             File.separator);
         }
+        else
+        {
+            // [USER_HOME]/.
+            cfgName += ".";
+        }
 
-        // Windows : [USER_HOME]/Local Settings/Application Data/.fr.jmmc...properties
+        // Windows : [USER_HOME]/Local Settings/Application Data/fr.jmmc...properties
         // UNIX : [USER_HOME]/.fr.jmmc...properties
-        // MAC OS X : ~Library/Preferences/.fr.jmmc...properties
-        cfgName += ('.' + _shortPreferenceFilename);
+        // MAC OS X : [USER_HOME]/Library/Preferences/fr.jmmc...properties
+        cfgName += _shortPreferenceFilename;
         System.out.println("Properties file path : " + cfgName);
 
         return cfgName;

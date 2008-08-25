@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.9 2008-06-11 07:52:24 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.10 2008-08-25 14:30:00 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2008/06/11 07:52:24  mella
+# exit when one jnlp file is not found
+#
 # Revision 1.8  2008/05/30 13:14:06  ccmgr
 # Remove bigManfistest creation since it creates security pbs on Mac OS X
 #
@@ -163,9 +166,16 @@ APP_CODEBASE=$CODEBASE/$APPNAME
 # search keystore file
 KEYSTOREFILE="$MCSTOP/etc/keystore"
 echo "Signing step uses '$KEYSTOREFILE' keystore"
-# read keyword password 
-read -s -p "Enter 'mykey' password to sign every jar files:" MYKEY
-echo -e "\n"
+# read keyword password from file or from prompt if key file is not present
+KEYFILE="${KEYSTOREFILE}.key"
+if [ -f "$KEYFILE" ]
+then
+    echo "Using '$KEYFILE' as key file"
+    MYKEY=$(cat $KEYFILE)
+else
+    read -s -p "Enter 'mykey' password to sign every jar files:" MYKEY
+    echo -e "\n"    
+fi
 
 
 # Check webroot directory

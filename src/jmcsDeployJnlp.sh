@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.10 2008-08-25 14:30:00 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.11 2008-08-26 08:14:58 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2008/08/25 14:30:00  mella
+# Use key file for signing if present
+#
 # Revision 1.9  2008/06/11 07:52:24  mella
 # exit when one jnlp file is not found
 #
@@ -64,6 +67,8 @@ _usage()
     echo "                     (default value: http://<hostname>/~<username>/<software name>')"
     echo "  --webroot  <dir> : optional - specify directory were JNLP file and related jar will be copied."
     echo "                     (default value: ~<username>/public_html/<software name>')"
+    echo "  --searchpath  <dir1>:<dir2> : optional - specify one additional list of directory to search jar file into."
+    echo "                     (default value: ~<username>/public_html/<software name>')"
     echo "  --verbose        : optional - request verbose messages."
     echo "  <JNLP file>      : this (xml) file must be well formed and have 'jnlp' extension"
     echo "" 
@@ -119,7 +124,7 @@ shllibEchoDebug ()
 # Note that we use `"$@"' to let each command-line parameter expand to a
 # separate word. The quotes around `$@' are essential!
 # We need TEMP as the `eval set --' would nuke the return value of getopt.
-TEMP=`getopt -o "" --long codebase:,webroot:,verbose,help \
+TEMP=`getopt -o "" --long codebase:,webroot:,searchpath:,verbose,help \
 -n "$SCRIPTNAME" -- "$@"`
 if [ $? != 0 ] ; then _usage >&2 ; exit 1 ; fi
 # Note the quotes around `$TEMP': they are essential!
@@ -130,6 +135,8 @@ while true ; do
                 CODEBASE="$2"; shift 2 ;;
                 --webroot )
                 WEBROOT="$2"; shift 2 ;;
+                --searchpath )
+                USERSEARCHPATH="$2"; shift 2 ;;
                 --help ) _usage ; exit ; shift ;;
                 --verbose ) shllibSetDebugOn ; shift ;;
                 -- ) shift ; break ;;
@@ -248,7 +255,7 @@ copyJnlpAndRelated()
     for jar in $INCLUDEDJARLIST
     do
         jarname=$(basename $jar 2> /dev/null) 
-        if srcjar=$(miscLocateFile "$jarname" "../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib")
+        if srcjar=$(miscLocateFile "$jarname" "../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib:$USERSEARCHPATH")
         then
             destjar=$destDir/$jar
             # since jarpath can be on the form dir/dir/toto.jar , we have to ensure that

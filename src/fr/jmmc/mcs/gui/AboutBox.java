@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.13 2008-06-27 11:23:21 bcolucci Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.14 2008-08-28 15:43:14 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2008/06/27 11:23:21  bcolucci
+ * Add comments.
+ *
  * Revision 1.12  2008/06/20 08:41:45  bcolucci
  * Remove unused imports and add class comments.
  *
@@ -109,8 +112,11 @@ public class AboutBox extends JDialog implements HyperlinkListener
     /** Link label */
     private JEditorPane _linkLabel = new JEditorPane();
 
-    /** Label of program info (name and version) */
-    private JLabel _programInfoLabel = new JLabel();
+    /** Label of program name */
+    private JLabel _programNameLabel = new JLabel();
+
+    /** Label of program version */
+    private JLabel _programVersionLabel = new JLabel();
 
     /** Help : JFrame design
      *
@@ -123,10 +129,14 @@ public class AboutBox extends JDialog implements HyperlinkListener
      *  |  |  +--------------------------------------------------------+  |  |
      *  |  |  |  +-[_downSpaceSplit]--------------------------------+  |  |  |
      *  |  |  |  |  +-[_compilationInfoSplit]--------------------+  |  |  |  |
-     *  |  |  |  |  |  +-[_linkAndProgramSplit]---------------+  |  |  |  |  |
-     *  |  |  |  |  |  | _linkLabel                           |  |  |  |  |  |
+     *  |  |  |  |  |  +-[_linkAndProgramInfoSplit]-----------+  |  |  |  |  |
+     *  |  |  |  |  |  | +-[_ProgramNameAndVersionSplit]---+  |  |  |  |  |  |
+     *  |  |  |  |  |  | | _programNameLabel               |  |  |  |  |  |  |
+     *  |  |  |  |  |  | +---------------------------------+  |  |  |  |  |  |
+     *  |  |  |  |  |  | | _programVersionLabel            |  |  |  |  |  |  |
+     *  |  |  |  |  |  | +---------------------------------+  |  |  |  |  |  |
      *  |  |  |  |  |  +--------------------------------------+  |  |  |  |  |
-     *  |  |  |  |  |  | _programInfoLabel                    |  |  |  |  |  |
+     *  |  |  |  |  |  | _linkLabel                           |  |  |  |  |  |
      *  |  |  |  |  |  +--------------------------------------+  |  |  |  |  |
      *  |  |  |  |  +--------------------------------------------+  |  |  |  |
      *  |  |  |  |  |  _compilationInfoLabel                     |  |  |  |  |
@@ -143,8 +153,11 @@ public class AboutBox extends JDialog implements HyperlinkListener
      *  +--------------------------------------------------------------------+
      */
 
-    /** Split with _link and program */
-    private JSplitPane _linkAndProgramSplit = new JSplitPane();
+    /** Split with program name and version */
+    private JSplitPane _programNameAndVersionSplit = new JSplitPane();
+
+    /** Split with _link and program info */
+    private JSplitPane _linkAndProgramInfoSplit = new JSplitPane();
 
     /** Split with (link and program split) and compilation */
     private JSplitPane _compilationInfoSplit = new JSplitPane();
@@ -215,7 +228,8 @@ public class AboutBox extends JDialog implements HyperlinkListener
     {
         // Widgets Setup
         setupLogo();
-        setupProgramInfoLabel();
+        setupProgramNameLabel();
+        setupProgramVersionLabel();
         setupLinkLabel();
         setupCompilationInfoLabel();
         setupDescriptionTextarea();
@@ -227,6 +241,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         setDownSpaceSplitProperties();
         setCompilationInfoSplitProperties();
         setLinkAndProgramSplitProperties();
+        setProgramNameAndVersionSplitProperties();
 
         // Window setup
         setupWindow();
@@ -304,16 +319,33 @@ public class AboutBox extends JDialog implements HyperlinkListener
         _descriptionEditorPane.setPreferredSize(textareaDimension);
         _logger.fine("All the textarea properties have been initialized");
 
+        // Determine wether the EditorPane should be displayed or not.
+        boolean shouldBeDisplayed = false;
+
         // HTML generation
-        String         generatedHtml = "<html><head></head><body>" +
-            _applicationDataModel.getTextValue() + "<br><br>";
+        String generatedHtml = "<html><head></head><body>";
+
+        // Get the Text value
+        String textValue = _applicationDataModel.getTextValue();
+
+        if (textValue.length() > 0)
+        {
+            shouldBeDisplayed = true;
+            generatedHtml += textValue;
+            generatedHtml += "<br><br>";
+        }
 
         // Generate a HTML string with each package informations
-        Vector<String> packagesInfo  = _applicationDataModel.getPackagesInfo();
-        String         packageHtml   = "";
+        Vector<String> packagesInfo = _applicationDataModel.getPackagesInfo();
+        String         packageHtml  = "";
 
         // For each package
         int nbElems = packagesInfo.size();
+
+        if (nbElems > 0)
+        {
+            shouldBeDisplayed = true;
+        }
 
         /* We have a step of 3 because for each
            package we have a name, a link and a description */
@@ -346,10 +378,13 @@ public class AboutBox extends JDialog implements HyperlinkListener
         generatedHtml += (packageHtml + "</body></html>");
 
         _descriptionEditorPane.setText(generatedHtml);
-        _logger.fine("The content of textarea has been inserted");
+        _logger.fine("The content of textarea has been inserted.");
 
-        // Link pane
-        _descriptionScrollPane.setViewportView(_descriptionEditorPane);
+        // Link pane only if anything to display
+        if (shouldBeDisplayed == true)
+        {
+            _descriptionScrollPane.setViewportView(_descriptionEditorPane);
+        }
     }
 
     /**
@@ -388,17 +423,29 @@ public class AboutBox extends JDialog implements HyperlinkListener
         _logger.fine("All the link label properties have been initialized");
     }
 
-    /** Sets program info label properties */
-    private void setupProgramInfoLabel()
+    /** Sets program name label properties */
+    private void setupProgramNameLabel()
     {
         // Get program informations
-        String name    = _applicationDataModel.getProgramName();
-        String version = _applicationDataModel.getProgramVersion();
-        String pInfo   = name + " - v" + version;
+        String name = _applicationDataModel.getProgramName();
 
-        _programInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        _programInfoLabel.setText(pInfo);
-        _programInfoLabel.setFont(new Font("Dialog", 1, 23));
+        _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _programNameLabel.setText(name);
+        _programNameLabel.setFont(new Font("Dialog", 1, 23));
+
+        _logger.fine(
+            "All the program info label properties have been initialized");
+    }
+
+    /** Sets program version label properties */
+    private void setupProgramVersionLabel()
+    {
+        // Get program informations
+        String version = "Version " +
+            _applicationDataModel.getProgramVersion();
+
+        _programVersionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _programVersionLabel.setText(version);
 
         _logger.fine(
             "All the program info label properties have been initialized");
@@ -420,15 +467,29 @@ public class AboutBox extends JDialog implements HyperlinkListener
             "All the compilation info label properties have been initialized");
     }
 
-    /** Set link and program split properties */
+    /** Set program name and version split properties */
+    private void setProgramNameAndVersionSplitProperties()
+    {
+        // Set properties
+        _programNameAndVersionSplit.setBorder(null);
+        _programNameAndVersionSplit.setDividerSize(0);
+        _programNameAndVersionSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        _programNameAndVersionSplit.setTopComponent(_programNameLabel);
+        _programNameAndVersionSplit.setBottomComponent(_programVersionLabel);
+
+        _logger.fine(
+            "All the link and program split properties have been initialized");
+    }
+
+    /** Set link and program info split properties */
     private void setLinkAndProgramSplitProperties()
     {
         // Set properties
-        _linkAndProgramSplit.setBorder(null);
-        _linkAndProgramSplit.setDividerSize(0);
-        _linkAndProgramSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        _linkAndProgramSplit.setRightComponent(_linkLabel);
-        _linkAndProgramSplit.setLeftComponent(_programInfoLabel);
+        _linkAndProgramInfoSplit.setBorder(null);
+        _linkAndProgramInfoSplit.setDividerSize(0);
+        _linkAndProgramInfoSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        _linkAndProgramInfoSplit.setTopComponent(_programNameAndVersionSplit);
+        _linkAndProgramInfoSplit.setBottomComponent(_linkLabel);
 
         _logger.fine(
             "All the link and program split properties have been initialized");
@@ -442,8 +503,8 @@ public class AboutBox extends JDialog implements HyperlinkListener
         _compilationInfoSplit.setDividerSize(0);
         _compilationInfoSplit.setDividerLocation(-1);
         _compilationInfoSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        _compilationInfoSplit.setTopComponent(_linkAndProgramSplit);
-        _compilationInfoSplit.setRightComponent(_compilationInfoLabel);
+        _compilationInfoSplit.setTopComponent(_linkAndProgramInfoSplit);
+        _compilationInfoSplit.setBottomComponent(_compilationInfoLabel);
 
         _logger.fine(
             "All the compilation info split properties have been initialized");
@@ -458,7 +519,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         _downSpaceSplit.setDividerLocation(-1);
         _downSpaceSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
         _downSpaceSplit.setTopComponent(_compilationInfoSplit);
-        _downSpaceSplit.setRightComponent(new JLabel(" "));
+        _downSpaceSplit.setBottomComponent(new JLabel(" "));
 
         _logger.fine(
             "All the down space split properties have been initialized");
@@ -473,7 +534,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         _upSpaceSplit.setDividerLocation(-1);
         _upSpaceSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
         _upSpaceSplit.setTopComponent(new JLabel(" "));
-        _upSpaceSplit.setRightComponent(_downSpaceSplit);
+        _upSpaceSplit.setBottomComponent(_downSpaceSplit);
 
         _logger.fine("All the up space split properties have been initialized");
     }
@@ -487,7 +548,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         _descriptionSplit.setDividerLocation(-1);
         _descriptionSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
         _descriptionSplit.setTopComponent(_upSpaceSplit);
-        _descriptionSplit.setRightComponent(_descriptionScrollPane);
+        _descriptionSplit.setBottomComponent(_descriptionScrollPane);
 
         _logger.fine("All the textarea split properties have been initialized");
     }

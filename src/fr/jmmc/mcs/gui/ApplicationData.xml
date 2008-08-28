@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ApplicationData link="Application URL">
-	<program name="Application name" version="Program version"/>
-	<compilation date="10/10/2010" compiler="Compilator"/>
-	<text>Text</text>
+<ApplicationData link="http://www.jmmc.fr/">
+	<program name="UNKNOWN Application Name" version="UNKNOWN Release Version"/>
+	<compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
+	<text></text>
 	<dependences>
     </dependences>
 </ApplicationData>

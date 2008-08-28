@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.19 2008-07-25 14:12:02 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.20 2008-08-28 12:34:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2008/07/25 14:12:02  lafrasse
+ * Corrected Mac OS X prefrerence file path generation.
+ *
  * Revision 1.18  2008/06/27 11:22:32  bcolucci
  * Improve again the way to get the properties file path according
  * to the user OS.
@@ -97,19 +100,17 @@ import java.util.Vector;
  * Application must take care of multiple instances that shares the same
  * preference file (RW conflict...).
  */
-public class Preferences extends Observable
+public abstract class Preferences extends Observable
 {
     /**
-     * Store shortPreferenceFilename.
-     * Class that herits from this one should overload this variable to return specific file name.
-     * It must not include any file separator.
+     * Store hidden preference version number name.
      */
-    protected static String _shortPreferenceFilename = "preferences.properties";
+    private static String _preferencesVersionNumberName = "preferences.version";
 
     /**
      * Store hidden properties index prefix.
      */
-    protected static String _indexPrefix = "MCSPropertyIndexes.";
+    private static String _indexPrefix = "MCSPropertyIndexes.";
 
     /**
      * Internal storage of preferences.
@@ -123,6 +124,8 @@ public class Preferences extends Observable
 
     /**
      * Creates a new Preferences object.
+     *
+     * This will try to load the preference file, if any.
      */
     public Preferences()
     {
@@ -130,55 +133,56 @@ public class Preferences extends Observable
     }
 
     /**
-     * Creates a new Preferences object using a specific preference filename.
-     * @param shortPreferenceFilename short preference filename ( no file
-     * separator included).
-     */
-    public Preferences(String shortPreferenceFilename)
-    {
-        MCSLogger.trace();
-
-        _shortPreferenceFilename = shortPreferenceFilename;
-        loadFromFile();
-    }
-
-    /**
-     * Truly notifies all registered Observers.
-     */
-    public void trulyNotifyObservers()
-    {
-        MCSLogger.trace();
-
-        // Notify all preferences listener of maybe new values coming from file.
-        setChanged();
-        notifyObservers();
-    }
-
-    /**
-     * Returns the name of file to store preferences into.
-     * Try to return an absolute pathName.
+     * Return the preference filename.
      *
-     * @return $USER/getShortPreferenceFilename()
+     * Class that herits from Preferences class MUST overload this method to
+     * return specific file name.
+     *
+     * @warning The filenmae must not include any file separator.
      */
-    public String getPreferenceFilename()
+    protected abstract String getPreferenceFilename();
+
+    /**
+     * Return the version of the structure of the preference file.
+     *
+     * Class that herits from Preferences class MUST overload this method to
+     * return specific file name.
+     *
+     * @warning The filenmae must not include any file separator.
+     */
+    protected abstract int getPreferencesVersionNumber();
+
+    /**
+     * Returns the path of file containing preferences values, as this varies
+     * accross different execution platforms.
+     *
+     * @return a string containing the full file path to the preference file,
+     * according to execution platform.
+     */
+    public String getPreferenceFilepath()
     {
         MCSLogger.trace();
 
         // [USER_HOME]/
         String cfgName = SystemUtils.USER_HOME + File.separator;
 
+        // Under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX)
         {
             // [USER_HOME]/Library/Preferences/
             cfgName += ("Library" + File.separator + "Preferences" +
             File.separator);
         }
+
+        // Under Windows
         else if (SystemUtils.IS_OS_WINDOWS)
         {
             // [USER_HOME]/Local Settings/Application Data/
             cfgName += ("Local Settings" + File.separator + "Application Data" +
             File.separator);
         }
+
+        // Under Linux, and anything else
         else
         {
             // [USER_HOME]/.
@@ -188,24 +192,9 @@ public class Preferences extends Observable
         // Windows : [USER_HOME]/Local Settings/Application Data/fr.jmmc...properties
         // UNIX : [USER_HOME]/.fr.jmmc...properties
         // MAC OS X : [USER_HOME]/Library/Preferences/fr.jmmc...properties
-        cfgName += _shortPreferenceFilename;
-        System.out.println("Properties file path : " + cfgName);
+        cfgName += getPreferenceFilename();
 
         return cfgName;
-    }
-
-    /**
-     * Set short preference filename.
-     *
-     * @param shortPreferenceFilename the filename to store on disk this
-     * preference.
-     */
-    public static void setShortPreferenceFilename(
-        String shortPreferenceFilename)
-    {
-        MCSLogger.trace();
-
-        _shortPreferenceFilename = shortPreferenceFilename;
     }
 
     /**
@@ -215,37 +204,91 @@ public class Preferences extends Observable
     {
         MCSLogger.trace();
 
-        String cfgName = getPreferenceFilename();
+        String cfgName = getPreferenceFilepath();
+
+        resetToDefaultPreferences();
 
         try
         {
-            resetToDefaultPreferences();
-            _currentProperties.load(new FileInputStream(cfgName));
+            MCSLogger.info("Loading '" + cfgName + "' preference file.");
+
+            // Laoding preference file
+            FileInputStream inputFile = new FileInputStream(cfgName);
+            _currentProperties.loadFromXML(inputFile);
+
+            // Getting laoded preference file version number
+            int loadedPreferenceVersion  = getPreferenceAsInt(_preferencesVersionNumberName);
+            int preferencesVersionNumber = getPreferencesVersionNumber();
+
+            // If the preference file version is older the the current default version
+            if (loadedPreferenceVersion < preferencesVersionNumber)
+            {
+                MCSLogger.warning(
+                    "Loaded an 'anterior to current version' preference file, so try to update preference file.");
+
+                // Handle version differences
+                boolean status = updatePreferencesVersion(loadedPreferenceVersion);
+
+                if (status == false)
+                {
+                    resetToDefaultPreferences();
+                }
+            }
+
+            // If the preference file version is newer the the current default version
+            if (loadedPreferenceVersion > preferencesVersionNumber)
+            {
+                MCSLogger.warning(
+                    "Loaded a 'posterior to current version' preference file, so fall back to default values instead.");
+
+                // Use current default values instead
+                resetToDefaultPreferences();
+            }
         }
         catch (IOException e)
         {
             // Do nothing just default values will be into the preferences.
+            MCSLogger.warning(
+                "Failed loading preference file, so fall back to default values instead.");
+            resetToDefaultPreferences();
         }
 
         // Notify all preferences listener of maybe new values coming from file.
-        setChanged();
-        notifyObservers();
+        triggerObserversNotification();
+    }
+
+    /**
+     * Try to update older preference file version.
+     *
+     * @warning This method should be overriden to process older files. In its default behavior, default values will be loaded instead.
+     *
+     * @param loadedVersionNumber the version of the loaded preference file.
+     *
+     * @return true if the update went fine, false otherwise.
+     */
+    protected boolean updatePreferencesVersion(int loadedVersionNumber)
+    {
+        MCSLogger.trace();
+
+        return false;
     }
 
     /**
      * Save preferences into preferences file.
      *
-     * @throws PreferencesException indicates a problem during save process.
+     * @throws PreferencesException DOCUMENT ME!
      */
     final public void saveToFile() throws PreferencesException
     {
-        saveToFile("SCALIB GUI PROPERTIES...");
+        MCSLogger.trace();
+
+        saveToFile(null);
     }
 
     /**
      * Save preferences into preferences file.
      *
-     * @param comment comment
+     * @param comment comment to b included in the preference file
      *
      * @throws PreferencesException DOCUMENT ME!
      */
@@ -255,15 +298,51 @@ public class Preferences extends Observable
 
         try
         {
-            String           cfgName    = getPreferenceFilename();
+            String           cfgName    = getPreferenceFilepath();
             FileOutputStream outputFile = new FileOutputStream(cfgName);
-            _currentProperties.store(outputFile, comment);
+            _currentProperties.storeToXML(outputFile, comment);
             outputFile.close();
         }
         catch (Exception e)
         {
             throw new PreferencesException("Can't store preferences to file", e);
         }
+    }
+
+    /**
+     * Restore default values to preferences. Use save method to store default
+     * values into the preferences file.
+     */
+    public void resetToDefaultPreferences()
+    {
+        MCSLogger.trace();
+
+        _currentProperties = (Properties) _defaultProperties.clone();
+
+        // Notify all preferences listener.
+        triggerObserversNotification();
+    }
+
+    /**
+     * Set the default properties used to reset default preferences.
+     * This method should be used to adjust specific application preferences.
+     *
+     * @param defaultProperties the default properties to set for this application.
+     */
+    protected void setDefaultPreferences(Preferences defaults)
+    {
+        MCSLogger.trace();
+
+        // Copy in default values
+        _defaultProperties = (Properties) defaults._currentProperties.clone();
+
+        // Set internal preference version number
+        Integer tmp = new Integer(getPreferencesVersionNumber());
+        _defaultProperties.setProperty(_preferencesVersionNumberName,
+            tmp.toString());
+
+        // Notify all preferences listener.
+        triggerObserversNotification();
     }
 
     /**
@@ -316,6 +395,13 @@ public class Preferences extends Observable
                 ((Boolean) preferenceValue).toString());
         }
 
+        // Else if the constraint is an Integer object
+        else if (preferenceValue.getClass() == java.lang.Integer.class)
+        {
+            _currentProperties.setProperty(preferenceName,
+                ((Integer) preferenceValue).toString());
+        }
+
         // Else if the constraint is a Double object
         else if (preferenceValue.getClass() == java.lang.Double.class)
         {
@@ -341,8 +427,7 @@ public class Preferences extends Observable
         setPreferenceOrder(preferenceName, preferenceIndex);
 
         // Notify all preferences listener.
-        setChanged();
-        notifyObservers();
+        triggerObserversNotification();
     }
 
     /**
@@ -369,8 +454,7 @@ public class Preferences extends Observable
         }
 
         // Notify all preferences listener.
-        setChanged();
-        notifyObservers();
+        triggerObserversNotification();
     }
 
     /**
@@ -452,6 +536,22 @@ public class Preferences extends Observable
         String value = _currentProperties.getProperty(preferenceName);
 
         return Double.valueOf(value).doubleValue();
+    }
+
+    /**
+     * Get an integer preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return one integer representing the preference value.
+     */
+    final public int getPreferenceAsInt(String preferenceName)
+    {
+        MCSLogger.trace();
+
+        String value = _currentProperties.getProperty(preferenceName);
+
+        return Integer.valueOf(value).intValue();
     }
 
     /**
@@ -541,33 +641,13 @@ public class Preferences extends Observable
     }
 
     /**
-     * Restore default values to preferences. Use save method to store default
-     * values into the preferences file.
+     * Trigger a notification of change to all registered Observers.
      */
-    public void resetToDefaultPreferences()
+    public void triggerObserversNotification()
     {
         MCSLogger.trace();
 
-        _currentProperties = (Properties) _defaultProperties.clone();
-
-        // Notify all preferences listener.
-        setChanged();
-        notifyObservers();
-    }
-
-    /**
-     * Set the default properties used to reset default preferences.
-     * This method should be used to adjust specific application preferences.
-     *
-     * @param defaultProperties the default properties to set for this application.
-     */
-    protected void setDefaultPreferences(Preferences defaults)
-    {
-        MCSLogger.trace();
-
-        _defaultProperties = (Properties) defaults._currentProperties.clone();
-
-        // Notify all preferences listener.
+        // Notify all preferences listener of maybe new values coming from file.
         setChanged();
         notifyObservers();
     }
@@ -581,43 +661,7 @@ public class Preferences extends Observable
     {
         MCSLogger.trace();
 
-        return "Preferences stored into [" + getPreferenceFilename() + "] : " +
+        return "Preferences file " + getPreferenceFilepath() + " contains :\n" +
         _currentProperties;
-    }
-
-    /**
-     * main method used to test this class.
-     *
-     * @param args command line arguments
-     */
-    public static void main(String[] args)
-    {
-        // Do simple tests
-        try
-        {
-            Preferences p = new Preferences();
-
-            System.out.println("You can mv your configuration file" +
-                p.getPreferenceFilename() + " to see different behaviour");
-
-            System.out.println("Preferences are :" + p);
-            p.setPreference("color.c1", "#123456");
-            p.setPreference("color.c2", "#234567");
-            System.out.println("Preferences are :" + p);
-
-            // Try to store preferences into the preference file
-            p.saveToFile();
-
-            // Play with a second preference instance that share common prefs
-            Preferences p2 = new Preferences();
-            System.out.println("Preferences 2 are :" + p2);
-
-            p2.resetToDefaultPreferences();
-            System.out.println("Default preferences 2 are :" + p2);
-        }
-        catch (PreferencesException e)
-        {
-            e.printStackTrace();
-        }
     }
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SplashScreen.java,v 1.7 2008-06-20 08:41:45 bcolucci Exp $"
+ * "@(#) $Id: SplashScreen.java,v 1.8 2008-08-28 15:41:34 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2008/06/20 08:41:45  bcolucci
+ * Remove unused imports and add class comments.
+ *
  * Revision 1.6  2008/05/20 08:49:24  bcolucci
  * Improved thread delay definition.
  *
@@ -89,9 +92,11 @@ public class SplashScreen extends JFrame implements Runnable
     }
 
     /**
-     * Create the window fullfilled with all the information included in the XML file.
+     * Create the window fullfilled with all the information included in the XML
+     * file.
      *
-     * The file should be located in "src", named "AboutBoxData.xml", following schema "src/AboutBoxSchema.xsd"
+     * The file should be located in "src", named "AboutBoxData.xml", following
+     * schema "src/AboutBoxSchema.xsd"
      */
     public void run()
     {
@@ -110,7 +115,7 @@ public class SplashScreen extends JFrame implements Runnable
         }
         catch (Exception ex)
         {
-            _logger.severe("Cannot wait " + delay + "ms");
+            _logger.severe("Could not wait '" + delay + "' ms.");
             ex.printStackTrace();
         }
     }
@@ -126,7 +131,7 @@ public class SplashScreen extends JFrame implements Runnable
         setPanelProperties();
         setFrameProperties();
 
-        _logger.fine("All of the jframe properties have been initialized");
+        _logger.fine("Every JFrame properties have been initialized");
     }
 
     /** Sets panel properties */
@@ -138,7 +143,7 @@ public class SplashScreen extends JFrame implements Runnable
         _panel.add(_programNameLabel, BorderLayout.CENTER);
         _panel.add(_programVersionLabel, BorderLayout.PAGE_END);
 
-        _logger.fine("All of the panel properties have been initialized");
+        _logger.fine("Every panel properties have been initialized");
     }
 
     /** Sets logo properties */
@@ -150,7 +155,7 @@ public class SplashScreen extends JFrame implements Runnable
                                            .getResource(_applicationDataModel.getLogoURL()));
         _logoLabel.setIcon(logo);
 
-        _logger.fine("All of the logo label properties have been initialized");
+        _logger.fine("Every logo label properties have been initialized");
     }
 
     /** Sets program name label properties */
@@ -163,7 +168,7 @@ public class SplashScreen extends JFrame implements Runnable
         _programNameLabel.setText(name);
 
         _logger.fine(
-            "All of the program name label properties have been initialized");
+            "Every program name label properties have been initialized");
     }
 
     /** Sets program version label properties */
@@ -174,10 +179,10 @@ public class SplashScreen extends JFrame implements Runnable
         // Pattern : "v{version} - {copyright}"
         String version = _applicationDataModel.getProgramVersion();
         version += (" - " + _applicationDataModel.getCopyrightValue());
-        _programVersionLabel.setText("v" + version);
+        _programVersionLabel.setText("Version " + version);
 
         _logger.fine(
-            "All of the program version label properties have been initialized");
+            "Every program version label properties have been initialized");
     }
 
     /** Sets frame properties */

@@ -54,7 +54,7 @@ import javax.swing.JFrame;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class OSXAdapter extends ApplicationAdapter
 {
@@ -96,7 +96,6 @@ public class OSXAdapter extends ApplicationAdapter
         if (mainApp != null)
         {
             ae.setHandled(true);
-            //mainApp._aboutAction.actionPerformed(null);
             App.aboutBoxAction().actionPerformed(null);
         }
         else
@@ -115,8 +114,8 @@ public class OSXAdapter extends ApplicationAdapter
     {
         if (mainApp != null)
         {
-            //mainApp._showPreferencesAction.actionPerformed(null);
-            //ae.setHandled(true);
+            ae.setHandled(true);
+            App.showPreferencesAction().actionPerformed(null);
         }
         else
         {
@@ -134,13 +133,11 @@ public class OSXAdapter extends ApplicationAdapter
     {
         if (mainApp != null)
         {
-            /*
-               /        You MUST setHandled(false) if you want to delay or cancel the quit.
-               /        This is important for cross-platform development -- have a universal quit
-               /        routine that chooses whether or not to quit, so the functionality is identical
-               /        on all platforms.  This example simply cancels the AppleEvent-based quit and
-               /        defers to that universal method.
-             */
+            /* You MUST setHandled(false) if you want to delay or cancel the quit.
+             * This is important for cross-platform development -- have a universal quit
+             * routine that chooses whether or not to quit, so the functionality is identical
+             * on all platforms.  This example simply cancels the AppleEvent-based quit and
+             * defers to that universal method. */
             ae.setHandled(false);
             App.exitAction().actionPerformed(null);
         }

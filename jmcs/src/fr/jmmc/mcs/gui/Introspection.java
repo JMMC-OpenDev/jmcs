@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Introspection.java,v 1.4 2008-06-25 08:12:22 bcolucci Exp $"
+ * "@(#) $Id: Introspection.java,v 1.5 2008-09-01 11:07:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/06/25 08:12:22  bcolucci
+ * Add functions.
+ *
  * Revision 1.3  2008/06/20 08:41:45  bcolucci
  * Remove unused imports and add class comments.
  *
@@ -56,7 +59,7 @@ public class Introspection
         }
         catch (Exception ex)
         {
-            _logger.fine("Cannot find class '" + classpath + "'");
+            _logger.warning("Cannot find class '" + classpath + "'");
         }
 
         return classSearched;
@@ -148,7 +151,7 @@ public class Introspection
         }
         catch (Exception ex)
         {
-            _logger.fine("Cannot get instance of '" + className + "'");
+            _logger.warning("Cannot get instance of '" + className + "'");
         }
 
         return instance;
@@ -207,7 +210,7 @@ public class Introspection
         }
         catch (Exception ex)
         {
-            _logger.fine("Cannot find method '" + methodName + "'");
+            _logger.warning("Cannot find method '" + methodName + "'");
         }
 
         return methodSearched;
@@ -297,7 +300,7 @@ public class Introspection
         }
         catch (Exception ex)
         {
-            _logger.fine("Cannot get value of '" + methodName + "'");
+            _logger.warning("Cannot get value of '" + methodName + "'");
         }
 
         return value;
@@ -385,7 +388,7 @@ public class Introspection
         }
         catch (Exception ex)
         {
-            _logger.fine("Cannot get value of '" + fieldName + "'");
+            _logger.warning("Cannot get value of '" + fieldName + "'");
         }
 
         return field;
@@ -425,7 +428,7 @@ public class Introspection
         }
         catch (Exception ex)
         {
-            _logger.fine("Cannot get value of '" + fieldName + "'");
+            _logger.warning("Cannot get value of '" + fieldName + "'");
         }
 
         return value;

@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.24 2008-09-01 11:10:47 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.25 2008-09-01 11:45:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2008/09/01 11:10:47  lafrasse
+ * Moved to new fr.jmmc.jmcs.util.Preferences APIs.
+ * Removed unecessary proxy methods to fr.jmmc.jmcs.util.Preferences.
+ * Improved logging.
+ *
  * Revision 1.23  2008/07/04 14:32:12  lafrasse
  * Added missing Vector class import.
  * iAdded premiminary support for application exit when instancied by another app.
@@ -397,7 +402,7 @@ public abstract class App implements Observer
                     {
                         if (_aboutBox != null)
                         {
-                            if (! _aboutBox.isVisible())
+                            if (_aboutBox.isVisible() == false)
                             {
                                 _aboutBox.setVisible(true);
                             }
@@ -411,6 +416,19 @@ public abstract class App implements Observer
                             _aboutBox = new AboutBox();
                         }
                     }
+                }
+            };
+    }
+
+    /** Creates the action which open the preferences window */
+    public static Action showPreferencesAction()
+    {
+        return new AbstractAction("Show Preferences Window")
+            {
+                public void actionPerformed(ActionEvent evt)
+                {
+                    _logger.warning(
+                        "Should have been overriden in order to display application own Preferences window");
                 }
             };
     }

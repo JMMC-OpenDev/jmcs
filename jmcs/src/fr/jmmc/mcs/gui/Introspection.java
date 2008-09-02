@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Introspection.java,v 1.5 2008-09-01 11:07:45 lafrasse Exp $"
+ * "@(#) $Id: Introspection.java,v 1.6 2008-09-02 12:31:00 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/09/01 11:07:45  lafrasse
+ * Improved logging.
+ *
  * Revision 1.4  2008/06/25 08:12:22  bcolucci
  * Add functions.
  *
@@ -24,17 +27,15 @@ package fr.jmmc.mcs.gui;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 
 /**
- * This class provides functions in order to use
- * Java introspection.
+ * This class provides helper functions related to object introspection.
  *
- * For example, you can easily execute a method of
- * a class with the class name and the method name.
- * Or you can know if a field exists, get a method
- * value etc...
+ * For example, you can easily execute a method of a class given the path to the
+ * seeked class. and the method name. Or you can also discover at runtime if a
+ * field exists, retireve a method execution result, etc ...
  */
 public class Introspection
 {
@@ -42,393 +43,401 @@ public class Introspection
     private static final Logger _logger = Logger.getLogger("fr.jmmc");
 
     /**
-     * Returns class according to classpath
-     * passed in argument
+     * Returns a class object according to a given class path.
      *
-     * @param classpath classpath of the class to find
+     * @param classPath path to the seeked class.
      *
-     * @return class according to classpath given
+     * @return found class, null otherwise.
      */
-    public static Class getClass(String classpath)
+    public static Class getClass(String classPath)
     {
-        Class classSearched = null;
+        Class searchedClass = null;
 
         try
         {
-            classSearched = Class.forName(classpath);
+            searchedClass = Class.forName(classPath);
         }
         catch (Exception ex)
         {
-            _logger.warning("Cannot find class '" + classpath + "'");
+            _logger.log(Level.WARNING, "Cannot find class '" + classPath + "'",
+                ex);
         }
 
-        return classSearched;
+        return searchedClass;
     }
 
     /**
-     * Returns true if the class exists
+     * Test whether a class exists, from a given class path.
      *
-     * @param className class name
+     * @param classPath path to the seeked class.
      *
-     * @return true if the class exists
+     * @return true if the class exists, false otherwise.
      */
-    public static boolean isClassExists(String className)
+    public static boolean hasClass(String classPath)
     {
-        return (getClass(className) != null);
+        if (getClass(classPath) != null)
+        {
+            _logger.fine("Found class '" + classPath + "'.");
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * Returns the package which contains the class
-     * according to the class name
+     * Returns the package containing the class identified by the given class
+     * path.
      *
-     * @param className class name
+     * @param classPath path to the seeked class.
      *
-     * @return class package
+     * @return found class package, null otherwise.
      */
-    public static Package getClassPackage(String className)
+    public static Package getClassPackage(String classPath)
     {
-        Package packageSearched = null;
-        packageSearched = getClass(className).getPackage();
+        Package packageSearched = getClass(classPath).getPackage();
 
         return packageSearched;
     }
 
     /**
-     * Returns the package which contains the class
-     * according to the class
+     * Returns the package containing the given class.
      *
-     * @param c class
+     * @param seekedClass class.
      *
-     * @return class package
+     * @return found class package, null otherwise.
      */
-    public static Package getClassPackage(Class c)
+    public static Package getClassPackage(Class seekedClass)
     {
-        return c.getPackage();
+        return seekedClass.getPackage();
     }
 
     /**
-     * Returns the package name which contains the class
-     * according to the class name
+     * Returns the name of the package containing the class identified by the
+     * given class path.
      *
-     * @param className class name
+     * @param classPath path to the seeked class.
      *
-     * @return class package name
+     * @return found class package name, null otherwise.
      */
-    public static String getClassPackageName(String className)
+    public static String getClassPackageName(String classPath)
     {
-        return getClassPackage(className).getName();
+        return getClassPackage(classPath).getName();
     }
 
     /**
-     * Returns the package name which contains the class
-     * according to the class
+     * Returns the name of the package containing the given class.
      *
-     * @param c class
+     * @param seekedClass class.
      *
-     * @return class package name
+     * @return found class package name, null otherwise.
      */
-    public static String getClassPackageName(Class c)
+    public static String getClassPackageName(Class seekedClass)
     {
-        return c.getPackage().getName();
+        return seekedClass.getPackage().getName();
     }
 
     /**
-     * Return a new instance of the class
-     * according to the class name passed in
-     * argument
+     * Returns a new instance of the class identified by the gien class path.
      *
-     * @param className class name
+     * @param classPath path to the seeked class.
      *
-     * @return new instance of the class
+     * @return new instance of the class, null otherwise.
      */
-    public static Object getInstance(String className)
+    public static Object getInstance(String classPath)
     {
         Object instance = null;
 
         try
         {
-            instance = getClass(className).newInstance();
+            instance = getClass(classPath).newInstance();
         }
         catch (Exception ex)
         {
-            _logger.warning("Cannot get instance of '" + className + "'");
+            _logger.log(Level.WARNING,
+                "Cannot get instance of class '" + classPath + "'", ex);
         }
 
         return instance;
     }
 
     /**
-     * Returns method, in the class according to the
-     * class name passed in argument, which name according to
-     * the method name passed in argument
+     * Returns the list of methods of the class identified by the given class
+     * path.
      *
-     * @param className class name
-     * @param methodName method name
+     * @param classPath path to the seeked class.
      *
-     * @return method in className and named methodName
+     * @return Array of found methods, null otherwise.
      */
-    public static Method getMethod(String className, String methodName)
+    public static Method[] getMethods(String classPath)
     {
-        return getMethod(className, methodName, new Class[] {  });
+        return getClass(classPath).getMethods();
     }
 
     /**
-     * Returns methods of the class
-     * according to the class name
-     * passed in argument
+     * Returns the seeked method with EMPTY argument list in the class
+     * identified by the given class path.
      *
-     * @param className class name
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
      *
-     * @return methods of the class
+     * @return seeked method in class, null otherwise.
      */
-    public static Method[] getMethods(String className)
+    public static Method getMethod(String classPath, String methodName)
     {
-        return getClass(className).getMethods();
+        return getMethod(classPath, methodName, new Class[] {  });
     }
 
     /**
-     * Returns method of the class
-     * according to the class name
-     * passed in argument. The method searched
-     * is named methodName and have parameters
+     * Returns the seeked method with given argument list in the class
+     * identified by the given class path.
      *
-     * @param className class name
-     * @param methodName method name
-     * @param parameters parameters
      *
-     * @return method according to className, methodName and parameters
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
+     * @param parameters seeked method parameter Class array.
+     *
+     * @return seeked method with parameters in class, null otherwise.
      */
-    public static Method getMethod(String className, String methodName,
+    public static Method getMethod(String classPath, String methodName,
         Class[] parameters)
     {
         Method methodSearched = null;
 
         try
         {
-            methodSearched = getClass(className)
+            methodSearched = getClass(classPath)
                                  .getMethod(methodName, parameters);
         }
         catch (Exception ex)
         {
-            _logger.warning("Cannot find method '" + methodName + "'");
+            _logger.log(Level.WARNING,
+                "Cannot find method '" + methodName + "'", ex);
         }
 
         return methodSearched;
     }
 
     /**
-     * Returns true if the method exists
+     * Test whether a method exists, from a given class path.
      *
-     * @param className class name
-     * @param methodName method name
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
      *
-     * @return true if the method exists
+     * @return true if the method exists, false otherwise.
      */
-    public static boolean isMethodExists(String className, String methodName)
+    public static boolean hasMethod(String classPath, String methodName)
     {
-        return isMethodExists(className, methodName, new Class[] {  });
+        return hasMethod(classPath, methodName, new Class[] {  });
     }
 
     /**
-     * Returns true if the method exists
+     * Test whether a method with guven parameters list exists, from a given
+     * class path.
      *
-     * @param className class name
-     * @param methodName method name
-     * @param parameters parameters
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
+     * @param parameters seeked parameters array.
      *
-     * @return true if the method exists
+     * @return true if the method exists, false otherwise.
      */
-    public static boolean isMethodExists(String className, String methodName,
+    public static boolean hasMethod(String classPath, String methodName,
         Class[] parameters)
     {
-        return (getMethod(className, methodName, parameters) != null);
+        if (getMethod(classPath, methodName, parameters) != null)
+        {
+            _logger.fine("Found method '" + methodName + "' in class '" +
+                classPath + "'.");
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * Returns value of the method according
-     * to the className and the methodName
+     * Returns the execution result of the method in the class identified by
+     * their own names.
      *
-     * @param className class name
-     * @param methodName method name
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
      *
-     * @return value of the method
+     * @return result of the method execution, null otherwise.
      */
-    public static Object getMethodValue(String className, String methodName)
+    public static Object getMethodValue(String classPath, String methodName)
     {
-        return getMethodValue(className, methodName, new Class[] {  });
+        return getMethodValue(classPath, methodName, new Class[] {  });
     }
 
     /**
-     * Returns value of the method according
-     * to the className, the methodName and
-     * the parameters
+     * Returns the execution result of the method with given parameters in the
+     * class identified by their own names.
      *
-     * @param className class name
-     * @param methodName method name
-     * @param parameters parameters
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
+     * @param parameters parameters array.
      *
-     * @return value of the method
+     * @return result of the method execution, null otherwise.
      */
-    public static Object getMethodValue(String className, String methodName,
+    public static Object getMethodValue(String classPath, String methodName,
         Class[] parameters)
     {
-        return getMethodValue(className, methodName, parameters,
+        return getMethodValue(classPath, methodName, parameters,
             new Object[] {  });
     }
 
     /**
-     * Returns value of the method according
-     * to the className, the methodName,
-     * the parameters and arguments
+     * Returns the execution result of the method with given parameters and
+     * argument values in the class identified by their own names.
      *
-     * @param className class name
-     * @param methodName method name
-     * @param parameters parameters
-     * @param arguments arguments
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
+     * @param parameters parameters array.
+     * @param arguments arguments array.
      *
-     * @return value of the method
+     * @return result of the method execution, null otherwise.
      */
-    public static Object getMethodValue(String className, String methodName,
+    public static Object getMethodValue(String classPath, String methodName,
         Class[] parameters, Object[] arguments)
     {
-        Method method = getMethod(className, methodName, parameters);
+        Method method = getMethod(classPath, methodName, parameters);
         Object value  = null;
 
         try
         {
-            value = method.invoke(getInstance(className), arguments);
+            value = method.invoke(getInstance(classPath), arguments);
         }
         catch (Exception ex)
         {
-            _logger.warning("Cannot get value of '" + methodName + "'");
+            _logger.log(Level.WARNING,
+                "Cannot get result of method '" + methodName + "'", ex);
         }
 
         return value;
     }
 
     /**
-     * Executes a method but don't returns it's value
+     * Execute a method in the class identified by their own names, without
+     * returning the result.
      *
-     * @param className class name
-     * @param methodName method name
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
      */
-    public static void executeMethod(String className, String methodName)
+    public static void executeMethod(String classPath, String methodName)
     {
-        executeMethod(className, methodName, new Class[] {  });
+        executeMethod(classPath, methodName, new Class[] {  });
     }
 
     /**
-     * Executes a method but don't returns it's value
+     * Execute a method with given parameters in the class identified by their
+     * own names, without returning the result.
      *
-     * @param className class name
-     * @param methodName method name
-     * @param arguments arguments
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
+     * @param parameters parameters array.
      */
-    public static void executeMethod(String className, String methodName,
-        Object[] arguments)
-    {
-        executeMethod(className, methodName, new Class[] {  }, arguments);
-    }
-
-    /**
-     * Executes a method but don't returns it's value
-     *
-     * @param className class name
-     * @param methodName method name
-     * @param parameters parameters
-     */
-    public static void executeMethod(String className, String methodName,
+    public static void executeMethod(String classPath, String methodName,
         Class[] parameters)
     {
-        executeMethod(className, methodName, parameters, new Object[] {  });
+        executeMethod(classPath, methodName, parameters, new Object[] {  });
     }
 
     /**
-     * Executes a method but don't returns it's value
+     * Execute a method with given parameters and argument values in the class
+     * identified by their own names, without returning the result.
      *
-     * @param className class name
-     * @param methodName method name
-     * @param parameters parameters
-     * @param arguments arguments
+     * @param classPath path to the seeked class.
+     * @param methodName seeked method name.
+     * @param parameters parameters array.
+     * @param arguments arguments array.
      */
-    public static void executeMethod(String className, String methodName,
+    public static void executeMethod(String classPath, String methodName,
         Class[] parameters, Object[] arguments)
     {
-        getMethodValue(className, methodName, parameters, arguments);
+        getMethodValue(classPath, methodName, parameters, arguments);
     }
 
     /**
-     * Returns fields of a class
+     * Returns the list of fields of the class identified by the given class
+     * path.
      *
-     * @param className class name
+     * @param classPath path to the seeked class.
      *
-     * @return fields of class
+     * @return Array of found fields, null otherwise.
      */
-    public static Field[] getFields(String className)
+    public static Field[] getFields(String classPath)
     {
-        return getClass(className).getFields();
+        return getClass(classPath).getFields();
     }
 
     /**
-     * Returns field of a class according
-     * to the fieldName
+     * Returns the seeked field in the class identified by the given class path.
      *
-     * @param className class name
-     * @param fieldName field name
+     * @param classPath path to the seeked class.
+     * @param fieldName seeked field name.
      *
-     * @return field of the class named fieldName
+     * @return seeked field in class, null otherwise.
      */
-    public static Field getField(String className, String fieldName)
+    public static Field getField(String classPath, String fieldName)
     {
         Field field = null;
 
         try
         {
-            field = getClass(className).getField(fieldName);
+            field = getClass(classPath).getField(fieldName);
         }
         catch (Exception ex)
         {
-            _logger.warning("Cannot get value of '" + fieldName + "'");
+            _logger.log(Level.WARNING, "Cannot get field '" + fieldName + "'",
+                ex);
         }
 
         return field;
     }
 
     /**
-     * Returns true if the field exists in
-     * the class according to the class name
+     * Test whether a field exists, from a given class path.
      *
-     * @param className class name
-     * @param fieldName field name
+     * @param classPath path to the seeked class.
+     * @param fieldName seeked field name.
      *
-     * @return true if the field exists
+     * @return true if the field exists, false otherwise.
      */
-    public static boolean isFieldExists(String className, String fieldName)
+    public static boolean hasField(String classPath, String fieldName)
     {
-        return (getField(className, fieldName) != null);
+        if (getField(classPath, fieldName) != null)
+        {
+            _logger.fine("Found field '" + fieldName + "' in class '" +
+                classPath + "'.");
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * Returns the value of the field in the
-     * class according to the class name
+     * Returns the value of the field in the class identified by the given class
+     * path.
      *
-     * @param className class name
-     * @param fieldName field name
+     * @param classPath seeked class name.
+     * @param fieldName seeked field name.
      *
-     * @return value of the field
+     * @return value of the seeked field, null otherwise.
      */
-    public static Object getFieldValue(String className, String fieldName)
+    public static Object getFieldValue(String classPath, String fieldName)
     {
-        Field  field = getField(className, fieldName);
+        Field  field = getField(classPath, fieldName);
         Object value = null;
 
         try
         {
-            value = field.get(getInstance(className));
+            value = field.get(getInstance(classPath));
         }
         catch (Exception ex)
         {
-            _logger.warning("Cannot get value of '" + fieldName + "'");
+            _logger.log(Level.WARNING,
+                "Cannot get value of field '" + fieldName + "'", ex);
         }
 
         return value;

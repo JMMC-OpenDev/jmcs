@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.25 2008-09-01 11:45:18 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.26 2008-09-02 12:31:48 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2008/09/01 11:45:18  lafrasse
+ * Added a hook for preference window display.
+ *
  * Revision 1.24  2008/09/01 11:10:47  lafrasse
  * Moved to new fr.jmmc.jmcs.util.Preferences APIs.
  * Removed unecessary proxy methods to fr.jmmc.jmcs.util.Preferences.
@@ -281,7 +284,7 @@ public abstract class App implements Observer
             _logger.fine("App object instantiated and logger created");
 
             // Set the application data attribute
-            setApplicationData();
+            laodApplicationData();
             _logger.fine("Application data set");
 
             // Interpret arguments
@@ -292,7 +295,7 @@ public abstract class App implements Observer
             _logger.fine("Shared instance affected");
 
             // If execution should not be delayed
-            if ((waitBeforeExecution == false))
+            if (waitBeforeExecution == false)
             {
                 // Run the application imediatly
                 run();
@@ -300,7 +303,7 @@ public abstract class App implements Observer
         }
         catch (Exception ex)
         {
-            _logger.severe("Error during creation of the application");
+            _logger.severe("Error while initalizing the application");
 
             // In order to see the error window
             if (_splashScreen != null)
@@ -311,22 +314,20 @@ public abstract class App implements Observer
                 }
             }
 
-            String errorMessage = "An error occured during application initialization";
-            JOptionPane.showMessageDialog(null, errorMessage, "Error",
+            JOptionPane.showMessageDialog(null,
+                "An error occured while initalizing the application", "Error",
                 JOptionPane.ERROR_MESSAGE);
 
             // Show feedback report
-            new FeedbackReport(((_applicationFrame != null) ? _applicationFrame
-                                                            : null), true, ex,
-                true);
+            new FeedbackReport(_applicationFrame, true, ex, true);
         }
     }
 
     /**
-     * Set the application data if Applicationdata.xml exists into the module.
+     * Laod application data if Applicationdata.xml exists into the module.
      * Otherwise, uses the default ApplicationData.xml.
      */
-    private void setApplicationData()
+    private void laodApplicationData()
     {
         // The class which is extended from App
         Class actualClass = getClass();
@@ -348,16 +349,16 @@ public abstract class App implements Observer
         catch (Exception ex)
         {
             _logger.log(Level.WARNING,
-                "Cannot unmarshal '" + xmlLocation +
-                "', trying the default one instead.", ex);
+                "Cannot load '" + xmlLocation +
+                "' application data, trying the default one instead.", ex);
 
             // Take the defaultData XML in order to take the default menus
-            takeDefaultApplicationData();
+            loadDefaultApplicationData();
         }
     }
 
-    /** Take the default ApplicationData.xml */
-    private void takeDefaultApplicationData()
+    /** Load the default ApplicationData.xml */
+    private void loadDefaultApplicationData()
     {
         String defaultXmlLocation = "";
 
@@ -383,10 +384,11 @@ public abstract class App implements Observer
             // We reinstantiate the application data model
             _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
         }
-        catch (Exception ex2)
+        catch (Exception ex)
         {
             _logger.log(Level.WARNING,
-                "Cannot unmarshal default " + defaultXmlLocation, ex2);
+                "Cannot laod '" + defaultXmlLocation +
+                "' default application data", ex);
             System.exit(-1);
         }
     }
@@ -427,7 +429,7 @@ public abstract class App implements Observer
             {
                 public void actionPerformed(ActionEvent evt)
                 {
-                    _logger.warning(
+                    System.out.println(
                         "Should have been overriden in order to display application own Preferences window");
                 }
             };
@@ -500,14 +502,15 @@ public abstract class App implements Observer
     }
 
     /** Load preferences */
-    public static void retrievePreferences()
+    public static void loadPreferences()
     {
         // Get default preferences class name
         Class  c              = getSharedInstance().getClass();
         String packageName    = c.getPackage().getName();
         String preferenceName = packageName + ".Preferences";
 
-        _logger.config("Default preferences class name : " + preferenceName);
+        _logger.config("Default preferences class name is '" + preferenceName +
+            "'.");
 
         try
         {
@@ -515,11 +518,13 @@ public abstract class App implements Observer
             _preferences = (Preferences) Introspection.getMethodValue(preferenceName,
                     "getInstance");
 
-            _logger.config("Preferences have been loaded\n" + _preferences);
+            _logger.config("Preferences have been loaded, and contains :\n" +
+                _preferences);
         }
         catch (Exception ex)
         {
-            _logger.warning("Cannot load preferences");
+            _logger.warning("Cannot load preferences '" + preferenceName +
+                "'.");
         }
 
         // Add app observer as observer for preferences
@@ -583,9 +588,13 @@ public abstract class App implements Observer
 
                 if (arg != null)
                 {
-                    _logger.info("Set logger level to " + arg);
+                    _logger.info("Set logger level to '" + arg + "'.");
 
-                    if (arg.equals("1"))
+                    if (arg.equals("0"))
+                    {
+                        _logger.setLevel(Level.OFF);
+                    }
+                    else if (arg.equals("1"))
                     {
                         _logger.setLevel(Level.SEVERE);
                     }
@@ -599,11 +608,11 @@ public abstract class App implements Observer
                     }
                     else if (arg.equals("4"))
                     {
-                        _logger.setLevel(Level.CONFIG);
+                        _logger.setLevel(Level.FINE);
                     }
                     else if (arg.equals("5"))
                     {
-                        _logger.setLevel(Level.FINEST);
+                        _logger.setLevel(Level.ALL);
                     }
                     else
                     {
@@ -642,7 +651,7 @@ public abstract class App implements Observer
         System.out.println(
             "| [-h]                         Show the options help                    |");
         System.out.println(
-            "| [-v]         [1|2|3|4|5]     Define console logging level             |");
+            "| [-v]         [0|1|2|3|4|5]   Define console logging level             |");
         System.out.println(
             "| [-version]                   Show application name and version        |");
         System.out.println(
@@ -650,7 +659,7 @@ public abstract class App implements Observer
         System.out.println(
             "-------------------------------------------------------------------------");
         System.out.println(
-            "LEVEL : 1=SEVERE, 2=WARNING, 3=INFO, 4=CONFIG, 5=FINEST\n");
+            "LEVEL : O=OFF, 1=SEVERE, 2=WARNING, 3=INFO, 4=FINE, 5=ALL\n");
 
         System.exit(0);
     }
@@ -687,7 +696,7 @@ public abstract class App implements Observer
         _applicationFrame.setLocationRelativeTo(null);
 
         // Load preferences
-        retrievePreferences();
+        loadPreferences();
 
         // Close the splash screen if we have to
         if (_showSplashScreen == true)

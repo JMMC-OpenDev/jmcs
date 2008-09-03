@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.20 2008-08-28 12:34:06 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.21 2008-09-03 16:19:59 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2008/08/28 12:34:06  lafrasse
+ * Changed preference file name API.
+ * Added Preference file version differences handling APIs.
+ * Enhanced documentation.
+ * Removed test main() as class became abstract.
+ *
  * Revision 1.19  2008/07/25 14:12:02  lafrasse
  * Corrected Mac OS X prefrerence file path generation.
  *
@@ -120,7 +126,13 @@ public abstract class Preferences extends Observable
     /**
      * Default propertiy values.
      */
-    private Properties _defaultProperties = new Properties();
+    protected Properties _defaultProperties = new Properties();
+
+    /*
+       {
+           setDefaultPreference("key", "value");
+       }
+     */
 
     /**
      * Creates a new Preferences object.
@@ -129,28 +141,65 @@ public abstract class Preferences extends Observable
      */
     public Preferences()
     {
-        loadFromFile();
+        try
+        {
+            setDefaultPreferences();
+            loadFromFile();
+        }
+        catch (Exception ex)
+        {
+            MCSLogger.error("Default preference values creation FAILED." + ex);
+        }
     }
 
     /**
      * Return the preference filename.
      *
-     * Class that herits from Preferences class MUST overload this method to
-     * return specific file name.
+     * @warning Classes that herits from Preferences class MUST overload this
+     * method to return specific file name.
      *
-     * @warning The filenmae must not include any file separator.
+     * @return the preference filename, without any file separator.
      */
     protected abstract String getPreferenceFilename();
 
     /**
      * Return the version of the structure of the preference file.
      *
-     * Class that herits from Preferences class MUST overload this method to
-     * return specific file name.
+     * @warning Classes that herits from Preferences class MUST overload this
+     * method to return specific file name.
      *
-     * @warning The filenmae must not include any file separator.
+     * @return the preference current version.
      */
     protected abstract int getPreferencesVersionNumber();
+
+    /**
+     * Hook to handle update of older preference file version.
+     *
+     * The default implementation triggers default values load.
+     *
+     * @warning This method should be overriden to process older files. In its
+     * default behavior, default values will be loaded instead.
+     *
+     * @param loadedVersionNumber the version of the loaded preference file.
+     *
+     * @return should return true if the update went fine, false otherwise to
+     * automaticcaly trigger default values load.
+     */
+    protected boolean updatePreferencesVersion(int loadedVersionNumber)
+    {
+        MCSLogger.trace();
+
+        return false;
+    }
+
+    /**
+     * Set the default properties used to reset default preferences.
+     * This method should be used to adjust specific application preferences.
+     *
+     * @warning Classes that herits from Preferences MUST overload this method
+     * to set default preferences.
+     */
+    protected abstract void setDefaultPreferences() throws PreferencesException;
 
     /**
      * Returns the path of file containing preferences values, as this varies
@@ -210,6 +259,7 @@ public abstract class Preferences extends Observable
 
         try
         {
+            System.out.println("Loading '" + cfgName + "' preference file.");
             MCSLogger.info("Loading '" + cfgName + "' preference file.");
 
             // Laoding preference file
@@ -255,22 +305,6 @@ public abstract class Preferences extends Observable
 
         // Notify all preferences listener of maybe new values coming from file.
         triggerObserversNotification();
-    }
-
-    /**
-     * Try to update older preference file version.
-     *
-     * @warning This method should be overriden to process older files. In its default behavior, default values will be loaded instead.
-     *
-     * @param loadedVersionNumber the version of the loaded preference file.
-     *
-     * @return true if the update went fine, false otherwise.
-     */
-    protected boolean updatePreferencesVersion(int loadedVersionNumber)
-    {
-        MCSLogger.trace();
-
-        return false;
     }
 
     /**
@@ -324,25 +358,23 @@ public abstract class Preferences extends Observable
     }
 
     /**
-     * Set the default properties used to reset default preferences.
-     * This method should be used to adjust specific application preferences.
+     * Set a preference in the given properties set.
      *
-     * @param defaultProperties the default properties to set for this application.
+     * @param properties the properties set to modify.
+     * @param preferenceName the preference name.
+     * @param preferenceValue the preference value.
      */
-    protected void setDefaultPreferences(Preferences defaults)
+    final public void setPreferenceToProperties(Properties properties,
+        String preferenceName, Object preferenceValue)
+        throws PreferencesException
     {
         MCSLogger.trace();
 
-        // Copy in default values
-        _defaultProperties = (Properties) defaults._currentProperties.clone();
+        // Wiil automatically get -1 for a yet undefined preference
+        int order = getPreferenceOrder(preferenceName);
 
-        // Set internal preference version number
-        Integer tmp = new Integer(getPreferencesVersionNumber());
-        _defaultProperties.setProperty(_preferencesVersionNumberName,
-            tmp.toString());
-
-        // Notify all preferences listener.
-        triggerObserversNotification();
+        setPreferenceToProperties(properties, preferenceName, order,
+            preferenceValue);
     }
 
     /**
@@ -356,17 +388,86 @@ public abstract class Preferences extends Observable
     {
         MCSLogger.trace();
 
-        // Wiil automatically get -1 for a yet undefined preference
-        int order = getPreferenceOrder(preferenceName);
+        setPreferenceToProperties(_currentProperties, preferenceName,
+            preferenceValue);
+    }
 
-        try
+    /**
+     * Set a preference.
+     *
+     * @param preferenceName the preference name.
+     * @param preferenceValue the preference value.
+     */
+    final public void setDefaultPreference(String preferenceName,
+        Object preferenceValue) throws PreferencesException
+    {
+        MCSLogger.trace();
+
+        setPreferenceToProperties(_defaultProperties, preferenceName,
+            preferenceValue);
+    }
+
+    /**
+     * Set a preference in the given properties set.
+     *
+     * @param properties the properties set to modify.
+     * @param preferenceName the preference name.
+     * @param preferenceIndex the order number for the property (-1 for no order).
+     * @param preferenceValue the preference value.
+     */
+    final private void setPreferenceToProperties(Properties properties,
+        String preferenceName, int preferenceIndex, Object preferenceValue)
+        throws PreferencesException
+    {
+        MCSLogger.trace();
+
+        // If the constraint is a String object
+        if (preferenceValue.getClass() == java.lang.String.class)
         {
-            setPreference(preferenceName, order, preferenceValue);
+            properties.setProperty(preferenceName, (String) preferenceValue);
         }
-        catch (PreferencesException e)
+
+        // Else if the constraint is a Boolean object
+        else if (preferenceValue.getClass() == java.lang.Boolean.class)
         {
-            throw e;
+            properties.setProperty(preferenceName,
+                ((Boolean) preferenceValue).toString());
         }
+
+        // Else if the constraint is an Integer object
+        else if (preferenceValue.getClass() == java.lang.Integer.class)
+        {
+            properties.setProperty(preferenceName,
+                ((Integer) preferenceValue).toString());
+        }
+
+        // Else if the constraint is a Double object
+        else if (preferenceValue.getClass() == java.lang.Double.class)
+        {
+            properties.setProperty(preferenceName,
+                ((Double) preferenceValue).toString());
+        }
+
+        // Else if the constraint is a Color object
+        else if (preferenceValue.getClass() == java.awt.Color.class)
+        {
+            properties.setProperty(preferenceName,
+                fr.jmmc.mcs.util.ColorEncoder.encode((Color) preferenceValue));
+        }
+
+        // Otherwise we don't know how to handle the given object type
+        else
+        {
+            throw new PreferencesException(
+                "Can't handle the given preference value.");
+        }
+
+        // Add property index for order if needed
+        setPreferenceOrderToProperties(properties, preferenceName,
+            preferenceIndex);
+
+        // Notify all preferences listener.
+        triggerObserversNotification();
     }
 
     /**
@@ -381,50 +482,50 @@ public abstract class Preferences extends Observable
     {
         MCSLogger.trace();
 
-        // If the constraint is a String object
-        if (preferenceValue.getClass() == java.lang.String.class)
-        {
-            _currentProperties.setProperty(preferenceName,
-                (String) preferenceValue);
-        }
+        setPreferenceToProperties(_currentProperties, preferenceName,
+            preferenceIndex, preferenceValue);
+    }
 
-        // Else if the constraint is a Boolean object
-        else if (preferenceValue.getClass() == java.lang.Boolean.class)
-        {
-            _currentProperties.setProperty(preferenceName,
-                ((Boolean) preferenceValue).toString());
-        }
+    /**
+     * Set a preference default value.
+     *
+     * @param preferenceName the preference name.
+     * @param preferenceIndex the order number for the property (-1 for no order).
+     * @param preferenceValue the preference value.
+     */
+    final public void setDefaultPreference(String preferenceName,
+        int preferenceIndex, Object preferenceValue)
+        throws PreferencesException
+    {
+        MCSLogger.trace();
 
-        // Else if the constraint is an Integer object
-        else if (preferenceValue.getClass() == java.lang.Integer.class)
-        {
-            _currentProperties.setProperty(preferenceName,
-                ((Integer) preferenceValue).toString());
-        }
+        setPreferenceToProperties(_defaultProperties, preferenceName,
+            preferenceIndex, preferenceValue);
+    }
 
-        // Else if the constraint is a Double object
-        else if (preferenceValue.getClass() == java.lang.Double.class)
-        {
-            _currentProperties.setProperty(preferenceName,
-                ((Double) preferenceValue).toString());
-        }
-
-        // Else if the constraint is a Color object
-        else if (preferenceValue.getClass() == java.awt.Color.class)
-        {
-            _currentProperties.setProperty(preferenceName,
-                fr.jmmc.mcs.util.ColorEncoder.encode((Color) preferenceValue));
-        }
-
-        // Otherwise we don't know how to handle the given object type
-        else
-        {
-            throw new PreferencesException(
-                "Can't handle the given preference value.");
-        }
+    /**
+     * Set a preference order in the given properties set.
+     *
+     * @param properties the properties set to modify.
+     * @param preferenceName the preference name.
+     * @param preferenceIndex the order number for the property (-1 for no order).
+     */
+    final private void setPreferenceOrderToProperties(Properties properties,
+        String preferenceName, int preferenceIndex)
+    {
+        MCSLogger.trace();
 
         // Add property index for order if needed
-        setPreferenceOrder(preferenceName, preferenceIndex);
+        if (preferenceIndex > -1)
+        {
+            properties.setProperty(_indexPrefix + preferenceName,
+                Integer.toString(preferenceIndex));
+        }
+        else
+        {
+            properties.setProperty(_indexPrefix + preferenceName,
+                Integer.toString(-1));
+        }
 
         // Notify all preferences listener.
         triggerObserversNotification();
@@ -441,20 +542,8 @@ public abstract class Preferences extends Observable
     {
         MCSLogger.trace();
 
-        // Add property index for order if needed
-        if (preferenceIndex > -1)
-        {
-            _currentProperties.setProperty(_indexPrefix + preferenceName,
-                Integer.toString(preferenceIndex));
-        }
-        else
-        {
-            _currentProperties.setProperty(_indexPrefix + preferenceName,
-                Integer.toString(-1));
-        }
-
-        // Notify all preferences listener.
-        triggerObserversNotification();
+        setPreferenceOrderToProperties(_currentProperties, preferenceName,
+            preferenceIndex);
     }
 
     /**

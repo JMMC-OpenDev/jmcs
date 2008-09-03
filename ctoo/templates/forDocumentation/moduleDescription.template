@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+ <INSTITUTE> project
+
+ "@(#) $Id: moduleDescription.template,v 1.10 2008-04-23 15:01:37 rdautric Exp $"
+
+ History
+ ~~~~~~~
+ $Log: not supported by cvs2svn $
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the responsible's institute
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <institute>Institute</institute>
+        <package>PackageName</package>
+    </module>
+
+-->
+
+<module name="module">
+    <desc>description</desc>
+    <resp>responsible</resp>
+    <institute><INSTITUTE></institute>
+    <package>package</package>
+</module>

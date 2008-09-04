@@ -47,6 +47,8 @@ package fr.jmmc.mcs.gui;
 
 import com.apple.eawt.*;
 
+import fr.jmmc.mcs.util.ActionRegistrar;
+
 import javax.swing.JFrame;
 
 
@@ -54,7 +56,7 @@ import javax.swing.JFrame;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class OSXAdapter extends ApplicationAdapter
 {
@@ -69,6 +71,9 @@ public class OSXAdapter extends ApplicationAdapter
      */
     private static com.apple.eawt.Application theApplication;
 
+    /** Store a proxy to the shared ActionRegistrar facility */
+    private ActionRegistrar _registrar = null;
+
     // reference to the app where the existing quit, about, prefs code is
     /**
      * DOCUMENT ME!
@@ -82,7 +87,9 @@ public class OSXAdapter extends ApplicationAdapter
      */
     private OSXAdapter(JFrame inApp)
     {
-        mainApp = inApp;
+        mainApp        = inApp;
+
+        _registrar     = ActionRegistrar.getInstance();
     }
 
     // implemented handler methods.  These are basically hooks into existing 
@@ -115,7 +122,7 @@ public class OSXAdapter extends ApplicationAdapter
         if (mainApp != null)
         {
             ae.setHandled(true);
-            App.showPreferencesAction().actionPerformed(null);
+            _registrar.getPreferenceAction().actionPerformed(null);
         }
         else
         {
@@ -139,7 +146,7 @@ public class OSXAdapter extends ApplicationAdapter
              * on all platforms.  This example simply cancels the AppleEvent-based quit and
              * defers to that universal method. */
             ae.setHandled(false);
-            App.exitAction().actionPerformed(null);
+            _registrar.getQuitAction().actionPerformed(null);
         }
         else
         {

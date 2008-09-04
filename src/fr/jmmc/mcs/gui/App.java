@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.26 2008-09-02 12:31:48 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.27 2008-09-04 16:03:35 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2008/09/02 12:31:48  lafrasse
+ * Code, documentation and logging cleanup.
+ *
  * Revision 1.25  2008/09/01 11:45:18  lafrasse
  * Added a hook for preference window display.
  *
@@ -142,7 +145,6 @@ import java.net.URL;
 
 import java.util.Enumeration;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -170,9 +172,9 @@ import javax.swing.*;
  * in order to do that and which has been written to abstract the way
  * to acces to these informations.
  */
-public abstract class App implements Observer
+public abstract class App
 {
-    /** Logger */
+    /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = Logger.getLogger("fr.jmmc");
 
     /** Singleton reference */
@@ -277,7 +279,7 @@ public abstract class App implements Observer
             _logger.addHandler(_consoleHandler);
             _logger.addHandler(_streamHandler);
             _logger.setLevel(Level.INFO);
-            _logger.fine("Logger properties set");
+            _logger.finer("Logger properties set");
 
             _logger.fine(
                 "Memory and console handler created and fixed to feedbackLogger");
@@ -285,14 +287,13 @@ public abstract class App implements Observer
 
             // Set the application data attribute
             laodApplicationData();
-            _logger.fine("Application data set");
+            _logger.fine("Application data loaded");
 
             // Interpret arguments
             interpretArguments(args);
 
             // Set shared instance
             _sharedInstance = this;
-            _logger.fine("Shared instance affected");
 
             // If execution should not be delayed
             if (waitBeforeExecution == false)
@@ -489,48 +490,6 @@ public abstract class App implements Observer
             };
     }
 
-    /** Creates the action which open logGui */
-    public static Action logGuiAction()
-    {
-        return new AbstractAction("LogGui")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    imx.loggui.LogMaster.startLogGui();
-                }
-            };
-    }
-
-    /** Load preferences */
-    public static void loadPreferences()
-    {
-        // Get default preferences class name
-        Class  c              = getSharedInstance().getClass();
-        String packageName    = c.getPackage().getName();
-        String preferenceName = packageName + ".Preferences";
-
-        _logger.config("Default preferences class name is '" + preferenceName +
-            "'.");
-
-        try
-        {
-            // Get preferences instance
-            _preferences = (Preferences) Introspection.getMethodValue(preferenceName,
-                    "getInstance");
-
-            _logger.config("Preferences have been loaded, and contains :\n" +
-                _preferences);
-        }
-        catch (Exception ex)
-        {
-            _logger.warning("Cannot load preferences '" + preferenceName +
-                "'.");
-        }
-
-        // Add app observer as observer for preferences
-        _preferences.addObserver(getSharedInstance());
-    }
-
     /**
      * Interpret command line arguments
      *
@@ -545,9 +504,12 @@ public abstract class App implements Observer
         }
 
         // Array for long arguments (help & version)
-        LongOpt[] longopts = new LongOpt[2];
-        longopts[0]     = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 0);
-        longopts[1]     = new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1);
+        LongOpt[] longopts = new LongOpt[]
+            {
+                new LongOpt("help", LongOpt.NO_ARGUMENT, null, 0),
+                new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1),
+                new LongOpt("loggui", LongOpt.NO_ARGUMENT, null, 2)
+            };
 
         // Instantiate the getopt object
         Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(),
@@ -579,6 +541,12 @@ public abstract class App implements Observer
                 System.out.println(getProgramName());
                 // Exit the application
                 System.exit(0);
+
+                break;
+
+            // Display the LogGUI panel
+            case 2:
+                imx.loggui.LogMaster.startLogGui();
 
                 break;
 
@@ -695,9 +663,6 @@ public abstract class App implements Observer
         _applicationFrame.pack();
         _applicationFrame.setLocationRelativeTo(null);
 
-        // Load preferences
-        loadPreferences();
-
         // Close the splash screen if we have to
         if (_showSplashScreen == true)
         {
@@ -799,17 +764,6 @@ public abstract class App implements Observer
         String version = _applicationDataModel.getProgramVersion();
 
         return name + " v" + version;
-    }
-
-    /**
-     * Observer abstract method
-     *
-     * @param o observable object
-     * @param arg argument
-     */
-    public void update(Observable o, Object arg)
-    {
-        _logger.config("Preferences have been changed");
     }
 }
 /*___oOo___*/

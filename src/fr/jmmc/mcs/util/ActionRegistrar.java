@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ActionRegistrar.java,v 1.1 2008-09-04 15:47:29 lafrasse Exp $"
+ * "@(#) $Id: ActionRegistrar.java,v 1.2 2008-09-04 15:58:00 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/09/04 15:47:29  lafrasse
+ * First revision.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
@@ -32,25 +35,6 @@ public class ActionRegistrar
 
     /** Quit Action unic identifying key */
     private static final String _quitActionKey = "quitActionKey";
-
-    /**
-     * DOCUMENT ME!
-     */
-    /**
-     * DOCUMENT ME!
-     */
-
-    /**
-     * DOCUMENT ME!
-     */
-
-    /**
-     * DOCUMENT ME!
-     */
-
-    /**
-     * DOCUMENT ME!
-     */
 
     /**
      * Hastable to associate string keys like
@@ -166,7 +150,7 @@ public class ActionRegistrar
      *
      * @return the retrieved registered action, null otherwise.
      */
-    public AbstractAction getPreferenceAction(AbstractAction action)
+    public AbstractAction getPreferenceAction()
     {
         _logger.entering("ActionRegistrar", "getPreferenceAction");
 
@@ -193,7 +177,7 @@ public class ActionRegistrar
      *
      * @return the retrieved registered action, null otherwise.
      */
-    public AbstractAction getQuitAction(AbstractAction action)
+    public AbstractAction getQuitAction()
     {
         _logger.entering("ActionRegistrar", "getQuitAction");
 

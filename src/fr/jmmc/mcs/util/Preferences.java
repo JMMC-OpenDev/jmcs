@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.21 2008-09-03 16:19:59 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.22 2008-09-04 11:37:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2008/09/03 16:19:59  lafrasse
+ * Enforced default preferences definition.
+ *
  * Revision 1.20  2008/08/28 12:34:06  lafrasse
  * Changed preference file name API.
  * Added Preference file version differences handling APIs.
@@ -259,7 +262,6 @@ public abstract class Preferences extends Observable
 
         try
         {
-            System.out.println("Loading '" + cfgName + "' preference file.");
             MCSLogger.info("Loading '" + cfgName + "' preference file.");
 
             // Laoding preference file

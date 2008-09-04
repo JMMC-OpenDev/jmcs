@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.14 2008-06-23 07:47:32 bcolucci Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.15 2008-09-04 16:02:12 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2008/06/23 07:47:32  bcolucci
+ * Use SystemUtils class from apache common lang library in order
+ * to know is we are running on a MAC OS X or not instead of
+ * use os.name property.
+ *
  * Revision 1.13  2008/06/20 08:41:45  bcolucci
  * Remove unused imports and add class comments.
  *
@@ -56,14 +61,19 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.util.ActionRegistrar;
+
 import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Component;
+
+import java.lang.reflect.Method;
 
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -91,10 +101,17 @@ import javax.swing.text.DefaultEditorKit;
 public class MainMenuBar extends JMenuBar
 {
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(MainMenuBar.class.getName());
+    private static final Logger _logger = Logger.getLogger(
+            "fr.jmmc.mcs.gui.MainMenuBar");
+
+    /** Store wether we are running under Mac OS X or not */
+    private boolean _isRunningUnderMacOSX = false;
 
     /** Table where are stocked the menus */
-    private Hashtable<String, JMenu> _menusTable = new Hashtable<String, JMenu>();
+    private Hashtable<String, JMenu> _menusTable = null;
+
+    /** Store a proxy to the shared ActionRegistrar facility */
+    private ActionRegistrar _registrar = null;
 
     /**
      * Creates a new MainMenuBar object
@@ -103,6 +120,13 @@ public class MainMenuBar extends JMenuBar
      */
     public MainMenuBar(JFrame frame)
     {
+        // Get the host operating system type
+        _isRunningUnderMacOSX     = SystemUtils.IS_OS_MAC_OSX;
+
+        // Member initilization
+        _menusTable               = new Hashtable<String, JMenu>();
+        _registrar                = ActionRegistrar.getInstance();
+
         // Get the application data model
         ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
@@ -128,16 +152,16 @@ public class MainMenuBar extends JMenuBar
                     {
                         // Get menu label
                         String currentMenuLabel = menu.getLabel();
-                        _logger.fine("Make " + currentMenuLabel + " menu");
+                        _logger.fine("Make '" + currentMenuLabel + "' menu.");
 
                         // Keep it if it's an other menu
-                        if (! currentMenuLabel.equals("File") &&
-                                ! currentMenuLabel.equals("Edit") &&
-                                ! currentMenuLabel.equals("Help"))
+                        if ((currentMenuLabel.equals("File") == false) &&
+                                (currentMenuLabel.equals("Edit") == false) &&
+                                (currentMenuLabel.equals("Help") == false))
                         {
                             otherMenus.add(currentMenuLabel);
-                            _logger.fine("Add " + currentMenuLabel +
-                                " to other menus vector");
+                            _logger.fine("Add '" + currentMenuLabel +
+                                "' to other menus vector.");
                         }
 
                         // Get the component according to the castor menu object
@@ -146,8 +170,8 @@ public class MainMenuBar extends JMenuBar
 
                         // Put it in the menu table
                         _menusTable.put(currentMenuLabel, completeMenu);
-                        _logger.fine("Put " + completeMenu.getName() +
-                            " into the menus table");
+                        _logger.fine("Put '" + completeMenu.getName() +
+                            "' into the menus table.");
                     }
                 }
             }
@@ -163,7 +187,7 @@ public class MainMenuBar extends JMenuBar
         for (String menuLabel : otherMenus)
         {
             add(_menusTable.get(menuLabel));
-            _logger.fine("Add " + menuLabel + " into the menubar");
+            _logger.fine("Add '" + menuLabel + "' menu into the menubar.");
         }
 
         // Create help menu
@@ -199,16 +223,16 @@ public class MainMenuBar extends JMenuBar
                     fileMenu.add(currentComponent);
                 }
 
-                if (! SystemUtils.IS_OS_MAC_OSX)
+                if (_isRunningUnderMacOSX == false)
                 {
                     fileMenu.add(new JSeparator());
                 }
             }
         }
 
-        if (! SystemUtils.IS_OS_MAC_OSX)
+        if (_isRunningUnderMacOSX == false)
         {
-            fileMenu.add(App.exitAction());
+            fileMenu.add(_registrar.getQuitAction());
             haveMenu = true;
         }
 
@@ -216,7 +240,7 @@ public class MainMenuBar extends JMenuBar
         if (haveMenu)
         {
             add(fileMenu);
-            _logger.fine("Add file into the menubar");
+            _logger.fine("Add 'File' menu into the menubar.");
         }
     }
 
@@ -268,7 +292,7 @@ public class MainMenuBar extends JMenuBar
 
         // Add menu to menubar
         add(editMenu);
-        _logger.fine("Add edit into the menubar");
+        _logger.fine("Add 'Edit' menu into the menubar.");
     }
 
     /** Create help menu */
@@ -302,7 +326,7 @@ public class MainMenuBar extends JMenuBar
             }
         }
 
-        if (! SystemUtils.IS_OS_MAC_OSX)
+        if (_isRunningUnderMacOSX == false)
         {
             helpMenu.add(new JSeparator());
 
@@ -312,7 +336,7 @@ public class MainMenuBar extends JMenuBar
 
         // Add menu to menubar
         add(helpMenu);
-        _logger.fine("Add help into the menubar");
+        _logger.fine("Add 'Help' into the menubar.");
     }
 
     /**
@@ -329,13 +353,14 @@ public class MainMenuBar extends JMenuBar
     {
         // Create the current component
         JComponent me = createComponent(menu, createJMenu);
-        _logger.fine("Component " + me.getName() + " created");
+        _logger.fine("Component '" + me.getName() + "' created");
 
         // Add it to the parent if there is one
         if (parent != null)
         {
             parent.add(me);
-            _logger.fine(me.getName() + " linked to " + parent.getName());
+            _logger.fine("'" + me.getName() + "' linked to '" +
+                parent.getName() + "'.");
         }
 
         // Get submenus
@@ -380,7 +405,7 @@ public class MainMenuBar extends JMenuBar
                                                         : "NONE";
         boolean isCheckbox = (menu.getCheckbox() != null);
 
-        // Check that we cannot have a checkbox and a radio in the same time etc..
+        // Check that we cannot have a checkbox and a radio at the same time
         boolean notPossible = (isCheckbox && isJMenu);
 
         // Is it a separator?
@@ -392,24 +417,18 @@ public class MainMenuBar extends JMenuBar
         else
         {
             // Get action
-            Action action = null;
-
-            if (Introspection.isMethodExists(className, actionName))
-            {
-                action = (Action) Introspection.getMethodValue(className,
-                        actionName);
-            }
+            AbstractAction action = _registrar.get(className, actionName);
 
             // Set attributes
             setAttributes(menu, action);
 
-            if (isCheckbox) // Is it a checkbox?
+            if (isCheckbox == true) // Is it a checkbox?
             {
                 comp = new JCheckBoxMenuItem(action);
                 ((JCheckBoxMenuItem) comp).setLabel(label);
                 _logger.fine("Component is a JCheckBoxMenuItem");
             }
-            else if (isJMenu) // What have we to create?
+            else if (isJMenu == true) // What have we to create?
             {
                 comp = new JMenu(action);
                 ((JMenu) comp).setLabel(label);
@@ -471,7 +490,7 @@ public class MainMenuBar extends JMenuBar
                 action.putValue(Action.SMALL_ICON, new ImageIcon(icon));
             }
 
-            _logger.fine("Attributes set on " + menu.getLabel());
+            _logger.fine("Attributes set on '" + menu.getLabel() + "'.");
         }
     }
 
@@ -483,11 +502,61 @@ public class MainMenuBar extends JMenuBar
     public void macOSXRegistration(JFrame frame)
     {
         // If running under Mac OS X
-        if (SystemUtils.IS_OS_MAC_OSX)
+        if (_isRunningUnderMacOSX == true)
         {
-            // Execute registerMacOSXApplication method
-            Introspection.executeMethod("fr.jmmc.mcs.gui.OSXAdapter",
-                "registerMacOSXApplication", new Object[] { frame });
+            // Set the menu bar under Mac OS X
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+            try
+            {
+                Class   osxAdapter     = this.getClass().getClassLoader()
+                                             .loadClass("fr.jmmc.mcs.gui.OSXAdapter");
+
+                Class[] defArgs        = { JFrame.class };
+                Method  registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication",
+                        defArgs);
+
+                if (registerMethod != null)
+                {
+                    Object[] args = { (JFrame) frame };
+                    registerMethod.invoke(osxAdapter, args);
+                }
+
+                // This is slightly gross.  to reflectively access methods with boolean args, 
+                // use "boolean.class", then pass a Boolean object in as the arg, which apparently
+                // gets converted for you by the reflection system.
+                defArgs[0] = boolean.class;
+
+                Method prefsEnableMethod = osxAdapter.getDeclaredMethod("enablePrefs",
+                        defArgs);
+
+                if (prefsEnableMethod != null)
+                {
+                    Object[] args = { Boolean.TRUE };
+                    prefsEnableMethod.invoke(osxAdapter, args);
+                }
+            }
+            catch (NoClassDefFoundError e)
+            {
+                // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
+                // because OSXAdapter extends ApplicationAdapter in its def
+                System.err.println(
+                    "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" +
+                    e + ")");
+            }
+            catch (ClassNotFoundException e)
+            {
+                // This shouldn't be reached; if there's a problem with the OSXAdapter we should get the 
+                // above NoClassDefFoundError first.
+                System.err.println(
+                    "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" +
+                    e + ")");
+            }
+            catch (Exception e)
+            {
+                System.err.println("Exception while loading the OSXAdapter:");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -498,7 +567,7 @@ public class MainMenuBar extends JMenuBar
      */
     private String getPrefixKey()
     {
-        return (SystemUtils.IS_OS_MAC_OSX) ? "meta " : "ctrl ";
+        return (_isRunningUnderMacOSX == true) ? "meta " : "ctrl ";
     }
 }
 /*___oOo___*/

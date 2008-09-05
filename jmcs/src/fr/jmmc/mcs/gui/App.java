@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.28 2008-09-05 16:08:14 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.29 2008-09-05 16:19:27 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2008/09/05 16:08:14  lafrasse
+ * Implemented secured application exit.
+ *
  * Revision 1.27  2008/09/04 16:03:35  lafrasse
  * Code, documentation and log enhancement.
  *
@@ -295,7 +298,7 @@ public abstract class App
             _logger.fine("App object instantiated and logger created");
 
             // Set the application data attribute
-            laodApplicationData();
+            loadApplicationData();
             _logger.fine("Application data loaded");
 
             // Interpret arguments
@@ -337,7 +340,7 @@ public abstract class App
      * Laod application data if Applicationdata.xml exists into the module.
      * Otherwise, uses the default ApplicationData.xml.
      */
-    private void laodApplicationData()
+    private void loadApplicationData()
     {
         // The class which is extended from App
         Class actualClass = getClass();
@@ -428,19 +431,6 @@ public abstract class App
                             _aboutBox = new AboutBox();
                         }
                     }
-                }
-            };
-    }
-
-    /** Creates the action which open the preferences window */
-    public static Action showPreferencesAction()
-    {
-        return new AbstractAction("Show Preferences Window")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    System.out.println(
-                        "Should have been overriden in order to display application own Preferences window");
                 }
             };
     }
@@ -629,7 +619,22 @@ public abstract class App
     /** Execute application body */
     protected abstract void execute();
 
-    /** Handle operations before closing application */
+    /**
+     * Hook to handle operations before closing application.
+     *
+     * This method is automatically triggered when the application "Quit" menu
+     * has been used. Thus, you have a chance to do things like saves before the
+     * application really quit.
+     *
+     * The default implementation lets the application quitting gently.
+     *
+     * @warning This method should be overriden to handle quit as you intend to.
+     * In its default behavior, all changes that occured during application life
+     * will be lost.
+     *
+     * @return should return true if the application can exit, false otherwise
+     * to cancel exit.
+     */
     protected boolean finnish()
     {
         _logger.fine("Default App.finnish() handler called.");
@@ -760,6 +765,7 @@ public abstract class App
         return name + " v" + version;
     }
 
+    /* Action to correctly handle operations before closing application. */
     protected class QuitAction extends RegisteredAction
     {
         public QuitAction(String classPath, String fieldName)

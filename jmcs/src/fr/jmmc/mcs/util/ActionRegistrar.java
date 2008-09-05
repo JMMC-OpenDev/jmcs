@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ActionRegistrar.java,v 1.2 2008-09-04 15:58:00 lafrasse Exp $"
+ * "@(#) $Id: ActionRegistrar.java,v 1.3 2008-09-05 08:33:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2008/09/04 15:58:00  lafrasse
+ * Typo corrections.
+ *
  * Revision 1.1  2008/09/04 15:47:29  lafrasse
  * First revision.
  *
@@ -40,7 +43,7 @@ public class ActionRegistrar
      * Hastable to associate string keys like
      * "fr.jmmc.classpath.classname:fiedname" to AbstractAction instances.
      */
-    Hashtable<String, AbstractAction> _register = null;
+    private Hashtable<String, AbstractAction> _register = null;
 
     /** Hidden constructor */
     protected ActionRegistrar()

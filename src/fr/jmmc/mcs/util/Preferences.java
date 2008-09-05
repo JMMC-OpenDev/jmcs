@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.23 2008-09-05 08:26:33 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.24 2008-09-05 16:11:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2008/09/05 08:26:33  lafrasse
+ * Code, documentation and log enhancement.
+ *
  * Revision 1.22  2008/09/04 11:37:33  lafrasse
  * Removed forgotten output trace.
  *
@@ -192,7 +195,7 @@ public abstract class Preferences extends Observable
      *
      * This method is automatically triggered when the preference file loaded is
      * bound to a previous version of your Preference-derived object. Thus, you
-     * have a chance to laod previous values, update them and save them in a new
+     * have a chance to load previous values, update them and save them in a new
      * preference file.
      *
      * The default implementation triggers default values load.

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.15 2008-09-04 16:02:12 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.16 2008-09-05 16:19:59 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2008/09/04 16:02:12  lafrasse
+ * Moved to new ActionRegistrar infrastructure.
+ * Code, documentation and log enhancement.
+ *
  * Revision 1.14  2008/06/23 07:47:32  bcolucci
  * Use SystemUtils class from apache common lang library in order
  * to know is we are running on a MAC OS X or not instead of
@@ -288,6 +292,11 @@ public class MainMenuBar extends JMenuBar
                     editMenu.add(currentComponent);
                 }
             }
+        }
+
+        if (_isRunningUnderMacOSX == false)
+        {
+            editMenu.add(_registrar.getPreferenceAction());
         }
 
         // Add menu to menubar

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.27 2008-09-04 16:03:35 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.28 2008-09-05 16:08:14 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2008/09/04 16:03:35  lafrasse
+ * Code, documentation and log enhancement.
+ *
  * Revision 1.26  2008/09/02 12:31:48  lafrasse
  * Code, documentation and logging cleanup.
  *
@@ -126,8 +129,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import fr.jmmc.mcs.util.Preferences;
-import fr.jmmc.mcs.util.PreferencesException;
+import fr.jmmc.mcs.util.*;
 
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
@@ -211,19 +213,23 @@ public abstract class App
     private static String[] _args;
 
     /** If it's true, exit the application after the exit method */
-    private static boolean _exitApplicationWhenClosed = false;
+    private static boolean _exitApplicationWhenClosed = true;
 
     /** Application preferences */
     private static Preferences _preferences;
 
-    /** Creates a new App object
+    /** Quit handling action */
+    private QuitAction _quitAction = null;
+
+    /**
+     * Creates a new App object
      *
      * @param args command-line arguments
      */
     protected App(String[] args)
     {
         // Start application imediatly, with splashscreen
-        this(args, false, true);
+        this(args, false);
     }
 
     /** Creates a new App object, with possibility to delay execution
@@ -248,7 +254,7 @@ public abstract class App
     {
         /* Start application and define that the it will
            not stop itself when exit method will be called */
-        this(args, waitBeforeExecution, showSplashScreen, false);
+        this(args, waitBeforeExecution, showSplashScreen, true);
     }
 
     /**
@@ -263,6 +269,9 @@ public abstract class App
     protected App(String[] args, boolean waitBeforeExecution,
         boolean showSplashScreen, boolean exitWhenClosed)
     {
+        String classPath = getClass().getName();
+        _quitAction = new QuitAction(classPath, "_quitAction");
+
         try
         {
             // Attributes affectations
@@ -472,24 +481,6 @@ public abstract class App
             };
     }
 
-    /** Creates the exit action which properly exit the application (applet) */
-    public static Action exitAction()
-    {
-        return new AbstractAction("Quit")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    // TODO : est-ce que ca appelle la methode de la classe fille ?????
-                    exit();
-
-                    if (_exitApplicationWhenClosed == true)
-                    {
-                        System.exit(-1);
-                    }
-                }
-            };
-    }
-
     /**
      * Interpret command line arguments
      *
@@ -638,9 +629,12 @@ public abstract class App
     /** Execute application body */
     protected abstract void execute();
 
-    /** Execute operations before closing application */
-    protected static void exit()
+    /** Handle operations before closing application */
+    protected boolean finnish()
     {
+        _logger.fine("Default App.finnish() handler called.");
+
+        return true;
     }
 
     /** Describe the life cycle of the application */
@@ -764,6 +758,44 @@ public abstract class App
         String version = _applicationDataModel.getProgramVersion();
 
         return name + " v" + version;
+    }
+
+    protected class QuitAction extends RegisteredAction
+    {
+        public QuitAction(String classPath, String fieldName)
+        {
+            super(classPath, fieldName);
+
+            flagAsQuitAction();
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            _logger.entering("QuitAction", "actionPerformed");
+
+            _logger.fine("Should we kill the application ?");
+
+            // If we are ready to finnish application execution
+            if (finnish() == true)
+            {
+                _logger.fine("Application should be killed.");
+
+                // Verify if we are authorized to kill the application or not
+                if (_exitApplicationWhenClosed == true)
+                {
+                    _logger.info("Killing the application.");
+                    System.exit(-1);
+                }
+                else
+                {
+                    _logger.fine("Application left opened as required.");
+                }
+            }
+            else
+            {
+                _logger.fine("Application killing cancelled.");
+            }
+        }
     }
 }
 /*___oOo___*/

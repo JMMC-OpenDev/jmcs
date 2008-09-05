@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.14 2008-08-28 15:43:14 lafrasse Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.15 2008-09-05 22:31:03 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2008/08/28 15:43:14  lafrasse
+ * Changed program name and version layout.
+ * Handled empty text area.
+ *
  * Revision 1.13  2008/06/27 11:23:21  bcolucci
  * Add comments.
  *
@@ -345,6 +349,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         if (nbElems > 0)
         {
             shouldBeDisplayed = true;
+            packageHtml += "Dependencies:<br>";
         }
 
         /* We have a step of 3 because for each
@@ -366,13 +371,6 @@ public class AboutBox extends JDialog implements HyperlinkListener
             }
 
             packageHtml += (" : " + description + "<br>");
-
-            /* We add a <br> only if it's
-               not the last package */
-            if (i < (nbElems - 3))
-            {
-                packageHtml += "<br>";
-            }
         }
 
         generatedHtml += (packageHtml + "</body></html>");

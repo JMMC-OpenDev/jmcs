@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.29 2008-09-05 16:19:27 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.30 2008-09-05 21:59:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2008/09/05 16:19:27  lafrasse
+ * Enhanced code documentation.
+ * Corrected API typo.
+ * Removed unused showPreferenceAction.
+ *
  * Revision 1.28  2008/09/05 16:08:14  lafrasse
  * Implemented secured application exit.
  *
@@ -773,6 +778,10 @@ public abstract class App
             super(classPath, fieldName);
 
             flagAsQuitAction();
+
+            // Define action name and accelerator
+            putValue(Action.NAME, "Quit");
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl Q"));
         }
 
         public void actionPerformed(java.awt.event.ActionEvent e)

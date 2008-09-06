@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.30 2008-09-05 21:59:21 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.31 2008-09-06 07:56:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2008/09/05 21:59:21  lafrasse
+ * Added name and accelerator to QuitAction.
+ *
  * Revision 1.29  2008/09/05 16:19:27  lafrasse
  * Enhanced code documentation.
  * Corrected API typo.
@@ -775,13 +778,9 @@ public abstract class App
     {
         public QuitAction(String classPath, String fieldName)
         {
-            super(classPath, fieldName);
+            super(classPath, fieldName, "Quit", "ctrl Q");
 
             flagAsQuitAction();
-
-            // Define action name and accelerator
-            putValue(Action.NAME, "Quit");
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl Q"));
         }
 
         public void actionPerformed(java.awt.event.ActionEvent e)

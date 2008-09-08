@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RegisteredAction.java,v 1.2 2008-09-06 07:53:19 lafrasse Exp $"
+ * "@(#) $Id: RegisteredAction.java,v 1.3 2008-09-08 14:28:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2008/09/06 07:53:19  lafrasse
+ * Added a second constructeur to set action name and accelerator.
+ *
  * Revision 1.1  2008/09/04 15:47:29  lafrasse
  * First revision.
  *
@@ -43,6 +46,24 @@ public abstract class RegisteredAction extends AbstractAction
 
     /**
      * Constructor, that automatically register the action in RegisteredAction,
+     * and assign it a name.
+     *
+     * @param classPath the path of the class containing the field pointing to
+     * the action, in the form returned by 'getClass().getName();'.
+     * @param fieldName the name of the field pointing to the action.
+     * @param actionName the name of the action.
+     */
+    public RegisteredAction(String classPath, String fieldName,
+        String actionName)
+    {
+        this(classPath, fieldName);
+
+        // Define action name and accelerator
+        putValue(Action.NAME, actionName);
+    }
+
+    /**
+     * Constructor, that automatically register the action in RegisteredAction,
      * and assign it a name and an accelerator.
      *
      * @param classPath the path of the class containing the field pointing to
@@ -54,10 +75,9 @@ public abstract class RegisteredAction extends AbstractAction
     public RegisteredAction(String classPath, String fieldName,
         String actionName, String actionAccelerator)
     {
-        this(classPath, actionAccelerator);
+        this(classPath, fieldName, actionName);
 
         // Define action name and accelerator
-        putValue(Action.NAME, actionName);
         putValue(Action.ACCELERATOR_KEY,
             KeyStroke.getKeyStroke(actionAccelerator));
     }

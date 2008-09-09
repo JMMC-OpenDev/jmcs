@@ -56,10 +56,15 @@ import javax.swing.JFrame;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class OSXAdapter extends ApplicationAdapter
 {
+    /**
+     * DOCUMENT ME!
+     */
+    private static boolean alreadyQuitting = false;
+
     // pseudo-singleton model; no point in making multiple instances
     /**
      * DOCUMENT ME!
@@ -145,8 +150,17 @@ public class OSXAdapter extends ApplicationAdapter
              * routine that chooses whether or not to quit, so the functionality is identical
              * on all platforms.  This example simply cancels the AppleEvent-based quit and
              * defers to that universal method. */
+            if (alreadyQuitting == false)
+            {
+                alreadyQuitting = true; // Prevent handleQuit() to be called twice (known Apple bug)
+                _registrar.getQuitAction().actionPerformed(null);
+            }
+            else
+            {
+                alreadyQuitting = false;
+            }
+
             ae.setHandled(false);
-            _registrar.getQuitAction().actionPerformed(null);
         }
         else
         {

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.31 2008-09-06 07:56:05 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.32 2008-09-09 12:02:59 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2008/09/06 07:56:05  lafrasse
+ * Moved QuitAction name and accelerator definition to new RegisteredAction
+ * constructor.
+ *
  * Revision 1.30  2008/09/05 21:59:21  lafrasse
  * Added name and accelerator to QuitAction.
  *
@@ -188,7 +192,11 @@ import javax.swing.*;
 public abstract class App
 {
     /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = Logger.getLogger("fr.jmmc");
+    private static final Logger _mainLogger = Logger.getLogger("fr.jmmc");
+
+    /** Logger - register on fr.jmmc to collect all logs under this path */
+    private static final Logger _logger = Logger.getLogger(
+            "fr.jmmc.mcs.gui.App");
 
     /** Singleton reference */
     private static App _sharedInstance;
@@ -296,10 +304,10 @@ public abstract class App
                     simpleFormatter);
 
             // We add the memory handler created and the console one to the logger
-            _logger.addHandler(_consoleHandler);
-            _logger.addHandler(_streamHandler);
-            _logger.setLevel(Level.INFO);
-            _logger.finer("Logger properties set");
+            _mainLogger.addHandler(_consoleHandler);
+            _mainLogger.addHandler(_streamHandler);
+            _mainLogger.setLevel(Level.INFO);
+            _logger.finer("MAin Logger properties set");
 
             _logger.fine(
                 "Memory and console handler created and fixed to feedbackLogger");
@@ -549,27 +557,27 @@ public abstract class App
 
                     if (arg.equals("0"))
                     {
-                        _logger.setLevel(Level.OFF);
+                        _mainLogger.setLevel(Level.OFF);
                     }
                     else if (arg.equals("1"))
                     {
-                        _logger.setLevel(Level.SEVERE);
+                        _mainLogger.setLevel(Level.SEVERE);
                     }
                     else if (arg.equals("2"))
                     {
-                        _logger.setLevel(Level.WARNING);
+                        _mainLogger.setLevel(Level.WARNING);
                     }
                     else if (arg.equals("3"))
                     {
-                        _logger.setLevel(Level.INFO);
+                        _mainLogger.setLevel(Level.INFO);
                     }
                     else if (arg.equals("4"))
                     {
-                        _logger.setLevel(Level.FINE);
+                        _mainLogger.setLevel(Level.FINE);
                     }
                     else if (arg.equals("5"))
                     {
-                        _logger.setLevel(Level.ALL);
+                        _mainLogger.setLevel(Level.ALL);
                     }
                     else
                     {
@@ -646,6 +654,7 @@ public abstract class App
     protected boolean finnish()
     {
         _logger.fine("Default App.finnish() handler called.");
+        System.out.println("Default App.finnish() handler called.");
 
         return true;
     }

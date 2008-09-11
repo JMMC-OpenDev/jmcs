@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.15 2008-09-05 22:31:03 lafrasse Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.16 2008-09-11 15:32:28 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2008/09/05 22:31:03  lafrasse
+ * Added a 'Dependencies' label if any.
+ *
  * Revision 1.14  2008/08/28 15:43:14  lafrasse
  * Changed program name and version layout.
  * Handled empty text area.
@@ -349,7 +352,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         if (nbElems > 0)
         {
             shouldBeDisplayed = true;
-            packageHtml += "Dependencies:<br>";
+            packageHtml += "<i>Dependencies</i>:<br>";
         }
 
         /* We have a step of 3 because for each
@@ -370,12 +373,13 @@ public class AboutBox extends JDialog implements HyperlinkListener
                 packageHtml += ("<a href='" + link + "'>" + name + "</a>");
             }
 
-            packageHtml += (" : " + description + "<br>");
+            packageHtml += (" : <i>" + description + "</i><br>");
         }
 
         generatedHtml += (packageHtml + "</body></html>");
 
         _descriptionEditorPane.setText(generatedHtml);
+        _descriptionEditorPane.setCaretPosition(0); // Show first line
         _logger.fine("The content of textarea has been inserted.");
 
         // Link pane only if anything to display

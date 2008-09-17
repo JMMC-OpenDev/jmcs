@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.24 2008-09-05 16:11:38 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.25 2008-09-17 21:42:55 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2008/09/05 16:11:38  lafrasse
+ * Typo fix.
+ *
  * Revision 1.23  2008/09/05 08:26:33  lafrasse
  * Code, documentation and log enhancement.
  *
@@ -129,7 +132,7 @@ public abstract class Preferences extends Observable
     /** Internal storage of preferences. */
     private Properties _currentProperties = new Properties();
 
-    /** Default propertiy  */
+    /** Default propertiy. */
     protected Properties _defaultProperties = new Properties();
 
     /**
@@ -154,8 +157,7 @@ public abstract class Preferences extends Observable
     }
 
     /**
-     * Set the default properties used to reset default preferences.
-     * This method should be used to adjust specific application preferences.
+     * MUST set the default properties used to reset default preferences.
      *
      * @warning Classes that herits from Preferences MUST overload this method
      * to set default preferences.
@@ -163,25 +165,25 @@ public abstract class Preferences extends Observable
     protected abstract void setDefaultPreferences() throws PreferencesException;
 
     /**
-     * Return the preference filename.
+     * MUST return the preference filename.
      *
      * Should return the filename to be used for preference load and save. This
      * name should be in the form "fr.jmmc.searchcal.properties".
      *
      * @warning Classes that herits from Preferences class MUST overload this
-     * method to return specific file name.
+     * method in order to properly load preference file.
      *
      * @return the preference filename, without any file separator.
      */
     protected abstract String getPreferenceFilename();
 
     /**
-     * Return the version of the structure of the preference file.
+     * MUST return the revision number of the structure of the preference file.
      *
-     * The revision number returned should be incremented each time preference
-     * structure change, in order to be able to automatically trigger
-     * updatePreferencesVersion() execution to handle changes when final user
-     * update its JMMC software.
+     * The revision number (a positive integer greater than 0) returned should
+     * be incremented each time preference structure changes, in order to
+     * automatically trigger updatePreferencesVersion() execution, in order to
+     * handle changes when final user update its JMMC software.
      *
      * @warning Classes that herits from Preferences class MUST overload this
      * method to return specific file name.
@@ -191,29 +193,34 @@ public abstract class Preferences extends Observable
     protected abstract int getPreferencesVersionNumber();
 
     /**
-     * Hook to handle update of older preference file version.
+     * Hook to handle updates of older preference file version.
+     *
+     * The default implementation triggers a 'safe' default values load.
      *
      * This method is automatically triggered when the preference file loaded is
      * bound to a previous version of your Preference-derived object. Thus, you
-     * have a chance to load previous values, update them and save them in a new
-     * preference file.
+     * have a chance to load previous values and update them if needed.
      *
-     * The default implementation triggers default values load.
+     * @warning This method SHOULD be overriden in order to process older files.
+     * Otherwise, default values will be loaded instead.
      *
-     * @warning This method should be overriden to process older files. In its
-     * default behavior, default values will be loaded instead.
+     * @warning This method MUST perform one update revision jump at a time, as
+     * it will be called as many time as necessary to reach the desired
+     * revision state (i.e, if loaded revision is 2 and current revision is 5,
+     * this method will be called three times: once to update from rev. 2 to
+     * rev. 3; once to update from rev. 3 to rev. 4; and once to update from
+     * rev. 4 to rev. 5).
      *
      * @param loadedVersionNumber the version of the loaded preference file.
      *
-     * @return should return true if the update went fine, false otherwise to
-     * automaticcaly trigger default values load.
+     * @return should return true if the update went fine and new values should
+     * be saved, false otherwise to automaticcaly trigger default values load.
      */
     protected boolean updatePreferencesVersion(int loadedVersionNumber)
     {
         MCSLogger.trace();
 
-        // 1) Handle change
-        // 2) Save new prefs
+        // By default, triggers default values load.
         return false;
     }
 
@@ -232,26 +239,68 @@ public abstract class Preferences extends Observable
         {
             MCSLogger.info("Loading '" + _fullFilepath + "' preference file.");
 
-            // Laoding preference file
+            // Loading preference file
             FileInputStream inputFile = new FileInputStream(_fullFilepath);
             _currentProperties.loadFromXML(inputFile);
 
             // Getting laoded preference file version number
-            int loadedPreferenceVersion  = getPreferenceAsInt(_preferencesVersionNumberName);
             int preferencesVersionNumber = getPreferencesVersionNumber();
+            int loadedPreferenceVersion  = Integer.MIN_VALUE; // To be sure to be below most preferencesVersionNumber, as Java does not provide unsigned types to garanty positive values from getPreferencesVersionNumber() !!!
 
-            // If the preference file version is older the the current default version
+            try
+            {
+                loadedPreferenceVersion = getPreferenceAsInt(_preferencesVersionNumberName);
+            }
+            catch (Exception e)
+            {
+                MCSLogger.error("Cannot get loaded preference version number.");
+            }
+
+            MCSLogger.debug("Loaded preference version is '" +
+                loadedPreferenceVersion +
+                "', current preferences version number is '" +
+                preferencesVersionNumber + "'.");
+
+            // If the preference file version is older than the current default version
             if (loadedPreferenceVersion < preferencesVersionNumber)
             {
                 MCSLogger.warning(
-                    "Loaded an 'anterior to current version' preference file, so try to update preference file.");
+                    "Loaded an 'anterior to current version' preference file, will try to update preference file.");
 
                 // Handle version differences
-                boolean status = updatePreferencesVersion(loadedPreferenceVersion);
+                int     currentPreferenceVersion = loadedPreferenceVersion;
+                boolean shouldWeContinue         = true;
 
-                if (status == false)
+                while ((shouldWeContinue == true) &&
+                        (currentPreferenceVersion < preferencesVersionNumber))
                 {
+                    MCSLogger.debug(
+                        "Trying to update loaded preferences from revision '" +
+                        currentPreferenceVersion + "'.");
+
+                    shouldWeContinue = updatePreferencesVersion(currentPreferenceVersion);
+
+                    currentPreferenceVersion++;
+                }
+
+                // If update went wrong (or was not handled)
+                if (shouldWeContinue == false)
+                {
+                    // Use default values instead
                     resetToDefaultPreferences();
+                }
+                else
+                {
+                    try
+                    {
+                        // Otherwise save updated values to file
+                        saveToFile();
+                    }
+                    catch (Exception ex)
+                    {
+                        MCSLogger.error("Cannot save preference to disk: " +
+                            ex);
+                    }
                 }
             }
 
@@ -265,11 +314,13 @@ public abstract class Preferences extends Observable
                 resetToDefaultPreferences();
             }
         }
-        catch (IOException e)
+        catch (Exception ex)
         {
             // Do nothing just default values will be into the preferences.
             MCSLogger.warning(
-                "Failed loading preference file, so fall back to default values instead.");
+                "Failed loading preference file, so fall back to default values instead : " +
+                ex);
+
             resetToDefaultPreferences();
         }
 
@@ -299,6 +350,10 @@ public abstract class Preferences extends Observable
     final public void saveToFile(String comment) throws PreferencesException
     {
         MCSLogger.trace();
+
+        // Store current Preference object revision number
+        int preferencesVersionNumber = getPreferencesVersionNumber();
+        setPreference(_preferencesVersionNumberName, preferencesVersionNumber);
 
         try
         {

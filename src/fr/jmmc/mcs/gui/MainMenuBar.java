@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.16 2008-09-05 16:19:59 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.17 2008-09-18 20:59:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2008/09/05 16:19:59  lafrasse
+ * Added preference entry in edit menu while not running under Mac OS X.
+ *
  * Revision 1.15  2008/09/04 16:02:12  lafrasse
  * Moved to new ActionRegistrar infrastructure.
  * Code, documentation and log enhancement.
@@ -65,7 +68,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import fr.jmmc.mcs.util.ActionRegistrar;
+import fr.jmmc.mcs.util.*;
 
 import org.apache.commons.lang.SystemUtils;
 
@@ -362,7 +365,7 @@ public class MainMenuBar extends JMenuBar
     {
         // Create the current component
         JComponent me = createComponent(menu, createJMenu);
-        _logger.fine("Component '" + me.getName() + "' created");
+        _logger.fine("Component '" + me.getName() + "' created.");
 
         // Add it to the parent if there is one
         if (parent != null)
@@ -421,7 +424,7 @@ public class MainMenuBar extends JMenuBar
         if (label.equals("NONE") || notPossible)
         {
             comp = new JSeparator();
-            _logger.fine("Component is a separator");
+            _logger.fine("Component is a separator.");
         }
         else
         {
@@ -433,21 +436,32 @@ public class MainMenuBar extends JMenuBar
 
             if (isCheckbox == true) // Is it a checkbox?
             {
+                _logger.fine("Component is a JCheckBoxMenuItem.");
+
                 comp = new JCheckBoxMenuItem(action);
                 ((JCheckBoxMenuItem) comp).setLabel(label);
-                _logger.fine("Component is a JCheckBoxMenuItem");
+
+                if (action instanceof RegisteredPreferencedBooleanAction)
+                {
+                    _logger.fine(
+                        "Component is bound to a RegisteredPreferencedBooleanAction.");
+
+                    ((RegisteredPreferencedBooleanAction) action).addBoundButton((JCheckBoxMenuItem) comp);
+                }
             }
             else if (isJMenu == true) // What have we to create?
             {
+                _logger.fine("Component is a JMenu.");
+
                 comp = new JMenu(action);
                 ((JMenu) comp).setLabel(label);
-                _logger.fine("Component is a JMenu");
             }
             else
             {
+                _logger.fine("Component is a JMenuItem.");
+
                 comp = new JMenuItem(action);
                 ((JMenuItem) comp).setLabel(label);
-                _logger.fine("Component is a JMenuItem");
             }
         }
 
@@ -551,7 +565,7 @@ public class MainMenuBar extends JMenuBar
                 // because OSXAdapter extends ApplicationAdapter in its def
                 System.err.println(
                     "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" +
-                    e + ")");
+                    e + ").");
             }
             catch (ClassNotFoundException e)
             {
@@ -559,7 +573,7 @@ public class MainMenuBar extends JMenuBar
                 // above NoClassDefFoundError first.
                 System.err.println(
                     "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" +
-                    e + ")");
+                    e + ").");
             }
             catch (Exception e)
             {

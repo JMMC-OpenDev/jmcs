@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RegisteredAction.java,v 1.3 2008-09-08 14:28:18 lafrasse Exp $"
+ * "@(#) $Id: RegisteredAction.java,v 1.4 2008-09-19 08:46:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/09/08 14:28:18  lafrasse
+ * Added third contructor with action name only.
+ * Corrected a bug that was linking naled action with its actionName instead of
+ * fieldName.
+ *
  * Revision 1.2  2008/09/06 07:53:19  lafrasse
  * Added a second constructeur to set action name and accelerator.
  *
@@ -89,6 +94,9 @@ public abstract class RegisteredAction extends AbstractAction
     {
         _logger.entering("RegisteredAction", "flagAsPreferenceAction");
 
+        // Force the preference action name
+        putValue(Action.NAME, "Preferences...");
+
         _registrar.putPreferenceAction(this);
     }
 
@@ -99,6 +107,13 @@ public abstract class RegisteredAction extends AbstractAction
     {
         _logger.entering("RegisteredAction", "flagAsQuitAction");
 
+        // Force the 'quit' action name
+        putValue(Action.NAME, "Quit");
+        
+        // Force the 'quit keyboard shortcut
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl Q"));
+    }
+    
         _registrar.putQuitAction(this);
     }
 }

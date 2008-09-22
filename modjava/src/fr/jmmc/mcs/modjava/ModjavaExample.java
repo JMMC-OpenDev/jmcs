@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModjavaExample.java,v 1.3 2008-07-01 09:12:08 lafrasse Exp $"
+ * "@(#) $Id: ModjavaExample.java,v 1.4 2008-09-22 16:54:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/07/01 09:12:08  lafrasse
+ * Moved old code into new package tree.
+ *
  * Revision 1.2  2006/03/07 14:20:58  lafrasse
  * Corrected typos
  *
@@ -13,16 +16,16 @@
  * initial release
  *
  ******************************************************************************/
-
 package fr.jmmc.mcs.modjava;
+
 
 /**
  * @file
  * brief description of the program, which ends at this dot.
  *
  * @synopsis
- * \e \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
- *                     [\e \<option1\> ... \e \<optionN\>] 
+ * \e \<Command Name\> [\e \<param1\> ... \e \<paramN\>]
+ *                     [\e \<option1\> ... \e \<optionN\>]
  *
  * @param param1 : description of parameter 1
  * @param paramN : description of parameter N
@@ -31,11 +34,11 @@ package fr.jmmc.mcs.modjava;
  * @opt
  * @optname option1 : description of option 1
  * @optname optionN : description of option N
- * 
+ *
  * \n
  * @details
  * OPTIONAL detailed description of the c main file follows here.
- * 
+ *
  * @usedfiles
  * OPTIONAL. If files are used, for each one, name, and usage description.
  * @filename fileName1 :  usage description of fileName1
@@ -47,7 +50,7 @@ package fr.jmmc.mcs.modjava;
  * each variable, name, and usage description, as below.
  * @envvar envVar1 :  usage description of envVar1
  * @envvar envVar2 :  usage description of envVar2
- * 
+ *
  * \n
  * @warning OPTIONAL. Warning if any (software requirements, ...)
  *
@@ -62,23 +65,23 @@ package fr.jmmc.mcs.modjava;
  * @sa OPTIONAL. See also section, in which you can refer other documented
  * entities. Doxygen will create the link automatically.
  * @sa modcppOPERATION.C
- * 
+ *
  * @bug OPTIONAL. Known bugs list if it exists.
  * @bug Bug 1 : bug 1 description
  *
  * @todo OPTIONAL. Things to forsee list.
  * @todo Action 1 : action 1 description
- * 
+ *
  */
-
-public class ModjavaExample {
+public class ModjavaExample
+{
     /* A Class implementation comment can go here. */
 
     /**
      * Main.
      */
-    public static void main(String[] args) {
-
+    public static void main(String[] args)
+    {
         System.out.println("Complex addition:");
 
         Complex z1 = new Complex(1.0, 1.0);
@@ -88,5 +91,4 @@ public class ModjavaExample {
         System.out.println(z1 + " + " + z2 + " = " + z3);
     }
 }
-
 /*___oOo___*/

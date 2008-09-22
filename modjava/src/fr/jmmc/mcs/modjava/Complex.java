@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Complex.java,v 1.3 2008-07-01 09:12:08 lafrasse Exp $"
+ * "@(#) $Id: Complex.java,v 1.4 2008-09-22 16:54:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/07/01 09:12:08  lafrasse
+ * Moved old code into new package tree.
+ *
  * Revision 1.2  2006/03/07 14:20:58  lafrasse
  * Corrected typos
  *
@@ -13,15 +16,14 @@
  * initial release
  *
  ******************************************************************************/
-
 package fr.jmmc.mcs.modjava;
+
 
 /**
  * Complex numbers.
  */
-
-public class Complex {
-
+public class Complex
+{
     /** real part of the complex number */
     private double real;
 
@@ -31,9 +33,10 @@ public class Complex {
     /**
      * Default constructor.
      */
-    public Complex() {
-        real = 0.0;
-        imag = 0.0;
+    public Complex()
+    {
+        real     = 0.0;
+        imag     = 0.0;
     }
 
     /**
@@ -42,9 +45,10 @@ public class Complex {
      * @param _real real part of the complex number.
      * @param _imag imaginary part of the complex number.
      */
-    public Complex(double _real, double _imag) {
-        real = _real;
-        imag = _imag;
+    public Complex(double _real, double _imag)
+    {
+        real     = _real;
+        imag     = _imag;
     }
 
     /**
@@ -54,12 +58,12 @@ public class Complex {
      *
      * @return the result of the addition.
      */
-    public Complex add(Complex z) {  
-
+    public Complex add(Complex z)
+    {
         Complex temp = new Complex();
 
-        temp.real    = real + z.real;
-        temp.imag    = imag + z.imag;
+        temp.real     = real + z.real;
+        temp.imag     = imag + z.imag;
 
         return temp;
     }
@@ -69,10 +73,11 @@ public class Complex {
      *
      * @return the representation of the complex as a String object.
      */
-    public String toString() {  
+    public String toString()
+    {
         String temp = "(" + real + ", " + imag + ")";
+
         return temp;
     }
 }
-
 /*___oOo___*/

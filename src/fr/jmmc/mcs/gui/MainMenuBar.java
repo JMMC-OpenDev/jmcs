@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.18 2008-09-22 16:16:29 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.19 2008-09-22 16:51:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2008/09/22 16:16:29  lafrasse
+ * Enforced 'Preferences.." menu creation even if no action is registered as the
+ * 'Preference' one.
+ *
  * Revision 1.17  2008/09/18 20:59:52  lafrasse
  * Added support of RegisteredPreferencedBooleanAction.
  *
@@ -514,13 +518,16 @@ public class MainMenuBar extends JMenuBar
             }
 
             // Set icon
-            String icon       = (menu.getIcon() != null) ? menu.getIcon() : "";
+            String icon = (menu.getIcon() != null) ? menu.getIcon() : "";
 
-            String actionIcon = (String) action.getValue(Action.SMALL_ICON);
-
-            if (actionIcon == null)
+            if (action.getValue(Action.SMALL_ICON) != null)
             {
-                action.putValue(Action.SMALL_ICON, new ImageIcon(icon));
+                String actionIcon = (String) action.getValue(Action.SMALL_ICON);
+
+                if (actionIcon == null)
+                {
+                    action.putValue(Action.SMALL_ICON, new ImageIcon(icon));
+                }
             }
 
             _logger.fine("Attributes set on '" + menu.getLabel() + "'.");

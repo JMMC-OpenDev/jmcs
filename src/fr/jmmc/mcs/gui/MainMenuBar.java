@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.17 2008-09-18 20:59:52 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.18 2008-09-22 16:16:29 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2008/09/18 20:59:52  lafrasse
+ * Added support of RegisteredPreferencedBooleanAction.
+ *
  * Revision 1.16  2008/09/05 16:19:59  lafrasse
  * Added preference entry in edit menu while not running under Mac OS X.
  *
@@ -299,7 +302,14 @@ public class MainMenuBar extends JMenuBar
 
         if (_isRunningUnderMacOSX == false)
         {
-            editMenu.add(_registrar.getPreferenceAction());
+            Action preferenceAction = _registrar.getPreferenceAction();
+
+            if (preferenceAction != null)
+            {
+                editMenu.add(new JSeparator());
+
+                editMenu.add(preferenceAction);
+            }
         }
 
         // Add menu to menubar

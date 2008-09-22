@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.1 2008-07-01 08:58:13 lafrasse Exp $"
+ * "@(#) $Id: Main.java,v 1.2 2008-09-22 16:53:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/07/01 08:58:13  lafrasse
+ * Added jmcs test application from bcolucci.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
 
@@ -29,7 +32,7 @@ import javax.swing.JFrame;
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Main extends App
 {
@@ -45,14 +48,8 @@ public class Main extends App
     /** Button to launch helpview window */
     private JButton _helpViewButton = null;
 
-    /** Button to launch logGui */
-    private JButton _logGuiButton = null;
-
-    /** Button to save preferences */
-    private JButton _savePreferencesButton = null;
-
-    /** Button to load preferences */
-    private JButton _loadPreferencesButton = null;
+    /** Actions class */
+    Actions _actions;
 
     /** Constructor */
     public Main(String[] args)
@@ -67,13 +64,12 @@ public class Main extends App
         _logger.warning("Initialize application objects");
         _logger.info(args.length + " arguments have been taken");
 
+        _actions                  = new Actions();
+
         // .. buttons
-        _aboutBoxButton            = new JButton(aboutBoxAction());
-        _feedbackReportButton      = new JButton(feedbackReportAction());
-        _helpViewButton            = new JButton(openHelpFrame());
-        _logGuiButton              = new JButton(logGuiAction());
-        _savePreferencesButton     = new JButton(savePreferencesAction());
-        _loadPreferencesButton     = new JButton(loadPreferencesAction());
+        _aboutBoxButton           = new JButton(aboutBoxAction());
+        _feedbackReportButton     = new JButton(feedbackReportAction());
+        _helpViewButton           = new JButton(openHelpFrame());
 
         // Set borderlayout
         getFramePanel().setLayout(new BorderLayout());
@@ -81,41 +77,36 @@ public class Main extends App
         // Add buttons to panel
         getFramePanel().add(_aboutBoxButton, BorderLayout.NORTH);
         getFramePanel().add(_feedbackReportButton, BorderLayout.CENTER);
-
-        //getFramePanel().add(_helpViewButton, BorderLayout.WEST);
-        getFramePanel().add(_loadPreferencesButton, BorderLayout.WEST);
-
-        //getFramePanel().add(_logGuiButton, BorderLayout.SOUTH);
-        getFramePanel().add(_savePreferencesButton, BorderLayout.SOUTH);
     }
 
     /** Execute application body */
     @Override
     protected void execute()
     {
-        _logger.warning("Execute application body");
+        _logger.info("Execute application body");
 
         // Set others preferences
         try
         {
-            setPreference("MAIN", "maim");
+            Preferences.getInstance().setPreference("MAIN", "maim");
         }
         catch (Exception ex)
         {
+            _logger.log(Level.WARNING, "Failed setting preference.", ex);
         }
 
         // Show the frame
         getFrame().setVisible(true);
-
-        //System.out.println("Program name : " + getPreference("application.name"));
     }
 
     /** Execute operations before closing application */
     @Override
-    protected static void exit()
+    protected boolean finnish()
     {
         _logger.warning("Execute operations before closing application");
-        System.exit(0);
+
+        // Quit application
+        return true;
     }
 
     /** Open help view action */

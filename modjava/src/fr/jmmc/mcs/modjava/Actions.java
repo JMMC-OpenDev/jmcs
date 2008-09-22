@@ -1,17 +1,18 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Actions.java,v 1.1 2008-07-01 08:58:13 lafrasse Exp $"
+ * "@(#) $Id: Actions.java,v 1.2 2008-09-22 16:53:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/07/01 08:58:13  lafrasse
+ * Added jmcs test application from bcolucci.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
 
-import fr.jmmc.mcs.gui.*;
-
-import java.awt.event.ActionEvent;
+import fr.jmmc.mcs.util.*;
 
 import javax.swing.*;
 
@@ -20,120 +21,82 @@ import javax.swing.*;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Actions
 {
     /**
      * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
      */
-    public Action scaction1()
-    {
-        return new AbstractAction("scaction1")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    System.out.println("scaction1");
-                }
-            };
-    }
+    public GenericLoggedAction scaction1;
 
     /**
      * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
      */
-    public Action scaction2()
-    {
-        return new AbstractAction("scaction2")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    System.out.println("scaction2");
-                }
-            };
-    }
+    public GenericLoggedAction scaction2;
 
     /**
      * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
      */
-    public Action scaction3()
-    {
-        return new AbstractAction("scaction3")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    System.out.println("scaction3");
-                }
-            };
-    }
+    public GenericLoggedAction scaction3;
 
     /**
      * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
      */
-    public Action scaction5()
-    {
-        return new AbstractAction("scaction5")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    System.out.println("scaction5");
-                }
-            };
-    }
+    public GenericLoggedAction scaction5;
 
     /**
      * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
      */
-    public Action mfaction3()
-    {
-        return new AbstractAction("mfaction3")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    System.out.println("mfaction3");
-                }
-            };
-    }
+    public GenericLoggedAction mfaction3;
 
     /**
      * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
      */
-    public Action mfaction4()
-    {
-        return new AbstractAction("mfaction4")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    System.out.println("mfaction4");
-                }
-            };
-    }
+    public GenericLoggedAction mfaction4;
 
     /**
      * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
      */
-    public Action mfaction5()
+    public GenericLoggedAction mfaction5;
+
+    /**
+     * Creates a new Actions object.
+     */
+    public Actions()
     {
-        return new AbstractAction("mfaction5")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    System.out.println("mfaction5");
-                }
-            };
+        System.out.println("" + ActionRegistrar.getInstance());
+
+        scaction1     = new GenericLoggedAction("scaction1");
+        scaction2     = new GenericLoggedAction("scaction2");
+        scaction3     = new GenericLoggedAction("scaction3");
+        scaction5     = new GenericLoggedAction("scaction5");
+
+        mfaction3     = new GenericLoggedAction("mfaction3");
+        mfaction4     = new GenericLoggedAction("mfaction4");
+        mfaction5     = new GenericLoggedAction("mfaction5");
+
+        System.out.println("" + ActionRegistrar.getInstance());
+    }
+
+    protected class GenericLoggedAction extends RegisteredAction
+    {
+        String _fieldName = null;
+
+        public GenericLoggedAction(String fieldName)
+        {
+            super("fr.jmmc.mcs.modjava.Actions", fieldName);
+
+            System.out.println("GenericLoggedAction('" + fieldName + "').");
+
+            _fieldName = fieldName;
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            System.out.println("GenericLoggedAction.actionPerformed('" +
+                _fieldName + "').");
+        }
     }
 }
 /*___oOo___*/

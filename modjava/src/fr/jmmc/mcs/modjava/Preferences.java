@@ -1,56 +1,78 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.1 2008-07-01 08:58:13 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.2 2008-09-22 16:53:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/07/01 08:58:13  lafrasse
+ * Added jmcs test application from bcolucci.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
+
+import fr.jmmc.mcs.util.*;
+
+import java.util.logging.*;
 
 
 /** Test application default preferences */
 public class Preferences extends fr.jmmc.mcs.util.Preferences
 {
-    /** Preference file name */
-    static String _shortPreferenceFilename = "fr.jmmc.test.properties";
+    /** Logger */
+    private static final Logger _logger = Logger.getLogger(
+            "fr.jmmc.mcs.modjava.Preferences");
 
     /** Singleton instance */
-    private static Preferences _singleton = null;
+    private static Preferences _instance = null;
 
     /**
-     * Return the singleton instance of Preferences.
-     *
-     * @return the singleton preference instance
+     * Privatized constructor that must be empty.
      */
-    public static Preferences getInstance()
+    private Preferences()
     {
-        if (_singleton == null)
+    }
+
+    /**
+     * Return the preference filename.
+     */
+    protected String getPreferenceFilename()
+    {
+        _logger.entering("Preferences", "getPreferenceFilename");
+
+        return "fr.jmmc.modjava.test.properties";
+    }
+
+    /**
+     * Return the preference revision number.
+     */
+    protected int getPreferencesVersionNumber()
+    {
+        _logger.entering("Preferences", "getPreferencesVersionNumber");
+
+        return 1;
+    }
+
+    /** Set preferences default values */
+    protected void setDefaultPreferences() throws PreferencesException
+    {
+        _logger.entering("Preferences", "setDefaultPreferences");
+
+        setDefaultPreference("DEFAULT", "default");
+    }
+
+    /** Return the singleton instance */
+    public static final synchronized Preferences getInstance()
+    {
+        // DO NOT MODIFY !!!
+        if (_instance == null)
         {
-            // On charge les préférences contenues dans le fichier
-            _singleton = new Preferences();
-            _singleton.setShortPreferenceFilename(_shortPreferenceFilename);
-            _singleton.loadFromFile();
-
-            // On crée des préférences particulières pour l'application
-            Preferences defaults = new Preferences();
-
-            // Default preferences
-            try
-            {
-                defaults.setPreference("DEFAULT", "default");
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-
-            // On remplace les valeurs par défaut si possible
-            _singleton.setDefaultPreferences(defaults);
-            _singleton.loadFromFile();
+            _instance = new Preferences();
         }
 
-        return _singleton;
+        return _instance;
+
+        // DO NOT MODIFY !!!
     }
 }

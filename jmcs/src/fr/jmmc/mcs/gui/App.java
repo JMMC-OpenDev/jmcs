@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.32 2008-09-09 12:02:59 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.33 2008-09-22 16:49:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2008/09/09 12:02:59  lafrasse
+ * Separated App logger from shared logger.
+ *
  * Revision 1.31  2008/09/06 07:56:05  lafrasse
  * Moved QuitAction name and accelerator definition to new RegisteredAction
  * constructor.
@@ -668,12 +671,12 @@ public abstract class App
             showSplashScreen();
         }
 
+        // Call abstract init method with arguments
+        init(_args);
+
         // Set JMenuBar
         MainMenuBar mainMenuBar = new MainMenuBar(_applicationFrame);
         _applicationFrame.setJMenuBar(mainMenuBar);
-
-        // Call abstract init method with arguments
-        init(_args);
 
         // Set application frame common properties
         _applicationFrame.pack();

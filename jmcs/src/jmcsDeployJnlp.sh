@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.11 2008-08-26 08:14:58 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.12 2008-09-24 08:06:20 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2008/08/26 08:14:58  mella
+# Add searchpath option to perform additionnal search of jar files
+#
 # Revision 1.10  2008/08/25 14:30:00  mella
 # Use key file for signing if present
 #
@@ -119,100 +122,13 @@ shllibEchoDebug ()
     fi
 }
 
-# Perform command option analysis
-#
-# Note that we use `"$@"' to let each command-line parameter expand to a
-# separate word. The quotes around `$@' are essential!
-# We need TEMP as the `eval set --' would nuke the return value of getopt.
-TEMP=`getopt -o "" --long codebase:,webroot:,searchpath:,verbose,help \
--n "$SCRIPTNAME" -- "$@"`
-if [ $? != 0 ] ; then _usage >&2 ; exit 1 ; fi
-# Note the quotes around `$TEMP': they are essential!
-eval set -- "$TEMP"
-while true ; do
-        case "$1" in
-                --codebase )
-                CODEBASE="$2"; shift 2 ;;
-                --webroot )
-                WEBROOT="$2"; shift 2 ;;
-                --searchpath )
-                USERSEARCHPATH="$2"; shift 2 ;;
-                --help ) _usage ; exit ; shift ;;
-                --verbose ) shllibSetDebugOn ; shift ;;
-                -- ) shift ; break ;;
-                * ) echo "Internal error!" ; exit 1 ;;
-        esac
-done
-
-# Check input file
-# Change to directory of given jnlp file and use its parent as MODULEROOT
-cd $(dirname "$1")
-MODULEROOT=$(cd ..;pwd)
-JNLPFILE=$(basename "$1" 2> /dev/null)
-if [ ! -f  "$JNLPFILE" ]
-then
-    echo "Missing JNLP file"
-    _usage
-    exit 1
-fi
-
-
-# define application name from given jnlp
-APPNAME=$(basename $JNLPFILE .jnlp 2> /dev/null)
-
-if [ "$APPNAME" == "$(basename $JNLPFILE 2> /dev/null)" ]
-then
-    echo "Given JNLP file does not end with '.jnlp' extension"
-    exit 1
-fi
-
-# define directory where application material should be installed into 
-APP_WEBROOT=$WEBROOT/$APPNAME
-APP_CODEBASE=$CODEBASE/$APPNAME
-
-# search keystore file
-KEYSTOREFILE="$MCSTOP/etc/keystore"
-echo "Signing step uses '$KEYSTOREFILE' keystore"
-# read keyword password from file or from prompt if key file is not present
-KEYFILE="${KEYSTOREFILE}.key"
-if [ -f "$KEYFILE" ]
-then
-    echo "Using '$KEYFILE' as key file"
-    MYKEY=$(cat $KEYFILE)
-else
-    read -s -p "Enter 'mykey' password to sign every jar files:" MYKEY
-    echo -e "\n"    
-fi
-
-
-# Check webroot directory
-if [ -d "$WEBROOT" ]
-then
-    echo "Installing application into '$APP_WEBROOT' directory..." 
-    if [ -e "$APP_WEBROOT" ]
-    then
-        OLDAPP_WEBROOT=$APP_WEBROOT.$(date +"%Y.%m.%d.%m.%S")
-        mv $APP_WEBROOT $OLDAPP_WEBROOT
-        echo 
-        echo "WARNING: '$APP_WEBROOT' already exists, renamed '$(basename $OLDAPP_WEBROOT 2> /dev/null)'" 
-        echo
-    fi
-    mkdir "$APP_WEBROOT"
-else
-    shllibEchoError "Can't install application into '$APP_WEBROOT' directory." 
-    echo "'$WEBROOT' directory does not exist, please create it before." 
-    exit 1
-fi
-
-# Do really interresting job...
-
 copyJnlpAndRelated()
 {
     local LONGGIVENJNLP=$1
     local SHORTGIVENJNLP=$(basename $1 2> /dev/null)
     local destDir=$2
     local destCodeBase=$3
-    
+
     shllibEchoDebug "Copy '$LONGGIVENJNLP' into '$destDir'"
     mkdir -p $destDir 2> /dev/null
     if ! cp $LONGGIVENJNLP $destDir
@@ -227,9 +143,9 @@ copyJnlpAndRelated()
     xml ed -u "/jnlp/@codebase" -v "$destCodeBase" \
     -u "/jnlp/@href" -v "$SHORTGIVENJNLP" \
     $LONGGIVENJNLP > $destJnlp
-    
+
     cd $(dirname $LONGGIVENJNLP 2> /dev/null)
-    
+
     # transformation builds shell variables : 
     # eval command source them into into bash world
     eval $(xml sel -t -o "local INCLUDEDJNLPLIST=&quot;" \
@@ -251,7 +167,7 @@ copyJnlpAndRelated()
             exit 1
         fi
     done
-    
+
     for jar in $INCLUDEDJARLIST
     do
         jarname=$(basename $jar 2> /dev/null) 
@@ -286,16 +202,15 @@ copyJnlpAndRelated()
             relativePath="/$relativePath"
         fi
         if ! copyJnlpAndRelated $jnlp ${destDir}${relativePath} ${destCodeBase}${relativePath}
-        then
-            return $?
-        fi
+    then
+        return $?
+    fi
 done
 }
-    
-copyJnlpAndRelated $JNLPFILE $APP_WEBROOT $APP_CODEBASE || exit $?
 
-createAppJar(){
-    # sign each jar and make a big jar file to build final APPNAME.jar file
+# This function signs each jar and make a big jar file to build final APPNAME.jar file
+createAppJar()
+{
     echo "Creating '$APPNAME.jar' ... "
     # BIGMANIFEST file will content of previous entries
     #BIGMANIFEST=$APP_WEBROOT/BIG_MANIFEST.MF
@@ -307,7 +222,7 @@ createAppJar(){
     do
         shllibEchoDebug " Add '$jarpath' content into tmpbigjar"
         jar xf $jarpath
-      #  cat META-INF/MANIFEST.MF | awk '{if ( match($1,"Name: *") == 1 )p=1; if( length($1) == 0 ){p=0; print} ; if (p==1)print ;}' >> $BIGMANIFEST
+        #  cat META-INF/MANIFEST.MF | awk '{if ( match($1,"Name: *") == 1 )p=1; if( length($1) == 0 ){p=0; print} ; if (p==1)print ;}' >> $BIGMANIFEST
         rm -rf META-INF
     done
 
@@ -330,7 +245,105 @@ createAppJar(){
     rm -rf tmpbigjar
 }
 
+createRelease()
+{
+    echo "Creating releaseNotes.html"
+
+}
+
+cleanup()
+{
+    if [ -d $APP_WEBROOT ]
+    then
+        rm -rf $APP_WEBROOT
+    fi
+}
+
+# Perform command option analysis
+#
+# Note that we use `"$@"' to let each command-line parameter expand to a
+# separate word. The quotes around `$@' are essential!
+# We need TEMP as the `eval set --' would nuke the return value of getopt.
+TEMP=`getopt -o "" --long codebase:,webroot:,searchpath:,verbose,help \
+-n "$SCRIPTNAME" -- "$@"`
+if [ $? != 0 ] ; then _usage >&2 ; exit 1 ; fi
+# Note the quotes around `$TEMP': they are essential!
+eval set -- "$TEMP"
+while true ; do
+    case "$1" in
+        --codebase )
+        CODEBASE="$2"; shift 2 ;;
+        --webroot )
+        WEBROOT="$2"; shift 2 ;;
+        --searchpath )
+        USERSEARCHPATH="$2"; shift 2 ;;
+        --help ) _usage ; exit ; shift ;;
+        --verbose ) shllibSetDebugOn ; shift ;;
+        -- ) shift ; break ;;
+        * ) echo "Internal error!" ; exit 1 ;;
+    esac
+done
+
+# Check input file
+# Change to directory of given jnlp file and use its parent as MODULEROOT
+cd $(dirname "$1")
+MODULEROOT=$(cd ..;pwd)
+JNLPFILE=$(basename "$1" 2> /dev/null)
+if [ ! -f  "$JNLPFILE" ]
+then
+    echo "Missing JNLP file"
+    _usage
+    exit 1
+fi
+
+
+# define application name from given jnlp
+APPNAME=$(basename $JNLPFILE .jnlp 2> /dev/null)
+
+if [ "$APPNAME" == "$(basename $JNLPFILE 2> /dev/null)" ]
+then
+    echo "Given JNLP file does not end with '.jnlp' extension"
+    exit 1
+fi
+
+# define directory where application material should be installed into 
+REAL_APP_WEBROOT=$WEBROOT/$APPNAME
+APP_WEBROOT=$WEBROOT/$APPNAME.$(date +%s)
+APP_CODEBASE=$CODEBASE/$APPNAME
+
+# search keystore file
+KEYSTOREFILE="$MCSTOP/etc/keystore"
+echo "Signing step uses '$KEYSTOREFILE' keystore"
+# read keyword password from file or from prompt if key file is not present
+KEYFILE="${KEYSTOREFILE}.key"
+if [ -f "$KEYFILE" ]
+then
+    echo "Using '$KEYFILE' as key file"
+    MYKEY=$(cat $KEYFILE)
+else
+    read -s -p "Enter 'mykey' password to sign every jar files:" MYKEY
+    echo -e "\n"    
+fi
+
+# Check webroot directory
+if [ ! -d "$WEBROOT" ]
+then
+    shllibEchoError "Can't install application into '$REAL_APP_WEBROOT' directory." 
+    echo "'$WEBROOT' directory does not exist, please create it before." 
+    exit 1
+fi
+mkdir "$APP_WEBROOT"
+
+# prepare housekeeping 
+trap "cleanup" 0 1 2 5 15
+
+# Do really interresting job...
+
+copyJnlpAndRelated $JNLPFILE $APP_WEBROOT $APP_CODEBASE || exit $?
+
 createAppJar
+
+
 
 # Generates one default index.html file
 echo "Creating index.html ... "
@@ -357,6 +370,19 @@ xml sel -I -t -e "html" \
 ${APPNAME}.jnlp > index.html 
 echo "    done"
 
+
+echo "Installing application into '$REAL_APP_WEBROOT' directory..." 
+if [ -e "$REAL_APP_WEBROOT" ]
+then
+    OLDAPP_WEBROOT=$REAL_APP_WEBROOT.$(date +"%Y.%m.%d.%m.%S")
+    mv $REAL_APP_WEBROOT $OLDAPP_WEBROOT
+    echo 
+    echo "WARNING: '$REAL_APP_WEBROOT' already exists, renamed '$(basename $OLDAPP_WEBROOT 2> /dev/null)'" 
+    echo
+fi
+
+mv $APP_WEBROOT $REAL_APP_WEBROOT 
+
 echo
-echo "Deployement has been made into '$APP_WEBROOT'" 
+echo "Deployement has been made into '$REAL_APP_WEBROOT'" 
 echo "Please test deployement onto: $APP_CODEBASE"

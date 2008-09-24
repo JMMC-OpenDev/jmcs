@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.13 2008-09-24 15:32:27 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.14 2008-09-24 15:43:47 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2008/09/24 15:32:27  mella
+# First working prototype that generates releaseNotes.(rss|html)
+#
 # Revision 1.12  2008/09/24 08:06:20  mella
 # One failure in the build process does not erase previous running webroot
 #
@@ -213,7 +216,7 @@ EOF
             <xsl:value-of select="//ApplicationData/@link"/>
             <xsl:value-of select="'/releaseNotes.html'"/>
             <xsl:value-of select="'#'"/>
-            <xsl:value-of select="position()"/>
+            <xsl:value-of select="@version"/>
         </xsl:element>
         <xsl:element name="description">
             <!--<![CDATA[<![CDATA[]]>-->
@@ -405,7 +408,7 @@ createHtmlIndex()
     JARFILE=$(xml sel -t -v "concat(substring-before(/jnlp/@href, '.jnlp'),'.jar')" ${APPNAME}.jnlp)
     xml sel -I -t -e "html" \
     -e "head" \
-    -e "title" -v "//title" -b \
+    -e "title" -v "//title" -b -b \
     -e "body" \
     -e "p" -m "//icon/@href" -e "image" -a "src" -v "." -b -b -b -b \
     -e "h1" -v "//title" -b \
@@ -466,6 +469,9 @@ createReleaseFiles()
         xml sel -I -t -e "html" \
         -e "head" \
         -e "title" -v "//program/@name" -o " " -v "//program/@version" -o "releases"  -b \
+        -e "link" -a "rel" -o "alternate" -b -a "type" -o "application/rss+xml" -b  -a "title" -o "RSS" -b -a "href" -o "./releaseNotes.rss" -b -b \
+        -e "link" -a "rel" -o "stylesheet" -b -a "type" -o "text/css" -b -a "href" -o "http://www.jmmc.fr/css/2col_leftNav.css" -b -b \
+        -b \
         -e "body" \
         -e "h1" -e "a" -a "href" -v "//ApplicationData/@link" -b  -v "//program/@name" -o " " -v "//program/@version" -b -o " release notes" -b \
         -m "//release" \

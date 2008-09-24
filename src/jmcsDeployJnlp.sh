@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.12 2008-09-24 08:06:20 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.13 2008-09-24 15:32:27 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2008/09/24 08:06:20  mella
+# One failure in the build process does not erase previous running webroot
+#
 # Revision 1.11  2008/08/26 08:14:58  mella
 # Add searchpath option to perform additionnal search of jar files
 #
@@ -86,6 +89,155 @@ _usage()
     echo "" 
     echo ""
 }
+
+createXsltFiles()
+{
+    cat > setDateOfReleases.xsl <<EOF
+    <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:exslt="http://exslt.org/common"
+    xmlns:math="http://exslt.org/math"
+    xmlns:date="http://exslt.org/dates-and-times"
+    xmlns:func="http://exslt.org/functions"
+    xmlns:set="http://exslt.org/sets"
+    xmlns:str="http://exslt.org/strings"
+    xmlns:dyn="http://exslt.org/dynamic"
+    xmlns:saxon="http://icl.com/saxon"
+    xmlns:xalanredirect="org.apache.xalan.xslt.extensions.Redirect"
+    xmlns:xt="http://www.jclark.com/xt"
+    xmlns:libxslt="http://xmlsoft.org/XSLT/namespace"
+    xmlns:test="http://xmlsoft.org/XSLT/"
+    extension-element-prefixes="exslt math date func set str dyn saxon xalanredirect xt libxslt test"
+    exclude-result-prefixes="math str">
+    <xsl:output omit-xml-declaration="yes" indent="no"/>
+    <xsl:param name="releaseFile">ApplicationReleases.xml</xsl:param>
+    <xsl:variable name="releaseNotes" select="document(\$releaseFile)"/>
+    <!--                                                             -->
+    <!-- Update releaseFile with all new releases of given document  -->
+    <!--   and update pubDates                                       -->
+    <!--                                                             -->
+    <xsl:template match="/">
+    <xsl:apply-templates />
+    </xsl:template>
+
+    <xsl:template match="release" priority="2">
+    <xsl:variable name="version" select="./@version" />
+    <xsl:variable name="pubDate">
+    <xsl:value-of select="concat(date:day-abbreviation(), ', ',
+    format-number(date:day-in-month(), '00'), ' ',
+    date:month-abbreviation(), ' ',
+    date:year(), ' ',
+    format-number(date:hour-in-day(), '00'), ':',
+    format-number(date:minute-in-hour(), '00'), ':',
+    format-number(date:second-in-minute(), '00'), ' GMT')"/>
+    </xsl:variable>
+
+    <xsl:if test="not(exslt:node-set(\$releaseNotes)//release[@version=\$version]/pubDate)">
+    <xsl:message>appending release <xsl:value-of select="\$version"/> (<xsl:value-of select="\$pubDate"/>)</xsl:message>
+    <xsl:element name="{name()}">
+    <xsl:apply-templates select="./@*"/>
+    <xsl:element name="pubDate"><xsl:value-of select="\$pubDate"/></xsl:element>
+    <xsl:apply-templates />
+    </xsl:element>
+    </xsl:if>
+
+    <xsl:if test="exslt:node-set(\$releaseNotes)//release[@version=\$version]/pubDate">
+    <xsl:message>release <xsl:value-of select="\$version"/> already present</xsl:message>
+    <xsl:copy-of select="exslt:node-set(\$releaseNotes)//release[@version=\$version]"/>
+    </xsl:if>
+
+    </xsl:template>
+
+    <!-- Copy elements as original -->
+    <xsl:template match="*" priority="1">
+    <xsl:element name="{name()}">
+    <xsl:apply-templates select="./@*"/>
+    <xsl:apply-templates />
+    </xsl:element>
+    </xsl:template>
+
+    <!-- Copy comment text and attributes as original -->
+    <xsl:template match="comment()|text()|@*">
+    <xsl:copy-of select="."/>
+    </xsl:template>
+    </xsl:stylesheet>
+EOF
+
+    cat > applicationReleaseToRss.xsl <<EOF
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+ xmlns:exslt="http://exslt.org/common"
+ xmlns:math="http://exslt.org/math"
+ xmlns:date="http://exslt.org/dates-and-times"
+ xmlns:func="http://exslt.org/functions"
+ xmlns:set="http://exslt.org/sets"
+ xmlns:str="http://exslt.org/strings"
+ xmlns:dyn="http://exslt.org/dynamic"
+ xmlns:saxon="http://icl.com/saxon"
+ xmlns:xalanredirect="org.apache.xalan.xslt.extensions.Redirect"
+ xmlns:xt="http://www.jclark.com/xt"
+ xmlns:libxslt="http://xmlsoft.org/XSLT/namespace"
+ xmlns:test="http://xmlsoft.org/XSLT/"
+ extension-element-prefixes="exslt math date func set str dyn saxon xalanredirect xt libxslt test"
+ exclude-result-prefixes="math str">
+<xsl:output omit-xml-declaration="no" indent="yes"/>
+<xsl:param name="inputFile">-</xsl:param>
+<xsl:template match="/">
+  <xsl:call-template name="t1"/>
+</xsl:template>
+<xsl:template name="t1">
+  <xsl:element name="rss">
+    <xsl:attribute name="version">
+      <xsl:value-of select="'2.0'"/>
+    </xsl:attribute>
+    <xsl:element name="channel">
+      <xsl:element name="title">
+        <xsl:value-of select="//program/@name"/>
+        <xsl:value-of select="'releases'"/>
+      </xsl:element>
+      <xsl:element name="description">
+        <xsl:value-of select="'Here comes the automatically generated feeds according software releases '"/>
+      </xsl:element>
+      <xsl:element name="link">
+        <xsl:value-of select="//ApplicationData/@link"/>
+        <xsl:value-of select="'/releaseNotes.html'"/>
+      </xsl:element>
+      <xsl:for-each select="//release">
+        <xsl:element name="item">
+          <xsl:element name="title">
+            <xsl:value-of select="'Version '"/>
+            <xsl:value-of select="@version"/>
+          </xsl:element>
+          <xsl:element name="pubDate">
+            <xsl:value-of select="pubDate"/>
+          </xsl:element>
+          <xsl:element name="link">
+            <xsl:value-of select="//ApplicationData/@link"/>
+            <xsl:value-of select="'/releaseNotes.html'"/>
+            <xsl:value-of select="'#'"/>
+            <xsl:value-of select="position()"/>
+        </xsl:element>
+        <xsl:element name="description">
+            <!--<![CDATA[<![CDATA[]]>-->
+            <xsl:value-of select="'&lt;![CDATA['" disable-output-escaping="yes"/>
+            <ul>
+                <xsl:for-each select=".//change">
+                    <li>
+                        <xsl:value-of select="."/>
+                    </li>
+                </xsl:for-each>
+            </ul>
+            <xsl:value-of select="']]>'" disable-output-escaping="yes"/>
+          </xsl:element>
+        </xsl:element>
+      </xsl:for-each>
+    </xsl:element>
+  </xsl:element>
+</xsl:template>
+</xsl:stylesheet>
+EOF
+}
+
+
+
 
 shllibSetDebugOn()
 {
@@ -245,10 +397,92 @@ createAppJar()
     rm -rf tmpbigjar
 }
 
-createRelease()
+createHtmlIndex()
 {
-    echo "Creating releaseNotes.html"
+    OUTPUTFILE=index.html
+    echo "Creating '$OUTPUTFILE' ... "
+    cd $APP_WEBROOT
+    JARFILE=$(xml sel -t -v "concat(substring-before(/jnlp/@href, '.jnlp'),'.jar')" ${APPNAME}.jnlp)
+    xml sel -I -t -e "html" \
+    -e "head" \
+    -e "title" -v "//title" -b \
+    -e "body" \
+    -e "p" -m "//icon/@href" -e "image" -a "src" -v "." -b -b -b -b \
+    -e "h1" -v "//title" -b \
+    -e "p" -v "//description" -b \
+    -e "p" -o "By " -e "a" -a "href" -v "//homepage/@href" -b -v "//vendor" -b -b \
+    -e "p" -o "Run Java Webstart application" -e "a" -a "href" -v "/jnlp/@href" -b \
+    -o " using this link on main jnlp file" -b -b \
+    -e "p" -e "a" -a "href" -o "$JARFILE" -b -o "Download JAR " -b \
+    -o "of application and run following command:" -b \
+    -e "p" -e "pre" -o "java -jar $JARFILE " \
+    -m "//application-desc/argument" -o "&quot;" -v "." -o "&quot; " -b -b -b \
+    -i "//j2se" \
+    -e "h4" -o "List of supported Java 2 SE Runtime Environment (JRE) versions:" -b \
+    -e "ul" -m "//j2se" -e "li" -v "@version" -b -b -b \
+    -e "small" -e "pre" -o "--" -n \
+    -o "This page and previous content is generated by $SCRIPTNAME on " -v "date:date()" -b -b \
+    ${APPNAME}.jnlp > $OUTPUTFILE 
+    cd -
+    echo "    done"
+}
 
+# this function try to complete previous release file and generates html and rss
+# version of this release file
+# if the previous release file is not found a new one is generated
+# in fact the reference file is the same as applicationData.xml with addition of
+# pubDate elements
+# Warning next code works if only one Applicationdata is in the module
+# To solve it we could search ApplicationDara.xml under the package of main
+# class of jnlp file...
+createReleaseFiles()
+{
+    APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
+    cd $APP_WEBROOT
+    createXsltFiles
+    if [ -f $APPLICATION_DATA_XML ]
+    then
+        echo "Creating releaseNotes files ... "
+
+        # recover release from previous installation or build new one
+        XML_RELEASE_FILE=ApplicationRelease.xml
+        if [ -e $REAL_APP_WEBROOT/$XML_RELEASE_FILE ]
+        then
+            OLDXML_RELEASE_FILE=$REAL_APP_WEBROOT/$XML_RELEASE_FILE
+        else
+            OLDXML_RELEASE_FILE=$APPLICATION_DATA_XML
+        fi
+
+        # complete OLD release file with ones comming from given APPLICATION_DATA_XML
+        # and set pubDate
+        xsltproc --path .:$PWD \
+        --stringparam releaseFile $OLDXML_RELEASE_FILE \
+        --output $XML_RELEASE_FILE \
+        setDateOfReleases.xsl $APPLICATION_DATA_XML 
+
+        # transform into html and rss format
+        HTML_RELEASE_NOTES=releaseNotes.html
+        echo "Creating '$HTML_RELEASE_NOTES'"
+        xml sel -I -t -e "html" \
+        -e "head" \
+        -e "title" -v "//program/@name" -o " " -v "//program/@version" -o "releases"  -b \
+        -e "body" \
+        -e "h1" -e "a" -a "href" -v "//ApplicationData/@link" -b  -v "//program/@name" -o " " -v "//program/@version" -b -o " release notes" -b \
+        -m "//release" \
+        -e "a" -a "name" -v "@version" -b -b \
+        -e "h2" -o "Version " -v "@version" -b \
+        -e "p" -v "pubDate" \
+        -e "ul" \
+        -m ".//change" -e "li" -v "." -b\
+        -b -b -b -b \
+        $XML_RELEASE_FILE > $HTML_RELEASE_NOTES 
+
+        OUTPUTFILE=releaseNotes.rss
+        echo "Creating '$OUTPUTFILE'"
+        xsltproc --output $OUTPUTFILE applicationReleaseToRss.xsl $XML_RELEASE_FILE
+        echo "    done"
+    fi
+    cd -
 }
 
 cleanup()
@@ -296,7 +530,6 @@ then
     exit 1
 fi
 
-
 # define application name from given jnlp
 APPNAME=$(basename $JNLPFILE .jnlp 2> /dev/null)
 
@@ -338,38 +571,10 @@ mkdir "$APP_WEBROOT"
 trap "cleanup" 0 1 2 5 15
 
 # Do really interresting job...
-
+createReleaseFiles
 copyJnlpAndRelated $JNLPFILE $APP_WEBROOT $APP_CODEBASE || exit $?
-
 createAppJar
-
-
-
-# Generates one default index.html file
-echo "Creating index.html ... "
-cd $APP_WEBROOT
-JARFILE=$(xml sel -t -v "concat(substring-before(/jnlp/@href, '.jnlp'),'.jar')" ${APPNAME}.jnlp)
-xml sel -I -t -e "html" \
--e "head" \
--e "title" -v "//title" -b \
--e "body" \
--e "p" -m "//icon/@href" -e "image" -a "src" -v "." -b -b -b -b \
--e "h1" -v "//title" -b \
--e "p" -v "//description" -b \
--e "p" -o "By " -e "a" -a "href" -v "//homepage/@href" -b -v "//vendor" -b -b \
--e "p" -o "Run Java Webstart application" -e "a" -a "href" -v "/jnlp/@href" -b \
--o " using this link on main jnlp file" -b -b \
--e "p" -e "a" -a "href" -o "$JARFILE" -b -o "Download JAR " -b \
--o "of application and run following command:" -b \
--e "p" -e "pre" -o "java -jar $JARFILE " \
--m "//application-desc/argument" -o "&quot;" -v "." -o "&quot; " -b -b -b \
--i "//j2se" \
--e "h4" -o "List of supported Java 2 SE Runtime Environment (JRE) versions:" -b \
--e "ul" -m "//j2se" -e "li" -v "@version" -b -b -b \
--e "small" -e "pre" -o "--" -n -o "This page and previous content has been installed by $SCRIPTNAME on " -v "date:date()" -b -b \
-${APPNAME}.jnlp > index.html 
-echo "    done"
-
+createHtmlIndex
 
 echo "Installing application into '$REAL_APP_WEBROOT' directory..." 
 if [ -e "$REAL_APP_WEBROOT" ]

@@ -1,11 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.14 2008-09-24 15:43:47 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.15 2008-09-25 07:26:18 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2008/09/24 15:43:47  mella
+# - fix minor html build bugs
+# - add css stylesheet to html page
+# - add rss link into html page
+#
 # Revision 1.13  2008/09/24 15:32:27  mella
 # First working prototype that generates releaseNotes.(rss|html)
 #
@@ -194,7 +199,7 @@ EOF
     <xsl:element name="channel">
       <xsl:element name="title">
         <xsl:value-of select="//program/@name"/>
-        <xsl:value-of select="'releases'"/>
+        <xsl:value-of select="' releases'"/>
       </xsl:element>
       <xsl:element name="description">
         <xsl:value-of select="'Here comes the automatically generated feeds according software releases '"/>

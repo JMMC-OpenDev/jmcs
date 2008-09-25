@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <ApplicationData link="http://www.jmmc.fr/">
-	<program name="UNKNOWN Application Name" version="UNKNOWN Release Version"/>
-	<compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
-	<text></text>
-	<dependences>
+    <program name="UNKNOWN Application Name" version="UNKNOWN Release Version"/>
+    <compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
+    <text></text>
+    <dependences>
     </dependences>
+    <releasenotes>
+        <release version="0">
+            <change></change>
+        </release>
+    </releasenotes>
 </ApplicationData>

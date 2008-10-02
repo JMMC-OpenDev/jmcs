@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.16 2008-10-02 20:14:54 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.17 2008-10-02 20:16:55 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2008/10/02 20:14:54  mella
+# Do only copy pubDate of previous releases instead of all release elements
+#
 # Revision 1.15  2008/09/25 07:26:18  mella
 # typo
 #
@@ -209,7 +212,7 @@ EOF
       </xsl:element>
       <xsl:element name="link">
         <xsl:value-of select="//ApplicationData/@link"/>
-        <xsl:value-of select="'/releasenotes.html'"/>
+        <xsl:value-of select="'/releasenotes.htm'"/>
       </xsl:element>
       <xsl:for-each select="//release">
         <xsl:element name="item">
@@ -222,7 +225,7 @@ EOF
           </xsl:element>
           <xsl:element name="link">
             <xsl:value-of select="//ApplicationData/@link"/>
-            <xsl:value-of select="'/releasenotes.html'"/>
+            <xsl:value-of select="'/releasenotes.htm'"/>
             <xsl:value-of select="'#'"/>
             <xsl:value-of select="@version"/>
         </xsl:element>
@@ -411,7 +414,7 @@ createAppJar()
 
 createHtmlIndex()
 {
-    OUTPUTFILE=index.html
+    OUTPUTFILE=index.htm
     echo "Creating '$OUTPUTFILE' ... "
     cd $APP_WEBROOT
     JARFILE=$(xml sel -t -v "concat(substring-before(/jnlp/@href, '.jnlp'),'.jar')" ${APPNAME}.jnlp)
@@ -473,7 +476,7 @@ createReleaseFiles()
         setDateOfReleases.xsl $APPLICATION_DATA_XML 
 
         # transform into html and rss format
-        HTML_RELEASE_NOTES=releasenotes.html
+        HTML_RELEASE_NOTES=releasenotes.htm
         echo "Creating '$HTML_RELEASE_NOTES'"
         xml sel -I -t -e "html" \
         -e "head" \

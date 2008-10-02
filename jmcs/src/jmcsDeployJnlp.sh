@@ -1,18 +1,21 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.15 2008-09-25 07:26:18 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.16 2008-10-02 20:14:54 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2008/09/25 07:26:18  mella
+# typo
+#
 # Revision 1.14  2008/09/24 15:43:47  mella
 # - fix minor html build bugs
 # - add css stylesheet to html page
 # - add rss link into html page
 #
 # Revision 1.13  2008/09/24 15:32:27  mella
-# First working prototype that generates releaseNotes.(rss|html)
+# First working prototype that generates releasenotes.(rss|html)
 #
 # Revision 1.12  2008/09/24 08:06:20  mella
 # One failure in the build process does not erase previous running webroot
@@ -118,7 +121,7 @@ createXsltFiles()
     exclude-result-prefixes="math str">
     <xsl:output omit-xml-declaration="yes" indent="no"/>
     <xsl:param name="releaseFile">ApplicationReleases.xml</xsl:param>
-    <xsl:variable name="releaseNotes" select="document(\$releaseFile)"/>
+    <xsl:variable name="releasenotes" select="document(\$releaseFile)"/>
     <!--                                                             -->
     <!-- Update releaseFile with all new releases of given document  -->
     <!--   and update pubDates                                       -->
@@ -139,19 +142,19 @@ createXsltFiles()
     format-number(date:second-in-minute(), '00'), ' GMT')"/>
     </xsl:variable>
 
-    <xsl:if test="not(exslt:node-set(\$releaseNotes)//release[@version=\$version]/pubDate)">
-    <xsl:message>appending release <xsl:value-of select="\$version"/> (<xsl:value-of select="\$pubDate"/>)</xsl:message>
     <xsl:element name="{name()}">
     <xsl:apply-templates select="./@*"/>
+    <xsl:if test="not(exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate)">
+    <xsl:message>appending release <xsl:value-of select="\$version"/> (<xsl:value-of select="\$pubDate"/>)</xsl:message>
     <xsl:element name="pubDate"><xsl:value-of select="\$pubDate"/></xsl:element>
-    <xsl:apply-templates />
-    </xsl:element>
+    </xsl:if>
+    <xsl:if test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
+    <xsl:message>release <xsl:value-of select="\$version"/> already present</xsl:message>
+    <xsl:copy-of select="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate"/>
     </xsl:if>
 
-    <xsl:if test="exslt:node-set(\$releaseNotes)//release[@version=\$version]/pubDate">
-    <xsl:message>release <xsl:value-of select="\$version"/> already present</xsl:message>
-    <xsl:copy-of select="exslt:node-set(\$releaseNotes)//release[@version=\$version]"/>
-    </xsl:if>
+    <xsl:apply-templates />
+    </xsl:element>
 
     </xsl:template>
 
@@ -202,11 +205,11 @@ EOF
         <xsl:value-of select="' releases'"/>
       </xsl:element>
       <xsl:element name="description">
-        <xsl:value-of select="'Here comes the automatically generated feeds according software releases '"/>
+        <xsl:value-of select="'This RSS feed summarizes each software releases.'"/>
       </xsl:element>
       <xsl:element name="link">
         <xsl:value-of select="//ApplicationData/@link"/>
-        <xsl:value-of select="'/releaseNotes.html'"/>
+        <xsl:value-of select="'/releasenotes.html'"/>
       </xsl:element>
       <xsl:for-each select="//release">
         <xsl:element name="item">
@@ -219,7 +222,7 @@ EOF
           </xsl:element>
           <xsl:element name="link">
             <xsl:value-of select="//ApplicationData/@link"/>
-            <xsl:value-of select="'/releaseNotes.html'"/>
+            <xsl:value-of select="'/releasenotes.html'"/>
             <xsl:value-of select="'#'"/>
             <xsl:value-of select="@version"/>
         </xsl:element>
@@ -228,8 +231,9 @@ EOF
             <xsl:value-of select="'&lt;![CDATA['" disable-output-escaping="yes"/>
             <ul>
                 <xsl:for-each select=".//change">
+                <xsl:sort select="./@type"/>
                     <li>
-                        <xsl:value-of select="."/>
+                        <xsl:if test="./@type"><xsl:value-of select="./@type"/>: </xsl:if><xsl:value-of select="."/>
                     </li>
                 </xsl:for-each>
             </ul>
@@ -450,7 +454,7 @@ createReleaseFiles()
     createXsltFiles
     if [ -f $APPLICATION_DATA_XML ]
     then
-        echo "Creating releaseNotes files ... "
+        echo "Creating releasenotes files ... "
 
         # recover release from previous installation or build new one
         XML_RELEASE_FILE=ApplicationRelease.xml
@@ -469,12 +473,12 @@ createReleaseFiles()
         setDateOfReleases.xsl $APPLICATION_DATA_XML 
 
         # transform into html and rss format
-        HTML_RELEASE_NOTES=releaseNotes.html
+        HTML_RELEASE_NOTES=releasenotes.html
         echo "Creating '$HTML_RELEASE_NOTES'"
         xml sel -I -t -e "html" \
         -e "head" \
         -e "title" -v "//program/@name" -o " " -v "//program/@version" -o "releases"  -b \
-        -e "link" -a "rel" -o "alternate" -b -a "type" -o "application/rss+xml" -b  -a "title" -o "RSS" -b -a "href" -o "./releaseNotes.rss" -b -b \
+        -e "link" -a "rel" -o "alternate" -b -a "type" -o "application/rss+xml" -b  -a "title" -o "RSS" -b -a "href" -o "./releasenotes.rss" -b -b \
         -e "link" -a "rel" -o "stylesheet" -b -a "type" -o "text/css" -b -a "href" -o "http://www.jmmc.fr/css/2col_leftNav.css" -b -b \
         -b \
         -e "body" \
@@ -488,7 +492,7 @@ createReleaseFiles()
         -b -b -b -b \
         $XML_RELEASE_FILE > $HTML_RELEASE_NOTES 
 
-        OUTPUTFILE=releaseNotes.rss
+        OUTPUTFILE=releasenotes.rss
         echo "Creating '$OUTPUTFILE'"
         xsltproc --output $OUTPUTFILE applicationReleaseToRss.xsl $XML_RELEASE_FILE
         echo "    done"

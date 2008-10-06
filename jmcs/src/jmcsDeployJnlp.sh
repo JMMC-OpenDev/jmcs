@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.17 2008-10-02 20:16:55 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.18 2008-10-06 15:08:14 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.17  2008/10/02 20:16:55  mella
+# Fix .htm instead of .html extensions
+#
 # Revision 1.16  2008/10/02 20:14:54  mella
 # Do only copy pubDate of previous releases instead of all release elements
 #
@@ -135,7 +138,18 @@ createXsltFiles()
 
     <xsl:template match="release" priority="2">
     <xsl:variable name="version" select="./@version" />
+    <xsl:variable name="prereleases">
+    <xsl:for-each select="./prerelease">
+    <xsl:value-of select="@version"/>
+    </xsl:for-each>
+    </xsl:variable>
+    <xsl:variable name="oldprereleases">
+    <xsl:for-each select="exslt:node-set(\$releasenotes)//release[@version=\$version]//prerelease" >
+    <xsl:value-of select="@version"/>
+    </xsl:for-each>
+    </xsl:variable>
     <xsl:variable name="pubDate">
+    <xsl:element name="pubDate">
     <xsl:value-of select="concat(date:day-abbreviation(), ', ',
     format-number(date:day-in-month(), '00'), ' ',
     date:month-abbreviation(), ' ',
@@ -143,18 +157,48 @@ createXsltFiles()
     format-number(date:hour-in-day(), '00'), ':',
     format-number(date:minute-in-hour(), '00'), ':',
     format-number(date:second-in-minute(), '00'), ' GMT')"/>
+    </xsl:element>
     </xsl:variable>
+    <xsl:variable name="oldPubDate">
+    <xsl:element name="pubDate">
+    <xsl:choose>
+    <xsl:when test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
+    <xsl:copy-of select="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate"/>
+    </xsl:when><xsl:otherwise>
+    <xsl:value-of select="concat(date:day-abbreviation(), ', ',
+    format-number(date:day-in-month(), '00'), ' ',
+    date:month-abbreviation(), ' ',
+    date:year(), ' ',
+    format-number(date:hour-in-day(), '00'), ':',
+    format-number(date:minute-in-hour(), '00'), ':',
+    format-number(date:second-in-minute(), '00'), ' GMT')"/>
+    </xsl:otherwise>
+    </xsl:choose>
+    </xsl:element>
+    </xsl:variable>
+
 
     <xsl:element name="{name()}">
     <xsl:apply-templates select="./@*"/>
-    <xsl:if test="not(exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate)">
-    <xsl:message>appending release <xsl:value-of select="\$version"/> (<xsl:value-of select="\$pubDate"/>)</xsl:message>
-    <xsl:element name="pubDate"><xsl:value-of select="\$pubDate"/></xsl:element>
-    </xsl:if>
-    <xsl:if test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
-    <xsl:message>release <xsl:value-of select="\$version"/> already present</xsl:message>
-    <xsl:copy-of select="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate"/>
-    </xsl:if>
+    <xsl:choose>
+    <xsl:when test="\$prereleases=\$oldprereleases">
+    <xsl:message>release <xsl:value-of select="\$version"/> keep old pubDate (<xsl:value-of select="\$oldPubDate"/>)</xsl:message>
+    <xsl:copy-of select="\$oldPubDate"/>
+    </xsl:when>
+<!--    <xsl:when test="set:difference(\$oldprereleases, \$prereleases)">
+    <xsl:message>prerelease detect</xsl:message>
+    </xsl:when>
+    <xsl:when test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
+    <xsl:message><xsl:copy-of select="set:difference(\$prereleases, \$oldprereleases)"/></xsl:message>
+    <xsl:message>release <xsl:value-of select="\$version"/> keep same pubDate</xsl:message>
+    </xsl:when>
+    -->
+    <xsl:otherwise>
+    <xsl:message>release <xsl:value-of select="\$version"/> get new pubDate (<xsl:value-of select="\$pubDate"/>)</xsl:message>
+    <xsl:copy-of select="\$pubDate"/>
+    <!-- Check that old release hae date and all prereleases-->
+    </xsl:otherwise>
+    </xsl:choose>
 
     <xsl:apply-templates />
     </xsl:element>
@@ -491,7 +535,7 @@ createReleaseFiles()
         -e "h2" -o "Version " -v "@version" -b \
         -e "p" -v "pubDate" \
         -e "ul" \
-        -m ".//change" -e "li" -v "." -b\
+        -m ".//change" -s A:T:U "./@type" -e "li" -i "./@type" -v "./@type" -o ": " -b -v "." -b\
         -b -b -b -b \
         $XML_RELEASE_FILE > $HTML_RELEASE_NOTES 
 

@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.13 2008-06-25 12:05:21 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.14 2008-10-07 13:42:43 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2008/06/25 12:05:21  bcolucci
+ * Add a surcharge of the constructor with a boolean
+ * in order to specify that the application have to
+ * be closed after that the report has been sent.
+ *
  * Revision 1.12  2008/06/20 08:41:45  bcolucci
  * Remove unused imports and add class comments.
  *
@@ -227,7 +232,8 @@ public class FeedbackReport extends JDialog implements Observer
         _exit                    = exit;
 
         // Create the model and add the observer
-        _feedbackReportModel     = new FeedbackReportModel();
+        // GM has haccked api to temporary shortcup process and lease
+        _feedbackReportModel     = new FeedbackReportModel(getExceptionTrace());
         _feedbackReportModel.addObserver(this);
 
         // Launch the model as thread
@@ -540,7 +546,7 @@ public class FeedbackReport extends JDialog implements Observer
      */
     private String getExceptionTrace()
     {
-        String exceptionTrace = "None";
+        String exceptionTrace = "No stack trace";
 
         // Check if the exception is not null
         if (_exception != null)
@@ -549,10 +555,7 @@ public class FeedbackReport extends JDialog implements Observer
             PrintWriter  printWriter  = new PrintWriter(stringWriter);
 
             _exception.printStackTrace(printWriter);
-
             exceptionTrace = stringWriter.toString();
-
-            //_exception.printStackTrace();
         }
 
         return exceptionTrace;

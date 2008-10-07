@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.33 2008-09-22 16:49:51 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.34 2008-10-07 13:43:03 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2008/09/22 16:49:51  lafrasse
+ * Moved MainMenuBar initialization after init() method call (instead of before).
+ *
  * Revision 1.32  2008/09/09 12:02:59  lafrasse
  * Separated App logger from shared logger.
  *
@@ -309,7 +312,7 @@ public abstract class App
             // We add the memory handler created and the console one to the logger
             _mainLogger.addHandler(_consoleHandler);
             _mainLogger.addHandler(_streamHandler);
-            _mainLogger.setLevel(Level.INFO);
+            _mainLogger.setLevel(Level.FINE);
             _logger.finer("MAin Logger properties set");
 
             _logger.fine(

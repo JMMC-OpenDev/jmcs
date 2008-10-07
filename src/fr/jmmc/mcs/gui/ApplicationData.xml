@@ -7,7 +7,9 @@
     </dependences>
     <releasenotes>
         <release version="0">
-            <change></change>
+            <prerelease version="0.beta" tag="V0_beta">
+                <change></change>
+            </prerelease>
         </release>
     </releasenotes>
 </ApplicationData>

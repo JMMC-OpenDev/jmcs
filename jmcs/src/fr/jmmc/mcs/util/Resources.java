@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.10 2008-02-13 05:30:12 mella Exp $"
+ * "@(#) $Id: Resources.java,v 1.11 2008-10-15 13:44:01 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2008/02/13 05:30:12  mella
+ * set right logger name and adjust log level
+ *
  * Revision 1.9  2007/06/19 15:18:10  lafrasse
  * Added Mac OS X command key handling for menu short cuts.
  *
@@ -37,19 +40,12 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
-import java.awt.*;
-import java.awt.event.*;
-
-import java.io.*;
-
 import java.net.URL;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 
-import javax.xml.parsers.*;
 
 
 /**

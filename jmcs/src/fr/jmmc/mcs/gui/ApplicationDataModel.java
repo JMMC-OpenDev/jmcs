@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.11 2008-06-27 11:23:00 bcolucci Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.12 2008-10-15 13:59:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2008/06/27 11:23:00  bcolucci
+ * Add comments.
+ *
  * Revision 1.10  2008/06/20 08:41:45  bcolucci
  * Remove unused imports and add class comments.
  *
@@ -98,6 +101,31 @@ public class ApplicationDataModel
         _applicationDataCastorModel     = ApplicationData.unmarshal(inputStreamReader);
 
         _logger.fine("Application data model loaded.");
+    }
+
+    /**
+     * Return the value of the field "copyright" from the XML file
+     *
+     * @return the value of the field copyright from the XML file or null
+     */
+    public String getAcknowledgment()
+    {
+        if (_applicationDataCastorModel == null)
+        {
+            _logger.fine("_applicationDataCastorModel is null");
+
+            return null;
+        }
+
+        if (_applicationDataCastorModel.getAcknowledgment() == null)
+        {
+            _logger.fine(
+                "_applicationDataCastorModel.getAcknowledgment() is null");
+
+            return null;
+        }
+
+        return _applicationDataCastorModel.getAcknowledgment();
     }
 
     /**

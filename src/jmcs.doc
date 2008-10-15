@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: jmcs.doc,v 1.5 2008-06-23 07:46:07 bcolucci Exp $"
+ * "@(#) $Id: jmcs.doc,v 1.6 2008-10-15 13:58:46 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/06/23 07:46:07  bcolucci
+ * Add a library
+ *
  * Revision 1.4  2008/06/20 07:09:37  bcolucci
  * Add informations about others Jar files.
  *
@@ -30,6 +33,10 @@ lib includes external jars:
 Adjust logging facilities:
 (http://www.informatrix.ch/loggui/index.html)
 loggui.jar 
+
+Fits format:
+(http://www.hq.eso.org/~pgrosbol/fits_java/jfits.html)
+jfits-0.93.jar
 
 2D plots:
 (http://ptolemy.eecs.berkeley.edu/java/ptplot5.6/ptolemy/plot/doc/index.htm)

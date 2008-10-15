@@ -6,8 +6,8 @@
     <dependences>
     </dependences>
     <releasenotes>
-        <release version="0">
-            <prerelease version="0.beta" tag="V0_beta">
+        <release version="0.0">
+            <prerelease version="0.0b0" tag="V0_0b0">
                 <change></change>
             </prerelease>
         </release>

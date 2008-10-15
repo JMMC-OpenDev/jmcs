@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.19 2008-09-22 16:51:42 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.20 2008-10-15 13:49:54 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2008/09/22 16:51:42  lafrasse
+ * Enforced Icon attribute retrieval.
+ *
  * Revision 1.18  2008/09/22 16:16:29  lafrasse
  * Enforced 'Preferences.." menu creation even if no action is registered as the
  * 'Preference' one.
@@ -327,11 +330,18 @@ public class MainMenuBar extends JMenuBar
         // Create menu
         JMenu helpMenu = new JMenu("Help");
 
+        // Add acknowledgement action
+        helpMenu.add(App.acknowledgementAction());
+        helpMenu.add(new JSeparator());
+
         // Add feedback action
         helpMenu.add(App.feedbackReportAction());
 
         // Add helpview action
         helpMenu.add(App.helpViewAction());
+
+        // Add release action
+        helpMenu.add(App.showReleaseAction());
 
         // Get help menu from table
         JMenu help = _menusTable.get("Help");
@@ -522,9 +532,7 @@ public class MainMenuBar extends JMenuBar
 
             if (action.getValue(Action.SMALL_ICON) != null)
             {
-                String actionIcon = (String) action.getValue(Action.SMALL_ICON);
-
-                if (actionIcon == null)
+                if (! icon.equals(""))
                 {
                     action.putValue(Action.SMALL_ICON, new ImageIcon(icon));
                 }

@@ -81,7 +81,8 @@
                         </xsd:sequence>
                     </xsd:complexType>
                 </xsd:element>
-
+                <xsd:element name="acknowledgment" minOccurs="0" maxOccurs="1" type="xsd:string">
+                </xsd:element>
             </xsd:sequence>
             <xsd:attribute name="link" type="xsd:string"/>
         </xsd:complexType>

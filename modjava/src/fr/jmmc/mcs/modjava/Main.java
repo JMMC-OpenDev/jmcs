@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.2 2008-09-22 16:53:50 lafrasse Exp $"
+ * "@(#) $Id: Main.java,v 1.3 2008-10-15 12:02:53 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2008/09/22 16:53:50  lafrasse
+ * Moved to new JMCS APIs.
+ *
  * Revision 1.1  2008/07/01 08:58:13  lafrasse
  * Added jmcs test application from bcolucci.
  *
@@ -32,7 +35,7 @@ import javax.swing.JFrame;
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Main extends App
 {
@@ -101,7 +104,7 @@ public class Main extends App
 
     /** Execute operations before closing application */
     @Override
-    protected boolean finnish()
+    protected boolean finish()
     {
         _logger.warning("Execute operations before closing application");
 

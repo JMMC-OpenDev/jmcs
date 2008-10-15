@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.11 2008-06-20 08:42:25 bcolucci Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.12 2008-10-15 14:01:20 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2008/06/20 08:42:25  bcolucci
+ * Remove unused imports and add class comments.
+ *
  * Revision 1.10  2008/06/17 07:55:05  bcolucci
  * Add more logs.
  *
@@ -132,10 +135,13 @@ public class FeedbackReportModel extends Observable implements Runnable
         _logger.fine("TypeDataModel constructed");
 
         // Get informations to send with the report
-        _applicationVersion     = _applicationDataModel.getProgramVersion();
-        _applicationName        = _applicationDataModel.getProgramName();
+        if (_applicationDataModel != null)
+        {
+            _applicationVersion     = _applicationDataModel.getProgramVersion();
+            _applicationName        = _applicationDataModel.getProgramName();
+        }
 
-        _systemConfig           = getSystemConfig();
+        _systemConfig = getSystemConfig();
         _logger.fine("system configuration has been saved");
 
         _applicationLog = App.getLogOutput();

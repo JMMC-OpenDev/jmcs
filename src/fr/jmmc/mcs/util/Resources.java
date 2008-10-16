@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.11 2008-10-15 13:44:01 mella Exp $"
+ * "@(#) $Id: Resources.java,v 1.12 2008-10-16 09:18:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2008/10/15 13:44:01  mella
+ * housekeeping
+ *
  * Revision 1.10  2008/02/13 05:30:12  mella
  * set right logger name and adjust log level
  *
@@ -45,7 +48,6 @@ import java.net.URL;
 import java.util.*;
 
 import javax.swing.*;
-
 
 
 /**

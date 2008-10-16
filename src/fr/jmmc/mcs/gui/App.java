@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.34 2008-10-07 13:43:03 mella Exp $"
+ * "@(#) $Id: App.java,v 1.35 2008-10-16 08:22:14 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2008/10/07 13:43:03  mella
+ * Fix Fine log level
+ *
  * Revision 1.33  2008/09/22 16:49:51  lafrasse
  * Moved MainMenuBar initialization after init() method call (instead of before).
  *
@@ -155,20 +158,16 @@ import fr.jmmc.mcs.util.*;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 
 import java.io.ByteArrayOutputStream;
 
-import java.lang.reflect.Method;
-
 import java.net.URL;
 
-import java.util.Enumeration;
-import java.util.Observable;
-import java.util.Vector;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -244,7 +243,13 @@ public abstract class App
     private static Preferences _preferences;
 
     /** Quit handling action */
-    private QuitAction _quitAction = null;
+    private static QuitAction _quitAction = null;
+
+    /** Acknowledgement handling action */
+    private static AcknowledgementAction _acknowledgementAction = null;
+
+    /** Show release handling action */
+    private static ShowReleaseAction _showReleaseAction = null;
 
     /**
      * Creates a new App object
@@ -309,25 +314,30 @@ public abstract class App
             _streamHandler = new StreamHandler(_byteArrayOutputStream,
                     simpleFormatter);
 
-            // We add the memory handler created and the console one to the logger
-            _mainLogger.addHandler(_consoleHandler);
+            // We add the memory handler create to the logger
             _mainLogger.addHandler(_streamHandler);
             _mainLogger.setLevel(Level.FINE);
-            _logger.finer("MAin Logger properties set");
+            _logger.finer("Main Logger properties set");
 
-            _logger.fine(
-                "Memory and console handler created and fixed to feedbackLogger");
-            _logger.fine("App object instantiated and logger created");
+            _logger.fine("Memory handler created and fixed to feedbackLogger.");
+            _logger.fine("App object instantiated and logger created.");
 
             // Set the application data attribute
             loadApplicationData();
-            _logger.fine("Application data loaded");
+            _logger.fine("Application data loaded.");
 
             // Interpret arguments
             interpretArguments(args);
 
             // Set shared instance
-            _sharedInstance = this;
+            _sharedInstance            = this;
+
+            // Set Acknowledgment and ShowRelease Actions
+            // (the creation must be done after applicationModel instanciation)
+            _acknowledgementAction     = new AcknowledgementAction("fr.jmmc.mcs.gui.App",
+                    "_acknowledgementAction");
+            _showReleaseAction         = new ShowReleaseAction("fr.jmmc.mcs.gui.App",
+                    "_showReleaseAction");
 
             // If execution should not be delayed
             if (waitBeforeExecution == false)
@@ -359,36 +369,32 @@ public abstract class App
     }
 
     /**
-     * Laod application data if Applicationdata.xml exists into the module.
+     * Load application data if Applicationdata.xml exists into the module.
      * Otherwise, uses the default ApplicationData.xml.
      */
     private void loadApplicationData()
     {
-        // The class which is extended from App
-        Class actualClass = getClass();
+        URL fileURL = getURLFromResourceFilename("ApplicationData.xml");
 
-        // It's package
-        Package p = actualClass.getPackage();
-
-        // Replace '.' by '/' of package name
-        String packageName = p.getName().replace(".", "/");
-        String xmlLocation = packageName + "/" + "ApplicationData.xml";
-
-        try
+        if (fileURL == null)
         {
-            // Open XML file at path
-            URL xmlURL = actualClass.getClassLoader().getResource(xmlLocation);
-
-            _applicationDataModel = new ApplicationDataModel(xmlURL);
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot load '" + xmlLocation +
-                "' application data, trying the default one instead.", ex);
-
             // Take the defaultData XML in order to take the default menus
             loadDefaultApplicationData();
+        }
+        else
+        {
+            try
+            {
+                // We reinstantiate the application data model
+                _applicationDataModel = new ApplicationDataModel(fileURL);
+            }
+            catch (Exception ex)
+            {
+                _logger.log(Level.SEVERE,
+                    "Could not load application data from '" + fileURL +
+                    "' file.", ex);
+                loadDefaultApplicationData();
+            }
         }
     }
 
@@ -426,6 +432,12 @@ public abstract class App
                 "' default application data", ex);
             System.exit(-1);
         }
+    }
+
+    /** Return the action which displays and copy acknowledgement to clipboard */
+    public static Action acknowledgementAction()
+    {
+        return _acknowledgementAction;
     }
 
     /** Creates the action which open the about box window */
@@ -491,6 +503,18 @@ public abstract class App
                     }
                 }
             };
+    }
+
+    /** Return the action which tries to quit the application */
+    public static Action quitAction()
+    {
+        return _quitAction;
+    }
+
+    /** Return the action dedicated to display release */
+    public static Action showReleaseAction()
+    {
+        return _showReleaseAction;
     }
 
     /**
@@ -657,10 +681,9 @@ public abstract class App
      * @return should return true if the application can exit, false otherwise
      * to cancel exit.
      */
-    protected boolean finnish()
+    protected boolean finish()
     {
-        _logger.fine("Default App.finnish() handler called.");
-        System.out.println("Default App.finnish() handler called.");
+        _logger.info("Default App.finish() handler called.");
 
         return true;
     }
@@ -788,6 +811,50 @@ public abstract class App
         return name + " v" + version;
     }
 
+    /**
+     * Get URL from resource filename.
+     *
+     * @param fileName name of searched file.
+     *
+     * @return resource file URL
+     */
+    public URL getURLFromResourceFilename(String fileName)
+    {
+        // The class which is extended from App
+        Class actualClass = getClass();
+
+        // It's package
+        Package p = actualClass.getPackage();
+
+        // the package name
+        String packageName = p.getName();
+
+        // Replace '.' by '/' of package name
+        String packagePath = packageName.replace(".", "/");
+        String filePath    = packagePath + "/" + fileName;
+
+        System.out.println("filePath = '" + filePath + "'.");
+
+        _logger.fine("filePath = '" + filePath + "'.");
+
+        URL fileURL = null;
+
+        try
+        {
+            // Open XML file at path
+            fileURL = actualClass.getClassLoader().getResource(filePath);
+        }
+        catch (Exception ex)
+        {
+            _logger.log(Level.WARNING,
+                "Cannot load '" + filePath + "' resource file.", ex);
+        }
+
+        _logger.fine("fileURL = '" + fileURL + "'.");
+
+        return fileURL;
+    }
+
     /* Action to correctly handle operations before closing application. */
     protected class QuitAction extends RegisteredAction
     {
@@ -804,8 +871,8 @@ public abstract class App
 
             _logger.fine("Should we kill the application ?");
 
-            // If we are ready to finnish application execution
-            if (finnish() == true)
+            // If we are ready to finish application execution
+            if (finish() == true)
             {
                 _logger.fine("Application should be killed.");
 
@@ -824,6 +891,55 @@ public abstract class App
             {
                 _logger.fine("Application killing cancelled.");
             }
+        }
+    }
+
+    /* Action to copy acknowledgement text to the clipboard. */
+    protected class AcknowledgementAction extends RegisteredAction
+    {
+        String _acknowledgement = null;
+
+        public AcknowledgementAction(String classPath, String fieldName)
+        {
+            super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
+            _acknowledgement = _applicationDataModel.getAcknowledgment();
+
+            if (_acknowledgement == null)
+            {
+                setEnabled(false);
+            }
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            _logger.entering("AcknowledgementAction", "actionPerformed");
+
+            if (_acknowledgement != null)
+            {
+                StringSelection ss = new StringSelection(_acknowledgement);
+                Toolkit.getDefaultToolkit().getSystemClipboard()
+                       .setContents(ss, null);
+            }
+
+            JOptionPane.showMessageDialog(null,
+                _acknowledgement +
+                "\n\nPREVIOUS MESSAGE HAS BEEN COPIED TO YOUR CLIPBOARD",
+                "JMMC acknowledgment note", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /* Action to copy ccknowledgement text to the clipboard. */
+    protected class ShowReleaseAction extends RegisteredAction
+    {
+        public ShowReleaseAction(String classPath, String fieldName)
+        {
+            super(classPath, fieldName, "Show Release Notes");
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            _logger.entering("ShowReleaseAction", "actionPerformed");
+            BrowserLauncher.openURL(_applicationDataModel.getReleaseNotesLinkValue());
         }
     }
 }

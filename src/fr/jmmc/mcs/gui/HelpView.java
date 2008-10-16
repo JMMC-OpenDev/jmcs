@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.8 2008-06-20 08:41:45 bcolucci Exp $"
+ * "@(#) $Id: HelpView.java,v 1.9 2008-10-16 14:19:34 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2008/06/20 08:41:45  bcolucci
+ * Remove unused imports and add class comments.
+ *
  * Revision 1.7  2008/06/13 08:16:59  bcolucci
  * Check if a null pointer exception was launched from WindowCenterer.
  *
@@ -52,51 +55,74 @@ public class HelpView
     /** Logger */
     private static final Logger _logger = Logger.getLogger(HelpView.class.getName());
 
+    /** internal reference to the help broker */
+    private static HelpBroker _helpBroker;
+
+    /** instance of help view */
+    private static HelpView _instance = null;
+
+    /** inited flag */
+    private static boolean _alreadyInited = false;
+
     /** Show the help window */
     public HelpView()
     {
-        // Get the helpset file and create the help broker
-        URL url = HelpSet.findHelpSet(null, "documentation.hs");
+        _instance = this;
+    }
 
-        if (url == null)
+    /**
+     * Tell if help set can be used
+     *
+     * @return true if the help set can be used, false otherwise.
+     */
+    public static boolean isAvailable()
+    {
+        if (_instance == null)
         {
-            _logger.severe("Cannot find helpset");
-
-            return;
+            _instance = new HelpView();
         }
 
-        HelpSet helpSet = null;
+        if (_alreadyInited)
+        {
+            return true;
+        }
 
         try
         {
-            helpSet = new HelpSet(getClass().getClassLoader(), url);
+            // Get the helpset file and create the centered help broker 
+            URL url = HelpSet.findHelpSet(null, "documentation.hs");
+            _logger.fine("using helpset url=" + url);
+
+            HelpSet helpSet = new HelpSet(_instance.getClass().getClassLoader(),
+                    url);
+            _helpBroker = helpSet.createHelpBroker();
+            _helpBroker.setLocation(WindowCenterer.getCenteringPoint(
+                    _helpBroker.getSize()));
         }
         catch (Exception ex)
         {
-            _logger.log(Level.SEVERE, "Cannot build helpset", ex);
+            _logger.log(Level.SEVERE, "Problem during helpset built", ex);
+
+            return false;
         }
 
-        if (helpSet == null)
+        _alreadyInited = true;
+
+        return true;
+    }
+
+    /**
+     * Show or hide the help view depending on the value of parameter b.
+     *
+     * @param b if true, shows this component; otherwise, hides this componentShow or hide help view.
+     */
+    public static void setVisible(boolean b)
+    {
+        if (isAvailable())
         {
-            _logger.severe("Cannot build helpset");
-
-            return;
+            // Show the window
+            _helpBroker.setDisplayed(b);
         }
-
-        // Show the window
-        HelpBroker helpBroker = helpSet.createHelpBroker();
-
-        try
-        {
-            helpBroker.setLocation(WindowCenterer.getCenteringPoint(
-                    helpBroker.getSize()));
-        }
-        catch (Exception ex)
-        {
-            _logger.warning("Cannot center window on the main screen");
-        }
-
-        helpBroker.setDisplayed(true);
     }
 }
 /*___oOo___*/

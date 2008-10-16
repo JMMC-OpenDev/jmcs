@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.12 2008-10-15 13:59:39 mella Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.13 2008-10-16 08:15:53 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2008/10/15 13:59:39  mella
+ * Add Acknowledgment getter
+ *
  * Revision 1.11  2008/06/27 11:23:00  bcolucci
  * Add comments.
  *
@@ -204,9 +207,24 @@ public class ApplicationDataModel
         String mainWebPageURL = _mainWebPageURL;
 
         mainWebPageURL = _applicationDataCastorModel.getLink();
-        _logger.fine("MainWebPageURL value has been taken on model");
+        _logger.fine("MainWebPageURL value has been taken on model:" +
+            mainWebPageURL);
 
         return mainWebPageURL;
+    }
+
+    /**
+     * Return the value of the release notes "link" based
+     * onto the XML link element.
+     *
+     * @return the release notes link
+     */
+    public String getReleaseNotesLinkValue()
+    {
+        String releaseLink = getLinkValue() + "/releasenotes.htm";
+        _logger.fine("ReleaseNotesLink value is :" + releaseLink);
+
+        return releaseLink;
     }
 
     /**

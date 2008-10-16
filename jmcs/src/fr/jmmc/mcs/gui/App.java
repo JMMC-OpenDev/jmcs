@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.37 2008-10-16 09:17:42 mella Exp $"
+ * "@(#) $Id: App.java,v 1.38 2008-10-16 09:19:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2008/10/16 09:17:42  mella
+ * add new supported option
+ *
  * Revision 1.36  2008/10/16 08:53:53  mella
  * remove system.out.println
  *
@@ -922,17 +925,25 @@ public abstract class App
         {
             _logger.entering("AcknowledgementAction", "actionPerformed");
 
+            String windowTitle   = _applicationDataModel.getProgramName() +
+                " Acknowledgment Note";
+            String windowContent = "No acknowledgement yet.";
+
             if (_acknowledgement != null)
             {
                 StringSelection ss = new StringSelection(_acknowledgement);
                 Toolkit.getDefaultToolkit().getSystemClipboard()
                        .setContents(ss, null);
+
+                String delimiter = "---------------------------------------------------------------------------\n";
+                String message   = "The previous message has already been copied to your clipboard, in order to\n" +
+                    "let you conveniently paste it in your related publication.";
+                windowContent    = delimiter + _acknowledgement + "\n" +
+                    delimiter + "\n" + message;
             }
 
-            JOptionPane.showMessageDialog(null,
-                _acknowledgement +
-                "\n\nPREVIOUS MESSAGE HAS BEEN COPIED TO YOUR CLIPBOARD",
-                "JMMC acknowledgment note", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, windowContent, windowTitle,
+                JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

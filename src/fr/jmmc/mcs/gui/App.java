@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.36 2008-10-16 08:53:53 mella Exp $"
+ * "@(#) $Id: App.java,v 1.37 2008-10-16 09:17:42 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2008/10/16 08:53:53  mella
+ * remove system.out.println
+ *
  * Revision 1.35  2008/10/16 08:22:14  mella
  * Add showReleaseAction
  * Add acknowledgmentAction
@@ -651,6 +654,8 @@ public abstract class App
             "|-----------------------------------------------------------------------|");
         System.out.println(
             "| [-h]                         Show the options help                    |");
+        System.out.println(
+            "| [-loggui]                    Show the logging tool                    |");
         System.out.println(
             "| [-v]         [0|1|2|3|4|5]   Define console logging level             |");
         System.out.println(

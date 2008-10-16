@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.20 2008-10-15 13:49:54 mella Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.21 2008-10-16 07:54:07 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2008/10/15 13:49:54  mella
+ * Add default release and acknowledgment menu items
+ *
  * Revision 1.19  2008/09/22 16:51:42  lafrasse
  * Enforced Icon attribute retrieval.
  *
@@ -407,10 +410,10 @@ public class MainMenuBar extends JMenuBar
             for (fr.jmmc.mcs.gui.castor.Menu submenu : submenus)
             {
                 // The submenu will be a jmenu?
-                boolean willBeJMenu = ((submenu.getMenu()).length > 0);
+                boolean isJMenu = ((submenu.getMenu()).length > 0);
 
                 // Recursive call on submenu
-                recursiveParser(submenu, me, willBeJMenu);
+                recursiveParser(submenu, me, isJMenu);
             }
         }
 
@@ -434,18 +437,16 @@ public class MainMenuBar extends JMenuBar
         JComponent comp = null;
 
         // Attributes
-        String  label      = (menu.getLabel() != null) ? menu.getLabel() : "NONE";
-        String  className  = (menu.getClasspath() != null)
-            ? menu.getClasspath() : "NONE";
-        String  actionName = (menu.getAction() != null) ? menu.getAction()
-                                                        : "NONE";
-        boolean isCheckbox = (menu.getCheckbox() != null);
+        boolean hasLabel     = (menu.getLabel() != null);
+        boolean hasClasspath = (menu.getClasspath() != null);
+        boolean hasAction    = (menu.getAction() != null);
+        boolean isCheckbox   = (menu.getCheckbox() != null);
 
-        // Check that we cannot have a checkbox and a radio at the same time
-        boolean notPossible = (isCheckbox && isJMenu);
+        // flag new component as separator or not
+        boolean isSeparator = ! (isJMenu || hasClasspath || hasAction);
 
         // Is it a separator?
-        if (label.equals("NONE") || notPossible)
+        if (isSeparator)
         {
             comp = new JSeparator();
             _logger.fine("Component is a separator.");
@@ -453,50 +454,54 @@ public class MainMenuBar extends JMenuBar
         else
         {
             // Get action
-            AbstractAction action = _registrar.get(className, actionName);
+            AbstractAction action = _registrar.get(menu.getClasspath(),
+                    menu.getAction());
 
             // Set attributes
             setAttributes(menu, action);
 
+            // If the (xml) menu seems to be a checkbox and a menu container
+            // then only a checkbox will be created
             if (isCheckbox == true) // Is it a checkbox?
             {
                 _logger.fine("Component is a JCheckBoxMenuItem.");
-
                 comp = new JCheckBoxMenuItem(action);
-                ((JCheckBoxMenuItem) comp).setLabel(label);
 
                 if (action instanceof RegisteredPreferencedBooleanAction)
                 {
                     _logger.fine(
                         "Component is bound to a RegisteredPreferencedBooleanAction.");
-
                     ((RegisteredPreferencedBooleanAction) action).addBoundButton((JCheckBoxMenuItem) comp);
+                }
+
+                if (isJMenu == true)
+                {
+                    _logger.warning(
+                        "The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
                 }
             }
             else if (isJMenu == true) // What have we to create?
             {
                 _logger.fine("Component is a JMenu.");
-
                 comp = new JMenu(action);
-                ((JMenu) comp).setLabel(label);
             }
             else
             {
                 _logger.fine("Component is a JMenuItem.");
-
                 comp = new JMenuItem(action);
-                ((JMenuItem) comp).setLabel(label);
+            }
+
+            if (menu.getLabel() != null)
+            {
+                ((JMenuItem) comp).setText(menu.getLabel());
             }
         }
-
-        // Set component name
-        comp.setName(label);
 
         return comp;
     }
 
     /**
-     * Set menu attributes
+     * Set menu attributes (all but the label)
      *
      * @param menu castor menu
      * @param action action to modify

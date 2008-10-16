@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.39 2008-10-16 11:39:45 mella Exp $"
+ * "@(#) $Id: App.java,v 1.40 2008-10-16 11:42:19 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2008/10/16 11:39:45  mella
+ * Remove getProgramName method
+ *
  * Revision 1.38  2008/10/16 09:19:42  lafrasse
  * Refined Acknoledgement window.
  *
@@ -580,7 +583,7 @@ public abstract class App
             // Show the name and the version of the program
             case 1:
                 // Show the application name on the shell
-                System.out.println(getProgramName());
+                System.out.println(_applicationDataModel.getProgramName());
                 // Exit the application
                 System.exit(0);
 

@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.25 2008-09-17 21:42:55 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.26 2008-10-16 11:56:30 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2008/09/17 21:42:55  lafrasse
+ * Enhanced documentation.
+ * Updated to handle multiple revision update in a raw on file load.
+ * Automated updated file save.
+ *
  * Revision 1.24  2008/09/05 16:11:38  lafrasse
  * Typo fix.
  *
@@ -92,8 +97,6 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
-import fr.jmmc.mcs.log.MCSLogger;
-
 import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Color;
@@ -101,7 +104,6 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -109,6 +111,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -120,6 +124,12 @@ import java.util.Vector;
  */
 public abstract class Preferences extends Observable
 {
+    /** Class name */
+    private static final String _className = "fr.jmmc.mcs.util.Preferences";
+
+    /** Logger - get from given class name */
+    private static final Logger _logger = Logger.getLogger(_className);
+
     /** Store hidden preference version number name. */
     private static String _fullFilepath = null;
 
@@ -152,7 +162,7 @@ public abstract class Preferences extends Observable
         }
         catch (Exception ex)
         {
-            MCSLogger.error("Preference initialization FAILED." + ex);
+            _logger.log(Level.WARNING, "Preference initialization FAILED.", ex);
         }
     }
 
@@ -218,7 +228,7 @@ public abstract class Preferences extends Observable
      */
     protected boolean updatePreferencesVersion(int loadedVersionNumber)
     {
-        MCSLogger.trace();
+        _logger.entering(_fullFilepath, _fullFilepath);
 
         // By default, triggers default values load.
         return false;
@@ -231,13 +241,13 @@ public abstract class Preferences extends Observable
      */
     final public void loadFromFile()
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "loadFromFile");
 
         resetToDefaultPreferences();
 
         try
         {
-            MCSLogger.info("Loading '" + _fullFilepath + "' preference file.");
+            _logger.info("Loading '" + _fullFilepath + "' preference file.");
 
             // Loading preference file
             FileInputStream inputFile = new FileInputStream(_fullFilepath);
@@ -253,10 +263,11 @@ public abstract class Preferences extends Observable
             }
             catch (Exception e)
             {
-                MCSLogger.error("Cannot get loaded preference version number.");
+                _logger.log(Level.WARNING,
+                    "Cannot get loaded preference version number.", e);
             }
 
-            MCSLogger.debug("Loaded preference version is '" +
+            _logger.fine("Loaded preference version is '" +
                 loadedPreferenceVersion +
                 "', current preferences version number is '" +
                 preferencesVersionNumber + "'.");
@@ -264,7 +275,7 @@ public abstract class Preferences extends Observable
             // If the preference file version is older than the current default version
             if (loadedPreferenceVersion < preferencesVersionNumber)
             {
-                MCSLogger.warning(
+                _logger.warning(
                     "Loaded an 'anterior to current version' preference file, will try to update preference file.");
 
                 // Handle version differences
@@ -274,7 +285,7 @@ public abstract class Preferences extends Observable
                 while ((shouldWeContinue == true) &&
                         (currentPreferenceVersion < preferencesVersionNumber))
                 {
-                    MCSLogger.debug(
+                    _logger.fine(
                         "Trying to update loaded preferences from revision '" +
                         currentPreferenceVersion + "'.");
 
@@ -298,8 +309,8 @@ public abstract class Preferences extends Observable
                     }
                     catch (Exception ex)
                     {
-                        MCSLogger.error("Cannot save preference to disk: " +
-                            ex);
+                        _logger.log(Level.WARNING,
+                            "Cannot save preference to disk: ", ex);
                     }
                 }
             }
@@ -307,7 +318,7 @@ public abstract class Preferences extends Observable
             // If the preference file version is newer the the current default version
             if (loadedPreferenceVersion > preferencesVersionNumber)
             {
-                MCSLogger.warning(
+                _logger.warning(
                     "Loaded a 'posterior to current version' preference file, so fall back to default values instead.");
 
                 // Use current default values instead
@@ -317,8 +328,8 @@ public abstract class Preferences extends Observable
         catch (Exception ex)
         {
             // Do nothing just default values will be into the preferences.
-            MCSLogger.warning(
-                "Failed loading preference file, so fall back to default values instead : " +
+            _logger.log(Level.WARNING,
+                "Failed loading preference file, so fall back to default values instead : ",
                 ex);
 
             resetToDefaultPreferences();
@@ -335,8 +346,6 @@ public abstract class Preferences extends Observable
      */
     final public void saveToFile() throws PreferencesException
     {
-        MCSLogger.trace();
-
         saveToFile(null);
     }
 
@@ -349,7 +358,7 @@ public abstract class Preferences extends Observable
      */
     final public void saveToFile(String comment) throws PreferencesException
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "saveToFile");
 
         // Store current Preference object revision number
         int preferencesVersionNumber = getPreferencesVersionNumber();
@@ -372,7 +381,7 @@ public abstract class Preferences extends Observable
      */
     final public void resetToDefaultPreferences()
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "resetToDefaultPreferences");
 
         _currentProperties = (Properties) _defaultProperties.clone();
 
@@ -389,7 +398,7 @@ public abstract class Preferences extends Observable
     final public void setPreference(String preferenceName,
         Object preferenceValue) throws PreferencesException
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "setPreference");
 
         setPreferenceToProperties(_currentProperties, preferenceName,
             preferenceValue);
@@ -404,7 +413,7 @@ public abstract class Preferences extends Observable
     final public void setDefaultPreference(String preferenceName,
         Object preferenceValue) throws PreferencesException
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "setDefaultPreference");
 
         setPreferenceToProperties(_defaultProperties, preferenceName,
             preferenceValue);
@@ -421,9 +430,7 @@ public abstract class Preferences extends Observable
         String preferenceName, Object preferenceValue)
         throws PreferencesException
     {
-        MCSLogger.trace();
-
-        // Wiil automatically get -1 for a yet undefined preference
+        // Will automatically get -1 for a yet undefined preference
         int order = getPreferenceOrder(preferenceName);
 
         setPreferenceToProperties(properties, preferenceName, order,
@@ -442,7 +449,7 @@ public abstract class Preferences extends Observable
         String preferenceName, int preferenceIndex, Object preferenceValue)
         throws PreferencesException
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "setPreferenceToProperties");
 
         // If the constraint is a String object
         if (preferenceValue.getClass() == java.lang.String.class)
@@ -503,8 +510,6 @@ public abstract class Preferences extends Observable
     final public void setPreference(String preferenceName, int preferenceIndex,
         Object preferenceValue) throws PreferencesException
     {
-        MCSLogger.trace();
-
         setPreferenceToProperties(_currentProperties, preferenceName,
             preferenceIndex, preferenceValue);
     }
@@ -520,8 +525,6 @@ public abstract class Preferences extends Observable
         int preferenceIndex, Object preferenceValue)
         throws PreferencesException
     {
-        MCSLogger.trace();
-
         setPreferenceToProperties(_defaultProperties, preferenceName,
             preferenceIndex, preferenceValue);
     }
@@ -535,8 +538,6 @@ public abstract class Preferences extends Observable
     final public void setPreferenceOrder(String preferenceName,
         int preferenceIndex)
     {
-        MCSLogger.trace();
-
         setPreferenceOrderToProperties(_currentProperties, preferenceName,
             preferenceIndex);
     }
@@ -551,8 +552,6 @@ public abstract class Preferences extends Observable
     final private void setPreferenceOrderToProperties(Properties properties,
         String preferenceName, int preferenceIndex)
     {
-        MCSLogger.trace();
-
         // Add property index for order if needed
         if (preferenceIndex > -1)
         {
@@ -578,7 +577,7 @@ public abstract class Preferences extends Observable
      */
     final public int getPreferenceOrder(String preferenceName)
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "getPreferenceOrder");
 
         // -1 is the flag value for no order found, so it is the default value.
         int result = -1;
@@ -613,7 +612,7 @@ public abstract class Preferences extends Observable
      */
     final public String getPreference(String preferenceName)
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "getPreference");
 
         return _currentProperties.getProperty(preferenceName);
     }
@@ -627,7 +626,7 @@ public abstract class Preferences extends Observable
      */
     final public boolean getPreferenceAsBoolean(String preferenceName)
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "getPreferenceAsBoolean");
 
         String value = _currentProperties.getProperty(preferenceName);
 
@@ -643,7 +642,7 @@ public abstract class Preferences extends Observable
      */
     final public double getPreferenceAsDouble(String preferenceName)
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "getPreferenceAsDouble");
 
         String value = _currentProperties.getProperty(preferenceName);
 
@@ -659,7 +658,7 @@ public abstract class Preferences extends Observable
      */
     final public int getPreferenceAsInt(String preferenceName)
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "getPreferenceAsInt");
 
         String value = _currentProperties.getProperty(preferenceName);
 
@@ -676,7 +675,7 @@ public abstract class Preferences extends Observable
     final public Color getPreferenceAsColor(String preferenceName)
         throws PreferencesException
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "getPreferenceAsColor");
 
         String stringValue = _currentProperties.getProperty(preferenceName);
         Color  colorValue;
@@ -703,7 +702,7 @@ public abstract class Preferences extends Observable
      */
     final public Enumeration getPreferences(String prefix)
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "getPreferences");
 
         int         size               = 0;
         Enumeration e                  = _currentProperties.propertyNames();
@@ -761,7 +760,7 @@ public abstract class Preferences extends Observable
      */
     final private String computePreferenceFilepath()
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "computePreferenceFilepath");
 
         // [USER_HOME]/
         _fullFilepath = SystemUtils.USER_HOME + File.separator;
@@ -794,7 +793,7 @@ public abstract class Preferences extends Observable
         // MAC OS X : [USER_HOME]/Library/Preferences/fr.jmmc..._rev4.properties
         _fullFilepath += getPreferenceFilename();
 
-        MCSLogger.debug("Computed preference file path = '" + _fullFilepath +
+        _logger.fine("Computed preference file path = '" + _fullFilepath +
             "'.");
 
         return _fullFilepath;
@@ -805,7 +804,7 @@ public abstract class Preferences extends Observable
      */
     final public void triggerObserversNotification()
     {
-        MCSLogger.trace();
+        _logger.entering(_className, "triggerObserversNotification");
 
         // Notify all preferences listener of maybe new values coming from file.
         setChanged();
@@ -819,8 +818,6 @@ public abstract class Preferences extends Observable
      */
     final public String toString()
     {
-        MCSLogger.trace();
-
         return "Preferences file '" + _fullFilepath + "' contains :\n" +
         _currentProperties;
     }

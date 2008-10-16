@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.21 2008-10-16 07:54:07 mella Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.22 2008-10-16 13:59:19 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2008/10/16 07:54:07  mella
+ * Clean and improve createComponent method
+ *
  * Revision 1.20  2008/10/15 13:49:54  mella
  * Add default release and acknowledgment menu items
  *
@@ -333,18 +336,13 @@ public class MainMenuBar extends JMenuBar
         // Create menu
         JMenu helpMenu = new JMenu("Help");
 
-        // Add acknowledgement action
-        helpMenu.add(App.acknowledgementAction());
+        // Add helpview action
+        helpMenu.add(App.helpViewAction());
+
         helpMenu.add(new JSeparator());
 
         // Add feedback action
         helpMenu.add(App.feedbackReportAction());
-
-        // Add helpview action
-        helpMenu.add(App.helpViewAction());
-
-        // Add release action
-        helpMenu.add(App.showReleaseAction());
 
         // Get help menu from table
         JMenu help = _menusTable.get("Help");
@@ -364,6 +362,14 @@ public class MainMenuBar extends JMenuBar
                 }
             }
         }
+
+        helpMenu.add(new JSeparator());
+
+        // Add acknowledgement action
+        helpMenu.add(App.acknowledgementAction());
+
+        // Add release action
+        helpMenu.add(App.showReleaseAction());
 
         if (_isRunningUnderMacOSX == false)
         {

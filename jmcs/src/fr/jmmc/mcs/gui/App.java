@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.42 2008-10-16 13:59:03 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.43 2008-10-16 14:19:06 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.42  2008/10/16 13:59:03  lafrasse
+ * Renamed actions.
+ *
  * Revision 1.41  2008/10/16 12:03:29  lafrasse
  * Added a default automatically generated acknowledgement.
  *
@@ -272,6 +275,9 @@ public abstract class App
     /** Acknowledgement handling action */
     private static AcknowledgementAction _acknowledgementAction = null;
 
+    /** Show help handling action */
+    private static ShowHelpAction _showHelpAction = null;
+
     /** Show release handling action */
     private static ShowReleaseAction _showReleaseAction = null;
 
@@ -356,12 +362,14 @@ public abstract class App
             // Set shared instance
             _sharedInstance            = this;
 
-            // Set Acknowledgment and ShowRelease Actions
+            // Build Acknowledgment, ShowRelease and ShowHelp Actions
             // (the creation must be done after applicationModel instanciation)
             _acknowledgementAction     = new AcknowledgementAction("fr.jmmc.mcs.gui.App",
                     "_acknowledgementAction");
             _showReleaseAction         = new ShowReleaseAction("fr.jmmc.mcs.gui.App",
                     "_showReleaseAction");
+            _showHelpAction            = new ShowHelpAction("fr.jmmc.mcs.gui.App",
+                    "_showHelpAction");
 
             // If execution should not be delayed
             if (waitBeforeExecution == false)
@@ -514,19 +522,10 @@ public abstract class App
             };
     }
 
-    /** Creates the helpview action which open the helpview window */
-    public static Action helpViewAction()
+    /** Return the action which tries to display the help */
+    public static Action showHelpAction()
     {
-        return new AbstractAction("User Manual")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    if (_applicationDataModel != null)
-                    {
-                        new HelpView();
-                    }
-                }
-            };
+        return _showHelpAction;
     }
 
     /** Return the action which tries to quit the application */
@@ -949,7 +948,7 @@ public abstract class App
         }
     }
 
-    /* Action to copy ccknowledgement text to the clipboard. */
+    /* Action to show release. */
     protected class ShowReleaseAction extends RegisteredAction
     {
         public ShowReleaseAction(String classPath, String fieldName)
@@ -961,6 +960,22 @@ public abstract class App
         {
             _logger.entering("ShowReleaseAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getReleaseNotesLinkValue());
+        }
+    }
+
+    /* Action to show help. */
+    protected class ShowHelpAction extends RegisteredAction
+    {
+        public ShowHelpAction(String classPath, String fieldName)
+        {
+            super(classPath, fieldName, "User Manual");
+            setEnabled(HelpView.isAvailable());
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            _logger.entering("ShowHelpAction", "actionPerformed");
+            HelpView.setVisible(true);
         }
     }
 }

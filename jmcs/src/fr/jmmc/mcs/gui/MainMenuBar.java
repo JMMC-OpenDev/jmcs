@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.22 2008-10-16 13:59:19 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.23 2008-10-16 14:19:34 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2008/10/16 13:59:19  lafrasse
+ * Re-ordered Help menu.
+ *
  * Revision 1.21  2008/10/16 07:54:07  mella
  * Clean and improve createComponent method
  *
@@ -337,7 +340,7 @@ public class MainMenuBar extends JMenuBar
         JMenu helpMenu = new JMenu("Help");
 
         // Add helpview action
-        helpMenu.add(App.helpViewAction());
+        helpMenu.add(App.showHelpAction());
 
         helpMenu.add(new JSeparator());
 

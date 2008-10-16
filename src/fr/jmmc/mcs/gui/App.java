@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.40 2008-10-16 11:42:19 mella Exp $"
+ * "@(#) $Id: App.java,v 1.41 2008-10-16 12:03:29 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2008/10/16 11:42:19  mella
+ * Fix compilation pb with getProgramName
+ *
  * Revision 1.39  2008/10/16 11:39:45  mella
  * Remove getProgramName method
  *
@@ -906,32 +909,37 @@ public abstract class App
             super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
             _acknowledgement = _applicationDataModel.getAcknowledgment();
 
+            // If the application does not provide an acknowledgement
             if (_acknowledgement == null)
             {
-                setEnabled(false);
+                // Generate one instead
+                String appName   = _applicationDataModel.getProgramName();
+                String appURL    = _applicationDataModel.getLinkValue();
+                _acknowledgement = "This research has made use of the \\texttt{" +
+                    appName +
+                    "} service of the Jean-Marie Mariotti Center\n\\footnote{Available at " +
+                    appURL + "}";
             }
+
+            // If the application does not provide an ApplicationData.xml file,
+            // the generic acknowledgement found in JMCS will be used instead.
         }
 
         public void actionPerformed(java.awt.event.ActionEvent e)
         {
             _logger.entering("AcknowledgementAction", "actionPerformed");
 
+            StringSelection ss = new StringSelection(_acknowledgement);
+            Toolkit.getDefaultToolkit().getSystemClipboard()
+                   .setContents(ss, null);
+
+            String delimiter     = "---------------------------------------------------------------------------\n";
+            String message       = "The previous message has already been copied to your clipboard, in order to\n" +
+                "let you conveniently paste it in your related publication.";
             String windowTitle   = _applicationDataModel.getProgramName() +
                 " Acknowledgment Note";
-            String windowContent = "No acknowledgement yet.";
-
-            if (_acknowledgement != null)
-            {
-                StringSelection ss = new StringSelection(_acknowledgement);
-                Toolkit.getDefaultToolkit().getSystemClipboard()
-                       .setContents(ss, null);
-
-                String delimiter = "---------------------------------------------------------------------------\n";
-                String message   = "The previous message has already been copied to your clipboard, in order to\n" +
-                    "let you conveniently paste it in your related publication.";
-                windowContent    = delimiter + _acknowledgement + "\n" +
-                    delimiter + "\n" + message;
-            }
+            String windowContent = delimiter + _acknowledgement + "\n" +
+                delimiter + "\n" + message;
 
             JOptionPane.showMessageDialog(null, windowContent, windowTitle,
                 JOptionPane.INFORMATION_MESSAGE);

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AboutBox.java,v 1.16 2008-09-11 15:32:28 lafrasse Exp $"
+ * "@(#) $Id: AboutBox.java,v 1.17 2008-10-16 12:01:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2008/09/11 15:32:28  lafrasse
+ * Moved depenciex test and description in itallic.
+ * Ensure that the first line of the editor pane is displayed at execution.
+ *
  * Revision 1.15  2008/09/05 22:31:03  lafrasse
  * Added a 'Dependencies' label if any.
  *
@@ -238,7 +242,7 @@ public class AboutBox extends JDialog implements HyperlinkListener
         setupProgramNameLabel();
         setupProgramVersionLabel();
         setupLinkLabel();
-        setupCompilationInfoLabel();
+        //setupCompilationInfoLabel();
         setupDescriptionTextarea();
         setupCopyrightLabel();
 
@@ -326,18 +330,16 @@ public class AboutBox extends JDialog implements HyperlinkListener
         _descriptionEditorPane.setPreferredSize(textareaDimension);
         _logger.fine("All the textarea properties have been initialized");
 
-        // Determine wether the EditorPane should be displayed or not.
-        boolean shouldBeDisplayed = false;
-
         // HTML generation
         String generatedHtml = "<html><head></head><body>";
+        generatedHtml += "Brought to you by The JMMC Team.<BR><BR>";
+        generatedHtml += "<I>If this software was helpful for your study or research work, please include the mandatory acknowledgment (available from the Help menu) in your publications.</I><BR><BR>";
 
         // Get the Text value
         String textValue = _applicationDataModel.getTextValue();
 
         if (textValue.length() > 0)
         {
-            shouldBeDisplayed = true;
             generatedHtml += textValue;
             generatedHtml += "<br><br>";
         }
@@ -351,7 +353,6 @@ public class AboutBox extends JDialog implements HyperlinkListener
 
         if (nbElems > 0)
         {
-            shouldBeDisplayed = true;
             packageHtml += "<i>Dependencies</i>:<br>";
         }
 
@@ -379,14 +380,12 @@ public class AboutBox extends JDialog implements HyperlinkListener
         generatedHtml += (packageHtml + "</body></html>");
 
         _descriptionEditorPane.setText(generatedHtml);
-        _descriptionEditorPane.setCaretPosition(0); // Show first line
+        // Show first line of editor pane, and not its last line as by default !
+        _descriptionEditorPane.setCaretPosition(0);
         _logger.fine("The content of textarea has been inserted.");
 
         // Link pane only if anything to display
-        if (shouldBeDisplayed == true)
-        {
-            _descriptionScrollPane.setViewportView(_descriptionEditorPane);
-        }
+        _descriptionScrollPane.setViewportView(_descriptionEditorPane);
     }
 
     /**

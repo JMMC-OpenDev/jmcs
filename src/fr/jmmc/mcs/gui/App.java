@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.41 2008-10-16 12:03:29 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.42 2008-10-16 13:59:03 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.41  2008/10/16 12:03:29  lafrasse
+ * Added a default automatically generated acknowledgement.
+ *
  * Revision 1.40  2008/10/16 11:42:19  mella
  * Fix compilation pb with getProgramName
  *
@@ -464,7 +467,7 @@ public abstract class App
     /** Creates the action which open the about box window */
     public static Action aboutBoxAction()
     {
-        return new AbstractAction("Show About Box")
+        return new AbstractAction("About...")
             {
                 public void actionPerformed(ActionEvent evt)
                 {
@@ -499,7 +502,7 @@ public abstract class App
     /** Creates the feedback action which open the feedback window */
     public static Action feedbackReportAction(final Exception ex)
     {
-        return new AbstractAction("Show Feedback Report")
+        return new AbstractAction("Report Feedback to JMMC...")
             {
                 public void actionPerformed(ActionEvent evt)
                 {
@@ -514,7 +517,7 @@ public abstract class App
     /** Creates the helpview action which open the helpview window */
     public static Action helpViewAction()
     {
-        return new AbstractAction("Show Help View")
+        return new AbstractAction("User Manual")
             {
                 public void actionPerformed(ActionEvent evt)
                 {
@@ -951,7 +954,7 @@ public abstract class App
     {
         public ShowReleaseAction(String classPath, String fieldName)
         {
-            super(classPath, fieldName, "Show Release Notes");
+            super(classPath, fieldName, "Release Notes");
         }
 
         public void actionPerformed(java.awt.event.ActionEvent e)

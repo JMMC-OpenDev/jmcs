@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.38 2008-10-16 09:19:42 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.39 2008-10-16 11:39:45 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.38  2008/10/16 09:19:42  lafrasse
+ * Refined Acknoledgement window.
+ *
  * Revision 1.37  2008/10/16 09:17:42  mella
  * add new supported option
  *
@@ -808,21 +811,6 @@ public abstract class App
     public static App getSharedInstance()
     {
         return _sharedInstance;
-    }
-
-    /**
-     * Return a string according to the
-     * pattern : [programName] v[programVersion]
-     *
-     * @return program name
-     */
-    public static String getProgramName()
-    {
-        // Get application name and version
-        String name    = _applicationDataModel.getProgramName();
-        String version = _applicationDataModel.getProgramVersion();
-
-        return name + " v" + version;
     }
 
     /**

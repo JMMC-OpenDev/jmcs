@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.35 2008-10-16 08:22:14 mella Exp $"
+ * "@(#) $Id: App.java,v 1.36 2008-10-16 08:53:53 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2008/10/16 08:22:14  mella
+ * Add showReleaseAction
+ * Add acknowledgmentAction
+ * Add quitAction getter
+ * Remove logging outputHandler and set mainLogger level to FINE
+ *
  * Revision 1.34  2008/10/07 13:43:03  mella
  * Fix Fine log level
  *
@@ -832,9 +838,6 @@ public abstract class App
         // Replace '.' by '/' of package name
         String packagePath = packageName.replace(".", "/");
         String filePath    = packagePath + "/" + fileName;
-
-        System.out.println("filePath = '" + filePath + "'.");
-
         _logger.fine("filePath = '" + filePath + "'.");
 
         URL fileURL = null;

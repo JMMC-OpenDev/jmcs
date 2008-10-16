@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RegisteredAction.java,v 1.5 2008-09-19 08:49:53 lafrasse Exp $"
+ * "@(#) $Id: RegisteredAction.java,v 1.6 2008-10-16 08:55:49 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/09/19 08:49:53  lafrasse
+ * Minor compilation bug correction.
+ *
  * Revision 1.4  2008/09/19 08:46:20  lafrasse
  * Forced 'preference' and 'quit' action names and aaccelerators.
  *
@@ -31,7 +34,7 @@ import javax.swing.*;
 /**
  * Action class customized to auto-register in ActionRegistrar when created.
  */
-public abstract class RegisteredAction extends AbstractAction
+public abstract class RegisteredAction extends MCSAction
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(
@@ -42,20 +45,23 @@ public abstract class RegisteredAction extends AbstractAction
 
     /**
      * Constructor, that automatically register the action in RegisteredAction.
-     *
+     * Action name, icon, accelerator and description is first inited using
+     * fieldName to build a MCSAction.
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
      */
     public RegisteredAction(String classPath, String fieldName)
     {
+        super(fieldName);
         _registrar.put(classPath, fieldName, this);
     }
 
     /**
      * Constructor, that automatically register the action in RegisteredAction,
      * and assign it a name.
-     *
+     * Action name, icon, accelerator and description is first inited following MCSAction.
+     * Then actionName set or overwritte action name.
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
@@ -73,6 +79,8 @@ public abstract class RegisteredAction extends AbstractAction
     /**
      * Constructor, that automatically register the action in RegisteredAction,
      * and assign it a name and an accelerator.
+     * Action name, icon, accelerator and description is first inited following MCSAction.
+     * Then actionName and actionAccelerator set or overwritte action name and action accelerator.
      *
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.

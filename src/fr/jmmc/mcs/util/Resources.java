@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.12 2008-10-16 09:18:22 lafrasse Exp $"
+ * "@(#) $Id: Resources.java,v 1.13 2008-10-16 13:16:11 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2008/10/16 09:18:22  lafrasse
+ * Jalopization.
+ *
  * Revision 1.11  2008/10/15 13:44:01  mella
  * housekeeping
  *
@@ -46,6 +49,7 @@ package fr.jmmc.mcs.util;
 import java.net.URL;
 
 import java.util.*;
+import java.util.logging.Level;
 
 import javax.swing.*;
 
@@ -65,7 +69,7 @@ public abstract class Resources
     static String _loggerClassName = "Resources";
 
     /** resource filename  that must be overloaded by subclasses */
-    protected static String _resourceName = "fr.jmmc.mcs/util/Resources";
+    protected static String _resourceName = "fr/jmmc/mcs/util/Resources";
 
     /** Properties */
     private static ResourceBundle _resources = null;
@@ -98,6 +102,19 @@ public abstract class Resources
      */
     public static String getResource(String resourceName)
     {
+        return getResource(resourceName, Level.WARNING);
+    }
+
+    /**
+     * Get content from resource file.
+     *
+     * @param resourceName name of resource
+     * @param notFoundLogLevel level to use if resource is not found
+     *
+     * @return the content of the resource or null indicating error
+     */
+    public static String getResource(String resourceName, Level notFoundLogLevel)
+    {
         logger_.entering(_loggerClassName, "getResource");
 
         if (_resources == null)
@@ -123,7 +140,7 @@ public abstract class Resources
         }
         catch (Exception e)
         {
-            logger_.warning("Entry not found :" + e.getMessage());
+            logger_.log(notFoundLogLevel, "Entry not found :" + e.getMessage());
         }
 
         return null;
@@ -140,7 +157,7 @@ public abstract class Resources
     {
         logger_.entering(_loggerClassName, "getActionText");
 
-        return getResource("actions.action." + actionName + ".text");
+        return getResource("actions.action." + actionName + ".text", Level.FINE);
     }
 
     /**
@@ -154,7 +171,8 @@ public abstract class Resources
     {
         logger_.entering(_loggerClassName, "getActionDescription");
 
-        return getResource("actions.action." + actionName + ".description");
+        return getResource("actions.action." + actionName + ".description",
+            Level.FINE);
     }
 
     /**
@@ -168,7 +186,8 @@ public abstract class Resources
     {
         logger_.entering(_loggerClassName, "getToolTipText");
 
-        return getResource("widgets.widget." + widgetName + ".tooltip");
+        return getResource("widgets.widget." + widgetName + ".tooltip",
+            Level.FINE);
     }
 
     /**
@@ -184,7 +203,7 @@ public abstract class Resources
 
         // Get the accelerator string description from the Resource.properties file
         String keyString = getResource("actions.action." + actionName +
-                ".accelerator");
+                ".accelerator", Level.FINE);
 
         if (keyString == null)
         {
@@ -224,7 +243,8 @@ public abstract class Resources
         logger_.entering(_loggerClassName, "getActionIcon");
 
         // Get back the icon image path
-        String iconPath = getResource("actions.action." + actionName + ".icon");
+        String iconPath = getResource("actions.action." + actionName + ".icon",
+                Level.FINE);
 
         if (iconPath == null)
         {

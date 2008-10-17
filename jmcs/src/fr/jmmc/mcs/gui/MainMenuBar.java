@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.23 2008-10-16 14:19:34 mella Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.24 2008-10-17 10:41:54 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2008/10/16 14:19:34  mella
+ * Use new help view handling
+ *
  * Revision 1.22  2008/10/16 13:59:19  lafrasse
  * Re-ordered Help menu.
  *
@@ -373,6 +376,9 @@ public class MainMenuBar extends JMenuBar
 
         // Add release action
         helpMenu.add(App.showReleaseAction());
+
+        // Add release action
+        helpMenu.add(App.showFaqAction());
 
         if (_isRunningUnderMacOSX == false)
         {

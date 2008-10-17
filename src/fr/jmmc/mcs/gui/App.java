@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.43 2008-10-16 14:19:06 mella Exp $"
+ * "@(#) $Id: App.java,v 1.44 2008-10-17 10:41:54 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.43  2008/10/16 14:19:06  mella
+ * Use new help view handling
+ *
  * Revision 1.42  2008/10/16 13:59:03  lafrasse
  * Renamed actions.
  *
@@ -281,6 +284,9 @@ public abstract class App
     /** Show release handling action */
     private static ShowReleaseAction _showReleaseAction = null;
 
+    /** Show FAQ handling action */
+    private static ShowFaqAction _showFaqAction = null;
+
     /**
      * Creates a new App object
      *
@@ -368,6 +374,8 @@ public abstract class App
                     "_acknowledgementAction");
             _showReleaseAction         = new ShowReleaseAction("fr.jmmc.mcs.gui.App",
                     "_showReleaseAction");
+            _showFaqAction             = new ShowFaqAction("fr.jmmc.mcs.gui.App",
+                    "_showFaqAction");
             _showHelpAction            = new ShowHelpAction("fr.jmmc.mcs.gui.App",
                     "_showHelpAction");
 
@@ -538,6 +546,12 @@ public abstract class App
     public static Action showReleaseAction()
     {
         return _showReleaseAction;
+    }
+
+    /** Return the action dedicated to display FAQ */
+    public static Action showFaqAction()
+    {
+        return _showFaqAction;
     }
 
     /**
@@ -960,6 +974,21 @@ public abstract class App
         {
             _logger.entering("ShowReleaseAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getReleaseNotesLinkValue());
+        }
+    }
+
+    /* Action to show FAQ. */
+    protected class ShowFaqAction extends RegisteredAction
+    {
+        public ShowFaqAction(String classPath, String fieldName)
+        {
+            super(classPath, fieldName, "Frequently Asked Questions");
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            _logger.entering("ShowFaqAction", "actionPerformed");
+            BrowserLauncher.openURL(_applicationDataModel.getFaqLinkValue());
         }
     }
 

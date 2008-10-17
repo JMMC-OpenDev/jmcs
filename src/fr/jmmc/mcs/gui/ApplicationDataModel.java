@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.13 2008-10-16 08:15:53 mella Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.14 2008-10-17 10:41:54 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2008/10/16 08:15:53  mella
+ * Add getReleaseNotesLinkValue method
+ *
  * Revision 1.12  2008/10/15 13:59:39  mella
  * Add Acknowledgment getter
  *
@@ -214,8 +217,8 @@ public class ApplicationDataModel
     }
 
     /**
-     * Return the value of the release notes "link" based
-     * onto the XML link element.
+     * Return the value of the release notes "link" based onto the XML link
+     * element.
      *
      * @return the release notes link
      */
@@ -225,6 +228,19 @@ public class ApplicationDataModel
         _logger.fine("ReleaseNotesLink value is :" + releaseLink);
 
         return releaseLink;
+    }
+
+    /**
+     * Return the value of the FAQ "link" based onto the XML link element.
+     *
+     * @return the FAQ link
+     */
+    public String getFaqLinkValue()
+    {
+        String faqLink = getLinkValue() + "/faq/";
+        _logger.fine("FaqLink value is :" + faqLink);
+
+        return faqLink;
     }
 
     /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.3 2008-10-15 12:02:53 mella Exp $"
+ * "@(#) $Id: Main.java,v 1.4 2008-10-27 15:26:13 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/10/15 12:02:53  mella
+ * rename finnish method into finish
+ *
  * Revision 1.2  2008/09/22 16:53:50  lafrasse
  * Moved to new JMCS APIs.
  *
@@ -35,7 +38,7 @@ import javax.swing.JFrame;
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Main extends App
 {
@@ -124,7 +127,7 @@ public class Main extends App
 
                     // Add buttons to panel
                     helpFrame.getContentPane()
-                             .add(new JButton(helpViewAction()),
+                             .add(new JButton(showHelpAction()),
                         BorderLayout.NORTH);
                     helpFrame.getContentPane()
                              .add(new JButton("CENTER"), BorderLayout.CENTER);

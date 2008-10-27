@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ApplicationData link="http://www.myProgram.com/">
+    <program name="MyProgram" version="1.1.02"/>
+    <compilation date="11/04/2008" compiler="g++-4.1"/>
+    <text>This is not a description of MyProgram but only a simple text to check the textarea.</text>
+    <dependences>
+        <package name="Castor" description="A librairie which permits to generate Java classes from XSD schema." link="http://www.castor.org/"/>
+        <package name="JTidy" description="JTidy is a Java port of HTML Tidy, a HTML syntax checker and pretty printer. Like its non-Java cousin, JTidy can be used as a tool for cleaning up malformed and faulty HTML."/>
+        <package name="SAX" description="SAX is the Simple API for XML, originally a Java-only API. SAX was the first widely adopted API for XML in Java, and is a 'de facto' standard." link="http://www.saxproject.org/"/>
+    </dependences>
+    <menubar>
+        <menu label="Model fitting">
+            <menu label="Model fitting 1" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction1" accelerator="shift T" description="Raccourcis n-1 de Model fitting"/>
+            <menu/>
+            <menu label="Model fitting 2" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction2" description="Raccourcis n-2 de Model fitting"/>
+            <menu label="Model fitting 3" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction3" accelerator="shift I" description="Raccourcis n-3 de Model fitting"/>
+            <menu label="Model fitting 4" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction4" accelerator="shift X"/>
+            <menu/>
+            <menu label="Model fitting 5" checkbox="true" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction5" description="Raccourcis n-5 de Model fitting"/>
+        </menu>
+        <menu label="SearchCal">
+            <menu label="SearchCal 1" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" accelerator="F">
+                <menu label="SearchCal 11" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" accelerator="I">
+                    <menu label="SearchCal 111" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" accelerator="I"/>
+                    <menu/>
+                    <menu label="SearchCal 112" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" accelerator="I" checkbox="true"/>
+                </menu>
+                <menu label="SearchCal 12" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" accelerator="I"/>
+            </menu>
+            <menu label="SearchCal 2" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction2" accelerator="G"/>
+            <menu label="SearchCal 3" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction3" checkbox="true"/>
+            <menu label="SearchCal 4" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction4"/>
+            <menu/>
+            <menu label="SearchCal 5" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction5"/>
+        </menu>
+        <menu label="Help">
+            <menu label="How to bla" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1"/>
+            <menu label="Don't know" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" checkbox="true"/>
+        </menu>
+        <menu label="File">
+            <menu label="Import" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" icon="fr/jmmc/test/import.png"/>
+            <menu label="Export" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1"/>
+        </menu>
+        <menu label="Edit">
+            <menu label="Import"/>
+            <menu label="Export">
+                <menu label="As file"/>
+                <menu label="As text"/>
+            </menu>
+        </menu>
+    </menubar>
+    <releasenotes>
+        <release version="0.0">
+            <prerelease version="0.0b0" tag="V0_0b0">
+                <change></change>
+            </prerelease>
+        </release>
+    </releasenotes>
+    <acknowledgment><![CDATA[If this software was helpful for your study or research work,
+please include the following acknowledgment:
+
+This research has made use of the \texttt{SearchCal} service of the
+Jean-Mariotti Centre\footnote{Available at http://www.jmmc.fr}
+]]></acknowledgment>
+
+</ApplicationData>

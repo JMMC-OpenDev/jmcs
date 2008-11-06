@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.13 2008-10-16 13:16:11 mella Exp $"
+ * "@(#) $Id: Resources.java,v 1.14 2008-11-06 13:45:37 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2008/10/16 13:16:11  mella
+ * Use dedicated warn level param to resources retrieval method
+ *
  * Revision 1.12  2008/10/16 09:18:22  lafrasse
  * Jalopization.
  *
@@ -89,7 +92,7 @@ public abstract class Resources
     {
         logger_.entering(_loggerClassName, "setResourceName");
 
-        logger_.info("Application will grab resources from '" + name + "'");
+        logger_.fine("Application will grab resources from '" + name + "'");
         _resourceName = name;
     }
 
@@ -125,8 +128,8 @@ public abstract class Resources
             }
             catch (Exception e)
             {
-                logger_.warning("Resource bundle can't be found :" +
-                    e.getMessage());
+                logger_.log(notFoundLogLevel,
+                    "Resource bundle can't be found :" + e.getMessage());
 
                 return null;
             }
@@ -248,8 +251,8 @@ public abstract class Resources
 
         if (iconPath == null)
         {
-            logger_.warning("No resource found for action name '" + actionName +
-                "'.");
+            logger_.fine("No icon resource found for action name '" +
+                actionName + "'.");
 
             return null;
         }
@@ -259,10 +262,12 @@ public abstract class Resources
 
         if (imgURL == null)
         {
-            logger_.warning("Could not load icon '" + iconPath + "'.");
+            logger_.fine("Could not load icon '" + iconPath + "'.");
 
             return null;
         }
+
+        logger_.fine("Using imgUrl for icon resource  '" + imgURL);
 
         return new ImageIcon(imgURL);
     }

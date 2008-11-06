@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.26 2008-10-16 11:56:30 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.27 2008-11-06 13:45:02 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2008/10/16 11:56:30  mella
+ * improve logging replacing MCSLogger by common logger
+ *
  * Revision 1.25  2008/09/17 21:42:55  lafrasse
  * Enhanced documentation.
  * Updated to handle multiple revision update in a raw on file load.
@@ -328,7 +331,7 @@ public abstract class Preferences extends Observable
         catch (Exception ex)
         {
             // Do nothing just default values will be into the preferences.
-            _logger.log(Level.WARNING,
+            _logger.log(Level.FINE,
                 "Failed loading preference file, so fall back to default values instead : ",
                 ex);
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.14 2008-10-07 13:42:43 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.15 2008-11-06 13:44:44 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2008/10/07 13:42:43  mella
+ * Use tip to return stacktrace
+ *
  * Revision 1.13  2008/06/25 12:05:21  bcolucci
  * Add a surcharge of the constructor with a boolean
  * in order to specify that the application have to
@@ -232,8 +235,13 @@ public class FeedbackReport extends JDialog implements Observer
         _exit                    = exit;
 
         // Create the model and add the observer
-        // GM has haccked api to temporary shortcup process and lease
+        // GM has haccked api to temporary shortcup process and force presence of exception if any
         _feedbackReportModel     = new FeedbackReportModel(getExceptionTrace());
+        if(exception!=null){
+            _description.append("Following exception occured:\n"+exception.getMessage());
+            _logger.log(Level.FINE, "One exception was given to the feedback report", exception);
+        }
+
         _feedbackReportModel.addObserver(this);
 
         // Launch the model as thread

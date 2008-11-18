@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.27 2008-11-06 13:45:02 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.28 2008-11-18 09:14:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2008/11/06 13:45:02  mella
+ * fix better loging level
+ *
  * Revision 1.26  2008/10/16 11:56:30  mella
  * improve logging replacing MCSLogger by common logger
  *
@@ -227,11 +230,11 @@ public abstract class Preferences extends Observable
      * @param loadedVersionNumber the version of the loaded preference file.
      *
      * @return should return true if the update went fine and new values should
-     * be saved, false otherwise to automaticcaly trigger default values load.
+     * be saved, false otherwise to automatically trigger default values load.
      */
     protected boolean updatePreferencesVersion(int loadedVersionNumber)
     {
-        _logger.entering(_fullFilepath, _fullFilepath);
+        _logger.entering(_className, "updatePreferencesVersion");
 
         // By default, triggers default values load.
         return false;

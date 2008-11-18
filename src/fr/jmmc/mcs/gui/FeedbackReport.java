@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.15 2008-11-06 13:44:44 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.16 2008-11-18 09:13:54 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2008/11/06 13:44:44  mella
+ * Add exception to log trace
+ *
  * Revision 1.14  2008/10/07 13:42:43  mella
  * Use tip to return stacktrace
  *
@@ -237,9 +240,13 @@ public class FeedbackReport extends JDialog implements Observer
         // Create the model and add the observer
         // GM has haccked api to temporary shortcup process and force presence of exception if any
         _feedbackReportModel     = new FeedbackReportModel(getExceptionTrace());
-        if(exception!=null){
-            _description.append("Following exception occured:\n"+exception.getMessage());
-            _logger.log(Level.FINE, "One exception was given to the feedback report", exception);
+
+        if (exception != null)
+        {
+            _description.append("Following exception occured:\n" +
+                exception.getMessage());
+            _logger.log(Level.FINE,
+                "One exception was given to the feedback report", exception);
         }
 
         _feedbackReportModel.addObserver(this);

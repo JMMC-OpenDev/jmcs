@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsHTML2HelpSet.sh,v 1.2 2008-05-16 12:33:10 bcolucci Exp $"
+# "@(#) $Id: jmcsHTML2HelpSet.sh,v 1.3 2008-11-21 11:15:10 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2008/05/16 12:33:10  bcolucci
+# Removing unnecessary 'cd' and added tidy HTML cleanup.
+#
 # Revision 1.1  2008/04/29 14:28:58  bcolucci
 # Added JavaHelp support and automatic documentation generation from HTML.
 #
@@ -55,7 +58,7 @@ jar_name=$module_name"-doc.jar"
 
 # Check that there is 1 argument at least
 if [ $# -le 0 ]; then
-    echo "Error : Please specify one module at least ..."
+    echo "Error : Please specify at least one documentation reference to get associted module..."
     exit 1
 fi
 
@@ -78,7 +81,7 @@ mkdir $latex_tempory_folder
 # path like ../xx/ too...
 cd $latex_tempory_folder
 
-echo "Checkout all modules ..."
+echo "Checkout each documentation modules ..."
 # For each module
 for module in $@
 do
@@ -91,8 +94,8 @@ do
         exit 1;
     fi
 
-    # Compile it
-    make -C $module/ all
+    # Compile it and force HTML generation according to default makefile convention
+    make -C $module/ all $module
 
     # Move the compilation generated
     # files in module co folder
@@ -125,7 +128,10 @@ java -classpath $(mkfMakeJavaClasspath) fr.jmmc.mcs.gui.jmcsGenerateHelpsetFromH
 
 echo "Jar construction ..."
 # Create the helpset jar file
-jar cf ../../lib/$jar_name *
+OUTPUT_JAR=../../lib/$jar_name
+jar cf $OUTPUT_JAR *
+echo "  '$OUTPUT_JAR' generated"
+
 
 # Return to doc folder and remove Latex tempory folder folder
 # in order to avoid later files inclusion
@@ -143,5 +149,5 @@ if [ -e $jhelpdev_tmp_folder ]; then
     fi
 fi
 
-echo "===========> Terminated ..."
+echo "Done"
 #___oOo___

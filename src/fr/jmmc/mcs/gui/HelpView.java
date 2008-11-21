@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.10 2008-11-21 11:15:10 mella Exp $"
+ * "@(#) $Id: HelpView.java,v 1.11 2008-11-21 14:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2008/11/21 11:15:10  mella
+ * Improve html harvesting (especially in webstart mode for use)
+ *
  * Revision 1.9  2008/10/16 14:19:34  mella
  * Use new help view handling
  *
@@ -90,25 +93,31 @@ public class HelpView
             return true;
         }
 
-        URL url=null;
+        URL url = null;
+
         try
         {
             // Get the helpset file and create the centered help broker 
-             url= HelpSet.findHelpSet(null, "documentation.hs");
-             if (url == null)
-             {
-                 url= HelpSet.findHelpSet(null, "/documentation.hs");
-             }            
-             if (url == null)
-             {
-                 url=_instance.getClass().getClassLoader().getResource("documentation.hs");
-             }
-             if (url == null)
-             {
-                 url=_instance.getClass().getClassLoader().getResource("/documentation.hs");
-             }
+            url = HelpSet.findHelpSet(null, "documentation.hs");
 
-             _logger.fine("using helpset url=" + url);
+            if (url == null)
+            {
+                url = HelpSet.findHelpSet(null, "/documentation.hs");
+            }
+
+            if (url == null)
+            {
+                url = _instance.getClass().getClassLoader()
+                               .getResource("documentation.hs");
+            }
+
+            if (url == null)
+            {
+                url = _instance.getClass().getClassLoader()
+                               .getResource("/documentation.hs");
+            }
+
+            _logger.fine("using helpset url=" + url);
 
             HelpSet helpSet = new HelpSet(_instance.getClass().getClassLoader(),
                     url);
@@ -118,7 +127,8 @@ public class HelpView
         }
         catch (Exception ex)
         {
-            _logger.log(Level.SEVERE, "Problem during helpset built (url="+url+")", ex);
+            _logger.log(Level.SEVERE,
+                "Problem during helpset built (url=" + url + ")", ex);
 
             return false;
         }

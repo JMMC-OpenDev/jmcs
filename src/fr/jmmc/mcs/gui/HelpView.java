@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.11 2008-11-21 14:59:53 lafrasse Exp $"
+ * "@(#) $Id: HelpView.java,v 1.12 2008-11-28 12:54:12 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2008/11/21 14:59:53  lafrasse
+ * Jalopization.
+ *
  * Revision 1.10  2008/11/21 11:15:10  mella
  * Improve html harvesting (especially in webstart mode for use)
  *
@@ -128,7 +131,8 @@ public class HelpView
         catch (Exception ex)
         {
             _logger.log(Level.SEVERE,
-                "Problem during helpset built (url=" + url + ")", ex);
+                "Problem during helpset built (url=" + url + ", classloader=" +
+                _instance.getClass().getClassLoader() + ")", ex);
 
             return false;
         }

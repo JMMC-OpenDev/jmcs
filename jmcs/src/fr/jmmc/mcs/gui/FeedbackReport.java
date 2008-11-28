@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.16 2008-11-18 09:13:54 lafrasse Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.17 2008-11-28 12:55:30 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2008/11/18 09:13:54  lafrasse
+ * Jalopization.
+ *
  * Revision 1.15  2008/11/06 13:44:44  mella
  * Add exception to log trace
  *
@@ -67,6 +70,8 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -98,7 +103,7 @@ import javax.swing.JTextField;
  * the user system informations and the application logs and send all
  * using a HTTP POST request.
  */
-public class FeedbackReport extends JDialog implements Observer
+public class FeedbackReport extends JDialog implements Observer, KeyListener
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
@@ -244,7 +249,7 @@ public class FeedbackReport extends JDialog implements Observer
         if (exception != null)
         {
             _description.append("Following exception occured:\n" +
-                exception.getMessage());
+                exception.getMessage() + "\n\n--\n");
             _logger.log(Level.FINE,
                 "One exception was given to the feedback report", exception);
         }
@@ -263,6 +268,13 @@ public class FeedbackReport extends JDialog implements Observer
         setButtonsProperties();
         setTabbedProperties();
         setFrameProperties();
+
+        // Listen to key event to ensure
+        // that send button is enable only if desc is not null
+        _description.addKeyListener(this);
+        // and update ui
+        keyReleased(null);
+
         _logger.fine("All feedback report properties have been set");
     }
 
@@ -584,6 +596,34 @@ public class FeedbackReport extends JDialog implements Observer
         {
             System.exit(-1);
         }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param e DOCUMENT ME!
+     */
+    public void keyTyped(KeyEvent e)
+    {
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param e DOCUMENT ME!
+     */
+    public void keyPressed(KeyEvent e)
+    {
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param e DOCUMENT ME!
+     */
+    public void keyReleased(KeyEvent e)
+    {
+        _submitButton.setEnabled(_description.getText().length() > 0);
     }
 }
 /*___oOo___*/

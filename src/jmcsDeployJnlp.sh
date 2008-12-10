@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.19 2008-10-15 07:16:27 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.20 2008-12-10 20:47:24 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2008/10/15 07:16:27  mella
+# Add link onto releases into index.htm generated file
+#
 # Revision 1.18  2008/10/06 15:08:14  mella
 # Fix update with prereleases check
 #
@@ -441,6 +444,7 @@ createAppJar()
     done
 
     # remove old META-INF of previous jar if any and build new MANIFEST file
+    # only main class is included from jnlp because MANIFEST can't handle arguments
     rm -rf META-INF
     MAINCLASS=$(xml sel -t -v "//application-desc/@main-class"  $APP_WEBROOT/$JNLPFILE)
     cd ..

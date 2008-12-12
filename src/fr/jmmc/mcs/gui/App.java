@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.45 2008-12-12 15:00:34 mella Exp $"
+ * "@(#) $Id: App.java,v 1.46 2008-12-12 15:06:13 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.45  2008/12/12 15:00:34  mella
+ * Add public showLogGui method
+ *
  * Revision 1.44  2008/10/17 10:41:54  lafrasse
  * Added FAQ handling.
  *
@@ -613,7 +616,7 @@ public abstract class App
 
             // Display the LogGUI panel
             case 2:
-                startLogGui();
+                showLogGui();
 
                 break;
 
@@ -776,7 +779,7 @@ public abstract class App
     /**
      * Show third party logging utility.
      */
-    public void startLogGui() {
+    public static void showLogGui() {
         imx.loggui.LogMaster.startLogGui();
     }
 

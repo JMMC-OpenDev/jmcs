@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.12 2008-11-28 12:54:12 mella Exp $"
+ * "@(#) $Id: HelpView.java,v 1.13 2008-12-16 14:52:27 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2008/11/28 12:54:12  mella
+ * Add more information on failure case
+ *
  * Revision 1.11  2008/11/21 14:59:53  lafrasse
  * Jalopization.
  *
@@ -43,7 +46,11 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.net.URL;
+import java.io.*;
+
+import java.net.*;
+
+import java.security.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,6 +86,129 @@ public class HelpView
         _instance = this;
     }
 
+    //------------------------------------------------------------------------------
+    /**
+     * http://forums.sun.com/thread.jspa?messageID=10522645
+     *
+     * @param url the URL to fix
+     *
+     * @return the fixed URL
+     */
+    public static URL fixJarURL(URL url)
+    {
+        if (url == null)
+        {
+            return null;
+        }
+
+        // final String method = _module + ".fixJarURL";
+        String originalURLProtocol = url.getProtocol();
+
+        // if (log.isDebugEnabled()) { log.debug(method + " examining '" + originalURLProtocol + "' protocol url: " + url); }
+        if ("jar".equalsIgnoreCase(originalURLProtocol) == false)
+        {
+            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: URL is not 'jar' protocol: " + url); }
+            return url;
+        }
+
+        // if (log.isDebugEnabled()) { log.debug(method + " URL is jar protocol, continuing"); }
+        String originalURLString = url.toString();
+
+        // if (log.isDebugEnabled()) { log.debug(method + " using originalURLString: " + originalURLString); }
+        int bangSlashIndex = originalURLString.indexOf("!/");
+
+        if (bangSlashIndex > -1)
+        {
+            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: originalURLString already has bang-slash: " + originalURLString); }
+            return url;
+        }
+
+        // if (log.isDebugEnabled()) { log.debug(method + " originalURLString needs fixing (it has no bang-slash)"); }
+        String originalURLPath = url.getPath();
+
+        // if (log.isDebugEnabled()) { log.debug(method + " using originalURLPath: " + originalURLPath); }
+        URLConnection urlConnection;
+
+        try
+        {
+            urlConnection      = url.openConnection();
+
+            if (urlConnection == null)
+            {
+                throw new IOException("urlConnection is null");
+            }
+        }
+        catch (IOException e)
+        {
+            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: openConnection() exception", e); }
+            return url;
+        }
+
+        // if (log.isDebugEnabled()) { log.debug(method + " using urlConnection: " + urlConnection); }
+        Permission urlConnectionPermission;
+
+        try
+        {
+            urlConnectionPermission = urlConnection.getPermission();
+
+            if (urlConnectionPermission == null)
+            {
+                throw new IOException("urlConnectionPermission is null");
+            }
+        }
+        catch (IOException e)
+        {
+            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: getPermission() exception", e); }
+            return url;
+        }
+
+        // if (log.isDebugEnabled()) { log.debug(method + " using urlConnectionPermission: " + urlConnectionPermission); }
+        String urlConnectionPermissionName = urlConnectionPermission.getName();
+
+        if (urlConnectionPermissionName == null)
+        {
+            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: urlConnectionPermissionName is null"); }
+            return url;
+        }
+
+        // if (log.isDebugEnabled()) { log.debug(method + " using urlConnectionPermissionName: " + urlConnectionPermissionName); }
+        File file = new File(urlConnectionPermissionName);
+
+        if (file.exists() == false)
+        {
+            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: file does not exist: " + file); }
+            return url;
+        }
+
+        // if (log.isDebugEnabled()) { log.debug(method + " using file: " + file); }
+        String newURLStr;
+
+        try
+        {
+            newURLStr = "jar:" + file.toURL().toExternalForm() + "!/" +
+                originalURLPath;
+        }
+        catch (MalformedURLException e)
+        {
+            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: exception creating newURLStr", e); }
+            return url;
+        }
+
+        // if (log.isDebugEnabled()) { log.debug(method + " using newURLStr: " + newURLStr); }
+        try
+        {
+            url = new URL(newURLStr);
+        }
+        catch (MalformedURLException e)
+        {
+            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: exception creating new URL", e); }
+            return url;
+        }
+
+        return url;
+    }
+
+    //------------------------------------------------------------------------------
     /**
      * Tell if help set can be used
      *
@@ -102,23 +232,42 @@ public class HelpView
         {
             // Get the helpset file and create the centered help broker 
             url = HelpSet.findHelpSet(null, "documentation.hs");
+            _logger.finest("HelpSet.findHelpSet(null, 'documentation.hs') = '" +
+                url + "'.");
 
             if (url == null)
             {
                 url = HelpSet.findHelpSet(null, "/documentation.hs");
+                _logger.finest(
+                    "HelpSet.findHelpSet(null, '/documentation.hs') = '" + url +
+                    "'.");
             }
 
             if (url == null)
             {
+                // Works on Mac OS X 10.5 PPC G5 with JVM 1.5.0_16
+                // Works on Mac OS X 10.5 Intel with JVM 1.5.0_16
+                // Works on Windows XP with JVM 1.6.0_07
+                // Works on Linux with JVM 1.5.0_16
                 url = _instance.getClass().getClassLoader()
                                .getResource("documentation.hs");
+                _logger.finest(
+                    "_instance.getClass().getClassLoader().getResource('documentation.hs') = '" +
+                    url + "'.");
             }
 
             if (url == null)
             {
                 url = _instance.getClass().getClassLoader()
                                .getResource("/documentation.hs");
+                _logger.finest(
+                    "_instance.getClass().getClassLoader().getResource('/documentation.hs') = '" +
+                    url + "'.");
             }
+
+            // http://forums.sun.com/thread.jspa?messageID=10522645
+            url = fixJarURL(url);
+            _logger.finest("fixJarURL(url) = '" + url + "'.");
 
             _logger.fine("using helpset url=" + url);
 

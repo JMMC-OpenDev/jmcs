@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ActionRegistrar.java,v 1.3 2008-09-05 08:33:52 lafrasse Exp $"
+ * "@(#) $Id: ActionRegistrar.java,v 1.4 2009-01-05 13:43:08 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/09/05 08:33:52  lafrasse
+ * Added missing 'private' attribute to _register field, that was causing Jalopy to
+ * behave strangely.
+ *
  * Revision 1.2  2008/09/04 15:58:00  lafrasse
  * Typo corrections.
  *
@@ -35,6 +39,9 @@ public class ActionRegistrar
 
     /** Preference Action unic identifying key */
     private static final String _preferenceActionKey = "preferenceActionKey";
+
+    /** File opening action unic identifying key */
+    private static final String _openActionKey = "openActionKey";
 
     /** Quit Action unic identifying key */
     private static final String _quitActionKey = "quitActionKey";
@@ -158,6 +165,33 @@ public class ActionRegistrar
         _logger.entering("ActionRegistrar", "getPreferenceAction");
 
         return _register.get(_preferenceActionKey);
+    }
+
+    /**
+     * Register an action dedicated to file opening sequence.
+     *
+     * @param action the action instance to register.
+     *
+     * @return the previous registered action, null otherwise.
+     */
+    public AbstractAction putOpenAction(AbstractAction action)
+    {
+        _logger.entering("ActionRegistrar", "putOpenAction");
+
+        return _register.put(_openActionKey, action);
+    }
+
+    /**
+     * Return the previously registered action dedicated to file opening sequence
+     * handling.
+     *
+     * @return the retrieved registered action, null otherwise.
+     */
+    public AbstractAction getOpenAction()
+    {
+        _logger.entering("ActionRegistrar", "getOpenAction");
+
+        return _register.get(_openActionKey);
     }
 
     /**

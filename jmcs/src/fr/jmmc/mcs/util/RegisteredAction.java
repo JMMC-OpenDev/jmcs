@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RegisteredAction.java,v 1.6 2008-10-16 08:55:49 mella Exp $"
+ * "@(#) $Id: RegisteredAction.java,v 1.7 2009-01-05 13:43:08 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/10/16 08:55:49  mella
+ * Inherit MCS action to first init action parameters like MCSAction
+ *
  * Revision 1.5  2008/09/19 08:49:53  lafrasse
  * Minor compilation bug correction.
  *
@@ -109,6 +112,22 @@ public abstract class RegisteredAction extends MCSAction
         putValue(Action.NAME, "Preferences...");
 
         _registrar.putPreferenceAction(this);
+    }
+
+    /**
+     * Flag the action as the one dedicated to file opening sequence.
+     */
+    public void flagAsOpenAction()
+    {
+        _logger.entering("RegisteredAction", "flagAsOpenAction");
+
+        // Force the 'quit' action name
+        putValue(Action.NAME, "Open");
+
+        // Force the 'quit keyboard shortcut
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl O"));
+
+        _registrar.putOpenAction(this);
     }
 
     /**

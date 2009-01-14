@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.17 2008-11-28 12:55:30 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.18 2009-01-14 14:26:52 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2008/11/28 12:55:30  mella
+ * Enable submit button only if text is description is not null
+ *
  * Revision 1.16  2008/11/18 09:13:54  lafrasse
  * Jalopization.
  *
@@ -189,6 +192,13 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         this(null, false);
     }
 
+    /** Creates a new FeedbackReport object
+     * @param exception exception
+     */
+    public FeedbackReport(Exception exception) {
+        this(null, false, exception,false);
+    }
+
     /**
      * Creates a new FeedbackReport object
      * Set the parent frame.
@@ -250,7 +260,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         {
             _description.append("Following exception occured:\n" +
                 exception.getMessage() + "\n\n--\n");
-            _logger.log(Level.FINE,
+            _logger.log(Level.WARNING,
                 "One exception was given to the feedback report", exception);
         }
 

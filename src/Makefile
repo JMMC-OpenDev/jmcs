@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.19 2008-06-23 07:45:49 bcolucci Exp $"
+# "@(#) $Id: Makefile,v 1.20 2009-01-15 16:00:14 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2008/06/23 07:45:49  bcolucci
+# Use apache common lang library.
+#
 # Revision 1.18  2008/06/13 08:11:18  bcolucci
 # *** empty log message ***
 #
@@ -168,7 +171,7 @@ jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png \
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES = jmcsGenerateHelpsetFromHtml
+JAVA_EXECUTABLES = 
 
 #
 # <brief description of jmcsGenerateHelpsetFromHtml java program>

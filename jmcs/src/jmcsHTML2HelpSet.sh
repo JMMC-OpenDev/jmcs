@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsHTML2HelpSet.sh,v 1.3 2008-11-21 11:15:10 mella Exp $"
+# "@(#) $Id: jmcsHTML2HelpSet.sh,v 1.4 2009-01-15 16:00:14 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2008/11/21 11:15:10  mella
+# Improve html harvesting (especially in webstart mode for use)
+#
 # Revision 1.2  2008/05/16 12:33:10  bcolucci
 # Removing unnecessary 'cd' and added tidy HTML cleanup.
 #
@@ -85,23 +88,32 @@ echo "Checkout each documentation modules ..."
 # For each module
 for module in $@
 do
-    echo "Configuring $module ..."
+    if [ -d "$module" ]
+    then
+        module_doc=$(basename $module)"-doc"
+        echo "Copying html pages from $module to $module_doc..."
+        cp -r $module $module_doc
+        module=$(basename $module)
+    else
+        echo "Configuring $module ..."
 
-    # CVS export
-    cvs co $module
-    # Exit if export failed
-    if [ $? -eq 1 ]; then
-        exit 1;
+        # CVS export
+        cvs co $module
+        # Exit if export failed
+        if [ $? -eq 1 ]; then
+            exit 1;
+        fi
+
+        # Compile it and force HTML generation according to default makefile convention
+        make -C $module/ all $module
+
+        # Move the compilation generated
+        # files in module co folder
+        module_doc=$module"-doc"
+        mv $module/$module $module"-doc"
+        rm -rf $module
+
     fi
-
-    # Compile it and force HTML generation according to default makefile convention
-    make -C $module/ all $module
-
-    # Move the compilation generated
-    # files in module co folder
-    module_doc=$module"-doc"
-    mv $module/$module $module"-doc"
-    rm -rf $module
 
     # Remove all unsed file to avoid generated
     # errors with jhelpdev

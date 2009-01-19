@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.18 2009-01-14 14:26:52 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.19 2009-01-19 11:06:28 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2009/01/14 14:26:52  mella
+ * Add enw constructor and set new level to log when exception is given
+ *
  * Revision 1.17  2008/11/28 12:55:30  mella
  * Enable submit button only if text is description is not null
  *
@@ -195,8 +198,9 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     /** Creates a new FeedbackReport object
      * @param exception exception
      */
-    public FeedbackReport(Exception exception) {
-        this(null, false, exception,false);
+    public FeedbackReport(Exception exception)
+    {
+        this(null, false, exception, false);
     }
 
     /**

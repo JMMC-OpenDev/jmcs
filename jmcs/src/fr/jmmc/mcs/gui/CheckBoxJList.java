@@ -20,7 +20,7 @@ import javax.swing.event.*;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class CheckBoxJList extends JList implements ListSelectionListener
 {
@@ -86,7 +86,7 @@ public class CheckBoxJList extends JList implements ListSelectionListener
      */
     public void valueChanged(ListSelectionEvent lse)
     {
-        System.out.println(lse);
+        //System.out.println(lse);
 
         if (! lse.getValueIsAdjusting())
         {
@@ -110,7 +110,7 @@ public class CheckBoxJList extends JList implements ListSelectionListener
             while (it.hasNext())
             {
                 int index = ((Integer) it.next()).intValue();
-                System.out.println("adding " + index);
+                //System.out.println("adding " + index);
                 getSelectionModel().addSelectionInterval(index, index);
             }
 
@@ -139,7 +139,7 @@ public class CheckBoxJList extends JList implements ListSelectionListener
             {
                 if (getSelectionModel().isSelectedIndex(i))
                 {
-                    System.out.println("caching " + i);
+                    //System.out.println("caching " + i);
                     selectionCache.add(new Integer(i));
                 }
             }

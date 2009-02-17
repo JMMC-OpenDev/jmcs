@@ -20,7 +20,7 @@ import javax.swing.event.*;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class CheckBoxJList extends JList implements ListSelectionListener
 {
@@ -87,7 +87,6 @@ public class CheckBoxJList extends JList implements ListSelectionListener
     public void valueChanged(ListSelectionEvent lse)
     {
         //System.out.println(lse);
-
         if (! lse.getValueIsAdjusting())
         {
             removeListSelectionListener(this);

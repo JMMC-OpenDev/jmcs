@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.47 2008-12-16 11:04:21 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.48 2009-02-26 14:13:51 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.47  2008/12/16 11:04:21  lafrasse
+ * Jalopization.
+ *
  * Revision 1.46  2008/12/12 15:06:13  mella
  * Add public static showLogGui method
  *
@@ -424,7 +427,7 @@ public abstract class App
     private void loadApplicationData()
     {
         URL fileURL = getURLFromResourceFilename("ApplicationData.xml");
-
+        
         if (fileURL == null)
         {
             // Take the defaultData XML in order to take the default menus
@@ -890,7 +893,7 @@ public abstract class App
 
         _logger.fine("fileURL = '" + fileURL + "'.");
 
-        return fileURL;
+        return Urls.fixJarURL(fileURL);
     }
 
     /* Action to correctly handle operations before closing application. */

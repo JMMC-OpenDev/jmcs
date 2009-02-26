@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.13 2008-12-16 14:52:27 lafrasse Exp $"
+ * "@(#) $Id: HelpView.java,v 1.14 2009-02-26 14:17:09 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2008/12/16 14:52:27  lafrasse
+ * Workaround known JVM 1.5.0_16 bug preventig the load of HelpSets embedded in JAR file launched from JNLP.
+ *
  * Revision 1.12  2008/11/28 12:54:12  mella
  * Add more information on failure case
  *
@@ -46,11 +49,9 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import java.io.*;
-
+import fr.jmmc.mcs.util.Urls;
 import java.net.*;
 
-import java.security.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,129 +87,6 @@ public class HelpView
         _instance = this;
     }
 
-    //------------------------------------------------------------------------------
-    /**
-     * http://forums.sun.com/thread.jspa?messageID=10522645
-     *
-     * @param url the URL to fix
-     *
-     * @return the fixed URL
-     */
-    public static URL fixJarURL(URL url)
-    {
-        if (url == null)
-        {
-            return null;
-        }
-
-        // final String method = _module + ".fixJarURL";
-        String originalURLProtocol = url.getProtocol();
-
-        // if (log.isDebugEnabled()) { log.debug(method + " examining '" + originalURLProtocol + "' protocol url: " + url); }
-        if ("jar".equalsIgnoreCase(originalURLProtocol) == false)
-        {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: URL is not 'jar' protocol: " + url); }
-            return url;
-        }
-
-        // if (log.isDebugEnabled()) { log.debug(method + " URL is jar protocol, continuing"); }
-        String originalURLString = url.toString();
-
-        // if (log.isDebugEnabled()) { log.debug(method + " using originalURLString: " + originalURLString); }
-        int bangSlashIndex = originalURLString.indexOf("!/");
-
-        if (bangSlashIndex > -1)
-        {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: originalURLString already has bang-slash: " + originalURLString); }
-            return url;
-        }
-
-        // if (log.isDebugEnabled()) { log.debug(method + " originalURLString needs fixing (it has no bang-slash)"); }
-        String originalURLPath = url.getPath();
-
-        // if (log.isDebugEnabled()) { log.debug(method + " using originalURLPath: " + originalURLPath); }
-        URLConnection urlConnection;
-
-        try
-        {
-            urlConnection      = url.openConnection();
-
-            if (urlConnection == null)
-            {
-                throw new IOException("urlConnection is null");
-            }
-        }
-        catch (IOException e)
-        {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: openConnection() exception", e); }
-            return url;
-        }
-
-        // if (log.isDebugEnabled()) { log.debug(method + " using urlConnection: " + urlConnection); }
-        Permission urlConnectionPermission;
-
-        try
-        {
-            urlConnectionPermission = urlConnection.getPermission();
-
-            if (urlConnectionPermission == null)
-            {
-                throw new IOException("urlConnectionPermission is null");
-            }
-        }
-        catch (IOException e)
-        {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: getPermission() exception", e); }
-            return url;
-        }
-
-        // if (log.isDebugEnabled()) { log.debug(method + " using urlConnectionPermission: " + urlConnectionPermission); }
-        String urlConnectionPermissionName = urlConnectionPermission.getName();
-
-        if (urlConnectionPermissionName == null)
-        {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: urlConnectionPermissionName is null"); }
-            return url;
-        }
-
-        // if (log.isDebugEnabled()) { log.debug(method + " using urlConnectionPermissionName: " + urlConnectionPermissionName); }
-        File file = new File(urlConnectionPermissionName);
-
-        if (file.exists() == false)
-        {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: file does not exist: " + file); }
-            return url;
-        }
-
-        // if (log.isDebugEnabled()) { log.debug(method + " using file: " + file); }
-        String newURLStr;
-
-        try
-        {
-            newURLStr = "jar:" + file.toURL().toExternalForm() + "!/" +
-                originalURLPath;
-        }
-        catch (MalformedURLException e)
-        {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: exception creating newURLStr", e); }
-            return url;
-        }
-
-        // if (log.isDebugEnabled()) { log.debug(method + " using newURLStr: " + newURLStr); }
-        try
-        {
-            url = new URL(newURLStr);
-        }
-        catch (MalformedURLException e)
-        {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: exception creating new URL", e); }
-            return url;
-        }
-
-        return url;
-    }
-
-    //------------------------------------------------------------------------------
     /**
      * Tell if help set can be used
      *
@@ -266,7 +144,7 @@ public class HelpView
             }
 
             // http://forums.sun.com/thread.jspa?messageID=10522645
-            url = fixJarURL(url);
+            url = Urls.fixJarURL(url);
             _logger.finest("fixJarURL(url) = '" + url + "'.");
 
             _logger.fine("using helpset url=" + url);

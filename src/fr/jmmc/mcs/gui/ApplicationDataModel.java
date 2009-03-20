@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.14 2008-10-17 10:41:54 lafrasse Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.15 2009-03-20 06:23:48 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2008/10/17 10:41:54  lafrasse
+ * Added FAQ handling.
+ *
  * Revision 1.13  2008/10/16 08:15:53  mella
  * Add getReleaseNotesLinkValue method
  *
@@ -312,7 +315,7 @@ public class ApplicationDataModel
         Vector<String>                     packagesInfo = new Vector<String>();
 
         fr.jmmc.mcs.gui.castor.Dependences dependences  = _applicationDataCastorModel.getDependences();
-        fr.jmmc.mcs.gui.castor.Package[]   packages     = dependences.get_package();
+        fr.jmmc.mcs.gui.castor.Package[]   packages     = dependences.getPackage();
 
         // For each package
         for (int i = 0; i < packages.length; i++)

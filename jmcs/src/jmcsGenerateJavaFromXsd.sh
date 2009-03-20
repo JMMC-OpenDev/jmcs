@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsGenerateJavaFromXsd.sh,v 1.5 2008-06-19 13:05:38 bcolucci Exp $"
+# "@(#) $Id: jmcsGenerateJavaFromXsd.sh,v 1.6 2009-03-20 06:23:48 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2008/06/19 13:05:38  bcolucci
+# Change the XML model name.
+#
 # Revision 1.4  2008/06/11 07:13:53  mella
 # Fix wrong commit
 #
@@ -33,7 +36,7 @@ then
     # generate model java source from xml schema
     echo "Generating classes for $MODEL_SCHEMA"
     echo " Using classpath : $(mkfMakeJavaClasspath)"
-    java -classpath $(mkfMakeJavaClasspath) org.exolab.castor.builder.SourceGenerator -i ${MODEL_SCHEMA} -f -package fr.jmmc.mcs.gui.castor $*
+    java -classpath $(mkfMakeJavaClasspath) org.exolab.castor.builder.SourceGeneratorMain -i ${MODEL_SCHEMA} -f -package fr.jmmc.mcs.gui.castor $*
 else
     echo "Generated classes for $MODEL_SCHEMA up-to-date"
 fi

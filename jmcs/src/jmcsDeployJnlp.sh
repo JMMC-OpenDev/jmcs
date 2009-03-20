@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.20 2008-12-10 20:47:24 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.21 2009-03-20 06:23:48 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.20  2008/12/10 20:47:24  mella
+# add comment
+#
 # Revision 1.19  2008/10/15 07:16:27  mella
 # Add link onto releases into index.htm generated file
 #
@@ -480,6 +483,7 @@ createHtmlIndex()
     -e "p" -o "By " -e "a" -a "href" -v "//homepage/@href" -b -v "//vendor" -b -b \
     -e "p" -o "Run Java Webstart application" -e "a" -a "href" -v "/jnlp/@href" -b \
     -o " using this link on main jnlp file" -b -b \
+    -e "p" -o "- OR -" -b \
     -e "p" -e "a" -a "href" -o "$JARFILE" -b -o "Download JAR " -b \
     -o "of application and run following command:" -b \
     -e "p" -e "pre" -o "java -jar $JARFILE " \

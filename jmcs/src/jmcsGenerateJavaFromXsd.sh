@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsGenerateJavaFromXsd.sh,v 1.7 2009-03-20 10:03:15 mella Exp $"
+# "@(#) $Id: jmcsGenerateJavaFromXsd.sh,v 1.8 2009-03-21 07:23:13 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2009/03/20 10:03:15  mella
+# use ArrayList as containers
+#
 # Revision 1.6  2009/03/20 06:23:48  mella
 # move to castor1.3
 #
@@ -39,7 +42,7 @@ then
     # generate model java source from xml schema
     echo "Generating classes for $MODEL_SCHEMA"
     echo " Using classpath : $(mkfMakeJavaClasspath)"
-    java -classpath $(mkfMakeJavaClasspath) org.exolab.castor.builder.SourceGeneratorMain -types j2 -i ${MODEL_SCHEMA} -f -package fr.jmmc.mcs.gui.castor $*
+    java -classpath $(mkfMakeJavaClasspath) org.exolab.castor.builder.SourceGenerator -types j2 -i ${MODEL_SCHEMA} -f -package fr.jmmc.mcs.gui.castor $*
 else
     echo "Generated classes for $MODEL_SCHEMA up-to-date"
 fi

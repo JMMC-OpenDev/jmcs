@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.22 2009-03-20 10:03:36 mella Exp $"
+# "@(#) $Id: Makefile,v 1.23 2009-03-21 07:20:29 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.22  2009/03/20 10:03:36  mella
+# remove unsed jar
+#
 # Revision 1.21  2009/03/20 06:23:48  mella
 # move to castor1.3
 #
@@ -204,7 +207,7 @@ MAN8 =
 INSTALL_FILES = ../lib/loggui.jar \
 		../lib/ptplot5.6.jar \
 		../lib/jfits-0.93.jar \
-		../lib/castor*.jar \
+		../lib/castor.jar \
 		../lib/BrowserLauncher2-1_3.jar \
 		../lib/xercesImpl.jar \
 		../lib/xmlParserAPIs.jar \

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.15 2009-03-22 20:56:41 mella Exp $"
+ * "@(#) $Id: HelpView.java,v 1.16 2009-03-23 08:49:09 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2009/03/22 20:56:41  mella
+ * Add ShowHelpAction
+ *
  * Revision 1.14  2009/02/26 14:17:09  mella
  * fixJarURL has been moved into fr.jmmc.mcs.util.Urls
  *
@@ -199,7 +202,6 @@ public class HelpView
         Map.ID id;
         while (e.hasMoreElements()) {
             id = (Map.ID) e.nextElement();
-            System.out.println("id = " + id.getIDString());
             if (id.getIDString().endsWith(endOfHelpID)) {
                 return id.getIDString();
             }

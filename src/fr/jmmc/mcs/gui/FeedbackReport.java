@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.20 2009-03-31 07:11:32 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.21 2009-03-31 07:19:15 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2009/03/31 07:11:32  mella
+ * Change Email label
+ *
  * Revision 1.19  2009/01/19 11:06:28  lafrasse
  * Jalopization.
  *
@@ -364,7 +367,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     private void setMailProperties()
     {
         _mailSplit.setBorder(null);
-        _mailSplit.setDividerLocation(50);
+        _mailSplit.setDividerLocation(80);
         _mailSplit.setDividerSize(0);
 
         _mailLabel.setText("Your Email :");
@@ -382,7 +385,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         _typePanel.add(_typeComboBox, BorderLayout.LINE_START);
 
         _typeSplit.setBorder(null);
-        _typeSplit.setDividerLocation(50);
+        _typeSplit.setDividerLocation(80);
         _typeSplit.setDividerSize(0);
         _typeSplit.setEnabled(false);
 

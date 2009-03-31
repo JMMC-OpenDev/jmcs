@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.19 2009-01-19 11:06:28 lafrasse Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.20 2009-03-31 07:11:32 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2009/01/19 11:06:28  lafrasse
+ * Jalopization.
+ *
  * Revision 1.18  2009/01/14 14:26:52  mella
  * Add enw constructor and set new level to log when exception is given
  *
@@ -364,7 +367,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         _mailSplit.setDividerLocation(50);
         _mailSplit.setDividerSize(0);
 
-        _mailLabel.setText("Mail :");
+        _mailLabel.setText("Your Email :");
         _mailSplit.setLeftComponent(_mailLabel);
         _mailSplit.setRightComponent(_mail);
         _logger.fine("Mail properties have been set");

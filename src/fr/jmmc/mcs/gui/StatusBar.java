@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.2 2007-02-13 13:48:51 lafrasse Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.3 2009-04-08 13:00:51 sprette Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/02/13 13:48:51  lafrasse
+ * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
+ *
  * Revision 1.1  2006/11/18 22:52:56  lafrasse
  * Moved from jmmc.mcs.util .
  *
@@ -20,6 +23,7 @@ package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.log.*;
 
+import java.awt.Font;
 import javax.swing.*;
 
 
@@ -41,10 +45,29 @@ public class StatusBar extends JPanel
         super();
 
         // Layed out horizontally
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));        
 
-        add(new JLabel("Status : "));
-        add(_statusLabel);
+         //Create logo
+        JLabel logoJmmc = new JLabel();
+        logoJmmc.setIcon(new ImageIcon(getClass().getResource("SmallLogo.png")));
+        logoJmmc.setVisible(true);
+
+        //Create text logo
+        JLabel textStatusBar = new JLabel();
+        textStatusBar.setText("Provided by  : ");
+        textStatusBar.setFont(new Font("Comic Sans MS", 2, 12));
+        textStatusBar.setVisible(true);
+
+        //StatusBar elements placement
+        Box hBox = Box.createHorizontalBox();
+        hBox.add(new JLabel("Status : "));
+        hBox.add(_statusLabel);
+        hBox.add(Box.createHorizontalGlue());
+        hBox.add(textStatusBar);
+        hBox.add(logoJmmc);
+
+        this.add(hBox);
+
     }
 
     /**

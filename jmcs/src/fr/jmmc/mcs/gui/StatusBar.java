@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.3 2009-04-08 13:00:51 sprette Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.4 2009-04-09 06:26:07 sprette Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2009/04/08 13:00:51  sprette
+ * First CVS test
+ *
  * Revision 1.2  2007/02/13 13:48:51  lafrasse
  * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
  *
@@ -49,13 +52,13 @@ public class StatusBar extends JPanel
 
          //Create logo
         JLabel logoJmmc = new JLabel();
-        logoJmmc.setIcon(new ImageIcon(getClass().getResource("SmallLogo.png")));
+        logoJmmc.setIcon(new ImageIcon(getClass().getResource("logo_small.png")));
         logoJmmc.setVisible(true);
 
         //Create text logo
         JLabel textStatusBar = new JLabel();
-        textStatusBar.setText("Provided by  : ");
-        textStatusBar.setFont(new Font("Comic Sans MS", 2, 12));
+        textStatusBar.setText("Provided by ");
+        textStatusBar.setFont(new Font("Comic Sans MS", 2, 10));
         textStatusBar.setVisible(true);
 
         //StatusBar elements placement
@@ -65,8 +68,13 @@ public class StatusBar extends JPanel
         hBox.add(Box.createHorizontalGlue());
         hBox.add(textStatusBar);
         hBox.add(logoJmmc);
+        // Add one space on the right bottom angle because Mac OS X
+        // corner is already decored
+        hBox.add(Box.createHorizontalStrut(20));
 
         this.add(hBox);
+
+        
 
     }
 

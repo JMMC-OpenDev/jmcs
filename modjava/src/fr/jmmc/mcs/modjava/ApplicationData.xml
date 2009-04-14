@@ -39,7 +39,7 @@
             <menu label="Don't know" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" checkbox="true"/>
         </menu>
         <menu label="File">
-            <menu label="Import" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" icon="fr/jmmc/mcs/modjava/import.png"/>
+            <menu label="Import" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" icon="/fr/jmmc/mcs/modjava/import.png"/>
             <menu label="Export" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1"/>
         </menu>
         <menu label="Edit">

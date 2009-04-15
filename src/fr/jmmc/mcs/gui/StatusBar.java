@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.4 2009-04-09 06:26:07 sprette Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.5 2009-04-15 11:55:24 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2009/04/09 06:26:07  sprette
+ * Change small jmmc logo name
+ * Add space on the right bottom corner into the status bar (for Mac OS X)
+ *
  * Revision 1.3  2009/04/08 13:00:51  sprette
  * First CVS test
  *
@@ -70,7 +74,7 @@ public class StatusBar extends JPanel
         hBox.add(logoJmmc);
         // Add one space on the right bottom angle because Mac OS X
         // corner is already decored
-        hBox.add(Box.createHorizontalStrut(20));
+        hBox.add(Box.createHorizontalStrut(8));
 
         this.add(hBox);
 

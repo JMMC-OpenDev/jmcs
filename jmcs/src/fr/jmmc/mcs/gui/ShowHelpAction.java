@@ -1,7 +1,9 @@
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.util.Urls;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 
 public class ShowHelpAction extends AbstractAction {
 
@@ -9,7 +11,9 @@ public class ShowHelpAction extends AbstractAction {
 
     public ShowHelpAction(String label) {
         // Set Label
-        this.putValue(this.NAME, "?");
+        //this.putValue(this.NAME, "?");
+        String icon="/fr/jmmc/mcs/gui/help.png";
+        this.putValue(this.SMALL_ICON, new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
 
         // If help is available, then try to get the HelpID that ends with given label
         boolean helpIsAvailable = HelpView.isAvailable();

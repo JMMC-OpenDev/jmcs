@@ -7,13 +7,19 @@ import javax.swing.ImageIcon;
 
 public class ShowHelpAction extends AbstractAction {
 
+    /** Help id associted to the given label.*/
     private String _helpID;
 
+    /**
+     * Instanciate one action that will show the help view on the page associated to the given label.
+     * The label is used to retrieve one target from the documentationTOC.xml file.
+     *
+     * @param label the key used to retrieve the documentation page.
+     */
     public ShowHelpAction(String label) {
-        // Set Label
-        //this.putValue(this.NAME, "?");
+        // Set Icon (without additional label)
         String icon="/fr/jmmc/mcs/gui/help.png";
-        this.putValue(this.SMALL_ICON, new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
+        this.putValue(SMALL_ICON, new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
 
         // If help is available, then try to get the HelpID that ends with given label
         boolean helpIsAvailable = HelpView.isAvailable();

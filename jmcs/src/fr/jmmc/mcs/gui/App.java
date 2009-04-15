@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.48 2009-02-26 14:13:51 mella Exp $"
+ * "@(#) $Id: App.java,v 1.49 2009-04-15 08:57:48 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.48  2009/02/26 14:13:51  mella
+ * improve getURLFromResourceFilename
+ *
  * Revision 1.47  2008/12/16 11:04:21  lafrasse
  * Jalopization.
  *
@@ -1019,6 +1022,9 @@ public abstract class App
         {
             super(classPath, fieldName, "User Manual");
             setEnabled(HelpView.isAvailable());
+            // Set Icon
+            String icon="/fr/jmmc/mcs/gui/help22x22.png";
+            this.putValue(SMALL_ICON, new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
         }
 
         public void actionPerformed(java.awt.event.ActionEvent e)

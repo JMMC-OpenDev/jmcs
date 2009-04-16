@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.49 2009-04-15 08:57:48 mella Exp $"
+ * "@(#) $Id: App.java,v 1.50 2009-04-16 15:42:49 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.49  2009/04/15 08:57:48  mella
+ * add 22x22 help icon onto show help action
+ *
  * Revision 1.48  2009/02/26 14:13:51  mella
  * improve getURLFromResourceFilename
  *
@@ -430,7 +433,7 @@ public abstract class App
     private void loadApplicationData()
     {
         URL fileURL = getURLFromResourceFilename("ApplicationData.xml");
-        
+
         if (fileURL == null)
         {
             // Take the defaultData XML in order to take the default menus
@@ -1022,9 +1025,11 @@ public abstract class App
         {
             super(classPath, fieldName, "User Manual");
             setEnabled(HelpView.isAvailable());
+
             // Set Icon
-            String icon="/fr/jmmc/mcs/gui/help22x22.png";
-            this.putValue(SMALL_ICON, new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
+            String icon = "/fr/jmmc/mcs/gui/help.png";
+            this.putValue(SMALL_ICON,
+                new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
         }
 
         public void actionPerformed(java.awt.event.ActionEvent e)

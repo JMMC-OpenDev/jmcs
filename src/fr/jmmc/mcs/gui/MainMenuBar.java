@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.25 2009-04-14 13:12:04 mella Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.26 2009-04-16 15:44:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2009/04/14 13:12:04  mella
+ * Fix code that didn't retrieve icon for non MCSAction
+ *
  * Revision 1.24  2008/10/17 10:41:54  lafrasse
  * Added FAQ handling.
  *
@@ -95,17 +98,18 @@ package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.util.*;
 
-import java.net.MalformedURLException;
-import java.util.logging.Level;
 import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Component;
 
 import java.lang.reflect.Method;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -555,16 +559,23 @@ public class MainMenuBar extends JMenuBar
 
             // Set icon
             String icon = menu.getIcon();
-            if (icon != null) {
+
+            if (icon != null)
+            {
                 // Open XML file at path
                 URL iconURL = getClass().getResource(icon);
-                if (iconURL != null) {
-                    action.putValue(Action.SMALL_ICON, new ImageIcon(Urls.fixJarURL(iconURL)));
-                } else {
+
+                if (iconURL != null)
+                {
+                    action.putValue(Action.SMALL_ICON,
+                        new ImageIcon(Urls.fixJarURL(iconURL)));
+                }
+                else
+                {
                     _logger.warning("Can't find iconUrl : " + icon);
                 }
             }
-            
+
             _logger.fine("Attributes set on '" + menu.getLabel() + "'.");
         }
     }

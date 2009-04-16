@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.5 2009-04-15 11:55:24 mella Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.6 2009-04-16 15:44:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2009/04/15 11:55:24  mella
+ * fix space
+ *
  * Revision 1.4  2009/04/09 06:26:07  sprette
  * Change small jmmc logo name
  * Add space on the right bottom corner into the status bar (for Mac OS X)
@@ -31,6 +34,7 @@ package fr.jmmc.mcs.gui;
 import fr.jmmc.mcs.log.*;
 
 import java.awt.Font;
+
 import javax.swing.*;
 
 
@@ -52,9 +56,9 @@ public class StatusBar extends JPanel
         super();
 
         // Layed out horizontally
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));        
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-         //Create logo
+        //Create logo
         JLabel logoJmmc = new JLabel();
         logoJmmc.setIcon(new ImageIcon(getClass().getResource("logo_small.png")));
         logoJmmc.setVisible(true);
@@ -77,9 +81,6 @@ public class StatusBar extends JPanel
         hBox.add(Box.createHorizontalStrut(8));
 
         this.add(hBox);
-
-        
-
     }
 
     /**

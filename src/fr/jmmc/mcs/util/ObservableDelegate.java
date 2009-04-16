@@ -2,6 +2,7 @@ package fr.jmmc.mcs.util;
 
 import java.util.Observable;
 
+
 /**
  * This class enable a third class to be considered as Observable.
  * To delegate feature, the class just has to forward addObserver(Observer o) to this class and call
@@ -11,6 +12,9 @@ import java.util.Observable;
  */
 public class ObservableDelegate extends Observable
 {
+    /**
+     * DOCUMENT ME!
+     */
     Object _source;
 
     /**
@@ -18,17 +22,26 @@ public class ObservableDelegate extends Observable
      *
      * @param source the object to be observed;
      */
-    public ObservableDelegate(Object source){
+    public ObservableDelegate(Object source)
+    {
         super();
         _source = source;
     }
 
+    /**
+     * DOCUMENT ME!
+     */
     public void notifyObservers()
     {
         setChanged();
         super.notifyObservers();
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @param arg DOCUMENT ME!
+     */
     public void notifyObservers(Object arg)
     {
         setChanged();
@@ -39,7 +52,8 @@ public class ObservableDelegate extends Observable
      * Return the notified source
      * @return the source
      */
-    public Object getSource(){
+    public Object getSource()
+    {
         return _source;
     }
 }

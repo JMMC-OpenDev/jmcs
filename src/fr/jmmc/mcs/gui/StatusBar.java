@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.6 2009-04-16 15:44:51 lafrasse Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.7 2009-04-20 08:22:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2009/04/16 15:44:51  lafrasse
+ * Jalopization.
+ *
  * Revision 1.5  2009/04/15 11:55:24  mella
  * fix space
  *
@@ -76,9 +79,12 @@ public class StatusBar extends JPanel
         hBox.add(Box.createHorizontalGlue());
         hBox.add(textStatusBar);
         hBox.add(logoJmmc);
-        // Add one space on the right bottom angle because Mac OS X
-        // corner is already decored
-        hBox.add(Box.createHorizontalStrut(8));
+
+        /*
+         * Add a space on the right bottom angle because Mac OS X corner is
+         * already decored with its resize handle
+         */
+        hBox.add(Box.createHorizontalStrut(14));
 
         this.add(hBox);
     }

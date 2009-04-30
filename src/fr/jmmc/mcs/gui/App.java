@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.50 2009-04-16 15:42:49 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.51 2009-04-30 09:05:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.50  2009/04/16 15:42:49  lafrasse
+ * Corrected Help icon URL.
+ * Jalopization.
+ *
  * Revision 1.49  2009/04/15 08:57:48  mella
  * add 22x22 help icon onto show help action
  *
@@ -305,6 +309,9 @@ public abstract class App
     /** Show FAQ handling action */
     private static ShowFaqAction _showFaqAction = null;
 
+    /** Store a proxy to the shared ActionRegistrar facility */
+    private ActionRegistrar _registrar = null;
+
     /**
      * Creates a new App object
      *
@@ -353,7 +360,10 @@ public abstract class App
     protected App(String[] args, boolean waitBeforeExecution,
         boolean showSplashScreen, boolean exitWhenClosed)
     {
+        _registrar = ActionRegistrar.getInstance();
+
         String classPath = getClass().getName();
+        new OpenAction(classPath, "_openAction");
         _quitAction = new QuitAction(classPath, "_quitAction");
 
         try
@@ -579,18 +589,28 @@ public abstract class App
      */
     protected void interpretArguments(String[] args)
     {
+        // List received arguments
+        for (int i = 0; i < args.length; i++)
+        {
+            _logger.finest("args[" + i + "] = '" + args[i] + "'.");
+        }
+
         // Just leave method if no argument has been given
         if (args == null)
         {
             return;
         }
 
+        // Will contain file path for '-open' option
+        StringBuffer file = null;
+
         // Array for long arguments (help & version)
         LongOpt[] longopts = new LongOpt[]
             {
-                new LongOpt("help", LongOpt.NO_ARGUMENT, null, 0),
+                new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
                 new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1),
-                new LongOpt("loggui", LongOpt.NO_ARGUMENT, null, 2)
+                new LongOpt("loggui", LongOpt.NO_ARGUMENT, null, 2),
+                new LongOpt("open", LongOpt.REQUIRED_ARGUMENT, file, 3)
             };
 
         // Instantiate the getopt object
@@ -611,12 +631,6 @@ public abstract class App
 
                 break;
 
-            // Show the arguments help
-            case 0:
-                showArgumentsHelp();
-
-                break;
-
             // Show the name and the version of the program
             case 1:
                 // Show the application name on the shell
@@ -629,6 +643,15 @@ public abstract class App
             // Display the LogGUI panel
             case 2:
                 showLogGui();
+
+                break;
+
+            // Open the given file
+            case 3:
+                _logger.info("Should open '" + file + "'.");
+                _registrar.getOpenAction()
+                          .actionPerformed(new ActionEvent(_registrar, 0,
+                        file.toString()));
 
                 break;
 
@@ -754,7 +777,7 @@ public abstract class App
             showSplashScreen();
         }
 
-        // Call abstract init method with arguments
+        // Delegate initialization to daughter class through abstract init() call
         init(_args);
 
         // Set JMenuBar
@@ -771,7 +794,7 @@ public abstract class App
             closeSplashScreen();
         }
 
-        // Call abstract execute method
+        // Delegate execution to daughter class through abstract execute() call
         execute();
     }
 
@@ -900,6 +923,27 @@ public abstract class App
         _logger.fine("fileURL = '" + fileURL + "'.");
 
         return Urls.fixJarURL(fileURL);
+    }
+
+    /* Action to correctly handle file opening. */
+    protected class OpenAction extends RegisteredAction
+    {
+        public OpenAction(String classPath, String fieldName)
+        {
+            super(classPath, fieldName);
+
+            // Disabled as this default implementation does nothing
+            setEnabled(false);
+
+            flagAsOpenAction();
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            _logger.entering("OpenAction", "actionPerformed");
+
+            _logger.warning("No handler for default file opening.");
+        }
     }
 
     /* Action to correctly handle operations before closing application. */

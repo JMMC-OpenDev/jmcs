@@ -49,6 +49,8 @@ import com.apple.eawt.*;
 
 import fr.jmmc.mcs.util.ActionRegistrar;
 
+import java.awt.event.*;
+
 import javax.swing.JFrame;
 
 
@@ -56,7 +58,7 @@ import javax.swing.JFrame;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class OSXAdapter extends ApplicationAdapter
 {
@@ -166,6 +168,27 @@ public class OSXAdapter extends ApplicationAdapter
         {
             throw new IllegalStateException(
                 "handleQuit: MyApp instance detached from listener");
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param ae DOCUMENT ME!
+     */
+    public void handleOpenFile(ApplicationEvent ae)
+    {
+        if (mainApp != null)
+        {
+            ae.setHandled(true);
+            _registrar.getOpenAction()
+                      .actionPerformed(new ActionEvent(_registrar, 0,
+                    ae.getFilename()));
+        }
+        else
+        {
+            throw new IllegalStateException(
+                "handleOpenFile: MyApp instance detached from listener");
         }
     }
 

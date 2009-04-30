@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileFilterRepository.java,v 1.1 2009-04-30 09:03:47 lafrasse Exp $"
+ * "@(#) $Id: FileFilterRepository.java,v 1.2 2009-04-30 12:59:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2009/04/30 09:03:47  lafrasse
+ * Creation.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
@@ -264,8 +267,6 @@ class GenericFileFilter extends FileFilter
 
             if (fileType != null)
             {
-                System.out.println("Accepting file '" + fileName +
-                    "' of type '" + fileType + "'.");
                 _logger.finer("Accepting file '" + fileName + "' of type '" +
                     fileType + "'.");
 

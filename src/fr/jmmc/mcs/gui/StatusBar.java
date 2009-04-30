@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.7 2009-04-20 08:22:33 lafrasse Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.8 2009-04-30 13:02:14 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2009/04/20 08:22:33  lafrasse
+ * Optimized space between the JMMC logo and the resizing handle.
+ *
  * Revision 1.6  2009/04/16 15:44:51  lafrasse
  * Jalopization.
  *
@@ -34,9 +37,11 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import fr.jmmc.mcs.log.*;
+import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Font;
+
+import java.util.logging.*;
 
 import javax.swing.*;
 
@@ -46,13 +51,17 @@ import javax.swing.*;
  */
 public class StatusBar extends JPanel
 {
+    /** Logger */
+    private static final Logger _logger = Logger.getLogger(
+            "fr.jmmc.mcs.gui.StatusBar");
+
     /** Status label */
-    static JLabel _statusLabel = new JLabel();
+    private static JLabel _statusLabel = new JLabel();
 
     /**
      * Constructor.
      *
-     * Should be call at least one in order to allow usage.
+     * Should be called at least once in order to allow usage.
      */
     public StatusBar()
     {
@@ -61,32 +70,35 @@ public class StatusBar extends JPanel
         // Layed out horizontally
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-        //Create logo
-        JLabel logoJmmc = new JLabel();
-        logoJmmc.setIcon(new ImageIcon(getClass().getResource("logo_small.png")));
-        logoJmmc.setVisible(true);
+        // Create logo
+        JLabel jmmcLogo = new JLabel();
+        jmmcLogo.setIcon(new ImageIcon(getClass().getResource("logo_small.png")));
+        jmmcLogo.setVisible(true);
 
-        //Create text logo
+        // Create text logo
         JLabel textStatusBar = new JLabel();
         textStatusBar.setText("Provided by ");
         textStatusBar.setFont(new Font("Comic Sans MS", 2, 10));
         textStatusBar.setVisible(true);
 
-        //StatusBar elements placement
+        // StatusBar elements placement
         Box hBox = Box.createHorizontalBox();
         hBox.add(new JLabel("Status : "));
         hBox.add(_statusLabel);
         hBox.add(Box.createHorizontalGlue());
         hBox.add(textStatusBar);
-        hBox.add(logoJmmc);
+        hBox.add(jmmcLogo);
 
         /*
          * Add a space on the right bottom angle because Mac OS X corner is
          * already decored with its resize handle
          */
-        hBox.add(Box.createHorizontalStrut(14));
+        if (SystemUtils.IS_OS_MAC_OSX == true)
+        {
+            hBox.add(Box.createHorizontalStrut(14));
+        }
 
-        this.add(hBox);
+        add(hBox);
     }
 
     /**
@@ -94,9 +106,9 @@ public class StatusBar extends JPanel
      *
      * @param message the message to be displayed bu the status bar.
      */
-    public static void show(String message)
+    public static synchronized void show(String message)
     {
-        MCSLogger.trace();
+        _logger.entering("StatusBar", "show");
 
         _statusLabel.setText(message);
     }

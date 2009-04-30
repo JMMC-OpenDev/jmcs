@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RegisteredAction.java,v 1.7 2009-01-05 13:43:08 lafrasse Exp $"
+ * "@(#) $Id: RegisteredAction.java,v 1.8 2009-04-30 09:00:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2009/01/05 13:43:08  lafrasse
+ * Added Open action handling.
+ *
  * Revision 1.6  2008/10/16 08:55:49  mella
  * Inherit MCS action to first init action parameters like MCSAction
  *
@@ -121,10 +124,10 @@ public abstract class RegisteredAction extends MCSAction
     {
         _logger.entering("RegisteredAction", "flagAsOpenAction");
 
-        // Force the 'quit' action name
+        // Force the 'open' action name
         putValue(Action.NAME, "Open");
 
-        // Force the 'quit keyboard shortcut
+        // Force the 'open' keyboard shortcut
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl O"));
 
         _registrar.putOpenAction(this);
@@ -140,7 +143,7 @@ public abstract class RegisteredAction extends MCSAction
         // Force the 'quit' action name
         putValue(Action.NAME, "Quit");
 
-        // Force the 'quit keyboard shortcut
+        // Force the 'quit' keyboard shortcut
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl Q"));
 
         _registrar.putQuitAction(this);

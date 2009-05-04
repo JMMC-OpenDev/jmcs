@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.28 2008-11-18 09:14:51 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.29 2009-05-04 12:05:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2008/11/18 09:14:51  lafrasse
+ * Corrected documentation and log entering in updatePreferencesVersion().
+ *
  * Revision 1.27  2008/11/06 13:45:02  mella
  * fix better loging level
  *
@@ -697,6 +700,68 @@ public abstract class Preferences extends Observable
         }
 
         return colorValue;
+    }
+
+    /**
+     * Remove the given preference.
+     *
+     * If the given preference belongs to an ordered preferences group,
+     * preferences left will be re-ordered down to fullfil the place left empty,
+     * as expected. For example, {'LOW', 'MEDIUM', 'HIGH'} - MEDIUM will become
+     * {'LOW', 'HIGH'}, not {'LOW, '', 'HIGH'}.
+     *
+     * @param preferenceName the preference name.
+     */
+    final public void removePreference(String preferenceName)
+    {
+        _logger.entering(_className, "removePreference");
+
+        _logger.fine("Removing preference '" + preferenceName + "'.");
+
+        // Get the given preference order, if any
+        int preferenceOrder = getPreferenceOrder(preferenceName);
+
+        if (preferenceOrder != -1)
+        {
+            // Compute preference group prefix name
+            String preferencesPrefix = null;
+            int    indexOfLastDot    = preferenceName.lastIndexOf('.');
+
+            if ((indexOfLastDot > 0) &&
+                    (indexOfLastDot < (preferenceName.length() - 1)))
+            {
+                preferencesPrefix = preferenceName.substring(0, indexOfLastDot);
+            }
+
+            _logger.finer("Removing preference from ordered group '" +
+                preferencesPrefix + "'.");
+
+            // For each group preferences
+            Enumeration orderedPreferences = getPreferences(preferencesPrefix);
+
+            while (orderedPreferences.hasMoreElements())
+            {
+                String orderedPreferenceName = (String) orderedPreferences.nextElement();
+
+                int    preferenceIndex       = getPreferenceOrder(orderedPreferenceName);
+
+                if (preferenceIndex > preferenceOrder)
+                {
+                    int destinationIndex = preferenceIndex - 1;
+
+                    _logger.finest("Re-ordering preference '" +
+                        orderedPreferenceName + "' from index '" +
+                        preferenceIndex + "' to index '" + destinationIndex +
+                        "'.");
+
+                    setPreferenceOrder(orderedPreferenceName, destinationIndex);
+                }
+            }
+        }
+
+        // Removing the given preference and its ordering index
+        _currentProperties.remove(preferenceName);
+        _currentProperties.remove(_indexPrefix + preferenceName);
     }
 
     /**

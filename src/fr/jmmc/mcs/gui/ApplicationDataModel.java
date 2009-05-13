@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.16 2009-03-21 07:23:13 mella Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.17 2009-05-13 09:24:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2009/03/21 07:23:13  mella
+ * revert to previous castor
+ *
  * Revision 1.15  2009/03/20 06:23:48  mella
  * move to castor1.3
  *
@@ -230,10 +233,10 @@ public class ApplicationDataModel
      */
     public String getReleaseNotesLinkValue()
     {
-        String releaseLink = getLinkValue() + "/releasenotes.htm";
-        _logger.fine("ReleaseNotesLink value is :" + releaseLink);
+        String releaseNotesLink = getLinkValue() + "/releasenotes.htm";
+        _logger.fine("ReleaseNotesLink value is :" + releaseNotesLink);
 
-        return releaseLink;
+        return releaseNotesLink;
     }
 
     /**
@@ -247,6 +250,23 @@ public class ApplicationDataModel
         _logger.fine("FaqLink value is :" + faqLink);
 
         return faqLink;
+    }
+
+    /**
+     * Return the value of the Hot News RSS feed "link" based onto the XML link element.
+     *
+     * @return the Hot News RSS feed link
+     */
+    public String getHotNewsRSSFeedLinkValue()
+    {
+        String programName = getProgramName();
+        programName = programName.toLowerCase();
+
+        String hotNewsRSSFeedLink = getLinkValue() + "/" + programName +
+            ".rss";
+        _logger.fine("HotNewsRSSFeedLink value is :" + hotNewsRSSFeedLink);
+
+        return hotNewsRSSFeedLink;
     }
 
     /**

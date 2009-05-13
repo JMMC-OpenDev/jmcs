@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.51 2009-04-30 09:05:05 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.52 2009-05-13 09:24:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.51  2009/04/30 09:05:05  lafrasse
+ * Added code to automatically load a file given by the executing OS on startup.
+ *
  * Revision 1.50  2009/04/16 15:42:49  lafrasse
  * Corrected Help icon URL.
  * Jalopization.
@@ -303,6 +306,9 @@ public abstract class App
     /** Show help handling action */
     private static ShowHelpAction _showHelpAction = null;
 
+    /** Show hto news handling action */
+    private static ShowHotNewsAction _showHotNewsAction = null;
+
     /** Show release handling action */
     private static ShowReleaseAction _showReleaseAction = null;
 
@@ -400,6 +406,8 @@ public abstract class App
             // (the creation must be done after applicationModel instanciation)
             _acknowledgementAction     = new AcknowledgementAction("fr.jmmc.mcs.gui.App",
                     "_acknowledgementAction");
+            _showHotNewsAction         = new ShowHotNewsAction("fr.jmmc.mcs.gui.App",
+                    "_showHotNewsAction");
             _showReleaseAction         = new ShowReleaseAction("fr.jmmc.mcs.gui.App",
                     "_showReleaseAction");
             _showFaqAction             = new ShowFaqAction("fr.jmmc.mcs.gui.App",
@@ -568,6 +576,12 @@ public abstract class App
     public static Action quitAction()
     {
         return _quitAction;
+    }
+
+    /** Return the action dedicated to display hot news */
+    public static Action showHotNewsAction()
+    {
+        return _showHotNewsAction;
     }
 
     /** Return the action dedicated to display release */
@@ -1029,6 +1043,21 @@ public abstract class App
 
             JOptionPane.showMessageDialog(null, windowContent, windowTitle,
                 JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /* Action to show hot news RSS feed. */
+    protected class ShowHotNewsAction extends RegisteredAction
+    {
+        public ShowHotNewsAction(String classPath, String fieldName)
+        {
+            super(classPath, fieldName, "Hot News (RSS Feed)");
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            _logger.entering("ShowReleaseAction", "actionPerformed");
+            BrowserLauncher.openURL(_applicationDataModel.getHotNewsRSSFeedLinkValue());
         }
     }
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.26 2009-04-16 15:44:51 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.27 2009-05-13 09:24:25 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2009/04/16 15:44:51  lafrasse
+ * Jalopization.
+ *
  * Revision 1.25  2009/04/14 13:12:04  mella
  * Fix code that didn't retrieve icon for non MCSAction
  *
@@ -384,10 +387,15 @@ public class MainMenuBar extends JMenuBar
         // Add acknowledgement action
         helpMenu.add(App.acknowledgementAction());
 
+        helpMenu.add(new JSeparator());
+
+        // Add hot news action
+        helpMenu.add(App.showHotNewsAction());
+
         // Add release action
         helpMenu.add(App.showReleaseAction());
 
-        // Add release action
+        // Add Faq action
         helpMenu.add(App.showFaqAction());
 
         if (_isRunningUnderMacOSX == false)

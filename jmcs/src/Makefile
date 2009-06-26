@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.23 2009-03-21 07:20:29 mella Exp $"
+# "@(#) $Id: Makefile,v 1.24 2009-06-26 09:40:52 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.23  2009/03/21 07:20:29  mella
+# revert to previous castor
+#
 # Revision 1.22  2009/03/20 10:03:36  mella
 # remove unsed jar
 #
@@ -220,7 +223,8 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/Tidy.jar \
 		../lib/java-getopt-1.0.13.jar \
 		../lib/AppleJavaExtensions.jar \
-		../lib/commons-lang-2.4.jar
+		../lib/commons-lang-2.4.jar \
+		../config/jmcsLatexIndex2HsTOC.xsl
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

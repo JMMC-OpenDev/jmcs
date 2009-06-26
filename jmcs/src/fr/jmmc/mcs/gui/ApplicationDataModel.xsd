@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" >
+
+    <xsd:element name="ApplicationData">
+        <xsd:complexType>
+            <xsd:sequence>
+
+                <!-- Element program -->
+                <xsd:element name="program">
+                    <xsd:complexType>
+                        <xsd:attribute name="name" type="xsd:string"/>
+                        <xsd:attribute name="version" type="xsd:string"/>
+                    </xsd:complexType>
+                </xsd:element>
+
+                <!-- Element compilation -->
+                <xsd:element name="compilation">
+                    <xsd:complexType>
+                        <xsd:attribute name="date" type="xsd:string"/>
+                        <xsd:attribute name="compiler" type="xsd:string"/>
+                    </xsd:complexType>
+                </xsd:element>
+
+                <!-- Element text -->
+                <xsd:element name="text" type="xsd:string"/>
+
+                <!-- Element dependences -->
+                <xsd:element name="dependences">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="package" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:attribute name="name" type="xsd:string"/>
+                                    <xsd:attribute name="description" type="xsd:string"/>
+                                    <xsd:attribute name="link" type="xsd:string"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+
+                <!-- Element menubar -->
+                <xsd:element name="menubar" minOccurs="0" maxOccurs="1">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+
+                <!-- Element releasenotes -->
+                <xsd:element name="releasenotes">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="release" minOccurs="1" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="prerelease" minOccurs="1" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="change" minOccurs="1" maxOccurs="unbounded">
+                                                        <xsd:complexType mixed="true">
+                                                            <xsd:sequence>
+                                                                <xsd:any processContents="lax" minOccurs="0"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="type" type="xsd:string"/>
+                                                            <xsd:attribute name="id" type="xsd:string"/>
+                                                            <xsd:attribute name="url" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                                <xsd:attribute name="version" type="xsd:string" use="required"/>
+                                                <xsd:attribute name="tag" type="xsd:string"/>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                    <xsd:attribute name="version" type="xsd:string" use="required"/>
+                                    <xsd:attribute name="tag" type="xsd:string"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="acknowledgment" minOccurs="0" maxOccurs="1" type="xsd:string">
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="link" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!-- Element menu -->
+    <xsd:element name="menu">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+            <xsd:attribute name="label" type="xsd:string"/>
+            <xsd:attribute name="classpath" type="xsd:string"/>
+            <xsd:attribute name="action" type="xsd:string"/>
+            <xsd:attribute name="checkbox" type="xsd:string"/>
+            <xsd:attribute name="accelerator" type="xsd:string"/>
+            <xsd:attribute name="description" type="xsd:string"/>
+            <xsd:attribute name="icon" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

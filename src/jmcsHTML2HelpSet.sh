@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsHTML2HelpSet.sh,v 1.4 2009-01-15 16:00:14 mella Exp $"
+# "@(#) $Id: jmcsHTML2HelpSet.sh,v 1.5 2009-06-26 09:40:52 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2009/01/15 16:00:14  mella
+# user can give a module name or existing html directory
+#
 # Revision 1.3  2008/11/21 11:15:10  mella
 # Improve html harvesting (especially in webstart mode for use)
 #
@@ -122,9 +125,10 @@ do
     rm $module_doc/$module".html"
     rm -rf $module_doc/WARNINGS
 
-    echo "Cleaning HTML files with Tidy ..."
+    #echo "Cleaning HTML files with Tidy ..."
     # Parse and correct HTML with Tidy
-    java -jar $INTROOT/lib/Tidy.jar -utf8 -m -i -e -asxml $module_doc/*.html
+    #java -jar $INTROOT/lib/Tidy.jar -utf8 -m -i -e -asxml $module_doc/*.html
+
 
     # Remove -doc extension
     mv $module_doc $module
@@ -138,6 +142,32 @@ echo $header$(pwd)$footer > documentation.xml
 # Launch jhelpdev
 java -classpath $(mkfMakeJavaClasspath) fr.jmmc.mcs.gui.jmcsGenerateHelpsetFromHtml documentation.xml
 
+# try to get one better TOC if only one latex module is given
+HTMLINDEXFILE="$(basename $@)/index.html"
+if [ -e "$HTMLINDEXFILE" ]
+then
+    echo "Trying to build TOC with latex index"
+    INDEXFILE="$(basename $@)/index.xml"
+    # tidy html file
+    cp $HTMLINDEXFILE $INDEXFILE
+    java -jar $INTROOT/lib/Tidy.jar -utf8 -m -i -asxml $INDEXFILE
+    
+    DIRNAME="$(dirname $INDEXFILE)"
+    DOCTOC="documentationTOC.xml"
+    if grep LaTeX2HTML $INDEXFILE &> /dev/null
+    then
+        XSLTFILE=$(miscLocateFile jmcsLatexIndex2HsTOC.xsl)
+        mv $DOCTOC $DOCTOC.bac
+        xsltproc -o $DOCTOC --stringparam directory "$DIRNAME" $XSLTFILE $INDEXFILE 
+        xsltproc --stringparam directory "$DIRNAME" $XSLTFILE $INDEXFILE 
+
+    fi
+else
+    ls $(basename $@)
+    echo "Nothing found as latex index"
+fi
+
+
 echo "Jar construction ..."
 # Create the helpset jar file
 OUTPUT_JAR=../../lib/$jar_name
@@ -148,7 +178,7 @@ echo "  '$OUTPUT_JAR' generated"
 # Return to doc folder and remove Latex tempory folder folder
 # in order to avoid later files inclusion
 cd ../
-rm -rf tmp
+#rm -rf tmp
 
 # Remove jhelpdev tmp folder if exists
 # in order to permit to an other person

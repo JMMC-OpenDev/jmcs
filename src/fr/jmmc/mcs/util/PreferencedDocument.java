@@ -1,19 +1,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedDocument.java,v 1.2 2007-06-21 07:38:51 lafrasse Exp $"
+ * "@(#) $Id: PreferencedDocument.java,v 1.3 2009-07-16 09:34:59 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/06/21 07:38:51  lafrasse
+ * Jalopization.
+ *
  * Revision 1.1  2007/02/14 10:14:38  mella
  * First revision
  *
  *
  ******************************************************************************/
 package fr.jmmc.mcs.util;
-
-import java.awt.event.*;
 
 import java.util.*;
 
@@ -40,11 +41,12 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
     /** Shared instance */
     private Preferences _preferences;
 
-    /**
-     * DOCUMENT ME!
-     */
-    java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-            "fr.jmmc.mcs.util.PreferencedDocument");
+    /** Class name */
+    private final static String _className = "fr.jmmc.mcs.util.PreferencedDocument";
+
+    /** Class logger */
+    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(
+            _className);
 
     /**
      * PreferencedButtonModel constructor
@@ -97,9 +99,9 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
     }
 
     /**
-     * DOCUMENT ME!
+     * Get the widget content.
      *
-     * @return DOCUMENT ME!
+     * @return the widget content.
      */
     public String getMyText()
     {
@@ -118,13 +120,13 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
     }
 
     /**
-     * DOCUMENT ME!
+     * Change the value of the widget.
      *
-     * @param newValue DOCUMENT ME!
+     * @param newValue new value to be written into the widget.
      */
     public void setMyText(String newValue)
     {
-        logger.fine("setting new content to " + newValue);
+        _logger.fine("setting new content to " + newValue);
 
         try
         {
@@ -141,11 +143,11 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
     }
 
     /**
-     * DOCUMENT ME!
+     * Sett new preference value.
      *
-     * @param newValue DOCUMENT ME!
+     * @param newValue new string value.
      */
-    public void setPrefValue(String newValue)
+    private void setPrefValue(String newValue)
     {
         try
         {
@@ -158,49 +160,36 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
     }
 
     /**
-     * Triggerd if the text has been changed.
+     * Handle event.
+     *
+     * @param evt document event.
      */
     public void changedUpdate(DocumentEvent evt)
     {
-        // Gives notification that an attribute or set of attributes changed.                
-        logger.finest("changedUpdate event :");
-
-        // If the widget changed is not due to user action,
-        // return not to enter into an infinite loop
-        /*if (evt.)
-           {
-               if (evt.getActionCommand().equals("internalUpdate"))
-               {
-                   logger.info("This event is due to a preference update");
-                   return;
-               }
-           }
-           //*/
-
-        //setMyText(getMyText());        
+        // this event is not used
     }
 
     /**
-     * DOCUMENT ME!
+     * Handle event.
      *
-     * @param evt DOCUMENT ME!
+     * @param evt document event.
      */
     public void insertUpdate(DocumentEvent evt)
     {
         // Gives notification that there was an insert into the document.        
-        logger.finest("insertUpdate event:" + getMyText());
+        _logger.finest("insertUpdate event:" + getMyText());
         setPrefValue(getMyText());
     }
 
     /**
-     * DOCUMENT ME!
+     * Handle event.
      *
-     * @param evt DOCUMENT ME!
+     * @param evt document event.
      */
     public void removeUpdate(DocumentEvent evt)
     {
         // Gives notification that a portion of the document has been removed.        
-        logger.finest("removeUpdate event:" + getMyText());
+        _logger.finest("removeUpdate event:" + getMyText());
         setPrefValue(getMyText());
     }
 
@@ -210,16 +199,12 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
     public void update(Observable o, Object arg)
     {
         // Notify event Listener (telling this that it is an internal update)
-        logger.fine("Fire action listeners ");
-
-        // fireActionPerformed(new ActionEvent(this, SELECTED, "internalUpdate"));
+        _logger.fine("Fire action listeners ");
 
         // Update the widget view according property value changed
         String nextValue = _preferences.getPreference(_preferenceProperty);
-        logger.fine("Setting " + _preferenceProperty + " to " + nextValue);
+        _logger.fine("Setting " + _preferenceProperty + " to " + nextValue);
         setMyText(nextValue);
-
-        //setSelected(nextValue);
     }
 }
 /*___oOo___*/

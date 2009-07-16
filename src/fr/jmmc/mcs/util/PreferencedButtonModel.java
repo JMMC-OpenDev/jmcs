@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedButtonModel.java,v 1.5 2007-02-13 13:48:51 lafrasse Exp $"
+ * "@(#) $Id: PreferencedButtonModel.java,v 1.6 2009-07-16 09:14:37 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2007/02/13 13:48:51  lafrasse
+ * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
+ *
  * Revision 1.4  2006/10/16 14:29:49  lafrasse
  * Updated to reflect MCSLogger API changes.
  *
@@ -22,12 +25,9 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
-import fr.jmmc.mcs.log.MCSLogger;
-
 import java.awt.event.*;
 
 import java.util.*;
-import java.util.logging.*;
 
 import javax.swing.DefaultButtonModel;
 
@@ -51,6 +51,13 @@ public class PreferencedButtonModel extends DefaultButtonModel
 
     /** Shared instance */
     private Preferences _preferences;
+
+    /** Class name */
+    private final static String _className = "fr.jmmc.mcs.util.PreferencedButtonModel";
+
+    /** Class logger */
+    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(
+            _className);
 
     /**
      * PreferencedButtonModel constructor
@@ -116,22 +123,13 @@ public class PreferencedButtonModel extends DefaultButtonModel
         {
             if (evt.getActionCommand().equals("internalUpdate"))
             {
-                MCSLogger.info("This event is due to a preference update");
-
+                _logger.fine("This event is due to a preference update and does nothing");
                 return;
-
-                /*MCSLogger.info("Setting preference '" + _preferenceProperty + "' to " +
-                   nextValue);
-                   _requireSetSelected=false;
-                   _preferences.setPreference(_preferenceProperty, nextValue);
-                   MCSLogger.info("This is a internal update");
-                   _requireSetSelected=true;
-                 */
             }
         }
 
-        MCSLogger.info("This event is due to a user interaction");
-        MCSLogger.info("Setting preference '" + _preferenceProperty + "' to " +
+        _logger.fine("This event is due to a user interaction");
+        _logger.fine("Setting preference '" + _preferenceProperty + "' to " +
             nextValue);
 
         try
@@ -140,7 +138,7 @@ public class PreferencedButtonModel extends DefaultButtonModel
         }
         catch (Exception e)
         {
-            // @TODO
+            new fr.jmmc.mcs.gui.ReportDialog(new javax.swing.JFrame(), true, e).setVisible(true);
         }
     }
 
@@ -150,13 +148,13 @@ public class PreferencedButtonModel extends DefaultButtonModel
     public void update(Observable o, Object arg)
     {
         // Notify event Listener (telling this that it is an internal update)
-        MCSLogger.info("Fire action listeners ");
+        _logger.fine("Fire action listeners ");
 
         fireActionPerformed(new ActionEvent(this, SELECTED, "internalUpdate"));
 
         // Update the widget view according property value changed
         boolean nextValue = _preferences.getPreferenceAsBoolean(_preferenceProperty);
-        MCSLogger.info("Setting selected to " + nextValue);
+        _logger.fine("Setting selected to " + nextValue);
         setSelected(nextValue);
     }
 }

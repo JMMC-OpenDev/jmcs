@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.27 2009-05-13 09:24:25 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.28 2009-08-26 07:26:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2009/05/13 09:24:25  lafrasse
+ * Added a generic "Hot News (RSS Feed)" Help menu item.
+ *
  * Revision 1.26  2009/04/16 15:44:51  lafrasse
  * Jalopization.
  *
@@ -107,12 +110,10 @@ import java.awt.Component;
 
 import java.lang.reflect.Method;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;

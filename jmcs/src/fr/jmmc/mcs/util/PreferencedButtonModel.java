@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedButtonModel.java,v 1.6 2009-07-16 09:14:37 mella Exp $"
+ * "@(#) $Id: PreferencedButtonModel.java,v 1.7 2009-08-28 09:01:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2009/07/16 09:14:37  mella
+ * Add proper logger
+ * Handle exception triggering a bugreport dialog
+ *
  * Revision 1.5  2007/02/13 13:48:51  lafrasse
  * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
  *
@@ -46,18 +50,17 @@ public class PreferencedButtonModel extends DefaultButtonModel
     /** Store PreferencedButtonModel instances for a given preference name */
     protected static Hashtable _instancesHashtable = new Hashtable();
 
+    /** Class name */
+    private final static String _className = "fr.jmmc.mcs.util.PreferencedButtonModel";
+
+    /** Class logger */
+    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(_className);
+
     /** Preference property */
     private String _preferenceProperty;
 
     /** Shared instance */
     private Preferences _preferences;
-
-    /** Class name */
-    private final static String _className = "fr.jmmc.mcs.util.PreferencedButtonModel";
-
-    /** Class logger */
-    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(
-            _className);
 
     /**
      * PreferencedButtonModel constructor
@@ -123,7 +126,9 @@ public class PreferencedButtonModel extends DefaultButtonModel
         {
             if (evt.getActionCommand().equals("internalUpdate"))
             {
-                _logger.fine("This event is due to a preference update and does nothing");
+                _logger.fine(
+                    "This event is due to a preference update and does nothing");
+
                 return;
             }
         }

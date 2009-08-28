@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedDocument.java,v 1.3 2009-07-16 09:34:59 mella Exp $"
+ * "@(#) $Id: PreferencedDocument.java,v 1.4 2009-08-28 09:01:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2009/07/16 09:34:59  mella
+ * Improve documentation and clean code
+ *
  * Revision 1.2  2007/06/21 07:38:51  lafrasse
  * Jalopization.
  *
@@ -35,18 +38,17 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
     /** Store PreferencedButtonModel instances for a given preference name */
     protected static Hashtable _instancesHashtable = new Hashtable();
 
+    /** Class name */
+    private final static String _className = "fr.jmmc.mcs.util.PreferencedDocument";
+
+    /** Class logger */
+    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(_className);
+
     /** Preference property */
     private String _preferenceProperty;
 
     /** Shared instance */
     private Preferences _preferences;
-
-    /** Class name */
-    private final static String _className = "fr.jmmc.mcs.util.PreferencedDocument";
-
-    /** Class logger */
-    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(
-            _className);
 
     /**
      * PreferencedButtonModel constructor

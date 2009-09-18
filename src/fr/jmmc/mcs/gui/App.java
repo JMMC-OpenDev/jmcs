@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.52 2009-05-13 09:24:24 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.53 2009-09-18 10:41:40 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.52  2009/05/13 09:24:24  lafrasse
+ * Added a generic "Hot News (RSS Feed)" Help menu item.
+ *
  * Revision 1.51  2009/04/30 09:05:05  lafrasse
  * Added code to automatically load a file given by the executing OS on startup.
  *
@@ -1015,9 +1018,9 @@ public abstract class App
                 // Generate one instead
                 String appName   = _applicationDataModel.getProgramName();
                 String appURL    = _applicationDataModel.getLinkValue();
-                _acknowledgement = "This research has made use of the \\texttt{" +
-                    appName +
-                    "} service of the Jean-Marie Mariotti Center\n\\footnote{Available at " +
+                _acknowledgement = "This research has made use of the "+
+                        "Jean-Marie Mariotti Center\\texttt{" + appName +
+                    "} service\n\\footnote{Available at " +
                     appURL + "}";
             }
 

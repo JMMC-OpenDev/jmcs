@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.21 2009-03-20 06:23:48 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.22 2009-09-18 10:57:52 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.21  2009/03/20 06:23:48  mella
+# move to castor1.3
+#
 # Revision 1.20  2008/12/10 20:47:24  mella
 # add comment
 #
@@ -466,6 +469,24 @@ createAppJar()
     rm -rf tmpbigjar
 }
 
+createHtmlAcknowledgement()
+{
+    APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
+    OUTPUTFILE=acknowledgment.htm
+    echo "Creating '$OUTPUTFILE' ... "
+    cd $APP_WEBROOT
+    xml sel -I -t -e "html" \
+    -e "head" \
+    -e "title" -o "$APPNAME acknowledgment" -b -b \
+    -e "body" \
+    -e "pre" -v "//acknowledgment" \
+    -b -b \
+    ${APPLICATION_DATA_XML} > $OUTPUTFILE
+    cd -
+    echo "    done"
+}
+
+
 createHtmlIndex()
 {
     OUTPUTFILE=index.htm
@@ -650,6 +671,7 @@ createReleaseFiles
 copyJnlpAndRelated $JNLPFILE $APP_WEBROOT $APP_CODEBASE || exit $?
 createAppJar
 createHtmlIndex
+createHtmlAcknowledgement
 
 echo "Installing application into '$REAL_APP_WEBROOT' directory..." 
 if [ -e "$REAL_APP_WEBROOT" ]

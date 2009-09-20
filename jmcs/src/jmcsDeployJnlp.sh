@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.22 2009-09-18 10:57:52 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.23 2009-09-20 20:21:35 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.22  2009/09/18 10:57:52  mella
+# Add generation of acknowledgement
+#
 # Revision 1.21  2009/03/20 06:23:48  mella
 # move to castor1.3
 #
@@ -472,7 +475,7 @@ createAppJar()
 createHtmlAcknowledgement()
 {
     APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
-    OUTPUTFILE=acknowledgment.htm
+    OUTPUTFILE=acknowledgement.htm
     echo "Creating '$OUTPUTFILE' ... "
     cd $APP_WEBROOT
     xml sel -I -t -e "html" \

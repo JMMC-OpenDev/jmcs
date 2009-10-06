@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.24 2009-06-26 09:40:52 mella Exp $"
+# "@(#) $Id: Makefile,v 1.25 2009-10-06 15:54:57 lafrasse Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.24  2009/06/26 09:40:52  mella
+# fix generation of TOC into the javaHelpSet
+#
 # Revision 1.23  2009/03/21 07:20:29  mella
 # revert to previous castor
 #
@@ -183,11 +186,11 @@ jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png \
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES = 
+JAVA_EXECUTABLES = starResolver
 
 #
 # <brief description of jmcsGenerateHelpsetFromHtml java program>
-jmcsGenerateHelpsetFromHtml_CLASS    = fr.jmmc.mcs.gui.jmcsGenerateHelpsetFromHtml
+starResolver_CLASS  = fr.jmmc.mcs.astro.star.StarResolver
 
 #
 # Command Definition Files (CDF)

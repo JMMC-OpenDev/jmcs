@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.1 2009-10-06 15:54:17 lafrasse Exp $"
+ * "@(#) $Id: Star.java,v 1.2 2009-10-08 14:31:02 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2009/10/06 15:54:17  lafrasse
+ * First release.
+ *
  *
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
@@ -48,7 +51,10 @@ public class Star extends Observable
     {
         setChanged();
 
-        return content.put(property, value);
+        Object object = content.put(property, value);
+        notifyObservers();
+
+        return object;
     }
 
     /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SearchField.java,v 1.1 2009-10-07 15:59:17 lafrasse Exp $"
+ * "@(#) $Id: SearchField.java,v 1.2 2009-10-08 08:26:47 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2009/10/07 15:59:17  lafrasse
+ * First release.
+ *
  *
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
@@ -179,11 +182,18 @@ class SearchField extends JTextField
             int height = getHeight();
 
             // Paint a rounded rectangle in the background surrounded by a black line.
-            g.setColor(Color.BLACK);
+            g.setColor(Color.LIGHT_GRAY);
             g.fillRoundRect(0, 0, width, height, height, height);
+
+            g.setColor(Color.GRAY);
+            g.fillRoundRect(0, -1, width, height, height, height);
+
             g.setColor(getBackground());
             g.fillRoundRect(1, 1, width - 2, height - 2, height - 2, height -
                 2);
+
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawLine(10, 1, width - 10, 1);
         }
 
         // Now call the superclass behavior to paint the foreground.

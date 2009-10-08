@@ -1,75 +1,31 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SearchField.java,v 1.3 2009-10-08 09:02:22 lafrasse Exp $"
+ * "@(#) $Id: SearchField.java,v 1.4 2009-10-08 14:09:11 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2009/10/08 09:02:22  lafrasse
+ * Added magnifying glass icon on the left.
+ *
  * Revision 1.2  2009/10/08 08:26:47  lafrasse
  * Refined border color and anti-aliasing.
  *
  * Revision 1.1  2009/10/07 15:59:17  lafrasse
  * First release.
  *
- *
  ******************************************************************************/
-package fr.jmmc.mcs.astro.star;
+package fr.jmmc.mcs.gui;
 
 import org.apache.commons.lang.SystemUtils;
 
 import java.awt.*;
 import java.awt.event.*;
 
-import java.util.logging.Logger;
-
 import javax.swing.*;
-import javax.swing.JPanel;
 import javax.swing.border.*;
 import javax.swing.event.*;
-
-
-/**
- * Store informations relative to a star.
- */
-public class StarResolverWidget extends SearchField
-{
-    /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.astro.star.StarResolverWidget");
-
-    /**
-     * Main.
-     */
-    public static void main(String[] args)
-    {
-        // Context initialization
-        JFrame frame = new JFrame();
-        frame.setTitle("StarResolverWidget Demo");
-
-        Container   container   = frame.getContentPane();
-        JPanel      panel       = new JPanel();
-        SearchField searchField = new SearchField("Simbad");
-        searchField.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    String starName = e.getActionCommand();
-
-                    if (starName.length() > 0)
-                    {
-                        System.out.println("Searching for '" + starName + "'.");
-                    }
-                }
-            });
-        panel.add(searchField);
-        container.add(panel);
-        panel.setVisible(true);
-
-        frame.pack();
-        frame.setVisible(true);
-    }
-}
 
 
 /**
@@ -81,45 +37,37 @@ public class StarResolverWidget extends SearchField
  *
  * @todo : add a menu of recent searches.
  * @todo : make recent searches persistent.
- * @todo : use rounded corners, at least on Mac OS X.
  */
-class SearchField extends JTextField
+public class SearchField extends JTextField
 {
-    /**
-     * DOCUMENT ME!
-     */
+    /** The border that draws the magnifying glass and the cancel cross */
     private static final Border CANCEL_BORDER = new CancelBorder();
 
-    /**
-     * DOCUMENT ME!
-     */
+    /** Store wether notifications should be sent every time a key is pressed */
     private boolean sendsNotificationForEachKeystroke = false;
 
-    /**
-     * DOCUMENT ME!
-     */
+    /** Store wether a text should be drawn when nothing else in textfield */
     private boolean showingPlaceholderText = false;
 
-    /**
-     * DOCUMENT ME!
-     */
+    /** store wether the cnacell cross is currently clicked */
     private boolean armed = false;
 
     /**
      * Creates a new SearchField object.
      *
-     * @param placeholderText DOCUMENT ME!
+     * @param placeholderText the text displayed when nothing in.
      */
     public SearchField(String placeholderText)
     {
-        super(8);
+        super(8); // 8 characters wide by default
+
         addFocusListener(new PlaceholderText(placeholderText));
         initBorder();
         initKeyListener();
     }
 
     /**
-     * Creates a new SearchField object.
+     * Creates a new SearchField object with a default "Search" place holder.
      */
     public SearchField()
     {
@@ -127,11 +75,11 @@ class SearchField extends JTextField
     }
 
     /**
-     * DOCUMENT ME!
+     * Draw the custom widget border.
      */
     private void initBorder()
     {
-        // On Mac OS X, use specific search textfield widget
+        // On Mac OS X, simply use the OS specific search textfield widget
         if (SystemUtils.IS_OS_MAC_OSX == true)
         {
             // http://developer.apple.com/mac/library/technotes/tn2007/tn2196.html#//apple_ref/doc/uid/DTS10004439
@@ -156,11 +104,11 @@ class SearchField extends JTextField
             return;
         }
 
-        // Add an empty border around us to compensate for
-        // the rounded corners.
-        setBorder(BorderFactory.createEmptyBorder(4, 20, 4, 14));
+        // Fallback for platforms other than Mac OS X
 
-        // On other operating systems, build a custom widget
+        // Add an empty border around to compensate for rounded corners
+        setBorder(BorderFactory.createEmptyBorder(4, 22, 4, 14));
+
         setBorder(new CompoundBorder(getBorder(), CANCEL_BORDER));
 
         MouseInputListener mouseInputListener = new CancelListener();
@@ -173,12 +121,13 @@ class SearchField extends JTextField
     }
 
     /**
-     * DOCUMENT ME!
+     * Draw the dedicated custom rounded textfield.
      *
-     * @param g DOCUMENT ME!
+     * @param g the graphical context to draw in.
      */
     protected void paintComponent(Graphics g)
     {
+        // On anything but Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX == false)
         {
             int width  = getWidth();
@@ -204,7 +153,7 @@ class SearchField extends JTextField
     }
 
     /**
-     * DOCUMENT ME!
+     * Follow keystrokes to notify listeners accordinaly.
      */
     private void initKeyListener()
     {
@@ -225,7 +174,7 @@ class SearchField extends JTextField
     }
 
     /**
-     * DOCUMENT ME!
+     * Reset SearchField content and notify listeners.
      */
     private void cancel()
     {
@@ -234,7 +183,7 @@ class SearchField extends JTextField
     }
 
     /**
-     * DOCUMENT ME!
+     * Trap notifications when showing place holder.
      */
     private void maybeNotify()
     {
@@ -247,9 +196,9 @@ class SearchField extends JTextField
     }
 
     /**
-     * DOCUMENT ME!
+     * Store wether notifications should be sent for each key pressed.
      *
-     * @param eachKeystroke DOCUMENT ME!
+     * @param eachKeystroke true to notify any key pressed, false otherwise.
      */
     public void setSendsNotificationForEachKeystroke(boolean eachKeystroke)
     {
@@ -257,11 +206,11 @@ class SearchField extends JTextField
     }
 
     /**
-     * Draws the cancel button as a gray circle with a white cross inside.
+     * Draws the cancel button (a gray circle with a white cross) and the magnifying glass icon.
      */
     static class CancelBorder extends EmptyBorder
     {
-        private static final Color GRAY = new Color(0.7f, 0.7f, 0.7f);
+        private static final Color DISARMED_GRAY = new Color(0.7f, 0.7f, 0.7f);
 
         CancelBorder()
         {
@@ -271,18 +220,19 @@ class SearchField extends JTextField
         public void paintBorder(Component c, Graphics oldGraphics, int x,
             int y, int width, int height)
         {
-            SearchField field = (SearchField) c;
-            Graphics2D  g     = (Graphics2D) oldGraphics;
+            SearchField field           = (SearchField) c;
+            Color       backgroundColor = field.getBackground();
+            Graphics2D  g               = (Graphics2D) oldGraphics;
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
             // Draw magnifying glass lens
             final int diskL = 9;
-            final int diskX = x - diskL - 5;
+            final int diskX = x - diskL - 6;
             final int diskY = y + ((height - 1 - diskL) / 2);
             g.setColor(Color.DARK_GRAY);
             g.fillOval(diskX, diskY, diskL, diskL);
-            g.setColor(Color.WHITE);
+            g.setColor(backgroundColor);
             g.fillOval(diskX + 2, diskY + 2, diskL - 4, diskL - 4);
 
             // Draw magnifying glass handle
@@ -298,6 +248,7 @@ class SearchField extends JTextField
             if (field.showingPlaceholderText ||
                     (field.getText().length() == 0))
             {
+                // Don't draw the cancel cross
                 return;
             }
 
@@ -305,14 +256,14 @@ class SearchField extends JTextField
             final int circleL = 14;
             final int circleX = (x + width) - circleL + 9;
             final int circleY = y + ((height - 1 - circleL) / 2);
-            g.setColor(field.armed ? Color.GRAY : GRAY);
+            g.setColor(field.armed ? Color.GRAY : DISARMED_GRAY);
             g.fillOval(circleX, circleY, circleL, circleL);
 
             // Draw white cross
             final int lineL = circleL - 8;
             final int lineX = circleX + 4;
             final int lineY = circleY + 4;
-            g.setColor(Color.WHITE);
+            g.setColor(backgroundColor);
             g.drawLine(lineX, lineY, lineX + lineL, lineY + lineL);
             g.drawLine(lineX, lineY + lineL, lineX + lineL, lineY);
         }

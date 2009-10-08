@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SearchField.java,v 1.2 2009-10-08 08:26:47 lafrasse Exp $"
+ * "@(#) $Id: SearchField.java,v 1.3 2009-10-08 09:02:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2009/10/08 08:26:47  lafrasse
+ * Refined border color and anti-aliasing.
+ *
  * Revision 1.1  2009/10/07 15:59:17  lafrasse
  * First release.
  *
@@ -269,7 +272,28 @@ class SearchField extends JTextField
             int y, int width, int height)
         {
             SearchField field = (SearchField) c;
-            Color       color = GRAY;
+            Graphics2D  g     = (Graphics2D) oldGraphics;
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw magnifying glass lens
+            final int diskL = 9;
+            final int diskX = x - diskL - 5;
+            final int diskY = y + ((height - 1 - diskL) / 2);
+            g.setColor(Color.DARK_GRAY);
+            g.fillOval(diskX, diskY, diskL, diskL);
+            g.setColor(Color.WHITE);
+            g.fillOval(diskX + 2, diskY + 2, diskL - 4, diskL - 4);
+
+            // Draw magnifying glass handle
+            final int downX = (diskX + diskL) - 3;
+            final int downY = (diskY + diskL) - 3;
+            final int upX   = downX + 4;
+            final int upY   = downY + 4;
+            g.setColor(Color.DARK_GRAY);
+            g.drawLine(downX, downY, upX, upY);
+            g.drawLine(downX, downY, upX, upY);
+            g.drawLine(downX + 1, downY, upX, upY);
 
             if (field.showingPlaceholderText ||
                     (field.getText().length() == 0))
@@ -277,15 +301,11 @@ class SearchField extends JTextField
                 return;
             }
 
-            Graphics2D g = (Graphics2D) oldGraphics;
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-
             // Draw shaded disk
             final int circleL = 14;
             final int circleX = (x + width) - circleL + 9;
             final int circleY = y + ((height - 1 - circleL) / 2);
-            g.setColor(field.armed ? Color.GRAY : color);
+            g.setColor(field.armed ? Color.GRAY : GRAY);
             g.fillOval(circleX, circleY, circleL, circleL);
 
             // Draw white cross

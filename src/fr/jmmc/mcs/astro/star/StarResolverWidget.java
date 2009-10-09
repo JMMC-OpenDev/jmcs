@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.1 2009-10-08 14:31:20 lafrasse Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.2 2009-10-09 08:05:59 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2009/10/08 14:31:20  lafrasse
+ * First release.
+ *
  *
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
@@ -33,17 +36,15 @@ public class StarResolverWidget extends SearchField
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.astro.star.StarResolverWidget");
 
-    /**
-     * DOCUMENT ME!
-     */
-    Star _star = null;
+    /** Container to store retrieved star properties */
+    private Star _star = null;
 
     /**
      * Creates a new StarResolverWidget object.
      *
      * @param star DOCUMENT ME!
      */
-    StarResolverWidget(Star star)
+    public StarResolverWidget(Star star)
     {
         super("Simbad");
 
@@ -67,10 +68,11 @@ public class StarResolverWidget extends SearchField
     }
 
     /**
-     * Main.
+     * Main - for StarResolverWidget demonstration and test only.
      */
     public static void main(String[] args)
     {
+        // Resolver initialization
         final Star star = new Star();
         star.addObserver(new Observer()
             {

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.1 2009-10-06 15:54:18 lafrasse Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.2 2009-10-13 15:35:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2009/10/06 15:54:18  lafrasse
+ * First release.
+ *
  *
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
@@ -208,21 +211,21 @@ public class StarResolver
 
                 if (coordinatesTokenizer.countTokens() == 4)
                 {
-                    float ra = Float.parseFloat(coordinatesTokenizer.nextToken());
+                    double ra = Double.parseDouble(coordinatesTokenizer.nextToken());
                     _logger.finest("RA_d = '" + ra + "'.");
-                    _starModel.setPropertyValue(StarProperty.RA_d, ra);
+                    _starModel.setPropertyAsDouble(Star.Property.RA_d, ra);
 
-                    float dec = Float.parseFloat(coordinatesTokenizer.nextToken());
+                    double dec = Double.parseDouble(coordinatesTokenizer.nextToken());
                     _logger.finest("DEC_d = '" + dec + "'.");
-                    _starModel.setPropertyValue(StarProperty.DEC_d, dec);
+                    _starModel.setPropertyAsDouble(Star.Property.DEC_d, dec);
 
                     String hmsRa = coordinatesTokenizer.nextToken();
                     _logger.finest("RA = '" + hmsRa + "'.");
-                    _starModel.setPropertyValue(StarProperty.RA, hmsRa);
+                    _starModel.setPropertyAsString(Star.Property.RA, hmsRa);
 
                     String dmsDec = coordinatesTokenizer.nextToken();
                     _logger.finest("DEC = '" + dmsDec + "'.");
-                    _starModel.setPropertyValue(StarProperty.DEC, dmsDec);
+                    _starModel.setPropertyAsString(Star.Property.DEC, dmsDec);
                 }
                 else
                 {
@@ -232,7 +235,8 @@ public class StarResolver
 
                 // Second line should contain object types, separated by ','
                 String objectTypes = lineTokenizer.nextToken();
-                _starModel.setPropertyValue(StarProperty.OTYPELIST, objectTypes);
+                _starModel.setPropertyAsString(Star.Property.OTYPELIST,
+                    objectTypes);
                 _logger.finer("OTYPELIST = '" + objectTypes + "'.");
 
                 // Third line should contain star fluxes, separated by ','
@@ -246,12 +250,12 @@ public class StarResolver
                     String token         = fluxesTokenizer.nextToken();
                     String magnitudeBand = "FLUX_" +
                         token.substring(0, 1).toUpperCase(); // The first character is the magnutude band letter
-                    String value         = token.substring(2); // The second character is "=", followed by the magnitude value in float
+                    String value         = token.substring(2); // The second character is "=", followed by the magnitude value in double
 
                     _logger.finest(magnitudeBand + " = '" + value + "'.");
 
-                    _starModel.setPropertyValue(StarProperty.fromString(
-                            magnitudeBand), Float.parseFloat(value));
+                    _starModel.setPropertyAsDouble(Star.Property.fromString(
+                            magnitudeBand), Double.parseDouble(value));
                 }
             }
             catch (Exception ex)

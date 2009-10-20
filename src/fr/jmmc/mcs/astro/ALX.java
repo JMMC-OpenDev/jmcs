@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.5 2008-05-30 12:31:11 lafrasse Exp $"
+ * "@(#) $Id: ALX.java,v 1.6 2009-10-20 12:38:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2008/05/30 12:31:11  lafrasse
+ * Changed convertRA() & convertDEC() APIs to parseRA() & parseDEC() respectively.
+ * Added methods for "arcmin to/from degrees and minutes" conversion.
+ *
  * Revision 1.4  2007/06/21 07:38:51  lafrasse
  * Jalopization.
  *
@@ -239,7 +243,7 @@ public class ALX
     }
 
     /**
-     * Convert an arc-minute value to minutes.
+     * Convert a value in arc-minute to minutes.
      *
      * @param arcmin the arc-minute value to convert.
      *
@@ -267,7 +271,7 @@ public class ALX
     }
 
     /**
-     * Convert an arc-minute value to degrees.
+     * Convert a value in arc-minute to degrees.
      *
      * @param arcmin the arc-minute value to convert.
      *
@@ -292,6 +296,34 @@ public class ALX
         double arcmin = (degrees * 60);
 
         return arcmin;
+    }
+
+    /**
+     * Convert a minute value to degrees.
+     *
+     * @param minutes the value in minute to convert.
+     *
+     * @return a double containing the converted value.
+     */
+    public static double minutes2degrees(double minutes)
+    {
+        double degrees = minutes / 4;
+
+        return degrees;
+    }
+
+    /**
+     * Convert a value in degrees to minute.
+     *
+     * @param degrees the value in degrees to convert.
+     *
+     * @return a double containing the converted value.
+     */
+    public static double degrees2minutes(double degrees)
+    {
+        double minutes = degrees * 4;
+
+        return minutes;
     }
 }
 /*___oOo___*/

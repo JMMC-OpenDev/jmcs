@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.4 2009-10-23 12:23:35 lafrasse Exp $"
+ * "@(#) $Id: Star.java,v 1.5 2009-10-23 15:38:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2009/10/23 12:23:35  lafrasse
+ * Moved observer notification responsability to developper.
+ * Added a property for N flux magnitude value.
+ *
  * Revision 1.3  2009/10/13 15:34:54  lafrasse
  * Moved StarProperty enumeration in Star.
  * Typed getters and setters for string and Double.
@@ -27,9 +31,6 @@ import java.util.logging.*;
 
 /**
  * Store data relative to a star.
- *
- * @todo Add a clear() method and call it in StarResolver each time a new query
- * is performed.
  */
 public class Star extends Observable
 {
@@ -38,10 +39,13 @@ public class Star extends Observable
             "fr.jmmc.mcs.astro.star.Star");
 
     /** Star property-value backing store for String data */
-    Hashtable<Property, String> _stringContent = null;
+    private Hashtable<Property, String> _stringContent = null;
 
     /** Star property-value backing store for Double data */
-    Hashtable<Property, Double> _doubleContent = null;
+    private Hashtable<Property, Double> _doubleContent = null;
+
+    /** CDS Simbad error message */
+    private String _cdsSimbadErrorMessage = null;
 
     /**
      * Constructor.
@@ -51,6 +55,18 @@ public class Star extends Observable
         super();
         _stringContent     = new Hashtable();
         _doubleContent     = new Hashtable();
+    }
+
+    /**
+     * Clear all content.
+     */
+    public void clear()
+    {
+        setChanged();
+
+        _stringContent.clear();
+        _doubleContent.clear();
+        _cdsSimbadErrorMessage = null;
     }
 
     /**
@@ -126,6 +142,39 @@ public class Star extends Observable
     }
 
     /**
+     * Set an error message from CDS Simbad query execution, and notify registered observers.
+     *
+     * @sa fr.jmmc.mcs.astro.star.StarResolver.
+     * @sa fr.jmmc.mcs.astro.star.StarResolverWidget.
+     *
+     * @param message the error message to store.
+     */
+    public void raiseCDSimbadErrorMessage(String message)
+    {
+        setChanged();
+
+        _cdsSimbadErrorMessage = message;
+        _logger.severe("CDS Simbad problem : " + _cdsSimbadErrorMessage);
+
+        notifyObservers(null);
+    }
+
+    /**
+     * Get the error message from CDS Simbad query execution, and reset it for later use.
+     *
+     * @sa fr.jmmc.mcs.astro.star.StarResolver.
+     * @sa fr.jmmc.mcs.astro.star.StarResolverWidget.
+     *
+     * @retrun A String object containing the error message, or null if everything went fine.
+     */
+    public String consumeCDSimbadErrorMessage()
+    {
+        String message = _cdsSimbadErrorMessage;
+        _cdsSimbadErrorMessage = null; // reset error message
+        return message;
+    }
+
+    /**
      * Serialize the star object content in a String object.
      *
      * @return a String object containing the data stored inside a star.
@@ -133,7 +182,8 @@ public class Star extends Observable
     public String toString()
     {
         return "Strings = " + _stringContent.toString() + " / Doubles = " +
-        _doubleContent.toString();
+        _doubleContent.toString() + " / CDS Simbad error = '" +
+        _cdsSimbadErrorMessage + "'.";
     }
 
     /**
@@ -142,7 +192,7 @@ public class Star extends Observable
     public enum Property
     {
         RA, DEC, RA_d, DEC_d,
-        FLUX_N, FLUX_V, FLUX_I, FLUX_J, FLUX_H, FLUX_K, 
+        FLUX_N, FLUX_V, FLUX_I, FLUX_J, FLUX_H, FLUX_K,
         OTYPELIST,
         NOPROPERTY;
 

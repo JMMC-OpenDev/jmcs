@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.2 2009-10-09 08:05:59 lafrasse Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.3 2009-10-23 15:38:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2009/10/09 08:05:59  lafrasse
+ * Made constructor public (!).
+ * Refined documentation.
+ *
  * Revision 1.1  2009/10/08 14:31:20  lafrasse
  * First release.
  *
@@ -13,7 +17,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
 
-import fr.jmmc.mcs.gui.SearchField;
+import fr.jmmc.mcs.gui.*;
 
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -24,13 +28,14 @@ import java.util.Observer;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
 /**
  * Store informations relative to a star.
  */
-public class StarResolverWidget extends SearchField
+public class StarResolverWidget extends SearchField implements Observer
 {
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = Logger.getLogger(
@@ -49,6 +54,7 @@ public class StarResolverWidget extends SearchField
         super("Simbad");
 
         _star = star;
+        _star.addObserver(this);
 
         addActionListener(new ActionListener()
             {
@@ -58,13 +64,36 @@ public class StarResolverWidget extends SearchField
 
                     if (starName.length() > 0)
                     {
-                        System.out.println("Searching for '" + starName + "'.");
+                        _logger.info("Searching CDS Simbad data for star '" +
+                            starName + "'.");
+                        StatusBar.show("searching CDS Simbad data for star '" +
+                            starName +
+                            "'... (please wait, this may take a while)");
 
                         StarResolver resolver = new StarResolver(starName, _star);
                         resolver.resolve();
                     }
                 }
             });
+    }
+
+    /**
+     * Automatically called on attached QueryModel changes.
+     */
+    public void update(Observable o, Object arg)
+    {
+        String errorMessage = _star.consumeCDSimbadErrorMessage();
+
+        if (errorMessage != null) // An error occured
+        {
+            JOptionPane.showMessageDialog(null,
+                "CDS Simbad problem :\n" + errorMessage, "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }
+        else // Simbad querying went fine
+        {
+            StatusBar.show("CDS Simbad star resolution done.");
+        }
     }
 
     /**

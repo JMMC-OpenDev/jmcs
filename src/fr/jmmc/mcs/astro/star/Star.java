@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.3 2009-10-13 15:34:54 lafrasse Exp $"
+ * "@(#) $Id: Star.java,v 1.4 2009-10-23 12:23:35 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2009/10/13 15:34:54  lafrasse
+ * Moved StarProperty enumeration in Star.
+ * Typed getters and setters for string and Double.
+ *
  * Revision 1.2  2009/10/08 14:31:02  lafrasse
  * Added Observer notification when any property is set.
  *
@@ -23,6 +27,9 @@ import java.util.logging.*;
 
 /**
  * Store data relative to a star.
+ *
+ * @todo Add a clear() method and call it in StarResolver each time a new query
+ * is performed.
  */
 public class Star extends Observable
 {
@@ -56,10 +63,8 @@ public class Star extends Observable
      */
     public String setPropertyAsString(Property property, String value)
     {
-        setChanged();
-
         String previousValue = _stringContent.put(property, value);
-        notifyObservers();
+        setChanged();
 
         return previousValue;
     }
@@ -77,7 +82,6 @@ public class Star extends Observable
         setChanged();
 
         Double previousValue = _doubleContent.put(property, value);
-        notifyObservers();
 
         return previousValue;
     }
@@ -138,8 +142,8 @@ public class Star extends Observable
     public enum Property
     {
         RA, DEC, RA_d, DEC_d,
-        FLUX_V, FLUX_I, FLUX_J, FLUX_H, FLUX_K,
-        OTYPELIST, 
+        FLUX_N, FLUX_V, FLUX_I, FLUX_J, FLUX_H, FLUX_K, 
+        OTYPELIST,
         NOPROPERTY;
 
         /**

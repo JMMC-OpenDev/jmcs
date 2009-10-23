@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.4 2009-10-23 15:38:20 lafrasse Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.5 2009-10-23 15:55:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2009/10/23 15:38:20  lafrasse
+ * Added error (querying and parsing) management.
+ *
  * Revision 1.3  2009/10/23 12:24:22  lafrasse
  * Endorsed Star observers notification responsability.
  *
@@ -191,8 +194,6 @@ public class StarResolver
         public void parseResult()
         {
             _logger.entering("ResolveStarThread", "parseResult");
-
-            System.out.println("_result = " + _result);
 
             try
             {

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.3 2009-10-23 12:24:22 lafrasse Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.4 2009-10-23 15:38:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2009/10/23 12:24:22  lafrasse
+ * Endorsed Star observers notification responsability.
+ *
  * Revision 1.2  2009/10/13 15:35:50  lafrasse
  * Updated according to StarProperty migration in Star plus typped getters/setters.
  *
@@ -23,6 +26,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.StringTokenizer;
 import java.util.logging.*;
 
@@ -73,6 +78,7 @@ public class StarResolver
         }
 
         // Launch the query in the background in order to keed GUI updated
+        _starModel.clear();
         _resolveStarThread = new ResolveStarThread();
         _resolveStarThread.start();
     }
@@ -83,24 +89,21 @@ public class StarResolver
     public static void main(String[] args)
     {
         // Context initialization
-        Star   star     = new Star();
-        String starName = args[0];
+        final String starName = args[0];
+        final Star   star     = new Star();
+        star.addObserver(new Observer()
+            {
+                public void update(Observable o, Object arg)
+                {
+                    // Outpout results
+                    System.out.println("Star '" + starName + "' contains:\n" +
+                        star);
+                }
+            });
 
         // Seek data about the given star name (first arg on command line)
         StarResolver starResolver = new StarResolver(starName, star);
         starResolver.resolve();
-
-        // Wait for async query to finish
-        try
-        {
-            Thread.sleep(5000);
-        }
-        catch (Exception ex)
-        {
-        }
-
-        // Outpout results
-        System.out.println("Star '" + starName + "' contains:\n" + star);
     }
 
     class ResolveStarThread extends Thread
@@ -180,6 +183,8 @@ public class StarResolver
             {
                 //@TODO : Assertion - should never receive an empty scence object name
                 _logger.severe("Received an empty star name");
+                _starModel.raiseCDSimbadErrorMessage(
+                    "Could not resolve star with '" + _starName + "'.");
             }
         }
 
@@ -187,17 +192,22 @@ public class StarResolver
         {
             _logger.entering("ResolveStarThread", "parseResult");
 
+            System.out.println("_result = " + _result);
+
             try
             {
                 // If the result srting is empty
                 if (_result.length() < 1)
                 {
+                    _starModel.raiseCDSimbadErrorMessage("No data received.");
                     throw new Exception("SIMBAD returned an empty result");
                 }
 
                 // If there was an error during query
                 if (_result.startsWith("::error"))
                 {
+                    _starModel.raiseCDSimbadErrorMessage(
+                        "Querying script execution failed.");
                     throw new Exception(
                         "SIMBAD returned a script execution error");
                 }
@@ -232,6 +242,8 @@ public class StarResolver
                 }
                 else
                 {
+                    _starModel.raiseCDSimbadErrorMessage(
+                        "Could not parse received data.");
                     throw new Exception(
                         "Could not parse SIMBAD returned coordinates");
                 }
@@ -264,6 +276,8 @@ public class StarResolver
             catch (Exception ex)
             {
                 _logger.log(Level.SEVERE, "CDS Simbad result parsing failed", ex);
+                _starModel.raiseCDSimbadErrorMessage(
+                    "Could not parse received data.");
 
                 return;
             }

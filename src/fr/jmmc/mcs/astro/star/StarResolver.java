@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.2 2009-10-13 15:35:50 lafrasse Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.3 2009-10-23 12:24:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2009/10/13 15:35:50  lafrasse
+ * Updated according to StarProperty migration in Star plus typped getters/setters.
+ *
  * Revision 1.1  2009/10/06 15:54:18  lafrasse
  * First release.
  *
@@ -264,6 +267,8 @@ public class StarResolver
 
                 return;
             }
+
+            _starModel.notifyObservers();
         }
     }
 }

@@ -98,6 +98,7 @@
             <xsd:attribute name="classpath" type="xsd:string"/>
             <xsd:attribute name="action" type="xsd:string"/>
             <xsd:attribute name="checkbox" type="xsd:string"/>
+            <xsd:attribute name="radiogroup" type="xsd:string"/>
             <xsd:attribute name="accelerator" type="xsd:string"/>
             <xsd:attribute name="description" type="xsd:string"/>
             <xsd:attribute name="icon" type="xsd:string"/>

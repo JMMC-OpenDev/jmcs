@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.6 2009-10-20 12:38:45 lafrasse Exp $"
+ * "@(#) $Id: ALX.java,v 1.7 2009-11-02 12:05:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2009/10/20 12:38:45  lafrasse
+ * Added conversion from degrees to minutes and vice et versa.
+ *
  * Revision 1.5  2008/05/30 12:31:11  lafrasse
  * Changed convertRA() & convertDEC() APIs to parseRA() & parseDEC() respectively.
  * Added methods for "arcmin to/from degrees and minutes" conversion.
@@ -38,6 +41,24 @@ import java.util.*;
  */
 public class ALX
 {
+    /** Describe the micrometer (micron, or um) unit */
+    public static final double MICRON = 1.0;
+
+    /** Describe the meter unit */
+    public static final double METER = 1.0;
+
+    /** Describe the arcminute unit */
+    public static final double ARCMIN = 1.0;
+
+    /** Specify the value of one arcminute in degrees */
+    public static final double ARCMIN_IN_DEGREES = (1.0 / 60.0);
+
+    /** Describe the arcsecond unit */
+    public static final double ARCSEC = 1.0;
+
+    /** Specify the value of one arcsecond in degrees */
+    public static final double ARCSEC_IN_DEGREES = (1.0 / 3600.0);
+
     /**
      * Convert the given Right Ascension (RA).
      *

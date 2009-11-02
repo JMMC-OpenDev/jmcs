@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.28 2009-08-26 07:26:18 mella Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.29 2009-11-02 15:00:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2009/08/26 07:26:18  mella
+ * removed unused imports
+ *
  * Revision 1.27  2009/05/13 09:24:25  lafrasse
  * Added a generic "Hot News (RSS Feed)" Help menu item.
  *
@@ -128,6 +131,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButtonMenuItem;
 
 
 /**
@@ -209,7 +214,7 @@ public class MainMenuBar extends JMenuBar
 
                         // Get the component according to the castor menu object
                         JMenu completeMenu = (JMenu) recursiveParser(menu,
-                                null, true);
+                                null, true, null); // It is a JMenu, has no button group
 
                         // Put it in the menu table
                         _menusTable.put(currentMenuLabel, completeMenu);
@@ -422,11 +427,10 @@ public class MainMenuBar extends JMenuBar
      * @param group a group
      */
     private JComponent recursiveParser(fr.jmmc.mcs.gui.castor.Menu menu,
-        JComponent parent, boolean createJMenu)
+        JComponent parent, boolean createJMenu, ButtonGroup buttonGroup)
     {
         // Create the current component
-        JComponent me = createComponent(menu, createJMenu);
-        _logger.fine("Component '" + me.getName() + "' created.");
+        JComponent me = createComponent(menu, createJMenu, buttonGroup);
 
         // Add it to the parent if there is one
         if (parent != null)
@@ -438,16 +442,21 @@ public class MainMenuBar extends JMenuBar
 
         // Get submenus
         fr.jmmc.mcs.gui.castor.Menu[] submenus = menu.getMenu();
-
+        ButtonGroup group = null;
         if (submenus != null)
         {
+            if (menu.getRadiogroup() != null)
+            {
+                group = new ButtonGroup();
+            }
+
             for (fr.jmmc.mcs.gui.castor.Menu submenu : submenus)
             {
                 // The submenu will be a jmenu?
                 boolean isJMenu = ((submenu.getMenu()).length > 0);
 
                 // Recursive call on submenu
-                recursiveParser(submenu, me, isJMenu);
+                recursiveParser(submenu, me, isJMenu, group);
             }
         }
 
@@ -465,7 +474,7 @@ public class MainMenuBar extends JMenuBar
      * @return component according to the castor menu
      */
     private JComponent createComponent(fr.jmmc.mcs.gui.castor.Menu menu,
-        boolean isJMenu)
+        boolean isJMenu, ButtonGroup buttonGroup)
     {
         // Component to create
         JComponent comp = null;
@@ -518,6 +527,12 @@ public class MainMenuBar extends JMenuBar
             {
                 _logger.fine("Component is a JMenu.");
                 comp = new JMenu(action);
+            }
+            else if (buttonGroup != null)
+            {
+                _logger.fine("Component is a JRadioButtonMenuItem.");
+                comp = new JRadioButtonMenuItem(action);
+                buttonGroup.add((JRadioButtonMenuItem)comp);
             }
             else
             {

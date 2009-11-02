@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Actions.java,v 1.2 2008-09-22 16:53:50 lafrasse Exp $"
+ * "@(#) $Id: Actions.java,v 1.3 2009-11-02 15:01:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2008/09/22 16:53:50  lafrasse
+ * Moved to new JMCS APIs.
+ *
  * Revision 1.1  2008/07/01 08:58:13  lafrasse
  * Added jmcs test application from bcolucci.
  *
@@ -21,7 +24,7 @@ import javax.swing.*;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Actions
 {
@@ -61,6 +64,21 @@ public class Actions
     public GenericLoggedAction mfaction5;
 
     /**
+     * DOCUMENT ME!
+     */
+    public GenericLoggedAction radio1;
+
+    /**
+     * DOCUMENT ME!
+     */
+    public GenericLoggedAction radio2;
+
+    /**
+     * DOCUMENT ME!
+     */
+    public GenericLoggedAction radio3;
+
+    /**
      * Creates a new Actions object.
      */
     public Actions()
@@ -75,6 +93,10 @@ public class Actions
         mfaction3     = new GenericLoggedAction("mfaction3");
         mfaction4     = new GenericLoggedAction("mfaction4");
         mfaction5     = new GenericLoggedAction("mfaction5");
+
+        radio1        = new GenericLoggedAction("radio1");
+        radio2        = new GenericLoggedAction("radio2");
+        radio3        = new GenericLoggedAction("radio3");
 
         System.out.println("" + ActionRegistrar.getInstance());
     }

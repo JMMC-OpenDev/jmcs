@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.30 2009-11-02 15:03:32 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.31 2009-11-02 16:28:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2009/11/02 15:03:32  lafrasse
+ * Jalopization.
+ *
  * Revision 1.29  2009/11/02 15:00:58  lafrasse
  * Added support for radio-button like menu items.
  *
@@ -509,7 +512,7 @@ public class MainMenuBar extends JMenuBar
 
             // If the (xml) menu seems to be a checkbox and a menu container
             // then only a checkbox will be created
-            if (isCheckbox == true) // Is it a checkbox?
+            if (isCheckbox == true) // Is it a checkbox ?
             {
                 _logger.fine("Component is a JCheckBoxMenuItem.");
                 comp = new JCheckBoxMenuItem(action);
@@ -527,16 +530,29 @@ public class MainMenuBar extends JMenuBar
                         "The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
                 }
             }
-            else if (isJMenu == true) // What have we to create?
-            {
-                _logger.fine("Component is a JMenu.");
-                comp = new JMenu(action);
-            }
-            else if (buttonGroup != null)
+            else if (buttonGroup != null) // Is it a radiobutton ?
             {
                 _logger.fine("Component is a JRadioButtonMenuItem.");
                 comp = new JRadioButtonMenuItem(action);
                 buttonGroup.add((JRadioButtonMenuItem) comp);
+
+                if (action instanceof RegisteredPreferencedBooleanAction)
+                {
+                    _logger.fine(
+                        "Component is bound to a RegisteredPreferencedBooleanAction.");
+                    ((RegisteredPreferencedBooleanAction) action).addBoundButton((JRadioButtonMenuItem) comp);
+                }
+
+                if (isJMenu == true)
+                {
+                    _logger.warning(
+                        "The current menuitem is a radiobutton AND a sub-menu, which is impossible !!!");
+                }
+            }
+            else if (isJMenu == true) // What have we to create?
+            {
+                _logger.fine("Component is a JMenu.");
+                comp = new JMenu(action);
             }
             else
             {

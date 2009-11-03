@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.31 2009-11-02 16:28:51 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.32 2009-11-03 10:17:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2009/11/02 16:28:51  lafrasse
+ * Added support for RegisteredPreferencedBooleanAction in radio-button menu items.
+ *
  * Revision 1.30  2009/11/02 15:03:32  lafrasse
  * Jalopization.
  *
@@ -126,6 +129,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -142,15 +146,14 @@ import javax.swing.text.DefaultEditorKit;
 
 
 /**
- * This class which extends from JMenuBar, generates
- * all menus from the <b>ApplicationData.xml</b> file.
+ * This class which extends from JMenuBar, generates all menus from the
+ * <b>ApplicationData.xml</b> file.
  *
  * In all cases, it generates default menus.
  *
- * To acces to the XML informations, this class uses
- * <b>ApplicationDataModel</b> class. It's a class which has got getters
- * in order to do that and which has been written to abstract the way
- * to acces to these informations.
+ * To acces to the XML informations, this class uses <b>ApplicationDataModel</b>
+ * class. It's a class which has got getters in order to do that and which has
+ * been written to abstract the way to acces to these informations.
  */
 public class MainMenuBar extends JMenuBar
 {
@@ -168,9 +171,9 @@ public class MainMenuBar extends JMenuBar
     private ActionRegistrar _registrar = null;
 
     /**
-     * Creates a new MainMenuBar object
+     * Instantiate all defaults menus, plus application-specific ones.
      *
-     * @param frame frame where link the menu
+     * @param frame the JFrame against which the menubar is linked.
      */
     public MainMenuBar(JFrame frame)
     {
@@ -251,7 +254,7 @@ public class MainMenuBar extends JMenuBar
         macOSXRegistration(frame);
     }
 
-    /** Create file menu */
+    /** Create the 'File' menu. */
     private void createFileMenu()
     {
         // Create menu
@@ -298,7 +301,7 @@ public class MainMenuBar extends JMenuBar
         }
     }
 
-    /** Create edit menu */
+    /** Create the 'Edit' menu. */
     private void createEditMenu()
     {
         // Create menu
@@ -361,7 +364,7 @@ public class MainMenuBar extends JMenuBar
         _logger.fine("Add 'Edit' menu into the menubar.");
     }
 
-    /** Create help menu */
+    /** Create the 'Help' menu. */
     private void createHelpMenu()
     {
         // Create menu
@@ -424,25 +427,27 @@ public class MainMenuBar extends JMenuBar
     }
 
     /**
-     * Return the hightest component according to the castor
-     * menu object. We cast it to JMenu.
+     * Recursively instantiate each application-specific menu element.
      *
-     * @param menu castor menu
-     * @param parent parent component
-     * @param createJMenu if true, we will create a JMenu
-     * @param group a group
+     * @param menu castor Menu object to instantiate.
+     * @param parent parent component, null for the root element.
+     * @param createMenu create a JMenu if true, specific menu items otherwise.
+     * @param group a ButtonGroup in which radio-buttons should be added, null
+     * otherwise.
+     *
+     * @return the instantiated JComponent according to the XML menu hierarchy.
      */
     private JComponent recursiveParser(fr.jmmc.mcs.gui.castor.Menu menu,
-        JComponent parent, boolean createJMenu, ButtonGroup buttonGroup)
+        JComponent parent, boolean createMenu, ButtonGroup buttonGroup)
     {
         // Create the current component
-        JComponent me = createComponent(menu, createJMenu, buttonGroup);
+        JComponent component = createComponent(menu, createMenu, buttonGroup);
 
-        // Add it to the parent if there is one
+        // Add it to the parent if any
         if (parent != null)
         {
-            parent.add(me);
-            _logger.fine("'" + me.getName() + "' linked to '" +
+            parent.add(component);
+            _logger.fine("'" + component.getName() + "' linked to '" +
                 parent.getName() + "'.");
         }
 
@@ -460,31 +465,32 @@ public class MainMenuBar extends JMenuBar
             for (fr.jmmc.mcs.gui.castor.Menu submenu : submenus)
             {
                 // The submenu will be a jmenu?
-                boolean isJMenu = ((submenu.getMenu()).length > 0);
+                boolean isMenu = ((submenu.getMenu()).length > 0);
 
                 // Recursive call on submenu
-                recursiveParser(submenu, me, isJMenu, group);
+                recursiveParser(submenu, component, isMenu, group);
             }
         }
 
         // Return the hightest component
-        return me;
+        return component;
     }
 
     /**
-     * Create the component according to the
-     * castor menu object
+     * Create the component according to the castor Menu object.
      *
-     * @param menu castor menu
-     * @param isJMenu if true, will create a JMenu
+     * @param menu castor Menu object to instantiate.
+     * @param isMenu create a JMenu if true, specific menu items otherwise.
+     * @param buttonGroup used to only have a single menu item selected at any
+     * time, if not null.
      *
-     * @return component according to the castor menu
+     * @return the instantiated JComponent according to the XML description.
      */
     private JComponent createComponent(fr.jmmc.mcs.gui.castor.Menu menu,
-        boolean isJMenu, ButtonGroup buttonGroup)
+        boolean isMenu, ButtonGroup buttonGroup)
     {
         // Component to create
-        JComponent comp = null;
+        JMenuItem item = null;
 
         // Attributes
         boolean hasLabel     = (menu.getLabel() != null);
@@ -493,135 +499,140 @@ public class MainMenuBar extends JMenuBar
         boolean isCheckbox   = (menu.getCheckbox() != null);
 
         // flag new component as separator or not
-        boolean isSeparator = ! (isJMenu || hasClasspath || hasAction);
+        boolean isSeparator = ! (isMenu || hasClasspath || hasAction);
 
         // Is it a separator?
         if (isSeparator)
         {
-            comp = new JSeparator();
             _logger.fine("Component is a separator.");
+
+            return new JSeparator();
         }
-        else
+
+        // Get action
+        AbstractAction action = _registrar.get(menu.getClasspath(),
+                menu.getAction());
+
+        // Set attributes
+        setAttributes(menu, action);
+
+        // Is it a checkbox ?
+        if (isCheckbox == true)
         {
-            // Get action
-            AbstractAction action = _registrar.get(menu.getClasspath(),
-                    menu.getAction());
+            _logger.fine("Component is a JCheckBoxMenuItem.");
+            item = new JCheckBoxMenuItem(action);
 
-            // Set attributes
-            setAttributes(menu, action);
-
-            // If the (xml) menu seems to be a checkbox and a menu container
-            // then only a checkbox will be created
-            if (isCheckbox == true) // Is it a checkbox ?
+            if (action instanceof RegisteredPreferencedBooleanAction)
             {
-                _logger.fine("Component is a JCheckBoxMenuItem.");
-                comp = new JCheckBoxMenuItem(action);
-
-                if (action instanceof RegisteredPreferencedBooleanAction)
-                {
-                    _logger.fine(
-                        "Component is bound to a RegisteredPreferencedBooleanAction.");
-                    ((RegisteredPreferencedBooleanAction) action).addBoundButton((JCheckBoxMenuItem) comp);
-                }
-
-                if (isJMenu == true)
-                {
-                    _logger.warning(
-                        "The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
-                }
-            }
-            else if (buttonGroup != null) // Is it a radiobutton ?
-            {
-                _logger.fine("Component is a JRadioButtonMenuItem.");
-                comp = new JRadioButtonMenuItem(action);
-                buttonGroup.add((JRadioButtonMenuItem) comp);
-
-                if (action instanceof RegisteredPreferencedBooleanAction)
-                {
-                    _logger.fine(
-                        "Component is bound to a RegisteredPreferencedBooleanAction.");
-                    ((RegisteredPreferencedBooleanAction) action).addBoundButton((JRadioButtonMenuItem) comp);
-                }
-
-                if (isJMenu == true)
-                {
-                    _logger.warning(
-                        "The current menuitem is a radiobutton AND a sub-menu, which is impossible !!!");
-                }
-            }
-            else if (isJMenu == true) // What have we to create?
-            {
-                _logger.fine("Component is a JMenu.");
-                comp = new JMenu(action);
-            }
-            else
-            {
-                _logger.fine("Component is a JMenuItem.");
-                comp = new JMenuItem(action);
+                _logger.fine(
+                    "Component is bound to a RegisteredPreferencedBooleanAction.");
+                ((RegisteredPreferencedBooleanAction) action).addBoundButton((JCheckBoxMenuItem) item);
             }
 
-            if (menu.getLabel() != null)
+            if (isMenu == true)
             {
-                ((JMenuItem) comp).setText(menu.getLabel());
+                _logger.warning(
+                    "The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
+
+                return null;
             }
         }
+        else if (buttonGroup != null) // Is it a radio-button ?
+        {
+            _logger.fine("Component is a JRadioButtonMenuItem.");
+            item = new JRadioButtonMenuItem(action);
 
-        return comp;
+            // Put the radiobutton menu item in a the ButtonGroup to only have a single one selected at any time.
+            buttonGroup.add((JRadioButtonMenuItem) item);
+
+            if (action instanceof RegisteredPreferencedBooleanAction)
+            {
+                _logger.fine(
+                    "Component is bound to a RegisteredPreferencedBooleanAction.");
+                ((RegisteredPreferencedBooleanAction) action).addBoundButton((JRadioButtonMenuItem) item);
+            }
+
+            if (isMenu == true)
+            {
+                _logger.warning(
+                    "The current menuitem is a radiobutton AND a sub-menu, which is impossible !!!");
+
+                return null;
+            }
+        }
+        else if (isMenu == true) // is it a menu containig other menu item ?
+        {
+            _logger.fine("Component is a JMenu.");
+            item = new JMenu(action);
+        }
+        else // It is a menu item.
+        {
+            _logger.fine("Component is a JMenuItem.");
+            item = new JMenuItem(action);
+        }
+
+        // If the menu object has its own name
+        if (menu.getLabel() != null)
+        {
+            // Superseed the name of the item associated action
+            item.setText(menu.getLabel());
+        }
+
+        return item;
     }
 
     /**
-     * Set menu attributes (all but the label)
+     * Set menu attributes (all but the label).
      *
-     * @param menu castor menu
-     * @param action action to modify
+     * @param menu castor Menu object to get data from.
+     * @param action Action instance to modify.
      */
     private void setAttributes(fr.jmmc.mcs.gui.castor.Menu menu, Action action)
     {
-        if ((menu != null) && (action != null))
+        if ((menu == null) || (action == null))
         {
-            // Set accelerator
-            String accelerator = (menu.getAccelerator() != null)
-                ? menu.getAccelerator() : null;
-
-            if (accelerator != null)
-            {
-                String keyStroke = getPrefixKey() + accelerator;
-                action.putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(keyStroke));
-            }
-
-            // Set tooltip
-            String description   = (menu.getDescription() != null)
-                ? menu.getDescription() : "";
-
-            String actionTooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
-
-            if ((actionTooltip == null) && (! description.equals("")))
-            {
-                action.putValue(Action.SHORT_DESCRIPTION, description);
-            }
-
-            // Set icon
-            String icon = menu.getIcon();
-
-            if (icon != null)
-            {
-                // Open XML file at path
-                URL iconURL = getClass().getResource(icon);
-
-                if (iconURL != null)
-                {
-                    action.putValue(Action.SMALL_ICON,
-                        new ImageIcon(Urls.fixJarURL(iconURL)));
-                }
-                else
-                {
-                    _logger.warning("Can't find iconUrl : " + icon);
-                }
-            }
-
-            _logger.fine("Attributes set on '" + menu.getLabel() + "'.");
+            return;
         }
+
+        // Set action accelerator
+        String accelerator = menu.getAccelerator();
+
+        if (accelerator != null)
+        {
+            String keyStrokeString = getPrefixKey() + accelerator;
+            action.putValue(Action.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(keyStrokeString));
+        }
+
+        // Set action tooltip
+        String xmlTooltip    = menu.getDescription();
+        String actionTooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
+
+        if ((actionTooltip == null) && (xmlTooltip != null))
+        {
+            action.putValue(Action.SHORT_DESCRIPTION, xmlTooltip);
+        }
+
+        // Set action icon
+        String icon = menu.getIcon();
+
+        if (icon != null)
+        {
+            // Open XML file at path
+            URL iconURL = getClass().getResource(icon);
+
+            if (iconURL != null)
+            {
+                action.putValue(Action.SMALL_ICON,
+                    new ImageIcon(Urls.fixJarURL(iconURL)));
+            }
+            else
+            {
+                _logger.warning("Can't find iconUrl : " + icon);
+            }
+        }
+
+        _logger.fine("Attributes set on '" + menu.getLabel() + "'.");
     }
 
     /**

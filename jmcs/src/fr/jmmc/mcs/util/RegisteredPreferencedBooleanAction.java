@@ -1,13 +1,18 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RegisteredPreferencedBooleanAction.java,v 1.1 2008-09-18 20:59:13 lafrasse Exp $"
+ * "@(#) $Id: RegisteredPreferencedBooleanAction.java,v 1.2 2009-11-03 16:22:04 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2008/09/18 20:59:13  lafrasse
+ * First revision.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.util;
+
+import java.awt.event.*;
 
 import java.util.*;
 import java.util.logging.*;
@@ -19,7 +24,7 @@ import javax.swing.*;
  * RegisteredAction class customized to be bound to a preferenced boolean.
  */
 public class RegisteredPreferencedBooleanAction extends RegisteredAction
-    implements Observer
+    implements Observer, ItemListener
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(
@@ -70,6 +75,7 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
             "rememberBoundButton");
 
         _boundButtons.add(button);
+        button.addItemListener(this);
     }
 
     /**
@@ -80,6 +86,9 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
         _logger.entering("RegisteredPreferencedBooleanAction", "update");
 
         boolean state = _preferences.getPreferenceAsBoolean(_preferenceName);
+
+        _logger.finest(_preferenceName + " value changed to become '" + state +
+            "'.");
 
         for (AbstractButton button : _boundButtons)
         {
@@ -101,6 +110,10 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
 
             try
             {
+                _logger.finest(_preferenceName +
+                    " value was updated with new external state of '" +
+                    isSelected + "'.");
+
                 _preferences.setPreference(_preferenceName, isSelected);
             }
             catch (Exception ex)
@@ -109,6 +122,36 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
                     "Cannot set preference '" + _preferenceName + "' to '" +
                     isSelected + "'.", ex);
             }
+        }
+    }
+
+    /**
+     * Automatically called whenever any bound button state change.
+     *
+     * Added as it is the only reliable way to deal with ButtonGroup and JRadioButton.
+     * ButtonGroups don't handle "UNSELECT" ActionEvent, whereas ItemEvent do !!!
+     * @sa http://forums.sun.com/thread.jspa?forumID=257&threadID=173201
+     */
+    public void itemStateChanged(ItemEvent e)
+    {
+        _logger.entering("RegisteredPreferencedBooleanAction",
+            "itemStateChanged");
+
+        boolean isSelected = (e.getStateChange() == ItemEvent.SELECTED);
+
+        try
+        {
+            _logger.finest(_preferenceName +
+                " value was updated with new internal state of '" + isSelected +
+                "'.");
+
+            _preferences.setPreference(_preferenceName, isSelected);
+        }
+        catch (Exception ex)
+        {
+            _logger.log(Level.WARNING,
+                "Cannot set preference '" + _preferenceName + "' to '" +
+                isSelected + "'.", ex);
         }
     }
 }

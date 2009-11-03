@@ -1,0 +1,119 @@
+/*******************************************************************************
+ * JMMC project
+ *
+ * "@(#) $Id: jmcs.doc,v 1.7 2008-11-06 14:15:29 mella Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/10/15 13:58:46  mella
+ * Add jfits info
+ *
+ * Revision 1.5  2008/06/23 07:46:07  bcolucci
+ * Add a library
+ *
+ * Revision 1.4  2008/06/20 07:09:37  bcolucci
+ * Add informations about others Jar files.
+ *
+ * Revision 1.3  2007/03/14 10:27:30  mella
+ * Add information about jar for plotting
+ *
+ * Revision 1.2  2007/03/12 14:09:54  mella
+ * Added some informations
+ *
+ * Revision 1.1  2007/02/13 10:31:40  ccmgr
+ * Fix directory structure and add additional files
+ *
+ ******************************************************************************/
+
+/**
+\mainpage jmcs : General module used to collect and use common classes.
+
+Here comes the list of external jars that we use:
+<TABLE>
+<TR>
+<TD>loggui.jar</TD>
+<TD>Adjust logging facilities<BR>http://www.informatrix.ch/loggui/index.html</TD>
+</TR>
+
+<TR>
+<TD>jfits-0.93.jar</TD>
+<TD>Fits file manipulation<BR>http://www.hq.eso.org/~pgrosbol/fits_java/jfits.html</TD>
+</TR>
+
+<TR>
+<TD>plot*.jar microstar_xml.jar</TD>
+<TD>2D plots<BR>http://ptolemy.eecs.berkeley.edu/java/ptplot5.6/ptolemy/plot/doc/index.htm</TD>
+</TR>
+
+<TR>
+<TD>castor.jar</TD>
+<TD>Create Java classes from XSD schema<BR>http://www.castor.org/</TD>
+</TR>
+
+<TR>
+<TD>BrowserLauncher2-1_3.jar</TD>
+<TD>Permit to use the default web browser<BR>http://browserlaunch2.sourceforge.net/</TD>
+</TR>
+
+<TR>
+<TD>xercesImpl.jar xmlParserAPIs.jar</TD>
+<TD>XML validation<BR>http://xerces.apache.org/</TD>
+</TR>
+
+<TR>
+<TD> commons-httpclient-3.1.jar </TD>
+<TD>Use to send HTTP POST request<BR>http://hc.apache.org/httpclient-3.x/</TD>
+</TR>
+
+<TR>
+<TD>commons-logging-1.1.1.jar</TD>
+<TD>We do not use this library. It is a third party requirement. JMCS and JMMC
+software should use java.util.logging facilities.<BR>http://commons.apache.org/logging/</TD>
+</TR>
+
+<TR>
+<TD>commons-codec-1.3.jar</TD>
+<TD>Commons Codec provides implementations of common encoders and decoders such
+as Base64, Hex, Phonetic and URLs. <BR>http://commons.apache.org/codec/</TD>
+</TR>
+
+<TR>
+<TD> xmlenc.jar </TD>
+<TD>xmlenc is a light-weight XML encoding library for Java. It fills the gap
+between a light-weight parser like SAX, and a heavy-weight XML output library,
+like JDOM. <BR>http://freshmeat.net/projects/xmlenc/</TD>
+</TR>
+
+<TR>
+<TD> jhall.jar </TD>
+<TD> Show a help window from JavaHelp Jar file <BR>http://java.sun.com/javase/technologies/desktop/javahelp/</TD>
+</TR>
+
+<TR>
+<TD>jhelpdev.jar</TD>
+<TD>Generate TOC, JHM and HS files from HTML files<BR>
+http://jhelpdev.sourceforge.net/</TD>
+</TR>
+
+<TR>
+<TD>Tidy.jar</TD>
+<TD>Parse and validate HTML file<BR>http://tidy.sourceforge.net/</TD>
+</TR>
+
+<TR>
+<TD>java-getopt-1.0.13.jar</TD>
+<TD>Interpret command line arguments<BR>http://www.urbanophile.com/arenn/hacking/download.html</TD>
+</TR>
+
+<TR>
+<TD>AppleJavaExtensions.jar</TD>
+<TD>Adapt menus for Mac OS X<BR>http://developer.apple.com/samplecode/AppleJavaExtensions/index.html</TD>
+</TR>
+
+<TR>
+<TD> commons-lang-2.4.jar </TD>
+<TD>Provide much needed additions to the standard JDK's java.lang package <BR>http://commons.apache.org/lang/</TD>
+</TR>
+</TABLE>
+*/

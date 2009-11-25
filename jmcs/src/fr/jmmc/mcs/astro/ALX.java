@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.7 2009-11-02 12:05:42 lafrasse Exp $"
+ * "@(#) $Id: ALX.java,v 1.8 2009-11-25 08:28:02 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2009/11/02 12:05:42  lafrasse
+ * Added angle conversion constants.
+ *
  * Revision 1.6  2009/10/20 12:38:45  lafrasse
  * Added conversion from degrees to minutes and vice et versa.
  *
@@ -346,5 +349,35 @@ public class ALX
 
         return minutes;
     }
+
+    /** Set this class with limited executable features
+      * The user can use it giving one method name and argument value
+     *  e.g.:
+     *  java -cp ../jmcs.jar fr.jmmc.mcs.astro.ALX parseRA "1:1:1"
+     *  java -cp ../jmcs.jar fr.jmmc.mcs.astro.ALX spectralTypes "M1/M2/IV/III"
+     *  java -cp ../jmcs.jar fr.jmmc.mcs.astro.ALX luminosityClasses "M1/M2/IV/III"
+     *
+     *  If no argument is given, then it prints out the usage form
+     */
+    public static void main(String[] args) {
+        Class c = null;
+        try {
+            c = Class.forName(ALX.class.getName());
+
+            String method = args[0];
+            String arg = args[1];
+
+            java.lang.reflect.Method userMethod = c.getMethod(method, String.class);
+            System.out.println("" + userMethod.invoke(arg,arg));
+        } catch (Throwable e) {
+            java.lang.reflect.Method m[] = c.getDeclaredMethods();
+            System.out.println("Usage: <progname> <methodName> <arg>");
+            System.out.println("     where <methodName> can be:");
+            for (int i = 0; i < m.length; i++) {
+                System.out.println("       - "+ m[i].getName());
+            }
+        }
+    }
+    
 }
 /*___oOo___*/

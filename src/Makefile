@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.26 2009-10-07 15:59:32 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.27 2009-11-27 15:57:39 lafrasse Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.26  2009/10/07 15:59:32  lafrasse
+# Added StarResolverWidget.
+#
 # Revision 1.25  2009/10/06 15:54:57  lafrasse
 # *** empty log message ***
 #
@@ -190,12 +193,14 @@ jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png \
 # Java programs
 # ---------------------------------
 JAVA_EXECUTABLES = starResolver \
-                   starResolverWidget
+                   starResolverWidget \
+				   catalogs
 
 #
 # <brief description of jmcsGenerateHelpsetFromHtml java program>
 starResolver_CLASS        = fr.jmmc.mcs.astro.star.StarResolver
 starResolverWidget_CLASS  = fr.jmmc.mcs.astro.star.StarResolverWidget
+catalogs_CLASS             = fr.jmmc.mcs.astro.Catalog
 
 #
 # Command Definition Files (CDF)

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.9 2009-11-27 15:57:16 lafrasse Exp $"
+ * "@(#) $Id: ALX.java,v 1.10 2009-12-01 14:19:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2009/11/27 15:57:16  lafrasse
+ * Jalopization.
+ *
  * Revision 1.8  2009/11/25 08:28:02  mella
  * Add executable feature
  *
@@ -186,6 +189,12 @@ public class ALX
      */
     public static Vector spectralTypes(String rawSpectralType)
     {
+        // Remove any "SB" token (Feedback Report ID : #1259360028)
+        if (rawSpectralType.contains("SB"))
+        {
+            rawSpectralType = rawSpectralType.replaceAll("SB", "");
+        }
+
         Vector foundSpectralTypes = new Vector();
 
         for (int i = 0; i < rawSpectralType.length(); i++)
@@ -353,14 +362,16 @@ public class ALX
         return minutes;
     }
 
-    /** Set this class with limited executable features
+    /**
+     * Set this class with limited executable features.
+     *
      * The user can use it giving one method name and argument value
      *  e.g.:
-     *  java -cp ../jmcs.jar fr.jmmc.mcs.astro.ALX parseRA "1:1:1"
-     *  java -cp ../jmcs.jar fr.jmmc.mcs.astro.ALX spectralTypes "M1/M2/IV/III"
-     *  java -cp ../jmcs.jar fr.jmmc.mcs.astro.ALX luminosityClasses "M1/M2/IV/III"
+     *  ALX parseRA "1:1:1"
+     *  ALX spectralTypes "M1/M2/IV/III"
+     *  ALX luminosityClasses "M1/M2/IV/III"
      *
-     *  If no argument is given, then it prints out the usage form
+     * If no argument is given, then it prints out the usage form.
      */
     public static void main(String[] args)
     {

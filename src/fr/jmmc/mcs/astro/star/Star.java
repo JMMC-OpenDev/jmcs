@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.5 2009-10-23 15:38:20 lafrasse Exp $"
+ * "@(#) $Id: Star.java,v 1.6 2009-12-08 10:14:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2009/10/23 15:38:20  lafrasse
+ * Added error (querying and parsing) management.
+ *
  * Revision 1.4  2009/10/23 12:23:35  lafrasse
  * Moved observer notification responsability to developper.
  * Added a property for N flux magnitude value.
@@ -194,6 +197,9 @@ public class Star extends Observable
         RA, DEC, RA_d, DEC_d,
         FLUX_N, FLUX_V, FLUX_I, FLUX_J, FLUX_H, FLUX_K,
         OTYPELIST,
+        PROPERMOTION_RA, PROPERMOTION_DEC,
+        PARALLAX, PARALLAX_err,
+        SPECTRALTYPES,
         NOPROPERTY;
 
         /**

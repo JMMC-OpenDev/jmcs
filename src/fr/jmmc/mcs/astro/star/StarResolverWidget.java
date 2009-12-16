@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.3 2009-10-23 15:38:20 lafrasse Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.4 2009-12-16 15:53:02 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2009/10/23 15:38:20  lafrasse
+ * Added error (querying and parsing) management.
+ *
  * Revision 1.2  2009/10/09 08:05:59  lafrasse
  * Made constructor public (!).
  * Refined documentation.
@@ -78,21 +81,36 @@ public class StarResolverWidget extends SearchField implements Observer
     }
 
     /**
-     * Automatically called on attached QueryModel changes.
+     * Automatically called on attached Star changes.
      */
     public void update(Observable o, Object arg)
     {
-        String errorMessage = _star.consumeCDSimbadErrorMessage();
+        Star.Notification notification = Star.Notification.UNKNOWN;
 
-        if (errorMessage != null) // An error occured
+        if (arg != null)
         {
-            JOptionPane.showMessageDialog(null,
-                "CDS Simbad problem :\n" + errorMessage, "Error",
-                JOptionPane.ERROR_MESSAGE);
+            notification = (Star.Notification) arg;
         }
-        else // Simbad querying went fine
+
+        switch (notification)
         {
+        case QUERY_COMPLETE:
             StatusBar.show("CDS Simbad star resolution done.");
+
+            break;
+
+        case QUERY_ERROR:
+
+            String errorMessage = _star.consumeCDSimbadErrorMessage();
+
+            if (errorMessage != null) // An error occured
+            {
+                JOptionPane.showMessageDialog(null,
+                    "CDS Simbad problem :\n" + errorMessage, "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+
+            break;
         }
     }
 

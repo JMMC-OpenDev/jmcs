@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.6 2009-12-08 10:14:50 lafrasse Exp $"
+ * "@(#) $Id: Star.java,v 1.7 2009-12-16 15:53:02 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2009/12/08 10:14:50  lafrasse
+ * Added proper motion, parallax and spectral types storage and retrieval.
+ *
  * Revision 1.5  2009/10/23 15:38:20  lafrasse
  * Added error (querying and parsing) management.
  *
@@ -61,15 +64,26 @@ public class Star extends Observable
     }
 
     /**
+     * Copy content of a given Star.
+     *
+     * @param star the star whose content should be copied in.
+     */
+    public void copy(Star source)
+    {
+        _stringContent     = source._stringContent;
+        _doubleContent     = source._doubleContent;
+    }
+
+    /**
      * Clear all content.
      */
     public void clear()
     {
-        setChanged();
-
         _stringContent.clear();
         _doubleContent.clear();
         _cdsSimbadErrorMessage = null;
+
+        setChanged();
     }
 
     /**
@@ -78,7 +92,8 @@ public class Star extends Observable
      * @param property the identifier of the property to store.
      * @param value the value of the property to store.
      *
-     * @return the value of the previously stored value for the given property, null otherwise.
+     * @return the value of the previously stored value for the given property,
+     * null otherwise.
      */
     public String setPropertyAsString(Property property, String value)
     {
@@ -94,13 +109,13 @@ public class Star extends Observable
      * @param property the identifier of the property to store.
      * @param value the value of the property to store.
      *
-     * @return the value of the previously stored value for the given property, null otherwise.
+     * @return the value of the previously stored value for the given property,
+     * null otherwise.
      */
     public Double setPropertyAsDouble(Property property, Double value)
     {
-        setChanged();
-
         Double previousValue = _doubleContent.put(property, value);
+        setChanged();
 
         return previousValue;
     }
@@ -113,7 +128,8 @@ public class Star extends Observable
      *
      * @param property the identifier of the property to retrieve.
      *
-     * @return the value of the stored value for the given property, null otherwise.
+     * @return the value of the stored value for the given property,
+     * null otherwise.
      */
     public String getPropertyAsString(Property property)
     {
@@ -137,7 +153,8 @@ public class Star extends Observable
      *
      * @param property the identifier of the property to retrieve.
      *
-     * @return the value of the stored value for the given property, null otherwise.
+     * @return the value of the stored value for the given property,
+     * null otherwise.
      */
     public Double getPropertyAsDouble(Property property)
     {
@@ -145,7 +162,8 @@ public class Star extends Observable
     }
 
     /**
-     * Set an error message from CDS Simbad query execution, and notify registered observers.
+     * Set an error message from CDS Simbad query execution, and notify
+     * registered observers.
      *
      * @sa fr.jmmc.mcs.astro.star.StarResolver.
      * @sa fr.jmmc.mcs.astro.star.StarResolverWidget.
@@ -154,21 +172,22 @@ public class Star extends Observable
      */
     public void raiseCDSimbadErrorMessage(String message)
     {
-        setChanged();
-
         _cdsSimbadErrorMessage = message;
         _logger.severe("CDS Simbad problem : " + _cdsSimbadErrorMessage);
 
-        notifyObservers(null);
+        setChanged();
+        notifyObservers(Notification.QUERY_ERROR);
     }
 
     /**
-     * Get the error message from CDS Simbad query execution, and reset it for later use.
+     * Get the error message from CDS Simbad query execution, and reset it
+     * for later use.
      *
      * @sa fr.jmmc.mcs.astro.star.StarResolver.
      * @sa fr.jmmc.mcs.astro.star.StarResolverWidget.
      *
-     * @retrun A String object containing the error message, or null if everything went fine.
+     * @retrun A String object containing the error message, or null if
+     * everything went fine.
      */
     public String consumeCDSimbadErrorMessage()
     {
@@ -188,6 +207,14 @@ public class Star extends Observable
         _doubleContent.toString() + " / CDS Simbad error = '" +
         _cdsSimbadErrorMessage + "'.";
     }
+
+    /**
+     * Enumeration of all different observers notification a star can raise.
+     */
+    public enum Notification
+    {
+        QUERY_COMPLETE, QUERY_ERROR, UNKNOWN;
+    };
 
     /**
      * Enumeration of all different properties a star can handle.

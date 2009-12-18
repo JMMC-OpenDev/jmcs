@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.4 2009-12-16 15:53:02 lafrasse Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.5 2009-12-18 14:42:57 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2009/12/16 15:53:02  lafrasse
+ * Hardened CDS Simbad science star resolution mecanisms while failing.
+ * Code, documentation and log refinments.
+ *
  * Revision 1.3  2009/10/23 15:38:20  lafrasse
  * Added error (querying and parsing) management.
  *
@@ -40,6 +44,10 @@ import javax.swing.JPanel;
  */
 public class StarResolverWidget extends SearchField implements Observer
 {
+
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
+
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.astro.star.StarResolverWidget");
@@ -109,6 +117,8 @@ public class StarResolverWidget extends SearchField implements Observer
                     "CDS Simbad problem :\n" + errorMessage, "Error",
                     JOptionPane.ERROR_MESSAGE);
             }
+
+            StatusBar.show("CDS Simbad star resolution failed.");
 
             break;
         }

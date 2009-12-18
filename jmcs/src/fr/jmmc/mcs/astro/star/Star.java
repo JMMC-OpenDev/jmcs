@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.7 2009-12-16 15:53:02 lafrasse Exp $"
+ * "@(#) $Id: Star.java,v 1.8 2009-12-18 14:45:26 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2009/12/16 15:53:02  lafrasse
+ * Hardened CDS Simbad science star resolution mecanisms while failing.
+ * Code, documentation and log refinments.
+ *
  * Revision 1.6  2009/12/08 10:14:50  lafrasse
  * Added proper motion, parallax and spectral types storage and retrieval.
  *
@@ -31,6 +35,7 @@
 package fr.jmmc.mcs.astro.star;
 
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Observable;
 import java.util.logging.*;
 
@@ -45,10 +50,10 @@ public class Star extends Observable
             "fr.jmmc.mcs.astro.star.Star");
 
     /** Star property-value backing store for String data */
-    private Hashtable<Property, String> _stringContent = null;
+    private final Map<Property, String> _stringContent;
 
     /** Star property-value backing store for Double data */
-    private Hashtable<Property, Double> _doubleContent = null;
+    private final Map<Property, Double> _doubleContent;
 
     /** CDS Simbad error message */
     private String _cdsSimbadErrorMessage = null;
@@ -59,8 +64,8 @@ public class Star extends Observable
     public Star()
     {
         super();
-        _stringContent     = new Hashtable();
-        _doubleContent     = new Hashtable();
+        _stringContent     = new Hashtable<Property, String>();
+        _doubleContent     = new Hashtable<Property, Double>();
     }
 
     /**
@@ -70,8 +75,17 @@ public class Star extends Observable
      */
     public void copy(Star source)
     {
-        _stringContent     = source._stringContent;
-        _doubleContent     = source._doubleContent;
+      _stringContent.clear();
+      for (Map.Entry<Property, String> entry : source._stringContent.entrySet()) {
+        _stringContent.put(entry.getKey(), entry.getValue());
+      }
+
+      _doubleContent.clear();
+      for (Map.Entry<Property, Double> entry : source._doubleContent.entrySet()) {
+        _doubleContent.put(entry.getKey(), entry.getValue());
+      }
+
+      setChanged();
     }
 
     /**
@@ -201,6 +215,7 @@ public class Star extends Observable
      *
      * @return a String object containing the data stored inside a star.
      */
+    @Override
     public String toString()
     {
         return "Strings = " + _stringContent.toString() + " / Doubles = " +

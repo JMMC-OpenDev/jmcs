@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.7 2009-12-16 15:53:02 lafrasse Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.8 2009-12-18 14:43:54 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2009/12/16 15:53:02  lafrasse
+ * Hardened CDS Simbad science star resolution mecanisms while failing.
+ * Code, documentation and log refinments.
+ *
  * Revision 1.6  2009/12/08 10:14:50  lafrasse
  * Added proper motion, parallax and spectral types storage and retrieval.
  *
@@ -237,6 +241,9 @@ public class StarResolver
                         "SIMBAD returned a script execution error");
                 }
 
+                // Handle blanking character (~)
+                _result = _result.replaceAll("~", "");
+
                 // Parsing result line by line
                 StringTokenizer lineTokenizer = new StringTokenizer(_result,
                         "\n");
@@ -378,12 +385,7 @@ public class StarResolver
             }
             else
             {
-                _starModel.raiseCDSimbadErrorMessage(
-                    "Could not parse received proper motion for star '" +
-                    _starName + "'.");
-                throw new ParseException(
-                    "Could not parse SIMBAD returned proper motion '" +
-                    properMotion + "'", -1);
+                _logger.finest("No proper motion data for star '" + _starName + "'.");
             }
         }
 
@@ -407,12 +409,7 @@ public class StarResolver
             }
             else
             {
-                _starModel.raiseCDSimbadErrorMessage(
-                    "Could not parse received parallax for star '" + _starName +
-                    "'.");
-                throw new ParseException(
-                    "Could not parse SIMBAD returned parallax '" + parallax +
-                    "'", -1);
+                _logger.finest("No parallax data for star '" + _starName + "'.");
             }
         }
 

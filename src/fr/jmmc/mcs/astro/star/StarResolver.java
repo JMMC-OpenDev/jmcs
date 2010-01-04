@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.8 2009-12-18 14:43:54 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.9 2010-01-04 14:06:41 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2009/12/18 14:43:54  bourgesl
+ * blanking value support (~) and allow empty values for proper motion and parallax
+ *
  * Revision 1.7  2009/12/16 15:53:02  lafrasse
  * Hardened CDS Simbad science star resolution mecanisms while failing.
  * Code, documentation and log refinments.
@@ -34,6 +37,7 @@ package fr.jmmc.mcs.astro.star;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -181,6 +185,7 @@ public class StarResolver
             _logger.finest("CDS Simbad script :\n" + simbadScript);
 
             // Try to get star data from CDS
+            InputStream       inputStream = null;
             try
             {
                 // Forge the URL int UTF8 unicode charset
@@ -190,7 +195,7 @@ public class StarResolver
 
                 // Launch the network query
                 URL               url               = new URL(simbadURL);
-                InputStream       inputStream       = url.openStream();
+                inputStream       = url.openStream();
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader    bufferedReader    = new BufferedReader(inputStreamReader);
 
@@ -213,7 +218,15 @@ public class StarResolver
             {
                 _logger.log(Level.SEVERE, "CDS Connection failed.", ex);
 
-                return;
+            } finally
+            {
+              if (inputStream != null) {
+                try {
+                  inputStream.close();
+                } catch (IOException ex) {
+                  _logger.log(Level.SEVERE, "CDS Connection closed.", ex);
+                }
+              }
             }
         }
 

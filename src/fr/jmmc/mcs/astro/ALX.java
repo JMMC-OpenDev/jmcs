@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.10 2009-12-01 14:19:18 lafrasse Exp $"
+ * "@(#) $Id: ALX.java,v 1.11 2010-01-07 10:21:07 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2009/12/01 14:19:18  lafrasse
+ * Corrected spectralType() to ignore 'SB' as 'S' and 'B'  spectral type tokens (Feedback Report ID : #1259360028).
+ *
  * Revision 1.9  2009/11/27 15:57:16  lafrasse
  * Jalopization.
  *
@@ -37,6 +40,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.astro;
 
+import fr.jmmc.mcs.astro.star.Star;
 import fr.jmmc.mcs.log.MCSLogger;
 
 import java.util.*;
@@ -360,6 +364,16 @@ public class ALX
         double minutes = degrees * 4;
 
         return minutes;
+    }
+
+    /** 
+     * ld should be a diamvk.
+     */
+    public static Star ld2ud(double ld, String spectype){
+        Star star = new Star();
+        star.setPropertyAsDouble(Star.Property.UD_B, ld*1);
+        star.setPropertyAsDouble(Star.Property.UD_H, ld*2);
+        return star;
     }
 
     /**

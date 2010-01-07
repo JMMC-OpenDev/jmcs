@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.8 2009-12-18 14:45:26 bourgesl Exp $"
+ * "@(#) $Id: Star.java,v 1.9 2010-01-07 10:20:25 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2009/12/18 14:45:26  bourgesl
+ * fixed method copy() :
+ * - set changed flag (then notify observers)
+ * - hashtable are copied by key/values pairs
+ *
  * Revision 1.7  2009/12/16 15:53:02  lafrasse
  * Hardened CDS Simbad science star resolution mecanisms while failing.
  * Code, documentation and log refinments.
@@ -218,9 +223,19 @@ public class Star extends Observable
     @Override
     public String toString()
     {
-        return "Strings = " + _stringContent.toString() + " / Doubles = " +
+        String s="";
+        for (Property key : _stringContent.keySet()) {
+            s+=key+"="+_stringContent.get(key)+"\n";
+        }
+        for (Property key : _doubleContent.keySet()) {
+            s+=key+"="+_doubleContent.get(key)+"\n";
+        }
+
+        return s;
+        /*return "Strings = " + _stringContent.toString() + " / Doubles = " +
         _doubleContent.toString() + " / CDS Simbad error = '" +
         _cdsSimbadErrorMessage + "'.";
+         * */
     }
 
     /**
@@ -238,6 +253,8 @@ public class Star extends Observable
     {
         RA, DEC, RA_d, DEC_d,
         FLUX_N, FLUX_V, FLUX_I, FLUX_J, FLUX_H, FLUX_K,
+        LD_VK,
+        UD_J, UD_H, UD_K, UD_B, UD_V, UD_R, UD_L, UD_N,
         OTYPELIST,
         PROPERMOTION_RA, PROPERMOTION_DEC,
         PARALLAX, PARALLAX_err,

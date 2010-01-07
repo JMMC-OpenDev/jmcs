@@ -1,21 +1,30 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.2 2010-01-07 10:30:36 lafrasse Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.3 2010-01-07 12:53:26 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/01/07 10:30:36  lafrasse
+ * Added MCS header.
+ *
  ******************************************************************************/
-
 package fr.jmmc.mcs.astro;
 
 /**
- *
- * @author mella
+ * This executable class returns the uniform diameters given to the limb
+ * darkening diameter and spectraltype of one star.
+ * In fact it is just a wrapper to one ALX method.
  */
 public class LD2UD {
     public static void main(String[] args) {
-        System.out.println(ALX.ld2ud(1, "ABCD"));
+        try {
+            System.out.println(ALX.ld2ud(Double.parseDouble(args[0]),args[1]));
+        } catch (Exception e) {
+            System.err.println("Usage: LD2UD <limb darkened diameter> <spectral type>");
+            System.err.println("Exemple: LD2U '1.185' 'K3III'");
+            System.err.println(ALX.ld2ud(1.185,"K3III"));
+        }        
     }
 }

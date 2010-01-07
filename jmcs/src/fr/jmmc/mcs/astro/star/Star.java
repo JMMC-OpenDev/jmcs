@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.10 2010-01-07 12:55:06 mella Exp $"
+ * "@(#) $Id: Star.java,v 1.11 2010-01-07 13:05:06 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2010/01/07 12:55:06  mella
+ * sort UD properties
+ *
  * Revision 1.9  2010/01/07 10:20:25  mella
  * Add some diam properties ld and uds
  *
@@ -256,8 +259,7 @@ public class Star extends Observable
     {
         RA, DEC, RA_d, DEC_d,
         FLUX_N, FLUX_V, FLUX_I, FLUX_J, FLUX_H, FLUX_K,
-        LD_VK,
-        UD_B, UD_J, UD_H, UD_K, UD_L, UD_N, UD_R, UD_V,
+        UD_B, UD_I, UD_J, UD_H, UD_K, UD_L, UD_N, UD_R, UD_V,
         OTYPELIST,
         PROPERMOTION_RA, PROPERMOTION_DEC,
         PARALLAX, PARALLAX_err,

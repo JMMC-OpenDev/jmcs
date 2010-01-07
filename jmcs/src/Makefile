@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.28 2009-12-01 14:18:00 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.29 2010-01-07 10:37:31 lafrasse Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.28  2009/12/01 14:18:00  lafrasse
+# Added 'ALX' executable for test purpose.
+#
 # Revision 1.27  2009/11/27 15:57:39  lafrasse
 # Added fr/jmmc/mcs/astro/Catalog;
 #
@@ -195,17 +198,19 @@ jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png \
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES = starResolver \
-                   starResolverWidget \
-				   catalogs \
-				   ALX
+JAVA_EXECUTABLES = jmcsStarResolver \
+                   jmcsStarResolverWidget \
+				   jmcsCatalogs \
+				   jmcsALX \
+				   jmcsLD2UD
 
 #
 # <brief description of jmcsGenerateHelpsetFromHtml java program>
-starResolver_CLASS        = fr.jmmc.mcs.astro.star.StarResolver
-starResolverWidget_CLASS  = fr.jmmc.mcs.astro.star.StarResolverWidget
-catalogs_CLASS            = fr.jmmc.mcs.astro.Catalog
-ALX_CLASS                 = fr.jmmc.mcs.astro.ALX
+jmcsStarResolver_CLASS        = fr.jmmc.mcs.astro.star.StarResolver
+jmcsStarResolverWidget_CLASS  = fr.jmmc.mcs.astro.star.StarResolverWidget
+jmcsCatalogs_CLASS            = fr.jmmc.mcs.astro.Catalog
+jmcsALX_CLASS                 = fr.jmmc.mcs.astro.ALX
+jmcsLD2UD_CLASS               = fr.jmmc.mcs.astro.LD2UD
 
 #
 # Command Definition Files (CDF)

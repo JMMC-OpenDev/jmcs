@@ -1,7 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*******************************************************************************
+ * JMMC project
+ *
+ * "@(#) $Id: LD2UD.java,v 1.2 2010-01-07 10:30:36 lafrasse Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ ******************************************************************************/
 
 package fr.jmmc.mcs.astro;
 

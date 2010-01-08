@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.11 2010-01-07 10:21:07 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.12 2010-01-08 16:22:22 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2010/01/07 10:21:07  mella
+ * Add first prototype version of ld2ud program
+ *
  * Revision 1.10  2009/12/01 14:19:18  lafrasse
  * Corrected spectralType() to ignore 'SB' as 'S' and 'B'  spectral type tokens (Feedback Report ID : #1259360028).
  *
@@ -40,9 +43,12 @@
  ******************************************************************************/
 package fr.jmmc.mcs.astro;
 
+import cds.astro.Sptype;
 import fr.jmmc.mcs.astro.star.Star;
+import fr.jmmc.mcs.astro.star.Star.Property;
 import fr.jmmc.mcs.log.MCSLogger;
 
+import java.text.ParseException;
 import java.util.*;
 
 
@@ -369,12 +375,36 @@ public class ALX
     /** 
      * ld should be a diamvk.
      */
-    public static Star ld2ud(double ld, String spectype){
+    public static Star ld2ud(double ld, String sptype) throws ParseException{
         Star star = new Star();
-        star.setPropertyAsDouble(Star.Property.UD_B, ld*1);
-        star.setPropertyAsDouble(Star.Property.UD_H, ld*2);
+
+        Property [] uds = new Property[]{
+          Property.UD_B, Property.UD_H, Property.UD_I, Property.UD_J, Property.UD_K,
+          Property.UD_L, Property.UD_N, Property.UD_R, Property.UD_U, Property.UD_V
+        };           
+
+        for (Property ud : uds) {
+          double diam = LD2UD.getLimbDarkenedCorrectionFactor(ud, sptype)*ld;
+          star.setPropertyAsDouble(ud,diam);
+        }
         return star;
     }
+
+    public static int getTemperatureClass(String spectype) throws ParseException{
+      Sptype sp = new Sptype(spectype);
+      String spNum = sp.getSpNumeric();
+      int firstDotIndex = spNum.indexOf(".");
+      return Integer.parseInt(spNum.substring(0, firstDotIndex));
+    }
+
+    public static int getLuminosityClass(String spectype) throws ParseException{
+      Sptype sp = new Sptype(spectype);
+      String spNum = sp.getSpNumeric();
+      int firstDotIndex = spNum.indexOf(".");
+      int secondDotIndex = spNum.lastIndexOf(".");
+      return Integer.parseInt(spNum.substring(firstDotIndex+1,secondDotIndex));
+    }
+
 
     /**
      * Set this class with limited executable features.

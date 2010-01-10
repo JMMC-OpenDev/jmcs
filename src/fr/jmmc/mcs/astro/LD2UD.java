@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.6 2010-01-10 23:24:06 mella Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.7 2010-01-10 23:28:54 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/01/10 23:24:06  mella
+ * use better tables to get teff and logg
+ * use a logger to get some details about calculations
+ *
  * Revision 1.5  2010/01/08 16:22:22  mella
  * add most material to compute ld to ud
  *
@@ -45,7 +49,6 @@ public class LD2UD {
 
   static final String className_ = "fr.jmmc.mcs.astro.LD2UD";
   static final Logger logger_ = Logger.getLogger(className_);
-
   static final double[][] dwarfsSpToTeffAndLogg = dwarfsSpToTeffAndLogg();
   static final double[][] giantsSpToTeffAndLogg = giantsSpToTeffAndLogg();
   static final double[][] supergiantsSpToTeffAndLogg = supergiantsSpToTeffAndLogg();
@@ -82,7 +85,6 @@ public class LD2UD {
   /* Most of the following code follow the JMMC-MEM-2610-0001.
    * This class uses one CDS tool to parse the various spectral types.
    */
-
   public static double getLimbDarkenedCorrectionFactor(Property requestedUD, String sptype) throws ParseException {
     double[][] table = getCoefficientsTable(requestedUD);
     double logg = getGravity(sptype);
@@ -90,7 +92,7 @@ public class LD2UD {
     double c = searchCoeff(table, logg, teff);
     return getCorrectionFactor(c);
   }
-     
+
   // TODO Add units
   public static double getGravity(String sptype) throws ParseException {
     // Select one table to get logg and Teff
@@ -113,7 +115,7 @@ public class LD2UD {
     return result;
   }
 
-  private static double path1(double[][] table, int tempClassCode, int columnIndex){
+  private static double path1(double[][] table, int tempClassCode, int columnIndex) {
     double result = 0;
     double value = 0;
     double spcode = 0;
@@ -123,13 +125,13 @@ public class LD2UD {
       double[] ds = table[i];
       spcode = ds[0];
       value = ds[columnIndex];
-      if ( tempClassCode <= spcode && !found){
+      if (tempClassCode <= spcode && !found) {
         result = value;
         try {
-          double[] ds2 = table[i+1];
+          double[] ds2 = table[i + 1];
           double nextSpcode = ds2[0];
           double nextValue = ds2[columnIndex];
-          if( ( nextSpcode + spcode ) / 2 < tempClassCode ){
+          if ((nextSpcode + spcode) / 2 < tempClassCode) {
             result = nextValue;
           }
         } catch (Exception e) { //just to prevent end of array
@@ -139,6 +141,7 @@ public class LD2UD {
     }
     return result;
   }
+
   private static double searchLogg(double[][] table, int tempClassCode) {
     double result = path1(table, tempClassCode, 2);
     logger_.fine("Logg of star with tempCode = " + tempClassCode + " is " + result);
@@ -164,7 +167,7 @@ public class LD2UD {
       currentLogg = ds[0];
       currentTeff = ds[1];
       value = ds[2];
-      if ( logg <= currentLogg && !found){
+      if (logg <= currentLogg && !found) {
         result = value;
         //cela ne suffit evidement pas !!!
         found = true;
@@ -205,11 +208,11 @@ public class LD2UD {
       table = dwarfsSpToTeffAndLogg;
     }
 
-    if (table == dwarfsSpToTeffAndLogg){
+    if (table == dwarfsSpToTeffAndLogg) {
       logger_.fine("This star his handled has a Dwarf");
-    }else if(table == giantsSpToTeffAndLogg){
+    } else if (table == giantsSpToTeffAndLogg) {
       logger_.fine("This star his handled has a Giant");
-    }else{
+    } else {
       logger_.fine("This star his handled has a SuperGiant");
     }
 
@@ -228,24 +231,34 @@ public class LD2UD {
     switch (requestedUD) {
       case UD_B:
         table = logGAndTeffToB();
+        break;
       case UD_I:
         table = logGAndTeffToI();
+        break;
       case UD_J:
         table = logGAndTeffToJ();
+        break;
       case UD_H:
         table = logGAndTeffToH();
+        break;
       case UD_K:
         table = logGAndTeffToK();
+        break;
       case UD_L:
         table = logGAndTeffToL();
+        break;
       case UD_N:
         table = logGAndTeffToN();
+        break;
       case UD_R:
         table = logGAndTeffToR();
+        break;
       case UD_U:
         table = logGAndTeffToU();
+        break;
       case UD_V:
         table = logGAndTeffToV();
+        break;
       default:
         // we could throw one exception ?
         table = null;
@@ -260,65 +273,65 @@ public class LD2UD {
   /////////////////////////////////////////////////
   private static double[][] dwarfsSpToTeffAndLogg() {
     final double[][] tmp = new double[][]{
-              {12, 42000, -0.4}, // 1 O5
-              {16, 41000, -0.45}, // 2 O6
-              {20, 39000, -0.5}, // 3 O7
-              {24, 37000, -0.5}, // 4 O8
-              {28, 34000, -0.5}, // 5 O9
-              {32, 30000, -0.5}, // 6 B0
-              {36, 24000, -0.5}, // 7 B1
-              {40, 20900, -0.5}, // 8 B2
-              {44, 19000, -0.5}, // 9 B3
-              {48, 17500, -0.45}, // 10 B4
-              {52, 15200, -0.4}, // 11 B5
-              {56, 14000, -0.4}, // 12 B6
-              {60, 12500, -0.4}, // 13 B7
-              {64, 11400, -0.4}, // 14 B8
-              {68, 10500, -0.35}, // 15 B9
-              {72, 9790, -0.3}, // 16 A0
-              {76, 9500, -0.25}, // 17 A1
-              {80, 9000, -0.2}, // 18 A2
-              {84, 8600, -0.2}, // 19 A3
-              {88, 8400, -0.15}, // 20 A4
-              {92, 8180, -0.15}, // 21 A5
-              {96, 7750, -0.15}, // 22 A6
-              {100, 7600, -0.15}, // 23 A7
-              {104, 7500, -0.1}, // 24 A8
-              {108, 7350, -0.1}, // 25 A9
-              {112, 7300, -0.1}, // 26 F0
-              {114, 7150, -0.1}, // 27 F1
-              {116, 7000, -0.1}, // 28 F2
-              {120, 6900, -0.1}, // 29 F3
-              {122, 6800, -0.1}, // 30 F4
-              {124, 6650, -0.1}, // 31 F5
-              {128, 6500, -0.05}, // 32 F6
-              {132, 6200, -0.05}, // 33 F7
-              {136, 6250, -0.05}, // 34 F8
-              {140, 5940, -0.05}, // 35 G0
-              {144, 5900, 0}, // 36 G1
-              {148, 5790, 0}, // 37 G2
-              {152, 5700, 0}, // 38 G3
-              {154, 5650, 0}, // 39 G4
-              {156, 5560, 0.05}, // 40 G5
-              {160, 5500, 0.05}, // 41 G6
-              {162, 5300, 0.05}, // 42 G7
-              {164, 5310, 0.05}, // 43 G8
-              {166, 5250, 0.05}, // 44 G9
-              {168, 5150, 0.05}, // 45 K0
-              {172, 4800, 0.1}, // 46 K1
-              {176, 4830, 0.1}, // 47 K2
-              {180, 4700, 0.1}, // 48 K3
-              {184, 4550, 0.1}, // 49 K4
-              {188, 4410, 0.1}, // 50 K5
-              {190, 4200, 0.15}, // 51 K6
-              {192, 4000, 0.15}, // 52 K7
-              {196, 3840, 0.15}, // 53 M0
-              {200, 3700, 0.2}, // 54 M1
-              {204, 3520, 0.25}, // 55 M2
-              {208, 3400, 0.3}, // 56 M3
-              {212, 3300, 0.4}, // 57 M4
-              {216, 3170, 0.5}, // 58 M5
-            };
+      {12, 42000, -0.4}, // 1 O5
+      {16, 41000, -0.45}, // 2 O6
+      {20, 39000, -0.5}, // 3 O7
+      {24, 37000, -0.5}, // 4 O8
+      {28, 34000, -0.5}, // 5 O9
+      {32, 30000, -0.5}, // 6 B0
+      {36, 24000, -0.5}, // 7 B1
+      {40, 20900, -0.5}, // 8 B2
+      {44, 19000, -0.5}, // 9 B3
+      {48, 17500, -0.45}, // 10 B4
+      {52, 15200, -0.4}, // 11 B5
+      {56, 14000, -0.4}, // 12 B6
+      {60, 12500, -0.4}, // 13 B7
+      {64, 11400, -0.4}, // 14 B8
+      {68, 10500, -0.35}, // 15 B9
+      {72, 9790, -0.3}, // 16 A0
+      {76, 9500, -0.25}, // 17 A1
+      {80, 9000, -0.2}, // 18 A2
+      {84, 8600, -0.2}, // 19 A3
+      {88, 8400, -0.15}, // 20 A4
+      {92, 8180, -0.15}, // 21 A5
+      {96, 7750, -0.15}, // 22 A6
+      {100, 7600, -0.15}, // 23 A7
+      {104, 7500, -0.1}, // 24 A8
+      {108, 7350, -0.1}, // 25 A9
+      {112, 7300, -0.1}, // 26 F0
+      {114, 7150, -0.1}, // 27 F1
+      {116, 7000, -0.1}, // 28 F2
+      {120, 6900, -0.1}, // 29 F3
+      {122, 6800, -0.1}, // 30 F4
+      {124, 6650, -0.1}, // 31 F5
+      {128, 6500, -0.05}, // 32 F6
+      {132, 6200, -0.05}, // 33 F7
+      {136, 6250, -0.05}, // 34 F8
+      {140, 5940, -0.05}, // 35 G0
+      {144, 5900, 0}, // 36 G1
+      {148, 5790, 0}, // 37 G2
+      {152, 5700, 0}, // 38 G3
+      {154, 5650, 0}, // 39 G4
+      {156, 5560, 0.05}, // 40 G5
+      {160, 5500, 0.05}, // 41 G6
+      {162, 5300, 0.05}, // 42 G7
+      {164, 5310, 0.05}, // 43 G8
+      {166, 5250, 0.05}, // 44 G9
+      {168, 5150, 0.05}, // 45 K0
+      {172, 4800, 0.1}, // 46 K1
+      {176, 4830, 0.1}, // 47 K2
+      {180, 4700, 0.1}, // 48 K3
+      {184, 4550, 0.1}, // 49 K4
+      {188, 4410, 0.1}, // 50 K5
+      {190, 4200, 0.15}, // 51 K6
+      {192, 4000, 0.15}, // 52 K7
+      {196, 3840, 0.15}, // 53 M0
+      {200, 3700, 0.2}, // 54 M1
+      {204, 3520, 0.25}, // 55 M2
+      {208, 3400, 0.3}, // 56 M3
+      {212, 3300, 0.4}, // 57 M4
+      {216, 3170, 0.5}, // 58 M5
+    };
     return tmp;
   }
 
@@ -437,9 +450,9 @@ public class LD2UD {
               {212, 3000, -4.7}, // 57 M4
               {216, 2880, -4.8}, // 58 M5
             };
-    }
+  }
 
-    // ClaretTable_H.vot.csv
+  // ClaretTable_H.vot.csv
   private static double[][] logGAndTeffToH() {
     return new double[][]{
               {0.0, 3500, 0.482},

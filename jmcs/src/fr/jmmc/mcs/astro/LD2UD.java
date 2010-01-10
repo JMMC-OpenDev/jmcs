@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.5 2010-01-08 16:22:22 mella Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.6 2010-01-10 23:24:06 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/01/08 16:22:22  mella
+ * add most material to compute ld to ud
+ *
  * Revision 1.4  2010/01/07 13:03:57  mella
  * add test examples when command is executed without parameters
  *
@@ -20,6 +23,9 @@ package fr.jmmc.mcs.astro;
 
 import fr.jmmc.mcs.astro.star.Star.Property;
 import java.text.ParseException;
+import java.util.logging.Logger;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
 
 /**
  * This executable class returns the uniform diameters given to the limb
@@ -35,10 +41,25 @@ import java.text.ParseException;
  * because of the method limitation of 64k that throws a "Code too large" error
  *
  */
- 
 public class LD2UD {
 
+  static final String className_ = "fr.jmmc.mcs.astro.LD2UD";
+  static final Logger logger_ = Logger.getLogger(className_);
+
+  static final double[][] dwarfsSpToTeffAndLogg = dwarfsSpToTeffAndLogg();
+  static final double[][] giantsSpToTeffAndLogg = giantsSpToTeffAndLogg();
+  static final double[][] supergiantsSpToTeffAndLogg = supergiantsSpToTeffAndLogg();
+
   public static void main(String[] args) {
+
+    // instanciate one logger
+
+    ConsoleHandler h = new ConsoleHandler();
+    h.setLevel(Level.FINEST);
+    logger_.addHandler(h);
+    logger_.setLevel(Level.ALL);
+
+
     try {
       System.out.println(ALX.ld2ud(Double.parseDouble(args[0]), args[1]));
     } catch (Exception e) {
@@ -52,51 +73,106 @@ public class LD2UD {
         System.err.println("Exemple HD178524: LD2U '1.754' 'F2II/III'");
         System.err.println(ALX.ld2ud(1.754, "F2II/III"));
       } catch (Exception exc2) {
-        System.err.println(exc2);
+        exc2.printStackTrace(System.err);
       }
     }
   }
 
-  public static double getLimbDarkenedCorrectionFactor(Property requestedUD,String sptype) throws ParseException {
-    double[][] table = getCoefficientsTable(requestedUD);
-     double logg = getGravity(sptype);
-     double teff = getEffectiveTemperature(sptype);
-    double c = searchCoeff(table, logg, teff);
-    return getCorrectionFactor(c);
-  }
 
   /* Most of the following code follow the JMMC-MEM-2610-0001.
    * This class uses one CDS tool to parse the various spectral types.
-   *
    */
+
+  public static double getLimbDarkenedCorrectionFactor(Property requestedUD, String sptype) throws ParseException {
+    double[][] table = getCoefficientsTable(requestedUD);
+    double logg = getGravity(sptype);
+    double teff = getEffectiveTemperature(sptype);
+    double c = searchCoeff(table, logg, teff);
+    return getCorrectionFactor(c);
+  }
+     
+  // TODO Add units
   public static double getGravity(String sptype) throws ParseException {
     // Select one table to get logg and Teff
     int lumCode = ALX.getLuminosityClass(sptype);
     double[][] table = getSpToLoggAndTeffTable(lumCode);
     int tempCode = ALX.getTemperatureClass(sptype);
-    return searchLogg(table, tempCode);
+    double result = searchLogg(table, tempCode);
+    logger_.fine("Gravity of star with sptype = " + sptype + " is " + result);
+    return result;
   }
 
+  // TODO Add units
   public static double getEffectiveTemperature(String sptype) throws ParseException {
     // Select one table to get logg and Teff
     int lumCode = ALX.getLuminosityClass(sptype);
     double[][] table = getSpToLoggAndTeffTable(lumCode);
     int tempCode = ALX.getTemperatureClass(sptype);
-    return searchTeff(table, tempCode);
+    double result = searchTeff(table, tempCode);
+    logger_.fine("Effective temperature of star with sptype = " + sptype + " is " + result);
+    return result;
   }
 
-  private static double searchLogg(double[][] table, int tempCode) {
-    throw new UnsupportedOperationException("Not yet implemented");
+  private static double path1(double[][] table, int tempClassCode, int columnIndex){
+    double result = 0;
+    double value = 0;
+    double spcode = 0;
+    boolean found = false;
+    // Warning the array is read in the reverse order from the source code
+    for (int i = 0; i < table.length; i++) {
+      double[] ds = table[i];
+      spcode = ds[0];
+      value = ds[columnIndex];
+      if ( tempClassCode <= spcode && !found){
+        result = value;
+        try {
+          double[] ds2 = table[i+1];
+          double nextSpcode = ds2[0];
+          double nextValue = ds2[columnIndex];
+          if( ( nextSpcode + spcode ) / 2 < tempClassCode ){
+            result = nextValue;
+          }
+        } catch (Exception e) { //just to prevent end of array
+        }
+        found = true;
+      }
+    }
+    return result;
+  }
+  private static double searchLogg(double[][] table, int tempClassCode) {
+    double result = path1(table, tempClassCode, 2);
+    logger_.fine("Logg of star with tempCode = " + tempClassCode + " is " + result);
+    return result;
   }
 
-  private static double searchTeff(double[][] table, int tempCode) {
-    throw new UnsupportedOperationException("Not yet implemented");
+  private static double searchTeff(double[][] table, int tempClassCode) {
+    double result = path1(table, tempClassCode, 1);
+    logger_.fine("Teff of star with tempCode = " + tempClassCode + " is " + result);
+    return result;
   }
 
   private static double searchCoeff(double[][] table, double logg, double teff) {
-    throw new UnsupportedOperationException("Not yet implemented");
+    double result = 0;
+    double value = 0;
+    double currentLogg = 0;
+    double currentTeff = 0;
+    boolean found = false;
+
+    // Warning the array is read in the reverse order from the source code
+    for (int i = 0; i < table.length; i++) {
+      double[] ds = table[i];
+      currentLogg = ds[0];
+      currentTeff = ds[1];
+      value = ds[2];
+      if ( logg <= currentLogg && !found){
+        result = value;
+        //cela ne suffit evidement pas !!!
+        found = true;
+      }
+    }
+    return result;
   }
-  
+
   /**
    * Returns one correction factor given to on coefficient extracted from the tables.
    *
@@ -121,13 +197,22 @@ public class LD2UD {
     // The choice is made on the intermediate values of three groups :
     // I, II/III and IV/V
     // TODO make it doublechecked by a scientist
-    double[][] table = supergiantsSpToLoggAndTeff();
+    double[][] table = supergiantsSpToTeffAndLogg;
     if (lumCode > 20) {
-      table = giantsSpToLoggAndTeff();
+      table = giantsSpToTeffAndLogg;
     }
     if (lumCode > 36) {
-      table = dwarfsSpToLoggAndTeff();
+      table = dwarfsSpToTeffAndLogg;
     }
+
+    if (table == dwarfsSpToTeffAndLogg){
+      logger_.fine("This star his handled has a Dwarf");
+    }else if(table == giantsSpToTeffAndLogg){
+      logger_.fine("This star his handled has a Giant");
+    }else{
+      logger_.fine("This star his handled has a SuperGiant");
+    }
+
     return table;
   }
 
@@ -138,6 +223,7 @@ public class LD2UD {
    * @return
    */
   private static double[][] getCoefficientsTable(Property requestedUD) {
+    logger_.fine("Trying to find coef table for band " + requestedUD);
     double[][] table = null;
     switch (requestedUD) {
       case UD_B:
@@ -151,7 +237,7 @@ public class LD2UD {
       case UD_K:
         table = logGAndTeffToK();
       case UD_L:
-        table = logGAndTeffToN();
+        table = logGAndTeffToL();
       case UD_N:
         table = logGAndTeffToN();
       case UD_R:
@@ -172,187 +258,188 @@ public class LD2UD {
   // Following methods return the table content  //
   //                                             //
   /////////////////////////////////////////////////
-  private static double[][] dwarfsSpToLoggAndTeff() {
+  private static double[][] dwarfsSpToTeffAndLogg() {
+    final double[][] tmp = new double[][]{
+              {12, 42000, -0.4}, // 1 O5
+              {16, 41000, -0.45}, // 2 O6
+              {20, 39000, -0.5}, // 3 O7
+              {24, 37000, -0.5}, // 4 O8
+              {28, 34000, -0.5}, // 5 O9
+              {32, 30000, -0.5}, // 6 B0
+              {36, 24000, -0.5}, // 7 B1
+              {40, 20900, -0.5}, // 8 B2
+              {44, 19000, -0.5}, // 9 B3
+              {48, 17500, -0.45}, // 10 B4
+              {52, 15200, -0.4}, // 11 B5
+              {56, 14000, -0.4}, // 12 B6
+              {60, 12500, -0.4}, // 13 B7
+              {64, 11400, -0.4}, // 14 B8
+              {68, 10500, -0.35}, // 15 B9
+              {72, 9790, -0.3}, // 16 A0
+              {76, 9500, -0.25}, // 17 A1
+              {80, 9000, -0.2}, // 18 A2
+              {84, 8600, -0.2}, // 19 A3
+              {88, 8400, -0.15}, // 20 A4
+              {92, 8180, -0.15}, // 21 A5
+              {96, 7750, -0.15}, // 22 A6
+              {100, 7600, -0.15}, // 23 A7
+              {104, 7500, -0.1}, // 24 A8
+              {108, 7350, -0.1}, // 25 A9
+              {112, 7300, -0.1}, // 26 F0
+              {114, 7150, -0.1}, // 27 F1
+              {116, 7000, -0.1}, // 28 F2
+              {120, 6900, -0.1}, // 29 F3
+              {122, 6800, -0.1}, // 30 F4
+              {124, 6650, -0.1}, // 31 F5
+              {128, 6500, -0.05}, // 32 F6
+              {132, 6200, -0.05}, // 33 F7
+              {136, 6250, -0.05}, // 34 F8
+              {140, 5940, -0.05}, // 35 G0
+              {144, 5900, 0}, // 36 G1
+              {148, 5790, 0}, // 37 G2
+              {152, 5700, 0}, // 38 G3
+              {154, 5650, 0}, // 39 G4
+              {156, 5560, 0.05}, // 40 G5
+              {160, 5500, 0.05}, // 41 G6
+              {162, 5300, 0.05}, // 42 G7
+              {164, 5310, 0.05}, // 43 G8
+              {166, 5250, 0.05}, // 44 G9
+              {168, 5150, 0.05}, // 45 K0
+              {172, 4800, 0.1}, // 46 K1
+              {176, 4830, 0.1}, // 47 K2
+              {180, 4700, 0.1}, // 48 K3
+              {184, 4550, 0.1}, // 49 K4
+              {188, 4410, 0.1}, // 50 K5
+              {190, 4200, 0.15}, // 51 K6
+              {192, 4000, 0.15}, // 52 K7
+              {196, 3840, 0.15}, // 53 M0
+              {200, 3700, 0.2}, // 54 M1
+              {204, 3520, 0.25}, // 55 M2
+              {208, 3400, 0.3}, // 56 M3
+              {212, 3300, 0.4}, // 57 M4
+              {216, 3170, 0.5}, // 58 M5
+            };
+    return tmp;
+  }
+
+  private static double[][] giantsSpToTeffAndLogg() {
     return new double[][]{
-              {1, 42000, -0.4}, // O5
-              {2, 41000, -0.45}, // O6
-              {3, 39000, -0.5}, // O7
-              {4, 37000, -0.5}, // O8
-              {5, 34000, -0.5}, // O9
-              {6, 30000, -0.5}, // B0
-              {7, 24000, -0.5}, // B1
-              {8, 20900, -0.5}, // B2
-              {9, 19000, -0.5}, // B3
-              {10, 17500, -0.45}, // B4
-              {11, 15200, -0.4}, // B5
-              {12, 14000, -0.4}, // B6
-              {13, 12500, -0.4}, // B7
-              {14, 11400, -0.4}, // B8
-              {15, 10500, -0.35}, // B9
-              {16, 9790, -0.3}, // A0
-              {17, 9500, -0.25}, // A1
-              {18, 9000, -0.2}, // A2
-              {19, 8600, -0.2}, // A3
-              {20, 8400, -0.15}, // A4
-              {21, 8180, -0.15}, // A5
-              {22, 7750, -0.15}, // A6
-              {23, 7600, -0.15}, // A7
-              {24, 7500, -0.1}, // A8
-              {25, 7350, -0.1}, // A9
-              {26, 7300, -0.1}, // F0
-              {27, 7150, -0.1}, // F1
-              {28, 7000, -0.1}, // F2
-              {29, 6900, -0.1}, // F3
-              {30, 6800, -0.1}, // F4
-              {31, 6650, -0.1}, // F5
-              {32, 6500, -0.05}, // F6
-              {33, 6200, -0.05}, // F7
-              {34, 6250, -0.05}, // F8
-              {35, 5940, -0.05}, // G0
-              {36, 5900, 0}, // G1
-              {37, 5790, 0}, // G2
-              {38, 5700, 0}, // G3
-              {39, 5650, 0}, // G4
-              {40, 5560, 0.05}, // G5
-              {41, 5500, 0.05}, // G6
-              {42, 5300, 0.05}, // G7
-              {43, 5310, 0.05}, // G8
-              {44, 5250, 0.05}, // G9
-              {45, 5150, 0.05}, // K0
-              {46, 4800, 0.1}, // K1
-              {47, 4830, 0.1}, // K2
-              {48, 4700, 0.1}, // K3
-              {49, 4550, 0.1}, // K4
-              {50, 4410, 0.1}, // K5
-              {51, 4200, 0.15}, // K6
-              {52, 4000, 0.15}, // K7
-              {53, 3840, 0.15}, // M0
-              {54, 3700, 0.2}, // M1
-              {55, 3520, 0.25}, // M2
-              {56, 3400, 0.3}, // M3
-              {57, 3300, 0.4}, // M4
-              {58, 3170, 0.5}, // M5
+              {32, 26000, -1.1}, // 6 B0
+              {36, 23000, -1}, // 7 B1
+              {40, 20000, -1}, // 8 B2
+              {44, 17000, -1}, // 9 B3
+              {48, 15500, -1}, // 10 B4
+              {52, 14000, -0.95}, // 11 B5
+              {56, 13000, -1}, // 12 B6
+              {60, 12000, -1}, // 13 B7
+              {64, 11100, -1}, // 14 B8
+              {68, 10500, -1}, // 15 B9
+              {72, 9980, -1}, // 16 A0
+              {76, 9600, -1}, // 17 A1
+              {80, 9380, -1}, // 18 A2
+              {84, 9000, -1}, // 19 A3
+              {88, 8750, -1.05}, // 20 A4
+              {92, 8500, -1.1}, // 21 A5
+              {96, 8250, -1.1}, // 22 A6
+              {100, 8000, -1.1}, // 23 A7
+              {104, 7600, -1.1}, // 24 A8
+              {108, 7400, -1.2}, // 25 A9
+              {112, 7000, -1.2}, // 26 F0
+              {114, 6750, -1.2}, // 27 F1
+              {116, 6500, -1.25}, // 28 F2
+              {120, 6300, -1.3}, // 29 F3
+              {122, 6100, -1.3}, // 30 F4
+              {124, 6000, -1.35}, // 31 F5
+              {128, 5900, -1.4}, // 32 F6
+              {132, 5800, -1.4}, // 33 F7
+              {136, 5700, -1.45}, // 34 F8
+              {140, 5600, -1.5}, // 35 G0
+              {144, 5500, -1.5}, // 36 G1
+              {148, 5400, -1.6}, // 37 G2
+              {152, 5250, -1.7}, // 38 G3
+              {154, 5150, -1.8}, // 39 G4
+              {156, 5050, -1.9}, // 40 G5
+              {160, 4950, -2}, // 41 G6
+              {162, 4900, -2.1}, // 42 G7
+              {164, 4800, -2.15}, // 43 G8
+              {166, 4700, -2.2}, // 44 G9
+              {168, 4660, -2.3}, // 45 K0
+              {172, 4500, -2.3}, // 46 K1
+              {176, 4390, -2.35}, // 47 K2
+              {180, 4250, -2.4}, // 48 K3
+              {184, 4150, -2.5}, // 49 K4
+              {188, 4050, -2.7}, // 50 K5
+              {190, 3950, -2.8}, // 51 K6
+              {192, 3850, -2.95}, // 52 K7
+              {196, 3690, -3.1}, // 53 M0
+              {200, 3600, -3.3}, // 54 M1
+              {204, 3540, -3.55}, // 55 M2
+              {208, 3500, -3.75}, // 56 M3
+              {212, 3400, -4.1}, // 57 M4
+              {216, 3380, 0}, // 58 M5
             };
   }
 
-  private static double[][] giantsSpToLoggAndTeff() {
+  private static double[][] supergiantsSpToTeffAndLogg() {
     return new double[][]{
-              {6, 26000, -1.1}, // B0
-              {7, 23000, -1}, // B1
-              {8, 20000, -1}, // B2
-              {9, 17000, -1}, // B3
-              {10, 15500, -1}, // B4
-              {11, 14000, -0.95}, // B5
-              {12, 13000, -1}, // B6
-              {13, 12000, -1}, // B7
-              {14, 11100, -1}, // B8
-              {15, 10500, -1}, // B9
-              {16, 9980, -1}, // A0
-              {17, 9600, -1}, // A1
-              {18, 9380, -1}, // A2
-              {19, 9000, -1}, // A3
-              {20, 8750, -1.05}, // A4
-              {21, 8500, -1.1}, // A5
-              {22, 8250, -1.1}, // A6
-              {23, 8000, -1.1}, // A7
-              {24, 7600, -1.1}, // A8
-              {25, 7400, -1.2}, // A9
-              {26, 7000, -1.2}, // F0
-              {27, 6750, -1.2}, // F1
-              {28, 6500, -1.25}, // F2
-              {29, 6300, -1.3}, // F3
-              {30, 6100, -1.3}, // F4
-              {31, 6000, -1.35}, // F5
-              {32, 5900, -1.4}, // F6
-              {33, 5800, -1.4}, // F7
-              {34, 5700, -1.45}, // F8
-              {35, 5600, -1.5}, // G0
-              {36, 5500, -1.5}, // G1
-              {37, 5400, -1.6}, // G2
-              {38, 5250, -1.7}, // G3
-              {39, 5150, -1.8}, // G4
-              {40, 5050, -1.9}, // G5
-              {41, 4950, -2}, // G6
-              {42, 4900, -2.1}, // G7
-              {43, 4800, -2.15}, // G8
-              {44, 4700, -2.2}, // G9
-              {45, 4660, -2.3}, // K0
-              {46, 4500, -2.3}, // K1
-              {47, 4390, -2.35}, // K2
-              {48, 4250, -2.4}, // K3
-              {49, 4150, -2.5}, // K4
-              {50, 4050, -2.7}, // K5
-              {51, 3950, -2.8}, // K6
-              {52, 3850, -2.95}, // K7
-              {53, 3690, -3.1}, // M0
-              {54, 3600, -3.3}, // M1
-              {55, 3540, -3.55}, // M2
-              {56, 3500, -3.75}, // M3
-              {57, 3400, -4.1}, // M4
-              {58, 3380, 0}, // M5
+              {28, 32000, -1.4}, // 5 O9
+              {32, 26000, -1.6}, // 6 B0
+              {36, 21000, -1.7}, // 7 B1
+              {40, 17600, -1.8}, // 8 B2
+              {44, 15500, -1.9}, // 9 B3
+              {48, 14500, -2}, // 10 B4
+              {52, 13600, -2}, // 11 B5
+              {56, 12500, -2.1}, // 12 B6
+              {60, 11700, -2.2}, // 13 B7
+              {64, 11100, -2.2}, // 14 B8
+              {68, 10500, -2.3}, // 15 B9
+              {72, 9980, -2.3}, // 16 A0
+              {76, 9600, -2.3}, // 17 A1
+              {80, 9380, -2.3}, // 18 A2
+              {84, 9000, -2.4}, // 19 A3
+              {88, 8750, -2.4}, // 20 A4
+              {92, 8610, -2.4}, // 21 A5
+              {96, 8250, -2.5}, // 22 A6
+              {100, 8150, -2.6}, // 23 A7
+              {104, 7900, -2.6}, // 24 A8
+              {108, 7600, -2.7}, // 25 A9
+              {112, 7460, -2.7}, // 26 F0
+              {114, 7300, -2.8}, // 27 F1
+              {116, 7030, -2.9}, // 28 F2
+              {120, 6950, -2.9}, // 29 F3
+              {122, 6750, -2.9}, // 30 F4
+              {124, 6370, -3}, // 31 F5
+              {128, 6250, -3}, // 32 F6
+              {132, 6150, -3}, // 33 F7
+              {136, 5750, -3}, // 34 F8
+              {140, 5370, -3.1}, // 35 G0
+              {144, 5250, -3.2}, // 36 G1
+              {148, 5190, -3.2}, // 37 G2
+              {152, 5100, -3.2}, // 38 G3
+              {154, 4970, -3.3}, // 39 G4
+              {156, 4930, -3.3}, // 40 G5
+              {160, 4800, -3.3}, // 41 G6
+              {162, 4750, -3.4}, // 42 G7
+              {164, 4700, -3.4}, // 43 G8
+              {166, 4600, -3.5}, // 44 G9
+              {168, 4550, -3.5}, // 45 K0
+              {172, 4400, -3.6}, // 46 K1
+              {176, 4310, -3.7}, // 47 K2
+              {180, 4250, -3.8}, // 48 K3
+              {184, 4100, -4}, // 49 K4
+              {188, 3990, -4.1}, // 50 K5
+              {190, 3800, -4.2}, // 51 K6
+              {192, 3700, -4.3}, // 52 K7
+              {196, 3620, -4.3}, // 53 M0
+              {200, 3500, -4.4}, // 54 M1
+              {204, 3370, -4.5}, // 55 M2
+              {208, 3250, -4.6}, // 56 M3
+              {212, 3000, -4.7}, // 57 M4
+              {216, 2880, -4.8}, // 58 M5
             };
-  }
+    }
 
-  private static double[][] supergiantsSpToLoggAndTeff() {
-    return new double[][]{
-              {5, 32000, -1.4}, // O9
-              {6, 26000, -1.6}, // B0
-              {7, 21000, -1.7}, // B1
-              {8, 17600, -1.8}, // B2
-              {9, 15500, -1.9}, // B3
-              {10, 14500, -2}, // B4
-              {11, 13600, -2}, // B5
-              {12, 12500, -2.1}, // B6
-              {13, 11700, -2.2}, // B7
-              {14, 11100, -2.2}, // B8
-              {15, 10500, -2.3}, // B9
-              {16, 9980, -2.3}, // A0
-              {17, 9600, -2.3}, // A1
-              {18, 9380, -2.3}, // A2
-              {19, 9000, -2.4}, // A3
-              {20, 8750, -2.4}, // A4
-              {21, 8610, -2.4}, // A5
-              {22, 8250, -2.5}, // A6
-              {23, 8150, -2.6}, // A7
-              {24, 7900, -2.6}, // A8
-              {25, 7600, -2.7}, // A9
-              {26, 7460, -2.7}, // F0
-              {27, 7300, -2.8}, // F1
-              {28, 7030, -2.9}, // F2
-              {29, 6950, -2.9}, // F3
-              {30, 6750, -2.9}, // F4
-              {31, 6370, -3}, // F5
-              {32, 6250, -3}, // F6
-              {33, 6150, -3}, // F7
-              {34, 5750, -3}, // F8
-              {35, 5370, -3.1}, // G0
-              {36, 5250, -3.2}, // G1
-              {37, 5190, -3.2}, // G2
-              {38, 5100, -3.2}, // G3
-              {39, 4970, -3.3}, // G4
-              {40, 4930, -3.3}, // G5
-              {41, 4800, -3.3}, // G6
-              {42, 4750, -3.4}, // G7
-              {43, 4700, -3.4}, // G8
-              {44, 4600, -3.5}, // G9
-              {45, 4550, -3.5}, // K0
-              {46, 4400, -3.6}, // K1
-              {47, 4310, -3.7}, // K2
-              {48, 4250, -3.8}, // K3
-              {49, 4100, -4}, // K4
-              {50, 3990, -4.1}, // K5
-              {51, 3800, -4.2}, // K6
-              {52, 3700, -4.3}, // K7
-              {53, 3620, -4.3}, // M0
-              {54, 3500, -4.4}, // M1
-              {55, 3370, -4.5}, // M2
-              {56, 3250, -4.6}, // M3
-              {57, 3000, -4.7}, // M4
-              {58, 2880, -4.8}, // M5
-            };
-  }
-
-  // ClaretTable_H.vot.csv
+    // ClaretTable_H.vot.csv
   private static double[][] logGAndTeffToH() {
     return new double[][]{
               {0.0, 3500, 0.482},

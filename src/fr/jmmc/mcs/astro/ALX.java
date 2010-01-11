@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.12 2010-01-08 16:22:22 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.13 2010-01-11 22:06:33 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2010/01/08 16:22:22  mella
+ * add most material to compute ld to ud
+ *
  * Revision 1.11  2010/01/07 10:21:07  mella
  * Add first prototype version of ld2ud program
  *
@@ -379,12 +382,12 @@ public class ALX
         Star star = new Star();
 
         Property [] uds = new Property[]{
-          Property.UD_B, Property.UD_H, Property.UD_I, Property.UD_J, Property.UD_K,
+          Property.UD_B, Property.UD_I, Property.UD_J, Property.UD_H, Property.UD_K ,
           Property.UD_L, Property.UD_N, Property.UD_R, Property.UD_U, Property.UD_V
         };           
 
         for (Property ud : uds) {
-          double diam = LD2UD.getLimbDarkenedCorrectionFactor(ud, sptype)*ld;
+          double diam = ld / LD2UD.getLimbDarkenedCorrectionFactor(ud, sptype);
           star.setPropertyAsDouble(ud,diam);
         }
         return star;

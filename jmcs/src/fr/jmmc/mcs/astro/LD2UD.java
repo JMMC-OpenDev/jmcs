@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.8 2010-01-11 16:25:20 mella Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.9 2010-01-11 17:15:41 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/01/11 16:25:20  mella
+ * intermediate code before last logg detection
+ *
  * Revision 1.7  2010/01/10 23:28:54  mella
  * Add missing breaks in switch case
  *
@@ -66,6 +69,11 @@ public class LD2UD {
         logger_.addHandler(h);
         logger_.setLevel(Level.FINE);
 
+        searchCoeff(logGAndTeffToK(), 3, 6500);
+        searchCoeff(logGAndTeffToK(), .55, 5999);
+        searchCoeff(logGAndTeffToK(), .55, 5777);
+
+        System.exit(0);
 
         try {
             System.out.println(ALX.ld2ud(Double.parseDouble(args[0]), args[1]));
@@ -171,26 +179,32 @@ public class LD2UD {
     }
 
     // @todo add test code ( especially for array limits )
-    private static double searchCoeff(double[][] table, double logg, double teff) {
+private static double searchCoeff(double[][] table, double logg, double teff) {
         double result = 0;
         double prevTeff, currentTeff = 0;
         double prevLogg, currentLogg = 0;
         double prevCoeff, currentCoeff = -9999;
         boolean found = false;
 
-        // Warning the array is read in the reverse order from the source code
+        int firstGroupIndex;
+
         for (int i = 0; i < table.length; i++) {
             prevTeff = currentTeff;
             prevCoeff = currentCoeff;
             double[] ds = table[i];
             currentTeff = ds[1];
             currentCoeff = ds[2];
+//            logger_.fine("teff["+(i+1)+"]="+currentTeff);
             if (currentTeff != prevTeff) {
+                logger_.fine("changement de zone teff["+(i+1)+"]="+currentTeff);
+                firstGroupIndex=i;
                 int sens;
                 // We are into two different temperature groups.
-                if (currentTeff >= teff && prevTeff < teff && !found) {
+                if (teff <= currentTeff && teff > prevTeff && !found) {
+                    logger_.fine("Supindex  = "+i+ " where teff="+currentTeff);
+
                     found = true;
-                    if ((currentTeff + prevTeff) / 2 <= teff) {
+                    if (teff >= (currentTeff + prevTeff) / 2) {
                         result = currentCoeff;
                         sens = 1;
                     } else {
@@ -199,9 +213,8 @@ public class LD2UD {
                     }
                     // Now we need to jump to the next neares logg values in the
                     // same temperature group.
-
+                    //while( currentTeff  )
                     // logg
-
                 }
             }
         }
@@ -209,7 +222,6 @@ public class LD2UD {
                 " is " + result);
         return result;
     }
-
     /**
      * Returns one correction factor given to on coefficient extracted from the tables.
      *

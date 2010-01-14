@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.17 2009-04-16 15:44:51 lafrasse Exp $"
+ * "@(#) $Id: HelpView.java,v 1.18 2010-01-14 13:20:38 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2009/04/16 15:44:51  lafrasse
+ * Jalopization.
+ *
  * Revision 1.16  2009/03/23 08:49:09  mella
  * remove println
  *
@@ -123,15 +126,21 @@ public class HelpView
         {
             // Get the helpset file and create the centered help broker 
             url = HelpSet.findHelpSet(null, "documentation.hs");
-            _logger.finest("HelpSet.findHelpSet(null, 'documentation.hs') = '" +
-                url + "'.");
+
+            if (_logger.isLoggable(Level.FINEST)) {
+                _logger.finest("HelpSet.findHelpSet(null, 'documentation.hs') = '" +
+                    url + "'.");
+            }
 
             if (url == null)
             {
                 url = HelpSet.findHelpSet(null, "/documentation.hs");
-                _logger.finest(
-                    "HelpSet.findHelpSet(null, '/documentation.hs') = '" + url +
-                    "'.");
+
+                if (_logger.isLoggable(Level.FINEST)) {
+                    _logger.finest(
+                        "HelpSet.findHelpSet(null, '/documentation.hs') = '" + url +
+                        "'.");
+                }
             }
 
             if (url == null)
@@ -142,25 +151,45 @@ public class HelpView
                 // Works on Linux with JVM 1.5.0_16
                 url = _instance.getClass().getClassLoader()
                                .getResource("documentation.hs");
-                _logger.finest(
-                    "_instance.getClass().getClassLoader().getResource('documentation.hs') = '" +
-                    url + "'.");
+
+                if (_logger.isLoggable(Level.FINEST)) {
+                    _logger.finest(
+                        "_instance.getClass().getClassLoader().getResource('documentation.hs') = '" +
+                        url + "'.");
+                }
             }
 
             if (url == null)
             {
                 url = _instance.getClass().getClassLoader()
                                .getResource("/documentation.hs");
-                _logger.finest(
-                    "_instance.getClass().getClassLoader().getResource('/documentation.hs') = '" +
-                    url + "'.");
+
+                if (_logger.isLoggable(Level.FINEST)) {
+                    _logger.finest(
+                        "_instance.getClass().getClassLoader().getResource('/documentation.hs') = '" +
+                        url + "'.");
+                }
             }
 
             // http://forums.sun.com/thread.jspa?messageID=10522645
             url = Urls.fixJarURL(url);
-            _logger.finest("fixJarURL(url) = '" + url + "'.");
 
-            _logger.fine("using helpset url=" + url);
+            if (_logger.isLoggable(Level.FINEST)) {
+                _logger.finest("fixJarURL(url) = '" + url + "'.");
+            }
+
+            if (_logger.isLoggable(Level.FINE)) {
+                _logger.fine("using helpset url=" + url);
+            }
+
+            // check if the url is valid :
+            if (url == null) {
+                if (_logger.isLoggable(Level.INFO)) {
+                    _logger.info("No helpset document found.");
+                }
+
+                return false;
+            }
 
             HelpSet helpSet = new HelpSet(_instance.getClass().getClassLoader(),
                     url);
@@ -170,9 +199,11 @@ public class HelpView
         }
         catch (Exception ex)
         {
-            _logger.log(Level.SEVERE,
-                "Problem during helpset built (url=" + url + ", classloader=" +
-                _instance.getClass().getClassLoader() + ")", ex);
+            if (_logger.isLoggable(Level.SEVERE)) {
+                _logger.log(Level.SEVERE,
+                    "Problem during helpset built (url=" + url + ", classloader=" +
+                    _instance.getClass().getClassLoader() + ")", ex);
+            }
 
             return false;
         }
@@ -203,11 +234,9 @@ public class HelpView
      */
     public static String getHelpID(String endOfHelpID)
     {
-        String helpID = null;
-
         //search helpId into map that ends with label
         Map         m  = _helpBroker.getHelpSet().getCombinedMap();
-        Enumeration e  = m.getAllIDs();
+        Enumeration<?> e  = m.getAllIDs();
         Map.ID      id;
 
         while (e.hasMoreElements())

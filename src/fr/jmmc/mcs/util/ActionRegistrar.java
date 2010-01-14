@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ActionRegistrar.java,v 1.4 2009-01-05 13:43:08 lafrasse Exp $"
+ * "@(#) $Id: ActionRegistrar.java,v 1.5 2010-01-14 13:03:04 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2009/01/05 13:43:08  lafrasse
+ * Added Open action handling.
+ *
  * Revision 1.3  2008/09/05 08:33:52  lafrasse
  * Added missing 'private' attribute to _register field, that was causing Jalopy to
  * behave strangely.
@@ -93,8 +96,10 @@ public class ActionRegistrar
 
         if (previousAction == null)
         {
-            _logger.finest("Registered '" + internalActionKey +
+            if (_logger.isLoggable(Level.FINEST)) {
+              _logger.finest("Registered '" + internalActionKey +
                 "' action for the first time.");
+            }
         }
         else if (previousAction != action)
         {
@@ -103,8 +108,10 @@ public class ActionRegistrar
         }
         else
         {
-            _logger.fine("Registered '" + internalActionKey +
+            if (_logger.isLoggable(Level.FINE)) {
+              _logger.fine("Registered '" + internalActionKey +
                 "' action succesfully.");
+            }
         }
 
         return previousAction;
@@ -133,8 +140,10 @@ public class ActionRegistrar
         }
         else
         {
-            _logger.fine("Retrieved '" + internalActionKey +
+            if (_logger.isLoggable(Level.FINE)) {
+              _logger.fine("Retrieved '" + internalActionKey +
                 "' action succesfully.");
+            }
         }
 
         return retrievedAction;
@@ -226,6 +235,7 @@ public class ActionRegistrar
      *
      * @return the registrar content as a String.
      */
+    @Override
     public String toString()
     {
         _logger.entering("ActionRegistrar", "toString");

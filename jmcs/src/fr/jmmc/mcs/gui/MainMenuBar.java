@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.32 2009-11-03 10:17:45 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.33 2010-01-14 13:03:04 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2009/11/03 10:17:45  lafrasse
+ * Code and documentation refinments.
+ *
  * Revision 1.31  2009/11/02 16:28:51  lafrasse
  * Added support for RegisteredPreferencedBooleanAction in radio-button menu items.
  *
@@ -126,10 +129,10 @@ import java.net.URL;
 
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -157,6 +160,10 @@ import javax.swing.text.DefaultEditorKit;
  */
 public class MainMenuBar extends JMenuBar
 {
+
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
+
     /** Logger */
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.gui.MainMenuBar");
@@ -209,7 +216,10 @@ public class MainMenuBar extends JMenuBar
                     {
                         // Get menu label
                         String currentMenuLabel = menu.getLabel();
-                        _logger.fine("Make '" + currentMenuLabel + "' menu.");
+
+                        if (_logger.isLoggable(Level.FINE)) {
+                          _logger.fine("Make '" + currentMenuLabel + "' menu.");
+                        }
 
                         // Keep it if it's an other menu
                         if ((currentMenuLabel.equals("File") == false) &&
@@ -217,8 +227,11 @@ public class MainMenuBar extends JMenuBar
                                 (currentMenuLabel.equals("Help") == false))
                         {
                             otherMenus.add(currentMenuLabel);
-                            _logger.fine("Add '" + currentMenuLabel +
+
+                            if (_logger.isLoggable(Level.FINE)) {
+                              _logger.fine("Add '" + currentMenuLabel +
                                 "' to other menus vector.");
+                            }
                         }
 
                         // Get the component according to the castor menu object
@@ -227,8 +240,11 @@ public class MainMenuBar extends JMenuBar
 
                         // Put it in the menu table
                         _menusTable.put(currentMenuLabel, completeMenu);
-                        _logger.fine("Put '" + completeMenu.getName() +
+
+                        if (_logger.isLoggable(Level.FINE)) {
+                          _logger.fine("Put '" + completeMenu.getName() +
                             "' into the menus table.");
+                        }
                     }
                 }
             }
@@ -244,7 +260,10 @@ public class MainMenuBar extends JMenuBar
         for (String menuLabel : otherMenus)
         {
             add(_menusTable.get(menuLabel));
-            _logger.fine("Add '" + menuLabel + "' menu into the menubar.");
+
+            if (_logger.isLoggable(Level.FINE)) {
+              _logger.fine("Add '" + menuLabel + "' menu into the menubar.");
+            }
         }
 
         // Create help menu
@@ -447,8 +466,11 @@ public class MainMenuBar extends JMenuBar
         if (parent != null)
         {
             parent.add(component);
-            _logger.fine("'" + component.getName() + "' linked to '" +
+
+            if (_logger.isLoggable(Level.FINE)) {
+              _logger.fine("'" + component.getName() + "' linked to '" +
                 parent.getName() + "'.");
+            }
         }
 
         // Get submenus
@@ -628,11 +650,15 @@ public class MainMenuBar extends JMenuBar
             }
             else
             {
-                _logger.warning("Can't find iconUrl : " + icon);
+                if (_logger.isLoggable(Level.WARNING)) {
+                    _logger.warning("Can't find iconUrl : " + icon);
+                }
             }
         }
 
-        _logger.fine("Attributes set on '" + menu.getLabel() + "'.");
+        if (_logger.isLoggable(Level.FINE)) {
+          _logger.fine("Attributes set on '" + menu.getLabel() + "'.");
+        }
     }
 
     /**

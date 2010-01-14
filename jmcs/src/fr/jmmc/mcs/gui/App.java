@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.54 2009-10-07 15:58:34 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.55 2010-01-14 13:03:04 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.54  2009/10/07 15:58:34  lafrasse
+ * Jalopization.
+ *
  * Revision 1.53  2009/09/18 10:41:40  mella
  * Fix default acknoledgments form
  *
@@ -509,9 +512,11 @@ public abstract class App
         }
         catch (Exception ex)
         {
-            _logger.log(Level.WARNING,
-                "Cannot laod '" + defaultXmlLocation +
-                "' default application data", ex);
+            if (_logger.isLoggable(Level.WARNING)) {
+                _logger.log(Level.WARNING,
+                    "Cannot laod '" + defaultXmlLocation +
+                    "' default application data", ex);
+            }
             System.exit(-1);
         }
     }
@@ -610,9 +615,11 @@ public abstract class App
     protected void interpretArguments(String[] args)
     {
         // List received arguments
-        for (int i = 0; i < args.length; i++)
-        {
-            _logger.finest("args[" + i + "] = '" + args[i] + "'.");
+        if (_logger.isLoggable(Level.FINEST)) {
+            for (int i = 0; i < args.length; i++)
+            {
+                _logger.finest("args[" + i + "] = '" + args[i] + "'.");
+            }
         }
 
         // Just leave method if no argument has been given
@@ -668,7 +675,9 @@ public abstract class App
 
             // Open the given file
             case 3:
-                _logger.info("Should open '" + file + "'.");
+                if (_logger.isLoggable(Level.INFO)) {
+                  _logger.info("Should open '" + file + "'.");
+                }
                 _registrar.getOpenAction()
                           .actionPerformed(new ActionEvent(_registrar, 0,
                         file.toString()));
@@ -681,7 +690,9 @@ public abstract class App
 
                 if (arg != null)
                 {
-                    _logger.info("Set logger level to '" + arg + "'.");
+                    if (_logger.isLoggable(Level.INFO)) {
+                      _logger.info("Set logger level to '" + arg + "'.");
+                    }
 
                     if (arg.equals("0"))
                     {
@@ -925,7 +936,9 @@ public abstract class App
         // Replace '.' by '/' of package name
         String packagePath = packageName.replace(".", "/");
         String filePath    = packagePath + "/" + fileName;
-        _logger.fine("filePath = '" + filePath + "'.");
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("filePath = '" + filePath + "'.");
+        }
 
         URL fileURL = null;
 
@@ -936,11 +949,15 @@ public abstract class App
         }
         catch (Exception ex)
         {
-            _logger.log(Level.WARNING,
-                "Cannot load '" + filePath + "' resource file.", ex);
+            if (_logger.isLoggable(Level.WARNING)) {
+                _logger.log(Level.WARNING,
+                    "Cannot load '" + filePath + "' resource file.", ex);
+            }
         }
 
-        _logger.fine("fileURL = '" + fileURL + "'.");
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("fileURL = '" + fileURL + "'.");
+        }
 
         return Urls.fixJarURL(fileURL);
     }

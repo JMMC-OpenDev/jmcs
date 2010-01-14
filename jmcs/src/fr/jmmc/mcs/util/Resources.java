@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.14 2008-11-06 13:45:37 mella Exp $"
+ * "@(#) $Id: Resources.java,v 1.15 2010-01-14 13:03:04 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2008/11/06 13:45:37  mella
+ * fix logging levels
+ *
  * Revision 1.13  2008/10/16 13:16:11  mella
  * Use dedicated warn level param to resources retrieval method
  *
@@ -92,7 +95,9 @@ public abstract class Resources
     {
         logger_.entering(_loggerClassName, "setResourceName");
 
-        logger_.fine("Application will grab resources from '" + name + "'");
+        if (logger_.isLoggable(Level.FINE)) {
+          logger_.fine("Application will grab resources from '" + name + "'");
+        }
         _resourceName = name;
     }
 
@@ -128,14 +133,18 @@ public abstract class Resources
             }
             catch (Exception e)
             {
-                logger_.log(notFoundLogLevel,
+              if (logger_.isLoggable(notFoundLogLevel)) {
+                  logger_.log(notFoundLogLevel,
                     "Resource bundle can't be found :" + e.getMessage());
+              }
 
                 return null;
             }
         }
 
-        logger_.fine("getResource for " + resourceName);
+        if (logger_.isLoggable(Level.FINE)) {
+          logger_.fine("getResource for " + resourceName);
+        }
 
         try
         {
@@ -228,8 +237,10 @@ public abstract class Resources
         // Get and return the KeyStroke from the accelerator string description
         KeyStroke accelerator = KeyStroke.getKeyStroke(keyString);
 
-        logger_.fine("keyString['" + actionName + "'] = '" + keyString +
+        if (logger_.isLoggable(Level.FINE)) {
+          logger_.fine("keyString['" + actionName + "'] = '" + keyString +
             "' -> accelerator = '" + accelerator + "'.");
+        }
 
         return accelerator;
     }
@@ -251,8 +262,10 @@ public abstract class Resources
 
         if (iconPath == null)
         {
-            logger_.fine("No icon resource found for action name '" +
+            if (logger_.isLoggable(Level.FINE)) {
+              logger_.fine("No icon resource found for action name '" +
                 actionName + "'.");
+            }
 
             return null;
         }
@@ -262,12 +275,16 @@ public abstract class Resources
 
         if (imgURL == null)
         {
-            logger_.fine("Could not load icon '" + iconPath + "'.");
+            if (logger_.isLoggable(Level.FINE)) {
+              logger_.fine("Could not load icon '" + iconPath + "'.");
+            }
 
             return null;
         }
 
-        logger_.fine("Using imgUrl for icon resource  '" + imgURL);
+        if (logger_.isLoggable(Level.FINE)) {
+          logger_.fine("Using imgUrl for icon resource  '" + imgURL);
+        }
 
         return new ImageIcon(imgURL);
     }

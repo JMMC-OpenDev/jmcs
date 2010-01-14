@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ActionRegistrar.java,v 1.5 2010-01-14 13:03:04 bourgesl Exp $"
+ * "@(#) $Id: ActionRegistrar.java,v 1.6 2010-01-14 13:41:45 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/01/14 13:03:04  bourgesl
+ * use Logger.isLoggable to avoid a lot of string.concat()
+ *
  * Revision 1.4  2009/01/05 13:43:08  lafrasse
  * Added Open action handling.
  *
@@ -23,8 +26,9 @@
 package fr.jmmc.mcs.util;
 
 import java.util.Hashtable;
-import java.util.logging.*;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 
 
@@ -103,8 +107,10 @@ public class ActionRegistrar
         }
         else if (previousAction != action)
         {
-            _logger.warning("Overwritten the previously registered '" +
-                internalActionKey + "' action.");
+            if (_logger.isLoggable(Level.WARNING)) {
+                _logger.warning("Overwritten the previously registered '" +
+                    internalActionKey + "' action.");
+            }
         }
         else
         {
@@ -131,12 +137,18 @@ public class ActionRegistrar
     {
         _logger.entering("ActionRegistrar", "get");
 
+        if (classPath == null && fieldName == null) {
+          return null;
+        }
+
         String         internalActionKey = classPath + ":" + fieldName;
         AbstractAction retrievedAction   = _register.get(internalActionKey);
 
         if (retrievedAction == null)
         {
-            _logger.severe("Cannot find '" + internalActionKey + "' action.");
+            if (_logger.isLoggable(Level.SEVERE)) {
+                _logger.log(Level.SEVERE, "Cannot find '" + internalActionKey + "' action :", new Throwable());
+            }
         }
         else
         {

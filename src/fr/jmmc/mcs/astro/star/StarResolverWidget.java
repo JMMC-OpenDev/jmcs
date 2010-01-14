@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.5 2009-12-18 14:42:57 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.6 2010-01-14 12:40:19 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2009/12/18 14:42:57  bourgesl
+ * added serialVersionUID
+ *
  * Revision 1.4  2009/12/16 15:53:02  lafrasse
  * Hardened CDS Simbad science star resolution mecanisms while failing.
  * Code, documentation and log refinments.
@@ -32,6 +35,7 @@ import java.awt.event.ActionListener;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
@@ -75,8 +79,10 @@ public class StarResolverWidget extends SearchField implements Observer
 
                     if (starName.length() > 0)
                     {
-                        _logger.info("Searching CDS Simbad data for star '" +
+                        if (_logger.isLoggable(Level.INFO)) {
+                          _logger.info("Searching CDS Simbad data for star '" +
                             starName + "'.");
+                        }
                         StatusBar.show("searching CDS Simbad data for star '" +
                             starName +
                             "'... (please wait, this may take a while)");

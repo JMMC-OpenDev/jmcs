@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.9 2010-01-04 14:06:41 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.10 2010-01-14 12:40:20 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/01/04 14:06:41  bourgesl
+ * close properly the CDS connection
+ *
  * Revision 1.8  2009/12/18 14:43:54  bourgesl
  * blanking value support (~) and allow empty values for proper motion and parallax
  *
@@ -36,7 +39,7 @@
 package fr.jmmc.mcs.astro.star;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -144,6 +147,7 @@ public class StarResolver
         /** Simbad querying result */
         private String _result = null;
 
+        @Override
         public void run()
         {
             _logger.entering("ResolveStarThread", "run");
@@ -167,22 +171,29 @@ public class StarResolver
                 return;
             }
 
-            // Reset receiving buffer before proceding
+            // Reset result before proceeding
             _result = "";
 
-            // Forge Simbad script to execute
-            String simbadScript = "output console=off script=off\n"; // Just data
-            simbadScript += "format object form1 \""; // Simbad script preambule
-            simbadScript += "%COO(d;A);%COO(d;D);%COO(A);%COO(D);\\n"; // RA and DEC coordinates as sexagesimal and decimal degree values
-            simbadScript += "%OTYPELIST\\n"; // Object types enumeration
-            simbadScript += "%FLUXLIST(V,I,J,H,K;N=F,)\\n"; // Magnitudes, 'Band=Value' format
-            simbadScript += "%PM(A;D)\\n"; // Proper motion with error
-            simbadScript += "%PLX(V;E)\\n"; // Parallax with error
-            simbadScript += "%SP(S)"; // Spectral types enumeration
-            simbadScript += "\"\n"; // Simbad script end
-            simbadScript += ("query id " + _starName); // Add the object name we are looking for
+            // buffer used for both script and result :
+            final StringBuilder sb = new StringBuilder(255);
 
-            _logger.finest("CDS Simbad script :\n" + simbadScript);
+            // Forge Simbad script to execute
+            sb.append("output console=off script=off\n"); // Just data
+            sb.append("format object form1 \""); // Simbad script preambule
+            sb.append("%COO(d;A);%COO(d;D);%COO(A);%COO(D);\\n"); // RA and DEC coordinates as sexagesimal and decimal degree values
+            sb.append("%OTYPELIST\\n"); // Object types enumeration
+            sb.append("%FLUXLIST(V,I,J,H,K;N=F,)\\n"); // Magnitudes, 'Band=Value' format
+            sb.append("%PM(A;D)\\n"); // Proper motion with error
+            sb.append("%PLX(V;E)\\n"); // Parallax with error
+            sb.append("%SP(S)"); // Spectral types enumeration
+            sb.append("\"\n"); // Simbad script end
+            sb.append("query id ").append(_starName); // Add the object name we are looking for
+
+            final String simbadScript = sb.toString();
+
+            if (_logger.isLoggable(Level.FINEST)) {
+              _logger.finest("CDS Simbad script :\n" + simbadScript);
+            }
 
             // Try to get star data from CDS
             InputStream       inputStream = null;
@@ -191,7 +202,9 @@ public class StarResolver
                 // Forge the URL int UTF8 unicode charset
                 String encodedScript = URLEncoder.encode(simbadScript, "UTF-8");
                 String simbadURL     = _simbadBaseURL + encodedScript;
-                _logger.fine("Querying CDS Simbad at " + simbadURL);
+                if (_logger.isLoggable(Level.FINE)) {
+                  _logger.fine("Querying CDS Simbad at " + simbadURL);
+                }
 
                 // Launch the network query
                 URL               url               = new URL(simbadURL);
@@ -202,17 +215,24 @@ public class StarResolver
                 // Read incoming data line by line
                 String currentLine = null;
 
+                // reset buffer :
+                sb.setLength(0);
+
                 while ((currentLine = bufferedReader.readLine()) != null)
                 {
-                    if (_result.length() > 0)
+                    if (sb.length() > 0)
                     {
-                        _result += "\n";
+                        sb.append('\n');
                     }
 
-                    _result += currentLine;
+                    sb.append(currentLine);
                 }
 
-                _logger.finer("CDS Simbad raw result :\n" + _result);
+                _result = sb.toString();
+
+                if (_logger.isLoggable(Level.FINER)) {
+                  _logger.finer("CDS Simbad raw result :\n" + _result);
+                }
             }
             catch (Exception ex)
             {
@@ -254,8 +274,12 @@ public class StarResolver
                         "SIMBAD returned a script execution error");
                 }
 
-                // Handle blanking character (~)
-                _result = _result.replaceAll("~", "");
+                // Remove any blanking character (~) :
+                _result = _result.replaceAll("~[ ]*", "");
+
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("CDS Simbad result without blanking values :\n" + _result);
+                }
 
                 // Parsing result line by line
                 StringTokenizer lineTokenizer = new StringTokenizer(_result,
@@ -314,7 +338,9 @@ public class StarResolver
         private void parseCoordinates(String coordinates)
             throws Exception
         {
-            _logger.finer("Coordinates contains '" + coordinates + "'.");
+            if (_logger.isLoggable(Level.FINER)) {
+              _logger.finer("Coordinates contains '" + coordinates + "'.");
+            }
 
             StringTokenizer coordinatesTokenizer = new StringTokenizer(coordinates,
                     ";");
@@ -322,19 +348,27 @@ public class StarResolver
             if (coordinatesTokenizer.countTokens() == 4)
             {
                 double ra = Double.parseDouble(coordinatesTokenizer.nextToken());
-                _logger.finest("RA_d = '" + ra + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("RA_d = '" + ra + "'.");
+                }
                 _newStarModel.setPropertyAsDouble(Star.Property.RA_d, ra);
 
                 double dec = Double.parseDouble(coordinatesTokenizer.nextToken());
-                _logger.finest("DEC_d = '" + dec + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("DEC_d = '" + dec + "'.");
+                }
                 _newStarModel.setPropertyAsDouble(Star.Property.DEC_d, dec);
 
                 String hmsRa = coordinatesTokenizer.nextToken();
-                _logger.finest("RA = '" + hmsRa + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("RA = '" + hmsRa + "'.");
+                }
                 _newStarModel.setPropertyAsString(Star.Property.RA, hmsRa);
 
                 String dmsDec = coordinatesTokenizer.nextToken();
-                _logger.finest("DEC = '" + dmsDec + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("DEC = '" + dmsDec + "'.");
+                }
                 _newStarModel.setPropertyAsString(Star.Property.DEC, dmsDec);
             }
             else
@@ -350,7 +384,9 @@ public class StarResolver
 
         private void parseObjectTypes(String objectTypes)
         {
-            _logger.finer("Object Types contains '" + objectTypes + "'.");
+            if (_logger.isLoggable(Level.FINER)) {
+              _logger.finer("Object Types contains '" + objectTypes + "'.");
+            }
 
             _newStarModel.setPropertyAsString(Star.Property.OTYPELIST,
                 objectTypes);
@@ -358,7 +394,9 @@ public class StarResolver
 
         private void parseFluxes(String fluxes) throws Exception
         {
-            _logger.finer("Fluxes contains '" + fluxes + "'.");
+            if (_logger.isLoggable(Level.FINER)) {
+              _logger.finer("Fluxes contains '" + fluxes + "'.");
+            }
 
             StringTokenizer fluxesTokenizer = new StringTokenizer(fluxes, ",");
 
@@ -369,7 +407,9 @@ public class StarResolver
                     token.substring(0, 1).toUpperCase(); // The first character is the magnitude band letter
                 String value         = token.substring(2); // The second character is "=", followed by the magnitude value in double
 
-                _logger.finest(magnitudeBand + " = '" + value + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest(magnitudeBand + " = '" + value + "'.");
+                }
 
                 _newStarModel.setPropertyAsDouble(Star.Property.fromString(
                         magnitudeBand), Double.parseDouble(value));
@@ -379,7 +419,9 @@ public class StarResolver
         private void parseProperMotion(String properMotion)
             throws Exception
         {
-            _logger.finer("Proper Motion contains '" + properMotion + "'.");
+            if (_logger.isLoggable(Level.FINER)) {
+              _logger.finer("Proper Motion contains '" + properMotion + "'.");
+            }
 
             StringTokenizer properMotionTokenizer = new StringTokenizer(properMotion,
                     ";");
@@ -387,24 +429,32 @@ public class StarResolver
             if (properMotionTokenizer.countTokens() == 2)
             {
                 double pm_ra = Double.parseDouble(properMotionTokenizer.nextToken());
-                _logger.finest("PROPERMOTION_RA = '" + pm_ra + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("PROPERMOTION_RA = '" + pm_ra + "'.");
+                }
                 _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_RA,
                     pm_ra);
 
                 double pm_dec = Double.parseDouble(properMotionTokenizer.nextToken());
-                _logger.finest("PROPERMOTION_DEC = '" + pm_dec + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("PROPERMOTION_DEC = '" + pm_dec + "'.");
+                }
                 _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_DEC,
                     pm_dec);
             }
             else
             {
-                _logger.finest("No proper motion data for star '" + _starName + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("No proper motion data for star '" + _starName + "'.");
+                }
             }
         }
 
         private void parseParallax(String parallax) throws Exception
         {
-            _logger.finer("Parallax contains '" + parallax + "'.");
+            if (_logger.isLoggable(Level.FINER)) {
+              _logger.finer("Parallax contains '" + parallax + "'.");
+            }
 
             StringTokenizer parallaxTokenizer = new StringTokenizer(parallax,
                     ";");
@@ -412,23 +462,31 @@ public class StarResolver
             if (parallaxTokenizer.countTokens() == 2)
             {
                 double plx = Double.parseDouble(parallaxTokenizer.nextToken());
-                _logger.finest("PARALLAX = '" + plx + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("PARALLAX = '" + plx + "'.");
+                }
                 _newStarModel.setPropertyAsDouble(Star.Property.PARALLAX, plx);
 
                 double plx_err = Double.parseDouble(parallaxTokenizer.nextToken());
-                _logger.finest("PARALLAX_err = '" + plx_err + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("PARALLAX_err = '" + plx_err + "'.");
+                }
                 _newStarModel.setPropertyAsDouble(Star.Property.PARALLAX_err,
                     plx_err);
             }
             else
             {
-                _logger.finest("No parallax data for star '" + _starName + "'.");
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("No parallax data for star '" + _starName + "'.");
+                }
             }
         }
 
         private void parseSpectralTypes(String spectralTypes)
         {
-            _logger.finer("Spectral Types contains '" + spectralTypes + "'.");
+            if (_logger.isLoggable(Level.FINER)) {
+              _logger.finer("Spectral Types contains '" + spectralTypes + "'.");
+            }
 
             _newStarModel.setPropertyAsString(Star.Property.SPECTRALTYPES,
                 spectralTypes);

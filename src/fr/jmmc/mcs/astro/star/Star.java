@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.12 2010-01-07 13:47:50 mella Exp $"
+ * "@(#) $Id: Star.java,v 1.13 2010-01-14 12:40:20 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2010/01/07 13:47:50  mella
+ * add missing Uniform Diameters in U band
+ *
  * Revision 1.11  2010/01/07 13:05:06  mella
  * update list od Uniform Diameters
  *
@@ -232,15 +235,15 @@ public class Star extends Observable
     @Override
     public String toString()
     {
-        String s="";
+        final StringBuilder sb = new StringBuilder(255);
         for (Property key : _stringContent.keySet()) {
-            s+=key+"="+_stringContent.get(key)+"\n";
+            sb.append(key).append("=").append(_stringContent.get(key)).append("\n");
         }
         for (Property key : _doubleContent.keySet()) {
-            s+=key+"="+_doubleContent.get(key)+"\n";
+            sb.append(key).append("=").append(_doubleContent.get(key)).append("\n");
         }
 
-        return s;
+        return sb.toString();
         /*return "Strings = " + _stringContent.toString() + " / Doubles = " +
         _doubleContent.toString() + " / CDS Simbad error = '" +
         _cdsSimbadErrorMessage + "'.";

@@ -1,13 +1,17 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.29 2010-01-07 10:37:31 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.30 2010-01-18 15:27:00 lafrasse Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.29  2010/01/07 10:37:31  lafrasse
+# Renamed all executables to include the mandatory 'jmcs' prefix.
+# Added jmcsLD2UD executable.
+#
 # Revision 1.28  2009/12/01 14:18:00  lafrasse
 # Added 'ALX' executable for test purpose.
 #
@@ -247,6 +251,7 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/java-getopt-1.0.13.jar \
 		../lib/AppleJavaExtensions.jar \
 		../lib/commons-lang-2.4.jar \
+		../lib/sptype.jar \
 		../config/jmcsLatexIndex2HsTOC.xsl
 
 #

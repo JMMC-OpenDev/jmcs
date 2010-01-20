@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.14 2010-01-20 13:56:12 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.15 2010-01-20 13:58:31 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2010/01/20 13:56:12  mella
+ * remove duplicated code
+ *
  * Revision 1.13  2010/01/11 22:06:33  mella
  * fix formulae to get ld from ud
  *
@@ -381,6 +384,15 @@ public class ALX
     /** 
      * ld should be a diamvk.
      */
+    /**
+     * Compute teff and logg from given spectral type and return a star
+     * with Uniform diameters properties computed from the nearest
+     * teff and logg found in the various tables .
+     * @param ld
+     * @param sptype
+     * @return a Star with UD properties.
+     * @throws ParseException
+     */
     public static Star ld2ud(double ld, String sptype) throws ParseException{
         double teff = LD2UD.getEffectiveTemperature(sptype);
         double logg = LD2UD.getGravity(sptype);
@@ -388,13 +400,13 @@ public class ALX
     }
 
     /**
-     * ld should be a diamvk.
+     * Return a star with Uniform diameters properties computed from the nearest
+     * teff and logg found in the various tables.
      *
-     * @param ld
+     * @param ld should be a diamvk.
      * @param teff
      * @param logg
-     * @return a Star with UD properties.
-     * @throws ParseException
+     * @return a Star with UD properties.     
      */
     public static Star ld2ud(double ld, double teff, double logg){
         Star star = new Star();

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.12 2010-01-18 15:25:52 mella Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.13 2010-01-20 13:55:08 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2010/01/18 15:25:52  mella
+ * Fix default call
+ *
  * Revision 1.11  2010/01/15 20:13:57  mella
  * ordered cordovez tables by teff
  *
@@ -90,7 +93,7 @@ public class LD2UD {
         return result;
     }
 
-    public static double getLimbDarkenedCorrectionFactor(Property requestedUD, double teff, double logg) throws ParseException {
+    public static double getLimbDarkenedCorrectionFactor(Property requestedUD, double teff, double logg){
         double[][] table = getCoefficientsTable(requestedUD);
         double c = searchCoeff(table, logg, teff);
         double result = getCorrectionFactor(c);

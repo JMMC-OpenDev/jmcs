@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.13 2010-01-11 22:06:33 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.14 2010-01-20 13:56:12 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2010/01/11 22:06:33  mella
+ * fix formulae to get ld from ud
+ *
  * Revision 1.12  2010/01/08 16:22:22  mella
  * add most material to compute ld to ud
  *
@@ -379,15 +382,30 @@ public class ALX
      * ld should be a diamvk.
      */
     public static Star ld2ud(double ld, String sptype) throws ParseException{
+        double teff = LD2UD.getEffectiveTemperature(sptype);
+        double logg = LD2UD.getGravity(sptype);
+        return ld2ud(ld,teff,logg);
+    }
+
+    /**
+     * ld should be a diamvk.
+     *
+     * @param ld
+     * @param teff
+     * @param logg
+     * @return a Star with UD properties.
+     * @throws ParseException
+     */
+    public static Star ld2ud(double ld, double teff, double logg){
         Star star = new Star();
 
         Property [] uds = new Property[]{
           Property.UD_B, Property.UD_I, Property.UD_J, Property.UD_H, Property.UD_K ,
           Property.UD_L, Property.UD_N, Property.UD_R, Property.UD_U, Property.UD_V
-        };           
+        };
 
         for (Property ud : uds) {
-          double diam = ld / LD2UD.getLimbDarkenedCorrectionFactor(ud, sptype);
+          double diam = ld / LD2UD.getLimbDarkenedCorrectionFactor(ud, teff, logg);
           star.setPropertyAsDouble(ud,diam);
         }
         return star;

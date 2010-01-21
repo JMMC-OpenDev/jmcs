@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.13 2010-01-14 12:40:20 bourgesl Exp $"
+ * "@(#) $Id: Star.java,v 1.14 2010-01-21 10:04:01 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2010/01/14 12:40:20  bourgesl
+ * Fix blanking value with white spaces for proper motion and parallax ' ; '
+ * StringBuilder and Logger.isLoggable to avoid string.concat
+ *
  * Revision 1.12  2010/01/07 13:47:50  mella
  * add missing Uniform Diameters in U band
  *
@@ -54,7 +58,8 @@ package fr.jmmc.mcs.astro.star;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Observable;
-import java.util.logging.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -65,6 +70,9 @@ public class Star extends Observable
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.astro.star.Star");
+
+    /** star name */
+    private String _name = null;
 
     /** Star property-value backing store for String data */
     private final Map<Property, String> _stringContent;
@@ -92,6 +100,8 @@ public class Star extends Observable
      */
     public void copy(Star source)
     {
+      _name = source.getName();
+
       _stringContent.clear();
       for (Map.Entry<Property, String> entry : source._stringContent.entrySet()) {
         _stringContent.put(entry.getKey(), entry.getValue());
@@ -110,11 +120,29 @@ public class Star extends Observable
      */
     public void clear()
     {
+        _name = null;
         _stringContent.clear();
         _doubleContent.clear();
         _cdsSimbadErrorMessage = null;
 
         setChanged();
+    }
+
+    /**
+     * Define the star name
+     * @param name star name
+     */
+    public void setName(String name) {
+      this._name = name;
+      setChanged();
+    }
+
+    /**
+     * Return the star name or null if it is undefined
+     * @return star name or null
+     */
+    public String getName() {
+      return _name;
     }
 
     /**
@@ -204,7 +232,10 @@ public class Star extends Observable
     public void raiseCDSimbadErrorMessage(String message)
     {
         _cdsSimbadErrorMessage = message;
-        _logger.severe("CDS Simbad problem : " + _cdsSimbadErrorMessage);
+        
+        if (_logger.isLoggable(Level.SEVERE)) {
+          _logger.severe("CDS Simbad problem : " + _cdsSimbadErrorMessage);
+        }
 
         setChanged();
         notifyObservers(Notification.QUERY_ERROR);
@@ -236,6 +267,8 @@ public class Star extends Observable
     public String toString()
     {
         final StringBuilder sb = new StringBuilder(255);
+        sb.append("NAME=").append(_name).append("\n");
+
         for (Property key : _stringContent.keySet()) {
             sb.append(key).append("=").append(_stringContent.get(key)).append("\n");
         }

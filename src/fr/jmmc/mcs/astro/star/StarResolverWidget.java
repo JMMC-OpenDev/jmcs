@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.6 2010-01-14 12:40:19 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.7 2010-01-21 10:05:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/01/14 12:40:19  bourgesl
+ * Fix blanking value with white spaces for proper motion and parallax ' ; '
+ * StringBuilder and Logger.isLoggable to avoid string.concat
+ *
  * Revision 1.5  2009/12/18 14:42:57  bourgesl
  * added serialVersionUID
  *
@@ -27,8 +31,8 @@
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
 
-import fr.jmmc.mcs.gui.*;
-
+import fr.jmmc.mcs.gui.SearchField;
+import fr.jmmc.mcs.gui.StatusBar;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,8 +65,16 @@ public class StarResolverWidget extends SearchField implements Observer
 
     /**
      * Creates a new StarResolverWidget object.
+     */
+    public StarResolverWidget()
+    {
+      this(new Star());
+    }
+    
+    /**
+     * Creates a new StarResolverWidget object.
      *
-     * @param star DOCUMENT ME!
+     * @param star star model
      */
     public StarResolverWidget(Star star)
     {
@@ -93,6 +105,14 @@ public class StarResolverWidget extends SearchField implements Observer
                 }
             });
     }
+
+  /**
+   * Return the star model
+   * @return star model
+   */
+  public Star getStar() {
+    return _star;
+  }
 
     /**
      * Automatically called on attached Star changes.

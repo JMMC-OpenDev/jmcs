@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.10 2010-01-14 12:40:20 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.11 2010-01-21 10:05:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2010/01/14 12:40:20  bourgesl
+ * Fix blanking value with white spaces for proper motion and parallax ' ; '
+ * StringBuilder and Logger.isLoggable to avoid string.concat
+ *
  * Revision 1.9  2010/01/04 14:06:41  bourgesl
  * close properly the CDS connection
  *
@@ -52,7 +56,9 @@ import java.text.ParseException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
-import java.util.logging.*;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -65,19 +71,19 @@ public class StarResolver
             "fr.jmmc.mcs.astro.star.StarResolver");
 
     /** The seeked star name */
-    String _starName = null;
+    private final String _starName;
 
     /** The star data container */
-    Star _starModel = null;
+    private final Star _starModel;
 
     /**
      * The querying result data container, not to overwrite original model with
      * incomplete data in case an error occurs during CDS querying
      */
-    Star _newStarModel = new Star();
+    private final Star _newStarModel = new Star();
 
     /** The thread executing the CDS Simbad query and parsing */
-    ResolveStarThread _resolveStarThread = null;
+    private ResolveStarThread _resolveStarThread = null;
 
     /**
      * Constructor.
@@ -106,8 +112,10 @@ public class StarResolver
             return;
         }
 
-        // Launch the query in the background in order to keed GUI updated
-        _newStarModel.clear(); // Reset temporary container for incoming data
+        // Launch the query in the background in order to keep GUI updated
+
+        _newStarModel.setName(_starName); // Define the star name
+
         _resolveStarThread = new ResolveStarThread();
         _resolveStarThread.start(); // Launch query
     }
@@ -329,10 +337,12 @@ public class StarResolver
              * If anything went wrong while querying or parsing, previous data
              * remain unchanged.
              */
-            _starModel.copy(_newStarModel);
+            synchronized(_starModel) {
+              _starModel.copy(_newStarModel);
 
-            // Notify all registered observers that the query went fine
-            _starModel.notifyObservers(Star.Notification.QUERY_COMPLETE);
+              // Notify all registered observers that the query went fine :
+              _starModel.notifyObservers(Star.Notification.QUERY_COMPLETE);
+            }
         }
 
         private void parseCoordinates(String coordinates)

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.14 2010-01-21 10:04:01 bourgesl Exp $"
+ * "@(#) $Id: Star.java,v 1.15 2010-01-28 16:35:04 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2010/01/21 10:04:01  bourgesl
+ * added star name to be consistent with the query/result
+ *
  * Revision 1.13  2010/01/14 12:40:20  bourgesl
  * Fix blanking value with white spaces for proper motion and parallax ' ; '
  * StringBuilder and Logger.isLoggable to avoid string.concat
@@ -64,6 +67,7 @@ import java.util.logging.Logger;
 
 /**
  * Store data relative to a star.
+ * If the star has a name, it is stored into one string property.
  */
 public class Star extends Observable
 {
@@ -71,8 +75,7 @@ public class Star extends Observable
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.astro.star.Star");
 
-    /** star name */
-    private String _name = null;
+        
 
     /** Star property-value backing store for String data */
     private final Map<Property, String> _stringContent;
@@ -100,8 +103,6 @@ public class Star extends Observable
      */
     public void copy(Star source)
     {
-      _name = source.getName();
-
       _stringContent.clear();
       for (Map.Entry<Property, String> entry : source._stringContent.entrySet()) {
         _stringContent.put(entry.getKey(), entry.getValue());
@@ -120,7 +121,6 @@ public class Star extends Observable
      */
     public void clear()
     {
-        _name = null;
         _stringContent.clear();
         _doubleContent.clear();
         _cdsSimbadErrorMessage = null;
@@ -133,7 +133,7 @@ public class Star extends Observable
      * @param name star name
      */
     public void setName(String name) {
-      this._name = name;
+      setPropertyAsString(Property.NAME,name);
       setChanged();
     }
 
@@ -142,7 +142,7 @@ public class Star extends Observable
      * @return star name or null
      */
     public String getName() {
-      return _name;
+      return _stringContent.get(Property.NAME);
     }
 
     /**
@@ -267,7 +267,6 @@ public class Star extends Observable
     public String toString()
     {
         final StringBuilder sb = new StringBuilder(255);
-        sb.append("NAME=").append(_name).append("\n");
 
         for (Property key : _stringContent.keySet()) {
             sb.append(key).append("=").append(_stringContent.get(key)).append("\n");
@@ -303,7 +302,8 @@ public class Star extends Observable
         PROPERMOTION_RA, PROPERMOTION_DEC,
         PARALLAX, PARALLAX_err,
         SPECTRALTYPES,
-        NOPROPERTY;
+        NOPROPERTY,
+        NAME;
 
         /**
          * Give back the enum value from the corresponding string.

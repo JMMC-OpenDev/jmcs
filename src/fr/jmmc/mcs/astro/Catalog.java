@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Catalog.java,v 1.1 2009-11-27 15:57:39 lafrasse Exp $"
+ * "@(#) $Id: Catalog.java,v 1.2 2010-01-29 13:03:57 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2009/11/27 15:57:39  lafrasse
+ * Added fr/jmmc/mcs/astro/Catalog;
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.astro;
 
@@ -31,7 +34,8 @@ public enum Catalog
     LBSI        ("J/A+A/393/183/catalog",   "LBSI",         "Catalogue of calibrator stars for LBSI"),
     MIDI        ("MIDI",                    "MIDI",         "Photometric observations and angular size estimates of mid infrared interferometric calibration sources"),
     SBSC        ("V/36B/bsc4s",             "SBSC",         "The Supplement to the Bright Star Catalogue"),
-    SB9         ("B/sb9/main",              "SB9",          "SB9: 9th Catalogue of Spectroscopic Binary Orbits");
+    SB9         ("B/sb9/main",              "SB9",          "SB9: 9th Catalogue of Spectroscopic Binary Orbits"),
+    WDS         ("B/wds/wds",               "WDS",          "The Washington Visual Double Star Catalog");
 
     /** Store the catalog CDS 'cryptic' reference */
     private final String _reference;
@@ -98,15 +102,27 @@ public enum Catalog
      *
      * For example:
      * Catalog.titleFromReference("V/50/catalog") == "BSC";
-     * Catalog.titleFromReference("toto") == null;
+     * Catalog.titleFromReference("toto") == "toto";
+     * Catalog.titleFromReference(null) == Catalog.UNKNOWN;
      *
      * @param reference reference of the seeked catalog.
      *
-     * @return a String containing the given catalog title, Catalog.UNKNOWN otherwise.
+     * @return a String containing the given catalog title, the reference if not found, Catalog.UNKNOWN otherwise.
      */
     public static String titleFromReference(String reference)
     {
-        return (reference == null ? UNKNOWN : NastyTrick._titles.get(reference));
+        if (reference == null)
+        {
+            return UNKNOWN;
+        }
+
+        String title = NastyTrick._titles.get(reference);
+        if (title == null)
+        {
+            title = reference;
+        }
+
+        return title;
     }
 
     /**
@@ -114,15 +130,27 @@ public enum Catalog
      *
      * For example:
      * Catalog.descriptionFromReference("V/50/catalog") == "Bright Star Catalogue, 5th Revised Ed.";
-     * Catalog.descriptionFromReference("toto") == null;
+     * Catalog.descriptionFromReference("toto") == "toto";
+     * Catalog.descriptionFromReference(null) == Catalog.UNKNOWN;
      *
      * @param reference reference of the seeked catalog.
      *
-     * @return a String containing the given catalog description, Catalog.UNKNOWN otherwise.
+     * @return a String containing the given catalog description, the reference if not found, Catalog.UNKNOWN otherwise.
      */
     public static String descriptionFromReference(String reference)
     {
-        return (reference == null ? UNKNOWN : NastyTrick._descriptions.get(reference));
+        if (reference == null)
+        {
+            return UNKNOWN;
+        }
+
+        String description = NastyTrick._descriptions.get(reference);
+        if (description == null)
+        {
+            description = reference;
+        }
+
+        return description;
     }
 
     /**

@@ -279,7 +279,7 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
     this.minValue_ = min;
     this.normalisePixelCoefficient_ = ImageUtils.computeScalingFactor(min, max, nbColors_);
 
-    final BufferedImage bi = ImageUtils.createImage(width, height, array, min, normalisePixelCoefficient_, colorModel_, nbColors_);
+    final BufferedImage bi = ImageUtils.createImage(width, height, array, min, colorModel_, nbColors_, normalisePixelCoefficient_);
 
     this.imageRaster_ = bi.getRaster();
 

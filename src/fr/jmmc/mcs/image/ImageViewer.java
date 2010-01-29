@@ -63,7 +63,7 @@ public class ImageViewer extends javax.swing.JFrame implements Observer {
     String info = imageCanvas.getImageDimension().height + "x" +
             imageCanvas.getImageDimension().width + " Image " +
             imageCanvas.getCanvasDimension().height + "x" + imageCanvas.getCanvasDimension().width +
-            " pixels [ " + imageCanvas.mouseX_ + "," + imageCanvas.mouseY_ + " : " +
+            " pixels [" + imageCanvas.mouseX_ + "," + imageCanvas.mouseY_ + " : " +
             imageCanvas.mousePixel_ + "] = " + value;
     imageInfoTextField.setText(info);
     imageInfoTextField.validate();
@@ -134,8 +134,7 @@ public class ImageViewer extends javax.swing.JFrame implements Observer {
             {
                 public void run()
                 {
-                        ImageViewer viewer = new ImageViewer();
-                        viewer.setVisible(true);
+                        final ImageViewer viewer = new ImageViewer();
 
                         int     w   = 32;
                         int     h   = 32;
@@ -147,6 +146,9 @@ public class ImageViewer extends javax.swing.JFrame implements Observer {
                         }
 
                         viewer.getImageCanvas().initImage(w, h, img);
+
+                        viewer.pack();
+                        viewer.setVisible(true);
                 }
             });
     }

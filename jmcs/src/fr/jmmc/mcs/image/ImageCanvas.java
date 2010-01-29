@@ -438,13 +438,6 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
     return this.getCanvasDimension();
   }
 
-  /**
-   * @param args the command line arguments
-   */
-  public static void main(String[] args) {
-    ImageViewer.main(args);
-  }
-
   private class ObservableImage extends Observable {
 
     public void notifyImageObservers() {

@@ -1,0 +1,105 @@
+/*******************************************************************************
+ * JMMC project
+ *
+ * "@(#) $Id: PunctModelFunction.java,v 1.1 2010-01-29 15:52:46 bourgesl Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ */
+package fr.jmmc.mcs.model.function;
+
+import fr.jmmc.mcs.model.AbstractModelFunction;
+import fr.jmmc.mcs.model.targetmodel.Model;
+import org.apache.commons.math.complex.Complex;
+
+/**
+ * This ModelFunction implements the punct model
+ * 
+ * @author bourgesl
+ */
+public final class PunctModelFunction extends AbstractModelFunction {
+
+  /* Model constants */
+  /** model description */
+  private static String MODEL_DESC = "lpb_punct(ufreq, vfreq, flux_weight, x, y) \n\n" +
+          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
+          "given in 1/rad, of a punctual object (Dirac function) at coordinates \n" +
+          "(X,Y) given in milliarcsecond. \n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
+          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
+          "complex and of dims dimsof(UFREQ,VFREQ). \n";
+
+  /**
+   * Constructor
+   */
+  public PunctModelFunction() {
+    super();
+  }
+
+  /**
+   * Return the model type
+   * @return model type
+   */
+  public String getType() {
+    return MODEL_PUNCT;
+  }
+
+  /**
+   * Return a new Model instance with its parameters and default values
+   * @return new Model instance
+   */
+  @Override
+  public Model newModel() {
+    final Model model = super.newModel();
+    model.setName(MODEL_PUNCT);
+    model.setType(MODEL_PUNCT);
+    model.setDesc(MODEL_DESC);
+
+    return model;
+  }
+
+  /**
+   * Compute the model function for the given Ufreq, Vfreq arrays and model parameters
+   *
+   * Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ)
+   * given in 1/rad, of a punctual object (Dirac function) at coordinates
+   * (X,Y) given in milliarcsecond.
+   * FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1.
+   *
+   * Note : the visibility array is given to add this model contribution to the total visibility
+   *
+   * @param ufreq U frequencies in rad-1
+   * @param vfreq V frequencies in rad-1
+   * @param model model instance
+   * @param complex visibility array
+   */
+  public void compute(final double[] ufreq, final double[] vfreq, final Model model, final Complex[] vis) {
+
+    // Get parameters :
+    final double flux_weight = getParameter(model, PARAM_FLUX_WEIGHT);
+    final double x = getParameter(model, PARAM_X);
+    final double y = getParameter(model, PARAM_Y);
+
+    // Compute :
+    for (int i = 0, size = ufreq.length; i < size; i++) {
+      vis[i] = vis[i].add(compute_punct(ufreq[i], vfreq[i], flux_weight, x, y));
+    }
+  }
+
+  /**
+   * Compute the punct model function for a single UV point
+   *
+   * return flux_weight * shift(ufreq, vfreq, x, y);
+   *
+   * @param ufreq U frequency in rad-1
+   * @param vfreq V frequency in rad-1
+   * @param flux_weight intensity coefficient
+   * @param x x coordinate of the punctual object given in milliarcsecond
+   * @param y y coordinate of the punctual object given in milliarcsecond
+   * @return complex Fourier transform value
+   */
+  private Complex compute_punct(final double ufreq, final double vfreq, final double flux_weight, final double x, final double y) {
+    return shift(ufreq, vfreq, x, y).multiply(flux_weight);
+  }
+}

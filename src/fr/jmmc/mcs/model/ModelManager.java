@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.1 2010-01-29 15:52:45 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.2 2010-02-03 16:05:46 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/01/29 15:52:45  bourgesl
+ * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
+ *
  */
 package fr.jmmc.mcs.model;
 
@@ -111,20 +114,32 @@ public class ModelManager {
 
     if (ufreq != null && vfreq != null && models != null && !models.isEmpty()) {
 
+      /** Get the current thread to check if the computation is interrupted */
+      final Thread currentThread = Thread.currentThread();
+
       vis = new Complex[ufreq.length];
 
       // initialize the visiblity array :
       Arrays.fill(vis, Complex.ZERO);
 
-      ModelFunction mf;
+      // fast interrupt :
+      if (currentThread.isInterrupted()) {
+        return null;
+      }
 
       // For now : no composite model supported (hierarchy) !
 
+      ModelFunction mf;
       for (Model model : models) {
         mf = getModelFunction(model.getType());
 
         // add the model contribution :
         mf.compute(ufreq, vfreq, model, vis);
+
+        // fast interrupt :
+        if (currentThread.isInterrupted()) {
+          return null;
+        }
       }
     }
 

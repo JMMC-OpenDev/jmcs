@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.30 2010-01-18 15:27:00 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.31 2010-02-03 09:27:07 bourgesl Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.30  2010/01/18 15:27:00  lafrasse
+# Added installation of sptype.jar for jmcsLD2UD to work outside of jmcs/* .
+#
 # Revision 1.29  2010/01/07 10:37:31  lafrasse
 # Renamed all executables to include the mandatory 'jmcs' prefix.
 # Added jmcsLD2UD executable.
@@ -197,7 +200,8 @@ JARFILES        = jmcs
 # <brief description of jmcs jar files>
 jmcs_DIRS     = fr
 jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png \
-				fr/jmmc/mcs/gui/ApplicationData.xml
+                fr/jmmc/mcs/gui/ApplicationData.xml \
+                fr/jmmc/mcs/image/*.lut
 
 #
 # Java programs

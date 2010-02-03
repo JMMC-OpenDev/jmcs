@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: TestModel.java,v 1.1 2010-01-29 15:53:16 bourgesl Exp $"
+ * "@(#) $Id: TestModel.java,v 1.2 2010-02-03 09:31:29 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/01/29 15:53:16  bourgesl
+ * Test code for punct / disk models
+ *
  */
 package fr.jmmc.mcs.model.test;
 
@@ -13,7 +16,6 @@ import fr.jmmc.mcs.image.ImageViewer;
 import fr.jmmc.mcs.model.ModelFunction;
 import fr.jmmc.mcs.model.ModelManager;
 import fr.jmmc.mcs.model.function.DiskModelFunction;
-import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -135,6 +137,8 @@ public class TestModel {
 
 
   private static void computeImage(final ImageViewer iv, final List<Model> models) {
+    // amplitude or phase :
+    final boolean doAmp = true;
 
     // Image :
     final int width = 256;
@@ -179,15 +183,31 @@ public class TestModel {
     float val;
     float min = Float.MAX_VALUE;
     float max = Float.MIN_VALUE;
-    for (int j = 0; j < height; j++) {
-      for (int i = 0; i < width; i++) {
-        val = (float) vis[width * (height - 1 - j) + i].abs();
-        img[width * j + i] = val;
-        if (val < min) {
-          min = val;
+
+    if (doAmp) {
+      for (int j = 0; j < height; j++) {
+        for (int i = 0; i < width; i++) {
+          val = (float) vis[width * (height - 1 - j) + i].abs();
+          img[width * j + i] = val;
+          if (val < min) {
+            min = val;
+          }
+          if (val > max) {
+            max = val;
+          }
         }
-        if (val > max) {
-          max = val;
+      }
+    } else {
+      for (int j = 0; j < height; j++) {
+        for (int i = 0; i < width; i++) {
+          val = (float) vis[width * (height - 1 - j) + i].getArgument();
+          img[width * j + i] = val;
+          if (val < min) {
+            min = val;
+          }
+          if (val > max) {
+            max = val;
+          }
         }
       }
     }
@@ -197,7 +217,7 @@ public class TestModel {
 
     System.out.println("image : duration = " + 1e-6d * (System.nanoTime() - start) + " ms.");
 
-    iv.getImageCanvas().initImage(width, height, img);
+    iv.getImageCanvas().initImage(width, height, img, min, max);
 
     System.out.println("ImageViewer : duration = " + 1e-6d * (System.nanoTime() - start) + " ms.");
   }
@@ -221,8 +241,7 @@ public class TestModel {
     computeImage(iv, models);
 
     iv.setPreferredSize(new Dimension(500, 500));
-    iv.setVisible(true);
     iv.pack();
-
+    iv.setVisible(true);
   }
 }

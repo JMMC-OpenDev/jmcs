@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelUVMapService.java,v 1.1 2010-02-03 09:51:46 bourgesl Exp $"
+ * "@(#) $Id: ModelUVMapService.java,v 1.2 2010-02-03 16:05:46 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/02/03 09:51:46  bourgesl
+ * uv map rendering service
+ *
  */
 package fr.jmmc.mcs.model;
 
@@ -29,6 +32,8 @@ public class ModelUVMapService {
   /** Class logger */
   private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
           className_);
+  /** default image width / height */
+  private final static int DEFAULT_IMAGE_SIZE = 256;
 
   /**
    * Image modes (amplitude, phase)
@@ -61,8 +66,8 @@ public class ModelUVMapService {
   public static BufferedImage computeUVMap(final List<Model> models,
           final double uMin, final double uMax,
           final double vMin, final double vMax,
-          final ImageMode mode) {  
-    return computeUVMap(models, uMin, uMax, vMin, vMax, mode, 256, ColorModels.getDefaultColorModel());
+          final ImageMode mode) {
+    return computeUVMap(models, uMin, uMax, vMin, vMax, mode, DEFAULT_IMAGE_SIZE, ColorModels.getDefaultColorModel());
   }
 
   /**
@@ -86,17 +91,29 @@ public class ModelUVMapService {
 
     BufferedImage img = null;
 
-    // Start the computations :
-    final long start = System.nanoTime();
+    if (models != null && !models.isEmpty()) {
 
-    try {
-      if (models != null && !models.isEmpty()) {
+      /** Get the current thread to check if the computation is interrupted */
+      final Thread currentThread = Thread.currentThread();
+
+      // Start the computations :
+      final long start = System.nanoTime();
+
+      try {
         // square size :
         final int size = imageSize * imageSize;
+
+        // this step indicates when the thread.isInterrupted() is called in the for loop
+        final int stepInterrupt = size / 20;
 
         // 1 - Prepare UFreq and VFreq arrays :
         double[] u = computeFrequencySamples(imageSize, uMin, uMax);
         double[] v = computeFrequencySamples(imageSize, vMin, vMax);
+
+        // fast interrupt :
+        if (currentThread.isInterrupted()) {
+          return null;
+        }
 
         double[] ufreq = new double[size];
         double[] vfreq = new double[size];
@@ -117,16 +134,26 @@ public class ModelUVMapService {
         u = null;
         v = null;
 
+        // fast interrupt :
+        if (currentThread.isInterrupted()) {
+          return null;
+        }
+
         // 2 - Compute complex visibility for the given models :
 
         Complex[] vis = ModelManager.getInstance().computeModels(ufreq, vfreq, models);
+
+        // fast interrupt :
+        if (currentThread.isInterrupted()) {
+          return null;
+        }
 
         // force GC :
         ufreq = null;
         vfreq = null;
 
         // 3 - Extract the amplitude/phase to get the uv map :
-        final float[] data = new float[size];
+        float[] data = new float[size];
 
         float val;
         float min = Float.MAX_VALUE;
@@ -145,6 +172,10 @@ public class ModelUVMapService {
               if (val > max) {
                 max = val;
               }
+              // fast interrupt :
+              if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
+                return null;
+              }
             }
             if (logger.isLoggable(Level.FINE)) {
               logger.fine("VIS_AMP in [" + min + ", " + max + "]");
@@ -162,6 +193,10 @@ public class ModelUVMapService {
               if (val > max) {
                 max = val;
               }
+              // fast interrupt :
+              if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
+                return null;
+              }
             }
             if (logger.isLoggable(Level.FINE)) {
               logger.fine("VIS_PHI in [" + min + ", " + max + "]");
@@ -170,17 +205,33 @@ public class ModelUVMapService {
           default:
         }
 
+        // force GC :
+        vis = null;
+
+        // fast interrupt :
+        if (currentThread.isInterrupted()) {
+          return null;
+        }
+
         // 4 - Get the image with the given color model :
 
         img = ImageUtils.createImage(imageSize, imageSize, data, min, max, colorModel);
 
-      }
-    } catch (RuntimeException re) {
-      logger.log(Level.SEVERE, "runtime exception : ", re);
-    }
+        // force gc :
+        data = null;
 
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("compute : duration = " + 1e-6d * (System.nanoTime() - start) + " ms.");
+        // fast interrupt :
+        if (currentThread.isInterrupted()) {
+          return null;
+        }
+
+      } catch (RuntimeException re) {
+        logger.log(Level.SEVERE, "runtime exception : ", re);
+      }
+
+      if (logger.isLoggable(Level.INFO)) {
+        logger.info("compute : duration = " + 1e-6d * (System.nanoTime() - start) + " ms.");
+      }
     }
 
     return img;

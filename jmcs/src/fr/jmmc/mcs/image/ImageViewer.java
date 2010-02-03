@@ -1,7 +1,11 @@
-/*
- * ImageViewer.java
+/*******************************************************************************
+ * JMMC project
  *
- * Created on 5 avril 2007, 21:35
+ * "@(#) $Id: ImageViewer.java,v 1.3 2010-02-03 09:31:00 bourgesl Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
  */
 package fr.jmmc.mcs.image;
 
@@ -43,8 +47,7 @@ public class ImageViewer extends javax.swing.JFrame implements Observer {
     imageCanvas.addObserver(this);
     getContentPane().add(imageCanvas, java.awt.BorderLayout.CENTER);
     // set items for colormodels
-    colorModelComboBox.setModel(new javax.swing.DefaultComboBoxModel(
-            ColorModels.colorModelNames));
+    colorModelComboBox.setModel(new javax.swing.DefaultComboBoxModel(ColorModels.getColorModelNames()));
   }
 
   public ImageCanvas getImageCanvas() {
@@ -58,13 +61,13 @@ public class ImageViewer extends javax.swing.JFrame implements Observer {
    * @param object DOCUMENT ME!
    */
   public void update(Observable observable, Object object) {
-    final float value = imageCanvas.mousePixel_ / imageCanvas.normalisePixelCoefficient_ + imageCanvas.minValue_;
+    final float value = imageCanvas.getMousePixel() / imageCanvas.getNormalisePixelCoefficient() + imageCanvas.getMinValue();
 
     String info = imageCanvas.getImageDimension().height + "x" +
             imageCanvas.getImageDimension().width + " Image " +
             imageCanvas.getCanvasDimension().height + "x" + imageCanvas.getCanvasDimension().width +
-            " pixels [" + imageCanvas.mouseX_ + "," + imageCanvas.mouseY_ + " : " +
-            imageCanvas.mousePixel_ + "] = " + value;
+            " pixels [" + imageCanvas.getMouseX() + "," + imageCanvas.getMouseY() + " : " +
+            imageCanvas.getMousePixel() + "] = " + ImageCanvas.floatFormatter.format(value);
     imageInfoTextField.setText(info);
     imageInfoTextField.validate();
   }
@@ -122,34 +125,31 @@ public class ImageViewer extends javax.swing.JFrame implements Observer {
      */
     private void colorModelComboBoxActionPerformed(java.awt.event.ActionEvent evt)
     {//GEN-FIRST:event_colorModelComboBoxActionPerformed
-        imageCanvas.setColorModel(ColorModels.colorModels[colorModelComboBox.getSelectedIndex()]);
+      imageCanvas.setColorModel(ColorModels.getColorModel((String)colorModelComboBox.getSelectedItem()));
     }//GEN-LAST:event_colorModelComboBoxActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args)
-    {
-        java.awt.EventQueue.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                        final ImageViewer viewer = new ImageViewer();
+  /**
+   * @param args the command line arguments
+   */
+  public static void main(String[] args) {
+    java.awt.EventQueue.invokeLater(new Runnable() {
 
-                        int     w   = 32;
-                        int     h   = 32;
-                        float[] img = new float[w * h];
+      public void run() {
+        final ImageViewer viewer = new ImageViewer();
 
-                        for (int i = 0, size = img.length; i < size; i++)
-                        {
-                            img[i] = i;
-                        }
+        int w = 32;
+        int h = 32;
+        float[] img = new float[w * h];
 
-                        viewer.getImageCanvas().initImage(w, h, img);
+        for (int i = 0, size = img.length; i < size; i++) {
+          img[i] = i;
+        }
 
-                        viewer.pack();
-                        viewer.setVisible(true);
-                }
-            });
-    }
+        viewer.getImageCanvas().initImage(w, h, img);
+
+        viewer.pack();
+        viewer.setVisible(true);
+      }
+    });
+  }
 }

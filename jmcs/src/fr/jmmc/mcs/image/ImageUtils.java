@@ -1,18 +1,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ImageUtils.java,v 1.1 2010-01-29 15:50:07 bourgesl Exp $"
+ * "@(#) $Id: ImageUtils.java,v 1.2 2010-02-03 09:30:31 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/01/29 15:50:07  bourgesl
+ * Simple Image utilities to create an image from a float data array and use simple color models (lut)
+ *
  */
 package fr.jmmc.mcs.image;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.logging.Level;
@@ -70,11 +73,11 @@ public class ImageUtils {
    */
   public static BufferedImage createImage(final int width, final int height,
           final float[] array, final float min, final float max,
-          final ColorModel colorModel, final int iMaxColor) {
+          final IndexColorModel colorModel) {
 
-    final float scalingFactor = ImageUtils.computeScalingFactor(min, max, iMaxColor);
+    final float scalingFactor = ImageUtils.computeScalingFactor(min, max, colorModel.getMapSize());
 
-    return ImageUtils.createImage(width, height, array, min, colorModel, iMaxColor, scalingFactor);
+    return ImageUtils.createImage(width, height, array, min, colorModel, scalingFactor);
   }
 
   /*
@@ -91,7 +94,7 @@ public class ImageUtils {
    */
   public static BufferedImage createImage(final int width, final int height,
           final float[] array, final float min,
-          final ColorModel colorModel, final int iMaxColor, final float scalingFactor) {
+          final IndexColorModel colorModel, final float scalingFactor) {
 
     if (logger.isLoggable(Level.FINEST)) {
       logger.finest("createImage: using array of size  " + width + "x" + height +
@@ -100,8 +103,8 @@ public class ImageUtils {
 
     // Define image min and image max values. And set coefficient to normalize image values
     final int iMin = 0;
-
-    float c = scalingFactor;
+    final int iMaxColor = colorModel.getMapSize() - 1;
+    final float c = scalingFactor;
 
     if (logger.isLoggable(Level.FINEST)) {
       logger.finest("Image: dims=" + width + "x" + height + ", c=" + c + ", array[0]=" + array[0]);

@@ -1,10 +1,11 @@
-/*
- * ImageCanvas.java
+/*******************************************************************************
+ * JMMC project
  *
- * Created on 19 mars 2007, 11:10
+ * "@(#) $Id: ImageCanvas.java,v 1.4 2010-02-03 09:29:42 bourgesl Exp $"
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
  */
 package fr.jmmc.mcs.image;
 
@@ -26,6 +27,8 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.MemoryImageSource;
 import java.awt.image.WritableRaster;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -41,90 +44,95 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
   /**
    * DOCUMENT ME!
    */
-  static final int nbColors_ = 240;
-  /**
-   * DOCUMENT ME!
-   */
-  static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
+  private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
           "fr.jmmc.mcs.ImageCanvas");
-  /**
-   * DOCUMENT ME!
-   */
-  Image image_;
-  /**
-   * DOCUMENT ME!
-   */
-  WritableRaster imageRaster_;
-  /**
-   * DOCUMENT ME!
-   */
-  Image wedge_;
-  /**
-   * DOCUMENT ME!
-   */
-  IndexColorModel colorModel_;
-  /**
-   * DOCUMENT ME!
-   */
-  int w_;
-  /**
-   * DOCUMENT ME!
-   */
-  int h_;
-  /**
-   * DOCUMENT ME!
-   */
-  int mouseX_;
-  /**
-   * DOCUMENT ME!
-   */
-  int mouseY_;
-  /**
-   * DOCUMENT ME!
-   */
-  int mousePixel_;
-  /**
-   * DOCUMENT ME!
-   */
-  int canvasWidth_;
-  /**
-   * DOCUMENT ME!
-   */
-  int canvasHeight_;
+  /** float value formatter used by wedge rendering */
+  public static final NumberFormat floatFormatter = new DecimalFormat("0.00E0");
   // Define constant to place differnet members of plot
   /**
    * DOCUMENT ME!
    */
-  int leftInset = 20;
+  private static final int leftInset = 20;
   /**
    * DOCUMENT ME!
    */
-  int rightInset = 30;
+  private static final int rightInset = 40;
   /**
    * DOCUMENT ME!
    */
-  int topInset = 10;
+  private static final int topInset = 10;
   /**
    * DOCUMENT ME!
    */
-  int bottomInset = 25;
+  private static final int bottomInset = 25;
   /**
    * DOCUMENT ME!
    */
-  int wedgeWidth = 10;
+  private static final int wedgeWidth = 10;
   /**
    * DOCUMENT ME!
    */
-  int wedgeImageDist = 10;
+  private static final int wedgeImageDist = 10;
+  /**
+   * DOCUMENT ME!
+   */
+  private static final int wedgeLegendDist = 10;
+  /**
+   * DOCUMENT ME!
+   */
+  private Image image_;
+  /**
+   * DOCUMENT ME!
+   */
+  private WritableRaster imageRaster_;
+  /**
+   * DOCUMENT ME!
+   */
+  private Image wedge_;
+  /**
+   * DOCUMENT ME!
+   */
+  private IndexColorModel colorModel_;
+  /**
+   * DOCUMENT ME!
+   */
+  private int w_;
+  /**
+   * DOCUMENT ME!
+   */
+  private int h_;
+  /**
+   * DOCUMENT ME!
+   */
+  private int canvasWidth_;
+  /**
+   * DOCUMENT ME!
+   */
+  private int canvasHeight_;
+  /**
+   * DOCUMENT ME!
+   */
+  private int mouseX_;
+  /**
+   * DOCUMENT ME!
+   */
+  private int mouseY_;
+  /**
+   * DOCUMENT ME!
+   */
+  private int mousePixel_;
   /**
    * Minimum Float value
    */
-  float minValue_;
+  private float minValue_;
+  /**
+   * Maximum Float value
+   */
+  private float maxValue_;
   /**
    * Float value to Pixel conversion factor
    */
-  float normalisePixelCoefficient_;
-  //properties
+  private float normalisePixelCoefficient_;
   /**
    * DOCUMENT ME!
    */
@@ -134,7 +142,7 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
   /**
    * DOCUMENT ME!
    */
-  ObservableImage observe_;
+  private ObservableImage observe_;
 
   /**
    * Creates a new instance of ImageCanvas
@@ -143,7 +151,7 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
     image_ = null;
     imageRaster_ = null;
     // set default properties
-    colorModel_ = ColorModels.colorModels[0];
+    colorModel_ = ColorModels.getDefaultColorModel();
     antiAliasing = false;
 
     setColorModel(colorModel_);
@@ -220,7 +228,7 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
    * DOCUMENT ME!
    */
   private void buildWedge() {
-    int wedgeSize = nbColors_;
+    int wedgeSize = colorModel_.getMapSize();
     wedge_ = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(1, wedgeSize, colorModel_,
             generateWedge(0, wedgeSize, wedgeSize), 0, 1));
   }
@@ -277,9 +285,10 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
     }
 
     this.minValue_ = min;
-    this.normalisePixelCoefficient_ = ImageUtils.computeScalingFactor(min, max, nbColors_);
+    this.maxValue_ = max;
+    this.normalisePixelCoefficient_ = ImageUtils.computeScalingFactor(min, max, colorModel_.getMapSize());
 
-    final BufferedImage bi = ImageUtils.createImage(width, height, array, min, colorModel_, nbColors_, normalisePixelCoefficient_);
+    final BufferedImage bi = ImageUtils.createImage(width, height, array, min, colorModel_, normalisePixelCoefficient_);
 
     this.imageRaster_ = bi.getRaster();
 
@@ -394,14 +403,14 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
       }
 
       if (wedge_ != null) {
-        g2d.drawRect(leftInset + canvasWidth_ + wedgeImageDist, topInset, wedgeWidth + 1,
-                canvasHeight_ + 1);
-        g2d.drawString("" + nbColors_,
-                leftInset + canvasWidth_ + wedgeImageDist + wedgeWidth + 3, topInset + 6);
-        g2d.drawString("0", leftInset + canvasWidth_ + wedgeImageDist + wedgeWidth + 3,
-                topInset + canvasHeight_);
-        g2d.drawImage(wedge_, leftInset + canvasWidth_ + wedgeImageDist + 1, topInset + 1,
-                wedgeWidth, canvasHeight_, null);
+        g2d.drawRect(leftInset + canvasWidth_ + wedgeImageDist, topInset + wedgeLegendDist, wedgeWidth + 1,
+                canvasHeight_ - wedgeLegendDist + 1);
+        g2d.drawString(floatFormatter.format(maxValue_),
+                leftInset + canvasWidth_ + wedgeImageDist - 4, topInset + 6);
+        g2d.drawString(floatFormatter.format(minValue_), leftInset + canvasWidth_ + wedgeImageDist - 4,
+                topInset + canvasHeight_ + 15);
+        g2d.drawImage(wedge_, leftInset + canvasWidth_ + wedgeImageDist + 1, topInset + wedgeLegendDist + 1,
+                wedgeWidth, canvasHeight_ - wedgeLegendDist, null);
       }
     }
 
@@ -449,5 +458,29 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
     public void setChanged() {
       super.setChanged();
     }
+  }
+
+  public int getMousePixel() {
+    return mousePixel_;
+  }
+
+  public int getMouseX() {
+    return mouseX_;
+  }
+
+  public int getMouseY() {
+    return mouseY_;
+  }
+
+  public float getNormalisePixelCoefficient() {
+    return normalisePixelCoefficient_;
+  }
+
+  public float getMinValue() {
+    return minValue_;
+  }
+
+  public float getMaxValue() {
+    return maxValue_;
   }
 }

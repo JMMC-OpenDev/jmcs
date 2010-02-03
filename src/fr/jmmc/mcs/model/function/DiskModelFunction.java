@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DiskModelFunction.java,v 1.1 2010-01-29 15:52:46 bourgesl Exp $"
+ * "@(#) $Id: DiskModelFunction.java,v 1.2 2010-02-03 16:05:46 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/01/29 15:52:46  bourgesl
+ * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
+ *
  */
 package fr.jmmc.mcs.model.function;
 
@@ -90,6 +93,14 @@ public final class DiskModelFunction extends AbstractModelFunction {
    */
   public void compute(final double[] ufreq, final double[] vfreq, final Model model, final Complex[] vis) {
 
+    /** Get the current thread to check if the computation is interrupted */
+    final Thread currentThread = Thread.currentThread();
+
+    final int size = ufreq.length;
+
+    // this step indicates when the thread.isInterrupted() is called in the for loop
+    final int stepInterrupt = size / 20;
+
     // Get parameters :
     final double flux_weight = getParameter(model, PARAM_FLUX_WEIGHT);
     final double x = getParameter(model, PARAM_X);
@@ -101,8 +112,13 @@ public final class DiskModelFunction extends AbstractModelFunction {
     }
 
     // Compute :
-    for (int i = 0, size = ufreq.length; i < size; i++) {
+    for (int i = 0; i < size; i++) {
       vis[i] = vis[i].add(compute_disk(ufreq[i], vfreq[i], flux_weight, x, y, diameter));
+
+      // fast interrupt :
+      if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
+        return;
+      }
     }
   }
 

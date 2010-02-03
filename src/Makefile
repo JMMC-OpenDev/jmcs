@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.31 2010-02-03 09:27:07 bourgesl Exp $"
+# "@(#) $Id: Makefile,v 1.32 2010-02-03 09:37:30 bourgesl Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.31  2010/02/03 09:27:07  bourgesl
+# added lut files in jmcs jar file
+#
 # Revision 1.30  2010/01/18 15:27:00  lafrasse
 # Added installation of sptype.jar for jmcsLD2UD to work outside of jmcs/* .
 #
@@ -201,7 +204,7 @@ JARFILES        = jmcs
 jmcs_DIRS     = fr
 jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png \
                 fr/jmmc/mcs/gui/ApplicationData.xml \
-                fr/jmmc/mcs/image/*.lut
+                fr/jmmc/mcs/image/lut/*.lut
 
 #
 # Java programs

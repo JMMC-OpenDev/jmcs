@@ -1,29 +1,107 @@
-/*
- * EarthColorModel.java
+/*******************************************************************************
+ * JMMC project
  *
- * Created on 5 avril 2007, 09:18
+ * "@(#) $Id: ColorModels.java,v 1.2 2010-02-03 09:28:38 bourgesl Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
  */
 package fr.jmmc.mcs.image;
 
 import java.awt.image.IndexColorModel;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * Give access to several color models.
- *
  */
 public class ColorModels {
 
   /**
-   * DOCUMENT ME!
+   * Maximum number of colors in a 8 byte palette
    */
-  static int nbColors = 240;
-  /** Give access to color model names */
-  public final static String[] colorModelNames = new String[]{"Earth", "Rainbow", "Gray"};
-  /** Give access to color models */
-  public final static IndexColorModel[] colorModels = new IndexColorModel[]{
-    getEarthColorModel(), getRainbowColorModel(), getGrayColorModel(240)
-  };
+  public static final int MAX_COLORS = 256;
+  /**
+   * Maximum number of colors in earth and rainbow LUT
+   */
+  public static final int NB_COLORS = 240;
+  /** default color model */
+  public final static String DEFAULT_COLOR_MODEL = "Earth";
+  /** Color model names */
+  private final static Vector<String> colorModelNames = new Vector<String>();
+  /** Color models keyed by names */
+  private final static Map<String, IndexColorModel> colorModels = new HashMap<String, IndexColorModel>();
 
+  static {
+    // static initialization :
+    addColorModel(DEFAULT_COLOR_MODEL, getEarthColorModel());
+
+    addColorModel("Gray", getGrayColorModel(MAX_COLORS));
+
+    addColorModel("Rainbow", getRainbowColorModel());
+
+    try {
+      final String[] lutFiles = getResourceListing(ColorModels.class, "fr/jmmc/mcs/image/lut/");
+
+      Arrays.sort(lutFiles);
+
+      for (String name : lutFiles) {
+        IndexColorModel colorModel = loadFromFile(name);
+        if (colorModel != null) {
+          addColorModel(name.substring(0, name.indexOf('.')), colorModel);
+        }
+      }
+
+      Collections.sort(colorModelNames);
+
+    } catch (Exception e) {
+      // ignore :
+    }
+  }
+
+  private static void addColorModel(final String name, final IndexColorModel colorModel) {
+    colorModelNames.add(name);
+    colorModels.put(name, colorModel);
+  }
+
+  /**
+   * Forbidden constructor
+   */
+  private ColorModels() {
+    // no-op
+  }
+
+  public static Vector<String> getColorModelNames() {
+    return colorModelNames;
+  }
+
+  public static IndexColorModel getDefaultColorModel() {
+    return getColorModel(DEFAULT_COLOR_MODEL);
+  }
+
+  public static IndexColorModel getColorModel(final String name) {
+    return colorModels.get(name);
+  }
+
+  /* Private methods */
   /** Returns one 'earth' color model */
   private static IndexColorModel getEarthColorModel() {
     /* dk blue - lt blue - dk green - yellow green - lt brown - white */
@@ -32,9 +110,9 @@ public class ColorModels {
     /* ntsc gray scale looks slightly better than straight intensity */
     /* ntsc= 1 */
     /* r   g   b */
-    byte[] r = new byte[nbColors];
-    byte[] g = new byte[nbColors];
-    byte[] b = new byte[nbColors];
+    final byte[] r = new byte[NB_COLORS];
+    final byte[] g = new byte[NB_COLORS];
+    final byte[] b = new byte[NB_COLORS];
     r[0] = (byte) 0;
     g[0] = (byte) 0;
     b[0] = (byte) 0;
@@ -756,24 +834,7 @@ public class ColorModels {
     g[239] = (byte) 255;
     b[239] = (byte) 255;
 
-    /*        r[240] = (byte)72; g[240] = (byte)141; b[240] = (byte)26;
-    r[241] = (byte)72; g[241] = (byte)142; b[241] = (byte)26;
-    r[242] = (byte)72; g[242] = (byte)142; b[242] = (byte)26;
-    r[243] = (byte)72; g[243] = (byte)143; b[243] = (byte)26;
-    r[244] = (byte)73; g[244] = (byte)143; b[244] = (byte)26;
-    r[245] = (byte)73; g[245] = (byte)144; b[245] = (byte)26;
-    r[246] = (byte)73; g[246] = (byte)145; b[246] = (byte)27;
-    r[247] = (byte)74; g[247] = (byte)145; b[247] = (byte)27;
-    r[248] = (byte)74; g[248] = (byte)146; b[248] = (byte)27;
-    r[249] = (byte)74; g[249] = (byte)146; b[249] = (byte)27;
-    r[250] = (byte)75; g[250] = (byte)147; b[250] = (byte)27;
-    r[251] = (byte)75; g[251] = (byte)148; b[251] = (byte)27;
-    r[252] = (byte)75; g[252] = (byte)148; b[252] = (byte)27;
-    r[253] = (byte)75; g[253] = (byte)149; b[253] = (byte)27;
-    r[254] = (byte)76; g[254] = (byte)149; b[254] = (byte)27;
-    r[255] = (byte)76; g[255] = (byte)150; b[255] = (byte)28;
-     */
-    return new IndexColorModel(8, nbColors, r, g, b);
+    return new IndexColorModel(8, NB_COLORS, r, g, b);
   }
 
   /** Returns one 'rainbow' color model */
@@ -783,9 +844,9 @@ public class ColorModels {
     /* ncolors= 240 */
     /* r       g       b */
     //int nbColors = 240;
-    byte[] r = new byte[nbColors];
-    byte[] g = new byte[nbColors];
-    byte[] b = new byte[nbColors];
+    final byte[] r = new byte[NB_COLORS];
+    final byte[] g = new byte[NB_COLORS];
+    final byte[] b = new byte[NB_COLORS];
     r[0] = (byte) 255;
     g[0] = (byte) 0;
     b[0] = (byte) 42;
@@ -1505,34 +1566,18 @@ public class ColorModels {
     b[238] = (byte) 206;
     r[239] = (byte) 255;
     g[239] = (byte) 0;
-    b[239] = (byte) 201; /*
-    r[240] = (byte)72; g[240] = (byte)141; b[240] = (byte)26;
-    r[241] = (byte)72; g[241] = (byte)142; b[241] = (byte)26;
-    r[242] = (byte)72; g[242] = (byte)142; b[242] = (byte)26;
-    r[243] = (byte)72; g[243] = (byte)143; b[243] = (byte)26;
-    r[244] = (byte)73; g[244] = (byte)143; b[244] = (byte)26;
-    r[245] = (byte)73; g[245] = (byte)144; b[245] = (byte)26;
-    r[246] = (byte)73; g[246] = (byte)145; b[246] = (byte)27;
-    r[247] = (byte)74; g[247] = (byte)145; b[247] = (byte)27;
-    r[248] = (byte)74; g[248] = (byte)146; b[248] = (byte)27;
-    r[249] = (byte)74; g[249] = (byte)146; b[249] = (byte)27;
-    r[250] = (byte)75; g[250] = (byte)147; b[250] = (byte)27;
-    r[251] = (byte)75; g[251] = (byte)148; b[251] = (byte)27;
-    r[252] = (byte)75; g[252] = (byte)148; b[252] = (byte)27;
-    r[253] = (byte)75; g[253] = (byte)149; b[253] = (byte)27;
-    r[254] = (byte)76; g[254] = (byte)149; b[254] = (byte)27;
-    r[255] = (byte)76; g[255] = (byte)150; b[255] = (byte)28;*/
+    b[239] = (byte) 201;
 
-    return new IndexColorModel(8, nbColors, r, g, b);
+    return new IndexColorModel(8, NB_COLORS, r, g, b);
   }
 
   /** Returns one gray color model */
   private static IndexColorModel getGrayColorModel(int nbElements) {
-    byte[] r = new byte[nbElements];
-    byte[] g = new byte[nbElements];
-    byte[] b = new byte[nbElements];
+    final byte[] r = new byte[nbElements];
+    final byte[] g = new byte[nbElements];
+    final byte[] b = new byte[nbElements];
 
-    int mult = nbColors / nbElements;
+    final int mult = MAX_COLORS / nbElements;
 
     for (int i = 0; i < nbElements; i++) {
       byte v = (byte) (i * mult);
@@ -1545,15 +1590,124 @@ public class ColorModels {
       return new IndexColorModel(8, nbElements, r, g, b);
     }
 
-    for (int i = 0; i < b.length; i++) {
-      System.out.println("r[" + i + "]=" + r[i] + "\tg[" + i + "]=" + g[i] + "\tb[" + i +
-              "]=" + b[i]);
-    }
-
     return new IndexColorModel(4, nbElements, r, g, b);
   }
 
-  private ColorModels() {
-    // no-op
+  private static IndexColorModel loadFromFile(final String name) {
+
+    InputStream in = null;
+    try {
+      final String path = "lut/" + name;
+
+      in = ColorModels.class.getResourceAsStream(path);
+
+      final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "US-ASCII"));
+
+      String line;
+      StringTokenizer tok;
+
+      // outputs :
+      final int LEN = 128;
+      int n = 0;
+
+      int i = 0;
+      byte[] r = new byte[MAX_COLORS];
+      byte[] g = new byte[MAX_COLORS];
+      byte[] b = new byte[MAX_COLORS];
+
+      while ((line = reader.readLine()) != null && n < LEN) {
+        tok = new StringTokenizer(line, " ");
+
+        if (tok.countTokens() == 3) {
+          r[i] = (byte) (255f * Float.parseFloat(tok.nextToken()));
+          r[i + 1] = r[i];
+          g[i] = (byte) (255f * Float.parseFloat(tok.nextToken()));
+          g[i + 1] = g[i];
+          b[i] = (byte) (255f * Float.parseFloat(tok.nextToken()));
+          b[i + 1] = b[i];
+        }
+
+        i += 2;
+        n++;
+      }
+
+      return new IndexColorModel(8, MAX_COLORS, r, g, b);
+
+    } catch (Exception e) {
+      // ignore
+    } finally {
+      if (in != null) {
+        try {
+          in.close();
+        } catch (IOException ex) {
+          // ignore
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * List directory contents for a resource folder. Not recursive.
+   * This is basically a brute-force implementation.
+   * Works for regular files and also JARs.
+   *
+   * @author Greg Briggs
+   * @param clazz Any java class that lives in the same place as the resources you want.
+   * @param path Should end with "/", but not start with one.
+   * @return Just the name of each member item, not the full paths.
+   * @throws URISyntaxException
+   * @throws IOException
+   */
+  public static String[] getResourceListing(final Class<?> clazz, final String path) throws URISyntaxException, IOException {
+    URL dirURL = clazz.getClassLoader().getResource(path);
+
+    if (dirURL != null && dirURL.getProtocol().equals("file")) {
+      /* A file path: easy enough */
+      return new File(dirURL.toURI()).list();
+    }
+
+    if (dirURL == null) {
+      /*
+       * In case of a jar file, we can't actually find a directory.
+       * Have to assume the same jar as clazz.
+       */
+      final String me = clazz.getName().replace(".", "/") + ".class";
+      dirURL = clazz.getClassLoader().getResource(me);
+    }
+
+    if (dirURL.getProtocol().equals("jar")) {
+      /* A JAR path */
+      final String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); //strip out only the JAR file
+      final JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+      final Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
+      final Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory
+
+      while (entries.hasMoreElements()) {
+        String name = entries.nextElement().getName();
+        if (name.startsWith(path)) { //filter according to the path
+          String entry = name.substring(path.length());
+          int checkSubdir = entry.indexOf("/");
+          if (checkSubdir >= 0) {
+            // if it is a subdirectory, we just return the directory name
+            entry = entry.substring(0, checkSubdir);
+          }
+          if (entry.length() > 0) {
+            result.add(entry);
+          }
+        }
+      }
+      return result.toArray(new String[result.size()]);
+    }
+
+    throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
+  }
+
+  /**
+   * Test code
+   * @param args
+   */
+  public static void main(String[] args) {
+    ColorModels.getEarthColorModel();
   }
 }

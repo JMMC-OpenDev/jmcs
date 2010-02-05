@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ColorModels.java,v 1.3 2010-02-05 13:13:07 bourgesl Exp $"
+ * "@(#) $Id: ColorModels.java,v 1.4 2010-02-05 16:00:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/02/05 13:13:07  bourgesl
+ * added log messages
+ *
  * Revision 1.2  2010/02/03 09:28:38  bourgesl
  * refactoring :
  * - list of color model names and a map[name; colorModel]
@@ -22,18 +25,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 /**
@@ -46,7 +43,6 @@ public class ColorModels {
   /** Class logger */
   protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
           className_);
-
   /**
    * Maximum number of colors in a 8 byte palette
    */
@@ -55,40 +51,74 @@ public class ColorModels {
    * Maximum number of colors in earth and rainbow LUT
    */
   public static final int NB_COLORS = 240;
-  /** default color model */
+  /** 
+   * Default color model
+   */
   public final static String DEFAULT_COLOR_MODEL = "Earth";
-  /** Color model names */
+  /** 
+   * Color model names
+   */
   private final static Vector<String> colorModelNames = new Vector<String>();
-  /** Color models keyed by names */
+  /** 
+   * Color models keyed by names
+   */
   private final static Map<String, IndexColorModel> colorModels = new HashMap<String, IndexColorModel>();
+  /**
+   * Generated array of lut file names in the jmcs folder fr/jmmc/mcs/image/lut/
+   */
+  private final static String[] LUT_FILES = {
+    "aspro.lut",
+    "backgr.lut",
+    "blue.lut",
+    "blulut.lut",
+    "green.lut",
+    "heat.lut",
+    "idl11.lut",
+    "idl14.lut",
+    "idl15.lut",
+    "idl2.lut",
+    "idl4.lut",
+    "idl5.lut",
+    "idl6.lut",
+    "isophot.lut",
+    "light.lut",
+    "mousse.lut",
+    "neg.lut",
+    "pastel.lut",
+    "pseudo1.lut",
+    "pseudo2.lut",
+    "rainbow.lut",
+    "rainbow1.lut",
+    "rainbow2.lut",
+    "rainbow3.lut",
+    "rainbow4.lut",
+    "ramp.lut",
+    "real.lut",
+    "red.lut",
+    "smooth.lut"
+  };
 
+  /**
+   * Static initialization to prepare the color models (load lut files)
+   */
   static {
-    // static initialization :
+    // hard coded color models :
     addColorModel(DEFAULT_COLOR_MODEL, getEarthColorModel());
 
     addColorModel("Gray", getGrayColorModel(MAX_COLORS));
 
     addColorModel("Rainbow", getRainbowColorModel());
 
-    try {
-      final String[] lutFiles = getResourceListing(ColorModels.class, "fr/jmmc/mcs/image/lut/");
-
-      Arrays.sort(lutFiles);
-
-      for (String name : lutFiles) {
-        IndexColorModel colorModel = loadFromFile(name);
-        if (colorModel != null) {
-          addColorModel(name.substring(0, name.indexOf('.')), colorModel);
-        }
-      }
-
-      Collections.sort(colorModelNames);
-
-    } catch (Exception e) {
-      if (logger.isLoggable(Level.INFO)) {
-        logger.log(Level.INFO, "initialization failure : ", e);
+    // color models from lut files :
+    IndexColorModel colorModel;
+    for (String name : LUT_FILES) {
+      colorModel = loadFromFile(name);
+      if (colorModel != null) {
+        addColorModel(name.substring(0, name.indexOf('.')), colorModel);
       }
     }
+
+    Collections.sort(colorModelNames);
   }
 
   private static void addColorModel(final String name, final IndexColorModel colorModel) {
@@ -1668,14 +1698,8 @@ public class ColorModels {
   }
 
   /**
-   * List directory contents for a resource folder. Not recursive.
-   * This is basically a brute-force implementation.
-   * Works for regular files and also JARs.
-   *
-   * @author Greg Briggs
-   * @param clazz Any java class that lives in the same place as the resources you want.
-   * @param path Should end with "/", but not start with one.
-   * @return Just the name of each member item, not the full paths.
+   * List directory contents for a resource folder.
+   * 
    * @throws URISyntaxException
    * @throws IOException
    */
@@ -1687,47 +1711,44 @@ public class ColorModels {
       return new File(dirURL.toURI()).list();
     }
 
-    if (dirURL == null) {
-      /*
-       * In case of a jar file, we can't actually find a directory.
-       * Have to assume the same jar as clazz.
-       */
-      final String me = clazz.getName().replace(".", "/") + ".class";
-      dirURL = clazz.getClassLoader().getResource(me);
-    }
-
-    if (dirURL.getProtocol().equals("jar")) {
-      /* A JAR path */
-      final String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); //strip out only the JAR file
-      final JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-      final Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
-      final Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory
-
-      while (entries.hasMoreElements()) {
-        String name = entries.nextElement().getName();
-        if (name.startsWith(path)) { //filter according to the path
-          String entry = name.substring(path.length());
-          int checkSubdir = entry.indexOf("/");
-          if (checkSubdir >= 0) {
-            // if it is a subdirectory, we just return the directory name
-            entry = entry.substring(0, checkSubdir);
-          }
-          if (entry.length() > 0) {
-            result.add(entry);
-          }
-        }
-      }
-      return result.toArray(new String[result.size()]);
-    }
-
     throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
   }
 
   /**
-   * Test code
-   * @param args
+   * Test code and generate the array of lut file names in the jmcs folder fr/jmmc/mcs/image/lut/
+   * @param args unused
    */
   public static void main(String[] args) {
-    ColorModels.getEarthColorModel();
+
+    // Prepare the lut file list :
+    try {
+      final String[] lutFiles = getResourceListing(ColorModels.class, "fr/jmmc/mcs/image/lut/");
+
+      if (lutFiles != null) {
+        Arrays.sort(lutFiles);
+
+        final StringBuilder sb = new StringBuilder(512);
+
+        sb.append("private final static String[] LUT_FILES = {\n");
+        for (String name : lutFiles) {
+          sb.append("\"").append(name).append("\"").append(", \n");
+        }
+        final int pos = sb.lastIndexOf(",");
+        if (pos != -1) {
+          sb.deleteCharAt(pos);
+        }
+        sb.append("};");
+
+        logger.severe("lut files :\n" + sb.toString());
+      }
+
+    } catch (Exception e) {
+      if (logger.isLoggable(Level.INFO)) {
+        logger.log(Level.INFO, "resource listing failure : ", e);
+      }
+    }
+
+    // test case :
+    ColorModels.getDefaultColorModel();
   }
 }

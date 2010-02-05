@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ColorModels.java,v 1.2 2010-02-03 09:28:38 bourgesl Exp $"
+ * "@(#) $Id: ColorModels.java,v 1.3 2010-02-05 13:13:07 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/03 09:28:38  bourgesl
+ * refactoring :
+ * - list of color model names and a map[name; colorModel]
+ * - automatic load of lut files to have more color models
+ *
  */
 package fr.jmmc.mcs.image;
 
@@ -29,11 +34,18 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 /**
  * Give access to several color models.
  */
 public class ColorModels {
+
+  /** Class Name */
+  private static final String className_ = "fr.jmmc.mcs.image.ColorModels";
+  /** Class logger */
+  protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
+          className_);
 
   /**
    * Maximum number of colors in a 8 byte palette
@@ -73,7 +85,9 @@ public class ColorModels {
       Collections.sort(colorModelNames);
 
     } catch (Exception e) {
-      // ignore :
+      if (logger.isLoggable(Level.INFO)) {
+        logger.log(Level.INFO, "initialization failure : ", e);
+      }
     }
   }
 
@@ -98,7 +112,11 @@ public class ColorModels {
   }
 
   public static IndexColorModel getColorModel(final String name) {
-    return colorModels.get(name);
+    IndexColorModel colorModel = colorModels.get(name);
+    if (colorModel == null) {
+      return getDefaultColorModel();
+    }
+    return colorModel;
   }
 
   /* Private methods */
@@ -1634,7 +1652,9 @@ public class ColorModels {
       return new IndexColorModel(8, MAX_COLORS, r, g, b);
 
     } catch (Exception e) {
-      // ignore
+      if (logger.isLoggable(Level.INFO)) {
+        logger.log(Level.INFO, "loadFromFile failure : " + name, e);
+      }
     } finally {
       if (in != null) {
         try {

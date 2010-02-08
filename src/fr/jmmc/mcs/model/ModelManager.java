@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.2 2010-02-03 16:05:46 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.3 2010-02-08 16:56:26 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/03 16:05:46  bourgesl
+ * Added fast thread interruption checks for asynchronous uv map computation
+ *
  * Revision 1.1  2010/01/29 15:52:45  bourgesl
  * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
  *
@@ -145,6 +148,34 @@ public class ModelManager {
 
     return vis;
   }
+
+  public static void normalize(final Complex[] vis) {
+    double val;
+
+    // 1 - Find maximum amplitude :
+    double maxAmp = 0d;
+    for (int i = 0, size = vis.length; i < size; i++) {
+      // amplitude = complex modulus (abs in commons-math) :
+      val = (float) vis[i].abs();
+      if (val > maxAmp) {
+        maxAmp = val;
+      }
+    }
+
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("maxAmp : " + maxAmp);
+    }
+
+    // 2 - normalize :
+    if (maxAmp != 0d) {
+      final double factor = 1d / maxAmp;
+      for (int i = 0, size = vis.length; i < size; i++) {
+        // amplitude = complex modulus (abs in commons-math) :
+        vis[i] = vis[i].multiply(factor);
+      }
+    }
+  }
+
 
   /**
    * Return the parameter of the given type among the parameters of the given model

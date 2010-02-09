@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ImageCanvas.java,v 1.4 2010-02-03 09:29:42 bourgesl Exp $"
+ * "@(#) $Id: ImageCanvas.java,v 1.5 2010-02-09 16:50:07 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/03 09:29:42  bourgesl
+ * little paint changes on the wedge to have the float extrema + color models refactoring
+ *
  */
 package fr.jmmc.mcs.image;
 
@@ -77,6 +80,10 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
    * DOCUMENT ME!
    */
   private static final int wedgeLegendDist = 10;
+
+  /** float data array */
+  private float[] dataArray;
+
   /**
    * DOCUMENT ME!
    */
@@ -190,6 +197,7 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
     mouseY_ = ((e.getY() - topInset) * h_) / canvasHeight_;
 
     if ((mouseX_ >= 0) && (mouseY_ >= 0) && (mouseX_ < w_) && (mouseY_ < h_)) {
+      // first band = Red. => buggy with RGB rendering
       mousePixel_ = imageRaster_.getSample(mouseX_, mouseY_, 0);
       observe_.setChanged();
     }
@@ -286,13 +294,10 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
 
     this.minValue_ = min;
     this.maxValue_ = max;
-    this.normalisePixelCoefficient_ = ImageUtils.computeScalingFactor(min, max, colorModel_.getMapSize());
+    this.dataArray = array;
 
-    final BufferedImage bi = ImageUtils.createImage(width, height, array, min, colorModel_, normalisePixelCoefficient_);
-
-    this.imageRaster_ = bi.getRaster();
-
-    this.image_ = bi;
+    // rebuild image :
+    buildImage();
 
     // set new canvas dimension
     final Dimension d = new Dimension(width, height);
@@ -304,8 +309,15 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
    * DOCUMENT ME!
    */
   private void buildImage() {
-    if (this.imageRaster_ != null) {
-      this.image_ = new BufferedImage(this.colorModel_, this.imageRaster_, false, null);
+    // build image with RGB linear LUT interpolation :
+    if (this.dataArray != null) {
+      this.normalisePixelCoefficient_ = ImageUtils.computeScalingFactor(this.minValue_, this.maxValue_, colorModel_.getMapSize());
+
+      final BufferedImage bi = ImageUtils.createImage(this.w_, this.h_, this.dataArray, this.minValue_, colorModel_, normalisePixelCoefficient_);
+
+      this.imageRaster_ = bi.getRaster();
+
+      this.image_ = bi;
     }
   }
 

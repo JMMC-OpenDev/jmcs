@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: TestModel.java,v 1.2 2010-02-03 09:31:29 bourgesl Exp $"
+ * "@(#) $Id: TestModel.java,v 1.3 2010-02-09 16:50:07 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/03 09:31:29  bourgesl
+ * added Amplitude or Phase uv map
+ *
  * Revision 1.1  2010/01/29 15:53:16  bourgesl
  * Test code for punct / disk models
  *
@@ -141,7 +144,7 @@ public class TestModel {
     final boolean doAmp = true;
 
     // Image :
-    final int width = 256;
+    final int width = 512;
     final int height = width;
 
     double[] ufreq;

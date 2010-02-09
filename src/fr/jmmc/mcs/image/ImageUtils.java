@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ImageUtils.java,v 1.2 2010-02-03 09:30:31 bourgesl Exp $"
+ * "@(#) $Id: ImageUtils.java,v 1.3 2010-02-09 16:50:07 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/03 09:30:31  bourgesl
+ * better float value to color mapping
+ *
  * Revision 1.1  2010/01/29 15:50:07  bourgesl
  * Simple Image utilities to create an image from a float data array and use simple color models (lut)
  *
@@ -14,6 +17,7 @@ package fr.jmmc.mcs.image;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
@@ -31,6 +35,11 @@ public class ImageUtils {
   /** Class logger */
   protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
           className_);
+          /** alpha integer mask */
+  private final static int ALPHA_MASK = 0xff << 24;
+  /** flag to use RGB color interpolation */
+  public final static boolean USE_RGB_INTERPOLATION = true;
+
 
   /**
    * Forbidden constructor
@@ -110,24 +119,76 @@ public class ImageUtils {
       logger.finest("Image: dims=" + width + "x" + height + ", c=" + c + ", array[0]=" + array[0]);
     }
 
-    final WritableRaster imageRaster = Raster.createPackedRaster(DataBuffer.TYPE_BYTE, width, height, new int[]{0xFF},
-            new Point(0, 0));
+    if (USE_RGB_INTERPOLATION) {
+      final ColorModel rgbColorModel = ColorModel.getRGBdefault();
 
-    final DataBuffer dataBuffer = imageRaster.getDataBuffer();
+      final WritableRaster imageRaster = rgbColorModel.createCompatibleWritableRaster(width, height);
 
-    // init raster pixels
-    for (int i = 0, v = 0, size = array.length; i < size; i++) {
-      v = (int) ((array[i] - min) * c);
+      final DataBuffer dataBuffer = imageRaster.getDataBuffer();
 
-      if (v < iMin) {
-        v = iMin;
-      } else if (v > iMaxColor) {
-        v = iMaxColor;
+      // init raster pixels
+      for (int i = 0, size = array.length; i < size; i++) {
+        dataBuffer.setElem(i, getRGB(colorModel, iMaxColor, (array[i] - min) * c));
+      }
+      return new BufferedImage(rgbColorModel, imageRaster, false, null);
+      
+    } else {
+      final WritableRaster imageRaster = Raster.createPackedRaster(DataBuffer.TYPE_BYTE, width, height, new int[]{0xFF},
+              new Point(0, 0));
+
+      final DataBuffer dataBuffer = imageRaster.getDataBuffer();
+
+      // init raster pixels
+      for (int i = 0, v = 0, size = array.length; i < size; i++) {
+        v = Math.round(((array[i] - min) * c));
+
+        if (v < iMin) {
+          v = iMin;
+        } else if (v > iMaxColor) {
+          v = iMaxColor;
+        }
+
+        dataBuffer.setElem(i, v);
+      }
+      return new BufferedImage(colorModel, imageRaster, false, null);
+    }
+  }
+
+  private static final int getRGB(final IndexColorModel colorModel, final int iMaxColor, final float value) {
+
+      int minColorIdx = (int)Math.floor(value);
+
+      final float ratio = value - minColorIdx;
+
+      if (minColorIdx < 0) {
+        minColorIdx = 0;
+      }
+      if (minColorIdx > iMaxColor) {
+        minColorIdx = iMaxColor;
       }
 
-      dataBuffer.setElem(i, v);
-    }
+      int maxColorIdx = minColorIdx + 1;
 
-    return new BufferedImage(colorModel, imageRaster, false, null);
+      if (maxColorIdx > iMaxColor) {
+        maxColorIdx = iMaxColor;
+      }
+
+      final int minColor = colorModel.getRGB(minColorIdx);
+      final int maxColor = colorModel.getRGB(maxColorIdx);
+
+      final int ra = minColor >> 16 & 0xff;
+      final int ga = minColor >> 8 & 0xff;
+      final int ba = minColor & 0xff;
+
+      final int rb = maxColor >> 16 & 0xff;
+      final int gb = maxColor >> 8 & 0xff;
+      final int bb = maxColor & 0xff;
+
+      // linear interpolation for color :
+      final int r = Math.round(ra + (rb - ra) * ratio);
+      final int g = Math.round(ga + (gb - ga) * ratio);
+      final int b = Math.round(ba + (bb - ba) * ratio);
+
+      return ALPHA_MASK | (r << 16) | (g << 8) | b;
   }
 }

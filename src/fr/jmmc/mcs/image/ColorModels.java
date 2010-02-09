@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ColorModels.java,v 1.4 2010-02-05 16:00:33 bourgesl Exp $"
+ * "@(#) $Id: ColorModels.java,v 1.5 2010-02-09 16:49:34 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/05 16:00:33  bourgesl
+ * impossible to get the lut file list from signed jar (jnlp) then fixed bug using a generated hard-coded lut file list
+ *
  * Revision 1.3  2010/02/05 13:13:07  bourgesl
  * added log messages
  *
@@ -51,6 +54,8 @@ public class ColorModels {
    * Maximum number of colors in earth and rainbow LUT
    */
   public static final int NB_COLORS = 240;
+  /** force zero surroundings to be black */
+  public final static boolean FORCE_ZERO = true;
   /** 
    * Default color model
    */
@@ -1641,7 +1646,7 @@ public class ColorModels {
     return new IndexColorModel(4, nbElements, r, g, b);
   }
 
-  private static IndexColorModel loadFromFile(final String name) {
+  private static byte[][] loadLutFromFile(final String name) {
 
     InputStream in = null;
     try {
@@ -1656,30 +1661,62 @@ public class ColorModels {
 
       // outputs :
       final int LEN = 128;
-      int n = 0;
 
-      int i = 0;
-      byte[] r = new byte[MAX_COLORS];
-      byte[] g = new byte[MAX_COLORS];
-      byte[] b = new byte[MAX_COLORS];
+      final float[] rf = new float[MAX_COLORS];
+      final float[] gf = new float[MAX_COLORS];
+      final float[] bf = new float[MAX_COLORS];
 
-      while ((line = reader.readLine()) != null && n < LEN) {
+
+      for (int i = 0, n = 0; (line = reader.readLine()) != null && n <= LEN; i += 2, n++) {
         tok = new StringTokenizer(line, " ");
 
         if (tok.countTokens() == 3) {
-          r[i] = (byte) (255f * Float.parseFloat(tok.nextToken()));
-          r[i + 1] = r[i];
-          g[i] = (byte) (255f * Float.parseFloat(tok.nextToken()));
-          g[i + 1] = g[i];
-          b[i] = (byte) (255f * Float.parseFloat(tok.nextToken()));
-          b[i + 1] = b[i];
+          rf[i] = 255f * Float.parseFloat(tok.nextToken());
+          gf[i] = 255f * Float.parseFloat(tok.nextToken());
+          bf[i] = 255f * Float.parseFloat(tok.nextToken());
         }
 
-        i += 2;
-        n++;
       }
 
-      return new IndexColorModel(8, MAX_COLORS, r, g, b);
+      for (int i = 1, j = 0, k = 0, size = MAX_COLORS - 2; i < size; i += 2) {
+        j = i - 1;
+        k = i + 1;
+        rf[i] = 0.5f * (rf[j] + rf[k]);
+        gf[i] = 0.5f * (gf[j] + gf[k]);
+        bf[i] = 0.5f * (bf[j] + bf[k]);
+      }
+
+      // special case : color 255 :
+      rf[MAX_COLORS - 1] = rf[MAX_COLORS - 2];
+      gf[MAX_COLORS - 1] = gf[MAX_COLORS - 2];
+      bf[MAX_COLORS - 1] = bf[MAX_COLORS - 2];
+
+      if (FORCE_ZERO) {
+        // force to have black color :
+        final int REF_COLOR = 4;
+
+        final float rfRef = rf[REF_COLOR];
+        final float gfRef = gf[REF_COLOR];
+        final float bfRef = bf[REF_COLOR];
+
+        for (int i = REF_COLOR - 1; i >= 0; i--) {
+          rf[i] = rfRef * i / REF_COLOR;
+          gf[i] = gfRef * i / REF_COLOR;
+          bf[i] = bfRef * i / REF_COLOR;
+        }
+      }
+
+      final byte[] r = new byte[MAX_COLORS];
+      final byte[] g = new byte[MAX_COLORS];
+      final byte[] b = new byte[MAX_COLORS];
+
+      for (int i = 0; i < MAX_COLORS; i++) {
+        r[i] = (byte) rf[i];
+        g[i] = (byte) gf[i];
+        b[i] = (byte) bf[i];
+      }
+
+      return new byte[][]{r, g, b};
 
     } catch (Exception e) {
       if (logger.isLoggable(Level.INFO)) {
@@ -1693,6 +1730,16 @@ public class ColorModels {
           // ignore
         }
       }
+    }
+    return null;
+  }
+
+  private static IndexColorModel loadFromFile(final String name) {
+
+    final byte[][] rgb = loadLutFromFile(name);
+
+    if (rgb != null) {
+      return new IndexColorModel(8, MAX_COLORS, rgb[0], rgb[1], rgb[2]);
     }
     return null;
   }

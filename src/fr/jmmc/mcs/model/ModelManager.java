@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.3 2010-02-08 16:56:26 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.4 2010-02-12 15:52:05 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/02/08 16:56:26  bourgesl
+ * added the normalize visibility function
+ *
  * Revision 1.2  2010/02/03 16:05:46  bourgesl
  * Added fast thread interruption checks for asynchronous uv map computation
  *
@@ -19,11 +22,11 @@ import fr.jmmc.mcs.model.function.DiskModelFunction;
 import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import fr.jmmc.mcs.model.targetmodel.Parameter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 import org.apache.commons.math.complex.Complex;
 
@@ -42,7 +45,7 @@ public class ModelManager {
   private static ModelManager instance = new ModelManager();
   // members :
   /** List of model type */
-  private final List<String> modelTypes = new ArrayList<String>();
+  private final Vector<String> modelTypes = new Vector<String>();
   /** Map : model type, ModelFunction instance */
   private final Map<String, ModelFunction> modelFunctions = new HashMap<String, ModelFunction>();
 
@@ -83,19 +86,36 @@ public class ModelManager {
    * Return the list of model types
    * @return list of model types
    */
-  public List<String> getSupportedModels() {
+  public Vector<String> getSupportedModels() {
     return this.modelTypes;
+  }
+
+  /**
+   * Return the model description of the given type
+   * @param type type of the model
+   * @return model description
+   * @throws IllegalStateException if the given type is unknown
+   */
+  public String getModelDescription(final String type) {
+    return getModelFunction(type).getDescription();
   }
 
   /**
    * Return a new model of the given type
    * @param type type of the model
-   * @return new model or null if the given type is unknown
+   * @return new model
+   * @throws IllegalStateException if the given type is unknown
    */
   public Model createModel(final String type) {
     return getModelFunction(type).newModel();
   }
 
+  /**
+   * Return the model function for the given type
+   * @param type type of the model
+   * @return model function
+   * @throws IllegalStateException if the given type is unknown
+   */
   private ModelFunction getModelFunction(final String type) throws IllegalStateException {
     final ModelFunction mf = this.modelFunctions.get(type);
     if (mf == null) {
@@ -176,24 +196,21 @@ public class ModelManager {
     }
   }
 
-
   /**
    * Return the parameter of the given type among the parameters of the given model
    * @param type type of the parameter
    * @param model model to use
    * @return parameter or null if the parameter was not found
+   * @throws IllegalArgumentException if the parameter type is invalid for the given model
    */
   public static Parameter getParameter(final Model model, final String type) {
-    Parameter param = null;
-
-    for (Parameter p : model.getParameter()) {
+    for (Parameter p : model.getParameters()) {
       if (type.equals(p.getType())) {
-        param = p;
-        break;
+        return p;
       }
     }
 
-    return param;
+    throw new IllegalArgumentException("the parameter type [" + type + "] is invalid for this model [" + model.getType() + "] !");
   }
 
   /**
@@ -201,11 +218,9 @@ public class ModelManager {
    * @param model model to use
    * @param type type of the parameter
    * @param value value to set
+   * @throws IllegalArgumentException if the parameter type is invalid for the given model
    */
   public static void setParameterValue(final Model model, final String type, final double value) {
-    final Parameter parameter = getParameter(model, type);
-    if (parameter != null) {
-      parameter.setValue(value);
-    }
+    getParameter(model, type).setValue(value);
   }
 }

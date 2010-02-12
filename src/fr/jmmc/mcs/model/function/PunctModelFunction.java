@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PunctModelFunction.java,v 1.2 2010-02-03 16:05:46 bourgesl Exp $"
+ * "@(#) $Id: PunctModelFunction.java,v 1.3 2010-02-12 15:52:05 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/03 16:05:46  bourgesl
+ * Added fast thread interruption checks for asynchronous uv map computation
+ *
  * Revision 1.1  2010/01/29 15:52:46  bourgesl
  * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
  *
@@ -46,6 +49,14 @@ public final class PunctModelFunction extends AbstractModelFunction {
    */
   public String getType() {
     return MODEL_PUNCT;
+  }
+
+  /**
+   * Return the model description
+   * @return model description
+   */
+  public String getDescription() {
+    return MODEL_DESC;
   }
 
   /**

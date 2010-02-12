@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DiskModelFunction.java,v 1.2 2010-02-03 16:05:46 bourgesl Exp $"
+ * "@(#) $Id: DiskModelFunction.java,v 1.3 2010-02-12 15:52:05 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/03 16:05:46  bourgesl
+ * Added fast thread interruption checks for asynchronous uv map computation
+ *
  * Revision 1.1  2010/01/29 15:52:46  bourgesl
  * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
  *
@@ -31,7 +34,7 @@ public final class DiskModelFunction extends AbstractModelFunction {
           "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
           "given in 1/rad, of a normalized uniform disk of diameter \n" +
           "DIAMETER (milliarcsecond) and centered at coordinates (X,Y) (milliarcsecond). \n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. " +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
           "The function returns an error if DIAMETER is negative.\n\n" +
           "UFREQ and VFREQ must be conformable. The returned array is always \n" +
           "complex and of dims dimsof(UFREQ,VFREQ). \n";
@@ -55,6 +58,14 @@ public final class DiskModelFunction extends AbstractModelFunction {
   }
 
   /**
+   * Return the model description
+   * @return model description
+   */
+  public String getDescription() {
+    return MODEL_DESC;
+  }
+
+  /**
    * Return a new Model instance with its parameters and default values
    * @return new Model instance
    */
@@ -65,13 +76,15 @@ public final class DiskModelFunction extends AbstractModelFunction {
     model.setType(MODEL_DISK);
     model.setDesc(MODEL_DESC);
 
-    Parameter param = new Parameter();
+    Parameter param;
+
+    param = new Parameter();
     param.setName(PARAM_DIAMETER);
     param.setType(PARAM_DIAMETER);
     param.setMinValue(0D);
     param.setValue(0D);
     param.setUnits(UNIT_MAS);
-    model.getParameter().add(param);
+    model.getParameters().add(param);
 
     return model;
   }

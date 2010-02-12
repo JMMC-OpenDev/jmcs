@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import fr.jmmc.mcs.model.CloneableObject;
 
 
 /**
@@ -36,39 +37,41 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "model",
+    "models",
     "desc",
-    "parameter",
-    "parameterLink"
+    "parameters",
+    "parameterLinks"
 })
 @XmlRootElement(name = "model")
-public class Model {
+public class Model
+    extends CloneableObject
+{
 
-    @XmlElement(namespace = "http://www.jmmc.fr/jmcs/models/0.1")
-    protected List<Model> model;
+    @XmlElement(name = "model", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
+    protected List<Model> models;
     protected String desc;
-    @XmlElement(namespace = "http://www.jmmc.fr/jmcs/models/0.1")
-    protected List<Parameter> parameter;
-    @XmlElement(namespace = "http://www.jmmc.fr/jmcs/models/0.1")
-    protected List<ParameterLink> parameterLink;
+    @XmlElement(name = "parameter", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
+    protected List<Parameter> parameters;
+    @XmlElement(name = "parameterLink", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
+    protected List<ParameterLink> parameterLinks;
     @XmlAttribute(required = true)
     protected String name;
     @XmlAttribute(required = true)
     protected String type;
 
     /**
-     * Gets the value of the model property.
+     * Gets the value of the models property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the model property.
+     * This is why there is not a <CODE>set</CODE> method for the models property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getModel().add(newItem);
+     *    getModels().add(newItem);
      * </pre>
      * 
      * 
@@ -78,11 +81,11 @@ public class Model {
      * 
      * 
      */
-    public List<Model> getModel() {
-        if (model == null) {
-            model = new ArrayList<Model>();
+    public List<Model> getModels() {
+        if (models == null) {
+            models = new ArrayList<Model>();
         }
-        return this.model;
+        return this.models;
     }
 
     /**
@@ -110,18 +113,18 @@ public class Model {
     }
 
     /**
-     * Gets the value of the parameter property.
+     * Gets the value of the parameters property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameter property.
+     * This is why there is not a <CODE>set</CODE> method for the parameters property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getParameter().add(newItem);
+     *    getParameters().add(newItem);
      * </pre>
      * 
      * 
@@ -131,26 +134,26 @@ public class Model {
      * 
      * 
      */
-    public List<Parameter> getParameter() {
-        if (parameter == null) {
-            parameter = new ArrayList<Parameter>();
+    public List<Parameter> getParameters() {
+        if (parameters == null) {
+            parameters = new ArrayList<Parameter>();
         }
-        return this.parameter;
+        return this.parameters;
     }
 
     /**
-     * Gets the value of the parameterLink property.
+     * Gets the value of the parameterLinks property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameterLink property.
+     * This is why there is not a <CODE>set</CODE> method for the parameterLinks property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getParameterLink().add(newItem);
+     *    getParameterLinks().add(newItem);
      * </pre>
      * 
      * 
@@ -160,11 +163,11 @@ public class Model {
      * 
      * 
      */
-    public List<ParameterLink> getParameterLink() {
-        if (parameterLink == null) {
-            parameterLink = new ArrayList<ParameterLink>();
+    public List<ParameterLink> getParameterLinks() {
+        if (parameterLinks == null) {
+            parameterLinks = new ArrayList<ParameterLink>();
         }
-        return this.parameterLink;
+        return this.parameterLinks;
     }
 
     /**
@@ -214,5 +217,39 @@ public class Model {
     public void setType(String value) {
         this.type = value;
     }
+    
+//--simple--preserve
+  /**
+   * Return a deep "copy" of this instance
+   * @return deep "copy" of this instance
+   */
+  @Override
+  public Object clone() {
+    final Model copy = (Model) super.clone();
+
+    // Deep copy of models :
+    final List<Model> newModels = new ArrayList<Model>();
+    for (Model model : getModels()) {
+      newModels.add((Model) model.clone());
+    }
+    copy.models = newModels;
+
+    // Deep copy of parameters :
+    final List<Parameter> newParameters = new ArrayList<Parameter>();
+    for (Parameter parameter : getParameters()) {
+      newParameters.add((Parameter) parameter.clone());
+    }
+    copy.parameters = newParameters;
+
+    // Deep copy of parameters :
+    final List<ParameterLink> newParameterLinks = new ArrayList<ParameterLink>();
+    for (ParameterLink parameterLink : getParameterLinks()) {
+      newParameterLinks.add((ParameterLink) parameterLink.clone());
+    }
+    copy.parameterLinks = newParameterLinks;
+
+    return copy;
+  }
+//--simple--preserve
 
 }

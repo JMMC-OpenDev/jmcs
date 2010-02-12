@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: TestModel.java,v 1.3 2010-02-09 16:50:07 bourgesl Exp $"
+ * "@(#) $Id: TestModel.java,v 1.4 2010-02-12 15:52:05 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/02/09 16:50:07  bourgesl
+ * use rgb color interpolation for better image rendering
+ *
  * Revision 1.2  2010/02/03 09:31:29  bourgesl
  * added Amplitude or Phase uv map
  *
@@ -115,7 +118,7 @@ public class TestModel {
     // disk1 :
     model = mm.createModel(ModelFunction.MODEL_DISK);
 
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_FLUX_WEIGHT, 1.0);
+    ModelManager.setParameterValue(model, ModelFunction.PARAM_FLUX_WEIGHT, 3.0);
     ModelManager.setParameterValue(model, ModelFunction.PARAM_X, 0);
     ModelManager.setParameterValue(model, ModelFunction.PARAM_Y, 0);
     ModelManager.setParameterValue(model, DiskModelFunction.PARAM_DIAMETER, 30);

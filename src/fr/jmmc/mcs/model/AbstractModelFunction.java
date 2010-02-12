@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AbstractModelFunction.java,v 1.1 2010-01-29 15:52:45 bourgesl Exp $"
+ * "@(#) $Id: AbstractModelFunction.java,v 1.2 2010-02-12 15:52:05 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/01/29 15:52:45  bourgesl
+ * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
+ *
  */
 package fr.jmmc.mcs.model;
 
@@ -47,7 +50,6 @@ public abstract class AbstractModelFunction implements ModelFunction {
    * <code>Double.longBitsToDouble(0x1L)</code>.
    */
   public static final double DBL_MIN_VALUE = 0x0.0000000000001P-1022; // 4.9e-324
-  
   /* mathematical constants */
   /** _LPB_PI = value of the variable PI, to avoid any corruption */
   public final static double PI = 3.141592653589793238462643383279503D;
@@ -74,7 +76,7 @@ public abstract class AbstractModelFunction implements ModelFunction {
 
     final Model model = new Model();
 
-    // parameter :
+    // common parameters :
     Parameter param;
 
     param = new Parameter();
@@ -82,21 +84,21 @@ public abstract class AbstractModelFunction implements ModelFunction {
     param.setType(PARAM_FLUX_WEIGHT);
     param.setMinValue(0D);
     param.setValue(1D);
-    model.getParameter().add(param);
+    model.getParameters().add(param);
 
     param = new Parameter();
     param.setName(PARAM_X);
     param.setType(PARAM_X);
     param.setValue(0D);
     param.setUnits(UNIT_MAS);
-    model.getParameter().add(param);
+    model.getParameters().add(param);
 
     param = new Parameter();
     param.setName(PARAM_Y);
     param.setType(PARAM_Y);
     param.setValue(0D);
     param.setUnits(UNIT_MAS);
-    model.getParameter().add(param);
+    model.getParameters().add(param);
 
     return model;
   }
@@ -105,19 +107,11 @@ public abstract class AbstractModelFunction implements ModelFunction {
    * Return the parameter value of the given type among the parameters of the given model
    * @param type type of the parameter
    * @param model model to use
-   * @return parameter value or 0.0 if the parameter was not found
+   * @return parameter value
+   * @throws IllegalArgumentException if the parameter type is invalid for the given model
    */
   public final double getParameter(final Model model, final String type) {
-    double value = 0D;
-
-    for (Parameter p : model.getParameter()) {
-      if (type.equals(p.getType())) {
-        value = p.getValue();
-        break;
-      }
-    }
-
-    return value;
+    return ModelManager.getParameter(model, type).getValue();
   }
 
   /* computation utility methods */

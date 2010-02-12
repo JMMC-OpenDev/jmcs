@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import fr.jmmc.mcs.model.CloneableObject;
 
 
 /**
@@ -31,7 +32,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "parameterLink")
-public class ParameterLink {
+public class ParameterLink
+    extends CloneableObject
+{
 
     @XmlAttribute(required = true)
     @XmlIDREF

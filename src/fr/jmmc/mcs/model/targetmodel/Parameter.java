@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import fr.jmmc.mcs.model.CloneableObject;
 
 
 /**
@@ -44,7 +45,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 })
 @XmlRootElement(name = "parameter")
-public class Parameter {
+public class Parameter
+    extends CloneableObject
+{
 
     protected String desc;
     protected String units;
@@ -311,5 +314,14 @@ public class Parameter {
     public void setId(String value) {
         this.id = value;
     }
+    
+//--simple--preserve
+
+    @Override
+    public String toString() {
+      return "Parameter [" + this.name + " | " + this.type + "] = " + this.value;
+    }
+
+//--simple--preserve
 
 }

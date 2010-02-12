@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelFunction.java,v 1.1 2010-01-29 15:52:46 bourgesl Exp $"
+ * "@(#) $Id: ModelFunction.java,v 1.2 2010-02-12 15:52:05 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/01/29 15:52:46  bourgesl
+ * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
+ *
  */
 package fr.jmmc.mcs.model;
 
@@ -37,6 +40,12 @@ public interface ModelFunction {
    * @return model type
    */
   public String getType();
+
+  /**
+   * Return the model description
+   * @return model description
+   */
+  public String getDescription();
 
   /**
    * Return a new Model instance with its parameters and default values

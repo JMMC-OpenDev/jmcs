@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.1 2010-02-12 15:52:32 bourgesl Exp $"
+ * "@(#) $Id: ModelParameterTableModel.java,v 1.2 2010-02-15 16:45:47 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/02/12 15:52:32  bourgesl
+ * added cloneable support for target model classes
+ * added parameter table model
+ *
  */
 package fr.jmmc.mcs.model.gui;
 
@@ -285,7 +289,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
       switch (this.columnDefs[columnIndex]) {
         case NAME:
           if (!this.sharedParameterList.get(rowIndex).booleanValue()) {
-            final Model model = this.modelForParameterList.get(rowIndex);
+            final Model model = this.getModelAt(rowIndex);
             if (model != null) {
               return model.getName() + "." + parameter.getName();
             }
@@ -333,7 +337,8 @@ public final class ModelParameterTableModel extends AbstractTableModel {
 
       switch (this.columnDefs[columnIndex]) {
         case VALUE:
-          parameter.setValue(((Double) aValue).doubleValue());
+          final double dValue = (aValue != null) ? ((Double) aValue).doubleValue() : 0D;
+          parameter.setValue(dValue);
           modified = true;
           break;
         case MIN_VALUE:
@@ -349,7 +354,8 @@ public final class ModelParameterTableModel extends AbstractTableModel {
           modified = true;
           break;
         case FIXED_VALUE:
-          parameter.setHasFixedValue(((Boolean) aValue).booleanValue());
+          final boolean bValue = (aValue != null) ? ((Boolean) aValue).booleanValue() : false;
+          parameter.setHasFixedValue(bValue);
           modified = true;
           break;
       }
@@ -358,5 +364,15 @@ public final class ModelParameterTableModel extends AbstractTableModel {
         fireTableCellUpdated(rowIndex, columnIndex);
       }
     }
+  }
+
+  /* custom */
+  /**
+   * Return the model corresponding to the row at <code>rowIndex</code>
+   * @param	rowIndex	the row whose value is to be queried
+   * @return model
+   */
+  public Model getModelAt(final int rowIndex) {
+    return this.modelForParameterList.get(rowIndex);
   }
 }

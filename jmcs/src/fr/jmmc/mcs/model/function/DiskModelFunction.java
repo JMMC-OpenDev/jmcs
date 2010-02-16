@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DiskModelFunction.java,v 1.3 2010-02-12 15:52:05 bourgesl Exp $"
+ * "@(#) $Id: DiskModelFunction.java,v 1.4 2010-02-16 14:44:14 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/02/12 15:52:05  bourgesl
+ * refactoring due to changed generated classes by xjc
+ *
  * Revision 1.2  2010/02/03 16:05:46  bourgesl
  * Added fast thread interruption checks for asynchronous uv map computation
  *
@@ -115,10 +118,10 @@ public final class DiskModelFunction extends AbstractModelFunction {
     final int stepInterrupt = size / 20;
 
     // Get parameters :
-    final double flux_weight = getParameter(model, PARAM_FLUX_WEIGHT);
-    final double x = getParameter(model, PARAM_X);
-    final double y = getParameter(model, PARAM_Y);
-    final double diameter = getParameter(model, PARAM_DIAMETER);
+    final double flux_weight = getParameterValue(model, PARAM_FLUX_WEIGHT);
+    final double x = getParameterValue(model, PARAM_X);
+    final double y = getParameterValue(model, PARAM_Y);
+    final double diameter = getParameterValue(model, PARAM_DIAMETER);
 
     if (diameter < 0d) {
       throw new IllegalArgumentException("diameter < 0 not allowed for a normalized uniform disk !");

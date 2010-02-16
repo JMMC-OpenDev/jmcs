@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.4 2010-02-12 15:52:05 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.5 2010-02-16 14:43:35 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/12 15:52:05  bourgesl
+ * refactoring due to changed generated classes by xjc
+ *
  * Revision 1.3  2010/02/08 16:56:26  bourgesl
  * added the normalize visibility function
  *
@@ -21,7 +24,6 @@ package fr.jmmc.mcs.model;
 import fr.jmmc.mcs.model.function.DiskModelFunction;
 import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
-import fr.jmmc.mcs.model.targetmodel.Parameter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -169,6 +171,10 @@ public class ModelManager {
     return vis;
   }
 
+  /**
+   * Normalize the given complex visibility array
+   * @param vis complex visibility array
+   */
   public static void normalize(final Complex[] vis) {
     double val;
 
@@ -197,23 +203,6 @@ public class ModelManager {
   }
 
   /**
-   * Return the parameter of the given type among the parameters of the given model
-   * @param type type of the parameter
-   * @param model model to use
-   * @return parameter or null if the parameter was not found
-   * @throws IllegalArgumentException if the parameter type is invalid for the given model
-   */
-  public static Parameter getParameter(final Model model, final String type) {
-    for (Parameter p : model.getParameters()) {
-      if (type.equals(p.getType())) {
-        return p;
-      }
-    }
-
-    throw new IllegalArgumentException("the parameter type [" + type + "] is invalid for this model [" + model.getType() + "] !");
-  }
-
-  /**
    * Set the parameter value
    * @param model model to use
    * @param type type of the parameter
@@ -221,6 +210,66 @@ public class ModelManager {
    * @throws IllegalArgumentException if the parameter type is invalid for the given model
    */
   public static void setParameterValue(final Model model, final String type, final double value) {
-    getParameter(model, type).setValue(value);
+    model.getParameter(type).setValue(value);
+  }
+
+  /**
+   * Generate a unique identifier composed by the given model type + a digit ('disk'1 ...)
+   * @param type model type of the new model
+   * @param models list of existing models to check the new identifier
+   * @return new identifier
+   */
+  public String generateUniqueIdentifier(final String type, final List<Model> models) {
+    final Map<String, Boolean> ids = getIdMap(models);
+    if (logger.isLoggable(Level.FINEST)) {
+      logger.finest("model ids = " + ids);
+    }
+
+    String id;
+
+    int i = 1;
+    final StringBuilder sb = new StringBuilder();
+
+    sb.append(type).append(i);
+    id = sb.toString();
+    sb.setLength(0);
+
+    for (; ids.containsKey(id); i++) {
+      sb.append(type).append(i);
+      id = sb.toString();
+      sb.setLength(0);
+    }
+
+    if (logger.isLoggable(Level.FINEST)) {
+      logger.finest("new id = " + id);
+    }
+    return id;
+  }
+
+  /**
+   * Return the ids map using the given list of models (recursive)
+   * @param models list of models to traverse
+   * @return ids map
+   */
+  private Map<String, Boolean> getIdMap(final List<Model> models) {
+    final Map<String, Boolean> ids = new HashMap<String, Boolean>();
+
+    for (Model model : models) {
+      fillIdMap(model, ids);
+    }
+    return ids;
+  }
+
+  /**
+   * Fill the given ids map recursively using the given model and child models
+   * @param model model to traverse
+   * @param ids ids map to fill
+   */
+  private void fillIdMap(final Model model, final Map<String, Boolean> ids) {
+    ids.put(model.getName(), Boolean.TRUE);
+
+    for (Model child : model.getModels()) {
+      fillIdMap(child, ids);
+    }
   }
 }

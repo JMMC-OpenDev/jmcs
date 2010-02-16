@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AbstractModelFunction.java,v 1.2 2010-02-12 15:52:05 bourgesl Exp $"
+ * "@(#) $Id: AbstractModelFunction.java,v 1.3 2010-02-16 14:43:06 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/12 15:52:05  bourgesl
+ * refactoring due to changed generated classes by xjc
+ *
  * Revision 1.1  2010/01/29 15:52:45  bourgesl
  * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
  *
@@ -110,8 +113,8 @@ public abstract class AbstractModelFunction implements ModelFunction {
    * @return parameter value
    * @throws IllegalArgumentException if the parameter type is invalid for the given model
    */
-  public final double getParameter(final Model model, final String type) {
-    return ModelManager.getParameter(model, type).getValue();
+  public final double getParameterValue(final Model model, final String type) {
+    return model.getParameter(type).getValue();
   }
 
   /* computation utility methods */

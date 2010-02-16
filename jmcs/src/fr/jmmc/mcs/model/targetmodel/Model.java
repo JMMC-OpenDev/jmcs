@@ -1,3 +1,4 @@
+
 package fr.jmmc.mcs.model.targetmodel;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import fr.jmmc.mcs.model.CloneableObject;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -35,190 +37,207 @@ import fr.jmmc.mcs.model.CloneableObject;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "models",
-  "desc",
-  "parameters",
-  "parameterLinks"
+    "models",
+    "desc",
+    "parameters",
+    "parameterLinks"
 })
 @XmlRootElement(name = "model")
 public class Model
-        extends CloneableObject {
+    extends CloneableObject
+{
 
-  @XmlElement(name = "model", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
-  protected List<Model> models;
-  protected String desc;
-  @XmlElement(name = "parameter", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
-  protected List<Parameter> parameters;
-  @XmlElement(name = "parameterLink", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
-  protected List<ParameterLink> parameterLinks;
-  @XmlAttribute(required = true)
-  protected String name;
-  @XmlAttribute(required = true)
-  protected String type;
+    @XmlElement(name = "model", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
+    protected List<Model> models;
+    protected String desc;
+    @XmlElement(name = "parameter", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
+    protected List<Parameter> parameters;
+    @XmlElement(name = "parameterLink", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
+    protected List<ParameterLink> parameterLinks;
+    @XmlAttribute(required = true)
+    protected String name;
+    @XmlAttribute(required = true)
+    protected String type;
 
-  /**
-   * Gets the value of the models property.
-   *
-   * <p>
-   * This accessor method returns a reference to the live list,
-   * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
-   * This is why there is not a <CODE>set</CODE> method for the models property.
-   *
-   * <p>
-   * For example, to add a new item, do as follows:
-   * <pre>
-   *    getModels().add(newItem);
-   * </pre>
-   *
-   *
-   * <p>
-   * Objects of the following type(s) are allowed in the list
-   * {@link Model }
-   *
-   *
-   */
-  public List<Model> getModels() {
-    if (models == null) {
-      models = new ArrayList<Model>();
+    /**
+     * Gets the value of the models property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the models property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getModels().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Model }
+     * 
+     * 
+     */
+    public List<Model> getModels() {
+        if (models == null) {
+            models = new ArrayList<Model>();
+        }
+        return this.models;
     }
-    return this.models;
-  }
 
-  /**
-   * Gets the value of the desc property.
-   *
-   * @return
-   *     possible object is
-   *     {@link String }
-   *
-   */
-  public String getDesc() {
-    return desc;
-  }
-
-  /**
-   * Sets the value of the desc property.
-   *
-   * @param value
-   *     allowed object is
-   *     {@link String }
-   *
-   */
-  public void setDesc(String value) {
-    this.desc = value;
-  }
-
-  /**
-   * Gets the value of the parameters property.
-   *
-   * <p>
-   * This accessor method returns a reference to the live list,
-   * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
-   * This is why there is not a <CODE>set</CODE> method for the parameters property.
-   *
-   * <p>
-   * For example, to add a new item, do as follows:
-   * <pre>
-   *    getParameters().add(newItem);
-   * </pre>
-   *
-   *
-   * <p>
-   * Objects of the following type(s) are allowed in the list
-   * {@link Parameter }
-   *
-   *
-   */
-  public List<Parameter> getParameters() {
-    if (parameters == null) {
-      parameters = new ArrayList<Parameter>();
+    /**
+     * Gets the value of the desc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDesc() {
+        return desc;
     }
-    return this.parameters;
-  }
 
-  /**
-   * Gets the value of the parameterLinks property.
-   *
-   * <p>
-   * This accessor method returns a reference to the live list,
-   * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
-   * This is why there is not a <CODE>set</CODE> method for the parameterLinks property.
-   *
-   * <p>
-   * For example, to add a new item, do as follows:
-   * <pre>
-   *    getParameterLinks().add(newItem);
-   * </pre>
-   *
-   *
-   * <p>
-   * Objects of the following type(s) are allowed in the list
-   * {@link ParameterLink }
-   *
-   *
-   */
-  public List<ParameterLink> getParameterLinks() {
-    if (parameterLinks == null) {
-      parameterLinks = new ArrayList<ParameterLink>();
+    /**
+     * Sets the value of the desc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDesc(String value) {
+        this.desc = value;
     }
-    return this.parameterLinks;
-  }
 
-  /**
-   * Gets the value of the name property.
-   *
-   * @return
-   *     possible object is
-   *     {@link String }
-   *
-   */
-  public String getName() {
-    return name;
-  }
+    /**
+     * Gets the value of the parameters property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the parameters property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getParameters().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Parameter }
+     * 
+     * 
+     */
+    public List<Parameter> getParameters() {
+        if (parameters == null) {
+            parameters = new ArrayList<Parameter>();
+        }
+        return this.parameters;
+    }
 
-  /**
-   * Sets the value of the name property.
-   *
-   * @param value
-   *     allowed object is
-   *     {@link String }
-   *
-   */
-  public void setName(String value) {
-    this.name = value;
-  }
+    /**
+     * Gets the value of the parameterLinks property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the parameterLinks property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getParameterLinks().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link ParameterLink }
+     * 
+     * 
+     */
+    public List<ParameterLink> getParameterLinks() {
+        if (parameterLinks == null) {
+            parameterLinks = new ArrayList<ParameterLink>();
+        }
+        return this.parameterLinks;
+    }
 
-  /**
-   * Gets the value of the type property.
-   *
-   * @return
-   *     possible object is
-   *     {@link String }
-   *
-   */
-  public String getType() {
-    return type;
-  }
+    /**
+     * Gets the value of the name property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getName() {
+        return name;
+    }
 
-  /**
-   * Sets the value of the type property.
-   *
-   * @param value
-   *     allowed object is
-   *     {@link String }
-   *
-   */
-  public void setType(String value) {
-    this.type = value;
-  }
+    /**
+     * Sets the value of the name property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setName(String value) {
+        this.name = value;
+    }
 
+    /**
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setType(String value) {
+        this.type = value;
+    }
+    
 //--simple--preserve
   @Override
-  public String toString() {
+  public final String toString() {
     return this.name + " [ " + this.type + " ]";
+  }
+
+  /**
+   * Return the parameter of the given type
+   * @param type type of the parameter
+   * @return parameter
+   * @throws IllegalArgumentException if the parameter type is not present in this model
+   */
+  public final Parameter getParameter(final String type) {
+    for (Parameter p : getParameters()) {
+      if (type.equals(p.getType())) {
+        return p;
+      }
+    }
+
+    throw new IllegalArgumentException("the parameter type [" + type + "] is invalid for this model [" + getType() + "] !");
   }
 
   /**
@@ -226,7 +245,7 @@ public class Model
    * @return deep "copy" of this instance
    */
   @Override
-  public Object clone() {
+  public final Object clone() {
     final Model copy = (Model) super.clone();
 
     // Deep copy of models :
@@ -253,4 +272,5 @@ public class Model
     return copy;
   }
 //--simple--preserve
+
 }

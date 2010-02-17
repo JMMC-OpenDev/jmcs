@@ -221,7 +221,7 @@ public class Model
 //--simple--preserve
   @Override
   public final String toString() {
-    return this.name + " [ " + this.type + " ]";
+    return this.name + " [" + this.type + "]";
   }
 
   /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.2 2010-02-15 16:45:47 bourgesl Exp $"
+ * "@(#) $Id: ModelParameterTableModel.java,v 1.3 2010-02-17 15:10:12 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/15 16:45:47  bourgesl
+ * added getModelAt(rowIndex) method
+ *
  * Revision 1.1  2010/02/12 15:52:32  bourgesl
  * added cloneable support for target model classes
  * added parameter table model
@@ -44,8 +47,10 @@ public final class ModelParameterTableModel extends AbstractTableModel {
   /** Column definition enum */
   public enum ColumnDef {
 
+    MODEL("Model", String.class, false),
     NAME("Name", String.class, false),
     TYPE("Type", String.class, false),
+    SHARED("Shared", Boolean.class, false),
     UNITS("Units", String.class, false),
     VALUE("Value", Double.class, true),
     MIN_VALUE("MinValue", Double.class, true),
@@ -89,7 +94,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
   /** LITpro Columns (all) */
   private static final ColumnDef[] LITPRO_COLUMNS = ColumnDef.values();
   /** ASPRO Columns */
-  private static final ColumnDef[] ASPRO_COLUMNS = {ColumnDef.NAME, ColumnDef.TYPE, ColumnDef.UNITS, ColumnDef.VALUE};
+  private static final ColumnDef[] ASPRO_COLUMNS = {ColumnDef.MODEL, ColumnDef.NAME, ColumnDef.UNITS, ColumnDef.VALUE};
   /* members */
   /** column count */
   private int columnCount;
@@ -287,14 +292,12 @@ public final class ModelParameterTableModel extends AbstractTableModel {
 
     if (parameter != null) {
       switch (this.columnDefs[columnIndex]) {
+        case MODEL:
+          return this.getModelAt(rowIndex).getName();
         case NAME:
-          if (!this.sharedParameterList.get(rowIndex).booleanValue()) {
-            final Model model = this.getModelAt(rowIndex);
-            if (model != null) {
-              return model.getName() + "." + parameter.getName();
-            }
-          }
           return parameter.getName();
+        case SHARED:
+          return this.sharedParameterList.get(rowIndex);
         case TYPE:
           return parameter.getType();
         case UNITS:

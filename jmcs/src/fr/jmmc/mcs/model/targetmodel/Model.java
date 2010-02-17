@@ -227,8 +227,7 @@ public class Model
   /**
    * Return the parameter of the given type
    * @param type type of the parameter
-   * @return parameter
-   * @throws IllegalArgumentException if the parameter type is not present in this model
+   * @return parameter or null if the parameter type is not present in this model
    */
   public final Parameter getParameter(final String type) {
     for (Parameter p : getParameters()) {
@@ -236,8 +235,7 @@ public class Model
         return p;
       }
     }
-
-    throw new IllegalArgumentException("the parameter type [" + type + "] is invalid for this model [" + getType() + "] !");
+    return null;
   }
 
   /**

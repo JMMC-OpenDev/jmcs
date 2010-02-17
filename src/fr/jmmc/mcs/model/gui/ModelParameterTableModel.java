@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.3 2010-02-17 15:10:12 bourgesl Exp $"
+ * "@(#) $Id: ModelParameterTableModel.java,v 1.4 2010-02-17 17:05:45 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/02/17 15:10:12  bourgesl
+ * added model name + shared parameter flag as columns
+ *
  * Revision 1.2  2010/02/15 16:45:47  bourgesl
  * added getModelAt(rowIndex) method
  *
@@ -16,6 +19,7 @@
  */
 package fr.jmmc.mcs.model.gui;
 
+import fr.jmmc.mcs.model.ModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import fr.jmmc.mcs.model.targetmodel.Parameter;
 import fr.jmmc.mcs.model.targetmodel.ParameterLink;
@@ -140,6 +144,9 @@ public final class ModelParameterTableModel extends AbstractTableModel {
    * @param model target model
    */
   public void setData(final Model model) {
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("setData : " + model);
+    }
     resetData();
     processData(model);
 
@@ -152,6 +159,9 @@ public final class ModelParameterTableModel extends AbstractTableModel {
    * @param models list of target models
    */
   public void setData(final List<Model> models) {
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("setData : " + models);
+    }
     resetData();
     if (models != null) {
       for (Model model : models) {
@@ -259,9 +269,25 @@ public final class ModelParameterTableModel extends AbstractTableModel {
     boolean editable = false;
     final boolean columnEditable = this.columnDefs[columnIndex].isEditable();
     if (columnEditable) {
+      editable = true;
+
       // check if the row is editable ?
 
-      editable = true;
+      // First Model Rules :
+
+      // check if it is the first model :
+      final Model model = getModelAt(rowIndex);
+      if (model == this.modelForParameterList.get(0)) {
+
+        // if parameter type is 'x' or 'y' => not editable
+        final Parameter parameter = this.parameterList.get(rowIndex);
+
+        if (ModelFunction.PARAM_X.equals(parameter.getType()) ||
+                ModelFunction.PARAM_Y.equals(parameter.getType())) {
+          editable = false;
+        }
+      }
+
     }
     return editable;
   }

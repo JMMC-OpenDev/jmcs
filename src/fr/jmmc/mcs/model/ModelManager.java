@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.5 2010-02-16 14:43:35 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.6 2010-02-17 15:11:52 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/02/16 14:43:35  bourgesl
+ * use the model.getParameter(type) instead of ModelManager
+ * added generateUniqueIdentifier(models)
+ *
  * Revision 1.4  2010/02/12 15:52:05  bourgesl
  * refactoring due to changed generated classes by xjc
  *
@@ -24,6 +28,7 @@ package fr.jmmc.mcs.model;
 import fr.jmmc.mcs.model.function.DiskModelFunction;
 import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
+import fr.jmmc.mcs.model.targetmodel.Parameter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -214,62 +219,166 @@ public class ModelManager {
   }
 
   /**
-   * Generate a unique identifier composed by the given model type + a digit ('disk'1 ...)
+   * Create a new model for the given type and define model and parameter names
+   * @param type type of the model
+   * @param targetModels existing target models
+   * @return model new model
+   */
+  public Model newModel(final String type, final List<Model> targetModels) {
+
+    final Model newModel = createModel(type);
+
+    // generate an unique identifier for the new model :
+    final int modelIdx = generateModelUniqueName(newModel, targetModels);
+
+    final boolean isFirst = targetModels.isEmpty();
+
+    // Update parameter names to be unique :
+    for (Parameter parameter : newModel.getParameters()) {
+      if (isFirst) {
+        if (ModelFunction.PARAM_X.equals(parameter.getName()) ||
+                ModelFunction.PARAM_Y.equals(parameter.getName())) {
+          parameter.setHasFixedValue(true);
+        }
+      }
+
+      parameter.setName(parameter.getType() + modelIdx);
+    }
+
+    return newModel;
+  }
+
+  /**
+   * Create a new model for the given type and define model and parameter names replacing the given current model
+   * @param type type of the model
+   * @param currentModel model to replace
+   * @param targetModels existing target models
+   * @return model new model
+   */
+  public Model replaceModel(final String type, final Model currentModel, final List<Model> targetModels) {
+
+    final Model newModel = createModel(type);
+
+    // generate an unique identifier for the new model :
+    final int modelIdx = generateModelUniqueName(newModel, targetModels, currentModel);
+
+    // Update parameter names to be unique :
+    for (Parameter parameter : newModel.getParameters()) {
+
+      parameter.setName(parameter.getType() + modelIdx);
+
+      // try to recover previous parameters :
+      for (Parameter oldParameter : currentModel.getParameters()) {
+
+        if (matchType(parameter.getType(), oldParameter.getType())) {
+          parameter.setValue(oldParameter.getValue());
+          parameter.setHasFixedValue(oldParameter.isHasFixedValue());
+
+          parameter.setScale(oldParameter.getScale());
+
+          parameter.setMinValue(oldParameter.getMinValue());
+          parameter.setMaxValue(oldParameter.getMaxValue());
+        }
+      }
+    }
+
+    // retrieve shared parameters :
+    newModel.getParameterLinks().addAll(currentModel.getParameterLinks());
+
+    return newModel;
+  }
+
+  /**
+   * try to tell if the data of the old parameter can be copied to new parameter
+   * according to both names. If they ends with the same string after the '_'
+   * character, then this method returns true.
+   * @return true if both string ends with same keyword, else returns false
+   */
+  private static boolean matchType(String oldParamType, String newParamType) {
+    int idx;
+    idx = oldParamType.lastIndexOf('_');
+    if (idx != -1) {
+      oldParamType = oldParamType.substring(idx + 1);
+    }
+    idx = newParamType.lastIndexOf('_');
+    if (idx != -1) {
+      newParamType = newParamType.substring(idx + 1);
+    }
+    return newParamType.equals(oldParamType) || newParamType.contains(oldParamType);
+  }
+
+  /**
+   * Generate the unique identifier [model type + digit] like 'disk'1 ...
    * @param type model type of the new model
    * @param models list of existing models to check the new identifier
-   * @return new identifier
+   * @return unique model index
    */
-  public String generateUniqueIdentifier(final String type, final List<Model> models) {
-    final Map<String, Boolean> ids = getIdMap(models);
-    if (logger.isLoggable(Level.FINEST)) {
-      logger.finest("model ids = " + ids);
-    }
-
-    String id;
-
-    int i = 1;
-    final StringBuilder sb = new StringBuilder();
-
-    sb.append(type).append(i);
-    id = sb.toString();
-    sb.setLength(0);
-
-    for (; ids.containsKey(id); i++) {
-      sb.append(type).append(i);
-      id = sb.toString();
-      sb.setLength(0);
-    }
-
-    if (logger.isLoggable(Level.FINEST)) {
-      logger.finest("new id = " + id);
-    }
-    return id;
+  public static int generateModelUniqueName(final Model newModel, final List<Model> models) {
+    return generateModelUniqueName(newModel, models, null);
   }
 
   /**
-   * Return the ids map using the given list of models (recursive)
-   * @param models list of models to traverse
-   * @return ids map
+   * Generate the unique identifier [model type + digit] like 'disk'1 ...
+   * @param type model type of the new model
+   * @param models list of existing models to check the new identifier
+   * @param skipModel model to skip in the model traversal
+   * @return unique model index
    */
-  private Map<String, Boolean> getIdMap(final List<Model> models) {
-    final Map<String, Boolean> ids = new HashMap<String, Boolean>();
+  public static int generateModelUniqueName(final Model newModel, final List<Model> models, final Model skipModel) {
+    int prevIdx = 0;
 
     for (Model model : models) {
-      fillIdMap(model, ids);
+      if (model != skipModel) {
+        prevIdx = findModelMaxUniqueIndex(model, prevIdx, skipModel);
+      }
     }
-    return ids;
+
+    final int idx = prevIdx + 1;
+
+    if (logger.isLoggable(Level.FINEST)) {
+      logger.finest("new model index = " + idx);
+    }
+
+    newModel.setName(newModel.getType() + idx);
+
+    return idx;
   }
 
   /**
-   * Fill the given ids map recursively using the given model and child models
+   * Return the maximum value of the model unique index found recursively using the given model and child models
    * @param model model to traverse
-   * @param ids ids map to fill
+   * @param idx current maximum value of the model unique index
+   * @param skipModel model to skip in the model traversal
    */
-  private void fillIdMap(final Model model, final Map<String, Boolean> ids) {
-    ids.put(model.getName(), Boolean.TRUE);
+  private static int findModelMaxUniqueIndex(final Model model, final int prevIdx, final Model skipModel) {
+    // recompute unique index from model name :
+    final int modelIdx = parseModelUniqueIndex(model);
 
-    for (Model child : model.getModels()) {
-      fillIdMap(child, ids);
+    int idx = Math.max(prevIdx, modelIdx);
+
+    for (Model childModel : model.getModels()) {
+      if (childModel != skipModel) {
+        idx = findModelMaxUniqueIndex(childModel, idx, skipModel);
+      }
     }
+    return idx;
+  }
+
+  /**
+   * Return the model unique index from its name parsing [model type + digit] like 'disk'1 ...
+   * @param model model to use
+   * @return model unique index
+   */
+  private static int parseModelUniqueIndex(final Model model) {
+    final String idx = model.getName().substring(model.getType().length());
+
+    int index = 0;
+    try {
+      index = Integer.parseInt(idx);
+    } catch (NumberFormatException nfe) {
+      logger.log(Level.SEVERE, "model id parsing failure : ", nfe);
+    }
+
+    return index;
   }
 }

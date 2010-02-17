@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.6 2010-02-17 15:11:52 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.7 2010-02-17 17:06:47 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/02/17 15:11:52  bourgesl
+ * changed how to define the unique model name and parameter names
+ * added newModel and replaceModel methods useful for GUI
+ *
  * Revision 1.5  2010/02/16 14:43:35  bourgesl
  * use the model.getParameter(type) instead of ModelManager
  * added generateUniqueIdentifier(models)
@@ -219,6 +223,18 @@ public class ModelManager {
   }
 
   /**
+   * Reset editable fields for the given parameter
+   * @param parameter parameter to reset
+   */
+  public static void resetParameter(final Parameter parameter) {
+    parameter.setValue(0D);
+    parameter.setMinValue(null);
+    parameter.setMaxValue(null);
+    parameter.setScale(null);
+    parameter.setHasFixedValue(false);
+  }
+
+  /**
    * Create a new model for the given type and define model and parameter names
    * @param type type of the model
    * @param targetModels existing target models
@@ -231,18 +247,21 @@ public class ModelManager {
     // generate an unique identifier for the new model :
     final int modelIdx = generateModelUniqueName(newModel, targetModels);
 
-    final boolean isFirst = targetModels.isEmpty();
-
     // Update parameter names to be unique :
     for (Parameter parameter : newModel.getParameters()) {
-      if (isFirst) {
-        if (ModelFunction.PARAM_X.equals(parameter.getName()) ||
-                ModelFunction.PARAM_Y.equals(parameter.getName())) {
-          parameter.setHasFixedValue(true);
-        }
-      }
-
       parameter.setName(parameter.getType() + modelIdx);
+    }
+
+    // First Model Rules :
+    final boolean isFirst = targetModels.isEmpty();
+
+    if (isFirst) {
+      final Parameter paramRefX = newModel.getParameter(ModelFunction.PARAM_X);
+      final Parameter paramRefY = newModel.getParameter(ModelFunction.PARAM_Y);
+
+      // zero by default
+      paramRefX.setHasFixedValue(true);
+      paramRefY.setHasFixedValue(true);
     }
 
     return newModel;
@@ -259,12 +278,16 @@ public class ModelManager {
 
     final Model newModel = createModel(type);
 
-    // generate an unique identifier for the new model :
-    final int modelIdx = generateModelUniqueName(newModel, targetModels, currentModel);
+    // retrieve the unique identifier of the previous model if possible :
+    int modelIdx = parseModelUniqueIndex(currentModel);
+    if (modelIdx == 0) {
+      modelIdx = generateModelUniqueName(newModel, targetModels, currentModel);
+    } else {
+      newModel.setName(newModel.getType() + modelIdx);
+    }
 
     // Update parameter names to be unique :
     for (Parameter parameter : newModel.getParameters()) {
-
       parameter.setName(parameter.getType() + modelIdx);
 
       // try to recover previous parameters :
@@ -272,12 +295,10 @@ public class ModelManager {
 
         if (matchType(parameter.getType(), oldParameter.getType())) {
           parameter.setValue(oldParameter.getValue());
-          parameter.setHasFixedValue(oldParameter.isHasFixedValue());
-
-          parameter.setScale(oldParameter.getScale());
-
           parameter.setMinValue(oldParameter.getMinValue());
           parameter.setMaxValue(oldParameter.getMaxValue());
+          parameter.setScale(oldParameter.getScale());
+          parameter.setHasFixedValue(oldParameter.isHasFixedValue());
         }
       }
     }
@@ -286,6 +307,47 @@ public class ModelManager {
     newModel.getParameterLinks().addAll(currentModel.getParameterLinks());
 
     return newModel;
+  }
+
+  public static void relocateModels(final List<Model> targetModels) {
+    final int size = targetModels.size();
+    if (size == 0) {
+      return;
+    }
+
+    // new reference :
+    final Model refModel = targetModels.get(0);
+
+    // First Model Rules :
+    final Parameter paramRefX = refModel.getParameter(ModelFunction.PARAM_X);
+    final Parameter paramRefY = refModel.getParameter(ModelFunction.PARAM_Y);
+
+    if (size > 1) {
+      final double refX = paramRefX.getValue();
+      final double refY = paramRefY.getValue();
+
+      logger.severe("relocate to [" + refX + ", " + refY + "]");
+
+      Model model;
+      Parameter paramX, paramY;
+      for (int i = 0; i < size; i++) {
+        model = targetModels.get(i);
+
+        paramX = model.getParameter(ModelFunction.PARAM_X);
+        paramY = model.getParameter(ModelFunction.PARAM_Y);
+
+        // remove first model position :
+        paramX.setValue(paramX.getValue() - refX);
+        paramY.setValue(paramY.getValue() - refY);
+      }
+    }
+
+    // reset to zero :
+    resetParameter(paramRefX);
+    paramRefX.setHasFixedValue(true);
+
+    resetParameter(paramRefY);
+    paramRefY.setHasFixedValue(true);
   }
 
   /**
@@ -369,14 +431,16 @@ public class ModelManager {
    * @param model model to use
    * @return model unique index
    */
-  private static int parseModelUniqueIndex(final Model model) {
+  public static int parseModelUniqueIndex(final Model model) {
     final String idx = model.getName().substring(model.getType().length());
 
     int index = 0;
-    try {
-      index = Integer.parseInt(idx);
-    } catch (NumberFormatException nfe) {
-      logger.log(Level.SEVERE, "model id parsing failure : ", nfe);
+    if (idx.length() > 0) {
+      try {
+        index = Integer.parseInt(idx);
+      } catch (NumberFormatException nfe) {
+        logger.log(Level.SEVERE, "model id parsing failure : ", nfe);
+      }
     }
 
     return index;

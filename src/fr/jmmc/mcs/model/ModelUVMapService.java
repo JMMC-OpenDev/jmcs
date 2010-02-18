@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelUVMapService.java,v 1.3 2010-02-04 14:43:36 bourgesl Exp $"
+ * "@(#) $Id: ModelUVMapService.java,v 1.4 2010-02-18 15:51:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/02/04 14:43:36  bourgesl
+ * added UVMapData bean to keep several data related to uv map in order to conserve the value / color mapping and uv area while zooming on uv map
+ *
  * Revision 1.2  2010/02/03 16:05:46  bourgesl
  * Added fast thread interruption checks for asynchronous uv map computation
  *
@@ -67,8 +70,8 @@ public final class ModelUVMapService {
    * @return UVMapData
    */
   public static UVMapData computeUVMap(final List<Model> models,
-          final Rectangle2D.Float uvRect,
-          final ImageMode mode) {
+                                       final Rectangle2D.Float uvRect,
+                                       final ImageMode mode) {
     return computeUVMap(models, uvRect, null, null, mode, DEFAULT_IMAGE_SIZE, DEFAULT_COLOR_MODEL);
   }
 
@@ -82,9 +85,9 @@ public final class ModelUVMapService {
    * @return UVMapData
    */
   public static UVMapData computeUVMap(final List<Model> models,
-          final Rectangle2D.Float uvRect,
-          final Float refMin, final Float refMax,
-          final ImageMode mode) {
+                                       final Rectangle2D.Float uvRect,
+                                       final Float refMin, final Float refMax,
+                                       final ImageMode mode) {
     return computeUVMap(models, uvRect, refMin, refMax, mode, DEFAULT_IMAGE_SIZE, DEFAULT_COLOR_MODEL);
   }
 
@@ -100,11 +103,11 @@ public final class ModelUVMapService {
    * @return UVMapData
    */
   public static UVMapData computeUVMap(final List<Model> models,
-          final Rectangle2D.Float uvRect,
-          final Float refMin, final Float refMax,
-          final ImageMode mode,
-          final int imageSize,
-          final IndexColorModel colorModel) {
+                                       final Rectangle2D.Float uvRect,
+                                       final Float refMin, final Float refMax,
+                                       final ImageMode mode,
+                                       final int imageSize,
+                                       final IndexColorModel colorModel) {
 
     UVMapData uvMapData = null;
 
@@ -259,6 +262,12 @@ public final class ModelUVMapService {
         uvMapData.setMin(min);
         uvMapData.setMax(max);
 
+      } catch (IllegalArgumentException iae) {
+        // ModelManager.compute throws an IllegalArgumentException if a parameter value is invalid :
+        if (logger.isLoggable(Level.WARNING)) {
+          logger.log(Level.WARNING, "invalid argument :", iae);
+        }
+        throw iae;
       } catch (RuntimeException re) {
         logger.log(Level.SEVERE, "runtime exception : ", re);
       }

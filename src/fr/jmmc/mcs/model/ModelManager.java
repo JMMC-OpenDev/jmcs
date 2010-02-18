@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.8 2010-02-18 09:59:37 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.9 2010-02-18 15:51:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/02/18 09:59:37  bourgesl
+ * new ModelDefinition interface to gather model and parameter types
+ *
  * Revision 1.7  2010/02/17 17:06:47  bourgesl
  * resetParameter(parameter)
  * first model rules added on addModel & relocateModels(models)
@@ -33,7 +36,9 @@
  */
 package fr.jmmc.mcs.model;
 
+import fr.jmmc.mcs.model.function.CircleModelFunction;
 import fr.jmmc.mcs.model.function.DiskModelFunction;
+import fr.jmmc.mcs.model.function.ElongatedDiskModelFunction;
 import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import fr.jmmc.mcs.model.targetmodel.Parameter;
@@ -49,7 +54,7 @@ import org.apache.commons.math.complex.Complex;
  * This class constitutes the main interface to target models (supported models, new model, computeModels)
  * @author bourgesl
  */
-public class ModelManager {
+public final class ModelManager {
 
   /** Class Name */
   private static final String className_ = "fr.jmmc.mcs.model.ModelManager";
@@ -80,17 +85,28 @@ public class ModelManager {
     this.registerFunctions();
   }
 
+  /**
+   * Register model functions
+   */
   private void registerFunctions() {
     // 1 - Punct Model :
     this.addFunction(new PunctModelFunction());
-    // 2 - Disk Model :
+    // 2 - Disk Models :
     this.addFunction(new DiskModelFunction());
+    // 2.1 Elongated Disk Model :
+    this.addFunction(new ElongatedDiskModelFunction());
+    // 3 - Circle Model :
+    this.addFunction(new CircleModelFunction());
 
     if (logger.isLoggable(Level.FINE)) {
       logger.fine("functions : " + modelFunctions);
     }
   }
 
+  /**
+   * Add the given function
+   * @param mf function to add
+   */
   private void addFunction(final ModelFunction mf) {
     final String type = mf.getType();
     this.modelFunctions.put(type, mf);
@@ -140,14 +156,27 @@ public class ModelManager {
   }
 
   /**
+   * Validate the given models i.e. all parameter values are valid
+   * @param models list of models to compute
+   * @throws IllegalArgumentException if a parameter value is invalid !
+   */
+  public void validateModels(final List<Model> models) throws IllegalArgumentException {
+    final double[] zero = new double[]{0d};
+
+    // compute at UV = [0,0] to get possible validation exception :
+    computeModels(zero, zero, models);
+  }
+
+  /**
    * Compute the complex visiblity of given models for the given Ufreq and Vfreq arrays
    * 
    * @param ufreq U frequencies in rad-1
    * @param vfreq V frequencies in rad-1
    * @param models list of models to compute
    * @return normalized complex visibility
+   * @throws IllegalArgumentException if a parameter value is invalid !
    */
-  public Complex[] computeModels(final double[] ufreq, final double[] vfreq, final List<Model> models) {
+  public Complex[] computeModels(final double[] ufreq, final double[] vfreq, final List<Model> models) throws IllegalArgumentException {
     Complex[] vis = null;
 
     if (ufreq != null && vfreq != null && models != null && !models.isEmpty()) {

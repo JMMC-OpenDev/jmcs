@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.15 2010-01-20 13:58:31 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.16 2010-02-18 11:02:30 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2010/01/20 13:58:31  mella
+ * add javadoc
+ *
  * Revision 1.14  2010/01/20 13:56:12  mella
  * remove duplicated code
  *
@@ -410,7 +413,8 @@ public class ALX
      */
     public static Star ld2ud(double ld, double teff, double logg){
         Star star = new Star();
-
+        star.setPropertyAsDouble(Property.TEFF, teff);
+        star.setPropertyAsDouble(Property.LOGG, logg);
         Property [] uds = new Property[]{
           Property.UD_B, Property.UD_I, Property.UD_J, Property.UD_H, Property.UD_K ,
           Property.UD_L, Property.UD_N, Property.UD_R, Property.UD_U, Property.UD_V

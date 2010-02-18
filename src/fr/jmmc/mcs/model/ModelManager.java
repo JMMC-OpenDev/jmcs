@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.7 2010-02-17 17:06:47 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.8 2010-02-18 09:59:37 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2010/02/17 17:06:47  bourgesl
+ * resetParameter(parameter)
+ * first model rules added on addModel & relocateModels(models)
+ *
  * Revision 1.6  2010/02/17 15:11:52  bourgesl
  * changed how to define the unique model name and parameter names
  * added newModel and replaceModel methods useful for GUI
@@ -256,8 +260,8 @@ public class ModelManager {
     final boolean isFirst = targetModels.isEmpty();
 
     if (isFirst) {
-      final Parameter paramRefX = newModel.getParameter(ModelFunction.PARAM_X);
-      final Parameter paramRefY = newModel.getParameter(ModelFunction.PARAM_Y);
+      final Parameter paramRefX = newModel.getParameter(ModelDefinition.PARAM_X);
+      final Parameter paramRefY = newModel.getParameter(ModelDefinition.PARAM_Y);
 
       // zero by default
       paramRefX.setHasFixedValue(true);
@@ -319,8 +323,8 @@ public class ModelManager {
     final Model refModel = targetModels.get(0);
 
     // First Model Rules :
-    final Parameter paramRefX = refModel.getParameter(ModelFunction.PARAM_X);
-    final Parameter paramRefY = refModel.getParameter(ModelFunction.PARAM_Y);
+    final Parameter paramRefX = refModel.getParameter(ModelDefinition.PARAM_X);
+    final Parameter paramRefY = refModel.getParameter(ModelDefinition.PARAM_Y);
 
     if (size > 1) {
       final double refX = paramRefX.getValue();
@@ -333,8 +337,8 @@ public class ModelManager {
       for (int i = 0; i < size; i++) {
         model = targetModels.get(i);
 
-        paramX = model.getParameter(ModelFunction.PARAM_X);
-        paramY = model.getParameter(ModelFunction.PARAM_Y);
+        paramX = model.getParameter(ModelDefinition.PARAM_X);
+        paramY = model.getParameter(ModelDefinition.PARAM_Y);
 
         // remove first model position :
         paramX.setValue(paramX.getValue() - refX);

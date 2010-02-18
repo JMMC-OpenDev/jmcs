@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.4 2010-02-17 17:05:45 bourgesl Exp $"
+ * "@(#) $Id: ModelParameterTableModel.java,v 1.5 2010-02-18 09:59:37 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/17 17:05:45  bourgesl
+ * first model X/Y parameters are not editable
+ *
  * Revision 1.3  2010/02/17 15:10:12  bourgesl
  * added model name + shared parameter flag as columns
  *
@@ -19,7 +22,7 @@
  */
 package fr.jmmc.mcs.model.gui;
 
-import fr.jmmc.mcs.model.ModelFunction;
+import fr.jmmc.mcs.model.ModelDefinition;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import fr.jmmc.mcs.model.targetmodel.Parameter;
 import fr.jmmc.mcs.model.targetmodel.ParameterLink;
@@ -282,8 +285,8 @@ public final class ModelParameterTableModel extends AbstractTableModel {
         // if parameter type is 'x' or 'y' => not editable
         final Parameter parameter = this.parameterList.get(rowIndex);
 
-        if (ModelFunction.PARAM_X.equals(parameter.getType()) ||
-                ModelFunction.PARAM_Y.equals(parameter.getType())) {
+        if (ModelDefinition.PARAM_X.equals(parameter.getType()) ||
+                ModelDefinition.PARAM_Y.equals(parameter.getType())) {
           editable = false;
         }
       }

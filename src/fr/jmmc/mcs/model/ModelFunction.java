@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelFunction.java,v 1.2 2010-02-12 15:52:05 bourgesl Exp $"
+ * "@(#) $Id: ModelFunction.java,v 1.3 2010-02-18 09:59:37 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/12 15:52:05  bourgesl
+ * refactoring due to changed generated classes by xjc
+ *
  * Revision 1.1  2010/01/29 15:52:46  bourgesl
  * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
  *
@@ -19,21 +22,7 @@ import org.apache.commons.math.complex.Complex;
  * This interface represents a taregt Model to compute the complex visibility for a given UV coordinates
  * @author bourgesl
  */
-public interface ModelFunction {
-
-  /* Model types */
-  /** punct model type */
-  public String MODEL_PUNCT = "punct";
-  /** disk model type */
-  public String MODEL_DISK = "disk";
-
-  /* Parameter constants */
-  /** Parameter type for the parameter flux_weight */
-  public static String PARAM_FLUX_WEIGHT = "flux_weight";
-  /** Parameter type for the parameter x */
-  public static String PARAM_X = "x";
-  /** Parameter type for the parameter y */
-  public static String PARAM_Y = "y";
+public interface ModelFunction extends ModelDefinition {
 
   /**
    * Return the model type

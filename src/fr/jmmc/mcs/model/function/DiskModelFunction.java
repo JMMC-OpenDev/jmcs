@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DiskModelFunction.java,v 1.4 2010-02-16 14:44:14 bourgesl Exp $"
+ * "@(#) $Id: DiskModelFunction.java,v 1.5 2010-02-18 09:59:37 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/16 14:44:14  bourgesl
+ * getParameter(mode, type) renamed to getParameterValue(model, type)
+ *
  * Revision 1.3  2010/02/12 15:52:05  bourgesl
  * refactoring due to changed generated classes by xjc
  *
@@ -41,9 +44,6 @@ public final class DiskModelFunction extends AbstractModelFunction {
           "The function returns an error if DIAMETER is negative.\n\n" +
           "UFREQ and VFREQ must be conformable. The returned array is always \n" +
           "complex and of dims dimsof(UFREQ,VFREQ). \n";
-  /* Parameter constants */
-  /** Parameter type for the parameter diameter */
-  public static String PARAM_DIAMETER = "diameter";
 
   /**
    * Constructor

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DiskModelFunction.java,v 1.5 2010-02-18 09:59:37 bourgesl Exp $"
+ * "@(#) $Id: DiskModelFunction.java,v 1.6 2010-02-18 15:51:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/02/18 09:59:37  bourgesl
+ * new ModelDefinition interface to gather model and parameter types
+ *
  * Revision 1.4  2010/02/16 14:44:14  bourgesl
  * getParameter(mode, type) renamed to getParameterValue(model, type)
  *
@@ -36,7 +39,7 @@ public final class DiskModelFunction extends AbstractModelFunction {
 
   /* Model constants */
   /** model description */
-  private static String MODEL_DESC = "lpb_disk(ufreq, vfreq, flux_weight, x, y, diameter) \n\n" +
+  private static final String MODEL_DESC = "lpb_disk(ufreq, vfreq, flux_weight, x, y, diameter) \n\n" +
           "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
           "given in 1/rad, of a normalized uniform disk of diameter \n" +
           "DIAMETER (milliarcsecond) and centered at coordinates (X,Y) (milliarcsecond). \n" +
@@ -98,7 +101,6 @@ public final class DiskModelFunction extends AbstractModelFunction {
    * Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ)
    * given in 1/rad, of a normalized uniform disk of diameter at coordinates
    * (X,Y) given in milliarcsecond.
-   * FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1.
    *
    * Note : the visibility array is given to add this model contribution to the total visibility
    *
@@ -106,6 +108,7 @@ public final class DiskModelFunction extends AbstractModelFunction {
    * @param vfreq V frequencies in rad-1
    * @param model model instance
    * @param complex visibility array
+   * @throws IllegalArgumentException if a parameter value is invalid !
    */
   public void compute(final double[] ufreq, final double[] vfreq, final Model model, final Complex[] vis) {
 
@@ -115,7 +118,7 @@ public final class DiskModelFunction extends AbstractModelFunction {
     final int size = ufreq.length;
 
     // this step indicates when the thread.isInterrupted() is called in the for loop
-    final int stepInterrupt = size / 20;
+    final int stepInterrupt = 1 + size / 25;
 
     // Get parameters :
     final double flux_weight = getParameterValue(model, PARAM_FLUX_WEIGHT);
@@ -124,7 +127,7 @@ public final class DiskModelFunction extends AbstractModelFunction {
     final double diameter = getParameterValue(model, PARAM_DIAMETER);
 
     if (diameter < 0d) {
-      throw new IllegalArgumentException("diameter < 0 not allowed for a normalized uniform disk !");
+      createParameterException(PARAM_DIAMETER, model, "< 0");
     }
 
     // Compute :
@@ -141,7 +144,7 @@ public final class DiskModelFunction extends AbstractModelFunction {
   /**
    * Compute the disk model function for a single UV point
    *
-   * return flux_weight * shift(ufreq, vfreq, x, y) * [ 2 * bessJ1(PI x diameter x norm(uv)) / PI x diameter x norm(uv)]
+   * shift(ufreq, vfreq, x, y) * flux_weight * [ 2 * bessJ1(PI x diameter x norm(uv)) / PI x diameter x norm(uv)]
    *
    * @param ufreq U frequency in rad-1
    * @param vfreq V frequency in rad-1
@@ -151,21 +154,39 @@ public final class DiskModelFunction extends AbstractModelFunction {
    * @param diameter diameter of the uniform disk object given in milliarcsecond
    * @return complex Fourier transform value
    */
-  private Complex compute_disk(final double ufreq, final double vfreq, final double flux_weight, final double x, final double y,
-          final double diameter) {
+  protected final static Complex compute_disk(final double ufreq, final double vfreq, final double flux_weight,
+                                              final double x, final double y, final double diameter) {
+
+    return shift(ufreq, vfreq, x, y).multiply(compute_disk_weight(ufreq, vfreq, flux_weight, diameter));
+  }
+
+  /**
+   * Return the weight part of the disk model function for a single UV point
+   *
+   * flux_weight * [ 2 * bessJ1(PI x diameter x norm(uv)) / PI x diameter x norm(uv)]
+   *
+   * @param ufreq U frequency in rad-1
+   * @param vfreq V frequency in rad-1
+   * @param flux_weight intensity coefficient
+   * @param diameter diameter of the uniform disk object given in milliarcsecond
+   * @return weight part of the disk model function
+   */
+  protected final static double compute_disk_weight(final double ufreq, final double vfreq,
+                                                    final double flux_weight, final double diameter) {
 
     // norm of uv :
     final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
 
-    final double r = PI * MAS2RAD * diameter * normUV;
+    final double d = PI * MAS2RAD * diameter * normUV;
 
     double g;
-    if (r == 0D) {
+    if (d == 0D) {
       g = 1D;
     } else {
-      g = 2D * Bessel.j1(r) / r;
+      g = 2D * Bessel.j1(d) / d;
     }
+    g *= flux_weight;
 
-    return shift(ufreq, vfreq, x, y).multiply(flux_weight * g);
+    return g;
   }
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AbstractModelFunction.java,v 1.3 2010-02-16 14:43:06 bourgesl Exp $"
+ * "@(#) $Id: AbstractModelFunction.java,v 1.4 2010-02-18 15:51:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/02/16 14:43:06  bourgesl
+ * use the model.getParameter(type) instead of ModelManager
+ *
  * Revision 1.2  2010/02/12 15:52:05  bourgesl
  * refactoring due to changed generated classes by xjc
  *
@@ -113,8 +116,25 @@ public abstract class AbstractModelFunction implements ModelFunction {
    * @return parameter value
    * @throws IllegalArgumentException if the parameter type is invalid for the given model
    */
-  public final double getParameterValue(final Model model, final String type) {
-    return model.getParameter(type).getValue();
+  protected final static double getParameterValue(final Model model, final String type) {
+    final Parameter parameter = model.getParameter(type);
+    if (parameter == null) {
+      throw new IllegalArgumentException("parameter [" + type + "] not found in the model [" + model.getName() + "] !");
+    }
+    return parameter.getValue();
+  }
+
+  /**
+   * Create a parameter validation exception
+   * @param type type of the parameter
+   * @param model model instance
+   * @param message validation message [< 0 for example]
+   * @throws IllegalArgumentException
+   */
+  protected static void createParameterException(final String type, final Model model, final String message) throws IllegalArgumentException {
+    final Parameter parameter = model.getParameter(type);
+
+    throw new IllegalArgumentException(parameter.getName() + " [" + parameter.getValue() + "] " + message + " not allowed in the model [" + model.getName() + "] !");
   }
 
   /* computation utility methods */
@@ -125,8 +145,79 @@ public abstract class AbstractModelFunction implements ModelFunction {
    *  (UFREQ,VFREQ) to account for a shift (X,Y) in image space.
    *   X, Y are given in milliarcseconds.
    */
-  protected final Complex shift(final double ufreq, final double vfreq, final double x, final double y) {
+  protected static final Complex shift(final double ufreq, final double vfreq, final double x, final double y) {
     final double phase = 2D * PI * MAS2RAD * (x * ufreq + y * vfreq);
     return new Complex(Math.cos(phase), -Math.sin(phase));
+  }
+
+  /**
+   * Return the new spatial frequency U
+   * transform(ufreq, vfreq, t_ana, t_homo, rotation)
+   *
+   * Returns the new spatial frequencies when the object has got geometrical
+   * transformations, successively a rotation, an anamorphose and a homothetie.
+   * (u,v)--> Transpose(Inverse(T))(u,v), with matrix T = HAR;
+   * Inverse(R)= |cos(beta) -sin(beta)|
+   *             |sin(beta)  cos(beta)|   beta angle in degrees
+   *   beta is the trigonometric angle
+   *       |y
+   *       |
+   *    ---|---> x    beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
+   *       |
+   *       |
+   *
+   * Inverse(A)= |t_ana 0|
+   *             |0     1|  t_ana = ratio of anamorphose, >0
+   * Inverse(H)= |t_homo   0|
+   *             |0   t_homo|  t_homo = ratio of homothetie >0
+   *
+   * The angle ROTATION is the astronomical position angle,       |North
+   * equal to 0 or 180 for x=0, and  90 or 270 for y=0.           |
+   * so, ROTATION = 90 - beta                                  ---|--->East
+   * the positive x-semi-axis being the Est direction, and        |
+   * the positive y-semi-axis beeing the North direction.         |
+   */
+  protected static final double transformU(final double ufreq, final double vfreq,
+                                           final double anamorphoseRatio, final double homothetieRatio, final double rotation) {
+
+    final double angle = DEG2RAD * (90D - rotation);
+
+    return ufreq * (Math.cos(angle) * anamorphoseRatio * homothetieRatio) +
+            vfreq * (Math.sin(angle) * anamorphoseRatio * homothetieRatio);
+  }
+
+  /**
+   * Return the new spatial frequency V
+   * transform(ufreq, vfreq, t_ana, t_homo, rotation)
+   *
+   * Returns the new spatial frequencies when the object has got geometrical
+   * transformations, successively a rotation, an anamorphose and a homothetie.
+   * (u,v)--> Transpose(Inverse(T))(u,v), with matrix T = HAR;
+   * Inverse(R)= |cos(beta) -sin(beta)|
+   *             |sin(beta)  cos(beta)|   beta angle in degrees
+   *   beta is the trigonometric angle
+   *       |y
+   *       |
+   *    ---|---> x    beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
+   *       |
+   *       |
+   *
+   * Inverse(A)= |t_ana 0|
+   *             |0     1|  t_ana = ratio of anamorphose, >0
+   * Inverse(H)= |t_homo   0|
+   *             |0   t_homo|  t_homo = ratio of homothetie >0
+   *
+   * The angle ROTATION is the astronomical position angle,       |North
+   * equal to 0 or 180 for x=0, and  90 or 270 for y=0.           |
+   * so, ROTATION = 90 - beta                                  ---|--->East
+   * the positive x-semi-axis being the Est direction, and        |
+   * the positive y-semi-axis beeing the North direction.         |
+   */
+  protected static final double transformV(final double ufreq, final double vfreq,
+                                           final double homothetieRatio, final double rotation) {
+
+    final double angle = DEG2RAD * (90D - rotation);
+
+    return -ufreq * (Math.sin(angle) * homothetieRatio) + vfreq * (Math.cos(angle) * homothetieRatio);
   }
 }

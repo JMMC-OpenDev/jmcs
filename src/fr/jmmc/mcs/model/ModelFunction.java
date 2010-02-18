@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelFunction.java,v 1.3 2010-02-18 09:59:37 bourgesl Exp $"
+ * "@(#) $Id: ModelFunction.java,v 1.4 2010-02-18 15:51:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/02/18 09:59:37  bourgesl
+ * new ModelDefinition interface to gather model and parameter types
+ *
  * Revision 1.2  2010/02/12 15:52:05  bourgesl
  * refactoring due to changed generated classes by xjc
  *
@@ -51,6 +54,7 @@ public interface ModelFunction extends ModelDefinition {
    * @param v V array in rad-1
    * @param model model instance
    * @param complex visibility array
+   * @throws IllegalArgumentException if a parameter value is invalid !
    */
   public void compute(final double[] u, final double[] v, final Model model, final Complex[] vis);
 }

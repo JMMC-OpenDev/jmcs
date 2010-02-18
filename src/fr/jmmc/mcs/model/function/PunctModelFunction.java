@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PunctModelFunction.java,v 1.4 2010-02-16 14:44:14 bourgesl Exp $"
+ * "@(#) $Id: PunctModelFunction.java,v 1.5 2010-02-18 15:51:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/16 14:44:14  bourgesl
+ * getParameter(mode, type) renamed to getParameterValue(model, type)
+ *
  * Revision 1.3  2010/02/12 15:52:05  bourgesl
  * refactoring due to changed generated classes by xjc
  *
@@ -31,7 +34,7 @@ public final class PunctModelFunction extends AbstractModelFunction {
 
   /* Model constants */
   /** model description */
-  private static String MODEL_DESC = "lpb_punct(ufreq, vfreq, flux_weight, x, y) \n\n" +
+  private final static String MODEL_DESC = "lpb_punct(ufreq, vfreq, flux_weight, x, y) \n\n" +
           "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
           "given in 1/rad, of a punctual object (Dirac function) at coordinates \n" +
           "(X,Y) given in milliarcsecond. \n" +
@@ -82,7 +85,6 @@ public final class PunctModelFunction extends AbstractModelFunction {
    * Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ)
    * given in 1/rad, of a punctual object (Dirac function) at coordinates
    * (X,Y) given in milliarcsecond.
-   * FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1.
    *
    * Note : the visibility array is given to add this model contribution to the total visibility
    *
@@ -99,7 +101,7 @@ public final class PunctModelFunction extends AbstractModelFunction {
     final int size = ufreq.length;
 
     // this step indicates when the thread.isInterrupted() is called in the for loop
-    final int stepInterrupt = size / 20;
+    final int stepInterrupt = 1 + size / 25;
 
     // Get parameters :
     final double flux_weight = getParameterValue(model, PARAM_FLUX_WEIGHT);
@@ -129,7 +131,7 @@ public final class PunctModelFunction extends AbstractModelFunction {
    * @param y y coordinate of the punctual object given in milliarcsecond
    * @return complex Fourier transform value
    */
-  private Complex compute_punct(final double ufreq, final double vfreq, final double flux_weight, final double x, final double y) {
+  private final static Complex compute_punct(final double ufreq, final double vfreq, final double flux_weight, final double x, final double y) {
     return shift(ufreq, vfreq, x, y).multiply(flux_weight);
   }
 }

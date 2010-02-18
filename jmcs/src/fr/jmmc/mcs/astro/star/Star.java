@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.15 2010-01-28 16:35:04 mella Exp $"
+ * "@(#) $Id: Star.java,v 1.16 2010-02-18 11:02:36 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2010/01/28 16:35:04  mella
+ * Use name as a property
+ *
  * Revision 1.14  2010/01/21 10:04:01  bourgesl
  * added star name to be consistent with the query/result
  *
@@ -297,7 +300,7 @@ public class Star extends Observable
     {
         RA, DEC, RA_d, DEC_d,
         FLUX_N, FLUX_V, FLUX_I, FLUX_J, FLUX_H, FLUX_K,
-        UD_B, UD_I, UD_J, UD_H, UD_K, UD_L, UD_N, UD_R, UD_U, UD_V,
+        UD_B, UD_I, UD_J, UD_H, UD_K, UD_L, UD_N, UD_R, UD_U, UD_V, TEFF, LOGG,
         OTYPELIST,
         PROPERMOTION_RA, PROPERMOTION_DEC,
         PARALLAX, PARALLAX_err,

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: EditableRhoThetaParameter.java,v 1.1 2010-02-19 16:02:52 bourgesl Exp $"
+ * "@(#) $Id: EditableRhoThetaParameter.java,v 1.2 2010-02-19 16:11:38 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/02/19 16:02:52  bourgesl
+ * new Editable interface to represent parameter in the table model
+ * new EditableRhoThetaParameter to implement rho/theta conversions
+ *
  */
 package fr.jmmc.mcs.model.gui;
 
@@ -211,7 +215,6 @@ public final class EditableRhoThetaParameter implements Editable {
   /**
    * Gets the value of the minValue property.
    */
-  @Override
   public Double getMinValue() {
     return null;
   }
@@ -219,7 +222,6 @@ public final class EditableRhoThetaParameter implements Editable {
   /**
    * Gets the value of the maxValue property.
    */
-  @Override
   public Double getMaxValue() {
     return null;
   }
@@ -227,7 +229,6 @@ public final class EditableRhoThetaParameter implements Editable {
   /**
    * Gets the value of the scale property.
    */
-  @Override
   public Double getScale() {
     return null;
   }
@@ -235,7 +236,6 @@ public final class EditableRhoThetaParameter implements Editable {
   /**
    * Gets the value of the hasFixedValue property.
    */
-  @Override
   public boolean isHasFixedValue() {
     return false;
   }
@@ -243,28 +243,24 @@ public final class EditableRhoThetaParameter implements Editable {
   /**
    * Sets the value of the minValue property.
    */
-  @Override
   public void setMinValue(Double value) {
   }
 
   /**
    * Sets the value of the maxValue property.
    */
-  @Override
   public void setMaxValue(Double value) {
   }
 
   /**
    * Sets the value of the scale property.
    */
-  @Override
   public void setScale(Double value) {
   }
 
   /**
    * Sets the value of the hasFixedValue property.
    */
-  @Override
   public void setHasFixedValue(boolean value) {
   }
 

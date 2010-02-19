@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.5 2010-02-18 09:59:37 bourgesl Exp $"
+ * "@(#) $Id: ModelParameterTableModel.java,v 1.6 2010-02-19 16:02:52 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/02/18 09:59:37  bourgesl
+ * new ModelDefinition interface to gather model and parameter types
+ *
  * Revision 1.4  2010/02/17 17:05:45  bourgesl
  * first model X/Y parameters are not editable
  *
@@ -49,6 +52,12 @@ public final class ModelParameterTableModel extends AbstractTableModel {
   public enum Mode {
 
     LITPRO, ASPRO;
+  }
+
+  /** Table edit mode enumeration (X_Y or RHO_THETA) */
+  public enum EditMode {
+
+    X_Y, RHO_THETA;
   }
 
   /** Column definition enum */
@@ -102,17 +111,16 @@ public final class ModelParameterTableModel extends AbstractTableModel {
   private static final ColumnDef[] LITPRO_COLUMNS = ColumnDef.values();
   /** ASPRO Columns */
   private static final ColumnDef[] ASPRO_COLUMNS = {ColumnDef.MODEL, ColumnDef.NAME, ColumnDef.UNITS, ColumnDef.VALUE};
+
   /* members */
+  /** edit mode */
+  private EditMode editMode = EditMode.X_Y;
   /** column count */
   private int columnCount;
   /** column definitions */
   private ColumnDef[] columnDefs;
   /** list of parameters (row) present in the table */
-  private final List<Parameter> parameterList = new ArrayList<Parameter>();
-  /** list of models associated to every parameter (row) present in the table */
-  private final List<Model> modelForParameterList = new ArrayList<Model>();
-  /** list of flag associated to every parameter (row) present in the table to indicate it is a shared parameter */
-  private final List<Boolean> sharedParameterList = new ArrayList<Boolean>();
+  private final List<Editable> parameterList = new ArrayList<Editable>();
 
   /**
    * Public constructor
@@ -145,11 +153,13 @@ public final class ModelParameterTableModel extends AbstractTableModel {
   /**
    * Define the data to use in this table model for a single target model
    * @param model target model
+   * @param editMode edition mode
    */
-  public void setData(final Model model) {
+  public void setData(final Model model, final EditMode editMode) {
     if (logger.isLoggable(Level.FINE)) {
-      logger.fine("setData : " + model);
+      logger.fine("setData[" + editMode + "] : " + model);
     }
+    setEditMode(editMode);
     resetData();
     processData(model);
 
@@ -160,11 +170,13 @@ public final class ModelParameterTableModel extends AbstractTableModel {
   /**
    * Define the data to use in this table model for a list of target models
    * @param models list of target models
+   * @param editMode edition mode
    */
-  public void setData(final List<Model> models) {
+  public void setData(final List<Model> models, final EditMode editMode) {
     if (logger.isLoggable(Level.FINE)) {
-      logger.fine("setData : " + models);
+      logger.fine("setData[" + editMode + "] : " + models);
     }
+    setEditMode(editMode);
     resetData();
     if (models != null) {
       for (Model model : models) {
@@ -181,13 +193,11 @@ public final class ModelParameterTableModel extends AbstractTableModel {
    */
   private void resetData() {
     this.parameterList.clear();
-    this.modelForParameterList.clear();
-    this.sharedParameterList.clear();
   }
 
   /**
    * Fill the table data members recursively with the given model
-   * @param model
+   * @param model model to process
    */
   private void processData(final Model model) {
 
@@ -195,18 +205,14 @@ public final class ModelParameterTableModel extends AbstractTableModel {
     final List<Parameter> parameters = model.getParameters();
 
     for (Parameter parameter : parameters) {
-      this.parameterList.add(parameter);
-      this.modelForParameterList.add(model);
-      this.sharedParameterList.add(Boolean.FALSE);
+      addParameter(model, parameter, false);
     }
 
     // Second add model linked parameters :
     final List<ParameterLink> parameterLinks = model.getParameterLinks();
 
     for (ParameterLink parameterLink : parameterLinks) {
-      this.parameterList.add(parameterLink.getParameterRef());
-      this.modelForParameterList.add(model);
-      this.sharedParameterList.add(Boolean.TRUE);
+      addParameter(model, parameterLink.getParameterRef(), true);
     }
 
     // Finally traverse the model hierarchy :
@@ -214,6 +220,31 @@ public final class ModelParameterTableModel extends AbstractTableModel {
 
     for (Model child : children) {
       processData(child);
+    }
+  }
+
+  /**
+   * Add the given parameter
+   * @param parameter parameter to add
+   * @param shared shared parameter flag
+   */
+  private void addParameter(final Model model, final Parameter parameter, final boolean shared) {
+    switch (getEditMode()) {
+      default:
+      case X_Y:
+        this.parameterList.add(new EditableParameter(model, parameter, shared));
+        break;
+
+      case RHO_THETA:
+        // Intercept and check for X/Y parameters :
+
+        if (ModelDefinition.PARAM_X.equals(parameter.getType())) {
+          this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.Type.RHO));
+        } else if (ModelDefinition.PARAM_Y.equals(parameter.getType())) {
+          this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.Type.THETA));
+        } else {
+          this.parameterList.add(new EditableParameter(model, parameter, shared));
+        }
     }
   }
 
@@ -277,20 +308,18 @@ public final class ModelParameterTableModel extends AbstractTableModel {
       // check if the row is editable ?
 
       // First Model Rules :
+      if (getModelAt(rowIndex) == this.getModelAt(0)) {
 
-      // check if it is the first model :
-      final Model model = getModelAt(rowIndex);
-      if (model == this.modelForParameterList.get(0)) {
+        final Editable parameter = this.parameterList.get(rowIndex);
 
-        // if parameter type is 'x' or 'y' => not editable
-        final Parameter parameter = this.parameterList.get(rowIndex);
+        // if the parameter a position (X/Y or RHO/THETA) => not editable :
+        editable = !parameter.isPosition();
 
-        if (ModelDefinition.PARAM_X.equals(parameter.getType()) ||
-                ModelDefinition.PARAM_Y.equals(parameter.getType())) {
-          editable = false;
+        // Custom position parameter = only value is editable :
+        if (editable && parameter instanceof EditableRhoThetaParameter) {
+          editable = (this.columnDefs[columnIndex] == ColumnDef.VALUE);
         }
       }
-
     }
     return editable;
   }
@@ -317,7 +346,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
    * @return	the value Object at the specified cell
    */
   public Object getValueAt(final int rowIndex, final int columnIndex) {
-    final Parameter parameter = this.parameterList.get(rowIndex);
+    final Editable parameter = this.parameterList.get(rowIndex);
 
     if (parameter != null) {
       switch (this.columnDefs[columnIndex]) {
@@ -326,7 +355,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
         case NAME:
           return parameter.getName();
         case SHARED:
-          return this.sharedParameterList.get(rowIndex);
+          return parameter.isShared();
         case TYPE:
           return parameter.getType();
         case UNITS:
@@ -359,7 +388,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
    */
   @Override
   public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
-    final Parameter parameter = this.parameterList.get(rowIndex);
+    final Editable parameter = this.parameterList.get(rowIndex);
 
     if (parameter != null) {
       if (logger.isLoggable(Level.FINE)) {
@@ -393,7 +422,11 @@ public final class ModelParameterTableModel extends AbstractTableModel {
       }
 
       if (modified) {
-        fireTableCellUpdated(rowIndex, columnIndex);
+        if (parameter instanceof EditableRhoThetaParameter) {
+          fireTableDataChanged();
+        } else {
+          fireTableCellUpdated(rowIndex, columnIndex);
+        }
       }
     }
   }
@@ -405,6 +438,22 @@ public final class ModelParameterTableModel extends AbstractTableModel {
    * @return model
    */
   public Model getModelAt(final int rowIndex) {
-    return this.modelForParameterList.get(rowIndex);
+    return this.parameterList.get(rowIndex).getModel();
+  }
+
+  /**
+   * Return the edit mode
+   * @return edit mode
+   */
+  public EditMode getEditMode() {
+    return editMode;
+  }
+
+  /**
+   * Define the edit mode (X_Y or RHO_THETA)
+   * @param editMode edit mode
+   */
+  private void setEditMode(final EditMode editMode) {
+    this.editMode = editMode;
   }
 }

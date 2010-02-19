@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: TestModel.java,v 1.4 2010-02-12 15:52:05 bourgesl Exp $"
+ * "@(#) $Id: TestModel.java,v 1.5 2010-02-19 16:02:52 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/12 15:52:05  bourgesl
+ * refactoring due to changed generated classes by xjc
+ *
  * Revision 1.3  2010/02/09 16:50:07  bourgesl
  * use rgb color interpolation for better image rendering
  *
@@ -19,9 +22,8 @@
 package fr.jmmc.mcs.model.test;
 
 import fr.jmmc.mcs.image.ImageViewer;
-import fr.jmmc.mcs.model.ModelFunction;
+import fr.jmmc.mcs.model.ModelDefinition;
 import fr.jmmc.mcs.model.ModelManager;
-import fr.jmmc.mcs.model.function.DiskModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -68,38 +70,38 @@ public class TestModel {
     Model model;
 
     // punct1 :
-    model = mm.createModel(ModelFunction.MODEL_PUNCT);
+    model = mm.createModel(ModelDefinition.MODEL_PUNCT);
 
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_FLUX_WEIGHT, 1.0);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_X, 0);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_Y, 0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_FLUX_WEIGHT, 1.0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_X, 0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_Y, 0);
 
     models.add(model);
 
     // punct2 :
-    model = mm.createModel(ModelFunction.MODEL_PUNCT);
+    model = mm.createModel(ModelDefinition.MODEL_PUNCT);
 
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_FLUX_WEIGHT, 1);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_X, 1);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_Y, 0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_FLUX_WEIGHT, 1);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_X, 1);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_Y, 0);
 
     models.add(model);
 /*
     // punct3 :
-    model = mm.createModel(ModelFunction.MODEL_PUNCT);
+    model = mm.createModel(ModelDefinition.MODEL_PUNCT);
 
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_FLUX_WEIGHT, 0.4);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_X, 0);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_Y, 1);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_FLUX_WEIGHT, 0.4);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_X, 0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_Y, 1);
 
     models.add(model);
 
     // punct4 :
-    model = mm.createModel(ModelFunction.MODEL_PUNCT);
+    model = mm.createModel(ModelDefinition.MODEL_PUNCT);
 
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_FLUX_WEIGHT, 0.2);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_X, 1);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_Y, 1);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_FLUX_WEIGHT, 0.2);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_X, 1);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_Y, 1);
 
     models.add(model);
 */
@@ -116,23 +118,23 @@ public class TestModel {
     Model model;
 
     // disk1 :
-    model = mm.createModel(ModelFunction.MODEL_DISK);
+    model = mm.createModel(ModelDefinition.MODEL_DISK);
 
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_FLUX_WEIGHT, 3.0);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_X, 0);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_Y, 0);
-    ModelManager.setParameterValue(model, DiskModelFunction.PARAM_DIAMETER, 30);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_FLUX_WEIGHT, 3.0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_X, 0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_Y, 0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_DIAMETER, 30);
 
     models.add(model);
 
     // disk2 :
     /*
-    model = mm.createModel(ModelFunction.MODEL_DISK);
+    model = mm.createModel(ModelDefinition.MODEL_DISK);
 
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_FLUX_WEIGHT, 1.0);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_X, 1);
-    ModelManager.setParameterValue(model, ModelFunction.PARAM_Y, 0);
-    ModelManager.setParameterValue(model, DiskModelFunction.PARAM_DIAMETER, 1);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_FLUX_WEIGHT, 1.0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_X, 1);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_Y, 0);
+    ModelManager.setParameterValue(model, ModelDefinition.PARAM_DIAMETER, 1);
 
     models.add(model);
     */

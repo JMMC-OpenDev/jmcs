@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Http.java,v 1.1 2010-01-18 16:05:18 mella Exp $"
+ * "@(#) $Id: Http.java,v 1.2 2010-03-01 14:51:57 mella Exp $"
  *
  */
 package fr.jmmc.mcs.util;
@@ -79,6 +79,7 @@ public class Http {
                 port = epoint.getPort();
                 hostConfiguration.setProxy(host, port);
                 logger_.log(Level.FINE, "setting proxy " + host + ":" + port);
+                System.setProperty(className_+".proxy", host+":"+port);
                 httpClient.setHostConfiguration(hostConfiguration);
             }
         }

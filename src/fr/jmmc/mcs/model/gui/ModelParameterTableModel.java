@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.6 2010-02-19 16:02:52 bourgesl Exp $"
+ * "@(#) $Id: ModelParameterTableModel.java,v 1.7 2010-03-30 12:06:36 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/02/19 16:02:52  bourgesl
+ * new Editable interface to represent parameter in the table model
+ * new EditableRhoThetaParameter to implement rho/theta conversions
+ *
  * Revision 1.5  2010/02/18 09:59:37  bourgesl
  * new ModelDefinition interface to gather model and parameter types
  *
@@ -119,6 +123,8 @@ public final class ModelParameterTableModel extends AbstractTableModel {
   private int columnCount;
   /** column definitions */
   private ColumnDef[] columnDefs;
+  /** first model reference to handle special behaviour */
+  private Model firstModel = null;
   /** list of parameters (row) present in the table */
   private final List<Editable> parameterList = new ArrayList<Editable>();
 
@@ -192,6 +198,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
    * Reset the table data members
    */
   private void resetData() {
+    this.firstModel = null;
     this.parameterList.clear();
   }
 
@@ -200,6 +207,10 @@ public final class ModelParameterTableModel extends AbstractTableModel {
    * @param model model to process
    */
   private void processData(final Model model) {
+    // define the first model if undefined :
+    if (this.firstModel == null) {
+      this.firstModel = model;
+    }
 
     // First add model parameters :
     final List<Parameter> parameters = model.getParameters();
@@ -236,14 +247,24 @@ public final class ModelParameterTableModel extends AbstractTableModel {
         break;
 
       case RHO_THETA:
-        // Intercept and check for X/Y parameters :
 
-        if (ModelDefinition.PARAM_X.equals(parameter.getType())) {
-          this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.Type.RHO));
-        } else if (ModelDefinition.PARAM_Y.equals(parameter.getType())) {
-          this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.Type.THETA));
-        } else {
+        // First Model Rules :
+
+        // For the first model keep X/Y fixed parameters :
+
+        if (model == this.firstModel) {
           this.parameterList.add(new EditableParameter(model, parameter, shared));
+        } else {
+
+          // Intercept and check for X/Y parameters :
+
+          if (ModelDefinition.PARAM_X.equals(parameter.getType())) {
+            this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.Type.RHO));
+          } else if (ModelDefinition.PARAM_Y.equals(parameter.getType())) {
+            this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.Type.THETA));
+          } else {
+            this.parameterList.add(new EditableParameter(model, parameter, shared));
+          }
         }
     }
   }
@@ -307,18 +328,18 @@ public final class ModelParameterTableModel extends AbstractTableModel {
 
       // check if the row is editable ?
 
+      final Editable parameter = this.parameterList.get(rowIndex);
+
       // First Model Rules :
-      if (getModelAt(rowIndex) == this.getModelAt(0)) {
+      if (getModelAt(rowIndex) == this.firstModel) {
 
-        final Editable parameter = this.parameterList.get(rowIndex);
-
-        // if the parameter a position (X/Y or RHO/THETA) => not editable :
+        // if the parameter is a position (X/Y or RHO/THETA) => not editable :
         editable = !parameter.isPosition();
+      }
 
-        // Custom position parameter = only value is editable :
-        if (editable && parameter instanceof EditableRhoThetaParameter) {
-          editable = (this.columnDefs[columnIndex] == ColumnDef.VALUE);
-        }
+      // Custom position parameter = only value is editable :
+      if (editable && parameter instanceof EditableRhoThetaParameter) {
+        editable = (this.columnDefs[columnIndex] == ColumnDef.VALUE);
       }
     }
     return editable;

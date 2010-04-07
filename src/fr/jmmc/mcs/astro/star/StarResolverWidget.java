@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.7 2010-01-21 10:05:18 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.8 2010-04-07 12:21:39 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2010/01/21 10:05:18  bourgesl
+ * Define the star name when the query is complete
+ * StarResolverWidget can be used in netbeans's component palette
+ *
  * Revision 1.6  2010/01/14 12:40:19  bourgesl
  * Fix blanking value with white spaces for proper motion and parallax ' ; '
  * StringBuilder and Logger.isLoggable to avoid string.concat
@@ -161,7 +165,7 @@ public class StarResolverWidget extends SearchField implements Observer
             {
                 public void update(Observable o, Object arg)
                 {
-                    System.out.println("Star changed:\n" + star);
+                    _logger.severe("Star changed:\n" + star);
                 }
             });
 

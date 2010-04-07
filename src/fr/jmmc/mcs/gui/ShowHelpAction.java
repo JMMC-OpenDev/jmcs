@@ -12,12 +12,17 @@ import javax.swing.ImageIcon;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ShowHelpAction extends AbstractAction
 {
     /** Help id associted to the given label.*/
     private String _helpID;
+
+    /** Shared frame to avoid one feedbackreport display (and mail) per
+     * missing doc indexes
+     */
+    private static java.awt.Frame _frame = new java.awt.Frame();
 
     /**
      * Instanciate one action that will show the help view on the page associated to the given label.
@@ -43,7 +48,7 @@ public class ShowHelpAction extends AbstractAction
             // If no helpID found, then show one feedback report and disable action
             if (_helpID == null)
             {
-                new FeedbackReport(new Exception(
+                new FeedbackReport(_frame, false, new Exception(
                         "Documentation problem:\nNo helpID found for label '" +
                         label +
                         "'\nPlease send this feedback to improve documentation."));

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.16 2010-02-18 11:02:36 mella Exp $"
+ * "@(#) $Id: Star.java,v 1.17 2010-04-07 12:22:21 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2010/02/18 11:02:36  mella
+ * add logg and teff to the ld2ud outputs
+ *
  * Revision 1.15  2010/01/28 16:35:04  mella
  * Use name as a property
  *
@@ -78,8 +81,6 @@ public class Star extends Observable
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.astro.star.Star");
 
-        
-
     /** Star property-value backing store for String data */
     private final Map<Property, String> _stringContent;
 
@@ -102,7 +103,7 @@ public class Star extends Observable
     /**
      * Copy content of a given Star.
      *
-     * @param star the star whose content should be copied in.
+     * @param source the star whose content should be copied from.
      */
     public void copy(Star source)
     {
@@ -137,7 +138,6 @@ public class Star extends Observable
      */
     public void setName(String name) {
       setPropertyAsString(Property.NAME,name);
-      setChanged();
     }
 
     /**
@@ -306,7 +306,8 @@ public class Star extends Observable
         PARALLAX, PARALLAX_err,
         SPECTRALTYPES,
         NOPROPERTY,
-        NAME;
+        NAME,
+        IDS;
 
         /**
          * Give back the enum value from the corresponding string.

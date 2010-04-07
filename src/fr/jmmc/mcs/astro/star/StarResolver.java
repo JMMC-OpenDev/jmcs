@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.11 2010-01-21 10:05:18 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.12 2010-04-07 13:10:00 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2010/01/21 10:05:18  bourgesl
+ * Define the star name when the query is complete
+ * StarResolverWidget can be used in netbeans's component palette
+ *
  * Revision 1.10  2010/01/14 12:40:20  bourgesl
  * Fix blanking value with white spaces for proper motion and parallax ' ; '
  * StringBuilder and Logger.isLoggable to avoid string.concat
@@ -121,7 +125,8 @@ public class StarResolver
     }
 
     /**
-     * Command-line tool that tries to resolve the star name given as first paramater.
+     * Command-line tool that tries to resolve the star name given as first parameter.
+     * @param args first argument is the star name
      */
     public static void main(String[] args)
     {
@@ -193,9 +198,12 @@ public class StarResolver
             sb.append("%FLUXLIST(V,I,J,H,K;N=F,)\\n"); // Magnitudes, 'Band=Value' format
             sb.append("%PM(A;D)\\n"); // Proper motion with error
             sb.append("%PLX(V;E)\\n"); // Parallax with error
-            sb.append("%SP(S)"); // Spectral types enumeration
+            sb.append("%SP(S)\\n"); // Spectral types enumeration
+            sb.append("%IDLIST[%*|]"); // Simbad identifiers
             sb.append("\"\n"); // Simbad script end
             sb.append("query id ").append(_starName); // Add the object name we are looking for
+
+            // Note : the object type may be useful too like %OTYPE ('Star') or %OTYPELIST ('*,**,X')
 
             final String simbadScript = sb.toString();
 
@@ -289,9 +297,10 @@ public class StarResolver
                   _logger.finest("CDS Simbad result without blanking values :\n" + _result);
                 }
 
-                // Parsing result line by line
-                StringTokenizer lineTokenizer = new StringTokenizer(_result,
-                        "\n");
+                // Parsing result line by line :
+
+                // Special line tokenizer because it is possible to have a blank lines (no flux at all) :
+                final StrictStringTokenizer lineTokenizer = new StrictStringTokenizer(_result, "\n");
 
                 // First line should contain star coordinates, separated by ';'
                 String coordinates = lineTokenizer.nextToken();
@@ -316,6 +325,11 @@ public class StarResolver
                 // Sixth line should contain star spectral types
                 String spectralTypes = lineTokenizer.nextToken();
                 parseSpectralTypes(spectralTypes);
+
+                // Seventh line should contain simbad identifiers, separated by '|'
+                String identifiers = lineTokenizer.nextToken();
+                parseIdentifiers(identifiers);
+
             }
             catch (Exception ex)
             {
@@ -501,6 +515,81 @@ public class StarResolver
             _newStarModel.setPropertyAsString(Star.Property.SPECTRALTYPES,
                 spectralTypes);
         }
+
+        private void parseIdentifiers(String identifiers)
+        {
+            if (_logger.isLoggable(Level.FINER)) {
+              _logger.finer("Identifier contains '" + identifiers + "'.");
+            }
+
+            if (identifiers.length() > 0) {
+              // remove redundant space characters :
+              identifiers = identifiers.replaceAll("[ ]+", " ");
+            }
+
+            if (identifiers.length() > 0) {
+              // remove last separator :
+              identifiers = identifiers.substring(0, identifiers.length() - 1);
+            }
+
+            _newStarModel.setPropertyAsString(Star.Property.IDS, identifiers);
+        }
+
     }
+
+    /**
+     * StringTokenizer Hack to return empty token if multiple delimiters found
+     *
+     * @see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4140850
+     */
+  private static class StrictStringTokenizer {
+
+    /** delimiter */
+    private String delimiter;
+    /** internal string tokenizer returning delimiter too */
+    private final StringTokenizer st;
+    /** last token reminder */
+    private String lastToken;
+
+    /**
+     * Special StringTokenizer that returns empty token if multiple delimiters encountered
+     * @param input input string
+     * @param delimiter delimiter
+     */
+    public StrictStringTokenizer(final String input, final String delimiter) {
+      this.delimiter = delimiter;
+      this.st = new StringTokenizer(input, delimiter, true);
+      this.lastToken = delimiter;// if first token is separator
+    }
+    
+    /**
+     * Returns the next token from this string tokenizer.
+     *
+     * @return     the next token from this string tokenizer.
+     */
+    public String nextToken() {
+        String result = null;
+
+        String token;
+        while (result == null && this.st.hasMoreTokens()) {
+            token = this.st.nextToken();
+            if (token.equals(this.delimiter)) {
+                if (this.lastToken.equals(this.delimiter)) {
+                  // no value between 2 separators ?
+                  result = "";
+                }
+            } else {
+              result = token;
+            }
+            this.lastToken = token;
+        } // next token
+        if (result == null) {
+          result = "";
+        }
+        return result;
+    }
+
+  }
+
 }
 /*___oOo___*/

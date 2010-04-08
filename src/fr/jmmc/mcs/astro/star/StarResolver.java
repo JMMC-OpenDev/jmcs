@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.13 2010-04-08 08:32:17 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.14 2010-04-08 13:33:32 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2010/04/08 08:32:17  bourgesl
+ * avoid multiple error messages for normal error case (simbad error or empty response)
+ *
  * Revision 1.12  2010/04/07 13:10:00  bourgesl
  * hack for a known StringTokenizer bug with the StrictStringTokenizer to return empty lines (empty flux for example)
  * get all simbad identifiers (IDLIST) for later gui improvements
@@ -203,11 +206,9 @@ public class StarResolver
             sb.append("%PM(A;D)\\n"); // Proper motion with error
             sb.append("%PLX(V;E)\\n"); // Parallax with error
             sb.append("%SP(S)\\n"); // Spectral types enumeration
-            sb.append("%IDLIST[%*|]"); // Simbad identifiers
+            sb.append("%IDLIST[%*,]"); // Simbad identifiers
             sb.append("\"\n"); // Simbad script end
             sb.append("query id ").append(_starName); // Add the object name we are looking for
-
-            // Note : the object type may be useful too like %OTYPE ('Star') or %OTYPELIST ('*,**,X')
 
             final String simbadScript = sb.toString();
 
@@ -330,7 +331,7 @@ public class StarResolver
                 String spectralTypes = lineTokenizer.nextToken();
                 parseSpectralTypes(spectralTypes);
 
-                // Seventh line should contain simbad identifiers, separated by '|'
+                // Seventh line should contain simbad identifiers, separated by ','
                 String identifiers = lineTokenizer.nextToken();
                 parseIdentifiers(identifiers);
 
@@ -339,6 +340,8 @@ public class StarResolver
               if (_logger.isLoggable(Level.FINE)) {
                   _logger.log(Level.FINE, "Invalid CDS Simbad result", iae);
               }
+
+                return;
             }
             catch (Exception ex)
             {
@@ -364,7 +367,7 @@ public class StarResolver
               _starModel.copy(_newStarModel);
 
               // Notify all registered observers that the query went fine :
-              _starModel.notifyObservers(Star.Notification.QUERY_COMPLETE);
+              _starModel.fireNotification(Star.Notification.QUERY_COMPLETE);
             }
         }
 

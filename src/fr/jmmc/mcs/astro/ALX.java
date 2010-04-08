@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.16 2010-02-18 11:02:30 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.17 2010-04-08 08:40:50 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2010/02/18 11:02:30  mella
+ * add logg and teff to the ld2ud outputs
+ *
  * Revision 1.15  2010/01/20 13:58:31  mella
  * add javadoc
  *
@@ -97,10 +100,8 @@ public class ALX
      *
      * @return the right ascension as a double in degrees.
      */
-    public static double parseRA(String raHms)
+    public static double parseHMS(String raHms)
     {
-        MCSLogger.trace();
-
         double hh;
         double hm;
         double hs;
@@ -111,15 +112,8 @@ public class ALX
         raHms     = raHms.trim();
 
         // Parse the given string
-        // sscanf(raHms, "%f %f %f", &hh, &hm, &hs)
         try
         {
-            /* !!! Replace by the code below to remove dependency on Java 1.5
-               Scanner s = new Scanner(raHms).useDelimiter(" ");
-               hh     = s.nextDouble();
-               hm     = s.nextDouble();
-               hs     = s.nextDouble();
-               s.close(); */
             String[] tokens = raHms.split(" ");
             hh     = Double.parseDouble(tokens[0]);
             hm     = Double.parseDouble(tokens[1]);
@@ -133,15 +127,33 @@ public class ALX
         }
 
         // Get sign of hh which has to be propagated to hm and hs
-        double sign = (raHms.startsWith("-")) ? (-1.0) : 1.0;
+        final double sign = (raHms.startsWith("-")) ? -1d : 1d;
 
         // Convert to degrees
-        double ra = (hh + ((sign * hm) / 60.0) + ((sign * hs) / 3600.0)) * 15.0;
+        // note : dd already includes the sign :
+        final double ra = (hh + sign * (hm / 60d + hs / 3600d)) * 15d;
+
+        MCSLogger.debug("HMS  : ’" + raHms + "' = '" + ra + "'.");
+
+        return ra;
+    }
+
+
+    /**
+     * Convert the given Right Ascension (RA).
+     *
+     * @param raHms the right ascension as a HH:MM:SS.TT or HH MM SS.TT string.
+     *
+     * @return the right ascension as a double in degrees  [-180 - 180].
+     */
+    public static double parseRA(String raHms)
+    {
+        double ra = parseHMS(raHms);
 
         // Set angle range [-180 - 180]
-        if (ra > 180)
+        if (ra > 180d)
         {
-            ra = -1.0 * (360 - ra);
+            ra = -1d * (360d - ra);
         }
 
         MCSLogger.debug("RA  : ’" + raHms + "' = '" + ra + "'.");
@@ -152,14 +164,12 @@ public class ALX
     /**
      * Convert the given Declinaison (DEC).
      *
-     * @param raHms the declinaison as a DD:MM:SS.TT or DD MM SS.TT string.
+     * @param decDms the declinaison as a DD:MM:SS.TT or DD MM SS.TT string.
      *
      * @return the declinaison as a double in degrees.
      */
     public static double parseDEC(String decDms)
     {
-        MCSLogger.trace();
-
         double dd;
         double dm;
         double ds;
@@ -170,15 +180,8 @@ public class ALX
         decDms     = decDms.trim();
 
         // Parse the given string
-        // sscanf(decDms, "%f %f %f", &dd, &dm, &ds)
         try
         {
-            /* !!! Replace by the code below to remove dependency on Java 1.5
-               Scanner s = new Scanner(decDms).useDelimiter(" ");
-               dd     = s.nextDouble();
-               dm     = s.nextDouble();
-               ds     = s.nextDouble();
-               s.close(); */
             String[] tokens = decDms.split(" ");
             dd     = Double.parseDouble(tokens[0]);
             dm     = Double.parseDouble(tokens[1]);
@@ -191,11 +194,12 @@ public class ALX
             ds     = 0.0;
         }
 
-        // Get sign of hh which has to be propagated to hm and hs
-        double sign = (decDms.startsWith("-")) ? (-1.0) : 1.0;
+        // Get sign of dd which has to be propagated to dm and ds
+        final double sign = (decDms.startsWith("-")) ? -1d : 1d;
 
         // Convert to degrees
-        double dec = dd + ((sign * dm) / 60.0) + ((sign * ds) / 3600.0);
+        // note : dd already includes the sign :
+        double dec = dd + sign * (dm / 60d + ds / 3600d);
 
         MCSLogger.debug("DEC : ’" + decDms + "' = '" + dec + "'.");
 

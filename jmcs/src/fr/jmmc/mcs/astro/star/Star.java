@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.17 2010-04-07 12:22:21 bourgesl Exp $"
+ * "@(#) $Id: Star.java,v 1.18 2010-04-08 13:34:32 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2010/04/07 12:22:21  bourgesl
+ * added IDS property to store simbad identifiers
+ *
  * Revision 1.16  2010/02/18 11:02:36  mella
  * add logg and teff to the ld2ud outputs
  *
@@ -69,6 +72,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -241,7 +245,7 @@ public class Star extends Observable
         }
 
         setChanged();
-        notifyObservers(Notification.QUERY_ERROR);
+        fireNotification(Notification.QUERY_ERROR);
     }
 
     /**
@@ -251,7 +255,7 @@ public class Star extends Observable
      * @sa fr.jmmc.mcs.astro.star.StarResolver.
      * @sa fr.jmmc.mcs.astro.star.StarResolverWidget.
      *
-     * @retrun A String object containing the error message, or null if
+     * @return A String object containing the error message, or null if
      * everything went fine.
      */
     public String consumeCDSimbadErrorMessage()
@@ -283,6 +287,23 @@ public class Star extends Observable
         _doubleContent.toString() + " / CDS Simbad error = '" +
         _cdsSimbadErrorMessage + "'.";
          * */
+    }
+
+    /**
+     * Fires the notification to the registered observers using the EDT thread
+     * @param notification notification enum value
+     */
+    public void fireNotification(final Notification notification) {
+      // notify observers (swing components) within EDT :
+      if (SwingUtilities.isEventDispatchThread()) {
+        notifyObservers(notification);
+      } else {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            notifyObservers(notification);
+          }
+        });
+      }
     }
 
     /**

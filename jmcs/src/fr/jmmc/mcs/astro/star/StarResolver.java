@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.12 2010-04-07 13:10:00 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.13 2010-04-08 08:32:17 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2010/04/07 13:10:00  bourgesl
+ * hack for a known StringTokenizer bug with the StrictStringTokenizer to return empty lines (empty flux for example)
+ * get all simbad identifiers (IDLIST) for later gui improvements
+ *
  * Revision 1.11  2010/01/21 10:05:18  bourgesl
  * Define the star name when the query is complete
  * StarResolverWidget can be used in netbeans's component palette
@@ -277,7 +281,7 @@ public class StarResolver
                 {
                     _starModel.raiseCDSimbadErrorMessage("No data for star '" +
                         _starName + "'.");
-                    throw new Exception("SIMBAD returned an empty result");
+                    throw new IllegalArgumentException("SIMBAD returned an empty result");
                 }
 
                 // If there was an error during query
@@ -286,7 +290,7 @@ public class StarResolver
                     _starModel.raiseCDSimbadErrorMessage(
                         "Querying script execution failed for star '" +
                         _starName + "'.");
-                    throw new Exception(
+                    throw new IllegalArgumentException(
                         "SIMBAD returned a script execution error");
                 }
 
@@ -330,6 +334,11 @@ public class StarResolver
                 String identifiers = lineTokenizer.nextToken();
                 parseIdentifiers(identifiers);
 
+            }
+            catch (IllegalArgumentException iae) {
+              if (_logger.isLoggable(Level.FINE)) {
+                  _logger.log(Level.FINE, "Invalid CDS Simbad result", iae);
+              }
             }
             catch (Exception ex)
             {

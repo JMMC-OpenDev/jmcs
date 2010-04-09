@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.14 2010-04-08 13:33:32 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.15 2010-04-09 09:24:36 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2010/04/08 13:33:32  bourgesl
+ * fixed bug on standard exception
+ * use Star.fireNotification to use EDT
+ *
  * Revision 1.13  2010/04/08 08:32:17  bourgesl
  * avoid multiple error messages for normal error case (simbad error or empty response)
  *
@@ -206,6 +210,7 @@ public class StarResolver
             sb.append("%PM(A;D)\\n"); // Proper motion with error
             sb.append("%PLX(V;E)\\n"); // Parallax with error
             sb.append("%SP(S)\\n"); // Spectral types enumeration
+            sb.append("%RV(V;W)\\n"); // Radial velocity
             sb.append("%IDLIST[%*,]"); // Simbad identifiers
             sb.append("\"\n"); // Simbad script end
             sb.append("query id ").append(_starName); // Add the object name we are looking for
@@ -331,7 +336,11 @@ public class StarResolver
                 String spectralTypes = lineTokenizer.nextToken();
                 parseSpectralTypes(spectralTypes);
 
-                // Seventh line should contain simbad identifiers, separated by ','
+                // Seventh line should contain radial velocity, separated by ';'
+                String radialVelocity = lineTokenizer.nextToken();
+                parseRadialVelocity(radialVelocity);
+
+                // Eigth line should contain simbad identifiers, separated by ','
                 String identifiers = lineTokenizer.nextToken();
                 parseIdentifiers(identifiers);
 
@@ -526,6 +535,40 @@ public class StarResolver
 
             _newStarModel.setPropertyAsString(Star.Property.SPECTRALTYPES,
                 spectralTypes);
+        }
+
+        private void parseRadialVelocity(String radialVelocity) throws Exception
+        {
+            if (_logger.isLoggable(Level.FINER)) {
+              _logger.finer("Radial velocity contains '" + radialVelocity + "'.");
+            }
+
+            StringTokenizer rvTokenizer = new StringTokenizer(radialVelocity,
+                    ";");
+
+            if (rvTokenizer.countTokens() > 0)
+            {
+                double rv = Double.parseDouble(rvTokenizer.nextToken());
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("RV = '" + rv + "'.");
+                }
+                _newStarModel.setPropertyAsDouble(Star.Property.RV, rv);
+
+                if (rvTokenizer.hasMoreTokens()) {
+                  String rv_def = rvTokenizer.nextToken();
+                  if (_logger.isLoggable(Level.FINEST)) {
+                    _logger.finest("RV_DEF = '" + rv_def + "'.");
+                  }
+                  _newStarModel.setPropertyAsString(Star.Property.RV_DEF,
+                      rv_def);
+                }
+            }
+            else
+            {
+                if (_logger.isLoggable(Level.FINEST)) {
+                  _logger.finest("No radial velocity data for star '" + _starName + "'.");
+                }
+            }
         }
 
         private void parseIdentifiers(String identifiers)

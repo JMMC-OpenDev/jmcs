@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.18 2010-04-08 13:34:32 bourgesl Exp $"
+ * "@(#) $Id: Star.java,v 1.19 2010-04-09 09:24:36 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2010/04/08 13:34:32  bourgesl
+ * added Star.fireNotification to use EDT instead of current thread
+ *
  * Revision 1.17  2010/04/07 12:22:21  bourgesl
  * added IDS property to store simbad identifiers
  *
@@ -327,8 +330,8 @@ public class Star extends Observable
         PARALLAX, PARALLAX_err,
         SPECTRALTYPES,
         NOPROPERTY,
-        NAME,
-        IDS;
+        NAME, IDS,
+        RV, RV_DEF;
 
         /**
          * Give back the enum value from the corresponding string.

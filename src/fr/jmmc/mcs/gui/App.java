@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.55 2010-01-14 13:03:04 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.56 2010-04-13 14:01:54 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.55  2010/01/14 13:03:04  bourgesl
+ * use Logger.isLoggable to avoid a lot of string.concat()
+ *
  * Revision 1.54  2009/10/07 15:58:34  lafrasse
  * Jalopization.
  *
@@ -223,7 +226,6 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 import java.awt.Container;
-import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -294,8 +296,8 @@ public abstract class App
     /** AboutBox */
     private static AboutBox _aboutBox = null;
 
-    /** Main frame of the application */
-    private static JFrame _applicationFrame = new JFrame();
+    /** Main frame of the application (singleton) */
+    private static JFrame _applicationFrame = null;
 
     /** Arguments */
     private static String[] _args;
@@ -449,7 +451,7 @@ public abstract class App
                 JOptionPane.ERROR_MESSAGE);
 
             // Show feedback report
-            new FeedbackReport(_applicationFrame, true, ex, true);
+            new FeedbackReport(getFrame(), true, ex, true);
         }
     }
 
@@ -571,7 +573,7 @@ public abstract class App
                 {
                     if (_applicationDataModel != null)
                     {
-                        new FeedbackReport(_applicationFrame, false, ex);
+                        new FeedbackReport(getFrame(), false, ex);
                     }
                 }
             };
@@ -812,12 +814,14 @@ public abstract class App
         init(_args);
 
         // Set JMenuBar
-        MainMenuBar mainMenuBar = new MainMenuBar(_applicationFrame);
-        _applicationFrame.setJMenuBar(mainMenuBar);
+        final JFrame frame = getFrame();
+
+        MainMenuBar mainMenuBar = new MainMenuBar(frame);
+        frame.setJMenuBar(mainMenuBar);
 
         // Set application frame common properties
-        _applicationFrame.pack();
-        _applicationFrame.setLocationRelativeTo(null);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
 
         // Close the splash screen if we have to
         if (_showSplashScreen == true)
@@ -890,8 +894,12 @@ public abstract class App
      *
      * @return application frame
      */
-    protected static Frame getFrame()
+    public static JFrame getFrame()
     {
+      if (_applicationFrame == null)
+      {
+        _applicationFrame = new JFrame();
+      }
         return _applicationFrame;
     }
 
@@ -900,9 +908,9 @@ public abstract class App
      *
      * @return application frame panel
      */
-    protected static Container getFramePanel()
+    public static Container getFramePanel()
     {
-        return _applicationFrame.getContentPane();
+        return getFrame().getContentPane();
     }
 
     /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.17 2010-04-08 08:40:50 bourgesl Exp $"
+ * "@(#) $Id: ALX.java,v 1.18 2010-04-13 14:00:00 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2010/04/08 08:40:50  bourgesl
+ * added parseHMS method that converts HMS to degrees without any range correction like parseRA. Tested intensively with aspro EditableStarResolverWidget
+ *
  * Revision 1.16  2010/02/18 11:02:30  mella
  * add logg and teff to the ld2ud outputs
  *
@@ -107,7 +110,7 @@ public class ALX
         double hs;
 
         // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
-        // Replace ':' by ' ', and remove trailing and leading pace
+        // Replace ':' by ' ', and remove trailing and leading space
         raHms     = raHms.replace(':', ' ');
         raHms     = raHms.trim();
 
@@ -175,7 +178,7 @@ public class ALX
         double ds;
 
         // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
-        // Replace ':' by ' ', and remove trailing and leading pace
+        // Replace ':' by ' ', and remove trailing and leading space
         decDms     = decDms.replace(':', ' ');
         decDms     = decDms.trim();
 

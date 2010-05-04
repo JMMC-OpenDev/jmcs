@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelUVMapService.java,v 1.4 2010-02-18 15:51:18 bourgesl Exp $"
+ * "@(#) $Id: ModelUVMapService.java,v 1.5 2010-05-04 15:40:58 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/18 15:51:18  bourgesl
+ * added parameter argument validation and propagation (illegal argument exception)
+ *
  * Revision 1.3  2010/02/04 14:43:36  bourgesl
  * added UVMapData bean to keep several data related to uv map in order to conserve the value / color mapping and uv area while zooming on uv map
  *
@@ -282,7 +285,7 @@ public final class ModelUVMapService {
 
   /**
    * Return the frequencies in rad-1
-   * @param nb number of sampled values
+   * @param nbSamples number of sampled values
    * @param min minimum frequency value
    * @param max maximum frequency value
    * @return sampled frequencies in rad-1

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: CircleModelFunction.java,v 1.1 2010-02-18 15:49:41 bourgesl Exp $"
+ * "@(#) $Id: CircleModelFunction.java,v 1.2 2010-05-11 16:10:06 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/02/18 15:49:41  bourgesl
+ * new models (circle, elongated disk)
+ *
  */
 package fr.jmmc.mcs.model.function;
 
@@ -92,7 +95,7 @@ public final class CircleModelFunction extends AbstractModelFunction {
    * @param ufreq U frequencies in rad-1
    * @param vfreq V frequencies in rad-1
    * @param model model instance
-   * @param complex visibility array
+   * @param vis complex visibility array
    * @throws IllegalArgumentException if a parameter value is invalid !
    */
   public void compute(final double[] ufreq, final double[] vfreq, final Model model, final Complex[] vis) {
@@ -134,12 +137,12 @@ public final class CircleModelFunction extends AbstractModelFunction {
    * @param ufreq U frequency in rad-1
    * @param vfreq V frequency in rad-1
    * @param flux_weight intensity coefficient
-   * @param x x coordinate of the punctual object given in milliarcsecond
-   * @param y y coordinate of the punctual object given in milliarcsecond
-   * @param diameter diameter of the uniform disk object given in milliarcsecond
+   * @param x x coordinate of the object given in milliarcsecond
+   * @param y y coordinate of the object given in milliarcsecond
+   * @param diameter diameter of the circle model given in milliarcsecond
    * @return complex Fourier transform value
    */
-  private final static Complex compute_circle(final double ufreq, final double vfreq, final double flux_weight,
+  protected final static Complex compute_circle(final double ufreq, final double vfreq, final double flux_weight,
                                               final double x, final double y, final double diameter) {
 
     // norm of uv :

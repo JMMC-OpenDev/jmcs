@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.9 2010-02-18 15:51:18 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.10 2010-05-11 16:09:48 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/02/18 15:51:18  bourgesl
+ * added parameter argument validation and propagation (illegal argument exception)
+ *
  * Revision 1.8  2010/02/18 09:59:37  bourgesl
  * new ModelDefinition interface to gather model and parameter types
  *
@@ -39,7 +42,9 @@ package fr.jmmc.mcs.model;
 import fr.jmmc.mcs.model.function.CircleModelFunction;
 import fr.jmmc.mcs.model.function.DiskModelFunction;
 import fr.jmmc.mcs.model.function.ElongatedDiskModelFunction;
+import fr.jmmc.mcs.model.function.FlattenedDiskModelFunction;
 import fr.jmmc.mcs.model.function.PunctModelFunction;
+import fr.jmmc.mcs.model.function.RingModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import fr.jmmc.mcs.model.targetmodel.Parameter;
 import java.util.Arrays;
@@ -89,14 +94,24 @@ public final class ModelManager {
    * Register model functions
    */
   private void registerFunctions() {
+    // TODO : discuss and decide how to manage model variants (elongated, flattened)
+
+    // 0 - background
+    // TODO : background model
     // 1 - Punct Model :
     this.addFunction(new PunctModelFunction());
     // 2 - Disk Models :
     this.addFunction(new DiskModelFunction());
     // 2.1 Elongated Disk Model :
     this.addFunction(new ElongatedDiskModelFunction());
-    // 3 - Circle Model :
+    // 2.2 Flattened Disk Model :
+    this.addFunction(new FlattenedDiskModelFunction());
+    // 3 - Circle Model (unresolved ring) :
     this.addFunction(new CircleModelFunction());
+    // 3.1 - Ring Model :
+    this.addFunction(new RingModelFunction());
+
+    // TODO : gaussian, limb darkened ...
 
     if (logger.isLoggable(Level.FINE)) {
       logger.fine("functions : " + modelFunctions);
@@ -387,6 +402,8 @@ public final class ModelManager {
    * try to tell if the data of the old parameter can be copied to new parameter
    * according to both names. If they ends with the same string after the '_'
    * character, then this method returns true.
+   * @param oldParamType parameter type of the old parameter
+   * @param newParamType parameter type of the new parameter
    * @return true if both string ends with same keyword, else returns false
    */
   private static boolean matchType(String oldParamType, String newParamType) {
@@ -404,7 +421,7 @@ public final class ModelManager {
 
   /**
    * Generate the unique identifier [model type + digit] like 'disk'1 ...
-   * @param type model type of the new model
+   * @param newModel given model
    * @param models list of existing models to check the new identifier
    * @return unique model index
    */
@@ -413,8 +430,8 @@ public final class ModelManager {
   }
 
   /**
-   * Generate the unique identifier [model type + digit] like 'disk'1 ...
-   * @param type model type of the new model
+   * Generate the unique identifier [model type + digit] like 'disk'1 to the given model ...
+   * @param newModel given model
    * @param models list of existing models to check the new identifier
    * @param skipModel model to skip in the model traversal
    * @return unique model index
@@ -442,8 +459,9 @@ public final class ModelManager {
   /**
    * Return the maximum value of the model unique index found recursively using the given model and child models
    * @param model model to traverse
-   * @param idx current maximum value of the model unique index
+   * @param prevIdx current maximum value of the model unique index
    * @param skipModel model to skip in the model traversal
+   * @return maximum value of the model unique index
    */
   private static int findModelMaxUniqueIndex(final Model model, final int prevIdx, final Model skipModel) {
     // recompute unique index from model name :

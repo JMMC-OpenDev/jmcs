@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: EditableRhoThetaParameter.java,v 1.3 2010-05-11 12:37:20 bourgesl Exp $"
+ * "@(#) $Id: EditableRhoThetaParameter.java,v 1.4 2010-05-11 12:55:55 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/05/11 12:37:20  bourgesl
+ * added the unit for theta (deg)
+ *
  * Revision 1.2  2010/02/19 16:11:38  bourgesl
  * removed Override annotations
  *
@@ -46,7 +49,9 @@ public final class EditableRhoThetaParameter implements Editable {
 
     /**
      * Custom constructor
-     * @param name name of the column
+     * @param name name of the parameter
+     * @param type type of the parameter
+     * @param units units of the parameter
      */
     private Type(final String name, final String type, final String units) {
       this.name = name;
@@ -102,6 +107,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Return the model
+   * @return model
    */
   public Model getModel() {
     return model;
@@ -109,6 +115,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Indicates if the parameter is a shared parameter
+   * @return true if the parameter is a shared parameter
    */
   public boolean isShared() {
     return false;
@@ -116,6 +123,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Indicates if the parameter is a position
+   * @return true if the parameter is a position
    */
   public boolean isPosition() {
     return true;
@@ -126,6 +134,7 @@ public final class EditableRhoThetaParameter implements Editable {
   /* --- read-only parameter attributes ------------------------------------- */
   /**
    * Gets the value of the name property.
+   * @return value of the name property
    */
   public String getName() {
     return this.name;
@@ -133,6 +142,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Gets the value of the type property.
+   * @return value of the type property
    */
   public String getType() {
     return this.type.getType();
@@ -140,6 +150,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Gets the value of the units property.
+   * @return value of the units property
    */
   public String getUnits() {
     return this.type.getUnits();
@@ -148,6 +159,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Gets the value of the value property.
+   * @return value property
    */
   public double getValue() {
     final double x = paramX.getValue();
@@ -175,7 +187,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Sets the value of the value property.
-   *
+   * @param value value to set
    */
   public void setValue(final double value) {
     if (logger.isLoggable(Level.FINE)) {
@@ -217,6 +229,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Gets the value of the minValue property.
+   * @return null
    */
   public Double getMinValue() {
     return null;
@@ -224,6 +237,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Gets the value of the maxValue property.
+   * @return null
    */
   public Double getMaxValue() {
     return null;
@@ -231,6 +245,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Gets the value of the scale property.
+   * @return null
    */
   public Double getScale() {
     return null;
@@ -238,6 +253,7 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Gets the value of the hasFixedValue property.
+   * @return false
    */
   public boolean isHasFixedValue() {
     return false;
@@ -245,24 +261,28 @@ public final class EditableRhoThetaParameter implements Editable {
 
   /**
    * Sets the value of the minValue property.
+   * @param value value to set
    */
   public void setMinValue(Double value) {
   }
 
   /**
    * Sets the value of the maxValue property.
+   * @param value value to set
    */
   public void setMaxValue(Double value) {
   }
 
   /**
    * Sets the value of the scale property.
+   * @param value value to set
    */
   public void setScale(Double value) {
   }
 
   /**
    * Sets the value of the hasFixedValue property.
+   * @param value value to set
    */
   public void setHasFixedValue(boolean value) {
   }

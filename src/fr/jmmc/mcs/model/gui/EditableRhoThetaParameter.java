@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: EditableRhoThetaParameter.java,v 1.2 2010-02-19 16:11:38 bourgesl Exp $"
+ * "@(#) $Id: EditableRhoThetaParameter.java,v 1.3 2010-05-11 12:37:20 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/02/19 16:11:38  bourgesl
+ * removed Override annotations
+ *
  * Revision 1.1  2010/02/19 16:02:52  bourgesl
  * new Editable interface to represent parameter in the table model
  * new EditableRhoThetaParameter to implement rho/theta conversions
@@ -39,7 +42,7 @@ public final class EditableRhoThetaParameter implements Editable {
   public enum Type {
 
     RHO("rho", "rho", "mas"),
-    THETA("theta", "theta", "");
+    THETA("theta", "theta", "deg");
 
     /**
      * Custom constructor

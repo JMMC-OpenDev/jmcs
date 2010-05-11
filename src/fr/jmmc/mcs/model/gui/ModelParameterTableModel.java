@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.7 2010-03-30 12:06:36 bourgesl Exp $"
+ * "@(#) $Id: ModelParameterTableModel.java,v 1.8 2010-05-11 12:55:55 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2010/03/30 12:06:36  bourgesl
+ * do not display rho/theta for the first model : use X/Y instead (read only)
+ *
  * Revision 1.6  2010/02/19 16:02:52  bourgesl
  * new Editable interface to represent parameter in the table model
  * new EditableRhoThetaParameter to implement rho/theta conversions
@@ -81,6 +84,8 @@ public final class ModelParameterTableModel extends AbstractTableModel {
     /**
      * Custom constructor
      * @param name name of the column
+     * @param type class of any column value
+     * @param editable flag to indicate if the column values are editable
      */
     private ColumnDef(final String name, final Class<?> type, final boolean editable) {
       this.name = name;
@@ -236,6 +241,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
 
   /**
    * Add the given parameter
+   * @param model the model containing the given parameter
    * @param parameter parameter to add
    * @param shared shared parameter flag
    */

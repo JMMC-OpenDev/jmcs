@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AbstractModelFunction.java,v 1.4 2010-02-18 15:51:18 bourgesl Exp $"
+ * "@(#) $Id: AbstractModelFunction.java,v 1.5 2010-05-11 16:09:30 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/18 15:51:18  bourgesl
+ * added parameter argument validation and propagation (illegal argument exception)
+ *
  * Revision 1.3  2010/02/16 14:43:06  bourgesl
  * use the model.getParameter(type) instead of ModelManager
  *
@@ -33,29 +36,7 @@ public abstract class AbstractModelFunction implements ModelFunction {
   /** Class logger */
   protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
           className_);
-  /** milli arc second Unit */
-  public final static String UNIT_MAS = "mas";
 
-  /* double floating precision constants (java) */
-  /**
-   * @see Double.MIN_NORMAL
-   * A constant holding the smallest positive normal value of type
-   * {@code double}, 2<sup>-1022</sup>.  It is equal to the
-   * hexadecimal floating-point literal {@code 0x1.0p-1022} and also
-   * equal to {@code Double.longBitsToDouble(0x0010000000000000L)}.
-   *
-   * @since 1.6
-   */
-  public static final double DBL_MIN_NORMAL = 0x1.0p-1022; // 2.2250738585072014E-308
-  /**
-   * @see Double.MIN_VALUE
-   * A constant holding the smallest positive nonzero value of type
-   * <code>double</code>, 2<sup>-1074</sup>. It is equal to the
-   * hexadecimal floating-point literal
-   * <code>0x0.0000000000001P-1022</code> and also equal to
-   * <code>Double.longBitsToDouble(0x1L)</code>.
-   */
-  public static final double DBL_MIN_VALUE = 0x0.0000000000001P-1022; // 4.9e-324
   /* mathematical constants */
   /** _LPB_PI = value of the variable PI, to avoid any corruption */
   public final static double PI = 3.141592653589793238462643383279503D;
@@ -144,6 +125,11 @@ public abstract class AbstractModelFunction implements ModelFunction {
    *  Returns complex factor to apply in the Fourier transform at frequencies
    *  (UFREQ,VFREQ) to account for a shift (X,Y) in image space.
    *   X, Y are given in milliarcseconds.
+   * @param ufreq UFREQ
+   * @param vfreq VFREQ
+   * @param x X (mas)
+   * @param y Y (mas)
+   * @return complex factor
    */
   protected static final Complex shift(final double ufreq, final double vfreq, final double x, final double y) {
     final double phase = 2D * PI * MAS2RAD * (x * ufreq + y * vfreq);
@@ -176,6 +162,12 @@ public abstract class AbstractModelFunction implements ModelFunction {
    * so, ROTATION = 90 - beta                                  ---|--->East
    * the positive x-semi-axis being the Est direction, and        |
    * the positive y-semi-axis beeing the North direction.         |
+   * @param ufreq UFREQ
+   * @param vfreq VFREQ
+   * @param anamorphoseRatio t_ana = ratio of anamorphose, >0
+   * @param homothetieRatio t_homo = ratio of homothetie >0
+   * @param rotation rotation angle in degrees
+   * @return new spatial frequency UFREQ
    */
   protected static final double transformU(final double ufreq, final double vfreq,
                                            final double anamorphoseRatio, final double homothetieRatio, final double rotation) {
@@ -212,6 +204,11 @@ public abstract class AbstractModelFunction implements ModelFunction {
    * so, ROTATION = 90 - beta                                  ---|--->East
    * the positive x-semi-axis being the Est direction, and        |
    * the positive y-semi-axis beeing the North direction.         |
+   * @param ufreq UFREQ
+   * @param vfreq VFREQ
+   * @param homothetieRatio t_homo = ratio of homothetie >0
+   * @param rotation rotation angle in degrees
+   * @return new spatial frequency VFREQ
    */
   protected static final double transformV(final double ufreq, final double vfreq,
                                            final double homothetieRatio, final double rotation) {

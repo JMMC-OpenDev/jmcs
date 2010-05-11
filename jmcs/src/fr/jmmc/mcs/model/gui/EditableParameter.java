@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: EditableParameter.java,v 1.1 2010-02-19 16:02:52 bourgesl Exp $"
+ * "@(#) $Id: EditableParameter.java,v 1.2 2010-05-11 12:55:55 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/02/19 16:02:52  bourgesl
+ * new Editable interface to represent parameter in the table model
+ * new EditableRhoThetaParameter to implement rho/theta conversions
+ *
  */
 package fr.jmmc.mcs.model.gui;
 
@@ -41,6 +45,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Return the model
+   * @return model
    */
   public Model getModel() {
     return model;
@@ -48,6 +53,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Indicates if the parameter is a shared parameter
+   * @return true if the parameter is a shared parameter
    */
   public boolean isShared() {
     return shared;
@@ -55,6 +61,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Indicates if the parameter is a position
+   * @return true if the parameter is a position
    */
   public boolean isPosition() {
     final String type = getType();
@@ -67,6 +74,7 @@ public final class EditableParameter implements Editable {
   /* --- read-only parameter attributes ------------------------------------- */
   /**
    * Gets the value of the name property.
+   * @return value of the name property
    */
   public String getName() {
     return this.parameter.getName();
@@ -74,6 +82,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Gets the value of the type property.
+   * @return value of the type property
    */
   public String getType() {
     return this.parameter.getType();
@@ -81,6 +90,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Gets the value of the units property.
+   * @return value of the units property
    */
   public String getUnits() {
     return this.parameter.getUnits();
@@ -89,6 +99,7 @@ public final class EditableParameter implements Editable {
   /* --- writable parameter attributes -------------------------------------- */
   /**
    * Gets the value of the value property.
+   * @return value property
    */
   public double getValue() {
     return this.parameter.getValue();
@@ -96,6 +107,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Gets the value of the minValue property.
+   * @return minValue property
    */
   public Double getMinValue() {
     return this.parameter.getMinValue();
@@ -103,6 +115,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Gets the value of the maxValue property.
+   * @return maxValue property
    */
   public Double getMaxValue() {
     return this.parameter.getMaxValue();
@@ -110,6 +123,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Gets the value of the scale property.
+   * @return scale property
    */
   public Double getScale() {
     return this.parameter.getScale();
@@ -117,6 +131,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Gets the value of the hasFixedValue property.
+   * @return hasFixedValue property
    */
   public boolean isHasFixedValue() {
     return this.parameter.isHasFixedValue();
@@ -124,7 +139,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Sets the value of the value property.
-   *
+   * @param value value to set
    */
   public void setValue(double value) {
     this.parameter.setValue(value);
@@ -132,6 +147,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Sets the value of the minValue property.
+   * @param value value to set
    */
   public void setMinValue(Double value) {
     this.parameter.setMinValue(value);
@@ -139,6 +155,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Sets the value of the maxValue property.
+   * @param value value to set
    */
   public void setMaxValue(Double value) {
     this.parameter.setMaxValue(value);
@@ -146,6 +163,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Sets the value of the scale property.
+   * @param value value to set
    */
   public void setScale(Double value) {
     this.parameter.setScale(value);
@@ -153,6 +171,7 @@ public final class EditableParameter implements Editable {
 
   /**
    * Sets the value of the hasFixedValue property.
+   * @param value value to set
    */
   public void setHasFixedValue(boolean value) {
     this.parameter.setHasFixedValue(value);

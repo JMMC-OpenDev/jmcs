@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PunctModelFunction.java,v 1.6 2010-05-11 16:10:06 bourgesl Exp $"
+ * "@(#) $Id: PunctModelFunction.java,v 1.7 2010-05-12 11:34:42 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/05/11 16:10:06  bourgesl
+ * added new models + javadoc
+ *
  * Revision 1.5  2010/02/18 15:51:18  bourgesl
  * added parameter argument validation and propagation (illegal argument exception)
  *
@@ -113,7 +116,7 @@ public final class PunctModelFunction extends AbstractModelFunction {
 
     // Compute :
     for (int i = 0; i < size; i++) {
-      vis[i] = vis[i].add(compute_punct(ufreq[i], vfreq[i], flux_weight, x, y));
+      vis[i] = vis[i].add(compute(ufreq[i], vfreq[i], flux_weight, x, y));
 
       // fast interrupt :
       if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
@@ -125,7 +128,7 @@ public final class PunctModelFunction extends AbstractModelFunction {
   /**
    * Compute the punct model function for a single UV point
    *
-   * return flux_weight * shift(ufreq, vfreq, x, y);
+   * return flux_weight * shift(ufreq, vfreq, x, y)
    *
    * @param ufreq U frequency in rad-1
    * @param vfreq V frequency in rad-1
@@ -134,7 +137,7 @@ public final class PunctModelFunction extends AbstractModelFunction {
    * @param y y coordinate of the object given in milliarcsecond
    * @return complex Fourier transform value
    */
-  protected final static Complex compute_punct(final double ufreq, final double vfreq, final double flux_weight, final double x, final double y) {
+  protected final static Complex compute(final double ufreq, final double vfreq, final double flux_weight, final double x, final double y) {
     return shift(ufreq, vfreq, x, y).multiply(flux_weight);
   }
 }

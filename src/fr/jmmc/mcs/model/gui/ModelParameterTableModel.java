@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.8 2010-05-11 12:55:55 bourgesl Exp $"
+ * "@(#) $Id: ModelParameterTableModel.java,v 1.9 2010-05-12 08:47:10 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/05/11 12:55:55  bourgesl
+ * javadoc only
+ *
  * Revision 1.7  2010/03/30 12:06:36  bourgesl
  * do not display rho/theta for the first model : use X/Y instead (read only)
  *
@@ -480,7 +483,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
    * Define the edit mode (X_Y or RHO_THETA)
    * @param editMode edit mode
    */
-  private void setEditMode(final EditMode editMode) {
+  public void setEditMode(final EditMode editMode) {
     this.editMode = editMode;
   }
 }

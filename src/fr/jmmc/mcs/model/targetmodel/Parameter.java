@@ -317,10 +317,19 @@ public class Parameter
     
 //--simple--preserve
 
-    @Override
-    public String toString() {
-      return "Parameter [" + this.name + " | " + this.type + "] = " + this.value;
-    }
+  /**
+   * Define the name and type to the same value
+   * @param value value to set
+   */
+  public void setNameAndType(final String value) {
+    this.name = value;
+    this.type = value;
+  }
+
+  @Override
+  public String toString() {
+    return "Parameter [" + this.name + " | " + this.type + "] = " + this.value;
+  }
 
 //--simple--preserve
 

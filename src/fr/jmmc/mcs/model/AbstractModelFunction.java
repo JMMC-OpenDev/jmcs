@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AbstractModelFunction.java,v 1.5 2010-05-11 16:09:30 bourgesl Exp $"
+ * "@(#) $Id: AbstractModelFunction.java,v 1.6 2010-05-17 15:54:50 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/05/11 16:09:30  bourgesl
+ * removed unused constants
+ *
  * Revision 1.4  2010/02/18 15:51:18  bourgesl
  * added parameter argument validation and propagation (illegal argument exception)
  *
@@ -21,29 +24,45 @@
  */
 package fr.jmmc.mcs.model;
 
+import fr.jmmc.mcs.model.function.math.PunctFunction;
+import fr.jmmc.mcs.model.function.math.Functions;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import fr.jmmc.mcs.model.targetmodel.Parameter;
 import org.apache.commons.math.complex.Complex;
 
 /**
  *
+ * @param <T> type of the function class
+ *
  * @author bourgesl
  */
-public abstract class AbstractModelFunction implements ModelFunction {
+public abstract class AbstractModelFunction<T extends PunctFunction> implements ModelFunction {
 
   /** Class Name */
-  private static final String className_ = "fr.jmmc.mcs.model.ModelFunction";
+  private final static String className_ = "fr.jmmc.mcs.model.ModelFunction";
   /** Class logger */
-  protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
+  protected final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
           className_);
 
-  /* mathematical constants */
-  /** _LPB_PI = value of the variable PI, to avoid any corruption */
-  public final static double PI = 3.141592653589793238462643383279503D;
-  /** _LPB_DEG2RAD = degree to radian conversion factor */
-  public final static double DEG2RAD = PI / 180D;
-  /** _LPB_MAS2RAD = milliarcsecond to radian conversion factor */
-  public final static double MAS2RAD = DEG2RAD / 3600D / 1000D;
+  /** variant enumeration (standard, elongated and flattened models) */
+  public enum ModelVariant {
+
+    Standard,
+    Elongated,
+    Flattened;
+  }
+
+  /* specific parameters for elongated models */
+  /** Parameter type for the parameter elong_ratio */
+  public final static String PARAM_ELONG_RATIO = "elong_ratio";
+  /** Parameter type for the parameter major_axis_pos_angle */
+  public final static String PARAM_MAJOR_AXIS_ANGLE = "major_axis_pos_angle";
+
+  /* specific parameters for flattened models */
+  /** Parameter type for the parameter flatten_ratio */
+  public final static String PARAM_FLATTEN_RATIO = "flatten_ratio";
+  /** Parameter type for the parameter minor_axis_pos_angle */
+  public final static String PARAM_MINOR_AXIS_ANGLE = "minor_axis_pos_angle";
 
   /**
    * Constructor
@@ -67,28 +86,131 @@ public abstract class AbstractModelFunction implements ModelFunction {
     Parameter param;
 
     param = new Parameter();
-    param.setName(PARAM_FLUX_WEIGHT);
-    param.setType(PARAM_FLUX_WEIGHT);
-    param.setMinValue(0D);
+    param.setNameAndType(PARAM_FLUX_WEIGHT);
     param.setValue(1D);
     model.getParameters().add(param);
 
     param = new Parameter();
-    param.setName(PARAM_X);
-    param.setType(PARAM_X);
+    param.setNameAndType(PARAM_X);
     param.setValue(0D);
     param.setUnits(UNIT_MAS);
     model.getParameters().add(param);
 
     param = new Parameter();
-    param.setName(PARAM_Y);
-    param.setType(PARAM_Y);
+    param.setNameAndType(PARAM_Y);
     param.setValue(0D);
     param.setUnits(UNIT_MAS);
     model.getParameters().add(param);
 
     return model;
   }
+
+  protected void addPositiveParameter(final Model model, final String name) {
+    final Parameter param = new Parameter();
+    param.setNameAndType(name);
+    param.setMinValue(0D);
+    param.setValue(0D);
+    param.setUnits(UNIT_MAS);
+    model.getParameters().add(param);
+  }
+
+  protected void addRatioParameter(final Model model, final String name) {
+    final Parameter param = new Parameter();
+    param.setNameAndType(name);
+    param.setMinValue(1D);
+    param.setValue(1D);
+    model.getParameters().add(param);
+  }
+
+  protected void addAngleParameter(final Model model, final String name) {
+    final Parameter param = new Parameter();
+    param.setNameAndType(name);
+    param.setMinValue(0D);
+    param.setValue(0D);
+    param.setMaxValue(180D);
+    param.setUnits(UNIT_DEG);
+    model.getParameters().add(param);
+  }
+
+  /**
+   * Check the model parameters against their min/max bounds.
+   * For now, it uses the parameter user min/max (LITpro) instead using anything else
+   * @param model model to check
+   * @throws IllegalArgumentException
+   */
+  public final void validate(final Model model) {
+    for (Parameter param : model.getParameters()) {
+
+      final double value = param.getValue();
+
+      if (param.getMinValue() != null && value < param.getMinValue().doubleValue()) {
+        createParameterException(param.getType(), model, "< " + param.getMinValue().doubleValue());
+      }
+
+      if (param.getMaxValue() != null && value > param.getMaxValue().doubleValue()) {
+        createParameterException(param.getType(), model, "> " + param.getMaxValue().doubleValue());
+      }
+    }
+  }
+
+  /**
+   * Compute the model function for the given Ufreq, Vfreq arrays and model parameters
+   *
+   * Note : the visibility array is given to add this model contribution to the total visibility
+   *
+   * @param ufreq U frequencies in rad-1
+   * @param vfreq V frequencies in rad-1
+   * @param model model instance
+   * @param vis complex visibility array
+   */
+  public final void compute(final double[] ufreq, final double[] vfreq, final Model model, final Complex[] vis) {
+
+    // check model parameters :
+    validate(model);
+
+    /** Get the current thread to check if the computation is interrupted */
+    final Thread currentThread = Thread.currentThread();
+
+    final int size = ufreq.length;
+
+    // this step indicates when the thread.isInterrupted() is called in the for loop
+    final int stepInterrupt = 1 + size / 20;
+
+    // Get parameters to fill the function context :
+    final T function = createFunction(model);
+
+    // Compute :
+    for (int i = 0; i < size; i++) {
+      vis[i] = vis[i].add(compute(ufreq[i], vfreq[i], function));
+
+      // fast interrupt :
+      if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
+        return;
+      }
+    }
+  }
+
+  /**
+   * Compute the model function at a single Ufreq and Vfreq
+   *
+   * return function.computeWeight(ufreq, vfreq) * shift(ufreq, vfreq, x, y)
+   *
+   * @param ufreq U frequency in rad-1
+   * @param vfreq V frequency in rad-1
+   * @param function model function to compute
+   * @return complex Fourier transform value
+   */
+  protected final Complex compute(final double ufreq, final double vfreq, final T function) {
+    return Functions.shift(ufreq, vfreq, function.getX(), function.getY(), function.computeWeight(ufreq, vfreq));
+  }
+
+  /**
+   * Create the computation function for the given model :
+   * Get model parameters to fill the function context
+   * @param model model instance
+   * @return model function
+   */
+  protected abstract T createFunction(final Model model);
 
   /**
    * Return the parameter value of the given type among the parameters of the given model
@@ -113,108 +235,9 @@ public abstract class AbstractModelFunction implements ModelFunction {
    * @throws IllegalArgumentException
    */
   protected static void createParameterException(final String type, final Model model, final String message) throws IllegalArgumentException {
+    // Find the parameter for the given type in the model parameter list :
     final Parameter parameter = model.getParameter(type);
 
     throw new IllegalArgumentException(parameter.getName() + " [" + parameter.getValue() + "] " + message + " not allowed in the model [" + model.getName() + "] !");
-  }
-
-  /* computation utility methods */
-  /**
-   * shift(ufreq, vfreq, x, y)
-   *
-   *  Returns complex factor to apply in the Fourier transform at frequencies
-   *  (UFREQ,VFREQ) to account for a shift (X,Y) in image space.
-   *   X, Y are given in milliarcseconds.
-   * @param ufreq UFREQ
-   * @param vfreq VFREQ
-   * @param x X (mas)
-   * @param y Y (mas)
-   * @return complex factor
-   */
-  protected static final Complex shift(final double ufreq, final double vfreq, final double x, final double y) {
-    final double phase = 2D * PI * MAS2RAD * (x * ufreq + y * vfreq);
-    return new Complex(Math.cos(phase), -Math.sin(phase));
-  }
-
-  /**
-   * Return the new spatial frequency U
-   * transform(ufreq, vfreq, t_ana, t_homo, rotation)
-   *
-   * Returns the new spatial frequencies when the object has got geometrical
-   * transformations, successively a rotation, an anamorphose and a homothetie.
-   * (u,v)--> Transpose(Inverse(T))(u,v), with matrix T = HAR;
-   * Inverse(R)= |cos(beta) -sin(beta)|
-   *             |sin(beta)  cos(beta)|   beta angle in degrees
-   *   beta is the trigonometric angle
-   *       |y
-   *       |
-   *    ---|---> x    beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
-   *       |
-   *       |
-   *
-   * Inverse(A)= |t_ana 0|
-   *             |0     1|  t_ana = ratio of anamorphose, >0
-   * Inverse(H)= |t_homo   0|
-   *             |0   t_homo|  t_homo = ratio of homothetie >0
-   *
-   * The angle ROTATION is the astronomical position angle,       |North
-   * equal to 0 or 180 for x=0, and  90 or 270 for y=0.           |
-   * so, ROTATION = 90 - beta                                  ---|--->East
-   * the positive x-semi-axis being the Est direction, and        |
-   * the positive y-semi-axis beeing the North direction.         |
-   * @param ufreq UFREQ
-   * @param vfreq VFREQ
-   * @param anamorphoseRatio t_ana = ratio of anamorphose, >0
-   * @param homothetieRatio t_homo = ratio of homothetie >0
-   * @param rotation rotation angle in degrees
-   * @return new spatial frequency UFREQ
-   */
-  protected static final double transformU(final double ufreq, final double vfreq,
-                                           final double anamorphoseRatio, final double homothetieRatio, final double rotation) {
-
-    final double angle = DEG2RAD * (90D - rotation);
-
-    return ufreq * (Math.cos(angle) * anamorphoseRatio * homothetieRatio) +
-            vfreq * (Math.sin(angle) * anamorphoseRatio * homothetieRatio);
-  }
-
-  /**
-   * Return the new spatial frequency V
-   * transform(ufreq, vfreq, t_ana, t_homo, rotation)
-   *
-   * Returns the new spatial frequencies when the object has got geometrical
-   * transformations, successively a rotation, an anamorphose and a homothetie.
-   * (u,v)--> Transpose(Inverse(T))(u,v), with matrix T = HAR;
-   * Inverse(R)= |cos(beta) -sin(beta)|
-   *             |sin(beta)  cos(beta)|   beta angle in degrees
-   *   beta is the trigonometric angle
-   *       |y
-   *       |
-   *    ---|---> x    beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
-   *       |
-   *       |
-   *
-   * Inverse(A)= |t_ana 0|
-   *             |0     1|  t_ana = ratio of anamorphose, >0
-   * Inverse(H)= |t_homo   0|
-   *             |0   t_homo|  t_homo = ratio of homothetie >0
-   *
-   * The angle ROTATION is the astronomical position angle,       |North
-   * equal to 0 or 180 for x=0, and  90 or 270 for y=0.           |
-   * so, ROTATION = 90 - beta                                  ---|--->East
-   * the positive x-semi-axis being the Est direction, and        |
-   * the positive y-semi-axis beeing the North direction.         |
-   * @param ufreq UFREQ
-   * @param vfreq VFREQ
-   * @param homothetieRatio t_homo = ratio of homothetie >0
-   * @param rotation rotation angle in degrees
-   * @return new spatial frequency VFREQ
-   */
-  protected static final double transformV(final double ufreq, final double vfreq,
-                                           final double homothetieRatio, final double rotation) {
-
-    final double angle = DEG2RAD * (90D - rotation);
-
-    return -ufreq * (Math.sin(angle) * homothetieRatio) + vfreq * (Math.cos(angle) * homothetieRatio);
   }
 }

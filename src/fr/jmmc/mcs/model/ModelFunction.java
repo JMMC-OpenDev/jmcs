@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelFunction.java,v 1.4 2010-02-18 15:51:18 bourgesl Exp $"
+ * "@(#) $Id: ModelFunction.java,v 1.5 2010-05-17 16:01:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/02/18 15:51:18  bourgesl
+ * added parameter argument validation and propagation (illegal argument exception)
+ *
  * Revision 1.3  2010/02/18 09:59:37  bourgesl
  * new ModelDefinition interface to gather model and parameter types
  *
@@ -46,6 +49,13 @@ public interface ModelFunction extends ModelDefinition {
   public Model newModel();
 
   /**
+   * Check the model parameters against their min/max bounds.
+   * @param model model to check
+   * @throws IllegalArgumentException
+   */
+  public void validate(final Model model);
+
+  /**
    * Compute the model function for the given U, V arrays and model parameters.
    *
    * Note : the visibility array is given to add this model contribution to the total visibility 
@@ -53,7 +63,7 @@ public interface ModelFunction extends ModelDefinition {
    * @param u U array in rad-1
    * @param v V array in rad-1
    * @param model model instance
-   * @param complex visibility array
+   * @param vis complex visibility array
    * @throws IllegalArgumentException if a parameter value is invalid !
    */
   public void compute(final double[] u, final double[] v, final Model model, final Complex[] vis);

@@ -1,30 +1,31 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RingModelFunction.java,v 1.1 2010-05-11 16:10:06 bourgesl Exp $"
+ * "@(#) $Id: RingModelFunction.java,v 1.2 2010-05-17 16:03:08 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/05/11 16:10:06  bourgesl
+ * added new models + javadoc
+ *
  */
 package fr.jmmc.mcs.model.function;
 
-import cern.jet.math.Bessel;
 import fr.jmmc.mcs.model.AbstractModelFunction;
+import fr.jmmc.mcs.model.function.math.RingFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
-import fr.jmmc.mcs.model.targetmodel.Parameter;
-import org.apache.commons.math.complex.Complex;
 
 /**
  * This ModelFunction implements the ring model
  * 
  * @author bourgesl
  */
-public final class RingModelFunction extends AbstractModelFunction {
+public final class RingModelFunction extends AbstractModelFunction<RingFunction> {
 
   /* Model constants */
-  /** model description */
-  private static final String MODEL_DESC = "lpb_ring(ufreq, vfreq, flux_weight, x, y, diameter, width) \n\n" +
+  /** ring model description */
+  private static final String MODEL_RING_DESC = "lpb_ring(ufreq, vfreq, flux_weight, x, y, diameter, width) \n\n" +
           "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
           "given in 1/rad, of a normalized uniform ring with internal \n" +
           "diameter DIAMETER  (milliarcsecond) and external diameter DIAMETER+WIDTH \n" +
@@ -33,14 +34,85 @@ public final class RingModelFunction extends AbstractModelFunction {
           "The function returns an error if DIAMETER or WIDTH are negative.\n\n" +
           "UFREQ and VFREQ must be conformable. The returned array is always \n" +
           "complex and of dims dimsof(UFREQ,VFREQ). \n";
+  /** elongated ring model description */
+  private static final String MODEL_ERING_DESC = "lpb_elong_ring(ufreq, vfreq, flux_weight, x, y, minor_internal_diameter, \n" +
+          "elong_ratio, width, major_axis_pos_angle) \n\n" +
+          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
+          "given in 1/rad, of a normalized uniform elongated ring centered at coordinates (X,Y) (milliarcsecond). \n" +
+          "The sizes of the function in two orthogonal directions are given by the \n" +
+          "narrowest internal diameter (MINOR_INTERNAL_DIAMETER) and by the ratio \n" +
+          "ELONG_RATIO between the widest internal diameter and MINOR_INTERNAL_DIAMETER, \n" +
+          "in the same way as for an ellipse: \n\n" +
+          "ELONG_RATIO = MAJOR_INTERNAL_DIAMETER / MINOR_INTERNAL_DIAMETER. \n" +
+          "In the direction of MINOR_INTERNAL_DIAMETER, the external diameter is \n" +
+          "MINOR_INTERNAL_DIAMETER + WIDTH. In the direction of the widest internal diameter, \n" +
+          "the width is magnified by the ratio ELONG_RATIO, so that the external \n" +
+          "diameter is the elongated MAJOR_INTERNAL_DIAMETER + WIDTH * ELONG_RATIO. \n" +
+          "MAJOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
+          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
+          "|North \n" +
+          "|               For avoiding degenerescence, the domain of variation \n" +
+          "|--->East       of MAJOR_AXIS_POS_ANGLE is 180 degrees, \n" +
+          "|               for ex. from 0 to 180 degrees. \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
+          "The function returns an error if MINOR_INTERNAL_DIAMETER is negative or if ELONG_RATIO \n" +
+          "is smaller than 1. \n\n" +
+          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
+          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+  /** flattened ring model description */
+  private static final String MODEL_FRING_DESC = "lpb_flatten_ring(ufreq, vfreq, flux_weight, x, y, major_internal_diameter, \n" +
+          "flatten_ratio, width, minor_axis_pos_angle) \n\n" +
+          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
+          "given in 1/rad, of a normalized uniform flattened ring centered at coordinates (X,Y) (milliarcsecond). \n" +
+          "The sizes of the function in two orthogonal directions are given by the \n" +
+          "widest internal diameter (MAJOR_INTERNAL_DIAMETER) and by the ratio \n" +
+          "FLATTEN_RATIO between MAJOR_INTERNAL_DIAMETER and the narrowest internal diameter, \n" +
+          "in the same way as for an ellipse (the flattening is along the minor axis): \n\n" +
+          "FLATTEN_RATIO = MAJOR_INTERNAL_DIAMETER / MINOR_INTERNAL_DIAMETER. \n" +
+          "In the direction of MAJOR_INTERNAL_DIAMETER, the external diameter is \n" +
+          "MAJOR_INTERNAL_DIAMETER + WIDTH. In the direction of the narrowest internal diameter, \n" +
+          "the width is decreased by the ratio FLATTEN_RATIO, so that the external \n" +
+          "diameter is the flattened MINOR_INTERNAL_DIAMETER + WIDTH / FLATTEN_RATIO. \n" +
+          "MINOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
+          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
+          "|North \n" +
+          "|               For avoiding degenerescence, the domain of variation \n" +
+          "|--->East       of MAJOR_AXIS_POS_ANGLE is 180 degrees, \n" +
+          "|               for ex. from 0 to 180 degrees. \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
+          "The function returns an error if MAJOR_INTERNAL_DIAMETER is negative or if FLATTEN_RATIO \n" +
+          "is smaller than 1. \n\n" +
+          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
+          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
   /** Parameter type for the parameter width */
-  public static String PARAM_WIDTH = "width";
+  public final static String PARAM_WIDTH = "width";
+
+  /* specific parameters for elongated ring */
+  /** Parameter type for the parameter minor_internal_diameter */
+  public final static String PARAM_MINOR_INTERNAL_DIAMETER = "minor_internal_diameter";
+
+  /* specific parameters for flattened ring */
+  /** Parameter type for the parameter major_internal_diameter */
+  public final static String PARAM_MAJOR_INTERNAL_DIAMETER = "major_internal_diameter";
+
+  /* members */
+  /** model variant */
+  private final ModelVariant variant;
 
   /**
    * Constructor
    */
   public RingModelFunction() {
+    this(ModelVariant.Standard);
+  }
+
+  /**
+   * Constructor for the given variant
+   * @param variant the model variant
+   */
+  public RingModelFunction(final ModelVariant variant) {
     super();
+    this.variant = variant;
   }
 
   /**
@@ -48,7 +120,15 @@ public final class RingModelFunction extends AbstractModelFunction {
    * @return model type
    */
   public String getType() {
-    return MODEL_RING;
+    switch (this.variant) {
+      default:
+      case Standard:
+        return MODEL_RING;
+      case Elongated:
+        return MODEL_ERING;
+      case Flattened:
+        return MODEL_FRING;
+    }
   }
 
   /**
@@ -56,7 +136,15 @@ public final class RingModelFunction extends AbstractModelFunction {
    * @return model description
    */
   public String getDescription() {
-    return MODEL_DESC;
+    switch (this.variant) {
+      default:
+      case Standard:
+        return MODEL_RING_DESC;
+      case Elongated:
+        return MODEL_ERING_DESC;
+      case Flattened:
+        return MODEL_FRING_DESC;
+    }
   }
 
   /**
@@ -66,121 +154,66 @@ public final class RingModelFunction extends AbstractModelFunction {
   @Override
   public Model newModel() {
     final Model model = super.newModel();
-    model.setName(MODEL_RING);
-    model.setType(MODEL_RING);
-    model.setDesc(MODEL_DESC);
 
-    Parameter param;
+    model.setNameAndType(getType());
+    model.setDesc(getDescription());
 
-    param = new Parameter();
-    param.setName(PARAM_DIAMETER);
-    param.setType(PARAM_DIAMETER);
-    param.setMinValue(0D);
-    param.setValue(0D);
-    param.setUnits(UNIT_MAS);
-    model.getParameters().add(param);
-
-    param = new Parameter();
-    param.setName(PARAM_WIDTH);
-    param.setType(PARAM_WIDTH);
-    param.setMinValue(0D);
-    param.setValue(0D);
-    param.setUnits(UNIT_MAS);
-    model.getParameters().add(param);
+    switch (this.variant) {
+      default:
+      case Standard:
+        addPositiveParameter(model, PARAM_DIAMETER);
+        addPositiveParameter(model, PARAM_WIDTH);
+        break;
+      case Elongated:
+        addPositiveParameter(model, PARAM_MINOR_INTERNAL_DIAMETER);
+        addRatioParameter(model, PARAM_ELONG_RATIO);
+        addPositiveParameter(model, PARAM_WIDTH);
+        addAngleParameter(model, PARAM_MAJOR_AXIS_ANGLE);
+        break;
+      case Flattened:
+        addPositiveParameter(model, PARAM_MAJOR_INTERNAL_DIAMETER);
+        addRatioParameter(model, PARAM_FLATTEN_RATIO);
+        addPositiveParameter(model, PARAM_WIDTH);
+        addAngleParameter(model, PARAM_MINOR_AXIS_ANGLE);
+        break;
+    }
 
     return model;
   }
 
   /**
-   * Compute the model function for the given Ufreq, Vfreq arrays and model parameters
-   *
-   * Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ)
-   * given in 1/rad, of a normalized uniform circle of diameter at coordinates
-   * (X,Y) given in milliarcsecond.
-   *
-   * Note : the visibility array is given to add this model contribution to the total visibility
-   *
-   * @param ufreq U frequencies in rad-1
-   * @param vfreq V frequencies in rad-1
+   * Create the computation function for the given model :
+   * Get model parameters to fill the function context
    * @param model model instance
-   * @param vis complex visibility array
-   * @throws IllegalArgumentException if a parameter value is invalid !
+   * @return model function
    */
-  public void compute(final double[] ufreq, final double[] vfreq, final Model model, final Complex[] vis) {
+  protected RingFunction createFunction(final Model model) {
+    final RingFunction function = new RingFunction();
 
-    /** Get the current thread to check if the computation is interrupted */
-    final Thread currentThread = Thread.currentThread();
+    // Get parameters to fill the context (includes parameter validation) :
+    function.setX(getParameterValue(model, PARAM_X));
+    function.setY(getParameterValue(model, PARAM_Y));
+    function.setFluxWeight(getParameterValue(model, PARAM_FLUX_WEIGHT));
 
-    final int size = ufreq.length;
-
-    // this step indicates when the thread.isInterrupted() is called in the for loop
-    final int stepInterrupt = 1 + size / 25;
-
-    // Get parameters :
-    final double flux_weight = getParameterValue(model, PARAM_FLUX_WEIGHT);
-    final double x = getParameterValue(model, PARAM_X);
-    final double y = getParameterValue(model, PARAM_Y);
-    final double diameter = getParameterValue(model, PARAM_DIAMETER);
-    final double width = getParameterValue(model, PARAM_WIDTH);
-
-    if (diameter < 0d) {
-      createParameterException(PARAM_DIAMETER, model, "< 0");
+    // Variant specific code :
+    switch (this.variant) {
+      default:
+      case Standard:
+        function.setDiameter(getParameterValue(model, PARAM_DIAMETER));
+        break;
+      case Elongated:
+        function.setDiameter(getParameterValue(model, PARAM_MINOR_INTERNAL_DIAMETER));
+        function.setAxisRatio(getParameterValue(model, PARAM_ELONG_RATIO));
+        function.setPositionAngle(getParameterValue(model, PARAM_MAJOR_AXIS_ANGLE));
+        break;
+      case Flattened:
+        function.setDiameter(getParameterValue(model, PARAM_MAJOR_INTERNAL_DIAMETER));
+        function.setAxisRatio(1d / getParameterValue(model, PARAM_FLATTEN_RATIO));
+        function.setPositionAngle(getParameterValue(model, PARAM_MINOR_AXIS_ANGLE));
+        break;
     }
+    function.setWidth(getParameterValue(model, PARAM_WIDTH));
 
-    if (width < 0d) {
-      createParameterException(PARAM_WIDTH, model, "< 0");
-    }
-
-    // Compute :
-    for (int i = 0; i < size; i++) {
-      vis[i] = vis[i].add(compute_ring(ufreq[i], vfreq[i], flux_weight, x, y, diameter, width));
-
-      // fast interrupt :
-      if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
-        return;
-      }
-    }
-  }
-
-  /**
-   * Compute the ring model function for a single UV point
-   *
-   * @param ufreq U frequency in rad-1
-   * @param vfreq V frequency in rad-1
-   * @param flux_weight intensity coefficient
-   * @param x x coordinate of the object given in milliarcsecond
-   * @param y y coordinate of the object given in milliarcsecond
-   * @param diameter diameter of the ring model given in milliarcsecond
-   * @param width width of the ring model given in milliarcsecond
-   * @return complex Fourier transform value
-   */
-  private final static Complex compute_ring(final double ufreq, final double vfreq, final double flux_weight,
-                                            final double x, final double y, final double diameter, final double width) {
-
-    if (width == 0d) {
-      // Returns the Fourier transform of infinitely thin ring, i.e. a circle.
-      return CircleModelFunction.compute_circle(ufreq, vfreq, flux_weight, x, y, diameter);
-    }
-    if (diameter == 0d) {
-      // Returns the Fourier transform of a disk of radius width.
-      return DiskModelFunction.compute_disk(ufreq, vfreq, flux_weight, x, y, 2d * width);
-    }
-
-    // norm of uv :
-    final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
-
-    final double alpha = 1d + width * diameter / 2d;
-
-    final double r = PI * MAS2RAD * diameter * normUV / 2d;
-
-    double g;
-    if (r == 0D) {
-      g = 1D;
-    } else {
-      g = ((alpha * Bessel.j1(2d * alpha * r) / r) - (Bessel.j1(2d * r) / r)) / (alpha * alpha - 1d);
-    }
-    g *= flux_weight;
-
-    return shift(ufreq, vfreq, x, y).multiply(flux_weight * g);
+    return function;
   }
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PunctModelFunction.java,v 1.7 2010-05-12 11:34:42 bourgesl Exp $"
+ * "@(#) $Id: PunctModelFunction.java,v 1.8 2010-05-17 16:03:09 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2010/05/12 11:34:42  bourgesl
+ * refactoring
+ *
  * Revision 1.6  2010/05/11 16:10:06  bourgesl
  * added new models + javadoc
  *
@@ -28,15 +31,15 @@
 package fr.jmmc.mcs.model.function;
 
 import fr.jmmc.mcs.model.AbstractModelFunction;
+import fr.jmmc.mcs.model.function.math.PunctFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
-import org.apache.commons.math.complex.Complex;
 
 /**
  * This ModelFunction implements the punct model
  * 
  * @author bourgesl
  */
-public final class PunctModelFunction extends AbstractModelFunction {
+public final class PunctModelFunction extends AbstractModelFunction<PunctFunction> {
 
   /* Model constants */
   /** model description */
@@ -46,7 +49,7 @@ public final class PunctModelFunction extends AbstractModelFunction {
           "(X,Y) given in milliarcsecond. \n" +
           "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
           "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and of dims dimsof(UFREQ,VFREQ). \n";
+          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
 
   /**
    * Constructor
@@ -78,66 +81,27 @@ public final class PunctModelFunction extends AbstractModelFunction {
   @Override
   public Model newModel() {
     final Model model = super.newModel();
-    model.setName(MODEL_PUNCT);
-    model.setType(MODEL_PUNCT);
-    model.setDesc(MODEL_DESC);
+
+    model.setNameAndType(getType());
+    model.setDesc(getDescription());
 
     return model;
   }
 
   /**
-   * Compute the model function for the given Ufreq, Vfreq arrays and model parameters
-   *
-   * Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ)
-   * given in 1/rad, of a punctual object (Dirac function) at coordinates
-   * (X,Y) given in milliarcsecond.
-   *
-   * Note : the visibility array is given to add this model contribution to the total visibility
-   *
-   * @param ufreq U frequencies in rad-1
-   * @param vfreq V frequencies in rad-1
+   * Create the computation function for the given model :
+   * Get model parameters to fill the function context
    * @param model model instance
-   * @param vis complex visibility array
+   * @return model function
    */
-  public void compute(final double[] ufreq, final double[] vfreq, final Model model, final Complex[] vis) {
+  protected PunctFunction createFunction(final Model model) {
+    final PunctFunction function = new PunctFunction();
 
-    /** Get the current thread to check if the computation is interrupted */
-    final Thread currentThread = Thread.currentThread();
+    // Get parameters to fill the context (includes parameter validation) :
+    function.setX(getParameterValue(model, PARAM_X));
+    function.setY(getParameterValue(model, PARAM_Y));
+    function.setFluxWeight(getParameterValue(model, PARAM_FLUX_WEIGHT));
 
-    final int size = ufreq.length;
-
-    // this step indicates when the thread.isInterrupted() is called in the for loop
-    final int stepInterrupt = 1 + size / 25;
-
-    // Get parameters :
-    final double flux_weight = getParameterValue(model, PARAM_FLUX_WEIGHT);
-    final double x = getParameterValue(model, PARAM_X);
-    final double y = getParameterValue(model, PARAM_Y);
-
-    // Compute :
-    for (int i = 0; i < size; i++) {
-      vis[i] = vis[i].add(compute(ufreq[i], vfreq[i], flux_weight, x, y));
-
-      // fast interrupt :
-      if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
-        return;
-      }
-    }
-  }
-
-  /**
-   * Compute the punct model function for a single UV point
-   *
-   * return flux_weight * shift(ufreq, vfreq, x, y)
-   *
-   * @param ufreq U frequency in rad-1
-   * @param vfreq V frequency in rad-1
-   * @param flux_weight intensity coefficient
-   * @param x x coordinate of the object given in milliarcsecond
-   * @param y y coordinate of the object given in milliarcsecond
-   * @return complex Fourier transform value
-   */
-  protected final static Complex compute(final double ufreq, final double vfreq, final double flux_weight, final double x, final double y) {
-    return shift(ufreq, vfreq, x, y).multiply(flux_weight);
+    return function;
   }
 }

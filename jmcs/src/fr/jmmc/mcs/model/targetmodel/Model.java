@@ -219,6 +219,16 @@ public class Model
     }
     
 //--simple--preserve
+
+  /**
+   * Define the name and type to the same value
+   * @param value value to set
+   */
+  public void setNameAndType(final String value) {
+    this.name = value;
+    this.type = value;
+  }
+
   @Override
   public final String toString() {
     return this.name + " [" + this.type + "]";

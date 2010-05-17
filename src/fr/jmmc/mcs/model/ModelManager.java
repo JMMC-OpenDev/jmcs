@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.10 2010-05-11 16:09:48 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.11 2010-05-17 16:02:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2010/05/11 16:09:48  bourgesl
+ * added new models + javadoc
+ *
  * Revision 1.9  2010/02/18 15:51:18  bourgesl
  * added parameter argument validation and propagation (illegal argument exception)
  *
@@ -39,10 +42,9 @@
  */
 package fr.jmmc.mcs.model;
 
+import fr.jmmc.mcs.model.AbstractModelFunction.ModelVariant;
 import fr.jmmc.mcs.model.function.CircleModelFunction;
 import fr.jmmc.mcs.model.function.DiskModelFunction;
-import fr.jmmc.mcs.model.function.ElongatedDiskModelFunction;
-import fr.jmmc.mcs.model.function.FlattenedDiskModelFunction;
 import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.function.RingModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
@@ -103,13 +105,17 @@ public final class ModelManager {
     // 2 - Disk Models :
     this.addFunction(new DiskModelFunction());
     // 2.1 Elongated Disk Model :
-    this.addFunction(new ElongatedDiskModelFunction());
+    this.addFunction(new DiskModelFunction(ModelVariant.Elongated));
     // 2.2 Flattened Disk Model :
-    this.addFunction(new FlattenedDiskModelFunction());
+    this.addFunction(new DiskModelFunction(ModelVariant.Flattened));
     // 3 - Circle Model (unresolved ring) :
     this.addFunction(new CircleModelFunction());
     // 3.1 - Ring Model :
     this.addFunction(new RingModelFunction());
+    // 3.2 - Elongated Ring Model :
+    this.addFunction(new RingModelFunction(ModelVariant.Elongated));
+    // 3.3 - Flattened Ring Model :
+    this.addFunction(new RingModelFunction(ModelVariant.Flattened));
 
     // TODO : gaussian, limb darkened ...
 
@@ -176,10 +182,15 @@ public final class ModelManager {
    * @throws IllegalArgumentException if a parameter value is invalid !
    */
   public void validateModels(final List<Model> models) throws IllegalArgumentException {
-    final double[] zero = new double[]{0d};
+    if (models != null && !models.isEmpty()) {
+      ModelFunction mf;
+      for (Model model : models) {
+        mf = getModelFunction(model.getType());
 
-    // compute at UV = [0,0] to get possible validation exception :
-    computeModels(zero, zero, models);
+        // check model parameters :
+        mf.validate(model);
+      }
+    }
   }
 
   /**
@@ -201,7 +212,7 @@ public final class ModelManager {
 
       vis = new Complex[ufreq.length];
 
-      // initialize the visiblity array :
+      // initialize the visiblity array with the Complex Zero (immutable) :
       Arrays.fill(vis, Complex.ZERO);
 
       // fast interrupt :
@@ -210,12 +221,11 @@ public final class ModelManager {
       }
 
       // For now : no composite model supported (hierarchy) !
-
       ModelFunction mf;
       for (Model model : models) {
         mf = getModelFunction(model.getType());
 
-        // add the model contribution :
+        // add the model contribution to the current visibility array :
         mf.compute(ufreq, vfreq, model, vis);
 
         // fast interrupt :

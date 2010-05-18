@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.12 2010-05-18 12:43:06 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.13 2010-05-18 15:34:47 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2010/05/18 12:43:06  bourgesl
+ * added Gaussian Models
+ *
  * Revision 1.11  2010/05/17 16:02:03  bourgesl
  * added elongated/flattened ring
  * changed validate() implementation
@@ -50,6 +53,7 @@ import fr.jmmc.mcs.model.AbstractModelFunction.ModelVariant;
 import fr.jmmc.mcs.model.function.CircleModelFunction;
 import fr.jmmc.mcs.model.function.DiskModelFunction;
 import fr.jmmc.mcs.model.function.GaussianModelFunction;
+import fr.jmmc.mcs.model.function.LDDiskModelFunction;
 import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.function.RingModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
@@ -101,10 +105,9 @@ public final class ModelManager {
    * Register model functions
    */
   private void registerFunctions() {
-    // TODO : discuss and decide how to manage model variants (elongated, flattened)
-
     // 0 - background
     // TODO : background model
+
     // 1 - Punct Model :
     this.addFunction(new PunctModelFunction());
     // 2 - Disk Models :
@@ -123,12 +126,12 @@ public final class ModelManager {
     this.addFunction(new RingModelFunction(ModelVariant.Flattened));
     // 4 - Gaussian Models :
     this.addFunction(new GaussianModelFunction());
-    // 2.1 Elongated Gaussian Model :
+    // 4.1 Elongated Gaussian Model :
     this.addFunction(new GaussianModelFunction(ModelVariant.Elongated));
-    // 2.2 Flattened Gaussian Model :
+    // 4.2 Flattened Gaussian Model :
     this.addFunction(new GaussianModelFunction(ModelVariant.Flattened));
-
-    // TODO : limb darkened ...
+    // 5 - Limb darkened disk Models :
+    this.addFunction(new LDDiskModelFunction());
 
     if (logger.isLoggable(Level.FINE)) {
       logger.fine("functions : " + modelFunctions);

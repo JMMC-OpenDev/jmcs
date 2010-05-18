@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: GaussianModelFunction.java,v 1.1 2010-05-18 12:43:06 bourgesl Exp $"
+ * "@(#) $Id: GaussianModelFunction.java,v 1.2 2010-05-18 15:34:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/05/18 12:43:06  bourgesl
+ * added Gaussian Models
+ *
  *
  */
 package fr.jmmc.mcs.model.function;
@@ -178,7 +181,7 @@ public final class GaussianModelFunction extends AbstractModelFunction<GaussianF
   protected GaussianFunction createFunction(final Model model) {
     final GaussianFunction function = new GaussianFunction();
 
-    // Get parameters to fill the context (includes parameter validation) :
+    // Get parameters to fill the context :
     function.setX(getParameterValue(model, PARAM_X));
     function.setY(getParameterValue(model, PARAM_Y));
     function.setFluxWeight(getParameterValue(model, PARAM_FLUX_WEIGHT));

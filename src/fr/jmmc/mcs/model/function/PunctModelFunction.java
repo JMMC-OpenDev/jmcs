@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PunctModelFunction.java,v 1.8 2010-05-17 16:03:09 bourgesl Exp $"
+ * "@(#) $Id: PunctModelFunction.java,v 1.9 2010-05-18 15:34:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/05/17 16:03:09  bourgesl
+ * major refactoring to simplify the code and delegate the model computation to a Function class
+ *
  * Revision 1.7  2010/05/12 11:34:42  bourgesl
  * refactoring
  *
@@ -97,7 +100,7 @@ public final class PunctModelFunction extends AbstractModelFunction<PunctFunctio
   protected PunctFunction createFunction(final Model model) {
     final PunctFunction function = new PunctFunction();
 
-    // Get parameters to fill the context (includes parameter validation) :
+    // Get parameters to fill the context :
     function.setX(getParameterValue(model, PARAM_X));
     function.setY(getParameterValue(model, PARAM_Y));
     function.setFluxWeight(getParameterValue(model, PARAM_FLUX_WEIGHT));

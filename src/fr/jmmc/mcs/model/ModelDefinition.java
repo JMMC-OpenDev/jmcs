@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelDefinition.java,v 1.4 2010-05-17 15:55:16 bourgesl Exp $"
+ * "@(#) $Id: ModelDefinition.java,v 1.5 2010-05-18 12:43:06 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/05/17 15:55:16  bourgesl
+ * added elongated / flattened ring
+ *
  * Revision 1.3  2010/05/11 16:09:53  bourgesl
  * added new models + javadoc
  *
@@ -41,6 +44,12 @@ public interface ModelDefinition {
   public String MODEL_ERING = "elong_ring";
   /** flattened ring model type */
   public String MODEL_FRING = "flatten_ring";
+  /** gaussian model type */
+  public String MODEL_GAUSS = "gaussian";
+  /** elongated gaussian model type */
+  public String MODEL_EGAUSS = "elong_gaussian";
+  /** flattened gaussian model type */
+  public String MODEL_FGAUSS = "flatten_gaussian";
 
   /* Units */
   /** milli arc second Unit */

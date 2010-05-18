@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: CircleModelFunction.java,v 1.3 2010-05-17 16:03:08 bourgesl Exp $"
+ * "@(#) $Id: CircleModelFunction.java,v 1.4 2010-05-18 15:34:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/05/17 16:03:08  bourgesl
+ * major refactoring to simplify the code and delegate the model computation to a Function class
+ *
  * Revision 1.2  2010/05/11 16:10:06  bourgesl
  * added new models + javadoc
  *
@@ -85,7 +88,7 @@ public final class CircleModelFunction extends AbstractModelFunction<CircleFunct
   protected CircleFunction createFunction(final Model model) {
     final CircleFunction function = new CircleFunction();
 
-    // Get parameters to fill the context (includes parameter validation) :
+    // Get parameters to fill the context :
     function.setX(getParameterValue(model, PARAM_X));
     function.setY(getParameterValue(model, PARAM_Y));
     function.setFluxWeight(getParameterValue(model, PARAM_FLUX_WEIGHT));

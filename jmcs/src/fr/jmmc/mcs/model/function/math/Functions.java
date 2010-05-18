@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Functions.java,v 1.2 2010-05-18 12:43:06 bourgesl Exp $"
+ * "@(#) $Id: Functions.java,v 1.3 2010-05-18 15:34:47 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/05/18 12:43:06  bourgesl
+ * added Gaussian Models
+ *
  * Revision 1.1  2010/05/17 16:04:01  bourgesl
  * Added this static class to gather model compute functions
  *
@@ -58,10 +61,10 @@ public class Functions {
 
   /**
    * Return the new spatial frequency U
-   * transform(ufreq, vfreq, t_ana, t_homo, rotation)
+   * transform(ufreq, vfreq, t_ana, rotation)
    *
    * Returns the new spatial frequencies when the object has got geometrical
-   * transformations, successively a rotation, an anamorphose and a homothetie.
+   * transformations, successively a rotation and an anamorphose.
    * (u,v)--> Transpose(Inverse(T))(u,v), with matrix T = HAR;
    * Inverse(R)= |cos(beta) -sin(beta)|
    *             |sin(beta)  cos(beta)|   beta angle in degrees
@@ -74,8 +77,6 @@ public class Functions {
    *
    * Inverse(A)= |t_ana 0|
    *             |0     1|  t_ana = ratio of anamorphose, >0
-   * Inverse(H)= |t_homo   0|
-   *             |0   t_homo|  t_homo = ratio of homothetie >0
    *
    * The angle ROTATION is the astronomical position angle,       |North
    * equal to 0 or 180 for x=0, and  90 or 270 for y=0.           |
@@ -85,25 +86,23 @@ public class Functions {
    * @param ufreq UFREQ
    * @param vfreq VFREQ
    * @param anamorphoseRatio t_ana = ratio of anamorphose, >0
-   * @param homothetieRatio t_homo = ratio of homothetie >0
    * @param rotation rotation angle in degrees
    * @return new spatial frequency UFREQ
    */
   public static final double transformU(final double ufreq, final double vfreq,
-                                        final double anamorphoseRatio, final double homothetieRatio, final double rotation) {
+                                        final double anamorphoseRatio, final double rotation) {
 
     final double angle = DEG2RAD * (90D - rotation);
 
-    return ufreq * (Math.cos(angle) * anamorphoseRatio * homothetieRatio) +
-            vfreq * (Math.sin(angle) * anamorphoseRatio * homothetieRatio);
+    return ufreq * Math.cos(angle) * anamorphoseRatio + vfreq * Math.sin(angle) * anamorphoseRatio;
   }
 
   /**
    * Return the new spatial frequency V
-   * transform(ufreq, vfreq, t_ana, t_homo, rotation)
+   * transform(ufreq, vfreq, t_ana, rotation)
    *
    * Returns the new spatial frequencies when the object has got geometrical
-   * transformations, successively a rotation, an anamorphose and a homothetie.
+   * transformations, only a rotation.
    * (u,v)--> Transpose(Inverse(T))(u,v), with matrix T = HAR;
    * Inverse(R)= |cos(beta) -sin(beta)|
    *             |sin(beta)  cos(beta)|   beta angle in degrees
@@ -114,11 +113,6 @@ public class Functions {
    *       |
    *       |
    *
-   * Inverse(A)= |t_ana 0|
-   *             |0     1|  t_ana = ratio of anamorphose, >0
-   * Inverse(H)= |t_homo   0|
-   *             |0   t_homo|  t_homo = ratio of homothetie >0
-   *
    * The angle ROTATION is the astronomical position angle,       |North
    * equal to 0 or 180 for x=0, and  90 or 270 for y=0.           |
    * so, ROTATION = 90 - beta                                  ---|--->East
@@ -126,16 +120,15 @@ public class Functions {
    * the positive y-semi-axis beeing the North direction.         |
    * @param ufreq UFREQ
    * @param vfreq VFREQ
-   * @param homothetieRatio t_homo = ratio of homothetie >0
    * @param rotation rotation angle in degrees
    * @return new spatial frequency VFREQ
    */
   public static final double transformV(final double ufreq, final double vfreq,
-                                        final double homothetieRatio, final double rotation) {
+                                        final double rotation) {
 
     final double angle = DEG2RAD * (90D - rotation);
 
-    return -ufreq * (Math.sin(angle) * homothetieRatio) + vfreq * (Math.cos(angle) * homothetieRatio);
+    return -ufreq * Math.sin(angle) + vfreq * Math.cos(angle);
   }
 
   /* Model functions */
@@ -257,8 +250,6 @@ public class Functions {
   public final static double computeGaussian(final double ufreq, final double vfreq, final double flux_weight,
                                              final double fwhm) {
 
-    // exp( -(f*f)/4./log(2.) * (ufreq*ufreq + vfreq*vfreq)  ) * flux_weight;
-
     final double f = PI * MAS2RAD * fwhm;
 
     final double d = -f * f / GAUSS_CST * (ufreq * ufreq + vfreq * vfreq);
@@ -268,6 +259,60 @@ public class Functions {
       g = 1D;
     } else {
       g = Math.exp(d);
+    }
+    g *= flux_weight;
+
+    return g;
+  }
+
+  /**
+   * Compute the center-to-limb darkened disk model function for a single UV point :
+   * o(mu) = 1 - A1(1-mu) - A2(1-mu)^2.
+   *
+   * @param ufreq U frequency in rad-1
+   * @param vfreq V frequency in rad-1
+   * @param flux_weight intensity coefficient
+   * @param diameter diameter of the disk object given in milliarcsecond
+   * @param a1 first coefficient of the quadratic law
+   * @param a2 second coefficient of the quadratic law
+   * @return Fourier transform value
+   */
+  public final static double computeLimbQuadratic(final double ufreq, final double vfreq, final double flux_weight,
+                                                  final double diameter, final double a1, final double a2) {
+    /*
+     * 11- Limb darkened Disk
+     *     g(u,v) = ( a*(j1/x) + b* sqrt(PI/2)*(J3over2/x**1.5) + 2*c*(j2/x**2) )/s
+     *     where
+     *       BesselJ[3/2, z] == (Sqrt[2/Pi] ((-z) Cos[z] + Sin[z]))/z^(3/2)
+     *       x=pi*diametre*q
+     *       j1=J1(x)
+     *       j2=J2(x)
+     *       j3over2(x)=sqrt((2/PI)/x)*((sin(x)/x)-cos(x))
+     *       a=1-cu-cv
+     *       b=cu+2*cv
+     *       c=-cv
+     *       s=a/2+b/3+c/4
+     *       q**2 = u**2+v**2
+     */
+
+    final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
+
+    final double d = PI * MAS2RAD * diameter * normUV;
+
+    double g;
+    if (d == 0D) {
+      g = 1D;
+    } else {
+      final double a = 1d - a1 - a2;
+      final double b = a1 + 2d * a2;
+      final double c = -a2;
+      final double s = a / 2d + b / 3d + c / 4d;
+
+      // Note : BesselJ[3/2, z] == (Sqrt[2/Pi] ((-z) Cos[z] + Sin[z]))/z^(3/2)
+      // BesselJ[3/2, d] * Sqrt(Pi/2) :
+      final double term2 = (Math.sin(d) / d - Math.cos(d)) / Math.sqrt(d);
+
+      g = (a * Bessel.j1(d) / d + b * term2 / Math.pow(d, 1.5d) + 2d * c * Bessel.jn(2, d) / (d * d)) / s;
     }
     g *= flux_weight;
 

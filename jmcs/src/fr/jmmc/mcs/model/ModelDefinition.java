@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelDefinition.java,v 1.5 2010-05-18 12:43:06 bourgesl Exp $"
+ * "@(#) $Id: ModelDefinition.java,v 1.6 2010-05-18 15:34:47 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/05/18 12:43:06  bourgesl
+ * added Gaussian Models
+ *
  * Revision 1.4  2010/05/17 15:55:16  bourgesl
  * added elongated / flattened ring
  *
@@ -50,6 +53,8 @@ public interface ModelDefinition {
   public String MODEL_EGAUSS = "elong_gaussian";
   /** flattened gaussian model type */
   public String MODEL_FGAUSS = "flatten_gaussian";
+  /** limb darkened disk model type */
+  public String MODEL_LDDISK = "limb_quadratic";
 
   /* Units */
   /** milli arc second Unit */

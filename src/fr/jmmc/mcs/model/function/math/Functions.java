@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Functions.java,v 1.1 2010-05-17 16:04:01 bourgesl Exp $"
+ * "@(#) $Id: Functions.java,v 1.2 2010-05-18 12:43:06 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/05/17 16:04:01  bourgesl
+ * Added this static class to gather model compute functions
+ *
  */
 package fr.jmmc.mcs.model.function.math;
 
@@ -25,6 +28,8 @@ public class Functions {
   public final static double DEG2RAD = PI / 180D;
   /** _LPB_MAS2RAD = milliarcsecond to radian conversion factor */
   public final static double MAS2RAD = DEG2RAD / 3600D / 1000D;
+  /** constant used to compute the gaussian model */
+  private final static double GAUSS_CST = 4d * Math.log(2d);
 
   /**
    * Forbidden constructor
@@ -134,7 +139,6 @@ public class Functions {
   }
 
   /* Model functions */
-
   /**
    * Compute the punct model function for a single UV point
    *
@@ -175,8 +179,6 @@ public class Functions {
 
   /**
    * Compute the disk model function for a single UV point
-   *
-   * flux_weight * [ 2 * bessJ1(PI x diameter x norm(uv)) / PI x diameter x norm(uv)]
    *
    * @param ufreq U frequency in rad-1
    * @param vfreq V frequency in rad-1
@@ -237,6 +239,35 @@ public class Functions {
       g = 1D;
     } else {
       g = ((alpha * Bessel.j1(2d * alpha * r) / r) - (Bessel.j1(2d * r) / r)) / (alpha * alpha - 1d);
+    }
+    g *= flux_weight;
+
+    return g;
+  }
+
+  /**
+   * Compute the gaussian model function for a single UV point
+   *
+   * @param ufreq U frequency in rad-1
+   * @param vfreq V frequency in rad-1
+   * @param flux_weight intensity coefficient
+   * @param fwhm full width at half maximum of the gaussian object given in milliarcsecond (diameter like)
+   * @return Fourier transform value
+   */
+  public final static double computeGaussian(final double ufreq, final double vfreq, final double flux_weight,
+                                             final double fwhm) {
+
+    // exp( -(f*f)/4./log(2.) * (ufreq*ufreq + vfreq*vfreq)  ) * flux_weight;
+
+    final double f = PI * MAS2RAD * fwhm;
+
+    final double d = -f * f / GAUSS_CST * (ufreq * ufreq + vfreq * vfreq);
+
+    double g;
+    if (d == 0D) {
+      g = 1D;
+    } else {
+      g = Math.exp(d);
     }
     g *= flux_weight;
 

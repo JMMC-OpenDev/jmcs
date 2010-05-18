@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.11 2010-05-17 16:02:03 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.12 2010-05-18 12:43:06 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2010/05/17 16:02:03  bourgesl
+ * added elongated/flattened ring
+ * changed validate() implementation
+ *
  * Revision 1.10  2010/05/11 16:09:48  bourgesl
  * added new models + javadoc
  *
@@ -45,6 +49,7 @@ package fr.jmmc.mcs.model;
 import fr.jmmc.mcs.model.AbstractModelFunction.ModelVariant;
 import fr.jmmc.mcs.model.function.CircleModelFunction;
 import fr.jmmc.mcs.model.function.DiskModelFunction;
+import fr.jmmc.mcs.model.function.GaussianModelFunction;
 import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.function.RingModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
@@ -110,14 +115,20 @@ public final class ModelManager {
     this.addFunction(new DiskModelFunction(ModelVariant.Flattened));
     // 3 - Circle Model (unresolved ring) :
     this.addFunction(new CircleModelFunction());
-    // 3.1 - Ring Model :
+    // 3.1 - Ring Models :
     this.addFunction(new RingModelFunction());
-    // 3.2 - Elongated Ring Model :
+    // 3.2 Elongated Ring Model :
     this.addFunction(new RingModelFunction(ModelVariant.Elongated));
-    // 3.3 - Flattened Ring Model :
+    // 3.3 Flattened Ring Model :
     this.addFunction(new RingModelFunction(ModelVariant.Flattened));
+    // 4 - Gaussian Models :
+    this.addFunction(new GaussianModelFunction());
+    // 2.1 Elongated Gaussian Model :
+    this.addFunction(new GaussianModelFunction(ModelVariant.Elongated));
+    // 2.2 Flattened Gaussian Model :
+    this.addFunction(new GaussianModelFunction(ModelVariant.Flattened));
 
-    // TODO : gaussian, limb darkened ...
+    // TODO : limb darkened ...
 
     if (logger.isLoggable(Level.FINE)) {
       logger.fine("functions : " + modelFunctions);

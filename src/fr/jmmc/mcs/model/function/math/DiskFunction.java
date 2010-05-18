@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DiskFunction.java,v 1.1 2010-05-17 16:05:30 bourgesl Exp $"
+ * "@(#) $Id: DiskFunction.java,v 1.2 2010-05-18 15:34:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/05/17 16:05:30  bourgesl
+ * This function classes only contain parameters and use Functions for computation. Disk and Ring support elongated / flattened variants (i.e. transform UV coordinates)
+ *
  */
 package fr.jmmc.mcs.model.function.math;
 
@@ -42,11 +45,11 @@ public class DiskFunction extends CircleFunction {
     super();
   }
 
-  public void setAxisRatio(final double axisRatio) {
+  public final void setAxisRatio(final double axisRatio) {
     this.axisRatio = axisRatio;
   }
 
-  public void setPositionAngle(final double positionAngle) {
+  public final void setPositionAngle(final double positionAngle) {
     this.positionAngle = positionAngle;
   }
 
@@ -60,8 +63,8 @@ public class DiskFunction extends CircleFunction {
   public double computeWeight(final double ufreq, final double vfreq) {
     if (axisRatio != 1d) {
       // transform UV coordinates :
-      final double t_ufreq = Functions.transformU(ufreq, vfreq, axisRatio, 1d, positionAngle);
-      final double t_vfreq = Functions.transformV(ufreq, vfreq, 1d, positionAngle);
+      final double t_ufreq = Functions.transformU(ufreq, vfreq, axisRatio, positionAngle);
+      final double t_vfreq = Functions.transformV(ufreq, vfreq, positionAngle);
 
       return Functions.computeDisk(t_ufreq, t_vfreq, flux_weight, diameter);
     }

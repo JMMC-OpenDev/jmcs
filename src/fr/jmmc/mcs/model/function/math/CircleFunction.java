@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: CircleFunction.java,v 1.1 2010-05-17 16:05:30 bourgesl Exp $"
+ * "@(#) $Id: CircleFunction.java,v 1.2 2010-05-18 15:34:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/05/17 16:05:30  bourgesl
+ * This function classes only contain parameters and use Functions for computation. Disk and Ring support elongated / flattened variants (i.e. transform UV coordinates)
+ *
  */
 package fr.jmmc.mcs.model.function.math;
 
@@ -25,7 +28,7 @@ public class CircleFunction extends PunctFunction {
     super();
   }
 
-  public void setDiameter(final double diameter) {
+  public final void setDiameter(final double diameter) {
     this.diameter = diameter;
   }
 

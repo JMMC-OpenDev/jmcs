@@ -1,56 +1,46 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RingModelFunction.java,v 1.3 2010-05-18 12:43:06 bourgesl Exp $"
+ * "@(#) $Id: GaussianModelFunction.java,v 1.1 2010-05-18 12:43:06 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * Revision 1.2  2010/05/17 16:03:08  bourgesl
- * major refactoring to simplify the code and delegate the model computation to a Function class
- *
- * Revision 1.1  2010/05/11 16:10:06  bourgesl
- * added new models + javadoc
  *
  */
 package fr.jmmc.mcs.model.function;
 
 import fr.jmmc.mcs.model.AbstractModelFunction;
-import fr.jmmc.mcs.model.function.math.RingFunction;
+import fr.jmmc.mcs.model.function.math.GaussianFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
 
 /**
- * This ModelFunction implements the ring model
+ * This ModelFunction implements the gaussian model
  * 
  * @author bourgesl
  */
-public final class RingModelFunction extends AbstractModelFunction<RingFunction> {
+public final class GaussianModelFunction extends AbstractModelFunction<GaussianFunction> {
 
   /* Model constants */
-  /** ring model description */
-  private static final String MODEL_RING_DESC = "lpb_ring(ufreq, vfreq, flux_weight, x, y, diameter, width) \n\n" +
+  /** gaussian model description */
+  private static final String MODEL_GAUSS_DESC = "lpb_gaussian(ufreq, vfreq, flux_weight, x, y, fwhm) \n\n" +
           "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized uniform ring with internal \n" +
-          "diameter DIAMETER  (milliarcsecond) and external diameter DIAMETER+WIDTH \n" +
-          "centered at coordinates (X,Y) (milliarcsecond). \n" +
+          "given in 1/rad, of a normalized gaussian with given FWHM \n" +
+          "(milliarcsecond) centered at coordinates (X,Y) (milliarcsecond). \n" +
           "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
-          "The function returns an error if DIAMETER or WIDTH are negative.\n\n" +
+          "The function returns an error if FWHM is negative.\n\n" +
           "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and of dims dimsof(UFREQ,VFREQ). \n";
-  /** elongated ring model description */
-  private static final String MODEL_ERING_DESC = "lpb_elong_ring(ufreq, vfreq, flux_weight, x, y, minor_internal_diameter, \n" +
-          "elong_ratio, width, major_axis_pos_angle) \n\n" +
+          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+  /** elongated gaussian model description */
+  private static final String MODEL_EGAUSS_DESC = "lpb_elong_gaussian(ufreq, vfreq, flux_weight, x, y, minor_axis_fwhm, \n" +
+          "elong_ratio, major_axis_pos_angle) \n\n" +
           "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized uniform elongated ring centered at coordinates (X,Y) (milliarcsecond). \n" +
+          "given in 1/rad, of a normalized elongated gaussian centered at coordinates (X,Y) (milliarcsecond). \n" +
           "The sizes of the function in two orthogonal directions are given by the \n" +
-          "narrowest internal diameter (MINOR_INTERNAL_DIAMETER) and by the ratio \n" +
-          "ELONG_RATIO between the widest internal diameter and MINOR_INTERNAL_DIAMETER, \n" +
+          "narrowest FWHM (MINOR_AXIS_FWHM) and by the ratio \n" +
+          "ELONG_RATIO between the largest FWHM (MAJOR_AXIS_FWHM) and the MINOR_AXIS_FWHM, \n" +
           "in the same way as for an ellipse (the elongation is along the major_axis): \n\n" +
-          "ELONG_RATIO = MAJOR_INTERNAL_DIAMETER / MINOR_INTERNAL_DIAMETER. \n" +
-          "In the direction of MINOR_INTERNAL_DIAMETER, the external diameter is \n" +
-          "MINOR_INTERNAL_DIAMETER + WIDTH. In the direction of the widest internal diameter, \n" +
-          "the width is magnified by the ratio ELONG_RATIO, so that the external \n" +
-          "diameter is the elongated MAJOR_INTERNAL_DIAMETER + WIDTH * ELONG_RATIO. \n" +
+          "ELONG_RATIO = MAJOR_AXIS_FWHM / MINOR_AXIS_FWHM. \n" +
           "MAJOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
           "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
           "|North \n" +
@@ -58,24 +48,20 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
           "|--->East       of MAJOR_AXIS_POS_ANGLE is 180 degrees, \n" +
           "|               for ex. from 0 to 180 degrees. \n\n" +
           "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
-          "The function returns an error if MINOR_INTERNAL_DIAMETER is negative or if ELONG_RATIO \n" +
+          "The function returns an error if MINOR_AXIS_FWHM is negative or if ELONG_RATIO \n" +
           "is smaller than 1. \n\n" +
           "UFREQ and VFREQ must be conformable. The returned array is always \n" +
           "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
-  /** flattened ring model description */
-  private static final String MODEL_FRING_DESC = "lpb_flatten_ring(ufreq, vfreq, flux_weight, x, y, major_internal_diameter, \n" +
-          "flatten_ratio, width, minor_axis_pos_angle) \n\n" +
+  /** flattened gaussian model description */
+  private static final String MODEL_FGAUSS_DESC = "lpb_flatten_gaussian(ufreq, vfreq, flux_weight, x, y, major_axis_fwhm, \n" +
+          "flatten_ratio, minor_axis_pos_angle) \n\n" +
           "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized uniform flattened ring centered at coordinates (X,Y) (milliarcsecond). \n" +
+          "given in 1/rad, of a normalized flattened gaussian centered at coordinates (X,Y) (milliarcsecond). \n" +
           "The sizes of the function in two orthogonal directions are given by the \n" +
-          "widest internal diameter (MAJOR_INTERNAL_DIAMETER) and by the ratio \n" +
-          "FLATTEN_RATIO between MAJOR_INTERNAL_DIAMETER and the narrowest internal diameter, \n" +
-          "in the same way as for an ellipse (the flattening is along the minor axis): \n\n" +
-          "FLATTEN_RATIO = MAJOR_INTERNAL_DIAMETER / MINOR_INTERNAL_DIAMETER. \n" +
-          "In the direction of MAJOR_INTERNAL_DIAMETER, the external diameter is \n" +
-          "MAJOR_INTERNAL_DIAMETER + WIDTH. In the direction of the narrowest internal diameter, \n" +
-          "the width is decreased by the ratio FLATTEN_RATIO, so that the external \n" +
-          "diameter is the flattened MINOR_INTERNAL_DIAMETER + WIDTH / FLATTEN_RATIO. \n" +
+          "largest FWHM (MAJOR_AXIS_FWHM) and by the ratio \n" +
+          "FLATTEN_RATIO between the largest FWHM (MAJOR_AXIS_FWHM) and the MINOR_AXIS_FWHM, \n" +
+          "in the same way as for an ellipse (the flattening is along the minor_axis): \n\n" +
+          "FLATTEN_RATIO = MAJOR_AXIS_FWHM / MINOR_AXIS_FWHM. \n" +
           "MINOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
           "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
           "|North \n" +
@@ -83,29 +69,31 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
           "|--->East       of MAJOR_AXIS_POS_ANGLE is 180 degrees, \n" +
           "|               for ex. from 0 to 180 degrees. \n\n" +
           "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
-          "The function returns an error if MAJOR_INTERNAL_DIAMETER is negative or if FLATTEN_RATIO \n" +
+          "The function returns an error if MAJOR_AXIS_FWHM is negative or if FLATTEN_RATIO \n" +
           "is smaller than 1. \n\n" +
           "UFREQ and VFREQ must be conformable. The returned array is always \n" +
           "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
-  /** Parameter type for the parameter width */
-  public final static String PARAM_WIDTH = "width";
 
-  /* specific parameters for elongated ring */
-  /** Parameter type for the parameter minor_internal_diameter */
-  public final static String PARAM_MINOR_INTERNAL_DIAMETER = "minor_internal_diameter";
+  /* specific parameters for gaussian */
+  /** Parameter type for the parameter fwhm */
+  public final static String PARAM_FWHM = "fwhm";
 
-  /* specific parameters for flattened ring */
-  /** Parameter type for the parameter major_internal_diameter */
-  public final static String PARAM_MAJOR_INTERNAL_DIAMETER = "major_internal_diameter";
+  /* specific parameters for elongated gaussian */
+  /** Parameter type for the parameter minor_axis_fwhm */
+  public final static String PARAM_MINOR_AXIS_FWHM = "minor_axis_fwhm";
+
+  /* specific parameters for flattened gaussian */
+  /** Parameter type for the parameter major_axis_fwhm */
+  public final static String PARAM_MAJOR_AXIS_FWHM = "major_axis_fwhm";
 
   /* members */
   /** model variant */
   private final ModelVariant variant;
 
   /**
-   * Constructor
+   * Constructor for the standard variant
    */
-  public RingModelFunction() {
+  public GaussianModelFunction() {
     this(ModelVariant.Standard);
   }
 
@@ -113,7 +101,7 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
    * Constructor for the given variant
    * @param variant the model variant
    */
-  public RingModelFunction(final ModelVariant variant) {
+  public GaussianModelFunction(final ModelVariant variant) {
     super();
     this.variant = variant;
   }
@@ -126,11 +114,11 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
     switch (this.variant) {
       default:
       case Standard:
-        return MODEL_RING;
+        return MODEL_GAUSS;
       case Elongated:
-        return MODEL_ERING;
+        return MODEL_EGAUSS;
       case Flattened:
-        return MODEL_FRING;
+        return MODEL_FGAUSS;
     }
   }
 
@@ -142,11 +130,11 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
     switch (this.variant) {
       default:
       case Standard:
-        return MODEL_RING_DESC;
+        return MODEL_GAUSS_DESC;
       case Elongated:
-        return MODEL_ERING_DESC;
+        return MODEL_EGAUSS_DESC;
       case Flattened:
-        return MODEL_FRING_DESC;
+        return MODEL_FGAUSS_DESC;
     }
   }
 
@@ -164,19 +152,16 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
     switch (this.variant) {
       default:
       case Standard:
-        addPositiveParameter(model, PARAM_DIAMETER);
-        addPositiveParameter(model, PARAM_WIDTH);
+        addPositiveParameter(model, PARAM_FWHM);
         break;
       case Elongated:
-        addPositiveParameter(model, PARAM_MINOR_INTERNAL_DIAMETER);
+        addPositiveParameter(model, PARAM_MINOR_AXIS_FWHM);
         addRatioParameter(model, PARAM_ELONG_RATIO);
-        addPositiveParameter(model, PARAM_WIDTH);
         addAngleParameter(model, PARAM_MAJOR_AXIS_ANGLE);
         break;
       case Flattened:
-        addPositiveParameter(model, PARAM_MAJOR_INTERNAL_DIAMETER);
+        addPositiveParameter(model, PARAM_MAJOR_AXIS_FWHM);
         addRatioParameter(model, PARAM_FLATTEN_RATIO);
-        addPositiveParameter(model, PARAM_WIDTH);
         addAngleParameter(model, PARAM_MINOR_AXIS_ANGLE);
         break;
     }
@@ -190,8 +175,8 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
    * @param model model instance
    * @return model function
    */
-  protected RingFunction createFunction(final Model model) {
-    final RingFunction function = new RingFunction();
+  protected GaussianFunction createFunction(final Model model) {
+    final GaussianFunction function = new GaussianFunction();
 
     // Get parameters to fill the context (includes parameter validation) :
     function.setX(getParameterValue(model, PARAM_X));
@@ -202,20 +187,19 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
     switch (this.variant) {
       default:
       case Standard:
-        function.setDiameter(getParameterValue(model, PARAM_DIAMETER));
+        function.setDiameter(getParameterValue(model, PARAM_FWHM));
         break;
       case Elongated:
-        function.setDiameter(getParameterValue(model, PARAM_MINOR_INTERNAL_DIAMETER));
+        function.setDiameter(getParameterValue(model, PARAM_MINOR_AXIS_FWHM));
         function.setAxisRatio(getParameterValue(model, PARAM_ELONG_RATIO));
         function.setPositionAngle(getParameterValue(model, PARAM_MAJOR_AXIS_ANGLE));
         break;
       case Flattened:
-        function.setDiameter(getParameterValue(model, PARAM_MAJOR_INTERNAL_DIAMETER));
+        function.setDiameter(getParameterValue(model, PARAM_MAJOR_AXIS_FWHM));
         function.setAxisRatio(1d / getParameterValue(model, PARAM_FLATTEN_RATIO));
         function.setPositionAngle(getParameterValue(model, PARAM_MINOR_AXIS_ANGLE));
         break;
     }
-    function.setWidth(getParameterValue(model, PARAM_WIDTH));
 
     return function;
   }

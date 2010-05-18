@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: GaussianFunction.java,v 1.1 2010-05-18 12:43:06 bourgesl Exp $"
+ * "@(#) $Id: GaussianFunction.java,v 1.2 2010-05-18 15:34:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/05/18 12:43:06  bourgesl
+ * added Gaussian Models
+ *
  *
  */
 package fr.jmmc.mcs.model.function.math;
@@ -33,8 +36,8 @@ public class GaussianFunction extends DiskFunction {
   public double computeWeight(final double ufreq, final double vfreq) {
     if (axisRatio != 1d) {
       // transform UV coordinates :
-      final double t_ufreq = Functions.transformU(ufreq, vfreq, axisRatio, 1d, positionAngle);
-      final double t_vfreq = Functions.transformV(ufreq, vfreq, 1d, positionAngle);
+      final double t_ufreq = Functions.transformU(ufreq, vfreq, axisRatio, positionAngle);
+      final double t_vfreq = Functions.transformV(ufreq, vfreq, positionAngle);
 
       return Functions.computeGaussian(t_ufreq, t_vfreq, flux_weight, diameter);
     }

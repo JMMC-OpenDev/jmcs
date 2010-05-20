@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.8 2009-04-30 13:02:14 lafrasse Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.9 2010-05-20 13:13:35 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2009/04/30 13:02:14  lafrasse
+ * Replaced MCSLog by standard logging.
+ * Added protection against multiple thread concurrent access.
+ * Documentation enhancement.
+ * Moved logo only under Mac OS X.
+ *
  * Revision 1.7  2009/04/20 08:22:33  lafrasse
  * Optimized space between the JMMC logo and the resizing handle.
  *
@@ -41,6 +47,8 @@ import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Font;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.logging.*;
 
 import javax.swing.*;
@@ -99,6 +107,18 @@ public class StatusBar extends JPanel
         }
 
         add(hBox);
+
+        // Get application data model to launch the default browser with the given link
+        final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        if (applicationDataModel != null) {            
+            jmmcLogo.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mouseClicked(MouseEvent evt) {
+                    BrowserLauncher.openURL(applicationDataModel.getLinkValue());
+                }
+            });
+        }
     }
 
     /**

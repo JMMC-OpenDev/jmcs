@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.30 2010-05-21 13:15:19 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.31 2010-05-21 13:48:21 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2010/05/21 13:15:19  mella
+ * remove some duplicated calls of notifyObservers
+ *
  * Revision 1.29  2009/05/04 12:05:22  lafrasse
  * Added hability to remove (ordered) preference.
  *
@@ -462,6 +465,13 @@ public abstract class Preferences extends Observable
         throws PreferencesException
     {
         _logger.entering(_className, "setPreferenceToProperties");
+
+        String currentValue = properties.getProperty(preferenceName);        
+        if (currentValue!=null && currentValue.equals(preferenceValue.toString())){
+            // nothing to do
+            _logger.finest("Preference '"+preferenceName+"' not changed");
+            return;
+        }
 
         // If the constraint is a String object
         if (preferenceValue.getClass() == java.lang.String.class)

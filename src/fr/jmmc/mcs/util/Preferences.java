@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.31 2010-05-21 13:48:21 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.32 2010-05-21 13:51:44 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2010/05/21 13:48:21  mella
+ * Do not notifyObservers anylonger if the preference get the same value
+ *
  * Revision 1.30  2010/05/21 13:15:19  mella
  * remove some duplicated calls of notifyObservers
  *
@@ -250,7 +253,8 @@ public abstract class Preferences extends Observable
     }
 
     /**
-     * Load preferences from file if any, or reset to default values.
+     * Load preferences from file if any, or reset to default values and
+     * notify listeners.
      *
      * @warning Any prefence value change not yet saved will be LOST.
      */
@@ -392,7 +396,7 @@ public abstract class Preferences extends Observable
     }
 
     /**
-     * Restore default values to preferences.
+     * Restore default values to preferences and notify listeners.
      */
     final public void resetToDefaultPreferences()
     {
@@ -406,6 +410,7 @@ public abstract class Preferences extends Observable
 
     /**
      * Set a preference.
+     * The listeners are notified only for preference changes.
      *
      * @param preferenceName the preference name.
      * @param preferenceValue the preference value.
@@ -421,6 +426,7 @@ public abstract class Preferences extends Observable
 
     /**
      * Set a preference.
+     * The listeners are notified only for preference changes.
      *
      * @param preferenceName the preference name.
      * @param preferenceValue the preference value.

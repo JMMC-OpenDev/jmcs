@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.29 2009-05-04 12:05:22 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.30 2010-05-21 13:15:19 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2009/05/04 12:05:22  lafrasse
+ * Added hability to remove (ordered) preference.
+ *
  * Revision 1.28  2008/11/18 09:14:51  lafrasse
  * Corrected documentation and log entering in updatePreferencesVersion().
  *
@@ -549,6 +552,8 @@ public abstract class Preferences extends Observable
     {
         setPreferenceOrderToProperties(_currentProperties, preferenceName,
             preferenceIndex);
+        // Notify all preferences listener.
+        triggerObserversNotification();
     }
 
     /**
@@ -572,9 +577,6 @@ public abstract class Preferences extends Observable
             properties.setProperty(_indexPrefix + preferenceName,
                 Integer.toString(-1));
         }
-
-        // Notify all preferences listener.
-        triggerObserversNotification();
     }
 
     /**

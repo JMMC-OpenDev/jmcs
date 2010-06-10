@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RingModelFunction.java,v 1.4 2010-05-18 15:34:03 bourgesl Exp $"
+ * "@(#) $Id: RingModelFunction.java,v 1.5 2010-06-10 10:18:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/05/18 15:34:03  bourgesl
+ * javadoc
+ *
  * Revision 1.3  2010/05/18 12:43:06  bourgesl
  * added Gaussian Models
  *
@@ -31,65 +34,50 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
 
   /* Model constants */
   /** ring model description */
-  private static final String MODEL_RING_DESC = "lpb_ring(ufreq, vfreq, flux_weight, x, y, diameter, width) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized uniform ring with internal \n" +
-          "diameter DIAMETER  (milliarcsecond) and external diameter DIAMETER+WIDTH \n" +
-          "centered at coordinates (X,Y) (milliarcsecond). \n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
-          "The function returns an error if DIAMETER or WIDTH are negative.\n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and of dims dimsof(UFREQ,VFREQ). \n";
+  private static final String MODEL_RING_DESC = 
+          "Returns the Fourier transform of a normalized uniform ring with internal diameter \n" +
+          "DIAMETER (milliarcsecond) and external diameter DIAMETER + WIDTH centered at coordinates \n" +
+          "(X,Y) (milliarcsecond). \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
+          "The function returns an error if DIAMETER or WIDTH are negative.";
   /** elongated ring model description */
-  private static final String MODEL_ERING_DESC = "lpb_elong_ring(ufreq, vfreq, flux_weight, x, y, minor_internal_diameter, \n" +
-          "elong_ratio, width, major_axis_pos_angle) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized uniform elongated ring centered at coordinates (X,Y) (milliarcsecond). \n" +
-          "The sizes of the function in two orthogonal directions are given by the \n" +
-          "narrowest internal diameter (MINOR_INTERNAL_DIAMETER) and by the ratio \n" +
+  private static final String MODEL_ERING_DESC = 
+          "Returns the Fourier transform of a normalized uniform elongated ring centered at \n" +
+          "coordinates (X,Y) (milliarcsecond). The sizes of the function in two orthogonal directions \n" +
+          "are given by the narrowest internal diameter (MINOR_INTERNAL_DIAMETER) and by the ratio \n" +
           "ELONG_RATIO between the widest internal diameter and MINOR_INTERNAL_DIAMETER, \n" +
-          "in the same way as for an ellipse (the elongation is along the major_axis): \n\n" +
+          "in the same way as for an ellipse (the elongation is along the major_axis) : \n" +
           "ELONG_RATIO = MAJOR_INTERNAL_DIAMETER / MINOR_INTERNAL_DIAMETER. \n" +
           "In the direction of MINOR_INTERNAL_DIAMETER, the external diameter is \n" +
           "MINOR_INTERNAL_DIAMETER + WIDTH. In the direction of the widest internal diameter, \n" +
-          "the width is magnified by the ratio ELONG_RATIO, so that the external \n" +
-          "diameter is the elongated MAJOR_INTERNAL_DIAMETER + WIDTH * ELONG_RATIO. \n" +
+          "the width is magnified by the ratio ELONG_RATIO, so that the external diameter is \n" +
+          "the elongated MAJOR_INTERNAL_DIAMETER + WIDTH * ELONG_RATIO. \n" +
           "MAJOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
           "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
-          "|North \n" +
-          "|               For avoiding degenerescence, the domain of variation \n" +
-          "|--->East       of MAJOR_AXIS_POS_ANGLE is 180 degrees, \n" +
-          "|               for ex. from 0 to 180 degrees. \n\n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
+          "For avoiding degenerescence, the domain of variation of MAJOR_AXIS_POS_ANGLE is 180 \n" +
+          "degrees, for ex. from 0 to 180 degrees. \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
           "The function returns an error if MINOR_INTERNAL_DIAMETER is negative or if ELONG_RATIO \n" +
-          "is smaller than 1. \n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+          "is smaller than 1.";
   /** flattened ring model description */
-  private static final String MODEL_FRING_DESC = "lpb_flatten_ring(ufreq, vfreq, flux_weight, x, y, major_internal_diameter, \n" +
-          "flatten_ratio, width, minor_axis_pos_angle) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized uniform flattened ring centered at coordinates (X,Y) (milliarcsecond). \n" +
-          "The sizes of the function in two orthogonal directions are given by the \n" +
-          "widest internal diameter (MAJOR_INTERNAL_DIAMETER) and by the ratio \n" +
+  private static final String MODEL_FRING_DESC = 
+          "Returns the Fourier transform of a normalized uniform flattened ring centered at \n" +
+          "coordinates (X,Y) (milliarcsecond). The sizes of the function in two orthogonal directions \n" +
+          "are given by the widest internal diameter (MAJOR_INTERNAL_DIAMETER) and by the ratio \n" +
           "FLATTEN_RATIO between MAJOR_INTERNAL_DIAMETER and the narrowest internal diameter, \n" +
-          "in the same way as for an ellipse (the flattening is along the minor axis): \n\n" +
+          "in the same way as for an ellipse (the flattening is along the minor axis) : \n" +
           "FLATTEN_RATIO = MAJOR_INTERNAL_DIAMETER / MINOR_INTERNAL_DIAMETER. \n" +
           "In the direction of MAJOR_INTERNAL_DIAMETER, the external diameter is \n" +
           "MAJOR_INTERNAL_DIAMETER + WIDTH. In the direction of the narrowest internal diameter, \n" +
-          "the width is decreased by the ratio FLATTEN_RATIO, so that the external \n" +
-          "diameter is the flattened MINOR_INTERNAL_DIAMETER + WIDTH / FLATTEN_RATIO. \n" +
+          "the width is decreased by the ratio FLATTEN_RATIO, so that the external diameter is \n" +
+          "the flattened MINOR_INTERNAL_DIAMETER + WIDTH / FLATTEN_RATIO. \n" +
           "MINOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
           "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
-          "|North \n" +
-          "|               For avoiding degenerescence, the domain of variation \n" +
-          "|--->East       of MAJOR_AXIS_POS_ANGLE is 180 degrees, \n" +
-          "|               for ex. from 0 to 180 degrees. \n\n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
+          "For avoiding degenerescence, the domain of variation of MINOR_AXIS_POS_ANGLE is 180 \n" +
+          "degrees, for ex. from 0 to 180 degrees. \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
           "The function returns an error if MAJOR_INTERNAL_DIAMETER is negative or if FLATTEN_RATIO \n" +
-          "is smaller than 1. \n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+          "is smaller than 1.";
   /** Parameter type for the parameter width */
   public final static String PARAM_WIDTH = "width";
 

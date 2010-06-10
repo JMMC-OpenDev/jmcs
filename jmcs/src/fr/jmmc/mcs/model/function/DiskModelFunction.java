@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DiskModelFunction.java,v 1.9 2010-05-18 15:34:03 bourgesl Exp $"
+ * "@(#) $Id: DiskModelFunction.java,v 1.10 2010-06-10 10:18:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/05/18 15:34:03  bourgesl
+ * javadoc
+ *
  * Revision 1.8  2010/05/17 16:03:08  bourgesl
  * major refactoring to simplify the code and delegate the model computation to a Function class
  *
@@ -46,52 +49,37 @@ public final class DiskModelFunction extends AbstractModelFunction<DiskFunction>
 
   /* Model constants */
   /** disk model description */
-  private static final String MODEL_DISK_DESC = "lpb_disk(ufreq, vfreq, flux_weight, x, y, diameter) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized uniform disk of diameter \n" +
-          "DIAMETER (milliarcsecond) and centered at coordinates (X,Y) (milliarcsecond). \n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
-          "The function returns an error if DIAMETER is negative.\n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+  private static final String MODEL_DISK_DESC = 
+          "Returns the Fourier transform of a normalized uniform disk of diameter DIAMETER \n" +
+          "(milliarcsecond) and centered at coordinates (X,Y) (milliarcsecond). \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
+          "The function returns an error if DIAMETER is negative.";
   /** elongated disk model description */
-  private static final String MODEL_EDISK_DESC = "lpb_elong_disk(ufreq, vfreq, flux_weight, x, y, minor_axis_diameter, \n" +
-          "elong_ratio, major_axis_pos_angle) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized ellipse centered at coordinates (X,Y) (milliarcsecond) \n" +
-          "with a ratio ELONG_RATIO between the major diameter and the minor one MINOR_AXIS_DIAMETER, \n" +
-          "turned from the positive vertical semi-axis (i.e. North direction) with angle \n" +
-          "MAJOR_AXIS_POS_ANGLE, in degrees, towards to the positive horizontal semi-axis \n" +
+  private static final String MODEL_EDISK_DESC = 
+          "Returns the Fourier transform of a normalized ellipse centered at coordinates (X,Y) \n" +
+          "(milliarcsecond) with a ratio ELONG_RATIO between the major diameter and the minor one \n" +
+          "MINOR_AXIS_DIAMETER, turned from the positive vertical semi-axis (i.e. North direction) \n" +
+          "with angle MAJOR_AXIS_POS_ANGLE, in degrees, towards to the positive horizontal semi-axis \n" +
           "(i.e. East direction). (the elongation is along the major_axis) \n\n" +
-          "|North \n" +
-          "|               For avoiding degenerescence, the domain of variation \n" +
-          "|--->East       of MAJOR_AXIS_POS_ANGLE is 180 degrees, \n" +
-          "|               for ex. from 0 to 180 degrees. \n\n" +
-          "ELONG_RATIO = major_axis / minor_axis \n\n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
-          "The function returns an error if MINOR_AXIS_DIAMETER is negative or if ELONG_RATIO \n" +
-          "is smaller than 1. \n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+          "For avoiding degenerescence, the domain of variation of MAJOR_AXIS_POS_ANGLE is 180 \n" +
+          "degrees, for ex. from 0 to 180 degrees. \n\n" +
+          "ELONG_RATIO = major_axis / minor_axis \n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
+          "The function returns an error if MINOR_AXIS_DIAMETER is negative or if ELONG_RATIO is \n" +
+          "smaller than 1.";
   /** flattened disk model description */
-  private static final String MODEL_FDISK_DESC = "lpb_flatten_disk(ufreq, vfreq, flux_weight, x, y, major_axis_diameter, \n" +
-          "flatten_ratio, minor_axis_pos_angle) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized ellipse centered at coordinates (X,Y) (milliarcsecond) \n" +
-          "with a ratio FLATTEN_RATIO between the major diameter MAJOR_AXIS_DIAMETER and the minor one, \n" +
-          "turned from the positive vertical semi-axis (i.e. North direction) with angle \n" +
-          "MINOR_AXIS_POS_ANGLE, in degrees, towards to the positive horizontal semi-axis \n" +
-          "(i.e. East direction). (the flattening is along the minor_axis) \n\n" +
-          "|North \n" +
-          "|               For avoiding degenerescence, the domain of variation \n" +
-          "|--->East       of MINOR_AXIS_POS_ANGLE is 180 degrees, \n" +
-          "|               for ex. from 0 to 180 degrees. \n\n" +
-          "FLATTEN_RATIO = major_axis / minor_axis \n\n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
+  private static final String MODEL_FDISK_DESC = 
+          "Returns the Fourier transform of a normalized ellipse centered at coordinates (X,Y) \n" +
+          "(milliarcsecond) with a ratio FLATTEN_RATIO between the major diameter \n" +
+          "MAJOR_AXIS_DIAMETER and the minor one, turned from the positive vertical semi-axis \n" +
+          "(i.e. North direction) with angle MINOR_AXIS_POS_ANGLE, in degrees, towards to the \n" +
+          "positive horizontal semi-axis (i.e. East direction). (the flattening is along the minor_axis) \n\n" +
+          "For avoiding degenerescence, the domain of variation of MINOR_AXIS_POS_ANGLE is 180 \n" +
+          "degrees, for ex. from 0 to 180 degrees. \n\n" +
+          "FLATTEN_RATIO = major_axis / minor_axis \n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
           "The function returns an error if MAJOR_AXIS_DIAMETER is negative or if FLATTEN_RATIO \n" +
-          "is smaller than 1. \n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+          "is smaller than 1.";
 
   /* specific parameters for elongated disk */
   /** Parameter type for the parameter minor_axis_diameter */

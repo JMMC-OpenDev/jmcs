@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LDDiskModelFunction.java,v 1.1 2010-05-18 15:34:48 bourgesl Exp $"
+ * "@(#) $Id: LDDiskModelFunction.java,v 1.2 2010-06-10 10:59:09 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/05/18 15:34:48  bourgesl
+ * added limb darkened disk model
+ *
  *
  */
 package fr.jmmc.mcs.model.function;
@@ -24,20 +27,16 @@ public final class LDDiskModelFunction extends AbstractModelFunction<LDDiskFunct
 
   /* Model constants */
   /** model description */
-  private static final String MODEL_DESC = "lpb_limb_quadratic(ufreq, vfreq, flux_weight, x, y, diameter, a1_coeff, a2_coeff) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a center-to-limb darkened disk of diameter \n" +
-          "DIAMETER (milliarcsecond) centered at coordinates (X,Y) (milliarcsecond). \n\n" +
-          "The brightness distribution o, if expressed versus mu, \n" +
-          "the cosine of the azimuth of a surface element of the star, follows \n" +
-          "a quadratic law of coefficients A1_COEFF, A2_COEFF ([-1,1]), and is normalized \n" +
-          "for mu = 1 (center of the star). \n" +
-          "o(mu) = 1 -A1_COEFF(1-mu) - A2_COEFF(1-mu)^2. \n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
-          "The function returns an error if DIAMETER is negative or \n" +
-          "if A1_COEFF or A2_coeff outside bounds [-1,1].\n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+  private static final String MODEL_DESC = 
+          "Returns the Fourier transform of a center-to-limb darkened disk of diameter DIAMETER \n" +
+          "(milliarcsecond) centered at coordinates (X,Y) (milliarcsecond). \n\n" +
+          "The brightness distribution o, if expressed versus mu, the cosine of the azimuth of \n" +
+          "a surface element of the star, follows a quadratic law of coefficients \n" +
+          "A1_COEFF, A2_COEFF ([-1,1]), and is normalized for mu = 1 (center of the star). \n" +
+          "o(mu) = 1 -A1_COEFF(1-mu) - A2_COEFF(1-mu)^2. \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
+          "The function returns an error if DIAMETER is negative or if A1_COEFF or A2_coeff is \n" +
+          "outside bounds [-1,1]";
   /** Parameter type for the parameter a1_coeff */
   public final static String PARAM_A1 = "a1_coeff";
   /** Parameter type for the parameter a2_coeff */

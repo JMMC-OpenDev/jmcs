@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RingModelFunction.java,v 1.5 2010-06-10 10:18:03 bourgesl Exp $"
+ * "@(#) $Id: RingModelFunction.java,v 1.6 2010-06-10 10:59:04 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/06/10 10:18:03  bourgesl
+ * simplified model descriptions + formatting
+ *
  * Revision 1.4  2010/05/18 15:34:03  bourgesl
  * javadoc
  *
@@ -46,14 +49,14 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
           "coordinates (X,Y) (milliarcsecond). The sizes of the function in two orthogonal directions \n" +
           "are given by the narrowest internal diameter (MINOR_INTERNAL_DIAMETER) and by the ratio \n" +
           "ELONG_RATIO between the widest internal diameter and MINOR_INTERNAL_DIAMETER, \n" +
-          "in the same way as for an ellipse (the elongation is along the major_axis) : \n" +
+          "in the same way as for an ellipse (the elongation is along the major_axis) : \n\n" +
           "ELONG_RATIO = MAJOR_INTERNAL_DIAMETER / MINOR_INTERNAL_DIAMETER. \n" +
           "In the direction of MINOR_INTERNAL_DIAMETER, the external diameter is \n" +
           "MINOR_INTERNAL_DIAMETER + WIDTH. In the direction of the widest internal diameter, \n" +
           "the width is magnified by the ratio ELONG_RATIO, so that the external diameter is \n" +
           "the elongated MAJOR_INTERNAL_DIAMETER + WIDTH * ELONG_RATIO. \n" +
           "MAJOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
-          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
+          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n" +
           "For avoiding degenerescence, the domain of variation of MAJOR_AXIS_POS_ANGLE is 180 \n" +
           "degrees, for ex. from 0 to 180 degrees. \n\n" +
           "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
@@ -65,14 +68,14 @@ public final class RingModelFunction extends AbstractModelFunction<RingFunction>
           "coordinates (X,Y) (milliarcsecond). The sizes of the function in two orthogonal directions \n" +
           "are given by the widest internal diameter (MAJOR_INTERNAL_DIAMETER) and by the ratio \n" +
           "FLATTEN_RATIO between MAJOR_INTERNAL_DIAMETER and the narrowest internal diameter, \n" +
-          "in the same way as for an ellipse (the flattening is along the minor axis) : \n" +
+          "in the same way as for an ellipse (the flattening is along the minor axis) : \n\n" +
           "FLATTEN_RATIO = MAJOR_INTERNAL_DIAMETER / MINOR_INTERNAL_DIAMETER. \n" +
           "In the direction of MAJOR_INTERNAL_DIAMETER, the external diameter is \n" +
           "MAJOR_INTERNAL_DIAMETER + WIDTH. In the direction of the narrowest internal diameter, \n" +
           "the width is decreased by the ratio FLATTEN_RATIO, so that the external diameter is \n" +
           "the flattened MINOR_INTERNAL_DIAMETER + WIDTH / FLATTEN_RATIO. \n" +
           "MINOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
-          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
+          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n" +
           "For avoiding degenerescence, the domain of variation of MINOR_AXIS_POS_ANGLE is 180 \n" +
           "degrees, for ex. from 0 to 180 degrees. \n\n" +
           "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +

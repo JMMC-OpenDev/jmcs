@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: GaussianModelFunction.java,v 1.2 2010-05-18 15:34:03 bourgesl Exp $"
+ * "@(#) $Id: GaussianModelFunction.java,v 1.3 2010-06-10 10:59:09 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/05/18 15:34:03  bourgesl
+ * javadoc
+ *
  * Revision 1.1  2010/05/18 12:43:06  bourgesl
  * added Gaussian Models
  *
@@ -26,56 +29,41 @@ public final class GaussianModelFunction extends AbstractModelFunction<GaussianF
 
   /* Model constants */
   /** gaussian model description */
-  private static final String MODEL_GAUSS_DESC = "lpb_gaussian(ufreq, vfreq, flux_weight, x, y, fwhm) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized gaussian with given FWHM \n" +
-          "(milliarcsecond) centered at coordinates (X,Y) (milliarcsecond). \n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
-          "The function returns an error if FWHM is negative.\n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+  private static final String MODEL_GAUSS_DESC =
+          "Returns the Fourier transform of a normalized gaussian with given FWHM (milliarcsecond) \n" +
+          "centered at coordinates (X,Y) (milliarcsecond). \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
+          "The function returns an error if FWHM is negative.";
   /** elongated gaussian model description */
-  private static final String MODEL_EGAUSS_DESC = "lpb_elong_gaussian(ufreq, vfreq, flux_weight, x, y, minor_axis_fwhm, \n" +
-          "elong_ratio, major_axis_pos_angle) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized elongated gaussian centered at coordinates (X,Y) (milliarcsecond). \n" +
-          "The sizes of the function in two orthogonal directions are given by the \n" +
-          "narrowest FWHM (MINOR_AXIS_FWHM) and by the ratio \n" +
-          "ELONG_RATIO between the largest FWHM (MAJOR_AXIS_FWHM) and the MINOR_AXIS_FWHM, \n" +
-          "in the same way as for an ellipse (the elongation is along the major_axis): \n\n" +
+  private static final String MODEL_EGAUSS_DESC =
+          "Returns the Fourier transform of a normalized elongated gaussian centered at coordinates \n" +
+          "(X,Y) (milliarcsecond). The sizes of the function in two orthogonal directions are given by \n" +
+          "the narrowest FWHM (MINOR_AXIS_FWHM) and by the ratio ELONG_RATIO between the largest \n" +
+          "FWHM (MAJOR_AXIS_FWHM) and the MINOR_AXIS_FWHM, in the same way as for an ellipse \n" +
+          "(the elongation is along the major_axis) : \n\n" +
           "ELONG_RATIO = MAJOR_AXIS_FWHM / MINOR_AXIS_FWHM. \n" +
           "MAJOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
-          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
-          "|North \n" +
-          "|               For avoiding degenerescence, the domain of variation \n" +
-          "|--->East       of MAJOR_AXIS_POS_ANGLE is 180 degrees, \n" +
-          "|               for ex. from 0 to 180 degrees. \n\n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
+          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n" +
+          "For avoiding degenerescence, the domain of variation of MAJOR_AXIS_POS_ANGLE is 180 \n" +
+          "degrees, for ex. from 0 to 180 degrees. \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
           "The function returns an error if MINOR_AXIS_FWHM is negative or if ELONG_RATIO \n" +
-          "is smaller than 1. \n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+          "is smaller than 1.";
   /** flattened gaussian model description */
-  private static final String MODEL_FGAUSS_DESC = "lpb_flatten_gaussian(ufreq, vfreq, flux_weight, x, y, major_axis_fwhm, \n" +
-          "flatten_ratio, minor_axis_pos_angle) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized flattened gaussian centered at coordinates (X,Y) (milliarcsecond). \n" +
-          "The sizes of the function in two orthogonal directions are given by the \n" +
-          "largest FWHM (MAJOR_AXIS_FWHM) and by the ratio \n" +
-          "FLATTEN_RATIO between the largest FWHM (MAJOR_AXIS_FWHM) and the MINOR_AXIS_FWHM, \n" +
-          "in the same way as for an ellipse (the flattening is along the minor_axis): \n\n" +
+  private static final String MODEL_FGAUSS_DESC =
+          "Returns the Fourier transform of a normalized flattened gaussian centered at coordinates \n" +
+          "(X,Y) (milliarcsecond). The sizes of the function in two orthogonal directions are given by \n" +
+          "the largest FWHM (MAJOR_AXIS_FWHM) and by the ratio FLATTEN_RATIO between the largest \n" +
+          "FWHM (MAJOR_AXIS_FWHM) and the MINOR_AXIS_FWHM, in the same way as for an ellipse \n" +
+          "(the flattening is along the minor_axis) : \n\n" +
           "FLATTEN_RATIO = MAJOR_AXIS_FWHM / MINOR_AXIS_FWHM. \n" +
           "MINOR_AXIS_POS_ANGLE is measured in degrees, from the positive vertical semi-axis \n" +
-          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n\n" +
-          "|North \n" +
-          "|               For avoiding degenerescence, the domain of variation \n" +
-          "|--->East       of MAJOR_AXIS_POS_ANGLE is 180 degrees, \n" +
-          "|               for ex. from 0 to 180 degrees. \n\n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
+          "(i.e. North direction) towards to the positive horizontal semi-axis (i.e. East direction). \n" +
+          "For avoiding degenerescence, the domain of variation of MINOR_AXIS_POS_ANGLE is 180 \n" +
+          "degrees, for ex. from 0 to 180 degrees. \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
           "The function returns an error if MAJOR_AXIS_FWHM is negative or if FLATTEN_RATIO \n" +
-          "is smaller than 1. \n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+          "is smaller than 1.";
 
   /* specific parameters for gaussian */
   /** Parameter type for the parameter fwhm */

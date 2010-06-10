@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PunctModelFunction.java,v 1.9 2010-05-18 15:34:03 bourgesl Exp $"
+ * "@(#) $Id: PunctModelFunction.java,v 1.10 2010-06-10 10:18:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/05/18 15:34:03  bourgesl
+ * javadoc
+ *
  * Revision 1.8  2010/05/17 16:03:09  bourgesl
  * major refactoring to simplify the code and delegate the model computation to a Function class
  *
@@ -46,13 +49,10 @@ public final class PunctModelFunction extends AbstractModelFunction<PunctFunctio
 
   /* Model constants */
   /** model description */
-  private final static String MODEL_DESC = "lpb_punct(ufreq, vfreq, flux_weight, x, y) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a punctual object (Dirac function) at coordinates \n" +
-          "(X,Y) given in milliarcsecond. \n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+  private final static String MODEL_DESC =
+          "Returns the Fourier transform of a punctual object (Dirac function) at coordinates (X,Y) \n" +
+          "(milliarcsecond). \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1.";
 
   /**
    * Constructor

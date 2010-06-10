@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: CircleModelFunction.java,v 1.4 2010-05-18 15:34:03 bourgesl Exp $"
+ * "@(#) $Id: CircleModelFunction.java,v 1.5 2010-06-10 10:18:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/05/18 15:34:03  bourgesl
+ * javadoc
+ *
  * Revision 1.3  2010/05/17 16:03:08  bourgesl
  * major refactoring to simplify the code and delegate the model computation to a Function class
  *
@@ -31,14 +34,11 @@ public final class CircleModelFunction extends AbstractModelFunction<CircleFunct
 
   /* Model constants */
   /** model description */
-  private static final String MODEL_DESC = "lpb_circle_diameter(ufreq, vfreq, flux_weight, x, y, diameter) \n\n" +
-          "Returns the Fourier transform, at spatial frequencies (UFREQ,VFREQ) \n" +
-          "given in 1/rad, of a normalized uniform circle of diameter \n" +
-          "DIAMETER (milliarcsecond) and centered at coordinates (X,Y) (milliarcsecond). \n" +
-          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n" +
-          "The function returns an error if DIAMETER is negative.\n\n" +
-          "UFREQ and VFREQ must be conformable. The returned array is always \n" +
-          "complex and with dimensions dimsof(UFREQ,VFREQ). \n";
+  private static final String MODEL_DESC =
+          "Returns the Fourier transform of a normalized uniform circle of diameter DIAMETER \n" +
+          "(milliarcsecond) and centered at coordinates (X,Y) (milliarcsecond). \n\n" +
+          "FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1. \n\n" +
+          "The function returns an error if DIAMETER is negative.";
 
   /**
    * Constructor
@@ -92,7 +92,7 @@ public final class CircleModelFunction extends AbstractModelFunction<CircleFunct
     function.setX(getParameterValue(model, PARAM_X));
     function.setY(getParameterValue(model, PARAM_Y));
     function.setFluxWeight(getParameterValue(model, PARAM_FLUX_WEIGHT));
-    
+
     function.setDiameter(getParameterValue(model, PARAM_DIAMETER));
 
     return function;

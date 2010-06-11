@@ -29,11 +29,9 @@ public class NumericJTable extends javax.swing.JTable {
 
     // single table selection :
     getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    getSelectionModel().addListSelectionListener(this);
 
     // Fix lost focus issues on JTable :
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-
   }
 
   @Override

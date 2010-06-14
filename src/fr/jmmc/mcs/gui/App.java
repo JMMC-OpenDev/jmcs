@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.57 2010-06-14 08:22:01 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.58 2010-06-14 11:52:29 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.57  2010/06/14 08:22:01  bourgesl
+ * file argument string buffer is instanciated to avoid NPE
+ * removed unused variables
+ * javadoc
+ *
  * Revision 1.56  2010/04/13 14:01:54  bourgesl
  * the static internal frame is lazy instanciated to avoid initialization issues (EDT)
  * the method getFrame() is public
@@ -240,12 +245,10 @@ import java.io.ByteArrayOutputStream;
 
 import java.net.URL;
 
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
-import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -677,20 +680,17 @@ public abstract class App
             return;
         }
 
-        // Will contain file path for '-open' option
-        final StringBuffer file = new StringBuffer();
-
         // Array for long arguments (help & version)
-        LongOpt[] longopts = new LongOpt[]
+        final LongOpt[] longopts = new LongOpt[]
             {
                 new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
                 new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1),
                 new LongOpt("loggui", LongOpt.NO_ARGUMENT, null, 2),
-                new LongOpt("open", LongOpt.REQUIRED_ARGUMENT, file, 3)
+                new LongOpt("open", LongOpt.REQUIRED_ARGUMENT, null, 3)
             };
 
         // Instantiate the getopt object
-        Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(),
+        final Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(),
                 args, "hv:", longopts, true);
 
         int    c; // argument key
@@ -699,6 +699,10 @@ public abstract class App
         // While there is a argument key
         while ((c = getOpt.getopt()) != -1)
         {
+            if (_logger.isLoggable(Level.FINEST)) {
+              _logger.finest("opt = " + c);
+            }
+
             switch (c)
             {
             // Show the arguments help
@@ -724,6 +728,8 @@ public abstract class App
 
             // Open the given file
             case 3:
+                // get the required file path argument :
+                final String file = getOpt.getOptarg();
                 if (_logger.isLoggable(Level.INFO)) {
                   _logger.info("Should open '" + file + "'.");
                 }

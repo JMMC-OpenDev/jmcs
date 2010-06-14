@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.56 2010-04-13 14:01:54 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.57 2010-06-14 08:22:01 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.56  2010/04/13 14:01:54  bourgesl
+ * the static internal frame is lazy instanciated to avoid initialization issues (EDT)
+ * the method getFrame() is public
+ *
  * Revision 1.55  2010/01/14 13:03:04  bourgesl
  * use Logger.isLoggable to avoid a lot of string.concat()
  *
@@ -220,8 +224,10 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import fr.jmmc.mcs.util.*;
 
+import fr.jmmc.mcs.util.ActionRegistrar;
+import fr.jmmc.mcs.util.RegisteredAction;
+import fr.jmmc.mcs.util.Urls;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
@@ -239,8 +245,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
+import java.util.prefs.Preferences;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
-import javax.swing.*;
 
 
 /**
@@ -275,9 +286,6 @@ public abstract class App
     /** Stream handler which permit us to keep logs report in strings */
     private static StreamHandler _streamHandler = null;
 
-    /** Console handler which permit us to show logs report on the console */
-    private static ConsoleHandler _consoleHandler = new ConsoleHandler();
-
     /** ByteArrayOutputStream which keeps logs report */
     private static ByteArrayOutputStream _byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -304,9 +312,6 @@ public abstract class App
 
     /** If it's true, exit the application after the exit method */
     private static boolean _exitApplicationWhenClosed = true;
-
-    /** Application preferences */
-    private static Preferences _preferences;
 
     /** Quit handling action */
     private static QuitAction _quitAction = null;
@@ -493,7 +498,7 @@ public abstract class App
         try
         {
             // The App class
-            Class app = Introspection.getClass("fr.jmmc.mcs.gui.App");
+            Class<?> app = Introspection.getClass("fr.jmmc.mcs.gui.App");
 
             // The App package
             Package defaultPackage = app.getPackage();
@@ -523,17 +528,30 @@ public abstract class App
         }
     }
 
-    /** Return the action which displays and copy acknowledgement to clipboard */
+    /**
+     * Return the action which displays and copy acknowledgement to clipboard
+     * @return action which displays and copy acknowledgement to clipboard
+     */
     public static Action acknowledgementAction()
     {
         return _acknowledgementAction;
     }
 
-    /** Creates the action which open the about box window */
+    /**
+     * Creates the action which open the about box window
+     * @return action which open the about box window
+     */
     public static Action aboutBoxAction()
     {
         return new AbstractAction("About...")
             {
+                /** default serial UID for Serializable interface */
+                private static final long serialVersionUID = 1;
+
+                /**
+                 * Handle the action event
+                 * @param evt action event
+                 */
                 public void actionPerformed(ActionEvent evt)
                 {
                     if (_applicationDataModel != null)
@@ -558,17 +576,31 @@ public abstract class App
             };
     }
 
-    /** Creates the feedback action which open the feedback window */
+    /**
+     * Creates the feedback action which open the feedback window
+     * @return feedback action which open the feedback window
+     */
     public static Action feedbackReportAction()
     {
         return feedbackReportAction(null);
     }
 
-    /** Creates the feedback action which open the feedback window */
+    /**
+     * Creates the feedback action which open the feedback window
+     * @param ex exception that occured
+     * @return feedback action which open the feedback window
+     */
     public static Action feedbackReportAction(final Exception ex)
     {
         return new AbstractAction("Report Feedback to JMMC...")
             {
+                /** default serial UID for Serializable interface */
+                private static final long serialVersionUID = 1;
+
+                /**
+                 * Handle the action event
+                 * @param evt action event
+                 */
                 public void actionPerformed(ActionEvent evt)
                 {
                     if (_applicationDataModel != null)
@@ -579,31 +611,46 @@ public abstract class App
             };
     }
 
-    /** Return the action which tries to display the help */
+    /**
+     * Return the action which tries to display the help
+     * @return action which tries to display the help
+     */
     public static Action showHelpAction()
     {
         return _showHelpAction;
     }
 
-    /** Return the action which tries to quit the application */
+    /**
+     * Return the action which tries to quit the application
+     * @return action which tries to quit the application
+     */
     public static Action quitAction()
     {
         return _quitAction;
     }
 
-    /** Return the action dedicated to display hot news */
+    /**
+     * Return the action dedicated to display hot news
+     * @return action dedicated to display hot news 
+     */
     public static Action showHotNewsAction()
     {
         return _showHotNewsAction;
     }
 
-    /** Return the action dedicated to display release */
+    /**
+     * Return the action dedicated to display release
+     * @return action dedicated to display release
+     */
     public static Action showReleaseAction()
     {
         return _showReleaseAction;
     }
 
-    /** Return the action dedicated to display FAQ */
+    /**
+     * Return the action dedicated to display FAQ
+     * @return action dedicated to display FAQ 
+     */
     public static Action showFaqAction()
     {
         return _showFaqAction;
@@ -631,7 +678,7 @@ public abstract class App
         }
 
         // Will contain file path for '-open' option
-        StringBuffer file = null;
+        final StringBuffer file = new StringBuffer();
 
         // Array for long arguments (help & version)
         LongOpt[] longopts = new LongOpt[]
@@ -772,7 +819,10 @@ public abstract class App
         System.exit(0);
     }
 
-    /** Initialize application objects */
+    /**
+     * Initialize application objects
+     * @param args command line arguments
+     */
     protected abstract void init(String[] args);
 
     /** Execute application body */
@@ -933,7 +983,7 @@ public abstract class App
     public URL getURLFromResourceFilename(String fileName)
     {
         // The class which is extended from App
-        Class actualClass = getClass();
+        Class<?> actualClass = getClass();
 
         // It's package
         Package p = actualClass.getPackage();
@@ -970,9 +1020,18 @@ public abstract class App
         return Urls.fixJarURL(fileURL);
     }
 
-    /* Action to correctly handle file opening. */
+    /** Action to correctly handle file opening. */
     protected class OpenAction extends RegisteredAction
     {
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+
+        /**
+         * Public constructor
+         * @param classPath the path of the class containing the field pointing to
+         * the action, in the form returned by 'getClass().getName();'.
+         * @param fieldName the name of the field pointing to the action.
+         */
         public OpenAction(String classPath, String fieldName)
         {
             super(classPath, fieldName);
@@ -983,7 +1042,11 @@ public abstract class App
             flagAsOpenAction();
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        public void actionPerformed(ActionEvent evt)
         {
             _logger.entering("OpenAction", "actionPerformed");
 
@@ -991,9 +1054,18 @@ public abstract class App
         }
     }
 
-    /* Action to correctly handle operations before closing application. */
+    /** Action to correctly handle operations before closing application. */
     protected class QuitAction extends RegisteredAction
     {
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+
+        /**
+         * Public constructor
+         * @param classPath the path of the class containing the field pointing to
+         * the action, in the form returned by 'getClass().getName();'.
+         * @param fieldName the name of the field pointing to the action.
+         */
         public QuitAction(String classPath, String fieldName)
         {
             super(classPath, fieldName, "Quit", "ctrl Q");
@@ -1001,7 +1073,11 @@ public abstract class App
             flagAsQuitAction();
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        public void actionPerformed(ActionEvent evt)
         {
             _logger.entering("QuitAction", "actionPerformed");
 
@@ -1030,11 +1106,21 @@ public abstract class App
         }
     }
 
-    /* Action to copy acknowledgement text to the clipboard. */
+    /** Action to copy acknowledgement text to the clipboard. */
     protected class AcknowledgementAction extends RegisteredAction
     {
-        String _acknowledgement = null;
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
 
+        /** acknowlegment content */
+        private String _acknowledgement = null;
+
+        /**
+         * Public constructor
+         * @param classPath the path of the class containing the field pointing to
+         * the action, in the form returned by 'getClass().getName();'.
+         * @param fieldName the name of the field pointing to the action.
+         */
         public AcknowledgementAction(String classPath, String fieldName)
         {
             super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
@@ -1055,7 +1141,11 @@ public abstract class App
             // the generic acknowledgement found in JMCS will be used instead.
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        public void actionPerformed(ActionEvent evt)
         {
             _logger.entering("AcknowledgementAction", "actionPerformed");
 
@@ -1076,54 +1166,102 @@ public abstract class App
         }
     }
 
-    /* Action to show hot news RSS feed. */
+    /** Action to show hot news RSS feed. */
     protected class ShowHotNewsAction extends RegisteredAction
     {
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+
+        /**
+         * Public constructor
+         * @param classPath the path of the class containing the field pointing to
+         * the action, in the form returned by 'getClass().getName();'.
+         * @param fieldName the name of the field pointing to the action.
+         */
         public ShowHotNewsAction(String classPath, String fieldName)
         {
             super(classPath, fieldName, "Hot News (RSS Feed)");
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        public void actionPerformed(ActionEvent evt)
         {
             _logger.entering("ShowReleaseAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getHotNewsRSSFeedLinkValue());
         }
     }
 
-    /* Action to show release. */
+    /** Action to show release. */
     protected class ShowReleaseAction extends RegisteredAction
     {
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+
+        /**
+         * Public constructor
+         * @param classPath the path of the class containing the field pointing to
+         * the action, in the form returned by 'getClass().getName();'.
+         * @param fieldName the name of the field pointing to the action.
+         */
         public ShowReleaseAction(String classPath, String fieldName)
         {
             super(classPath, fieldName, "Release Notes");
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        public void actionPerformed(ActionEvent evt)
         {
             _logger.entering("ShowReleaseAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getReleaseNotesLinkValue());
         }
     }
 
-    /* Action to show FAQ. */
+    /** Action to show FAQ. */
     protected class ShowFaqAction extends RegisteredAction
     {
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+
+        /**
+         * Public constructor
+         * @param classPath the path of the class containing the field pointing to
+         * the action, in the form returned by 'getClass().getName();'.
+         * @param fieldName the name of the field pointing to the action.
+         */
         public ShowFaqAction(String classPath, String fieldName)
         {
             super(classPath, fieldName, "Frequently Asked Questions");
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        public void actionPerformed(ActionEvent evt)
         {
             _logger.entering("ShowFaqAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getFaqLinkValue());
         }
     }
 
-    /* Action to show help. */
+    /** Action to show help. */
     protected class ShowHelpAction extends RegisteredAction
     {
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+
+        /**
+         * Public constructor
+         * @param classPath the path of the class containing the field pointing to
+         * the action, in the form returned by 'getClass().getName();'.
+         * @param fieldName the name of the field pointing to the action.
+         */
         public ShowHelpAction(String classPath, String fieldName)
         {
             super(classPath, fieldName, "User Manual");
@@ -1135,7 +1273,11 @@ public abstract class App
                 new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        public void actionPerformed(ActionEvent evt)
         {
             _logger.entering("ShowHelpAction", "actionPerformed");
             HelpView.setVisible(true);

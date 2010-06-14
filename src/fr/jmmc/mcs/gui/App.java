@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.58 2010-06-14 11:52:29 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.59 2010-06-14 13:10:28 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.58  2010/06/14 11:52:29  bourgesl
+ * fixed command line parsing to get the file argument (-open file)
+ *
  * Revision 1.57  2010/06/14 08:22:01  bourgesl
  * file argument string buffer is instanciated to avoid NPE
  * removed unused variables
@@ -337,6 +340,9 @@ public abstract class App
     /** Store a proxy to the shared ActionRegistrar facility */
     private ActionRegistrar _registrar = null;
 
+    /** temporarly store the file name argument for the open action */
+    private String _fileArgument = null;
+
     /**
      * Creates a new App object
      *
@@ -437,7 +443,7 @@ public abstract class App
             // If execution should not be delayed
             if (waitBeforeExecution == false)
             {
-                // Run the application imediatly
+                // Run the application imediately
                 run();
             }
         }
@@ -728,15 +734,11 @@ public abstract class App
 
             // Open the given file
             case 3:
-                // get the required file path argument :
-                final String file = getOpt.getOptarg();
+                // get the file path argument and store it temporarly :
+                this._fileArgument = getOpt.getOptarg();
                 if (_logger.isLoggable(Level.INFO)) {
-                  _logger.info("Should open '" + file + "'.");
+                  _logger.info("Should open '" + this._fileArgument + "'.");
                 }
-                _registrar.getOpenAction()
-                          .actionPerformed(new ActionEvent(_registrar, 0,
-                        file.toString()));
-
                 break;
 
             // Set the logger level
@@ -887,6 +889,12 @@ public abstract class App
 
         // Delegate execution to daughter class through abstract execute() call
         execute();
+
+        // If any file argument exists, open that file using the registered open action :
+        if (_fileArgument != null) {
+              _registrar.getOpenAction()
+                        .actionPerformed(new ActionEvent(_registrar, 0, _fileArgument));
+        }
     }
 
     /**

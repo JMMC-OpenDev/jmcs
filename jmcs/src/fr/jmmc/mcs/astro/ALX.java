@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.18 2010-04-13 14:00:00 bourgesl Exp $"
+ * "@(#) $Id: ALX.java,v 1.19 2010-06-22 13:01:44 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2010/04/13 14:00:00  bourgesl
+ * fixed syntax
+ *
  * Revision 1.17  2010/04/08 08:40:50  bourgesl
  * added parseHMS method that converts HMS to degrees without any range correction like parseRA. Tested intensively with aspro EditableStarResolverWidget
  *
@@ -79,22 +82,25 @@ import java.util.*;
 public class ALX
 {
     /** Describe the micrometer (micron, or um) unit */
-    public static final double MICRON = 1.0;
+    public static final double MICRON = 1.0d;
 
     /** Describe the meter unit */
-    public static final double METER = 1.0;
+    public static final double METER = 1.0d;
 
     /** Describe the arcminute unit */
-    public static final double ARCMIN = 1.0;
+    public static final double ARCMIN = 1.0d;
 
     /** Specify the value of one arcminute in degrees */
-    public static final double ARCMIN_IN_DEGREES = (1.0 / 60.0);
+    public static final double ARCMIN_IN_DEGREES = (1.0d / 60.0d);
 
     /** Describe the arcsecond unit */
-    public static final double ARCSEC = 1.0;
+    public static final double ARCSEC = 1.0d;
 
     /** Specify the value of one arcsecond in degrees */
-    public static final double ARCSEC_IN_DEGREES = (1.0 / 3600.0);
+    public static final double ARCSEC_IN_DEGREES = (1.0d / 3600.0d);
+
+    /** Specify the value of one milli arcsecond in degrees */
+    public static final double MILLI_ARCSEC_IN_DEGREES = ARCSEC_IN_DEGREES / 1000d;
 
     /**
      * Convert the given Right Ascension (RA).

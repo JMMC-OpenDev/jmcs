@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.59 2010-06-14 13:10:28 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.60 2010-06-28 14:26:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.59  2010/06/14 13:10:28  bourgesl
+ * store temporaly the file open argument to execute the open action after the application startup
+ *
  * Revision 1.58  2010/06/14 11:52:29  bourgesl
  * fixed command line parsing to get the file argument (-open file)
  *
@@ -720,7 +723,7 @@ public abstract class App
             // Show the name and the version of the program
             case 1:
                 // Show the application name on the shell
-                System.out.println(_applicationDataModel.getProgramName());
+                System.out.println(_applicationDataModel.getProgramName() + " v" + _applicationDataModel.getProgramVersion());
                 // Exit the application
                 System.exit(0);
 

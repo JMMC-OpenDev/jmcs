@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.13 2010-05-18 15:34:47 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.14 2010-06-29 14:24:02 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2010/05/18 15:34:47  bourgesl
+ * added limb darkened disk model
+ *
  * Revision 1.12  2010/05/18 12:43:06  bourgesl
  * added Gaussian Models
  *
@@ -213,7 +216,7 @@ public final class ModelManager {
    * @param ufreq U frequencies in rad-1
    * @param vfreq V frequencies in rad-1
    * @param models list of models to compute
-   * @return normalized complex visibility
+   * @return normalized complex visibility or null if thread interrupted
    * @throws IllegalArgumentException if a parameter value is invalid !
    */
   public Complex[] computeModels(final double[] ufreq, final double[] vfreq, final List<Model> models) throws IllegalArgumentException {

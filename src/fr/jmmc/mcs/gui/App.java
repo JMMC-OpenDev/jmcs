@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.60 2010-06-28 14:26:18 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.61 2010-07-08 13:20:34 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.60  2010/06/28 14:26:18  lafrasse
+ * Added actual software version when asked from CLI interface.
+ *
  * Revision 1.59  2010/06/14 13:10:28  bourgesl
  * store temporaly the file open argument to execute the open action after the application startup
  *
@@ -260,6 +263,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 
 
@@ -673,7 +677,7 @@ public abstract class App
      *
      * @param args arguments
      */
-    protected void interpretArguments(String[] args)
+    private final void interpretArguments(String[] args)
     {
         // List received arguments
         if (_logger.isLoggable(Level.FINEST)) {
@@ -839,6 +843,11 @@ public abstract class App
     /** Execute application body */
     protected abstract void execute();
 
+    /** Callback when the application is ready (typically make the frame visible) */
+    protected void ready() {
+        _logger.fine("Default App.ready() handler called.");
+    }
+
     /**
      * Hook to handle operations before closing application.
      *
@@ -895,9 +904,19 @@ public abstract class App
 
         // If any file argument exists, open that file using the registered open action :
         if (_fileArgument != null) {
+          SwingUtilities.invokeLater(new Runnable() {
+            /**
+             * Open the file using EDT :
+             */
+            public void run() {
               _registrar.getOpenAction()
                         .actionPerformed(new ActionEvent(_registrar, 0, _fileArgument));
+            }
+          });
         }
+
+        // Indicate that this application is ready
+        ready();
     }
 
     /**

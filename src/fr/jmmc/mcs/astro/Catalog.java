@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Catalog.java,v 1.3 2010-08-24 12:20:09 mella Exp $"
+ * "@(#) $Id: Catalog.java,v 1.4 2010-08-24 12:26:31 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/08/24 12:20:09  mella
+ * Display list of cats in xml in main function
+ *
  * Revision 1.2  2010/01/29 13:03:57  lafrasse
  * Enhanced titleFromReference() and descriptionFromReference() behavior when an
  * unkonown is given.
@@ -209,7 +212,7 @@ public enum Catalog
             String reference = catalog.reference();
             String title = catalog.title();
             String description = catalog.description();
-            System.out.println("<catalog ref='" + reference + "' title='" + title + "' description='" + description + "'</catalog>");
+            System.out.println("<catalog ref='" + reference + "' title='" + title + "' description='" + description + "'/>");
         }
     }
 }

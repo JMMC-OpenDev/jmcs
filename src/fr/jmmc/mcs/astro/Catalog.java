@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Catalog.java,v 1.5 2010-08-24 12:59:51 mella Exp $"
+ * "@(#) $Id: Catalog.java,v 1.6 2010-08-24 13:22:33 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/08/24 12:59:51  mella
+ * Define default color association
+ *
  * Revision 1.4  2010/08/24 12:26:31  mella
  * fix xml wellformness
  *
@@ -191,10 +194,11 @@ public enum Catalog
         for (Catalog catalog : Catalog.values()) {
             float computedHue = ((float) (i + 1) / (total + 1));
             Color catalogColor = Color.getHSBColor(computedHue, saturation,
-                    brightness);
-            if (cat == catalog) {
+                    brightness);            
+            if (cat==catalog) {
                 return catalogColor;
             }
+            i++;
         }
 
         return Color.BLACK;

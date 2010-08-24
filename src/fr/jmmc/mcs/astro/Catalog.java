@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Catalog.java,v 1.2 2010-01-29 13:03:57 lafrasse Exp $"
+ * "@(#) $Id: Catalog.java,v 1.3 2010-08-24 12:20:09 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/01/29 13:03:57  lafrasse
+ * Enhanced titleFromReference() and descriptionFromReference() behavior when an
+ * unkonown is given.
+ * Added WDS catalog definition.
+ *
  * Revision 1.1  2009/11/27 15:57:39  lafrasse
  * Added fr/jmmc/mcs/astro/Catalog;
  *
@@ -194,6 +199,18 @@ public enum Catalog
         System.out.println("catalogFromReference('" + unknownReference + "') = " + catalogFromReference(unknownReference) + ".");
         System.out.println("titleFromReference('" + unknownReference + "') = '" + titleFromReference(unknownReference) + "'.");
         System.out.println("descriptionFromReference('" + unknownReference + "') = '" + descriptionFromReference(unknownReference) + "'.");
+
+
+        System.out.println();
+        System.out.println();
+        // Display in xml each catalog in the enum
+        for (Catalog catalog : Catalog.values())
+        {
+            String reference = catalog.reference();
+            String title = catalog.title();
+            String description = catalog.description();
+            System.out.println("<catalog ref='" + reference + "' title='" + title + "' description='" + description + "'</catalog>");
+        }
     }
 }
 

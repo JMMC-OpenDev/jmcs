@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Catalog.java,v 1.4 2010-08-24 12:26:31 mella Exp $"
+ * "@(#) $Id: Catalog.java,v 1.5 2010-08-24 12:59:51 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/08/24 12:26:31  mella
+ * fix xml wellformness
+ *
  * Revision 1.3  2010/08/24 12:20:09  mella
  * Display list of cats in xml in main function
  *
@@ -20,6 +23,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.astro;
 
+import java.awt.Color;
 import java.util.Hashtable;
 
 
@@ -178,6 +182,24 @@ public enum Catalog
         return _title + " - '" + _description + "' (" + _reference + ")";
     }
 
+    public static Color getDefaultColor(Catalog cat) {
+        int i = 0;
+        int total = Catalog.values().length;
+        float saturation = 0.5f;
+        float brightness = 1.0f;
+
+        for (Catalog catalog : Catalog.values()) {
+            float computedHue = ((float) (i + 1) / (total + 1));
+            Color catalogColor = Color.getHSBColor(computedHue, saturation,
+                    brightness);
+            if (cat == catalog) {
+                return catalogColor;
+            }
+        }
+
+        return Color.BLACK;
+    }
+
     /**
      * For test and debug purpose only.
      */
@@ -212,7 +234,10 @@ public enum Catalog
             String reference = catalog.reference();
             String title = catalog.title();
             String description = catalog.description();
-            System.out.println("<catalog ref='" + reference + "' title='" + title + "' description='" + description + "'/>");
+            System.out.println("<catalog ref='" + reference +
+                    "' title='" + title +
+                    "' color='" + fr.jmmc.mcs.util.ColorEncoder.encode(getDefaultColor(catalog)) +
+                    "' description='" + description + "'/>");
         }
     }
 }

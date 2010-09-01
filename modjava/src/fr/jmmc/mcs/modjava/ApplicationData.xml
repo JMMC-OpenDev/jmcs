@@ -10,6 +10,10 @@
         <package name="SAX" description="SAX is the Simple API for XML, originally a Java-only API. SAX was the first widely adopted API for XML in Java, and is a 'de facto' standard." link="http://www.saxproject.org/"/>
     </dependences>
     <menubar>
+        <menu label="Preferences">
+            <menu label="Save to file" classpath="fr.jmmc.mcs.util.Preferences" action="savePreferences"/>
+            <menu label="Set default values" classpath="fr.jmmc.mcs.util.Preferences" action="restorePreferences"/>
+        </menu>
         <menu label="Model fitting">
             <menu label="Model fitting 1" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction1" accelerator="shift T" description="Raccourcis n-1 de Model fitting"/>
             <menu/>

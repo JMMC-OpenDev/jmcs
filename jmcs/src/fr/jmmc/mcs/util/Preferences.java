@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.32 2010-05-21 13:51:44 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.33 2010-09-02 09:45:35 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2010/05/21 13:51:44  mella
+ * add javadoc
+ *
  * Revision 1.31  2010/05/21 13:48:21  mella
  * Do not notifyObservers anylonger if the preference get the same value
  *
@@ -131,6 +134,7 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Action;
 
 
 /**
@@ -139,6 +143,14 @@ import java.util.logging.Logger;
  * and setDefaultProperties methods.
  * Application must take care of multiple instances that shares the same
  * preference file (RW conflict...).
+ *
+ * If instanciated in the App.init(), you can use the instantiated actions which
+ * save preference to file or restore preferences that get default values.
+ * To use them in
+ * &lt;menu label="Preferences"&gt;
+ *  &lt;menu label="Save to file" classpath="fr.jmmc.mcs.util.Preferences" action="savePreferences"/&gt;
+ *  &lt;menu label="Set default values" classpath="fr.jmmc.mcs.util.Preferences" action="restorePreferences"/&gt;
+ * &lt;/menu&gt;
  */
 public abstract class Preferences extends Observable
 {
@@ -163,6 +175,14 @@ public abstract class Preferences extends Observable
     /** Default propertiy. */
     protected Properties _defaultProperties = new Properties();
 
+    /** Save to file action */
+    protected Action _savePreferences = new SavePrefAction();
+
+
+    /** Restore preferences that get one default value */
+    protected Action _restoreDefaultPreferences = new RestoreDefaultPrefAction();
+
+
     /**
      * Creates a new Preferences object.
      *
@@ -182,6 +202,7 @@ public abstract class Preferences extends Observable
         {
             _logger.log(Level.WARNING, "Preference initialization FAILED.", ex);
         }
+
     }
 
     /**
@@ -910,4 +931,60 @@ public abstract class Preferences extends Observable
         return "Preferences file '" + _fullFilepath + "' contains :\n" +
         _currentProperties;
     }
+
+    public Action getSavePreferences() {
+        return _savePreferences;
+    }
+
+    public Action getRestoreDefaultPreferences() {
+        return _restoreDefaultPreferences;
+    }
+
+     // @todo try to move it into the mcs preferences area
+    protected class SavePrefAction extends RegisteredAction
+    {
+        public SavePrefAction()
+        {
+            super(_className,"savePreferences");
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            try
+            {
+                saveToFile();
+                //@todo move next line into Preferences
+                _logger.fine("Saving preferences");
+            }
+            catch (Exception exc)
+            {
+                // @todo handle this error at user level
+                exc.printStackTrace();
+            }
+        }
+    }
+
+    protected class RestoreDefaultPrefAction extends RegisteredAction
+    {
+        public RestoreDefaultPrefAction()
+        {
+            super(_className,"restorePreferences");
+        }
+
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
+            try
+            {
+                resetToDefaultPreferences();
+                //@todo move next line into Preferences
+                _logger.fine("Restoring preferences");
+            }
+            catch (Exception exc)
+            {
+                // @todo handle this error at user level
+                exc.printStackTrace();
+            }
+        }
+    }
+
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.4 2008-10-27 15:26:13 lafrasse Exp $"
+ * "@(#) $Id: Main.java,v 1.5 2010-09-02 09:34:03 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2008/10/27 15:26:13  lafrasse
+ * REflected JMCS help view action API change.
+ *
  * Revision 1.3  2008/10/15 12:02:53  mella
  * rename finnish method into finish
  *
@@ -22,9 +25,7 @@ import fr.jmmc.mcs.gui.*;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionEvent;
 
-import java.net.URL;
 
 import java.util.logging.*;
 
@@ -38,7 +39,7 @@ import javax.swing.JFrame;
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class Main extends App
 {
@@ -56,6 +57,7 @@ public class Main extends App
 
     /** Actions class */
     Actions _actions;
+    private JButton _testDismissableMessagePane;
 
     /** Constructor */
     public Main(String[] args)
@@ -76,6 +78,7 @@ public class Main extends App
         _aboutBoxButton           = new JButton(aboutBoxAction());
         _feedbackReportButton     = new JButton(feedbackReportAction());
         _helpViewButton           = new JButton(openHelpFrame());
+        _testDismissableMessagePane = new JButton(dismissableMessagePaneAction());
 
         // Set borderlayout
         getFramePanel().setLayout(new BorderLayout());
@@ -83,13 +86,7 @@ public class Main extends App
         // Add buttons to panel
         getFramePanel().add(_aboutBoxButton, BorderLayout.NORTH);
         getFramePanel().add(_feedbackReportButton, BorderLayout.CENTER);
-    }
-
-    /** Execute application body */
-    @Override
-    protected void execute()
-    {
-        _logger.info("Execute application body");
+        getFramePanel().add(_testDismissableMessagePane, BorderLayout.SOUTH);        
 
         // Set others preferences
         try
@@ -100,6 +97,13 @@ public class Main extends App
         {
             _logger.log(Level.WARNING, "Failed setting preference.", ex);
         }
+    }
+
+    /** Execute application body */
+    @Override
+    protected void execute()
+    {
+        _logger.info("Execute application body");        
 
         // Show the frame
         getFrame().setVisible(true);
@@ -144,6 +148,19 @@ public class Main extends App
             };
     }
 
+        /** Open help view action */
+    private Action dismissableMessagePaneAction()
+    {
+        return new AbstractAction("Show dismissable message pane")
+            {
+            public void actionPerformed(ActionEvent evt)
+                {
+                DismissableMessagePane.show(getFramePanel(),
+                        "Try to show a test message\n which can be deactivated by user!!",
+                        Preferences.getInstance(), "msgTest");
+            }
+        };
+    }
     /**
      * Main
      *

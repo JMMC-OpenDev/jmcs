@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.32 2010-02-03 09:37:30 bourgesl Exp $"
+# "@(#) $Id: Makefile,v 1.33 2010-09-06 14:27:57 bourgesl Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.32  2010/02/03 09:37:30  bourgesl
+# fixed path to lut files
+#
 # Revision 1.31  2010/02/03 09:27:07  bourgesl
 # added lut files in jmcs jar file
 #
@@ -259,6 +262,7 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/AppleJavaExtensions.jar \
 		../lib/commons-lang-2.4.jar \
 		../lib/sptype.jar \
+		../lib/commons-math-2.0.jar \
 		../config/jmcsLatexIndex2HsTOC.xsl
 
 #

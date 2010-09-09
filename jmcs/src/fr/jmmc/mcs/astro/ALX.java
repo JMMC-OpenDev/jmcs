@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.19 2010-06-22 13:01:44 bourgesl Exp $"
+ * "@(#) $Id: ALX.java,v 1.20 2010-09-09 15:57:10 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2010/06/22 13:01:44  bourgesl
+ * added constant MILLI_ARCSEC_IN_DEGREES
+ *
  * Revision 1.18  2010/04/13 14:00:00  bourgesl
  * fixed syntax
  *
@@ -67,10 +70,9 @@ package fr.jmmc.mcs.astro;
 import cds.astro.Sptype;
 import fr.jmmc.mcs.astro.star.Star;
 import fr.jmmc.mcs.astro.star.Star.Property;
-import fr.jmmc.mcs.log.MCSLogger;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.Vector;
 
 
 /**
@@ -142,7 +144,7 @@ public class ALX
         // note : dd already includes the sign :
         final double ra = (hh + sign * (hm / 60d + hs / 3600d)) * 15d;
 
-        MCSLogger.debug("HMS  : ’" + raHms + "' = '" + ra + "'.");
+//        MCSLogger.debug("HMS  : ’" + raHms + "' = '" + ra + "'.");
 
         return ra;
     }
@@ -165,7 +167,7 @@ public class ALX
             ra = -1d * (360d - ra);
         }
 
-        MCSLogger.debug("RA  : ’" + raHms + "' = '" + ra + "'.");
+//        MCSLogger.debug("RA  : ’" + raHms + "' = '" + ra + "'.");
 
         return ra;
     }
@@ -210,11 +212,57 @@ public class ALX
         // note : dd already includes the sign :
         double dec = dd + sign * (dm / 60d + ds / 3600d);
 
-        MCSLogger.debug("DEC : ’" + decDms + "' = '" + dec + "'.");
+//        MCSLogger.debug("DEC : ’" + decDms + "' = '" + dec + "'.");
 
         return dec;
     }
 
+    /**
+     * Return the DMS format of the given angle
+     * @param angle angle in degrees
+     * @return string DMS representation
+     */
+    public final static String toDms(final double angle) {
+      final boolean sign;
+      final double deg;
+      if (angle < 0) {
+        sign = true;
+        deg = -angle;
+      } else {
+        sign = false;
+        deg = angle;
+      }
+
+      // Compute degrees, minutes and seconds :
+      final int iDeg = (int)deg;
+
+      final double min = 60d * (deg - iDeg);
+      final int iMin = (int)min;
+
+      final double sec = 60d * (min - iMin);
+      final int iSec = (int)sec;
+
+      // keep only 3 digits :
+      final int milliSec = (int) Math.round(1000d * (sec - iSec));
+
+      final StringBuilder sb = new StringBuilder();
+      if (sign) {
+        sb.append("-");
+      }
+      sb.append(iDeg).append(':');
+      if (iMin < 10) {
+        sb.append("0");
+      }
+      sb.append(iMin).append(':');
+      if (iSec < 10) {
+        sb.append("0");
+      }
+      sb.append(iSec).append('.');
+      sb.append(milliSec);
+
+      return sb.toString();
+    }
+    
     /**
      * Extract one or more spectral types of the given spectral type.
      *
@@ -265,7 +313,6 @@ public class ALX
      */
     public static Vector luminosityClasses(String rawSpectralType)
     {
-        MCSLogger.trace();
 
         Vector  foundLuminosityClasses = new Vector();
         String  foundLuminosityClass   = "";

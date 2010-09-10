@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.24 2010-02-18 12:27:51 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.25 2010-09-10 07:59:12 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.24  2010/02/18 12:27:51  mella
+# add css to index.html
+#
 # Revision 1.23  2009/09/20 20:21:35  mella
 # add acknowledgement built
 #
@@ -279,7 +282,8 @@ EOF
       <xsl:for-each select="//release">
         <xsl:element name="item">
           <xsl:element name="title">
-            <xsl:value-of select="'Version '"/>
+          <xsl:value-of select="//program/@name"/>
+          <xsl:value-of select="' version '"/>
             <xsl:value-of select="@version"/>
           </xsl:element>
           <xsl:element name="pubDate">

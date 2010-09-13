@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.5 2010-09-02 09:34:03 mella Exp $"
+ * "@(#) $Id: Main.java,v 1.6 2010-09-13 15:57:29 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/09/02 09:34:03  mella
+ * Add preference instantiation into init because the menu building need some internal actions of Preferences object
+ * Add button to test the dismissable message pane
+ *
  * Revision 1.4  2008/10/27 15:26:13  lafrasse
  * REflected JMCS help view action API change.
  *
@@ -22,10 +26,14 @@
 package fr.jmmc.mcs.modjava;
 
 import fr.jmmc.mcs.gui.*;
+import fr.jmmc.mcs.interop.*;
+import org.astrogrid.samp.*;
+import org.astrogrid.samp.client.*;
+import java.util.Map;
+import java.util.HashMap;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-
 
 import java.util.logging.*;
 
@@ -39,7 +47,7 @@ import javax.swing.JFrame;
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class Main extends App
 {
@@ -107,6 +115,27 @@ public class Main extends App
 
         // Show the frame
         getFrame().setVisible(true);
+
+        try
+        {
+            MessageHandler handler = new AbstractMessageHandler("stuff.do") {
+                public Map processCall(HubConnection c, String senderId, Message msg) {
+                    // do stuff
+                    System.out.println("\tReceived message from '" + senderId + "' : '" + msg + "'.");
+    
+                    String name = (String) msg.getParam("name");
+                    Map result = new HashMap();
+                    result.put("name", name);
+                    result.put("x", SampUtils.encodeFloat(3.141159));
+                    return result;
+                }
+            };
+            SampManager.registerCapability(handler);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /** Execute operations before closing application */

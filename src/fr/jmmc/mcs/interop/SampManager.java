@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.1 2010-09-13 15:57:18 lafrasse Exp $"
+ * "@(#) $Id: SampManager.java,v 1.2 2010-09-14 14:31:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/09/13 15:57:18  lafrasse
+ * First SAMP manager implementation.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
@@ -85,7 +88,7 @@ public class SampManager
 
         String applicationURL = applicationDataModel.getMainWebPageURL();
         meta.setDescriptionText("More info at " + applicationURL);
-/*
+/* @TODO
         String iconURL = applicationDataModel.getLogoURL();
         meta.setIconUrl(iconURL);
 */

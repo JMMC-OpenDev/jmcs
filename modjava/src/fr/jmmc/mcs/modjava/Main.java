@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.6 2010-09-13 15:57:29 lafrasse Exp $"
+ * "@(#) $Id: Main.java,v 1.7 2010-09-17 09:45:28 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/09/13 15:57:29  lafrasse
+ * First SAMP manager implementation.
+ *
  * Revision 1.5  2010/09/02 09:34:03  mella
  * Add preference instantiation into init because the menu building need some internal actions of Preferences object
  * Add button to test the dismissable message pane
@@ -47,7 +50,7 @@ import javax.swing.JFrame;
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class Main extends App
 {
@@ -118,7 +121,7 @@ public class Main extends App
 
         try
         {
-            MessageHandler handler = new AbstractMessageHandler("stuff.do") {
+            SampMessageHandler handler = new SampMessageHandler("stuff.do") {
                 public Map processCall(HubConnection c, String senderId, Message msg) {
                     // do stuff
                     System.out.println("\tReceived message from '" + senderId + "' : '" + msg + "'.");
@@ -130,7 +133,6 @@ public class Main extends App
                     return result;
                 }
             };
-            SampManager.registerCapability(handler);
         }
         catch (Exception ex)
         {

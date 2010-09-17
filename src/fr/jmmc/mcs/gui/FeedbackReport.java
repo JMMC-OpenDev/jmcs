@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.21 2009-03-31 07:19:15 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.22 2010-09-17 14:04:37 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2009/03/31 07:19:15  mella
+ * Fix layout
+ *
  * Revision 1.20  2009/03/31 07:11:32  mella
  * Change Email label
  *
@@ -120,23 +123,23 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
 
-    /** Load bar */
-    private static JProgressBar _loadBar = new JProgressBar();
-
-    /** Kind of error/bug */
-    private static JComboBox _typeComboBox = new JComboBox();
-
-    /** User bug description */
-    private static JTextArea _description = new JTextArea();
-
-    /** User mail */
+    /** User mail ( only this widget is leaved static ) */
     private static JTextField _mail = new JTextField();
 
+    /** Load bar */
+    private  JProgressBar _loadBar = new JProgressBar();
+
+    /** Kind of error/bug */
+    private JComboBox _typeComboBox = new JComboBox();
+
+    /** User bug description */
+    private JTextArea _description = new JTextArea();
+
     /** Cancel button */
-    private static JButton _cancelButton = new JButton();
+    private JButton _cancelButton = new JButton();
 
     /** Submit button */
-    private static JButton _submitButton = new JButton();
+    private JButton _submitButton = new JButton();
 
     /** Model of the feedback report box */
     private FeedbackReportModel _feedbackReportModel = null;
@@ -264,7 +267,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
 
         // Create the model and add the observer
         // GM has haccked api to temporary shortcup process and force presence of exception if any
-        _feedbackReportModel     = new FeedbackReportModel(getExceptionTrace());
+        _feedbackReportModel     = new FeedbackReportModel(this);
 
         if (exception != null)
         {
@@ -571,7 +574,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @return default combo box model
      */
-    public static DefaultComboBoxModel getDefaultComboBoxModel()
+    public DefaultComboBoxModel getDefaultComboBoxModel()
     {
         return (DefaultComboBoxModel) _typeComboBox.getModel();
     }
@@ -581,8 +584,14 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @return description value
      */
-    public static String getDescription()
+    public String getDescription()
     {
+        return _description.getText();
+    }
+
+    public String addDescription(String strToAppend)
+    {
+        _description.append(strToAppend);
         return _description.getText();
     }
 
@@ -591,7 +600,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @return exception trace
      */
-    private String getExceptionTrace()
+    public  String getExceptionTrace()
     {
         String exceptionTrace = "No stack trace";
 

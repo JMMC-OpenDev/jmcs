@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.12 2008-10-15 14:01:20 mella Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.13 2010-09-17 14:04:37 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2008/10/15 14:01:20  mella
+ * improved handling when applicationDataModel is null
+ *
  * Revision 1.11  2008/06/20 08:42:25  bcolucci
  * Remove unused imports and add class comments.
  *
@@ -115,18 +118,26 @@ public class FeedbackReportModel extends Observable implements Runnable
     /** Ready to send report? */
     private boolean _readyToSend = false;
 
+    /** Component that store user's input*/
+    FeedbackReport _feedbackReport=null;
+
     /** Creates a new FeedbackReportModel object */
     public FeedbackReportModel()
     {
-        this("None");
+        this(null);
     }
 
     /** Creates a new FeedbackReportModel object
      * with the possibility to define a specific information
      */
-    public FeedbackReportModel(String specificInformation)
+    public FeedbackReportModel(FeedbackReport feedbackReport)
     {
-        _applicationSpecificInformation = specificInformation;
+        _feedbackReport = feedbackReport;
+
+        _applicationSpecificInformation="None";
+        if (_feedbackReport!=null){
+            _applicationSpecificInformation = feedbackReport.getExceptionTrace();
+        }       
         _logger.fine("Specific information has been set");
 
         _applicationDataModel      = App.getSharedApplicationDataModel();
@@ -233,8 +244,10 @@ public class FeedbackReportModel extends Observable implements Runnable
                 _logger.fine("Ready to send is true");
 
                 setMail(FeedbackReport.getMail());
-                setTypeDataModel(FeedbackReport.getDefaultComboBoxModel());
-                setDescription(FeedbackReport.getDescription());
+                if (_feedbackReport != null) {
+                    setTypeDataModel(_feedbackReport.getDefaultComboBoxModel());
+                    setDescription(_feedbackReport.getDescription());
+                }
 
                 try
                 {

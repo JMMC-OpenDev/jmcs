@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.22 2010-09-17 14:04:37 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.23 2010-09-17 14:18:58 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2010/09/17 14:04:37  mella
+ * Do not share static widget between multiple feedback reports so that user as to acknowledge each report
+ *
  * Revision 1.21  2009/03/31 07:19:15  mella
  * Fix layout
  *
@@ -123,8 +126,8 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
 
-    /** User mail ( only this widget is leaved static ) */
-    private static JTextField _mail = new JTextField();
+    /** User mail */
+    private JTextField _mail = new JTextField();
 
     /** Load bar */
     private  JProgressBar _loadBar = new JProgressBar();
@@ -564,7 +567,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @return mail value
      */
-    public static String getMail()
+    public String getMail()
     {
         return _mail.getText();
     }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.13 2010-09-17 14:04:37 mella Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.14 2010-09-17 14:18:58 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2010/09/17 14:04:37  mella
+ * Do not share static widget between multiple feedback reports so that user as to acknowledge each report
+ *
  * Revision 1.12  2008/10/15 14:01:20  mella
  * improved handling when applicationDataModel is null
  *
@@ -137,6 +140,7 @@ public class FeedbackReportModel extends Observable implements Runnable
         _applicationSpecificInformation="None";
         if (_feedbackReport!=null){
             _applicationSpecificInformation = feedbackReport.getExceptionTrace();
+            setMail(feedbackReport.getMail());
         }       
         _logger.fine("Specific information has been set");
 
@@ -243,7 +247,7 @@ public class FeedbackReportModel extends Observable implements Runnable
             {
                 _logger.fine("Ready to send is true");
 
-                setMail(FeedbackReport.getMail());
+                setMail(_mail);
                 if (_feedbackReport != null) {
                     setTypeDataModel(_feedbackReport.getDefaultComboBoxModel());
                     setDescription(_feedbackReport.getDescription());

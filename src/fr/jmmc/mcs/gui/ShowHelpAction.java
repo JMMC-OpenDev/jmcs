@@ -6,23 +6,22 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 
 /**
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ShowHelpAction extends AbstractAction
 {
     /** Help id associted to the given label.*/
     private String _helpID;
 
-    /** Shared frame to avoid one feedbackreport display (and mail) per
-     * missing doc indexes
-     */
-    private static java.awt.Frame _frame = new java.awt.Frame();
+    /** flag to display only the first missing do in production */
+    private static boolean _alreadyShown = false;
 
     /**
      * Instanciate one action that will show the help view on the page associated to the given label.
@@ -46,14 +45,22 @@ public class ShowHelpAction extends AbstractAction
             _helpID = HelpView.getHelpID(label);
 
             // If no helpID found, then show one feedback report and disable action
-            if (_helpID == null)
+            if (_helpID == null && ( ! _alreadyShown || App.isBetaVersion()) )
             {
-                new FeedbackReport(_frame, false, new Exception(
-                        "Documentation problem:\nNo helpID found for label '" +
-                        label +
-                        "'\nPlease send this feedback to improve documentation."));
-                setEnabled(false);
+                if (App.isBetaVersion()) {
+                    new FeedbackReport(null, false, new Exception(
+                            "Documentation problem:\nNo helpID found for label '" +
+                            label +
+                            "'\nWe are working on this problem to solve it."));
+                } else {
+                    JOptionPane.showMessageDialog(null,
+                            "Sorry, documentation not found. This case offen "+
+                            "occurs \n in java 1.5 version and Java Web Start applications.",
+                            "Documentation problem", JOptionPane.ERROR_MESSAGE);
 
+                }
+                setEnabled(false);
+                _alreadyShown=true;
                 return;
             }
         }

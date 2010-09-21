@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.61 2010-07-08 13:20:34 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.62 2010-09-21 07:24:01 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.61  2010/07/08 13:20:34  bourgesl
+ * added a new method ready() called in run() method and after both execute() and open action in order to show the GUI only after open action done
+ *
  * Revision 1.60  2010/06/28 14:26:18  lafrasse
  * Added actual software version when asked from CLI interface.
  *
@@ -973,6 +976,22 @@ public abstract class App
     public static ApplicationDataModel getSharedApplicationDataModel()
     {
         return _applicationDataModel;
+    }
+
+
+    /** Tell if the application is one production or beta version.
+     * This flag is given searching one 'b' in the program version given by the
+     * applicationData.xml file.
+     *
+     * @return true for one development version, false in production.
+     */
+    public static boolean isBetaVersion()
+    {
+        if (_applicationDataModel!=null)
+        {
+            return _applicationDataModel.getProgramVersion().contains("b");
+        }
+        return false;
     }
 
     /**

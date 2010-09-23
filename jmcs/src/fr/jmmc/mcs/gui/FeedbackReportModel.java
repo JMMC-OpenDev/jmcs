@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.14 2010-09-17 14:18:58 mella Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.15 2010-09-23 19:40:40 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2010/09/17 14:18:58  mella
+ * Do also set mail widget not static so that it is always shown.
+ *
  * Revision 1.13  2010/09/17 14:04:37  mella
  * Do not share static widget between multiple feedback reports so that user as to acknowledge each report
  *
@@ -53,16 +56,17 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.util.MCSObservable;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.util.Enumeration;
-import java.util.Observable;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -71,7 +75,7 @@ import javax.swing.DefaultComboBoxModel;
  * the application logs and send all by a HTTP POST request
  * to the jmmc team via a PHP script.
  */
-public class FeedbackReportModel extends Observable implements Runnable
+public class FeedbackReportModel extends MCSObservable implements Runnable
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReportModel.class.getName());
@@ -79,17 +83,18 @@ public class FeedbackReportModel extends Observable implements Runnable
     /** URL of the PHP script that handles form parameters */
     private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
 
-    //private static final String _phpScriptURL = "http://jmmc.fr/~bcolucci/feedback/feedback.php";
-
-    /** ApplicationData model */
-    public static ApplicationDataModel _applicationDataModel;
-
+    /* TEST URL of the PHP script that handles form parameters */
+/*
+    private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedbackLB.php";
+*/
     /** Feedback report type definition array */
-    private static String[] _feedbackTypes = new String[]
+    private static final String[] _feedbackTypes = new String[]
         {
             "Bug Report", "Documentation Typo", "Evolution Request",
             "Support Request"
         };
+
+    /* members */
 
     /** Program version */
     private String _applicationVersion = "Unknown";
@@ -106,9 +111,6 @@ public class FeedbackReportModel extends Observable implements Runnable
     /** User mail */
     private String _mail = "Unknown";
 
-    /** The default combo box model */
-    private DefaultComboBoxModel _feedbackTypeDataModel;
-
     /** The user bug description */
     private String _comments = "";
 
@@ -121,39 +123,52 @@ public class FeedbackReportModel extends Observable implements Runnable
     /** Ready to send report? */
     private boolean _readyToSend = false;
 
-    /** Component that store user's input*/
-    FeedbackReport _feedbackReport=null;
+    /* Swing components */
+    /** The default combo box model */
+    private DefaultComboBoxModel _feedbackTypeDataModel;
 
-    /** Creates a new FeedbackReportModel object */
+    /** Component that store user's input*/
+    private final FeedbackReport _feedbackReport;
+
+
+    /** 
+     * Creates a new FeedbackReportModel object
+     */
     public FeedbackReportModel()
     {
         this(null);
     }
 
-    /** Creates a new FeedbackReportModel object
+    /**
+     * Creates a new FeedbackReportModel object
      * with the possibility to define a specific information
+     * @param feedbackReport feedback report dialog or null if unknow
      */
-    public FeedbackReportModel(FeedbackReport feedbackReport)
+    public FeedbackReportModel(final FeedbackReport feedbackReport)
     {
+        super();
+        
         _feedbackReport = feedbackReport;
 
-        _applicationSpecificInformation="None";
-        if (_feedbackReport!=null){
+        _applicationSpecificInformation = "None";
+
+        if (_feedbackReport != null)
+        {
             _applicationSpecificInformation = feedbackReport.getExceptionTrace();
             setMail(feedbackReport.getMail());
         }       
         _logger.fine("Specific information has been set");
 
-        _applicationDataModel      = App.getSharedApplicationDataModel();
+        final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
         _feedbackTypeDataModel     = new DefaultComboBoxModel(_feedbackTypes);
         _logger.fine("TypeDataModel constructed");
 
         // Get informations to send with the report
-        if (_applicationDataModel != null)
+        if (applicationDataModel != null)
         {
-            _applicationVersion     = _applicationDataModel.getProgramVersion();
-            _applicationName        = _applicationDataModel.getProgramName();
+            _applicationVersion     = applicationDataModel.getProgramVersion();
+            _applicationName        = applicationDataModel.getProgramName();
         }
 
         _systemConfig = getSystemConfig();
@@ -168,7 +183,7 @@ public class FeedbackReportModel extends Observable implements Runnable
      *
      * @param ready ready to send report
      */
-    public void setReadyToSend(boolean ready)
+    public final void setReadyToSend(final boolean ready)
     {
         _readyToSend = ready;
     }
@@ -178,7 +193,7 @@ public class FeedbackReportModel extends Observable implements Runnable
      *
      * @param mail value of mail
      */
-    public void setMail(String mail)
+    public final void setMail(final String mail)
     {
         _mail = mail;
         _logger.fine("Mail value has been set");
@@ -189,7 +204,7 @@ public class FeedbackReportModel extends Observable implements Runnable
      *
      * @param comments value of feedback report description
      */
-    public void setDescription(String comments)
+    public final void setDescription(final String comments)
     {
         _comments = comments;
         _logger.fine("Description value has been set");
@@ -200,7 +215,7 @@ public class FeedbackReportModel extends Observable implements Runnable
      *
      * @param information value of Application-Specific Information
      */
-    public void setApplicationSpecificInformation(String information)
+    public final void setApplicationSpecificInformation(final String information)
     {
         _applicationSpecificInformation = information;
         _logger.fine("Application-Specific Information value has been set");
@@ -211,7 +226,7 @@ public class FeedbackReportModel extends Observable implements Runnable
      *
      * @return default combo box model
      */
-    public DefaultComboBoxModel getTypeDataModel()
+    public final DefaultComboBoxModel getTypeDataModel()
     {
         return _feedbackTypeDataModel;
     }
@@ -221,7 +236,7 @@ public class FeedbackReportModel extends Observable implements Runnable
      *
      * @param typeDataModel default combo box model
      */
-    public void setTypeDataModel(DefaultComboBoxModel typeDataModel)
+    public final void setTypeDataModel(final DefaultComboBoxModel typeDataModel)
     {
         if (typeDataModel != null)
         {
@@ -230,16 +245,18 @@ public class FeedbackReportModel extends Observable implements Runnable
         }
     }
 
-    /** Send the report peer mail */
+    /** 
+     * Send the report per mail
+     */
     public void run()
     {
-        while (1 == 1)
+        while (true)
         {
             try
             {
                 Thread.sleep(10);
             }
-            catch (Exception ex)
+            catch (InterruptedException ie)
             {
             }
 
@@ -256,63 +273,85 @@ public class FeedbackReportModel extends Observable implements Runnable
                 try
                 {
                     // Create an HTTP client to send report information to our PHP script
-                    HttpClient client = new HttpClient();
-                    PostMethod method = new PostMethod(_phpScriptURL);
+                    final HttpClient client = new HttpClient();
+                    final PostMethod method = new PostMethod(_phpScriptURL);
 
-                    _logger.fine(
-                        "Http client and post method have been created");
+                    _logger.fine("Http client and post method have been created");
 
                     // Compose HTML form parameters
                     method.addParameter("applicationName", _applicationName);
-                    method.addParameter("applicationVersion",
-                        _applicationVersion);
+                    method.addParameter("applicationVersion", _applicationVersion);
                     method.addParameter("systemConfig", _systemConfig);
                     method.addParameter("applicationLog", _applicationLog);
                     method.addParameter("userEmail", _mail);
 
-                    String feedbackType = (String) _feedbackTypeDataModel.getSelectedItem();
+                    final String feedbackType = (String) _feedbackTypeDataModel.getSelectedItem();
                     method.addParameter("feedbackType", feedbackType);
                     method.addParameter("comments", _comments);
-                    method.addParameter("applicationSpecificInformation",
-                        _applicationSpecificInformation);
+                    method.addParameter("applicationSpecificInformation", _applicationSpecificInformation);
+
                     _logger.fine("All post parameters have been set");
 
                     // Send feedback report to PHP script
                     client.executeMethod(method);
+
                     _logger.fine("The report mail has been send");
 
                     // Get PHP script result (either SUCCESS or FAILURE)
-                    String response = method.getResponseBodyAsString();
+                    final String response = method.getResponseBodyAsString();
 
-                    _logger.fine("HTTP response : " + response);
+                    if (_logger.isLoggable(Level.FINE)) {
+                      _logger.fine("HTTP response : " + response);
+                    }
 
-                    _send = (! response.contains("FAILED")) &&
-                        (method.isRequestSent());
+                    _send = (! response.contains("FAILED")) && (method.isRequestSent());
 
-                    _logger.fine("Report sent : " + (_send ? "YES" : "NO"));
+                    if (_logger.isLoggable(Level.FINE)) {
+                      _logger.fine("Report sent : " + (_send ? "YES" : "NO"));
+                    }
 
                     // Set state to changed
                     setChanged();
+
                     _logger.fine("The model has changed");
 
-                    // Notify feedback report
-                    notifyObservers(this);
-                    _logger.fine(
-                        "Observers have been notified that the model has changed");
+                    // Notify feedback report using EDT :
+                    fireNotification(null);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    _logger.log(Level.SEVERE, "Cannot send feedback report", ex);
+                    _logger.log(Level.SEVERE, "Cannot send feedback report", e);
                 }
 
                 _readyToSend = false;
+                
                 _logger.fine("Set ready to send to false");
             }
         }
     }
 
-    /** Return if report has been send */
-    public boolean isReportSend()
+
+    /**
+     * Fires the notification to the registered observers using the EDT thread
+     * @param arg optional argument
+     */
+    private void fireNotification(final Object arg) {
+      // notify observers (swing components) within EDT :
+
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          notifyObservers(arg);
+
+          _logger.fine("Observers have been notified that the model has changed");
+        }
+      });
+    }
+
+    /**
+     * Return if report has been send
+     * @return true if report has been send 
+     */
+    public final boolean isReportSend()
     {
         return _send;
     }
@@ -322,23 +361,26 @@ public class FeedbackReportModel extends Observable implements Runnable
      *
      * @return system configuration
      */
-    public String getSystemConfig()
+    public final String getSystemConfig()
     {
         // Get all informations about the system running the application
-        Properties  hostProperties            = System.getProperties();
-        Enumeration hostPropertiesEnumeration = hostProperties.propertyNames();
-        String      allHostProperties         = "";
+        final Properties  hostProperties            = System.getProperties();
+        final Enumeration<?> hostPropertiesEnumeration = hostProperties.propertyNames();
+
+        final StringBuilder sb = new StringBuilder(2048);
+
+        String propertyName, propertyValue;
 
         // For each system property, we make a string like "{name} : {value}"
         while (hostPropertiesEnumeration.hasMoreElements())
         {
-            String propertyName  = String.valueOf(hostPropertiesEnumeration.nextElement());
-            String propertyValue = System.getProperty(propertyName);
+            propertyName  = String.valueOf(hostPropertiesEnumeration.nextElement());
+            propertyValue = System.getProperty(propertyName);
 
-            allHostProperties += (propertyName + " : " + propertyValue + "\n");
+            sb.append(propertyName).append(" : ").append(propertyValue).append("\n");
         }
 
-        return allHostProperties;
+        return sb.toString();
     }
 }
 /*___oOo___*/

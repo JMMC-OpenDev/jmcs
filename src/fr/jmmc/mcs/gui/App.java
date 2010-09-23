@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.62 2010-09-21 07:24:01 mella Exp $"
+ * "@(#) $Id: App.java,v 1.63 2010-09-23 19:37:56 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.62  2010/09/21 07:24:01  mella
+ * Add getter method to check if the application is one production or development version
+ *
  * Revision 1.61  2010/07/08 13:20:34  bourgesl
  * added a new method ready() called in run() method and after both execute() and open action in order to show the GUI only after open action done
  *
@@ -292,18 +295,32 @@ public abstract class App
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _mainLogger = Logger.getLogger("fr.jmmc");
 
+    /** Stream handler which permit us to keep logs report in strings */
+    private static final StreamHandler _streamHandler;
+
+    /** ByteArrayOutputStream which keeps logs report */
+    private static final ByteArrayOutputStream _byteArrayOutputStream = new ByteArrayOutputStream(32768);
+
+    /**
+     * Static Logger initialization
+     */
+    static {
+        // Logger's stream handler creation
+        _streamHandler = new StreamHandler(_byteArrayOutputStream, new SimpleFormatter());
+
+        // We add the memory handler create to the logger
+        _mainLogger.addHandler(_streamHandler);
+        _mainLogger.setLevel(Level.FINE);
+        _mainLogger.finer("Main Logger properties set");
+        _mainLogger.fine("Memory handler created and fixed to feedbackLogger.");
+    }
+
+
     /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.gui.App");
+    private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.gui.App");
 
     /** Singleton reference */
     private static App _sharedInstance;
-
-    /** Stream handler which permit us to keep logs report in strings */
-    private static StreamHandler _streamHandler = null;
-
-    /** ByteArrayOutputStream which keeps logs report */
-    private static ByteArrayOutputStream _byteArrayOutputStream = new ByteArrayOutputStream();
 
     /** Shared application data model */
     private static ApplicationDataModel _applicationDataModel;
@@ -414,17 +431,6 @@ public abstract class App
             _showSplashScreen              = showSplashScreen;
             _exitApplicationWhenClosed     = exitWhenClosed;
 
-            // Logger's stream handler creation
-            SimpleFormatter simpleFormatter = new SimpleFormatter();
-            _streamHandler = new StreamHandler(_byteArrayOutputStream,
-                    simpleFormatter);
-
-            // We add the memory handler create to the logger
-            _mainLogger.addHandler(_streamHandler);
-            _mainLogger.setLevel(Level.FINE);
-            _logger.finer("Main Logger properties set");
-
-            _logger.fine("Memory handler created and fixed to feedbackLogger.");
             _logger.fine("App object instantiated and logger created.");
 
             // Set the application data attribute
@@ -459,7 +465,7 @@ public abstract class App
         }
         catch (Exception ex)
         {
-            _logger.severe("Error while initalizing the application");
+            _logger.severe("Error while initializing the application");
 
             // In order to see the error window
             if (_splashScreen != null)
@@ -471,11 +477,11 @@ public abstract class App
             }
 
             JOptionPane.showMessageDialog(null,
-                "An error occured while initalizing the application", "Error",
+                "An error occured while initializing the application", "Error",
                 JOptionPane.ERROR_MESSAGE);
 
-            // Show feedback report
-            new FeedbackReport(getFrame(), true, ex, true);
+            // Show feedback report (modal and do exit on close) :
+            new FeedbackReport(true, ex, true);
         }
     }
 
@@ -624,7 +630,8 @@ public abstract class App
                 {
                     if (_applicationDataModel != null)
                     {
-                        new FeedbackReport(getFrame(), false, ex);
+                        // Show feedback report (not modal and do not exit on close) :
+                        new FeedbackReport(ex);
                     }
                 }
             };
@@ -930,7 +937,9 @@ public abstract class App
     public static String getLogOutput()
     {
         // Needed in order to write all logs in the ouput stream buffer
-        _streamHandler.flush();
+        if (_streamHandler != null) {
+            _streamHandler.flush();
+        }
 
         return _byteArrayOutputStream.toString();
     }

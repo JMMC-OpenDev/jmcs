@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedButtonModel.java,v 1.7 2009-08-28 09:01:44 lafrasse Exp $"
+ * "@(#) $Id: PreferencedButtonModel.java,v 1.8 2010-09-23 19:38:16 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2009/08/28 09:01:44  lafrasse
+ * Jalopization.
+ *
  * Revision 1.6  2009/07/16 09:14:37  mella
  * Add proper logger
  * Handle exception triggering a bugreport dialog
@@ -29,6 +32,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
+import fr.jmmc.mcs.gui.FeedbackReport;
 import java.awt.event.*;
 
 import java.util.*;
@@ -143,7 +147,8 @@ public class PreferencedButtonModel extends DefaultButtonModel
         }
         catch (Exception e)
         {
-            new fr.jmmc.mcs.gui.ReportDialog(new javax.swing.JFrame(), true, e).setVisible(true);
+            // Show feedback report (modal and do not exit on close) :
+            new FeedbackReport(true, e);
         }
     }
 

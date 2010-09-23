@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedDocument.java,v 1.4 2009-08-28 09:01:44 lafrasse Exp $"
+ * "@(#) $Id: PreferencedDocument.java,v 1.5 2010-09-23 19:38:16 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2009/08/28 09:01:44  lafrasse
+ * Jalopization.
+ *
  * Revision 1.3  2009/07/16 09:34:59  mella
  * Improve documentation and clean code
  *
@@ -19,6 +22,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
+import fr.jmmc.mcs.gui.FeedbackReport;
 import java.util.*;
 
 import javax.swing.event.*;
@@ -115,7 +119,8 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
         }
         catch (Exception e)
         {
-            new fr.jmmc.mcs.gui.ReportDialog(new javax.swing.JFrame(), true, e).setVisible(true);
+          // Show feedback report (modal and do not exit on close) :
+          new FeedbackReport(true, e);
         }
 
         return content;
@@ -140,7 +145,8 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
         }
         catch (Exception e)
         {
-            new fr.jmmc.mcs.gui.ReportDialog(new javax.swing.JFrame(), true, e).setVisible(true);
+          // Show feedback report (modal and do not exit on close) :
+          new FeedbackReport(true, e);
         }
     }
 
@@ -157,7 +163,8 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
         }
         catch (Exception e)
         {
-            new fr.jmmc.mcs.gui.ReportDialog(new javax.swing.JFrame(), true, e).setVisible(true);
+          // Show feedback report (modal and do not exit on close) :
+          new FeedbackReport(true, e);
         }
     }
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DismissableMessagePane.java,v 1.1 2010-09-01 14:43:51 mella Exp $"
+ * "@(#) $Id: DismissableMessagePane.java,v 1.2 2010-09-23 19:38:16 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/09/01 14:43:51  mella
+ * First revision
+ *
  *
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
@@ -21,6 +24,13 @@ import javax.swing.JOptionPane;
  *
  */
 public class DismissableMessagePane {
+
+  /**
+   * Forbidden constructor
+   */
+  private DismissableMessagePane() {
+    super();
+  }
 
 
     /**
@@ -50,6 +60,7 @@ public class DismissableMessagePane {
                 }
             }
         } catch (PreferencesException ex) {
+            // Show feedback report (not modal and do exit on close) :
             new FeedbackReport(ex);
         }
 

@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class ShowHelpAction extends AbstractAction
 {
@@ -48,7 +48,8 @@ public class ShowHelpAction extends AbstractAction
             if (_helpID == null && ( ! _alreadyShown || App.isBetaVersion()) )
             {
                 if (App.isBetaVersion()) {
-                    new FeedbackReport(null, false, new Exception(
+                    // Show feedback report (not modal and do not exit on close) :
+                    new FeedbackReport(new Exception(
                             "Documentation problem:\nNo helpID found for label '" +
                             label +
                             "'\nWe are working on this problem to solve it."));

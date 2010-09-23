@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.23 2010-09-17 14:18:58 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.24 2010-09-23 19:43:56 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2010/09/17 14:18:58  mella
+ * Do also set mail widget not static so that it is always shown.
+ *
  * Revision 1.22  2010/09/17 14:04:37  mella
  * Do not share static widget between multiple feedback reports so that user as to acknowledge each report
  *
@@ -104,6 +107,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -113,6 +117,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -120,9 +125,16 @@ import javax.swing.JTextField;
  * called <b>FeedbackReportModel</b> to take the user informations,
  * the user system informations and the application logs and send all
  * using a HTTP POST request.
+ *
+ * TODO : september 2010 : handle properly thread associated to FeedBackReportModel (start/stop/notify) ...
+ *
  */
 public class FeedbackReport extends JDialog implements Observer, KeyListener
 {
+
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
+
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
 
@@ -195,58 +207,107 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     /** Tabbed pane */
     private JTabbedPane _tabbedPane = null;
 
-    /** Exception */
-    private Exception _exception = null;
+    /** Any Throwable (Exception, RuntimeException and Error) */
+    private Throwable _exception = null;
 
     /** Exit the application? */
     private boolean _exit = false;
 
-    /** Creates a new FeedbackReport object */
-    public FeedbackReport()
-    {
-        this(null, false);
+    /**
+     * Return a not null parent Frame for the Dialog
+     * @param frame given frame argument
+     * @return given frame or application frame if the given frame is null
+     */
+    private final static Frame getOwner(final Frame frame) {
+      Frame owner = frame;
+      if (owner == null) {
+        owner = App.getFrame();
+      }
+      if (_logger.isLoggable(Level.FINE)) {
+         _logger.fine("dialog owner = " + owner);
+      }
+      return owner;
     }
 
-    /** Creates a new FeedbackReport object
+    /** 
+     * Creates a new FeedbackReport object (not modal).
+     * Do not exit on close.
+     */
+    public FeedbackReport()
+    {
+        this(null, false, null, false);
+    }
+
+    /**
+     * Creates a new FeedbackReport object (not modal).
+     * Do not exit on close.
      * @param exception exception
      */
-    public FeedbackReport(Exception exception)
+    public FeedbackReport(final Throwable exception)
     {
         this(null, false, exception, false);
     }
 
     /**
-     * Creates a new FeedbackReport object
-     * Set the parent frame.
+     * Creates a new FeedbackReport object.
+     *
+     * @param modal if true, this dialog is modal
+     * @param exception exception
+     * @param exit if true, exit the application
+     */
+    public FeedbackReport(final boolean modal, final Throwable exception,
+                          final boolean exit)
+    {
+        this(null, modal, exception, exit);
+    }
+
+    /**
+     * Creates a new FeedbackReport object.
+     * Do not exit on close.
+     *
+     * @param modal if true, this dialog is modal
+     * @param exception exception
+     */
+    public FeedbackReport(final boolean modal, final Throwable exception)
+    {
+        this(null, modal, exception, false);
+    }
+
+    /**
+     * Creates a new FeedbackReport object (not modal).
+     * Set the parent frame that MUST not be null.
+     * Do not exit on close.
      *
      * @param frame parent frame
      */
-    public FeedbackReport(Frame frame)
+    public FeedbackReport(final Frame frame)
     {
-        this(frame, false);
+        this(frame, false, null, false);
     }
 
     /**
      * Creates a new FeedbackReport object
-     * Set the parent frame and specify if this dialog is modal or not.
+     * Set the parent frame that MUST not be null and specify if this dialog is modal or not.
+     * Do not exit on close.
      *
      * @param frame parent frame
      * @param modal if true, this dialog is modal
      */
-    public FeedbackReport(Frame frame, boolean modal)
+    public FeedbackReport(final Frame frame, final boolean modal)
     {
-        this(frame, modal, null);
+        this(frame, modal, null, false);
     }
 
     /**
      * Creates a new FeedbackReport object
-     * Set the parent frame and specify if this dialog is modal or not.
+     * Set the parent frame that MUST not be null and specify if this dialog is modal or not.
+     * Do not exit on close.
      *
      * @param frame parent frame
      * @param modal if true, this dialog is modal
      * @param exception exception
      */
-    public FeedbackReport(Frame frame, boolean modal, Exception exception)
+    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception)
     {
         this(frame, modal, exception, false);
     }
@@ -260,10 +321,13 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      * @param exception exception
      * @param exit if true, exit the application
      */
-    public FeedbackReport(Frame frame, boolean modal, Exception exception,
-        boolean exit)
+    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception,
+                          final boolean exit)
     {
-        super(frame, modal);
+        super(getOwner(frame), modal);
+
+        // Force to dispose when the dialog closes :
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         _exception               = exception;
         _exit                    = exit;
@@ -272,18 +336,23 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         // GM has haccked api to temporary shortcup process and force presence of exception if any
         _feedbackReportModel     = new FeedbackReportModel(this);
 
-        if (exception != null)
+        if (_exception != null)
         {
             _description.append("Following exception occured:\n" +
-                exception.getMessage() + "\n\n--\n");
-            _logger.log(Level.WARNING,
-                "One exception was given to the feedback report", exception);
+                ((_exception.getMessage() != null) ? _exception.getMessage() : "no message") +
+                "\n\n--\n");
+
+            if (_logger.isLoggable(Level.SEVERE)) {
+                _logger.log(Level.SEVERE, "An exception was given to the feedback report", _exception);
+            }
         }
 
         _feedbackReportModel.addObserver(this);
 
         // Launch the model as thread
         _feedbackReportThread = new Thread(_feedbackReportModel);
+
+        // LAURENT : TODO CLEAN : the thread should only start when the report must be sent ...
         _feedbackReportThread.start();
 
         // Draw the widgets
@@ -303,7 +372,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
 
         _logger.fine("All feedback report properties have been set");
     }
-
+    
     /** Set tabbed pane properties */
     private void setTabbedProperties()
     {
@@ -325,8 +394,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         JTextArea   systemTextArea   = new JTextArea();
 
         systemScrollPane.setAutoscrolls(true);
-        systemScrollPane.setBorder(BorderFactory.createTitledBorder(
-                "System properties :"));
+        systemScrollPane.setBorder(BorderFactory.createTitledBorder("System properties :"));
         systemTextArea.setEditable(false);
         systemTextArea.setLineWrap(true);
         systemTextArea.setRows(10);
@@ -341,8 +409,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         JTextArea   exceptionTextArea   = new JTextArea();
 
         exceptionScrollPane.setAutoscrolls(true);
-        exceptionScrollPane.setBorder(BorderFactory.createTitledBorder(
-                "Exception message :"));
+        exceptionScrollPane.setBorder(BorderFactory.createTitledBorder("Exception message :"));
         exceptionTextArea.setEditable(false);
         exceptionTextArea.setRows(10);
         exceptionTextArea.setLineWrap(true);
@@ -432,11 +499,9 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
             {
                 public void actionPerformed(ActionEvent evt)
                 {
-                    _feedbackReportThread.stop();
-
-                    // Exit or not the application
-                    exit();
-
+                    // Just use dispose() as it is overriden to :
+                    // - stop the thread in background
+                    // - exit if needed
                     dispose();
                 }
             });
@@ -515,41 +580,51 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         _buttonsPanel.revalidate();
     }
 
-    /** Update progress bar according to report sending completion state */
-    public void update(Observable observable, Object object)
+    /**
+     * Update progress bar according to report sending completion state
+     * @param observable feedbackReportModel instance
+     * @param object unused argument
+     */
+    public void update(final Observable observable, final Object object)
     {
+
+        // This method is called by the feedbackReportModel using EDT :
+
         activateLoadBarProperties();
 
         _loadBar.setIndeterminate(false);
 
-        FeedbackReportModel feedbackReportModel = (FeedbackReportModel) object;
+        final FeedbackReportModel feedbackReportModel = (FeedbackReportModel) observable;
 
         if (feedbackReportModel.isReportSend())
         {
+            _logger.info("Feedback report sent");
+
             _loadBar.setString("Thank you for your feedback.");
 
             // Wait before closing
-            int delay = 2000;
+            // Use invokeLater to avoid blocking EDT to repaint current changes :
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
 
-            try
-            {
-                Thread.sleep(delay);
-            }
-            catch (Exception ex)
-            {
-                _logger.log(Level.WARNING, "Cannot wait " + delay + "ms", ex);
-            }
+                    final int delay = 2000;
+                    try
+                    {
+                        Thread.sleep(delay);
+                    }
+                    catch (InterruptedException ie)
+                    {
+                        if (_logger.isLoggable(Level.WARNING)) {
+                          _logger.log(Level.WARNING, "Cannot wait " + delay + "ms", ie);
+                        }
+                    }
 
-            _logger.info("Feedback report sent");
-
-            _submitButton.setEnabled(true);
-            dispose();
-
-            // Stop the thread in background
-            _feedbackReportThread.stop();
-
-            // Exit or not the application
-            exit();
+                    // Just use dispose() as it is overriden to :
+                    // - stop the thread in background
+                    // - exit if needed
+                    dispose();
+                }
+            });
         }
         else
         {
@@ -563,11 +638,34 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     }
 
     /**
+     * Free any ressource or reference to this instance :
+     * remove this instance form Preference Observers
+     */
+    @Override
+    public void dispose() {
+      if (_logger.isLoggable(Level.FINE)) {
+        _logger.fine("dispose : " + this);
+      }
+
+      _logger.fine("stopping background thread ...");
+
+      // Stop the thread in background
+      // LAURENT : TODO CLEAN : ILLEGAL a thread must not be killed like this :
+      _feedbackReportThread.stop();
+
+      // Exit or not the application
+      exit();
+
+      // dispose Frame :
+      super.dispose();
+    }
+
+    /**
      * Return the mail value
      *
      * @return mail value
      */
-    public String getMail()
+    public final String getMail()
     {
         return _mail.getText();
     }
@@ -577,7 +675,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @return default combo box model
      */
-    public DefaultComboBoxModel getDefaultComboBoxModel()
+    public final DefaultComboBoxModel getDefaultComboBoxModel()
     {
         return (DefaultComboBoxModel) _typeComboBox.getModel();
     }
@@ -587,14 +685,19 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @return description value
      */
-    public String getDescription()
+    public final String getDescription()
     {
         return _description.getText();
     }
 
-    public String addDescription(String strToAppend)
+    /**
+     * Append the given message to the description value
+     * @param message to add
+     * @return complete description value
+     */
+    public final String addDescription(final String message)
     {
-        _description.append(strToAppend);
+        _description.append(message);
         return _description.getText();
     }
 
@@ -603,17 +706,15 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @return exception trace
      */
-    public  String getExceptionTrace()
+    public final String getExceptionTrace()
     {
         String exceptionTrace = "No stack trace";
 
         // Check if the exception is not null
         if (_exception != null)
         {
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter  printWriter  = new PrintWriter(stringWriter);
-
-            _exception.printStackTrace(printWriter);
+            final StringWriter stringWriter = new StringWriter();
+            _exception.printStackTrace(new PrintWriter(stringWriter));
             exceptionTrace = stringWriter.toString();
         }
 
@@ -621,11 +722,12 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     }
 
     /** Exit the application if there was a fatal error */
-    private void exit()
+    private final void exit()
     {
         // Exit or not the application
         if (_exit)
         {
+            _logger.fine("exiting ...");
             System.exit(-1);
         }
     }
@@ -635,7 +737,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @param e DOCUMENT ME!
      */
-    public void keyTyped(KeyEvent e)
+    public final void keyTyped(KeyEvent e)
     {
     }
 
@@ -644,7 +746,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @param e DOCUMENT ME!
      */
-    public void keyPressed(KeyEvent e)
+    public final void keyPressed(KeyEvent e)
     {
     }
 
@@ -653,7 +755,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      *
      * @param e DOCUMENT ME!
      */
-    public void keyReleased(KeyEvent e)
+    public final void keyReleased(KeyEvent e)
     {
         _submitButton.setEnabled(_description.getText().length() > 0);
     }

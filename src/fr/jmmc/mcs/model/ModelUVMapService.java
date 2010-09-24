@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelUVMapService.java,v 1.5 2010-05-04 15:40:58 bourgesl Exp $"
+ * "@(#) $Id: ModelUVMapService.java,v 1.6 2010-09-24 15:44:15 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/05/04 15:40:58  bourgesl
+ * javadoc
+ *
  * Revision 1.4  2010/02/18 15:51:18  bourgesl
  * added parameter argument validation and propagation (illegal argument exception)
  *
@@ -40,7 +43,7 @@ public final class ModelUVMapService {
   /** Class Name */
   private static final String className_ = "fr.jmmc.mcs.model.ModelUVMapService";
   /** Class logger */
-  private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
+  private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
           className_);
   /** default image width / height */
   private final static int DEFAULT_IMAGE_SIZE = 512;
@@ -271,8 +274,6 @@ public final class ModelUVMapService {
           logger.log(Level.WARNING, "invalid argument :", iae);
         }
         throw iae;
-      } catch (RuntimeException re) {
-        logger.log(Level.SEVERE, "runtime exception : ", re);
       }
 
       if (logger.isLoggable(Level.INFO)) {

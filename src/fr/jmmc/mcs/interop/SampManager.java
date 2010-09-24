@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.2 2010-09-14 14:31:42 lafrasse Exp $"
+ * "@(#) $Id: SampManager.java,v 1.3 2010-09-24 12:07:37 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/09/14 14:31:42  lafrasse
+ * Added TODOs
+ *
  * Revision 1.1  2010/09/13 15:57:18  lafrasse
  * First SAMP manager implementation.
  *
@@ -19,6 +22,7 @@ import java.util.logging.*;
 import org.astrogrid.samp.*;
 import org.astrogrid.samp.client.*;
 import org.astrogrid.samp.hub.*;
+import org.astrogrid.samp.gui.*;
 
 import fr.jmmc.mcs.gui.*;
 
@@ -27,23 +31,19 @@ import fr.jmmc.mcs.gui.*;
  *
  * @author lafrasse
  */
-public class SampManager
-{
+public class SampManager {
+
     /** Logger */
     private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.interop.SampManager");
-
     /** Singleton instance */
     private static SampManager _instance = null;
-
     /** Singleton instance */
-    private static HubConnector _connector = null;
+    private static GuiHubConnector _connector = null;
 
     /** Return the singleton instance */
-    public static final synchronized SampManager getInstance() throws SampException
-    {
+    public static final synchronized SampManager getInstance() throws SampException {
         // DO NOT MODIFY !!!
-        if (_instance == null)
-        {
+        if (_instance == null) {
             _instance = new SampManager();
         }
 
@@ -53,30 +53,11 @@ public class SampManager
     }
 
     /** Hidden constructor */
-    protected SampManager() throws SampException
-    {
+    protected SampManager() throws SampException {
         // @TODO : init JSamp env.
         ClientProfile profile = DefaultClientProfile.getProfile();
-        _connector = new HubConnector(profile);
+        _connector = new GuiHubConnector(profile);
         System.out.println("_connector = '" + _connector + "'.");
-
-        // @TODO : start internal hub if none alreday running.
-        if ( _connector == null )
-        {
-            // @TODO : marche pas !!!!
-            BasicHubService hub = new BasicHubService(new Random());
-
-            // Reconnect to the new hub
-            try
-            {
-                _connector = new HubConnector(profile);
-                System.out.println("_connector = '" + _connector + "'.");
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
-        }
 
         // Build application metadata
         Metadata meta = new Metadata();
@@ -88,33 +69,35 @@ public class SampManager
 
         String applicationURL = applicationDataModel.getMainWebPageURL();
         meta.setDescriptionText("More info at " + applicationURL);
-/* @TODO
+        /* @TODO
         String iconURL = applicationDataModel.getLogoURL();
         meta.setIconUrl(iconURL);
-*/
+         */
         _connector.declareMetadata(meta);
     }
 
     // @TODO : be able to regsiter to some specific capabilities to retrieve a list of capable applications.
-
     /** Sends a given message to a client */
-    public static void sendMessageTo(/*...*/) throws SampException
-    {
+    public static void sendMessageTo(String mType, String recipient, Message msg) throws SampException {
         SampManager.getInstance();
 
         System.out.println("sendMessage()");
     }
 
-    public static void broadcastMessage(/*...*/) throws SampException
-    {
+    public static void broadcastMessage(String mType, Map parameters) throws SampException {
         SampManager.getInstance();
 
-        System.out.println("sendMessage()");
+        Message msg = new Message(mType, parameters);
+        _connector.getConnection().notifyAll(msg);
+
+        System.out.println("Sent Message '" + msg + "'.");
     }
 
-    /** Hidden constructor */
-    public static void registerCapability(MessageHandler handler) throws SampException
-    {
+    public static void broadcastMessage(SampCapability capability, Map parameters) throws SampException {
+        broadcastMessage(capability.mType(), parameters);
+    }
+
+    public static void registerCapability(MessageHandler handler) throws SampException {
         SampManager.getInstance();
 
         System.out.println("registerCapability(" + handler + ")");
@@ -125,5 +108,21 @@ public class SampManager
 
         // Keep a look out for hubs if initial one shuts down
         _connector.setAutoconnect(10);
+    }
+
+    public static String[] capableRecipients(String mType) throws SampException {
+        SampManager.getInstance();
+
+        return (String[])_connector.getConnection().getSubscribedClients(mType).keySet().toArray(new String[0]);
+    }
+
+    public static String[] capableRecipients(SampCapability capability) throws SampException {
+        return capableRecipients(capability.mType());
+    }
+
+    public static GuiHubConnector getGuiHubConnector() throws SampException {
+        SampManager.getInstance();
+
+        return _connector;
     }
 }

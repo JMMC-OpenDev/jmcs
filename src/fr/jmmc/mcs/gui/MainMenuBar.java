@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.35 2010-09-24 16:05:51 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.36 2010-09-24 16:17:13 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2010/09/24 16:05:51  bourgesl
+ * removed imports for astrogrid to let the classloader open this class
+ *
  * Revision 1.34  2010/09/24 12:05:15  lafrasse
  * Added preliminary support for the "Interop" menu (only in beta mode for the time being).
  *
@@ -123,7 +126,6 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-import fr.jmmc.mcs.interop.SampManager;
 import fr.jmmc.mcs.util.ActionRegistrar;
 import fr.jmmc.mcs.util.RegisteredPreferencedBooleanAction;
 import fr.jmmc.mcs.util.Urls;
@@ -413,7 +415,7 @@ public class MainMenuBar extends JMenuBar
 
         org.astrogrid.samp.gui.GuiHubConnector hub;
         try {
-            hub = SampManager.getGuiHubConnector();
+            hub = fr.jmmc.mcs.interop.SampManager.getGuiHubConnector();
         } catch (org.astrogrid.samp.client.SampException ex) {
             Logger.getLogger(MainMenuBar.class.getName()).log(Level.SEVERE, null, ex);
             return;

@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.15 2010-09-23 19:40:40 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.16 2010-09-24 15:45:14 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2010/09/23 19:40:40  bourgesl
+ * fireObservers using EDT (FeedBackReport)
+ * comments / code formatting
+ * minor code cleanup
+ *
  * Revision 1.14  2010/09/17 14:18:58  mella
  * Do also set mail widget not static so that it is always shown.
  *
@@ -86,7 +91,7 @@ public class FeedbackReportModel extends MCSObservable implements Runnable
     /* TEST URL of the PHP script that handles form parameters */
 /*
     private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedbackLB.php";
-*/
+ */
     /** Feedback report type definition array */
     private static final String[] _feedbackTypes = new String[]
         {

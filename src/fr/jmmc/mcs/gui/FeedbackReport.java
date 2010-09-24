@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.24 2010-09-23 19:43:56 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.25 2010-09-24 15:45:14 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2010/09/23 19:43:56  bourgesl
+ * better EDT handling (refresh) but the mail report thread must be corrected later
+ * automatic Frame (Dialog) association with the application main Frame / new constructor without frame argument
+ * Free resources (thread ...) when the window is closed
+ *
  * Revision 1.23  2010/09/17 14:18:58  mella
  * Do also set mail widget not static so that it is always shown.
  *
@@ -109,7 +114,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -213,22 +217,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     /** Exit the application? */
     private boolean _exit = false;
 
-    /**
-     * Return a not null parent Frame for the Dialog
-     * @param frame given frame argument
-     * @return given frame or application frame if the given frame is null
-     */
-    private final static Frame getOwner(final Frame frame) {
-      Frame owner = frame;
-      if (owner == null) {
-        owner = App.getFrame();
-      }
-      if (_logger.isLoggable(Level.FINE)) {
-         _logger.fine("dialog owner = " + owner);
-      }
-      return owner;
-    }
-
+    
     /** 
      * Creates a new FeedbackReport object (not modal).
      * Do not exit on close.
@@ -324,7 +313,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception,
                           final boolean exit)
     {
-        super(getOwner(frame), modal);
+        super(MessagePane.getOwner(frame), modal);
 
         // Force to dispose when the dialog closes :
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -628,9 +617,9 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         }
         else
         {
-            String errorMessage = "Feedback Report message has not been sent.\nPlease check your internet connection.";
-            JOptionPane.showMessageDialog(null, errorMessage,
-                "Feedback Report Failed", JOptionPane.ERROR_MESSAGE);
+            MessagePane.showErrorMessage(
+                  "Feedback Report message has not been sent.\nPlease check your internet connection.",
+                  "Feedback Report Failed");
 
             _submitButton.setEnabled(true);
             _loadBar.setString("Error during report sending.");

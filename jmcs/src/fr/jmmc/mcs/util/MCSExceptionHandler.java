@@ -1,18 +1,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSExceptionHandler.java,v 1.1 2010-09-23 19:36:05 bourgesl Exp $"
+ * "@(#) $Id: MCSExceptionHandler.java,v 1.2 2010-09-24 15:43:32 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/09/23 19:36:05  bourgesl
+ * new generic exception handler (awt, thread) for uncaught exceptions
+ *
  */
 package fr.jmmc.mcs.util;
 
 import fr.jmmc.mcs.gui.FeedbackReport;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 /**
@@ -74,6 +76,7 @@ public final class MCSExceptionHandler {
    */
   private static void showException(final Throwable e) {
     // Show feedback report (modal and do not exit on close) :
+    // Note : FeedbackReport already logs the exception
     new FeedbackReport(true, e);
   }
 

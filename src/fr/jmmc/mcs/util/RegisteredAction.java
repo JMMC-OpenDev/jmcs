@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: RegisteredAction.java,v 1.8 2009-04-30 09:00:50 lafrasse Exp $"
+ * "@(#) $Id: RegisteredAction.java,v 1.9 2010-09-24 15:43:12 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2009/04/30 09:00:50  lafrasse
+ * Minor documentation update.
+ *
  * Revision 1.7  2009/01/05 13:43:08  lafrasse
  * Added Open action handling.
  *
@@ -32,9 +35,10 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
-import java.util.logging.*;
+import java.util.logging.Logger;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
 
-import javax.swing.*;
 
 
 /**
@@ -42,6 +46,9 @@ import javax.swing.*;
  */
 public abstract class RegisteredAction extends MCSAction
 {
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
+
     /** Logger */
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.util.RegisteredAction");

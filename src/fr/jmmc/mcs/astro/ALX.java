@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.21 2010-09-24 11:58:53 lafrasse Exp $"
+ * "@(#) $Id: ALX.java,v 1.22 2010-09-24 13:15:32 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2010/09/24 11:58:53  lafrasse
+ * Fixed round bug in toDms().
+ * Renamed toDms() to toDMS()
+ * Added toHMS()
+ *
  * Revision 1.20  2010/09/09 15:57:10  bourgesl
  * new method toDMS(angle) to format the angle in degrees to the +/-DD:MM:SS.MMM
  *
@@ -281,8 +286,6 @@ public class ALX
         formatter = new DecimalFormat(":00.###");
         sb.append(formatter.format(fSecond));
 
-        sb.append(" ===> ");
-        sb.append(fSecond);
         return sb.toString();
     }
 

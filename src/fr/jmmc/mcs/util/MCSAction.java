@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSAction.java,v 1.3 2007-02-13 13:48:51 lafrasse Exp $"
+ * "@(#) $Id: MCSAction.java,v 1.4 2010-09-24 15:43:12 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/02/13 13:48:51  lafrasse
+ * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
+ *
  * Revision 1.2  2006/11/20 15:41:23  lafrasse
  * Added error handling code.
  *
@@ -22,10 +25,12 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
-import fr.jmmc.mcs.log.*;
-import fr.jmmc.mcs.util.*;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
+
 
 
 /**
@@ -33,20 +38,16 @@ import javax.swing.*;
  */
 public abstract class MCSAction extends AbstractAction
 {
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
+
     /**
      * This constructor use the resource file to get text description and icon
      * of action.
+     * @param actionName name of the action as declared in the resource file
      */
-    public MCSAction(String actionName)
+    public MCSAction(final String actionName)
     {
-        MCSLogger.trace();
-
-        /*
-           if ((actionName == null) || (Resources.actionExists(actionName) == false))
-           {
-                   throws(new Execption());
-           }
-         */
 
         // Collect action info
         String    text        = Resources.getActionText(actionName);

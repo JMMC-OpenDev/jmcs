@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.34 2010-09-24 12:05:15 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.35 2010-09-24 16:05:51 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2010/09/24 12:05:15  lafrasse
+ * Added preliminary support for the "Interop" menu (only in beta mode for the time being).
+ *
  * Revision 1.33  2010/01/14 13:03:04  bourgesl
  * use Logger.isLoggable to avoid a lot of string.concat()
  *
@@ -121,7 +124,9 @@
 package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.interop.SampManager;
-import fr.jmmc.mcs.util.*;
+import fr.jmmc.mcs.util.ActionRegistrar;
+import fr.jmmc.mcs.util.RegisteredPreferencedBooleanAction;
+import fr.jmmc.mcs.util.Urls;
 
 import org.apache.commons.lang.SystemUtils;
 
@@ -150,9 +155,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
-import org.astrogrid.samp.client.SampException;
-import org.astrogrid.samp.gui.GuiHubConnector;
-import org.astrogrid.samp.xmlrpc.HubMode;
 
 
 /**
@@ -408,15 +410,16 @@ public class MainMenuBar extends JMenuBar
         // Create menu
         JMenu interopMenu = new JMenu("Interop");
 
-        GuiHubConnector hub;
+
+        org.astrogrid.samp.gui.GuiHubConnector hub;
         try {
             hub = SampManager.getGuiHubConnector();
-        } catch (SampException ex) {
+        } catch (org.astrogrid.samp.client.SampException ex) {
             Logger.getLogger(MainMenuBar.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
 
-        interopMenu.add(hub.createHubAction(true, HubMode.NO_GUI));
+        interopMenu.add(hub.createHubAction(true, org.astrogrid.samp.xmlrpc.HubMode.NO_GUI));
         interopMenu.add(hub.createRegisterAction());
         interopMenu.add(hub.createRegisterOrHubAction(_frame, null));
 

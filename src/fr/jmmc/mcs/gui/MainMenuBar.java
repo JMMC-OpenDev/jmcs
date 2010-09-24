@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.33 2010-01-14 13:03:04 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.34 2010-09-24 12:05:15 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2010/01/14 13:03:04  bourgesl
+ * use Logger.isLoggable to avoid a lot of string.concat()
+ *
  * Revision 1.32  2009/11/03 10:17:45  lafrasse
  * Code and documentation refinments.
  *
@@ -117,6 +120,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.interop.SampManager;
 import fr.jmmc.mcs.util.*;
 
 import org.apache.commons.lang.SystemUtils;
@@ -146,6 +150,9 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
+import org.astrogrid.samp.client.SampException;
+import org.astrogrid.samp.gui.GuiHubConnector;
+import org.astrogrid.samp.xmlrpc.HubMode;
 
 
 /**
@@ -177,6 +184,9 @@ public class MainMenuBar extends JMenuBar
     /** Store a proxy to the shared ActionRegistrar facility */
     private ActionRegistrar _registrar = null;
 
+    /** Store a proxy to the parent frame */
+    private JFrame _frame = null;
+
     /**
      * Instantiate all defaults menus, plus application-specific ones.
      *
@@ -184,6 +194,9 @@ public class MainMenuBar extends JMenuBar
      */
     public MainMenuBar(JFrame frame)
     {
+        // Get the parent frame
+        _frame = frame;
+
         // Get the host operating system type
         _isRunningUnderMacOSX     = SystemUtils.IS_OS_MAC_OSX;
 
@@ -266,11 +279,17 @@ public class MainMenuBar extends JMenuBar
             }
         }
 
+        // Create Interop menu
+        if (App.isBetaVersion() == true)
+        {
+            createInteropMenu();
+        }
+
         // Create help menu
         createHelpMenu();
 
         // Use OSXAdapter on the frame
-        macOSXRegistration(frame);
+        macOSXRegistration(_frame);
     }
 
     /** Create the 'File' menu. */
@@ -382,6 +401,55 @@ public class MainMenuBar extends JMenuBar
         add(editMenu);
         _logger.fine("Add 'Edit' menu into the menubar.");
     }
+
+    /** Create the 'Interop' menu. */
+    private void createInteropMenu()
+    {
+        // Create menu
+        JMenu interopMenu = new JMenu("Interop");
+
+        GuiHubConnector hub;
+        try {
+            hub = SampManager.getGuiHubConnector();
+        } catch (SampException ex) {
+            Logger.getLogger(MainMenuBar.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
+
+        interopMenu.add(hub.createHubAction(true, HubMode.NO_GUI));
+        interopMenu.add(hub.createRegisterAction());
+        interopMenu.add(hub.createRegisterOrHubAction(_frame, null));
+
+        // Get interop menu from table
+        JMenu interop = _menusTable.get("Interop");
+
+        if (interop != null)
+        {
+            Component[] components = interop.getMenuComponents();
+
+            if (components.length > 0)
+            {
+                interopMenu.add(new JSeparator());
+
+                // Add each component
+                for (Component currentComponent : components)
+                {
+                    interopMenu.add(currentComponent);
+                }
+            }
+        }
+
+        interopMenu.add(new JSeparator());
+
+        interopMenu.add(hub.createShowMonitorAction());
+        interopMenu.add(hub.createToggleRegisterAction());
+        interopMenu.add(hub.createUnregisterAction());
+
+        // Add menu to menubar
+        add(interopMenu);
+        _logger.fine("Add 'Interop' into the menubar.");
+    }
+
 
     /** Create the 'Help' menu. */
     private void createHelpMenu()

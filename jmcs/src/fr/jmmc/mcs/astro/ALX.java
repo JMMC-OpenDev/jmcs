@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.20 2010-09-09 15:57:10 bourgesl Exp $"
+ * "@(#) $Id: ALX.java,v 1.21 2010-09-24 11:58:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2010/09/09 15:57:10  bourgesl
+ * new method toDMS(angle) to format the angle in degrees to the +/-DD:MM:SS.MMM
+ *
  * Revision 1.19  2010/06/22 13:01:44  bourgesl
  * added constant MILLI_ARCSEC_IN_DEGREES
  *
@@ -70,6 +73,7 @@ package fr.jmmc.mcs.astro;
 import cds.astro.Sptype;
 import fr.jmmc.mcs.astro.star.Star;
 import fr.jmmc.mcs.astro.star.Star.Property;
+import java.text.DecimalFormat;
 
 import java.text.ParseException;
 import java.util.Vector;
@@ -219,50 +223,69 @@ public class ALX
 
     /**
      * Return the DMS format of the given angle
-     * @param angle angle in degrees
+     * @param angle angle in degrees > -360.0
      * @return string DMS representation
      */
-    public final static String toDms(final double angle) {
-      final boolean sign;
-      final double deg;
-      if (angle < 0) {
-        sign = true;
-        deg = -angle;
-      } else {
-        sign = false;
-        deg = angle;
-      }
+    public final static String toDMS(final double angle)
+    {
+        if (angle < -360.0)
+        {
+            return null;
+        }
 
-      // Compute degrees, minutes and seconds :
-      final int iDeg = (int)deg;
+        double normalizedAngle = Math.abs(angle) % 360.0;
 
-      final double min = 60d * (deg - iDeg);
-      final int iMin = (int)min;
+        final int iDeg = (int) Math.floor(normalizedAngle);
+        final double rest = normalizedAngle - iDeg;
 
-      final double sec = 60d * (min - iMin);
-      final int iSec = (int)sec;
-
-      // keep only 3 digits :
-      final int milliSec = (int) Math.round(1000d * (sec - iSec));
-
-      final StringBuilder sb = new StringBuilder();
-      if (sign) {
-        sb.append("-");
-      }
-      sb.append(iDeg).append(':');
-      if (iMin < 10) {
-        sb.append("0");
-      }
-      sb.append(iMin).append(':');
-      if (iSec < 10) {
-        sb.append("0");
-      }
-      sb.append(iSec).append('.');
-      sb.append(milliSec);
-
-      return sb.toString();
+        final StringBuilder sb = new StringBuilder();
+        if (angle < 0.0)
+        {
+            sb.append("-");
+        }
+        sb.append(iDeg).append(toMS(rest));
+        return sb.toString();
     }
-    
+
+    /**
+     * Return the HMS format of the given angle
+     * @param angle angle in degrees > -360.0
+     * @return string HMS representation, null otherwise
+     */
+    public final static String toHMS(final double angle) {
+        if (angle < -360.0)
+        {
+            return null;
+        }
+        double normalizedAngle = (angle + 360.0) % 360.0;
+        double fHour = 24.0 * (normalizedAngle / 360.0);
+        int iHour = (int) Math.floor(fHour);
+        double rest = normalizedAngle - (iHour / 24.0 * 360.0);
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append(iHour).append(toMS(rest));
+        return sb.toString();
+    }
+
+    private final static String toMS(final double angle)
+    {
+        double fMinute = 60.0 * angle;
+        int iMinute = (int) Math.floor(fMinute);
+
+        double fSecond = 60.0 * (fMinute - iMinute);
+
+        final StringBuilder sb = new StringBuilder();
+        DecimalFormat formatter = new DecimalFormat(":00");
+        sb.append(formatter.format(iMinute));
+
+        formatter = new DecimalFormat(":00.###");
+        sb.append(formatter.format(fSecond));
+
+        sb.append(" ===> ");
+        sb.append(fSecond);
+        return sb.toString();
+    }
+
     /**
      * Extract one or more spectral types of the given spectral type.
      *
@@ -516,6 +539,12 @@ public class ALX
      */
     public static void main(String[] args)
     {
+        for (int i = -10050; i < 11000; i++) {
+            double f = i / 27.9;
+            System.out.println("toDMS(" + f + ") = '" + toDMS(f) + "'.");
+            System.out.println("toHMS(" + f + ") = '" + toHMS(f) + "'.");
+        }
+
         Class c = null;
 
         try

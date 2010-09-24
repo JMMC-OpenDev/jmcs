@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.8 2010-04-07 12:21:39 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.9 2010-09-24 15:46:15 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/04/07 12:21:39  bourgesl
+ * logger instead of system.out in main()
+ *
  * Revision 1.7  2010/01/21 10:05:18  bourgesl
  * Define the star name when the query is complete
  * StarResolverWidget can be used in netbeans's component palette
@@ -35,6 +38,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
 
+import fr.jmmc.mcs.gui.MessagePane;
 import fr.jmmc.mcs.gui.SearchField;
 import fr.jmmc.mcs.gui.StatusBar;
 import java.awt.Container;
@@ -143,9 +147,8 @@ public class StarResolverWidget extends SearchField implements Observer
 
             if (errorMessage != null) // An error occured
             {
-                JOptionPane.showMessageDialog(null,
-                    "CDS Simbad problem :\n" + errorMessage, "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                MessagePane.showErrorMessage(
+                        "CDS Simbad problem :\n" + errorMessage);
             }
 
             StatusBar.show("CDS Simbad star resolution failed.");

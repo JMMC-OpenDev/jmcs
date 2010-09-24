@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.63 2010-09-23 19:37:56 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.64 2010-09-24 15:46:04 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.63  2010/09/23 19:37:56  bourgesl
+ * MemoryHandler (logs) initialized via static initializer to be ready immediately
+ * comments when calling FeedBackReport
+ *
  * Revision 1.62  2010/09/21 07:24:01  mella
  * Add getter method to check if the application is one production or development version
  *
@@ -462,6 +466,7 @@ public abstract class App
                 // Run the application imediately
                 run();
             }
+
         }
         catch (Exception ex)
         {
@@ -476,9 +481,8 @@ public abstract class App
                 }
             }
 
-            JOptionPane.showMessageDialog(null,
-                "An error occured while initializing the application", "Error",
-                JOptionPane.ERROR_MESSAGE);
+            MessagePane.showErrorMessage(
+                "An error occured while initializing the application");
 
             // Show feedback report (modal and do exit on close) :
             new FeedbackReport(true, ex, true);
@@ -882,7 +886,7 @@ public abstract class App
     }
 
     /** Describe the life cycle of the application */
-    protected void run()
+    protected final void run()
     {
         // Show splash screen if we have to
         if (_showSplashScreen == true)
@@ -896,8 +900,7 @@ public abstract class App
         // Set JMenuBar
         final JFrame frame = getFrame();
 
-        MainMenuBar mainMenuBar = new MainMenuBar(frame);
-        frame.setJMenuBar(mainMenuBar);
+        frame.setJMenuBar(new MainMenuBar(frame));
 
         // Set application frame common properties
         frame.pack();

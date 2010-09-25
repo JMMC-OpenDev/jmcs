@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSExceptionHandler.java,v 1.3 2010-09-25 12:17:42 bourgesl Exp $"
+ * "@(#) $Id: MCSExceptionHandler.java,v 1.4 2010-09-25 13:41:14 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/09/25 12:17:42  bourgesl
+ * more logs about threads, exception handler to inspect JNLP context
+ *
  * Revision 1.2  2010/09/24 15:43:32  bourgesl
  * removed unused import
  *
@@ -16,7 +19,6 @@
 package fr.jmmc.mcs.util;
 
 import fr.jmmc.mcs.gui.FeedbackReport;
-import java.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,6 +53,15 @@ public final class MCSExceptionHandler {
     setExceptionHandler(new SwingExceptionHandler());
   }
 
+  public static void installThreadHandler(final Thread thread) {
+    final Thread.UncaughtExceptionHandler handler = getExceptionHandler();
+    if (handler != null) {
+      applyUncaughtExceptionHandler(thread, handler);
+    } else {
+      _logger.info("No UncaughtExceptionHandler defined !");
+    }
+  }
+
   private static Thread.UncaughtExceptionHandler getExceptionHandler() {
     return exceptionHandler;
   }
@@ -76,29 +87,25 @@ public final class MCSExceptionHandler {
     applyUncaughtExceptionHandler(Thread.currentThread(), handler);
 
     if (handler instanceof SwingExceptionHandler) {
-      // swing handler : modify EDT :
-
       try {
         // Adding my handler to the Event-Driven Thread.
-        EventQueue.invokeAndWait(new Runnable() {
+        SwingUtilities.invokeAndWait(new Runnable() {
 
           public void run() {
             applyUncaughtExceptionHandler(Thread.currentThread(), handler);
           }
         });
       } catch (InterruptedException ie) {
-        _logger.log(Level.SEVERE, "failure", ie);
+        _logger.log(Level.SEVERE, "interrupted", ie);
       } catch (InvocationTargetException ite) {
-        _logger.log(Level.SEVERE, "failure", ite);
+        _logger.log(Level.SEVERE, "exception", ite.getCause());
       }
-
     }
   }
 
   private static void applyUncaughtExceptionHandler(final Thread thread, final Thread.UncaughtExceptionHandler handler) {
 
-    _logger.info("Current Thread = " + thread + " in group = " + thread.getThreadGroup() +
-            " with parent = " + thread.getThreadGroup().getParent());
+    _logger.info("Current Thread = " + thread + " in group = " + thread.getThreadGroup());
 
     final Thread.UncaughtExceptionHandler threadHandler = thread.getUncaughtExceptionHandler();
 
@@ -108,7 +115,6 @@ public final class MCSExceptionHandler {
     thread.setUncaughtExceptionHandler(getExceptionHandler());
 
     _logger.info("Updated Thread UncaughtExceptionHandler = " + thread.getUncaughtExceptionHandler());
-
   }
 
   private static boolean isFilteredException(final Throwable e) {

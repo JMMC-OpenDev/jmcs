@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSExceptionHandler.java,v 1.4 2010-09-25 13:41:14 bourgesl Exp $"
+ * "@(#) $Id: MCSExceptionHandler.java,v 1.5 2010-09-25 13:54:07 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/09/25 13:41:14  bourgesl
+ * new method installThreadHandler(thread) to set uncaughtException handler for new threads
+ *
  * Revision 1.3  2010/09/25 12:17:42  bourgesl
  * more logs about threads, exception handler to inspect JNLP context
  *
@@ -68,6 +71,9 @@ public final class MCSExceptionHandler {
 
   private static synchronized void setExceptionHandler(final Thread.UncaughtExceptionHandler handler) {
     if (handler != null) {
+      // Force security checks
+      System.setSecurityManager(null);
+
       exceptionHandler = handler;
 
       applyUncaughtExceptionHandler(handler);

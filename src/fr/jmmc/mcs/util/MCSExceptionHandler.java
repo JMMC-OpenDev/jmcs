@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSExceptionHandler.java,v 1.2 2010-09-24 15:43:32 bourgesl Exp $"
+ * "@(#) $Id: MCSExceptionHandler.java,v 1.3 2010-09-25 12:17:42 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/09/24 15:43:32  bourgesl
+ * removed unused import
+ *
  * Revision 1.1  2010/09/23 19:36:05  bourgesl
  * new generic exception handler (awt, thread) for uncaught exceptions
  *
@@ -13,6 +16,8 @@
 package fr.jmmc.mcs.util;
 
 import fr.jmmc.mcs.gui.FeedbackReport;
+import java.awt.EventQueue;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
@@ -32,31 +37,78 @@ public final class MCSExceptionHandler {
 
   /** Logger */
   private static final Logger _logger = Logger.getLogger(MCSExceptionHandler.class.getName());
-
-  /**
-   * Public constructor used by reflection
-   */
-  public MCSExceptionHandler() {
-    super();
-  }
-
-  /**
-   * AWT exception handler
-   *
-   * @param e the exception
-   */
-  public void handle(Throwable e) {
-    showException(e);
-  }
+  /** uncaughtException handler singleton */
+  private static volatile Thread.UncaughtExceptionHandler exceptionHandler = null;
 
   public static void installLoggingHandler() {
-    Thread.setDefaultUncaughtExceptionHandler(new LoggingExceptionHandler());
+    setExceptionHandler(new LoggingExceptionHandler());
   }
 
   public static void installSwingHandler() {
-    Thread.setDefaultUncaughtExceptionHandler(new SwingExceptionHandler());
-
+    // AWT exception handler for modal dialogs :
     System.setProperty("sun.awt.exception.handler", MCSExceptionHandler.class.getName());
+
+    setExceptionHandler(new SwingExceptionHandler());
+  }
+
+  private static Thread.UncaughtExceptionHandler getExceptionHandler() {
+    return exceptionHandler;
+  }
+
+  private static synchronized void setExceptionHandler(final Thread.UncaughtExceptionHandler handler) {
+    if (handler != null) {
+      exceptionHandler = handler;
+
+      applyUncaughtExceptionHandler(handler);
+    }
+  }
+
+  private static void applyUncaughtExceptionHandler(final Thread.UncaughtExceptionHandler handler) {
+
+    _logger.info("New UncaughtExceptionHandler = " + handler);
+
+    _logger.info("Current Default UncaughtExceptionHandler = " + Thread.getDefaultUncaughtExceptionHandler());
+
+    Thread.setDefaultUncaughtExceptionHandler(handler);
+
+    _logger.info("Updated Default UncaughtExceptionHandler = " + Thread.getDefaultUncaughtExceptionHandler());
+
+    applyUncaughtExceptionHandler(Thread.currentThread(), handler);
+
+    if (handler instanceof SwingExceptionHandler) {
+      // swing handler : modify EDT :
+
+      try {
+        // Adding my handler to the Event-Driven Thread.
+        EventQueue.invokeAndWait(new Runnable() {
+
+          public void run() {
+            applyUncaughtExceptionHandler(Thread.currentThread(), handler);
+          }
+        });
+      } catch (InterruptedException ie) {
+        _logger.log(Level.SEVERE, "failure", ie);
+      } catch (InvocationTargetException ite) {
+        _logger.log(Level.SEVERE, "failure", ite);
+      }
+
+    }
+  }
+
+  private static void applyUncaughtExceptionHandler(final Thread thread, final Thread.UncaughtExceptionHandler handler) {
+
+    _logger.info("Current Thread = " + thread + " in group = " + thread.getThreadGroup() +
+            " with parent = " + thread.getThreadGroup().getParent());
+
+    final Thread.UncaughtExceptionHandler threadHandler = thread.getUncaughtExceptionHandler();
+
+    _logger.info("Current Thread UncaughtExceptionHandler = " + threadHandler);
+
+    // Adding my handler to this thread (may be unnecessary) :
+    thread.setUncaughtExceptionHandler(getExceptionHandler());
+
+    _logger.info("Updated Thread UncaughtExceptionHandler = " + thread.getUncaughtExceptionHandler());
+
   }
 
   private static boolean isFilteredException(final Throwable e) {
@@ -74,10 +126,26 @@ public final class MCSExceptionHandler {
    * Report the exception to the user via Swing
    * @param e the exception
    */
-  private static void showException(final Throwable e) {
+  private final static void showException(final Throwable e) {
     // Show feedback report (modal and do not exit on close) :
     // Note : FeedbackReport already logs the exception
     new FeedbackReport(true, e);
+  }
+
+  /**
+   * Public constructor used by reflection
+   */
+  public MCSExceptionHandler() {
+    super();
+  }
+
+  /**
+   * AWT exception handler useful for exceptions occuring in modal dialogs
+   *
+   * @param e the exception
+   */
+  public void handle(final Throwable e) {
+    showException(e);
   }
 
   /**

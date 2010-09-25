@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.64 2010-09-24 15:46:04 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.65 2010-09-25 13:37:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.64  2010/09/24 15:46:04  bourgesl
+ * use MessagePane
+ *
  * Revision 1.63  2010/09/23 19:37:56  bourgesl
  * MemoryHandler (logs) initialized via static initializer to be ready immediately
  * comments when calling FeedBackReport
@@ -326,6 +329,9 @@ public abstract class App
     /** Singleton reference */
     private static App _sharedInstance;
 
+    /** flag indicating if the application started properly and is ready (visible) */
+    private static boolean _applicationReady = false;
+
     /** Shared application data model */
     private static ApplicationDataModel _applicationDataModel;
 
@@ -422,14 +428,14 @@ public abstract class App
     protected App(String[] args, boolean waitBeforeExecution,
         boolean showSplashScreen, boolean exitWhenClosed)
     {
-        _registrar = ActionRegistrar.getInstance();
-
-        String classPath = getClass().getName();
-        new OpenAction(classPath, "_openAction");
-        _quitAction = new QuitAction(classPath, "_quitAction");
-
         try
         {
+            _registrar = ActionRegistrar.getInstance();
+
+            String classPath = getClass().getName();
+            new OpenAction(classPath, "_openAction");
+            _quitAction = new QuitAction(classPath, "_quitAction");
+
             // Attributes affectations
             _args                          = args;
             _showSplashScreen              = showSplashScreen;
@@ -467,9 +473,7 @@ public abstract class App
                 run();
             }
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception e) {
             _logger.severe("Error while initializing the application");
 
             // In order to see the error window
@@ -484,8 +488,8 @@ public abstract class App
             MessagePane.showErrorMessage(
                 "An error occured while initializing the application");
 
-            // Show feedback report (modal and do exit on close) :
-            new FeedbackReport(true, ex, true);
+            // Show modal feedback report :
+            new FeedbackReport(true, e);
         }
     }
 
@@ -930,6 +934,9 @@ public abstract class App
 
         // Indicate that this application is ready
         ready();
+
+        // Indicate that the application is ready (visible)
+        _applicationReady = true;
     }
 
     /**
@@ -977,6 +984,7 @@ public abstract class App
         _splashScreen.dispose();
 
         // Stop the splash screen thread
+        // LAURENT : TODO CLEAN : ILLEGAL a thread must not be killed like this :
         _splashScreenThread.stop();
     }
 
@@ -1038,6 +1046,16 @@ public abstract class App
     public static App getSharedInstance()
     {
         return _sharedInstance;
+    }
+
+    /**
+     * Return true if the Application is ready
+     *
+     * @return true if the Application is ready
+     */
+    public final static boolean isReady()
+    {
+        return _applicationReady;
     }
 
     /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.25 2010-09-24 15:45:14 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.26 2010-09-25 13:38:35 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2010/09/24 15:45:14  bourgesl
+ * use use MessagePane
+ *
  * Revision 1.24  2010/09/23 19:43:56  bourgesl
  * better EDT handling (refresh) but the mail report thread must be corrected later
  * automatic Frame (Dialog) association with the application main Frame / new constructor without frame argument
@@ -214,7 +217,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     /** Any Throwable (Exception, RuntimeException and Error) */
     private Throwable _exception = null;
 
-    /** Exit the application? */
+    /** Exit the application ? */
     private boolean _exit = false;
 
     
@@ -224,7 +227,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      */
     public FeedbackReport()
     {
-        this(null, false, null, false);
+        this(null, false, null);
     }
 
     /**
@@ -234,20 +237,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      */
     public FeedbackReport(final Throwable exception)
     {
-        this(null, false, exception, false);
-    }
-
-    /**
-     * Creates a new FeedbackReport object.
-     *
-     * @param modal if true, this dialog is modal
-     * @param exception exception
-     * @param exit if true, exit the application
-     */
-    public FeedbackReport(final boolean modal, final Throwable exception,
-                          final boolean exit)
-    {
-        this(null, modal, exception, exit);
+        this(null, false, exception);
     }
 
     /**
@@ -259,46 +249,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      */
     public FeedbackReport(final boolean modal, final Throwable exception)
     {
-        this(null, modal, exception, false);
-    }
-
-    /**
-     * Creates a new FeedbackReport object (not modal).
-     * Set the parent frame that MUST not be null.
-     * Do not exit on close.
-     *
-     * @param frame parent frame
-     */
-    public FeedbackReport(final Frame frame)
-    {
-        this(frame, false, null, false);
-    }
-
-    /**
-     * Creates a new FeedbackReport object
-     * Set the parent frame that MUST not be null and specify if this dialog is modal or not.
-     * Do not exit on close.
-     *
-     * @param frame parent frame
-     * @param modal if true, this dialog is modal
-     */
-    public FeedbackReport(final Frame frame, final boolean modal)
-    {
-        this(frame, modal, null, false);
-    }
-
-    /**
-     * Creates a new FeedbackReport object
-     * Set the parent frame that MUST not be null and specify if this dialog is modal or not.
-     * Do not exit on close.
-     *
-     * @param frame parent frame
-     * @param modal if true, this dialog is modal
-     * @param exception exception
-     */
-    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception)
-    {
-        this(frame, modal, exception, false);
+        this(null, modal, exception);
     }
 
     /**
@@ -308,10 +259,10 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      * @param frame parent frame
      * @param modal if true, this dialog is modal
      * @param exception exception
-     * @param exit if true, exit the application
+     *
+     * @deprecated use new FeedbackReport(final boolean modal, final Throwable exception)
      */
-    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception,
-                          final boolean exit)
+    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception)
     {
         super(MessagePane.getOwner(frame), modal);
 
@@ -319,7 +270,16 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         _exception               = exception;
-        _exit                    = exit;
+
+        // check if the application is ready :
+        // If not, exit when closing the feedback report :
+        final boolean ready = App.isReady();
+
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("Application is ready : " + ready);
+        }
+
+        _exit = !ready || !App.getFrame().isVisible();
 
         // Create the model and add the observer
         // GM has haccked api to temporary shortcup process and force presence of exception if any
@@ -631,7 +591,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
      * remove this instance form Preference Observers
      */
     @Override
-    public void dispose() {
+    public final void dispose() {
       if (_logger.isLoggable(Level.FINE)) {
         _logger.fine("dispose : " + this);
       }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.36 2010-09-24 16:17:13 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.37 2010-09-25 12:17:10 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2010/09/24 16:17:13  bourgesl
+ * removed SampManager import to let the classloader open this class (JNLP)
+ *
  * Revision 1.35  2010/09/24 16:05:51  bourgesl
  * removed imports for astrogrid to let the classloader open this class
  *
@@ -126,6 +129,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.interop.SampManager;
 import fr.jmmc.mcs.util.ActionRegistrar;
 import fr.jmmc.mcs.util.RegisteredPreferencedBooleanAction;
 import fr.jmmc.mcs.util.Urls;
@@ -157,6 +161,10 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
+
+import org.astrogrid.samp.client.SampException;
+import org.astrogrid.samp.gui.GuiHubConnector;
+import org.astrogrid.samp.xmlrpc.HubMode;
 
 
 /**
@@ -413,15 +421,15 @@ public class MainMenuBar extends JMenuBar
         JMenu interopMenu = new JMenu("Interop");
 
 
-        org.astrogrid.samp.gui.GuiHubConnector hub;
+        GuiHubConnector hub;
         try {
-            hub = fr.jmmc.mcs.interop.SampManager.getGuiHubConnector();
-        } catch (org.astrogrid.samp.client.SampException ex) {
+            hub = SampManager.getGuiHubConnector();
+        } catch (SampException ex) {
             Logger.getLogger(MainMenuBar.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
 
-        interopMenu.add(hub.createHubAction(true, org.astrogrid.samp.xmlrpc.HubMode.NO_GUI));
+        interopMenu.add(hub.createHubAction(true, HubMode.NO_GUI));
         interopMenu.add(hub.createRegisterAction());
         interopMenu.add(hub.createRegisterOrHubAction(_frame, null));
 

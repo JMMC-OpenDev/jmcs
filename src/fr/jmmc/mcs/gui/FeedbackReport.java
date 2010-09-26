@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.26 2010-09-25 13:38:35 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.27 2010-09-26 12:40:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2010/09/25 13:38:35  bourgesl
+ * removed deprecated / unused constructors
+ * exit flag is automatically set (application is not ready or not visible)
+ *
  * Revision 1.25  2010/09/24 15:45:14  bourgesl
  * use use MessagePane
  *
@@ -216,10 +220,6 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
 
     /** Any Throwable (Exception, RuntimeException and Error) */
     private Throwable _exception = null;
-
-    /** Exit the application ? */
-    private boolean _exit = false;
-
     
     /** 
      * Creates a new FeedbackReport object (not modal).
@@ -270,16 +270,6 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         _exception               = exception;
-
-        // check if the application is ready :
-        // If not, exit when closing the feedback report :
-        final boolean ready = App.isReady();
-
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Application is ready : " + ready);
-        }
-
-        _exit = !ready || !App.getFrame().isVisible();
 
         // Create the model and add the observer
         // GM has haccked api to temporary shortcup process and force presence of exception if any
@@ -673,8 +663,18 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     /** Exit the application if there was a fatal error */
     private final void exit()
     {
+
+        // If the application is not ready, exit now :
+        final boolean ready = App.isReady();
+
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("Application is ready : " + ready);
+        }
+
+        final boolean exit = !ready || !App.getFrame().isVisible();
+
         // Exit or not the application
-        if (_exit)
+        if (exit)
         {
             _logger.fine("exiting ...");
             System.exit(-1);

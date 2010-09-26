@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.65 2010-09-25 13:37:33 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.66 2010-09-26 12:40:58 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.65  2010/09/25 13:37:33  bourgesl
+ * added applicationReady flag used by the FeedbackReport to exit or not the application
+ *
  * Revision 1.64  2010/09/24 15:46:04  bourgesl
  * use MessagePane
  *
@@ -861,11 +864,6 @@ public abstract class App
     /** Execute application body */
     protected abstract void execute();
 
-    /** Callback when the application is ready (typically make the frame visible) */
-    protected void ready() {
-        _logger.fine("Default App.ready() handler called.");
-    }
-
     /**
      * Hook to handle operations before closing application.
      *
@@ -919,8 +917,12 @@ public abstract class App
         // Delegate execution to daughter class through abstract execute() call
         execute();
 
+        // Indicate that the application is ready (visible)
+        _applicationReady = true;
+
         // If any file argument exists, open that file using the registered open action :
-        if (_fileArgument != null) {
+        if (_fileArgument != null)
+        {
           SwingUtilities.invokeLater(new Runnable() {
             /**
              * Open the file using EDT :
@@ -931,12 +933,6 @@ public abstract class App
             }
           });
         }
-
-        // Indicate that this application is ready
-        ready();
-
-        // Indicate that the application is ready (visible)
-        _applicationReady = true;
     }
 
     /**

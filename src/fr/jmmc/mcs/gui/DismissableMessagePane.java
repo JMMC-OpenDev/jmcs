@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DismissableMessagePane.java,v 1.3 2010-09-24 15:45:38 bourgesl Exp $"
+ * "@(#) $Id: DismissableMessagePane.java,v 1.4 2010-09-30 13:28:57 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/09/24 15:45:38  bourgesl
+ * format
+ *
  * Revision 1.2  2010/09/23 19:38:16  bourgesl
  * comments when calling FeedBackReport
  *
@@ -64,7 +67,7 @@ public final class DismissableMessagePane {
         }
       }
     } catch (PreferencesException pe) {
-      // Show feedback report (not modal and do exit on close) :
+      // Show the feedback report :
       new FeedbackReport(pe);
     }
 

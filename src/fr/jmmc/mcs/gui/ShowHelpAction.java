@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class ShowHelpAction extends AbstractAction {
 
@@ -44,7 +44,7 @@ public class ShowHelpAction extends AbstractAction {
       // If no helpID found, then show one feedback report and disable action
       if (_helpID == null && (!_alreadyShown || App.isBetaVersion())) {
         if (App.isBetaVersion()) {
-          // Show feedback report (not modal and do not exit on close) :
+          // Show the feedback report :
           new FeedbackReport(new Exception(
                   "Documentation problem:\nNo helpID found for label '"
                   + label

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.16 2010-09-24 15:45:14 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.17 2010-09-30 13:33:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2010/09/24 15:45:14  bourgesl
+ * use use MessagePane
+ *
  * Revision 1.15  2010/09/23 19:40:40  bourgesl
  * fireObservers using EDT (FeedBackReport)
  * comments / code formatting
@@ -61,6 +64,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.util.Http;
 import fr.jmmc.mcs.util.MCSObservable;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -80,7 +84,7 @@ import javax.swing.SwingUtilities;
  * the application logs and send all by a HTTP POST request
  * to the jmmc team via a PHP script.
  */
-public class FeedbackReportModel extends MCSObservable implements Runnable
+public final class FeedbackReportModel extends MCSObservable implements Runnable
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReportModel.class.getName());
@@ -88,10 +92,6 @@ public class FeedbackReportModel extends MCSObservable implements Runnable
     /** URL of the PHP script that handles form parameters */
     private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
 
-    /* TEST URL of the PHP script that handles form parameters */
-/*
-    private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedbackLB.php";
- */
     /** Feedback report type definition array */
     private static final String[] _feedbackTypes = new String[]
         {
@@ -101,17 +101,17 @@ public class FeedbackReportModel extends MCSObservable implements Runnable
 
     /* members */
 
-    /** Program version */
-    private String _applicationVersion = "Unknown";
-
     /** Program name */
-    private String _applicationName = "Unknown";
+    private final String _applicationName;
+
+    /** Program version */
+    private final String _applicationVersion;
 
     /** User system configuration */
-    private String _systemConfig = "Unknown";
+    private final String _systemConfig;
 
     /** Application logs */
-    private String _applicationLog = "None";
+    private final String _applicationLog;
 
     /** User mail */
     private String _mail = "Unknown";
@@ -172,14 +172,25 @@ public class FeedbackReportModel extends MCSObservable implements Runnable
         // Get informations to send with the report
         if (applicationDataModel != null)
         {
-            _applicationVersion     = applicationDataModel.getProgramVersion();
-            _applicationName        = applicationDataModel.getProgramName();
+            _applicationName    = applicationDataModel.getProgramName();
+            _applicationVersion = applicationDataModel.getProgramVersion();
+        } else {
+            _applicationName   = "Unknown";
+           _applicationVersion = "Unknown";
         }
 
         _systemConfig = getSystemConfig();
+
         _logger.fine("system configuration has been saved");
 
-        _applicationLog = App.getLogOutput();
+        final String logOutput = App.getLogOutput();
+        
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("logOutput length = " + logOutput.length());
+        }
+
+        _applicationLog = (logOutput.length() > 0) ? logOutput : "None";
+
         _logger.fine("All generated report informations have been collected");
     }
 
@@ -255,6 +266,9 @@ public class FeedbackReportModel extends MCSObservable implements Runnable
      */
     public void run()
     {
+        // Create an HTTP client to send report information to our PHP script
+        final HttpClient client = Http.getHttpClient(false);
+
         while (true)
         {
             try
@@ -275,12 +289,9 @@ public class FeedbackReportModel extends MCSObservable implements Runnable
                     setDescription(_feedbackReport.getDescription());
                 }
 
-                try
-                {
-                    // Create an HTTP client to send report information to our PHP script
-                    final HttpClient client = new HttpClient();
-                    final PostMethod method = new PostMethod(_phpScriptURL);
+                final PostMethod method = new PostMethod(_phpScriptURL);
 
+                try {
                     _logger.fine("Http client and post method have been created");
 
                     // Compose HTML form parameters
@@ -326,6 +337,10 @@ public class FeedbackReportModel extends MCSObservable implements Runnable
                 catch (Exception e)
                 {
                     _logger.log(Level.SEVERE, "Cannot send feedback report", e);
+
+                } finally {
+                  // Release the connection.
+                  method.releaseConnection();
                 }
 
                 _readyToSend = false;

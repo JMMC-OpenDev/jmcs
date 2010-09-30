@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.14 2010-06-29 14:24:02 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.15 2010-09-30 13:31:14 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2010/06/29 14:24:02  bourgesl
+ * javadoc comment
+ *
  * Revision 1.13  2010/05/18 15:34:47  bourgesl
  * added limb darkened disk model
  *
@@ -61,6 +64,7 @@ import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.function.RingModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import fr.jmmc.mcs.model.targetmodel.Parameter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -78,10 +82,10 @@ public final class ModelManager {
   /** Class Name */
   private static final String className_ = "fr.jmmc.mcs.model.ModelManager";
   /** Class logger */
-  private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
+  private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
           className_);
   /** singleton pattern */
-  private static ModelManager instance = new ModelManager();
+  private static final ModelManager instance = new ModelManager();
   // members :
   /** List of model type */
   private final Vector<String> modelTypes = new Vector<String>();
@@ -256,32 +260,47 @@ public final class ModelManager {
   }
 
   /**
-   * Normalize the given complex visibility array
-   * @param vis complex visibility array
+   * Return a deep "copy" of the list of models
+   * @param models list of models to clone
+   * @return cloned model list
    */
-  public static void normalize(final Complex[] vis) {
-    double val;
+  public static final List<Model> cloneModels(final List<Model> models) {
+    // Deep copy of models :
+    final List<Model> newModels = new ArrayList<Model>(models.size());
+    for (Model model : models) {
+      newModels.add((Model) model.clone());
+    }
+    return newModels;
+  }
 
-    // 1 - Find maximum amplitude :
-    double maxAmp = 0d;
-    for (int i = 0, size = vis.length; i < size; i++) {
-      // amplitude = complex modulus (abs in commons-math) :
-      val = (float) vis[i].abs();
-      if (val > maxAmp) {
-        maxAmp = val;
+  /**
+   * Normalize the fluxes and update the model parameters
+   * @param models list of models to update
+   */
+  public static final void normalizeFluxes(final List<Model> models) {
+    double totalFlux = 0d;
+
+    Parameter parameter;
+    for (Model model : models) {
+      parameter = model.getParameter(ModelDefinition.PARAM_FLUX_WEIGHT);
+
+      if (parameter == null) {
+        throw new IllegalArgumentException("parameter [" + ModelDefinition.PARAM_FLUX_WEIGHT + "] not found in the model [" + model.getName() + "] !");
       }
+
+      totalFlux += parameter.getValue();
     }
 
-    if (logger.isLoggable(Level.FINE)) {
-      logger.fine("maxAmp : " + maxAmp);
-    }
+    if (totalFlux != 0d && totalFlux != 1d) {
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("totalFlux = " + totalFlux);
+      }
 
-    // 2 - normalize :
-    if (maxAmp != 0d) {
-      final double factor = 1d / maxAmp;
-      for (int i = 0, size = vis.length; i < size; i++) {
-        // amplitude = complex modulus (abs in commons-math) :
-        vis[i] = vis[i].multiply(factor);
+      for (Model model : models) {
+        parameter = model.getParameter(ModelDefinition.PARAM_FLUX_WEIGHT);
+
+        // p is not null :
+        parameter.setValue(parameter.getValue() / totalFlux);
       }
     }
   }
@@ -384,6 +403,10 @@ public final class ModelManager {
     return newModel;
   }
 
+  /**
+   * Recenter the models using the first model to be at (0,0) in the given list of models
+   * @param targetModels list of models
+   */
   public static void relocateModels(final List<Model> targetModels) {
     final int size = targetModels.size();
     if (size == 0) {

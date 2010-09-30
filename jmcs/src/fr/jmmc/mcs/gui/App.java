@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.66 2010-09-26 12:40:58 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.67 2010-09-30 13:37:11 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.66  2010/09/26 12:40:58  bourgesl
+ * application is ready after run() and before loading a file
+ *
  * Revision 1.65  2010/09/25 13:37:33  bourgesl
  * added applicationReady flag used by the FeedbackReport to exit or not the application
  *
@@ -278,7 +281,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 
@@ -321,8 +323,9 @@ public abstract class App
         // We add the memory handler create to the logger
         _mainLogger.addHandler(_streamHandler);
         _mainLogger.setLevel(Level.FINE);
+
         _mainLogger.finer("Main Logger properties set");
-        _mainLogger.fine("Memory handler created and fixed to feedbackLogger.");
+        _mainLogger.fine("Memory handler created and fixed to feedback logger.");
     }
 
 
@@ -476,7 +479,7 @@ public abstract class App
                 run();
             }
 
-        } catch (Exception e) {
+        } catch (Throwable th) {
             _logger.severe("Error while initializing the application");
 
             // In order to see the error window
@@ -491,8 +494,8 @@ public abstract class App
             MessagePane.showErrorMessage(
                 "An error occured while initializing the application");
 
-            // Show modal feedback report :
-            new FeedbackReport(true, e);
+            // Show the feedback report (modal) :
+            new FeedbackReport(true, th);
         }
     }
 
@@ -641,7 +644,7 @@ public abstract class App
                 {
                     if (_applicationDataModel != null)
                     {
-                        // Show feedback report (not modal and do not exit on close) :
+                        // Show the feedback report :
                         new FeedbackReport(ex);
                     }
                 }
@@ -1231,19 +1234,17 @@ public abstract class App
             _logger.entering("AcknowledgementAction", "actionPerformed");
 
             StringSelection ss = new StringSelection(_acknowledgement);
-            Toolkit.getDefaultToolkit().getSystemClipboard()
-                   .setContents(ss, null);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 
-            String delimiter     = "---------------------------------------------------------------------------\n";
-            String message       = "The previous message has already been copied to your clipboard, in order to\n" +
+            final String delimiter     = "---------------------------------------------------------------------------\n";
+            final String message       = "The previous message has already been copied to your clipboard, in order to\n" +
                 "let you conveniently paste it in your related publication.";
-            String windowTitle   = _applicationDataModel.getProgramName() +
+            final String windowTitle   = _applicationDataModel.getProgramName() +
                 " Acknowledgment Note";
-            String windowContent = delimiter + _acknowledgement + "\n" +
+            final String windowContent = delimiter + _acknowledgement + "\n" +
                 delimiter + "\n" + message;
 
-            JOptionPane.showMessageDialog(null, windowContent, windowTitle,
-                JOptionPane.INFORMATION_MESSAGE);
+            MessagePane.showMessage(windowContent, windowTitle);
         }
     }
 

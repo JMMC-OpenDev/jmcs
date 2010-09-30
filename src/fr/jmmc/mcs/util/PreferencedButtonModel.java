@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedButtonModel.java,v 1.8 2010-09-23 19:38:16 bourgesl Exp $"
+ * "@(#) $Id: PreferencedButtonModel.java,v 1.9 2010-09-30 13:28:02 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/09/23 19:38:16  bourgesl
+ * comments when calling FeedBackReport
+ *
  * Revision 1.7  2009/08/28 09:01:44  lafrasse
  * Jalopization.
  *
@@ -147,7 +150,7 @@ public class PreferencedButtonModel extends DefaultButtonModel
         }
         catch (Exception e)
         {
-            // Show feedback report (modal and do not exit on close) :
+            // Show the feedback report (modal) :
             new FeedbackReport(true, e);
         }
     }

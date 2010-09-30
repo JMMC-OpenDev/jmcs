@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedDocument.java,v 1.5 2010-09-23 19:38:16 bourgesl Exp $"
+ * "@(#) $Id: PreferencedDocument.java,v 1.6 2010-09-30 13:28:02 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/09/23 19:38:16  bourgesl
+ * comments when calling FeedBackReport
+ *
  * Revision 1.4  2009/08/28 09:01:44  lafrasse
  * Jalopization.
  *
@@ -119,7 +122,7 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
         }
         catch (Exception e)
         {
-          // Show feedback report (modal and do not exit on close) :
+          // Show the feedback report (modal) :
           new FeedbackReport(true, e);
         }
 
@@ -145,7 +148,7 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
         }
         catch (Exception e)
         {
-          // Show feedback report (modal and do not exit on close) :
+          // Show the feedback report (modal) :
           new FeedbackReport(true, e);
         }
     }
@@ -163,7 +166,7 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
         }
         catch (Exception e)
         {
-          // Show feedback report (modal and do not exit on close) :
+          // Show the feedback report (modal) :
           new FeedbackReport(true, e);
         }
     }

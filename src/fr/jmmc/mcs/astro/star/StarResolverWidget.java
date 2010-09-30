@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.9 2010-09-24 15:46:15 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.10 2010-09-30 13:27:38 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/09/24 15:46:15  bourgesl
+ * use MessagePane
+ *
  * Revision 1.8  2010/04/07 12:21:39  bourgesl
  * logger instead of system.out in main()
  *
@@ -51,7 +54,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 

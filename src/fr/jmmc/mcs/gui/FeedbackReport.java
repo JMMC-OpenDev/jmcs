@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.27 2010-09-26 12:40:18 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.28 2010-09-30 13:35:24 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2010/09/26 12:40:18  bourgesl
+ * determine exit flag when used because the application frame can be displayed by EDT.invokeLater()
+ *
  * Revision 1.26  2010/09/25 13:38:35  bourgesl
  * removed deprecated / unused constructors
  * exit flag is automatically set (application is not ready or not visible)
@@ -140,7 +143,7 @@ import javax.swing.SwingUtilities;
  * TODO : september 2010 : handle properly thread associated to FeedBackReportModel (start/stop/notify) ...
  *
  */
-public class FeedbackReport extends JDialog implements Observer, KeyListener
+public final class FeedbackReport extends JDialog implements Observer, KeyListener
 {
 
     /** default serial UID for Serializable interface */
@@ -272,7 +275,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         _exception               = exception;
 
         // Create the model and add the observer
-        // GM has haccked api to temporary shortcup process and force presence of exception if any
+        // GM has hacked api to temporary shortcut process and force presence of exception if any
         _feedbackReportModel     = new FeedbackReportModel(this);
 
         if (_exception != null)
@@ -379,7 +382,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
     private void setMailProperties()
     {
         _mailSplit.setBorder(null);
-        _mailSplit.setDividerLocation(80);
+        _mailSplit.setDividerLocation(100);
         _mailSplit.setDividerSize(0);
 
         _mailLabel.setText("Your Email :");
@@ -397,7 +400,7 @@ public class FeedbackReport extends JDialog implements Observer, KeyListener
         _typePanel.add(_typeComboBox, BorderLayout.LINE_START);
 
         _typeSplit.setBorder(null);
-        _typeSplit.setDividerLocation(80);
+        _typeSplit.setDividerLocation(100);
         _typeSplit.setDividerSize(0);
         _typeSplit.setEnabled(false);
 

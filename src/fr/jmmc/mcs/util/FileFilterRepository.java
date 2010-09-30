@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileFilterRepository.java,v 1.3 2010-01-14 13:03:04 bourgesl Exp $"
+ * "@(#) $Id: FileFilterRepository.java,v 1.4 2010-09-30 13:28:35 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/01/14 13:03:04  bourgesl
+ * use Logger.isLoggable to avoid a lot of string.concat()
+ *
  * Revision 1.2  2009/04/30 12:59:21  lafrasse
  * Removed unused output trace.
  *
@@ -123,8 +126,8 @@ public class FileFilterRepository
         }
         else if (previousFilter != filter)
         {
-            if (_logger.isLoggable(Level.WARNING)) {
-              _logger.warning("Overwritten the previously registered '" +
+            if (_logger.isLoggable(Level.FINE)) {
+              _logger.fine("Overwritten the previously registered '" +
                 mimeType + "' file filter.");
             }
         }

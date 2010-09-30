@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Http.java,v 1.2 2010-03-01 14:51:57 mella Exp $"
+ * "@(#) $Id: Http.java,v 1.3 2010-09-30 13:34:36 bourgesl Exp $"
  *
  */
 package fr.jmmc.mcs.util;
@@ -25,65 +25,131 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
  * - returns a well configured HttpClient (jakarta project)
  * @author mella
  */
-public class Http {
+public final class Http {
 
-    public final static String className_ = Http.class.getName();
-    static Logger logger_ = Logger.getLogger(className_);
+  /** class name */
+  public final static String className_ = Http.class.getName();
+  /** logger */
+  private final static Logger logger_ = Logger.getLogger(className_);
+  /** default value for HTTP timeout = 5s */
+  public final static int HTTP_TIMEOUT = 5000;
+  /** Jmmc web to detect proxies */
+  private final static String JMMC_WEB = "http://www.jmmc.fr";
+  /** cached Jmmc URL */
+  private static URI JMMC_URI = null;
 
-    /**
-     * This class returns one httpclient.
-     * This client:
-     *  * uses the default proxy configuration (based on http://www.jmmc.fr).
-     *  * is thread safe.
-     * 
-     * @todo remove the limit for support of the first proxy.
-     */
-    public static HttpClient getHttpClient() {
-        try {
-            return getHttpClient(new URI("http://www.jmmc.fr"));
-        } catch (URISyntaxException ex) {
-            logger_.log(Level.SEVERE, null, ex);
-        }
-        return null;
+  /**
+   * Forbidden constructor
+   */
+  private Http() {
+    super();
+  }
+
+  /**
+   * This class returns a multi threaded http client.
+   * This client:
+   *  * uses the default proxy configuration (based on http://www.jmmc.fr).
+   *  * is thread safe.
+   *
+   * @return httpClient instance
+   */
+  public static HttpClient getHttpClient() {
+    return getHttpClient(getJmmcURI(), true);
+  }
+
+  /**
+   * This class returns an http client.
+   * This client:
+   *  * uses the default proxy configuration (based on http://www.jmmc.fr).
+   *
+   * @param multiThreaded true indicates to create a multi threaded http client
+   *
+   * @return httpClient instance
+   */
+  public static HttpClient getHttpClient(final boolean multiThreaded) {
+    return getHttpClient(getJmmcURI(), multiThreaded);
+  }
+
+  /**
+   * This class returns a multi threaded http client for the associated URI.
+   * This client:
+   *  * uses the default proxy configuration (based on http://www.jmmc.fr).
+   *  * is thread safe.
+   * @param uri reference uri used to get the proper proxy
+   * @param multiThreaded true indicates to create a multi threaded http client
+   *
+   * @todo remove the limit for support of the first proxy.
+   *
+   * @return httpClient instance
+   */
+  public static HttpClient getHttpClient(final URI uri, final boolean multiThreaded) {
+
+    final HttpClient httpClient;
+    if (multiThreaded) {
+      // Create an HttpClient with the MultiThreadedHttpConnectionManager.
+      // This connection manager must be used if more than one thread will
+      // be using the HttpClient.
+      httpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
+    } else {
+      httpClient = new HttpClient();
     }
 
-    /**
-     * This class returns one httpclient for the associated URI.
-     * This client:
-     *  * uses the default proxy configuration (based on http://www.jmmc.fr).
-     *  * is thread safe.
-     * @param uri reference uri used to get the proper proxy
-     * @todo remove the limit for support of the first proxy.
-     */
-    public static HttpClient getHttpClient(URI uri) {
-        HttpClient httpClient = null;
-        if (httpClient == null) {
-            MultiThreadedHttpConnectionManager connectionManager =
-                    new MultiThreadedHttpConnectionManager();
-            httpClient = new HttpClient(connectionManager);
+    setConfiguration(httpClient);
 
-            HostConfiguration hostConfiguration = new HostConfiguration();
-            ProxySelector proxySelector = ProxySelector.getDefault();
-            List<Proxy> list = proxySelector.select(uri);
-            Proxy p = list.get(0);
-            logger_.log(Level.FINE, "using " + p + "in proxyList = " + list);
-            if (p.type() != Proxy.Type.DIRECT) {
-                String host;
-                int port;
-                InetSocketAddress epoint = (InetSocketAddress) p.address();
-                if (epoint.isUnresolved()) {
-                    host = epoint.getHostName();
-                } else {
-                    host = epoint.getAddress().getHostName();
-                }
-                port = epoint.getPort();
-                hostConfiguration.setProxy(host, port);
-                logger_.log(Level.FINE, "setting proxy " + host + ":" + port);
-                System.setProperty(className_+".proxy", host+":"+port);
-                httpClient.setHostConfiguration(hostConfiguration);
-            }
+    if (uri != null) {
+      final ProxySelector proxySelector = ProxySelector.getDefault();
+      final List<Proxy> list = proxySelector.select(uri);
+      final Proxy p = list.get(0);
+
+      if (logger_.isLoggable(Level.FINE)) {
+        logger_.log(Level.FINE, "using " + p + "in proxyList = " + list);
+      }
+      if (p.type() != Proxy.Type.DIRECT) {
+        final String host;
+        final InetSocketAddress epoint = (InetSocketAddress) p.address();
+        if (epoint.isUnresolved()) {
+          host = epoint.getHostName();
+        } else {
+          host = epoint.getAddress().getHostName();
+        }
+        final int port = epoint.getPort();
+
+        if (logger_.isLoggable(Level.FINE)) {
+          logger_.log(Level.FINE, "setting proxy " + host + ":" + port);
         }
 
-        return httpClient;
+        System.setProperty(className_ + ".proxy", host + ":" + port);
+
+        final HostConfiguration hostConfiguration = new HostConfiguration();
+        hostConfiguration.setProxy(host, port);
+
+        httpClient.setHostConfiguration(hostConfiguration);
+      }
     }
+    return httpClient;
+  }
+
+  /**
+   * Define client configuration
+   * @param httpClient instance to configure
+   */
+  private static void setConfiguration(final HttpClient httpClient) {
+    // Since we can have long term exchanges
+    httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(HTTP_TIMEOUT);
+  }
+
+  /**
+   * Get JMMC URI
+   * @return JMMC URI
+   */
+  private static URI getJmmcURI() {
+    if (JMMC_URI == null) {
+      try {
+        JMMC_URI = new URI(JMMC_WEB);
+      } catch (URISyntaxException use) {
+        logger_.log(Level.SEVERE, "invalid URL", use);
+      }
+    }
+    return JMMC_URI;
+  }
 }

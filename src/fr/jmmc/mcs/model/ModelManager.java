@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelManager.java,v 1.15 2010-09-30 13:31:14 bourgesl Exp $"
+ * "@(#) $Id: ModelManager.java,v 1.16 2010-10-01 11:51:52 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2010/09/30 13:31:14  bourgesl
+ * added cloneModels() and normalizeFluxes(models) to properly normalize fluxes before computing OIFits visibility amplitudes
+ * javadoc
+ *
  * Revision 1.14  2010/06/29 14:24:02  bourgesl
  * javadoc comment
  *
@@ -64,7 +68,6 @@ import fr.jmmc.mcs.model.function.PunctModelFunction;
 import fr.jmmc.mcs.model.function.RingModelFunction;
 import fr.jmmc.mcs.model.targetmodel.Model;
 import fr.jmmc.mcs.model.targetmodel.Parameter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -257,20 +260,6 @@ public final class ModelManager {
     }
 
     return vis;
-  }
-
-  /**
-   * Return a deep "copy" of the list of models
-   * @param models list of models to clone
-   * @return cloned model list
-   */
-  public static final List<Model> cloneModels(final List<Model> models) {
-    // Deep copy of models :
-    final List<Model> newModels = new ArrayList<Model>(models.size());
-    for (Model model : models) {
-      newModels.add((Model) model.clone());
-    }
-    return newModels;
   }
 
   /**

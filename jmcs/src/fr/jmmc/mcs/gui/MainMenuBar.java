@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.37 2010-09-25 12:17:10 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.38 2010-10-04 23:36:03 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2010/09/25 12:17:10  bourgesl
+ * restored imports (SAMP)
+ *
  * Revision 1.36  2010/09/24 16:17:13  bourgesl
  * removed SampManager import to let the classloader open this class (JNLP)
  *
@@ -129,6 +132,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.interop.SampCapabilityAction;
 import fr.jmmc.mcs.interop.SampManager;
 import fr.jmmc.mcs.util.ActionRegistrar;
 import fr.jmmc.mcs.util.RegisteredPreferencedBooleanAction;
@@ -137,6 +141,7 @@ import fr.jmmc.mcs.util.Urls;
 import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 
 import java.lang.reflect.Method;
 
@@ -173,9 +178,9 @@ import org.astrogrid.samp.xmlrpc.HubMode;
  *
  * In all cases, it generates default menus.
  *
- * To acces to the XML informations, this class uses <b>ApplicationDataModel</b>
+ * To access to the XML informations, this class uses <b>ApplicationDataModel</b>
  * class. It's a class which has got getters in order to do that and which has
- * been written to abstract the way to acces to these informations.
+ * been written to abstract the way to access to these informations.
  */
 public class MainMenuBar extends JMenuBar
 {
@@ -249,6 +254,7 @@ public class MainMenuBar extends JMenuBar
                         // Keep it if it's an other menu
                         if ((currentMenuLabel.equals("File") == false) &&
                                 (currentMenuLabel.equals("Edit") == false) &&
+                                (currentMenuLabel.equals("Interop") == false) &&
                                 (currentMenuLabel.equals("Help") == false))
                         {
                             otherMenus.add(currentMenuLabel);
@@ -275,13 +281,11 @@ public class MainMenuBar extends JMenuBar
             }
         }
 
-        // Create file menu
         createFileMenu();
 
-        // Create edit menu
         createEditMenu();
 
-        // Create others menus
+        // Create others (application-specifics) menus
         for (String menuLabel : otherMenus)
         {
             add(_menusTable.get(menuLabel));
@@ -291,13 +295,8 @@ public class MainMenuBar extends JMenuBar
             }
         }
 
-        // Create Interop menu
-        if (App.isBetaVersion() == true)
-        {
-            createInteropMenu();
-        }
+        createInteropMenu();
 
-        // Create help menu
         createHelpMenu();
 
         // Use OSXAdapter on the frame
@@ -414,13 +413,16 @@ public class MainMenuBar extends JMenuBar
         _logger.fine("Add 'Edit' menu into the menubar.");
     }
 
+    private static int count = 0;
+
     /** Create the 'Interop' menu. */
     private void createInteropMenu()
     {
-        // Create menu
+        // Create menu (invisible by default)
         JMenu interopMenu = new JMenu("Interop");
+        interopMenu.setVisible(false);
 
-
+        // Start SAMP support
         GuiHubConnector hub;
         try {
             hub = SampManager.getGuiHubConnector();
@@ -429,37 +431,47 @@ public class MainMenuBar extends JMenuBar
             return;
         }
 
-        interopMenu.add(hub.createHubAction(true, HubMode.NO_GUI));
-        interopMenu.add(hub.createRegisterAction());
-        interopMenu.add(hub.createRegisterOrHubAction(_frame, null));
+        // Add auto-toggeling menu entry to regiter/unregister to/from hub
+        interopMenu.add(hub.createToggleRegisterAction());
+
+        // To visually monitor hub activity
+        interopMenu.add(hub.createShowMonitorAction());
 
         // Get interop menu from table
         JMenu interop = _menusTable.get("Interop");
 
+        // Add app-specific menu entries (if any)
         if (interop != null)
         {
             Component[] components = interop.getMenuComponents();
 
             if (components.length > 0)
             {
+                interopMenu.setVisible(true);
+
                 interopMenu.add(new JSeparator());
 
                 // Add each component
                 for (Component currentComponent : components)
                 {
-                    interopMenu.add(currentComponent);
+                    // @TODO : cast SAMP-flagged menus only !
+                    SampCapabilityAction action = (SampCapabilityAction)((JMenuItem)currentComponent).getAction();
+                    String title = ((JMenuItem)currentComponent).getText();
+
+                    JMenu menu = new JMenu(title);
+                    menu.setEnabled(false);
+
+                    SampManager.addMenu(menu, action);
+                    interopMenu.add(menu);
                 }
             }
         }
 
-        interopMenu.add(new JSeparator());
-
-        interopMenu.add(hub.createShowMonitorAction());
-        interopMenu.add(hub.createToggleRegisterAction());
-        interopMenu.add(hub.createUnregisterAction());
-
         // Add menu to menubar
         add(interopMenu);
+
+        // Keep this menu invisible until (at least) one capability is registered
+        SampManager.hookMenu(interopMenu);
         _logger.fine("Add 'Interop' into the menubar.");
     }
 

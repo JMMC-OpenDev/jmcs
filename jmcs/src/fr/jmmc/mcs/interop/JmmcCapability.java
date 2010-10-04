@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: JmmcCapability.java,v 1.1 2010-10-04 22:00:27 lafrasse Exp $"
+ * "@(#) $Id: JmmcCapability.java,v 1.2 2010-10-04 23:42:07 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/10/04 22:00:27  lafrasse
+ * First revision, mainly for SearchCal query launching from ASPRO2.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
@@ -28,7 +31,7 @@ public enum JmmcCapability {
     /** Constructor */
     JmmcCapability(String mType) {
         _mType = (mType == null ? UNKNOWN_MTYPE : mType);
-        NastyTrick._mTypes.put(mType, this);
+        JmmcCapabilityNastyTrick._mTypes.put(mType, this);
     }
 
     /** Gives back the mType */
@@ -53,7 +56,7 @@ public enum JmmcCapability {
             return UNKNOWN;
         }
 
-        JmmcCapability capability = NastyTrick._mTypes.get(mType);
+        JmmcCapability capability = JmmcCapabilityNastyTrick._mTypes.get(mType);
         if (capability == null) {
             return UNKNOWN;
         }
@@ -89,7 +92,7 @@ public enum JmmcCapability {
  * @sa http://www.velocityreviews.com/forums/t145807-an-enum-mystery-solved.html
  * @sa http://www.jroller.com/ethdsy/entry/static_fields_in_enum
  */
-class NastyTrick {
+class JmmcCapabilityNastyTrick {
 
     public static final Hashtable<String, JmmcCapability> _mTypes = new Hashtable();
 }

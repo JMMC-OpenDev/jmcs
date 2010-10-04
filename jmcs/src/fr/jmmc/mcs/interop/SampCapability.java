@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapability.java,v 1.2 2010-10-04 21:59:41 lafrasse Exp $"
+ * "@(#) $Id: SampCapability.java,v 1.3 2010-10-04 23:42:07 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/10/04 21:59:41  lafrasse
+ * Made mType() public.
+ *
  * Revision 1.1  2010/09/14 14:29:49  lafrasse
  * First SAMP manager implementation.
  *
@@ -39,7 +42,7 @@ public enum SampCapability {
     /** Constructor */
     SampCapability(String mType) {
         _mType = (mType == null ? UNKNOWN_MTYPE : mType);
-        NastyTrick._mTypes.put(mType, this);
+        SampCapabilityNastyTrick._mTypes.put(mType, this);
     }
 
     /** Gives back the mType */
@@ -64,7 +67,7 @@ public enum SampCapability {
             return UNKNOWN;
         }
 
-        SampCapability capability = NastyTrick._mTypes.get(mType);
+        SampCapability capability = SampCapabilityNastyTrick._mTypes.get(mType);
         if (capability == null) {
             return UNKNOWN;
         }
@@ -100,7 +103,7 @@ public enum SampCapability {
  * @sa http://www.velocityreviews.com/forums/t145807-an-enum-mystery-solved.html
  * @sa http://www.jroller.com/ethdsy/entry/static_fields_in_enum
  */
-class NastyTrick {
+class SampCapabilityNastyTrick {
 
     public static final Hashtable<String, SampCapability> _mTypes = new Hashtable();
 }

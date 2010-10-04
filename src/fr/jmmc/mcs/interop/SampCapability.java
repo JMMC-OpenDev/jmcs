@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapability.java,v 1.1 2010-09-14 14:29:49 lafrasse Exp $"
+ * "@(#) $Id: SampCapability.java,v 1.2 2010-10-04 21:59:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/09/14 14:29:49  lafrasse
+ * First SAMP manager implementation.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
@@ -40,7 +43,7 @@ public enum SampCapability {
     }
 
     /** Gives back the mType */
-    String mType() {
+    public String mType() {
         return _mType;
     }
 

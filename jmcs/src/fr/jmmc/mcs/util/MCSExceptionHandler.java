@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MCSExceptionHandler.java,v 1.6 2010-09-30 13:37:43 bourgesl Exp $"
+ * "@(#) $Id: MCSExceptionHandler.java,v 1.7 2010-10-04 10:17:41 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/09/30 13:37:43  bourgesl
+ * fixed JNLP issues
+ * complete javadoc
+ *
  * Revision 1.5  2010/09/25 13:54:07  bourgesl
  * disable security manager
  *
@@ -63,8 +67,14 @@ public final class MCSExceptionHandler {
    * Disable the security manager to be able to use System.setProperty ...
    */
   private static void disableSecurityManager() {
-    // Disable security checks
-    System.setSecurityManager(null);
+    try {
+      // Disable security checks :
+      System.setSecurityManager(null);
+    } catch (SecurityException se) {
+      // This case occurs with java netx and
+      // OpenJDK Runtime Environment (IcedTea6 1.6) (rhel-1.13.b16.el5-x86_64)
+      _logger.log(Level.INFO, "Can't set security manager to null", se);
+    }
   }
 
   /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.4 2010-10-04 23:35:44 lafrasse Exp $"
+ * "@(#) $Id: SampManager.java,v 1.5 2010-10-04 23:37:32 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/10/04 23:35:44  lafrasse
+ * Added "Interop" menu handling.
+ *
  * Revision 1.3  2010/09/24 12:07:37  lafrasse
  * Added preliminary support for message sending and broadcasting, plus SampCapability management.
  *
@@ -18,25 +21,19 @@
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
-import java.awt.Component;
 import java.util.*;
 
 import java.util.logging.*;
 
 import org.astrogrid.samp.*;
 import org.astrogrid.samp.client.*;
-import org.astrogrid.samp.hub.*;
 import org.astrogrid.samp.gui.*;
 
 import fr.jmmc.mcs.gui.*;
-import fr.jmmc.mcs.interop.SampCapability;
 import javax.swing.Action;
 import javax.swing.JMenu;
-import javax.swing.ListModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import org.astrogrid.samp.xmlrpc.HubMode;
 
 /**

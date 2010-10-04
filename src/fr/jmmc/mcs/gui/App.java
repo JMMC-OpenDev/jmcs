@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.67 2010-09-30 13:37:11 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.68 2010-10-04 10:23:51 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.67  2010/09/30 13:37:11  bourgesl
+ * initialization catch Throwable (Errors too)
+ * use MessagePane
+ *
  * Revision 1.66  2010/09/26 12:40:58  bourgesl
  * application is ready after run() and before loading a file
  *
@@ -1014,7 +1018,20 @@ public abstract class App
     }
 
     /**
-     * Return the application frame
+     * Define the application frame (singleton).
+     *
+     * TODO : workaround to let App create the frame (getFrame)...
+     * Concrete applications must be later refactored to initialize correctly the GUI using getFrame()
+     *
+     * @return application frame
+     */
+    public static void setFrame(final JFrame frame)
+    {
+        _applicationFrame = frame;
+    }
+
+    /**
+     * Return the application frame (singleton)
      *
      * @return application frame
      */

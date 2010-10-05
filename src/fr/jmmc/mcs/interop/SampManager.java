@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.8 2010-10-05 14:52:09 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.9 2010-10-05 17:32:51 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/10/05 14:52:09  bourgesl
+ * use an internal hub to avoid JNLP issues with external hubs / silently ignore IO exception if another hub is already running
+ * no more SampException in several method signatures
+ *
  * Revision 1.7  2010/10/05 12:02:39  bourgesl
  * added TODO on create external hub
  * throw an illegal state exception if the hooked menu is already set (signal multiple menu bars)
@@ -64,7 +68,7 @@ import org.astrogrid.samp.xmlrpc.XmlRpcKit;
  *
  * @author lafrasse
  */
-public class SampManager {
+public final class SampManager {
 
     /** Logger */
     private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.interop.SampManager");
@@ -112,12 +116,10 @@ public class SampManager {
       @Override
           protected void disconnect() {
             _logger.severe("DISCONNECT");
-            // BUGGY : ask mark taylor :
 
-            // If the user stops the internal hub (action stop hub on system tray icon),
-            // then the applications does not receive any shutdown message and
-            // their actions still indicate that the application is connected.
-            // Moreover, it should be possible to start another hub (internal) in another
+            // disconnect or shutdown ?
+
+            // It should be possible to start another hub (internal) in another
             // JMCS application to maintain the JSamp hub service.
             super.disconnect();
           }
@@ -158,7 +160,7 @@ public class SampManager {
           HubRunner.runHub(hubMode, XmlRpcKit.getInstance());
         } catch (IOException ioe) {
           if (_logger.isLoggable(Level.FINE)) {
-              _logger.log(Level.INFO, "unable to start internal hub (probably another hub is already running)", ioe);
+              _logger.log(Level.FINE, "unable to start internal hub (probably another hub is already running)", ioe);
           }
         }
 
@@ -171,6 +173,9 @@ public class SampManager {
         if (!_connector.isConnected()) {
             StatusBar.show("Could not connect to an existing hub or start an internal SAMP hub.");
         }
+
+        // This step required even if no message handlers added.
+        _connector.declareSubscriptions(_connector.computeSubscriptions());
     }
 
     /**

@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.6 2010-10-05 10:17:56 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.7 2010-10-05 12:02:39 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/10/05 10:17:56  bourgesl
+ * fixed warnings / javadoc
+ * fixed exception handling / logs
+ * fixed member visibility
+ *
  * Revision 1.5  2010/10/04 23:37:32  lafrasse
  * Removed unused imports.
  *
@@ -97,7 +102,11 @@ public class SampManager {
         _connector = new GuiHubConnector(profile);
 
         // Try to start an external SAMP hub if none available
-        final Action act = _connector.createHubAction(true, HubMode.CLIENT_GUI);
+
+        // TODO : use an internal hub for JNLP issues :
+        final boolean external = true;
+
+        final Action act = _connector.createHubAction(external, HubMode.CLIENT_GUI);
         act.actionPerformed(null);
 
         if (!_connector.isConnected()) {
@@ -169,6 +178,11 @@ public class SampManager {
      * @param menu interop menu container
      */
     public static void hookMenu(final JMenu menu) {
+
+        if (_menu != null) {
+          throw new IllegalStateException("the interoperability menu is already hooked by SampManager : \n" + _menu +"\n" + menu);
+        }
+
         _menu = menu;
 
         // If some capabilities are registered

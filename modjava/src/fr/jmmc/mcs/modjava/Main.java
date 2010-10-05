@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.7 2010-09-17 09:45:28 lafrasse Exp $"
+ * "@(#) $Id: Main.java,v 1.8 2010-10-05 07:57:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2010/09/17 09:45:28  lafrasse
+ * Added SampMessageHandler usage.
+ *
  * Revision 1.6  2010/09/13 15:57:29  lafrasse
  * First SAMP manager implementation.
  *
@@ -45,50 +48,43 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-
 /**
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
-public class Main extends App
-{
+public class Main extends App {
+
     /** Logger */
     private static final Logger _logger = Logger.getLogger(Main.class.getName());
-
     /** Button to launch about box window */
     private JButton _aboutBoxButton = null;
-
     /** Button to launch feedback report window */
     private JButton _feedbackReportButton = null;
-
     /** Button to launch helpview window */
     private JButton _helpViewButton = null;
-
     /** Actions class */
     Actions _actions;
     private JButton _testDismissableMessagePane;
 
     /** Constructor */
-    public Main(String[] args)
-    {
+    public Main(String[] args) {
         super(args, false, true, true);
     }
 
     /** Initialize application objects */
     @Override
-    protected void init(String[] args)
-    {
+    protected void init(String[] args) {
         _logger.warning("Initialize application objects");
         _logger.info(args.length + " arguments have been taken");
 
-        _actions                  = new Actions();
+        _actions = new Actions();
 
         // .. buttons
-        _aboutBoxButton           = new JButton(aboutBoxAction());
-        _feedbackReportButton     = new JButton(feedbackReportAction());
-        _helpViewButton           = new JButton(openHelpFrame());
+        _aboutBoxButton = new JButton(aboutBoxAction());
+        _feedbackReportButton = new JButton(feedbackReportAction());
+        _helpViewButton = new JButton(openHelpFrame());
         _testDismissableMessagePane = new JButton(dismissableMessagePaneAction());
 
         // Set borderlayout
@@ -97,35 +93,31 @@ public class Main extends App
         // Add buttons to panel
         getFramePanel().add(_aboutBoxButton, BorderLayout.NORTH);
         getFramePanel().add(_feedbackReportButton, BorderLayout.CENTER);
-        getFramePanel().add(_testDismissableMessagePane, BorderLayout.SOUTH);        
+        getFramePanel().add(_testDismissableMessagePane, BorderLayout.SOUTH);
 
         // Set others preferences
-        try
-        {
+        try {
             Preferences.getInstance().setPreference("MAIN", "maim");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _logger.log(Level.WARNING, "Failed setting preference.", ex);
         }
     }
 
     /** Execute application body */
     @Override
-    protected void execute()
-    {
-        _logger.info("Execute application body");        
+    protected void execute() {
+        _logger.info("Execute application body");
 
         // Show the frame
         getFrame().setVisible(true);
 
-        try
-        {
+        try {
             SampMessageHandler handler = new SampMessageHandler("stuff.do") {
+
                 public Map processCall(HubConnection c, String senderId, Message msg) {
                     // do stuff
-                    System.out.println("\tReceived message from '" + senderId + "' : '" + msg + "'.");
-    
+                    System.out.println("\tReceived 'stuff.do' message from '" + senderId + "' : '" + msg + "'.");
+
                     String name = (String) msg.getParam("name");
                     Map result = new HashMap();
                     result.put("name", name);
@@ -133,17 +125,22 @@ public class Main extends App
                     return result;
                 }
             };
-        }
-        catch (Exception ex)
-        {
+            handler = new SampMessageHandler(SampCapability.LOAD_VO_TABLE) {
+
+                public Map processCall(HubConnection c, String senderId, Message msg) {
+                    // do stuff
+                    System.out.println("\tReceived 'LOAD_VO_TABLE' message from '" + senderId + "' : '" + msg + "'.");
+                    return null;
+                }
+            };
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     /** Execute operations before closing application */
     @Override
-    protected boolean finish()
-    {
+    protected boolean finish() {
         _logger.warning("Execute operations before closing application");
 
         // Quit application
@@ -151,54 +148,46 @@ public class Main extends App
     }
 
     /** Open help view action */
-    private Action openHelpFrame()
-    {
-        return new AbstractAction("Open Help Frame")
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    // Instantiate help JFrame
-                    JFrame helpFrame = new JFrame("- Help frame -");
+    private Action openHelpFrame() {
+        return new AbstractAction("Open Help Frame") {
 
-                    // Add buttons to panel
-                    helpFrame.getContentPane()
-                             .add(new JButton(showHelpAction()),
+            public void actionPerformed(ActionEvent evt) {
+                // Instantiate help JFrame
+                JFrame helpFrame = new JFrame("- Help frame -");
+
+                // Add buttons to panel
+                helpFrame.getContentPane().add(new JButton(showHelpAction()),
                         BorderLayout.NORTH);
-                    helpFrame.getContentPane()
-                             .add(new JButton("CENTER"), BorderLayout.CENTER);
-                    helpFrame.getContentPane()
-                             .add(new JButton("WEST"), BorderLayout.WEST);
-                    helpFrame.getContentPane()
-                             .add(new JButton("SOUTH"), BorderLayout.SOUTH);
+                helpFrame.getContentPane().add(new JButton("CENTER"), BorderLayout.CENTER);
+                helpFrame.getContentPane().add(new JButton("WEST"), BorderLayout.WEST);
+                helpFrame.getContentPane().add(new JButton("SOUTH"), BorderLayout.SOUTH);
 
-                    // Set the frame properties
-                    helpFrame.pack();
-                    helpFrame.setLocationRelativeTo(null);
-                    helpFrame.setVisible(true);
-                }
-            };
+                // Set the frame properties
+                helpFrame.pack();
+                helpFrame.setLocationRelativeTo(null);
+                helpFrame.setVisible(true);
+            }
+        };
     }
 
-        /** Open help view action */
-    private Action dismissableMessagePaneAction()
-    {
-        return new AbstractAction("Show dismissable message pane")
-            {
-            public void actionPerformed(ActionEvent evt)
-                {
+    /** Open help view action */
+    private Action dismissableMessagePaneAction() {
+        return new AbstractAction("Show dismissable message pane") {
+
+            public void actionPerformed(ActionEvent evt) {
                 DismissableMessagePane.show(getFramePanel(),
                         "Try to show a test message\n which can be deactivated by user!!",
                         Preferences.getInstance(), "msgTest");
             }
         };
     }
+
     /**
      * Main
      *
      * @param args command line arguments
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         new Main(args);
     }
 }

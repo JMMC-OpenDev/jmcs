@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapabilityAction.java,v 1.2 2010-10-05 10:01:54 bourgesl Exp $"
+ * "@(#) $Id: SampCapabilityAction.java,v 1.3 2010-10-05 12:56:22 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/10/05 10:01:54  bourgesl
+ * fixed warnings / javadoc
+ * fixed exception handling / logs
+ * fixed member visibility
+ *
  * Revision 1.1  2010/10/04 23:31:04  lafrasse
  * First revision.
  *
@@ -180,7 +185,14 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      */
     public abstract Map<?,?> composeMessage();
 
-    // Automatically sends the message returned by composeMessage() to user selected client(s)
+    /**
+     * This method automatically sends the message returned by composeMessage()
+     * to user selected client(s). Children classes should not overwrite this
+     * method or must call super implementation to keep samp message management.
+     *
+     * @param e actionEvent comming from swing objects. It contains in its
+     * command the name of the destination.
+     */
     public void actionPerformed(java.awt.event.ActionEvent e) {
         _logger.entering("SampCapabilityAction", "actionPerformed");
 

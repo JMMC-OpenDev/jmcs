@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapability.java,v 1.4 2010-10-05 07:54:19 mella Exp $"
+ * "@(#) $Id: SampCapability.java,v 1.5 2010-10-05 08:32:19 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/10/05 07:54:19  mella
+ * Add mtype to launch new setting in LITpro
+ *
  * Revision 1.3  2010/10/04 23:42:07  lafrasse
  * Fixed common name for NastyTrick class.
  *
@@ -25,6 +28,7 @@ import java.util.Hashtable;
  */
 public enum SampCapability {
 
+    // Private jmmc samp capability are prefixed with application name
     LOAD_VO_TABLE("table.load.votable"),
     LOAD_FITS_TABLE("table.load.fits"),
     LOAD_FITS_IMAGE("image.load.fits"),
@@ -34,6 +38,7 @@ public enum SampCapability {
     SELECT_LIST("table.select.rowList"),
     POINT_COORDINATES("coord.pointAt.sky"),
     GET_ENV_VAR("client.env.get"),
+    SEARCHCAL_START_QUERY("fr.jmmc.searchcal.start.query"),
     LITPRO_START_SETTING("fr.jmmc.litpro.start.setting"),
     UNKNOWN("UNKNOWN");
 

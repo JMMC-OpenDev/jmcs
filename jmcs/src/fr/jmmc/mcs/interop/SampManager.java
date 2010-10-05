@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.7 2010-10-05 12:02:39 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.8 2010-10-05 14:52:09 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2010/10/05 12:02:39  bourgesl
+ * added TODO on create external hub
+ * throw an illegal state exception if the hooked menu is already set (signal multiple menu bars)
+ *
  * Revision 1.6  2010/10/05 10:17:56  bourgesl
  * fixed warnings / javadoc
  * fixed exception handling / logs
@@ -32,14 +36,15 @@ package fr.jmmc.mcs.interop;
 import fr.jmmc.mcs.gui.App;
 import fr.jmmc.mcs.gui.ApplicationDataModel;
 import fr.jmmc.mcs.gui.StatusBar;
+import java.io.IOException;
 import java.util.Collections;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.Action;
+
 import javax.swing.JMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -51,6 +56,8 @@ import org.astrogrid.samp.client.DefaultClientProfile;
 import org.astrogrid.samp.client.SampException;
 import org.astrogrid.samp.gui.GuiHubConnector;
 import org.astrogrid.samp.xmlrpc.HubMode;
+import org.astrogrid.samp.xmlrpc.HubRunner;
+import org.astrogrid.samp.xmlrpc.XmlRpcKit;
 
 /**
  * SampManager singleton class.
@@ -65,21 +72,20 @@ public class SampManager {
     /** Singleton instance */
     private static volatile SampManager _instance = null;
 
-    /** Singleton instance : TODO : encapsulate this inside SampManager  */
+    /** Singleton instance : TODO : encapsulate this inside SampManager */
     private static GuiHubConnector _connector = null;
 
-    /** Hook to the "Interop" menu */
+    /** Hook to the "Interop" menu : TODO : encapsulate this inside SampManager */
     private static JMenu _menu = null;
 
-    /** JMenu to Action relations */
+    /** JMenu to Action relations : TODO : encapsulate this inside SampManager */
     private static final Map<SampCapabilityAction,JMenu> _map = Collections.synchronizedMap(new HashMap<SampCapabilityAction, JMenu>());
 
     /**
      * Return the singleton instance
      * @return singleton instance
-     * @throws SampException if any Samp exception occured
      */
-    public static final synchronized SampManager getInstance() throws SampException {
+    public static final synchronized SampManager getInstance() {
         // DO NOT MODIFY !!!
         if (_instance == null) {
             _instance = new SampManager();
@@ -92,32 +98,35 @@ public class SampManager {
 
     /** 
      * Hidden constructor
-     * @throws SampException if any Samp exception occured
      */
-    protected SampManager() throws SampException {
+    protected SampManager() {
 
         // @TODO : init JSamp env.
         final ClientProfile profile = DefaultClientProfile.getProfile();
 
-        _connector = new GuiHubConnector(profile);
+        _connector = new GuiHubConnector(profile) {
+          /**
+           * Unregisters from the currently connected hub, if any.
+           * Performs any associated required cleanup.
+           */
+      @Override
+          protected void disconnect() {
+            _logger.severe("DISCONNECT");
+            // BUGGY : ask mark taylor :
 
-        // Try to start an external SAMP hub if none available
-
-        // TODO : use an internal hub for JNLP issues :
-        final boolean external = true;
-
-        final Action act = _connector.createHubAction(external, HubMode.CLIENT_GUI);
-        act.actionPerformed(null);
-
-        if (!_connector.isConnected()) {
-            StatusBar.show("Could not connect to nor start a SAMP hub.");
-        }
+            // If the user stops the internal hub (action stop hub on system tray icon),
+            // then the applications does not receive any shutdown message and
+            // their actions still indicate that the application is connected.
+            // Moreover, it should be possible to start another hub (internal) in another
+            // JMCS application to maintain the JSamp hub service.
+            super.disconnect();
+          }
+        };
 
         // Build application metadata
         final Metadata meta = new Metadata();
 
         final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
-        // @TODO : create some JmcsException !!!
 
         final String applicationName = applicationDataModel.getProgramName();
         meta.setName(applicationName);
@@ -131,6 +140,7 @@ public class SampManager {
          */
 
         _connector.declareMetadata(meta);
+        
         _connector.addConnectionListener(new ChangeListener() {
             public void stateChanged(final ChangeEvent e) {
                 if (_logger.isLoggable(Level.INFO)) {
@@ -139,25 +149,63 @@ public class SampManager {
                 // @TODO : Refresh menu to populate it according to connection
             }
         });
+
+        // Try to start an internal SAMP hub if none available
+
+        // use an internal hub for JNLP issues :
+        final HubMode hubMode = HubMode.CLIENT_GUI;
+        try {
+          HubRunner.runHub(hubMode, XmlRpcKit.getInstance());
+        } catch (IOException ioe) {
+          if (_logger.isLoggable(Level.FINE)) {
+              _logger.log(Level.INFO, "unable to start internal hub (probably another hub is already running)", ioe);
+          }
+        }
+
+        // try to connect
+        _connector.setActive(true);
+
+        // Keep a look out for hubs if initial one shuts down
+        _connector.setAutoconnect(10);
+
+        if (!_connector.isConnected()) {
+            StatusBar.show("Could not connect to an existing hub or start an internal SAMP hub.");
+        }
     }
 
     /**
      * Return the JSamp Gui hub connector providing swing actions
      * @return JSamp Gui hub connector providing swing actions
-     * @throws SampException if any Samp exception occured
      */
-    public static GuiHubConnector getGuiHubConnector() throws SampException {
+    protected static GuiHubConnector getGuiHubConnector() {
         SampManager.getInstance();
 
         return _connector;
     }
 
     /**
+     * Returns an action which toggles hub registration.
+     *
+     * @return   registration toggler action
+     */
+    public static Action createToggleRegisterAction() {
+      return getGuiHubConnector().createToggleRegisterAction();
+    }
+
+    /**
+     * Returns an action which will display a SAMP hub monitor window.
+     *
+     * @return   monitor window action
+     */
+    public static Action createShowMonitorAction() {
+      return getGuiHubConnector().createShowMonitorAction();
+    }
+
+    /**
      * Register an app-specific capability
      * @param handler message handler
-     * @throws SampException if any Samp exception occured
      */
-    public static void registerCapability(final SampMessageHandler handler) throws SampException {
+    public static void registerCapability(final SampMessageHandler handler) {
         SampManager.getInstance();
 
         _connector.addMessageHandler(handler);
@@ -168,9 +216,6 @@ public class SampManager {
 
         // This step required even if no custom message handlers added.
         _connector.declareSubscriptions(_connector.computeSubscriptions());
-
-        // Keep a look out for hubs if initial one shuts down
-        _connector.setAutoconnect(10);
     }
 
     /**

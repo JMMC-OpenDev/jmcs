@@ -1,17 +1,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapabilityAction.java,v 1.1 2010-10-04 23:31:04 lafrasse Exp $"
+ * "@(#) $Id: SampCapabilityAction.java,v 1.2 2010-10-05 10:01:54 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/10/04 23:31:04  lafrasse
+ * First revision.
+ *
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
 import fr.jmmc.mcs.gui.StatusBar;
 import fr.jmmc.mcs.util.RegisteredAction;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenu;
@@ -32,35 +35,38 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.interop.SampCapabilityAction");
 
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
+
+    /** label for broadcast to all */
+    private final static String BROADCAST_MENU_LABEL = "All";
+
+    /* members */
+
+    /** Always point to (this) for inner class access */
+    private final SampCapabilityAction _action;
+
     /** SAMP capability to send */
-    SampCapability _capability = null;
+    private final SampCapability _capability;
 
     /** mType of SAMP capability to send */
-    String _mType = null;
+    private final String _mType;
 
     /** Capable clients for the registered capability */
-    SubscribedClientListModel _capableClients = null;
-
-    /** Message to send */
-    HashMap _parameters = null;
+    private final SubscribedClientListModel _capableClients;
 
     /** Reference to the JMenu entry linked to the current action */
-    JMenu _menu = null;
-
-    /** Always point to (this) for inner class access */
-    SampCapabilityAction _action = null;
-
-    /** Always point to (this) for inner class access */
-    private final static String BROADCAST_MENU_LABEL = "All";
+    private JMenu _menu = null;
 
     /**
      * Constructor.
      *
-     * @sa RegisteredAction for first two parameters
-     *
+     * @param classPath the path of the class containing the field pointing to
+     * the action, in the form returned by 'getClass().getName();'.
+     * @param fieldName the name of the field pointing to the action.
      * @param capability the SAMP mType to be sent.
      */
-    public SampCapabilityAction(String classPath, String fieldName, SampCapability capability) {
+    public SampCapabilityAction(final String classPath, final String fieldName, final SampCapability capability) {
         super(classPath, fieldName);
 
         _action = this;
@@ -71,8 +77,9 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         // Get a dynamic list of SAMP clients able to respond to the specified capability.
         try {
             _capableClients = new SubscribedClientListModel(SampManager.getGuiHubConnector(), _mType);
-        } catch (SampException ex) {
-            Logger.getLogger(SampCapabilityAction.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SampException se) {
+          // TODO : handle correctly this exception : what to do
+          throw new IllegalStateException("unable to get Samp clients", se);
         }
 
         // Monitor any modification to the capable clients list
@@ -99,7 +106,9 @@ public abstract class SampCapabilityAction extends RegisteredAction {
                 // Retrieve the JMenu entry for the current capablity
                 _menu = SampManager.getMenu(_action);
                 if (_menu == null) {
-                    _logger.warning("Could not get back menu entry for action '" + _action + "'.");
+                    if (_logger.isLoggable(Level.WARNING)) {
+                        _logger.warning("Could not get back menu entry for action '" + _action + "'.");
+                    }
                     return;
                 }
 
@@ -107,12 +116,15 @@ public abstract class SampCapabilityAction extends RegisteredAction {
                 _menu.removeAll();
 
                 // If no client is able to handle specified capability
-                int nbOfClients = _capableClients.getSize();
+                final int nbOfClients = _capableClients.getSize();
                 if (nbOfClients <= 0) {
                     // Disable both action and JMenu instance
                     _action.setEnabled(false);
                     _menu.setEnabled(false);
-                    _logger.info("No SAMP client available for capability '" + _mType + "'.");
+
+                    if (_logger.isLoggable(Level.INFO)) {
+                        _logger.info("No SAMP client available for capability '" + _mType + "'.");
+                    }
                     return;
                 }
 
@@ -121,29 +133,37 @@ public abstract class SampCapabilityAction extends RegisteredAction {
                 _menu.setEnabled(true);
 
                 // Add generic "All" entry to broadcast message to all capable clients at once
-                JMenuItem broadcastMenuItem = new JMenuItem(_action);
+                final JMenuItem broadcastMenuItem = new JMenuItem(_action);
                 broadcastMenuItem.setText(BROADCAST_MENU_LABEL);
                 _menu.add(broadcastMenuItem);
-                _logger.finest("Added '" + BROADCAST_MENU_LABEL + "' broadcast menu entry for capability '" + _mType + "'.");
+
+                if (_logger.isLoggable(Level.FINEST)) {
+                    _logger.finest("Added '" + BROADCAST_MENU_LABEL + "' broadcast menu entry for capability '" + _mType + "'.");
+                }
 
                 _menu.addSeparator();
 
                 // Add each individal client
                 for (int i = 0; i < nbOfClients; i++) {
-                    Client client = (Client) _capableClients.getElementAt(i);
-                    String clientName = client.toString();
-                    String clientId = client.getId();
+                    final Client client = (Client) _capableClients.getElementAt(i);
+                    final String clientName = client.toString();
+                    final String clientId = client.getId();
 
-                    JMenuItem individualMenuItem = new JMenuItem(_action);
+                    final JMenuItem individualMenuItem = new JMenuItem(_action);
                     individualMenuItem.setText(clientName);
                     individualMenuItem.setActionCommand(clientId);
+
                     _menu.add(individualMenuItem);
-                    _logger.finer("Added '" + clientName + "' (" + clientId + ") menu entry for capability '" + _mType + "'.");
+
+                    if (_logger.isLoggable(Level.FINER)) {
+                        _logger.finer("Added '" + clientName + "' (" + clientId + ") menu entry for capability '" + _mType + "'.");
+                    }
                 }
 
                 _menu.setEnabled(true);
                 _menu.setVisible(true);
-                _menu.repaint();
+
+                // force to repaint the menu :
                 _menu.revalidate();
             }
         });
@@ -154,8 +174,11 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
     // @TODO : Monitor hub for registration for our capability to enable back the action
 
-    /** Should return the message you went to send */
-    public abstract HashMap composeMessage();
+    /** 
+     * Should return the message you want to send
+     * @return Samp message parameters as a map
+     */
+    public abstract Map<?,?> composeMessage();
 
     // Automatically sends the message returned by composeMessage() to user selected client(s)
     public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -164,25 +187,34 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         StatusBar.show("Sending data through SAMP ...");
 
         // Get the user clicked menu label
-        String command = e.getActionCommand();
+        final String command = e.getActionCommand();
 
         // Delegate message forging to app-specific code
-        _parameters = composeMessage();
+        final Map<?,?> parameters = composeMessage();
 
         try {
             // If the 'All' menu was used
             if (command.equals(BROADCAST_MENU_LABEL)) {
                 // Broadcast the forged message to all capable clients
-                SampManager.broadcastMessage(_mType, _parameters);
-                _logger.info("Broadcasted SAMP message to '" + _mType + "' capable clients.");
+                SampManager.broadcastMessage(_mType, parameters);
+
+                if (_logger.isLoggable(Level.INFO)) {
+                    _logger.info("Broadcasted SAMP message to '" + _mType + "' capable clients.");
+                }
+
             } else {
                 // Otherwise only send forged message to he selected client
-                SampManager.sendMessageTo(_mType, command, _parameters);
-                _logger.info("Sent '" + _mType + "' SAMP message to '" + command + "' client.");
+                SampManager.sendMessageTo(_mType, command, parameters);
+
+                if (_logger.isLoggable(Level.INFO)) {
+                    _logger.info("Sent '" + _mType + "' SAMP message to '" + command + "' client.");
+                }
+
             }
-        } catch (SampException ex) {
+        } catch (SampException se) {
+           _logger.log(Level.SEVERE, "Samp message send failure", se);
+
             StatusBar.show("Sending data through SAMP ... failed.");
-            ex.printStackTrace();
             return;
         }
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.40 2010-10-05 11:58:41 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.41 2010-10-05 12:21:43 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2010/10/05 11:58:41  bourgesl
+ * use internal logger
+ *
  * Revision 1.39  2010/10/05 07:40:45  bourgesl
  * InteropMenu ONLY available for BETA versions (instable)
  *
@@ -434,9 +437,9 @@ public class MainMenuBar extends JMenuBar
         GuiHubConnector hub;
         try {
             hub = SampManager.getGuiHubConnector();
-        } catch (SampException ex) {
-            _logger.log(Level.SEVERE, null, ex);
-            return;
+        } catch (SampException se) {
+          // TODO : handle correctly this exception : what to do
+          throw new IllegalStateException("unable to get Samp clients", se);
         }
 
         // Add auto-toggeling menu entry to regiter/unregister to/from hub

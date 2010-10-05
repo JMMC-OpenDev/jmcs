@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampMessageHandler.java,v 1.4 2010-10-05 10:17:56 bourgesl Exp $"
+ * "@(#) $Id: SampMessageHandler.java,v 1.5 2010-10-05 14:52:31 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/10/05 10:17:56  bourgesl
+ * fixed warnings / javadoc
+ * fixed exception handling / logs
+ * fixed member visibility
+ *
  * Revision 1.3  2010/10/05 09:44:19  bourgesl
  * fixed warnings / javadoc
  *
@@ -19,7 +24,6 @@
 package fr.jmmc.mcs.interop;
 
 import org.astrogrid.samp.client.AbstractMessageHandler;
-import org.astrogrid.samp.client.SampException;
 
 /**
  * SampMessageHandler class.
@@ -39,9 +43,8 @@ public abstract class SampMessageHandler extends AbstractMessageHandler
      * Generic constructor taking its mType as a String (e.g for private message)
      * 
      * @param mType single MType which this handler can process
-     * @throws SampException if any Samp exception occured
      */
-    public SampMessageHandler(final String mType) throws SampException
+    public SampMessageHandler(final String mType)
     {
         super(mType);
 
@@ -53,10 +56,8 @@ public abstract class SampMessageHandler extends AbstractMessageHandler
     /** 
      * Dedicated constructor taking a public or private SAMP capability
      * @param capability public or private SAMP capability 
-     *
-     * @throws SampException if any Samp exception occured
      */
-    public SampMessageHandler(final SampCapability capability) throws SampException
+    public SampMessageHandler(final SampCapability capability)
     {
         this(capability.mType());
     }

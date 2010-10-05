@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: JmmcCapability.java,v 1.2 2010-10-04 23:42:07 lafrasse Exp $"
+ * "@(#) $Id: JmmcCapability.java,v 1.3 2010-10-05 07:20:07 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/10/04 23:42:07  lafrasse
+ * Fixed common name for NastyTrick class.
+ *
  * Revision 1.1  2010/10/04 22:00:27  lafrasse
  * First revision, mainly for SearchCal query launching from ASPRO2.
  *
@@ -20,6 +23,7 @@ import java.util.Hashtable;
 public enum JmmcCapability {
 
     START_SEARCHCAL_QUERY("fr.jmmc.searchcal.query.start"),
+    START_LITPRO_SETTING("fr.jmmc.litpro.setting.start"),
     UNKNOWN("UNKNOWN");
 
     /** Store the SAMP 'cryptic' mType */

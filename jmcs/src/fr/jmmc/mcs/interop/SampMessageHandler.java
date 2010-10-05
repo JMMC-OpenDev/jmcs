@@ -1,24 +1,23 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampMessageHandler.java,v 1.2 2010-09-24 12:06:16 lafrasse Exp $"
+ * "@(#) $Id: SampMessageHandler.java,v 1.3 2010-10-05 09:44:19 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/09/24 12:06:16  lafrasse
+ * Added mType facilities and SampCapability support.
+ *
  * Revision 1.1  2010/09/14 14:29:49  lafrasse
  * First SAMP manager implementation.
  *
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
-import java.util.*;
-
-import java.util.logging.*;
-
-import org.astrogrid.samp.*;
-import org.astrogrid.samp.client.*;
-
+import java.util.logging.Logger;
+import org.astrogrid.samp.client.AbstractMessageHandler;
+import org.astrogrid.samp.client.SampException;
 
 /**
  * SampMessageHandler class.
@@ -30,13 +29,19 @@ import org.astrogrid.samp.client.*;
 public abstract class SampMessageHandler extends AbstractMessageHandler
 {
     /** Logger */
-    private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.interop.JmcsMessageHandler");
+    private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.interop.SampMessageHandler");
 
+    /* members */
     /** Store the handled mType */
-    String _mType = null;
+    private String _mType = null;
 
-    /** Generic constructor taking its mType as a String (e.g for private message) */
-    public SampMessageHandler(String mType) throws SampException
+    /**
+     * Generic constructor taking its mType as a String (e.g for private message)
+     * 
+     * @param mType single MType which this handler can process
+     * @throws SampException if any Samp exception occured
+     */
+    public SampMessageHandler(final String mType) throws SampException
     {
         super(mType);
 
@@ -45,14 +50,22 @@ public abstract class SampMessageHandler extends AbstractMessageHandler
         SampManager.registerCapability(this);
     }
 
-    /** Dedicated constructor taking a public SAMP capability */
-    public SampMessageHandler(SampCapability capability) throws SampException
+    /** 
+     * Dedicated constructor taking a public or private SAMP capability
+     * @param capability public or private SAMP capability 
+     *
+     * @throws SampException if any Samp exception occured
+     */
+    public SampMessageHandler(final SampCapability capability) throws SampException
     {
         this(capability.mType());
     }
 
-    /** Return the currently handled mType as a String */
-    public String handledMType()
+    /**
+     * Return the currently handled mType as a String
+     * @return the currently handled mType as a String 
+     */
+    public final String handledMType()
     {
         return _mType;
     }

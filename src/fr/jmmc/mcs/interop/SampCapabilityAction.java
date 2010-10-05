@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapabilityAction.java,v 1.4 2010-10-05 14:52:31 bourgesl Exp $"
+ * "@(#) $Id: SampCapabilityAction.java,v 1.5 2010-10-05 15:48:35 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/10/05 14:52:31  bourgesl
+ * removed SampException in several method signatures
+ *
  * Revision 1.3  2010/10/05 12:56:22  mella
  * Add javadoc
  *
@@ -188,43 +191,45 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * @param e actionEvent comming from swing objects. It contains in its
      * command the name of the destination.
      */
-    public void actionPerformed(java.awt.event.ActionEvent e) {
+    public final void actionPerformed(java.awt.event.ActionEvent e) {
         _logger.entering("SampCapabilityAction", "actionPerformed");
-
-        StatusBar.show("Sending data through SAMP ...");
-
-        // Get the user clicked menu label
-        final String command = e.getActionCommand();
 
         // Delegate message forging to app-specific code
         final Map<?,?> parameters = composeMessage();
 
-        try {
-            // If the 'All' menu was used
-            if (command.equals(BROADCAST_MENU_LABEL)) {
-                // Broadcast the forged message to all capable clients
-                SampManager.broadcastMessage(_mType, parameters);
+        if (parameters != null) {
+            StatusBar.show("Sending data through SAMP ...");
 
-                if (_logger.isLoggable(Level.INFO)) {
-                    _logger.info("Broadcasted SAMP message to '" + _mType + "' capable clients.");
+            try {
+                // Get the user clicked menu label
+                final String command = e.getActionCommand();
+
+                // If the 'All' menu was used
+                if (command.equals(BROADCAST_MENU_LABEL)) {
+                    // Broadcast the forged message to all capable clients
+                    SampManager.broadcastMessage(_mType, parameters);
+
+                    if (_logger.isLoggable(Level.INFO)) {
+                        _logger.info("Broadcasted SAMP message to '" + _mType + "' capable clients.");
+                    }
+
+                } else {
+                    // Otherwise only send forged message to he selected client
+                    SampManager.sendMessageTo(_mType, command, parameters);
+
+                    if (_logger.isLoggable(Level.INFO)) {
+                        _logger.info("Sent '" + _mType + "' SAMP message to '" + command + "' client.");
+                    }
+
                 }
+            } catch (SampException se) {
+               _logger.log(Level.SEVERE, "Samp message send failure", se);
 
-            } else {
-                // Otherwise only send forged message to he selected client
-                SampManager.sendMessageTo(_mType, command, parameters);
-
-                if (_logger.isLoggable(Level.INFO)) {
-                    _logger.info("Sent '" + _mType + "' SAMP message to '" + command + "' client.");
-                }
-
+                StatusBar.show("Sending data through SAMP ... failed.");
+                return;
             }
-        } catch (SampException se) {
-           _logger.log(Level.SEVERE, "Samp message send failure", se);
 
-            StatusBar.show("Sending data through SAMP ... failed.");
-            return;
+            StatusBar.show("Sending data through SAMP ... done.");
         }
-
-        StatusBar.show("Sending data through SAMP ... done.");
     }
 }

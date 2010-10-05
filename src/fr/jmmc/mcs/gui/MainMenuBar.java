@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.38 2010-10-04 23:36:03 lafrasse Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.39 2010-10-05 07:40:45 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.38  2010/10/04 23:36:03  lafrasse
+ * Added "Interop" menu handling.
+ *
  * Revision 1.37  2010/09/25 12:17:10  bourgesl
  * restored imports (SAMP)
  *
@@ -141,7 +144,6 @@ import fr.jmmc.mcs.util.Urls;
 import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 
 import java.lang.reflect.Method;
 
@@ -169,7 +171,6 @@ import javax.swing.text.DefaultEditorKit;
 
 import org.astrogrid.samp.client.SampException;
 import org.astrogrid.samp.gui.GuiHubConnector;
-import org.astrogrid.samp.xmlrpc.HubMode;
 
 
 /**
@@ -295,7 +296,11 @@ public class MainMenuBar extends JMenuBar
             }
         }
 
-        createInteropMenu();
+        // Create Interop menu only for beta version (LAURENT) :
+        if (App.isBetaVersion())
+        {
+          createInteropMenu();
+        }
 
         createHelpMenu();
 

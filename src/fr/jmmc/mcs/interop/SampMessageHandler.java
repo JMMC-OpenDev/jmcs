@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampMessageHandler.java,v 1.3 2010-10-05 09:44:19 bourgesl Exp $"
+ * "@(#) $Id: SampMessageHandler.java,v 1.4 2010-10-05 10:17:56 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/10/05 09:44:19  bourgesl
+ * fixed warnings / javadoc
+ *
  * Revision 1.2  2010/09/24 12:06:16  lafrasse
  * Added mType facilities and SampCapability support.
  *
@@ -15,7 +18,6 @@
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
-import java.util.logging.Logger;
 import org.astrogrid.samp.client.AbstractMessageHandler;
 import org.astrogrid.samp.client.SampException;
 
@@ -28,8 +30,6 @@ import org.astrogrid.samp.client.SampException;
  */
 public abstract class SampMessageHandler extends AbstractMessageHandler
 {
-    /** Logger */
-    private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.interop.SampMessageHandler");
 
     /* members */
     /** Store the handled mType */

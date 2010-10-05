@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapability.java,v 1.3 2010-10-04 23:42:07 lafrasse Exp $"
+ * "@(#) $Id: SampCapability.java,v 1.4 2010-10-05 07:54:19 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/10/04 23:42:07  lafrasse
+ * Fixed common name for NastyTrick class.
+ *
  * Revision 1.2  2010/10/04 21:59:41  lafrasse
  * Made mType() public.
  *
@@ -31,6 +34,7 @@ public enum SampCapability {
     SELECT_LIST("table.select.rowList"),
     POINT_COORDINATES("coord.pointAt.sky"),
     GET_ENV_VAR("client.env.get"),
+    LITPRO_START_SETTING("fr.jmmc.litpro.start.setting"),
     UNKNOWN("UNKNOWN");
 
     /** Store the SAMP 'cryptic' mType */

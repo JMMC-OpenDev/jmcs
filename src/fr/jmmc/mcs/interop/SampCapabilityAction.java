@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapabilityAction.java,v 1.3 2010-10-05 12:56:22 mella Exp $"
+ * "@(#) $Id: SampCapabilityAction.java,v 1.4 2010-10-05 14:52:31 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/10/05 12:56:22  mella
+ * Add javadoc
+ *
  * Revision 1.2  2010/10/05 10:01:54  bourgesl
  * fixed warnings / javadoc
  * fixed exception handling / logs
@@ -48,9 +51,6 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
     /* members */
 
-    /** Always point to (this) for inner class access */
-    private final SampCapabilityAction _action;
-
     /** SAMP capability to send */
     private final SampCapability _capability;
 
@@ -74,18 +74,13 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     public SampCapabilityAction(final String classPath, final String fieldName, final SampCapability capability) {
         super(classPath, fieldName);
 
-        _action = this;
+        final SampCapabilityAction action = this;
 
         _capability = capability;
         _mType = _capability.mType();
 
         // Get a dynamic list of SAMP clients able to respond to the specified capability.
-        try {
-            _capableClients = new SubscribedClientListModel(SampManager.getGuiHubConnector(), _mType);
-        } catch (SampException se) {
-          // TODO : handle correctly this exception : what to do
-          throw new IllegalStateException("unable to get Samp clients", se);
-        }
+        _capableClients = new SubscribedClientListModel(SampManager.getGuiHubConnector(), _mType);
 
         // Monitor any modification to the capable clients list
         _capableClients.addListDataListener(new ListDataListener() {
@@ -109,10 +104,10 @@ public abstract class SampCapabilityAction extends RegisteredAction {
                 _logger.entering("ListDataListener", "handleChange");
 
                 // Retrieve the JMenu entry for the current capablity
-                _menu = SampManager.getMenu(_action);
+                _menu = SampManager.getMenu(action);
                 if (_menu == null) {
                     if (_logger.isLoggable(Level.WARNING)) {
-                        _logger.warning("Could not get back menu entry for action '" + _action + "'.");
+                        _logger.warning("Could not get back menu entry for action '" + action + "'.");
                     }
                     return;
                 }
@@ -124,7 +119,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
                 final int nbOfClients = _capableClients.getSize();
                 if (nbOfClients <= 0) {
                     // Disable both action and JMenu instance
-                    _action.setEnabled(false);
+                    action.setEnabled(false);
                     _menu.setEnabled(false);
 
                     if (_logger.isLoggable(Level.INFO)) {
@@ -134,11 +129,11 @@ public abstract class SampCapabilityAction extends RegisteredAction {
                 }
 
                 // Otherwise, enable both
-                _action.setEnabled(true);
+                action.setEnabled(true);
                 _menu.setEnabled(true);
 
                 // Add generic "All" entry to broadcast message to all capable clients at once
-                final JMenuItem broadcastMenuItem = new JMenuItem(_action);
+                final JMenuItem broadcastMenuItem = new JMenuItem(action);
                 broadcastMenuItem.setText(BROADCAST_MENU_LABEL);
                 _menu.add(broadcastMenuItem);
 
@@ -154,7 +149,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
                     final String clientName = client.toString();
                     final String clientId = client.getId();
 
-                    final JMenuItem individualMenuItem = new JMenuItem(_action);
+                    final JMenuItem individualMenuItem = new JMenuItem(action);
                     individualMenuItem.setText(clientName);
                     individualMenuItem.setActionCommand(clientId);
 

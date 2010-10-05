@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.41 2010-10-05 12:21:43 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.42 2010-10-05 14:52:31 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.41  2010/10/05 12:21:43  bourgesl
+ * fixed samp exception handling
+ *
  * Revision 1.40  2010/10/05 11:58:41  bourgesl
  * use internal logger
  *
@@ -175,7 +178,6 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 
-import org.astrogrid.samp.client.SampException;
 import org.astrogrid.samp.gui.GuiHubConnector;
 
 
@@ -424,8 +426,6 @@ public class MainMenuBar extends JMenuBar
         _logger.fine("Add 'Edit' menu into the menubar.");
     }
 
-    private static int count = 0;
-
     /** Create the 'Interop' menu. */
     private void createInteropMenu()
     {
@@ -433,20 +433,11 @@ public class MainMenuBar extends JMenuBar
         JMenu interopMenu = new JMenu("Interop");
         interopMenu.setVisible(false);
 
-        // Start SAMP support
-        GuiHubConnector hub;
-        try {
-            hub = SampManager.getGuiHubConnector();
-        } catch (SampException se) {
-          // TODO : handle correctly this exception : what to do
-          throw new IllegalStateException("unable to get Samp clients", se);
-        }
-
         // Add auto-toggeling menu entry to regiter/unregister to/from hub
-        interopMenu.add(hub.createToggleRegisterAction());
+        interopMenu.add(SampManager.createToggleRegisterAction());
 
         // To visually monitor hub activity
-        interopMenu.add(hub.createShowMonitorAction());
+        interopMenu.add(SampManager.createShowMonitorAction());
 
         // Get interop menu from table
         JMenu interop = _menusTable.get("Interop");
@@ -555,7 +546,7 @@ public class MainMenuBar extends JMenuBar
      * @param menu castor Menu object to instantiate.
      * @param parent parent component, null for the root element.
      * @param createMenu create a JMenu if true, specific menu items otherwise.
-     * @param group a ButtonGroup in which radio-buttons should be added, null
+     * @param buttonGroup a ButtonGroup in which radio-buttons should be added, null
      * otherwise.
      *
      * @return the instantiated JComponent according to the XML menu hierarchy.
@@ -769,8 +760,10 @@ public class MainMenuBar extends JMenuBar
      * Generic registration with the Mac OS X application menu.
      *
      * Checks the platform, then attempts.
+     * 
+     * @param frame application frame
      */
-    public void macOSXRegistration(JFrame frame)
+    public final void macOSXRegistration(final JFrame frame)
     {
         // If running under Mac OS X
         if (_isRunningUnderMacOSX == true)
@@ -811,7 +804,7 @@ public class MainMenuBar extends JMenuBar
             {
                 // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
                 // because OSXAdapter extends ApplicationAdapter in its def
-                System.err.println(
+               _logger.severe(
                     "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" +
                     e + ").");
             }
@@ -819,14 +812,13 @@ public class MainMenuBar extends JMenuBar
             {
                 // This shouldn't be reached; if there's a problem with the OSXAdapter we should get the 
                 // above NoClassDefFoundError first.
-                System.err.println(
+                _logger.severe(
                     "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" +
                     e + ").");
             }
             catch (Exception e)
             {
-                System.err.println("Exception while loading the OSXAdapter:");
-                e.printStackTrace();
+                _logger.log(Level.SEVERE, "Exception while loading the OSXAdapter:", e);
             }
         }
     }

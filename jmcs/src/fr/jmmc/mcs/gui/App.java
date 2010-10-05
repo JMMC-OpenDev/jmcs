@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.69 2010-10-05 08:37:47 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.70 2010-10-05 12:02:59 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.69  2010/10/05 08:37:47  lafrasse
+ * Removed default window centering.
+ *
  * Revision 1.68  2010/10/04 10:23:51  mella
  * Add one setter to initialise the application frame. This allow temporary workarround for the appliaction which have not used the getFrame() method to build GUI over.
  *
@@ -909,6 +912,7 @@ public abstract class App
         // Delegate initialization to daughter class through abstract init() call
         init(_args);
 
+        // TODO : Use EDT or move that Swing code elsewhere :
         // Set JMenuBar
         final JFrame frame = getFrame();
 

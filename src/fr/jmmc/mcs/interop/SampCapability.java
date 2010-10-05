@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapability.java,v 1.5 2010-10-05 08:32:19 mella Exp $"
+ * "@(#) $Id: SampCapability.java,v 1.6 2010-10-05 09:33:48 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/10/05 08:32:19  mella
+ * Add SearchCal start query capability
+ *
  * Revision 1.4  2010/10/05 07:54:19  mella
  * Add mtype to launch new setting in LITpro
  *
@@ -21,7 +24,8 @@
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Enumeration of all different SAMP capabilities, aka mTypes.
@@ -48,13 +52,19 @@ public enum SampCapability {
     /** Blanking value for undefined Strings (null, ...) */
     public static final String UNKNOWN_MTYPE = "UNKNOWN";
 
-    /** Constructor */
-    SampCapability(String mType) {
+    /**
+     * Constructor
+     * @param mType samp message type (MTYPE)
+     */
+    SampCapability(final String mType) {
         _mType = (mType == null ? UNKNOWN_MTYPE : mType);
-        SampCapabilityNastyTrick._mTypes.put(mType, this);
+        SampCapabilityNastyTrick.TYPES.put(mType, this);
     }
 
-    /** Gives back the mType */
+    /**
+     * Return the samp message type (MTYPE)
+     * @return samp message type (MTYPE)
+     */
     public String mType() {
         return _mType;
     }
@@ -71,12 +81,12 @@ public enum SampCapability {
      *
      * @return a String containing the given catalog title, the reference if not found, SampCapability.UNKNOWN otherwise.
      */
-    public static SampCapability fromMType(String mType) {
+    public static SampCapability fromMType(final String mType) {
         if (mType == null) {
             return UNKNOWN;
         }
 
-        SampCapability capability = SampCapabilityNastyTrick._mTypes.get(mType);
+        final SampCapability capability = SampCapabilityNastyTrick.TYPES.get(mType);
         if (capability == null) {
             return UNKNOWN;
         }
@@ -86,6 +96,7 @@ public enum SampCapability {
 
     /**
      * For test and debug purpose only.
+     * @param args unused
      */
     public static void main(String[] args) {
         // For each catalog in the enum
@@ -104,15 +115,24 @@ public enum SampCapability {
         tmp = SampCapability.fromMType(mType);
         System.out.println("'" + mType + "' => '" + tmp + "'.");
     }
-}
 
-/**
- * To get over Java 1.5 limitation prohibiting static members in enum (initialization order hazard).
- *
- * @sa http://www.velocityreviews.com/forums/t145807-an-enum-mystery-solved.html
- * @sa http://www.jroller.com/ethdsy/entry/static_fields_in_enum
- */
-class SampCapabilityNastyTrick {
+    /**
+     * To get over Java 1.5 limitation prohibiting static members in enum (initialization order hazard).
+     *
+     * @sa http://www.velocityreviews.com/forums/t145807-an-enum-mystery-solved.html
+     * @sa http://www.jroller.com/ethdsy/entry/static_fields_in_enum
+     */
+    private final static class SampCapabilityNastyTrick {
 
-    public static final Hashtable<String, SampCapability> _mTypes = new Hashtable();
+        /** cached map of SampCapability keyed by mType */
+        protected static final Map<String, SampCapability> TYPES = new HashMap<String, SampCapability>();
+
+        /**
+         * Forbidden constructor : utility class
+         */
+        private SampCapabilityNastyTrick() {
+          super();
+        }
+    }
+    
 }

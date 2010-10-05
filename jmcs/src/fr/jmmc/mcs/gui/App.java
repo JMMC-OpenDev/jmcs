@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.68 2010-10-04 10:23:51 mella Exp $"
+ * "@(#) $Id: App.java,v 1.69 2010-10-05 08:37:47 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.68  2010/10/04 10:23:51  mella
+ * Add one setter to initialise the application frame. This allow temporary workarround for the appliaction which have not used the getFrame() method to build GUI over.
+ *
  * Revision 1.67  2010/09/30 13:37:11  bourgesl
  * initialization catch Throwable (Errors too)
  * use MessagePane
@@ -913,7 +916,6 @@ public abstract class App
 
         // Set application frame common properties
         frame.pack();
-        frame.setLocationRelativeTo(null);
 
         // Close the splash screen if we have to
         if (_showSplashScreen == true)

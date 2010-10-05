@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.5 2010-10-04 23:37:32 lafrasse Exp $"
+ * "@(#) $Id: SampManager.java,v 1.6 2010-10-05 10:17:56 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/10/04 23:37:32  lafrasse
+ * Removed unused imports.
+ *
  * Revision 1.4  2010/10/04 23:35:44  lafrasse
  * Added "Interop" menu handling.
  *
@@ -21,19 +24,27 @@
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
-import java.util.*;
+import fr.jmmc.mcs.gui.App;
+import fr.jmmc.mcs.gui.ApplicationDataModel;
+import fr.jmmc.mcs.gui.StatusBar;
+import java.util.Collections;
 
-import java.util.logging.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.astrogrid.samp.*;
-import org.astrogrid.samp.client.*;
-import org.astrogrid.samp.gui.*;
-
-import fr.jmmc.mcs.gui.*;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.astrogrid.samp.Message;
+import org.astrogrid.samp.Metadata;
+import org.astrogrid.samp.client.ClientProfile;
+import org.astrogrid.samp.client.DefaultClientProfile;
+import org.astrogrid.samp.client.SampException;
+import org.astrogrid.samp.gui.GuiHubConnector;
 import org.astrogrid.samp.xmlrpc.HubMode;
 
 /**
@@ -47,18 +58,22 @@ public class SampManager {
     private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.interop.SampManager");
 
     /** Singleton instance */
-    private static SampManager _instance = null;
+    private static volatile SampManager _instance = null;
 
-    /** Singleton instance */
+    /** Singleton instance : TODO : encapsulate this inside SampManager  */
     private static GuiHubConnector _connector = null;
 
     /** Hook to the "Interop" menu */
     private static JMenu _menu = null;
 
     /** JMenu to Action relations */
-    private static HashMap<SampCapabilityAction,JMenu> _map = null;
+    private static final Map<SampCapabilityAction,JMenu> _map = Collections.synchronizedMap(new HashMap<SampCapabilityAction, JMenu>());
 
-    /** Return the singleton instance */
+    /**
+     * Return the singleton instance
+     * @return singleton instance
+     * @throws SampException if any Samp exception occured
+     */
     public static final synchronized SampManager getInstance() throws SampException {
         // DO NOT MODIFY !!!
         if (_instance == null) {
@@ -70,68 +85,77 @@ public class SampManager {
         // DO NOT MODIFY !!!
     }
 
-    /** Hidden constructor */
+    /** 
+     * Hidden constructor
+     * @throws SampException if any Samp exception occured
+     */
     protected SampManager() throws SampException {
-        _map = new HashMap<SampCapabilityAction, JMenu>();
 
         // @TODO : init JSamp env.
-        ClientProfile profile = DefaultClientProfile.getProfile();
+        final ClientProfile profile = DefaultClientProfile.getProfile();
+
         _connector = new GuiHubConnector(profile);
 
         // Try to start an external SAMP hub if none available
-        Action act = _connector.createHubAction(true, HubMode.CLIENT_GUI);
+        final Action act = _connector.createHubAction(true, HubMode.CLIENT_GUI);
         act.actionPerformed(null);
-        if (_connector.isConnected() == false) {
+
+        if (!_connector.isConnected()) {
             StatusBar.show("Could not connect to nor start a SAMP hub.");
         }
 
         // Build application metadata
-        Metadata meta = new Metadata();
-        ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        final Metadata meta = new Metadata();
+
+        final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
         // @TODO : create some JmcsException !!!
 
-        String applicationName = applicationDataModel.getProgramName();
+        final String applicationName = applicationDataModel.getProgramName();
         meta.setName(applicationName);
 
-        String applicationURL = applicationDataModel.getMainWebPageURL();
+        final String applicationURL = applicationDataModel.getMainWebPageURL();
         meta.setDescriptionText("More info at " + applicationURL);
 
         /* @TODO : Add App metadata (cf. Aladin : icon, url, author, ... )
         String iconURL = applicationDataModel.getLogoURL();
         meta.setIconUrl(iconURL);
          */
+
         _connector.declareMetadata(meta);
         _connector.addConnectionListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                _logger.info("SAMP Hub connection status changed: " + e);
-                // @TODO : Refresh menu to populate it accordinal on connection
+            public void stateChanged(final ChangeEvent e) {
+                if (_logger.isLoggable(Level.INFO)) {
+                    _logger.info("SAMP Hub connection status changed: " + e);
+                }
+                // @TODO : Refresh menu to populate it according to connection
             }
         });
     }
 
+    /**
+     * Return the JSamp Gui hub connector providing swing actions
+     * @return JSamp Gui hub connector providing swing actions
+     * @throws SampException if any Samp exception occured
+     */
     public static GuiHubConnector getGuiHubConnector() throws SampException {
         SampManager.getInstance();
 
         return _connector;
     }
 
-    /** Link SampManager instance to the "Interop" menu */
-    public static void hookMenu(JMenu menu) {
-        _menu = menu;
-
-        // If some capabilities are registered
-        if (! _map.isEmpty()) {
-            // Make the "Interop" menu visible
-            _menu.setVisible(true);
-        }
-    }
-
-    /** Registerd an app-specific capability */
-    public static void registerCapability(SampMessageHandler handler) throws SampException {
+    /**
+     * Register an app-specific capability
+     * @param handler message handler
+     * @throws SampException if any Samp exception occured
+     */
+    public static void registerCapability(final SampMessageHandler handler) throws SampException {
         SampManager.getInstance();
 
         _connector.addMessageHandler(handler);
-        _logger.fine("Registered SAMP capability for mType '" + handler.handledMType() + "'.");
+
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("Registered SAMP capability for mType '" + handler.handledMType() + "'.");
+        }
 
         // This step required even if no custom message handlers added.
         _connector.declareSubscriptions(_connector.computeSubscriptions());
@@ -140,32 +164,72 @@ public class SampManager {
         _connector.setAutoconnect(10);
     }
 
-    /** Link a menu entry to its action */
-    public static void addMenu(JMenu menu, SampCapabilityAction action) {
+    /**
+     * Link SampManager instance to the "Interop" menu
+     * @param menu interop menu container
+     */
+    public static void hookMenu(final JMenu menu) {
+        _menu = menu;
+
+        // If some capabilities are registered
+        if (!_map.isEmpty()) {
+            // Make the "Interop" menu visible
+            _menu.setVisible(true);
+        }
+    }
+
+    /**
+     * Link a menu entry to its action
+     * @param menu menu entry
+     * @param action samp capability action
+     */
+    public static void addMenu(final JMenu menu, final SampCapabilityAction action) {
         _map.put(action, menu);
     }
 
-    /** Get a menu entry from its action */
-    public static JMenu getMenu(SampCapabilityAction action) {
+    /** 
+     * Get a menu entry from its action
+     * @param action samp capability action
+     * @return menu menu entry
+     */
+    public static JMenu getMenu(final SampCapabilityAction action) {
         return _map.get(action);
     }
 
-    /** Sends a given message to a client */
-    public static void sendMessageTo(String mType, String recipient, Map parameters) throws SampException {
+    /** 
+     * Send the given message to a client
+     * @param mType samp message type
+     * @param recipient public-id of client to receive message
+     * @param parameters message parameters
+     *
+     * @throws SampException if any Samp exception occured
+     */
+    public static void sendMessageTo(final String mType, final String recipient, final Map<?,?> parameters) throws SampException {
         SampManager.getInstance();
 
-        Message msg = new Message(mType, parameters);
+        final Message msg = new Message(mType, parameters);
         _connector.getConnection().notify(recipient, msg);
 
-        _logger.info("Sent '" + mType + "' SAMP message to '" + recipient + "' client.");
+        if (_logger.isLoggable(Level.INFO)) {
+            _logger.info("Sent '" + mType + "' SAMP message to '" + recipient + "' client.");
+        }
     }
 
-    public static void broadcastMessage(String mType, Map parameters) throws SampException {
+    /**
+     * Send the given message to all clients supporting the given message type
+     * @param mType samp message type
+     * @param parameters message parameters
+     * 
+     * @throws SampException if any Samp exception occured
+     */
+    public static void broadcastMessage(final String mType, final Map<?,?> parameters) throws SampException {
         SampManager.getInstance();
 
-        Message msg = new Message(mType, parameters);
+        final Message msg = new Message(mType, parameters);
         _connector.getConnection().notifyAll(msg);
 
-        _logger.info("Broadcasted SAMP message to '" + mType + "' capable clients.");
+        if (_logger.isLoggable(Level.INFO)) {
+            _logger.info("Broadcasted SAMP message to '" + mType + "' capable clients.");
+        }
     }
 }

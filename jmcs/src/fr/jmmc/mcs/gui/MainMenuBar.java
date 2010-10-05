@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.39 2010-10-05 07:40:45 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.40 2010-10-05 11:58:41 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2010/10/05 07:40:45  bourgesl
+ * InteropMenu ONLY available for BETA versions (instable)
+ *
  * Revision 1.38  2010/10/04 23:36:03  lafrasse
  * Added "Interop" menu handling.
  *
@@ -432,7 +435,7 @@ public class MainMenuBar extends JMenuBar
         try {
             hub = SampManager.getGuiHubConnector();
         } catch (SampException ex) {
-            Logger.getLogger(MainMenuBar.class.getName()).log(Level.SEVERE, null, ex);
+            _logger.log(Level.SEVERE, null, ex);
             return;
         }
 

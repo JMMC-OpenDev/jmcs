@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.11 2010-10-06 09:43:37 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.12 2010-10-06 16:04:45 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2010/10/06 09:43:37  bourgesl
+ * format
+ *
  * Revision 1.10  2010/10/06 09:43:08  bourgesl
  * GuiHubConnector is now a member of SampManager
  *
@@ -155,9 +158,8 @@ public final class SampManager {
 
       public void stateChanged(final ChangeEvent e) {
         if (_logger.isLoggable(Level.INFO)) {
-          _logger.info("SAMP Hub connection status changed: " + e);
+          _logger.info("SAMP Hub connection status changed: " + getHubConnector().isConnected());
         }
-        // @TODO : Refresh menu to populate it according to connection
       }
     });
 

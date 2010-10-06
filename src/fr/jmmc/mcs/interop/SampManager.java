@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.10 2010-10-06 09:43:08 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.11 2010-10-06 09:43:37 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2010/10/06 09:43:08  bourgesl
+ * GuiHubConnector is now a member of SampManager
+ *
  * Revision 1.9  2010/10/05 17:32:51  bourgesl
  * define initial subscriptions for Samp clients providing no message handler
  *
@@ -210,15 +213,14 @@ public final class SampManager {
     return SampManager.getInstance().getHubConnector();
   }
 
- /**
+  /**
    * Create a list model for the registered clients of the given message type
    * @param mType samp message type
-  * @return list model for the registered clients
+   * @return list model for the registered clients
    */
   protected static SubscribedClientListModel createSubscribedClientListModel(final String mType) {
     return new SubscribedClientListModel(SampManager.getGuiHubConnector(), mType);
   }
-
 
   /**
    * Returns an action which toggles hub registration.

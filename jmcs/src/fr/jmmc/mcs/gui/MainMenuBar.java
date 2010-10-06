@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.42 2010-10-05 14:52:31 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.43 2010-10-06 09:18:07 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.42  2010/10/05 14:52:31  bourgesl
+ * removed SampException in several method signatures
+ *
  * Revision 1.41  2010/10/05 12:21:43  bourgesl
  * fixed samp exception handling
  *
@@ -456,14 +459,15 @@ public class MainMenuBar extends JMenuBar
                 // Add each component
                 for (Component currentComponent : components)
                 {
+                    // Get menuitem initialised from ApplicationData
+                    JMenuItem menuItem = (JMenuItem)currentComponent;
                     // @TODO : cast SAMP-flagged menus only !
-                    SampCapabilityAction action = (SampCapabilityAction)((JMenuItem)currentComponent).getAction();
-                    String title = ((JMenuItem)currentComponent).getText();
-
-                    JMenu menu = new JMenu(title);
-                    menu.setEnabled(false);
-
-                    SampManager.addMenu(menu, action);
+                    SampCapabilityAction action = (SampCapabilityAction)(menuItem.getAction());
+                    // get previously created menu by samp action
+                    JMenu menu = SampManager.getMenu(action);
+                    // set text coming from applicationData.xml
+                    menu.setText(menuItem.getText());
+                    
                     interopMenu.add(menu);
                 }
             }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapabilityAction.java,v 1.7 2010-10-06 09:42:24 bourgesl Exp $"
+ * "@(#) $Id: SampCapabilityAction.java,v 1.8 2010-10-06 16:04:27 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2010/10/06 09:42:24  bourgesl
+ * javadoc / comments
+ *
  * Revision 1.6  2010/10/06 09:09:00  mella
  * Build interop menu entry if it does not always exists
  * Set menu and action state according current client state
@@ -38,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import org.astrogrid.samp.Client;
@@ -112,6 +116,11 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      */
     private void updateMenuAndActionAfterSubscribedClientChange() {
 
+        // TODO : remove when code is clean !
+        if (!SwingUtilities.isEventDispatchThread()) {
+          _logger.log(Level.SEVERE, "invalid thread : use EDT", new Throwable());
+        }
+
         // Disabled until a client for the given capabily registers to the hub
         setEnabled(false);
 
@@ -133,8 +142,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         // If no client is able to handle specified capability
         final int nbOfClients = _capableClients.getSize();        
         if (nbOfClients <= 0) {
-            if (_logger.isLoggable(Level.INFO)) {
-                _logger.info("No SAMP client available for capability '" + _mType + "'.");
+            if (_logger.isLoggable(Level.FINE)) {
+                _logger.fine("No SAMP client available for capability '" + _mType + "'.");
             }
             return;
         }

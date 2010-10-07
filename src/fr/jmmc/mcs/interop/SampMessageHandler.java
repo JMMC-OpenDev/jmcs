@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampMessageHandler.java,v 1.5 2010-10-05 14:52:31 bourgesl Exp $"
+ * "@(#) $Id: SampMessageHandler.java,v 1.6 2010-10-07 14:59:56 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/10/05 14:52:31  bourgesl
+ * removed SampException in several method signatures
+ *
  * Revision 1.4  2010/10/05 10:17:56  bourgesl
  * fixed warnings / javadoc
  * fixed exception handling / logs
@@ -70,4 +73,13 @@ public abstract class SampMessageHandler extends AbstractMessageHandler
     {
         return _mType;
     }
+
+    /*
+     * TODO : implement default processCall implementation
+     */
+/*
+    public Map processCall(final HubConnection c, final String senderId, final Message msg) {
+      return null;
+    }
+ */
 }

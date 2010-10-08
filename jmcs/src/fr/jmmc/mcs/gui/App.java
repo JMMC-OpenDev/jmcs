@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.70 2010-10-05 12:02:59 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.71 2010-10-08 08:39:09 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.70  2010/10/05 12:02:59  bourgesl
+ * added comments on MainMenuBar initialization
+ *
  * Revision 1.69  2010/10/05 08:37:47  lafrasse
  * Removed default window centering.
  *
@@ -870,6 +873,9 @@ public abstract class App
 
     /**
      * Initialize application objects
+     *
+     * The actions which are present in menubar must be instantiated in this method.
+     * 
      * @param args command line arguments
      */
     protected abstract void init(String[] args);

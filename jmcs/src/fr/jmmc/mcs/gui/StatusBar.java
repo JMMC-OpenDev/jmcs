@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.9 2010-05-20 13:13:35 mella Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.10 2010-10-11 13:28:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/05/20 13:13:35  mella
+ * Open the application web page by one logo click
+ *
  * Revision 1.8  2009/04/30 13:02:14  lafrasse
  * Replaced MCSLog by standard logging.
  * Added protection against multiple thread concurrent access.
@@ -49,30 +52,33 @@ import java.awt.Font;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.logging.*;
-
-import javax.swing.*;
-
+import java.util.logging.Logger;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * A status bar that can be shared all along an application.
  */
-public class StatusBar extends JPanel
-{
+public class StatusBar extends JPanel {
+
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
     /** Logger */
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.gui.StatusBar");
-
     /** Status label */
-    private static JLabel _statusLabel = new JLabel();
+    private static final JLabel _statusLabel = new JLabel();
 
     /**
      * Constructor.
      *
      * Should be called at least once in order to allow usage.
      */
-    public StatusBar()
-    {
+    public StatusBar() {
         super();
 
         // Layed out horizontally
@@ -101,8 +107,7 @@ public class StatusBar extends JPanel
          * Add a space on the right bottom angle because Mac OS X corner is
          * already decored with its resize handle
          */
-        if (SystemUtils.IS_OS_MAC_OSX == true)
-        {
+        if (SystemUtils.IS_OS_MAC_OSX == true) {
             hBox.add(Box.createHorizontalStrut(14));
         }
 
@@ -110,7 +115,7 @@ public class StatusBar extends JPanel
 
         // Get application data model to launch the default browser with the given link
         final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
-        if (applicationDataModel != null) {            
+        if (applicationDataModel != null) {
             jmmcLogo.addMouseListener(new MouseAdapter() {
 
                 @Override
@@ -122,14 +127,31 @@ public class StatusBar extends JPanel
     }
 
     /**
-     * Set the satus bar text.
+     * Set the status bar text.
      *
-     * @param message the message to be displayed bu the status bar.
+     * @param message the message to be displayed by the status bar.
      */
-    public static synchronized void show(String message)
-    {
+    public static void show(final String message) {
         _logger.entering("StatusBar", "show");
 
+        // update the status bar within EDT :
+        if (SwingUtilities.isEventDispatchThread()) {
+            setStatusLabel(message);
+        } else {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    setStatusLabel(message);
+                }
+            });
+        }
+    }
+
+    /**
+     * Change the content of the status bar
+     * @param message message to display
+     */
+    private static void setStatusLabel(final String message) {
         _statusLabel.setText(message);
     }
 }

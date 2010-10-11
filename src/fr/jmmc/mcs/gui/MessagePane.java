@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.3 2010-10-11 13:49:51 lafrasse Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.4 2010-10-11 14:00:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/10/11 13:49:51  lafrasse
+ * Ensures that error message dialogs are done in EDT.
+ *
  * Revision 1.2  2010/09/30 15:13:03  bourgesl
  * added methods for information and confirmation messages
  * complete javadoc
@@ -91,7 +94,7 @@ public final class MessagePane {
 
         final String msg;
         if (th != null && th.getMessage() != null) {
-            msg = message + "\n\n(" + th.getMessage() + ")";
+            msg = message + "\n\n" + "Explanation : \"" + th.getMessage() + "\".";
         } else {
             msg = message;
         }

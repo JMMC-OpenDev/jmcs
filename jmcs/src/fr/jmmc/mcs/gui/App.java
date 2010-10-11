@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.71 2010-10-08 08:39:09 mella Exp $"
+ * "@(#) $Id: App.java,v 1.72 2010-10-11 13:58:44 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.71  2010/10/08 08:39:09  mella
+ * Add javadoc info
+ *
  * Revision 1.70  2010/10/05 12:02:59  bourgesl
  * added comments on MainMenuBar initialization
  *
@@ -283,6 +286,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.InvocationTargetException;
 
 import java.net.URL;
 
@@ -486,7 +490,7 @@ public abstract class App
                     "_showHelpAction");
 
             // If execution should not be delayed
-            if (waitBeforeExecution == false)
+            if (!waitBeforeExecution)
             {
                 // Run the application imediately
                 run();
@@ -610,7 +614,7 @@ public abstract class App
                     {
                         if (_aboutBox != null)
                         {
-                            if (_aboutBox.isVisible() == false)
+                            if (!_aboutBox.isVisible())
                             {
                                 _aboutBox.setVisible(true);
                             }
@@ -910,7 +914,7 @@ public abstract class App
     protected final void run()
     {
         // Show splash screen if we have to
-        if (_showSplashScreen == true)
+        if (_showSplashScreen)
         {
             showSplashScreen();
         }
@@ -918,17 +922,35 @@ public abstract class App
         // Delegate initialization to daughter class through abstract init() call
         init(_args);
 
-        // TODO : Use EDT or move that Swing code elsewhere :
-        // Set JMenuBar
-        final JFrame frame = getFrame();
+        try {
 
-        frame.setJMenuBar(new MainMenuBar(frame));
+          // Using invokeAndWait to be in sync with the main thread :
+          SwingUtilities.invokeAndWait(new Runnable() {
 
-        // Set application frame common properties
-        frame.pack();
+            /**
+             * Initializes swing components in EDT
+             */
+            public void run() {
+              // Set JMenuBar
+              final JFrame frame = getFrame();
+
+              frame.setJMenuBar(new MainMenuBar(frame));
+
+              // Set application frame common properties
+              frame.pack();
+            }
+          });
+
+        } catch (InterruptedException ie) {
+          // propagate the exception :
+          throw new IllegalStateException("App.run : interrupted", ie);
+        } catch (InvocationTargetException ite) {
+          // propagate the internal exception :
+          throw new IllegalStateException("App.run : exception", ite.getCause());
+        }
 
         // Close the splash screen if we have to
-        if (_showSplashScreen == true)
+        if (_showSplashScreen)
         {
             closeSplashScreen();
         }
@@ -1197,12 +1219,12 @@ public abstract class App
             _logger.fine("Should we kill the application ?");
 
             // If we are ready to finish application execution
-            if (finish() == true)
+            if (finish())
             {
                 _logger.fine("Application should be killed.");
 
                 // Verify if we are authorized to kill the application or not
-                if (_exitApplicationWhenClosed == true)
+                if (_exitApplicationWhenClosed)
                 {
                     _logger.info("Killing the application.");
                     System.exit(-1);

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.12 2010-10-06 16:04:45 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.13 2010-10-11 13:58:28 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2010/10/06 16:04:45  bourgesl
+ * removed TODO
+ *
  * Revision 1.11  2010/10/06 09:43:37  bourgesl
  * format
  *
@@ -117,23 +120,7 @@ public final class SampManager {
     // @TODO : init JSamp env.
     final ClientProfile profile = DefaultClientProfile.getProfile();
 
-    _connector = new GuiHubConnector(profile) {
-
-      /**
-       * Unregisters from the currently connected hub, if any.
-       * Performs any associated required cleanup.
-       */
-      @Override
-      protected void disconnect() {
-        _logger.severe("DISCONNECT");
-
-        // disconnect or shutdown ?
-
-        // It should be possible to start another hub (internal) in another
-        // JMCS application to maintain the JSamp hub service.
-        super.disconnect();
-      }
-    };
+    _connector = new GuiHubConnector(profile);
 
     // Build application metadata :
     final Metadata meta = new Metadata();

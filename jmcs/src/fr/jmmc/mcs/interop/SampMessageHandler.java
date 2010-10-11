@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampMessageHandler.java,v 1.6 2010-10-07 14:59:56 bourgesl Exp $"
+ * "@(#) $Id: SampMessageHandler.java,v 1.7 2010-10-11 14:14:59 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/10/07 14:59:56  bourgesl
+ * added TODO processCall default impl
+ *
  * Revision 1.5  2010/10/05 14:52:31  bourgesl
  * removed SampException in several method signatures
  *
@@ -26,7 +29,11 @@
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 
+import java.util.Map;
+import org.astrogrid.samp.Message;
 import org.astrogrid.samp.client.AbstractMessageHandler;
+import org.astrogrid.samp.client.HubConnection;
+import org.astrogrid.samp.client.SampException;
 
 /**
  * SampMessageHandler class.
@@ -40,7 +47,7 @@ public abstract class SampMessageHandler extends AbstractMessageHandler
 
     /* members */
     /** Store the handled mType */
-    private String _mType = null;
+    private final String _mType;
 
     /**
      * Generic constructor taking its mType as a String (e.g for private message)
@@ -74,12 +81,32 @@ public abstract class SampMessageHandler extends AbstractMessageHandler
         return _mType;
     }
 
-    /*
-     * TODO : implement default processCall implementation
+    /**
+     * Implements message processing : notification only (no response)
+     * 
+     * This delegates the message processing to @see #processMessage(String, Message)
+     * and returns null (equivalent to an empty map)
+     *
+     * @param connection  hub connection
+     * @param senderId  public ID of sender client
+     * @param message  message with MType this handler is subscribed to
+     * @return null (empty map)
+     * @throws SampException if any error occured while message processing
      */
-/*
-    public Map processCall(final HubConnection c, final String senderId, final Message msg) {
+    public final Map<?,?> processCall(final HubConnection connection, final String senderId, final Message message) throws SampException {
+
+      this.processMessage(senderId, message);
+
       return null;
     }
- */
+
+    /**
+     * Implements message processing : must be implemented in child classes
+     *
+     * @param senderId public ID of sender client
+     * @param message message with MType this handler is subscribed to
+     * @throws SampException if any error occured while message processing
+     */
+    protected abstract void processMessage(final String senderId, final Message message) throws SampException;
+
 }

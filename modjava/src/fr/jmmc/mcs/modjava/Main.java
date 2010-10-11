@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.8 2010-10-05 07:57:21 lafrasse Exp $"
+ * "@(#) $Id: Main.java,v 1.9 2010-10-11 14:27:31 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/10/05 07:57:21  lafrasse
+ * To reflect fr.jmmc.mcs.interop API changes.
+ *
  * Revision 1.7  2010/09/17 09:45:28  lafrasse
  * Added SampMessageHandler usage.
  *
@@ -31,28 +34,28 @@
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
 
-import fr.jmmc.mcs.gui.*;
-import fr.jmmc.mcs.interop.*;
-import org.astrogrid.samp.*;
-import org.astrogrid.samp.client.*;
-import java.util.Map;
-import java.util.HashMap;
-
+import fr.jmmc.mcs.gui.App;
+import fr.jmmc.mcs.gui.DismissableMessagePane;
+import fr.jmmc.mcs.interop.SampCapability;
+import fr.jmmc.mcs.interop.SampMessageHandler;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-
-import java.util.logging.*;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import org.astrogrid.samp.Message;
+import org.astrogrid.samp.SampUtils;
 
 /**
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class Main extends App {
 
@@ -65,10 +68,13 @@ public class Main extends App {
     /** Button to launch helpview window */
     private JButton _helpViewButton = null;
     /** Actions class */
-    Actions _actions;
-    private JButton _testDismissableMessagePane;
+    Actions _actions = null;
+    /** Test button */
+    private JButton _testDismissableMessagePane = null;
 
-    /** Constructor */
+    /** Constructor
+     * @param args
+     */
     public Main(String[] args) {
         super(args, false, true, true);
     }
@@ -114,7 +120,7 @@ public class Main extends App {
         try {
             SampMessageHandler handler = new SampMessageHandler("stuff.do") {
 
-                public Map processCall(HubConnection c, String senderId, Message msg) {
+                public void processMessage(String senderId, Message msg) {
                     // do stuff
                     System.out.println("\tReceived 'stuff.do' message from '" + senderId + "' : '" + msg + "'.");
 
@@ -122,15 +128,15 @@ public class Main extends App {
                     Map result = new HashMap();
                     result.put("name", name);
                     result.put("x", SampUtils.encodeFloat(3.141159));
-                    return result;
+                    return;
                 }
             };
             handler = new SampMessageHandler(SampCapability.LOAD_VO_TABLE) {
 
-                public Map processCall(HubConnection c, String senderId, Message msg) {
+                public void processMessage(String senderId, Message msg) {
                     // do stuff
                     System.out.println("\tReceived 'LOAD_VO_TABLE' message from '" + senderId + "' : '" + msg + "'.");
-                    return null;
+                    return;
                 }
             };
         } catch (Exception ex) {
@@ -147,9 +153,12 @@ public class Main extends App {
         return true;
     }
 
-    /** Open help view action */
+    /** Open help view action
+     * @return
+     */
     private Action openHelpFrame() {
         return new AbstractAction("Open Help Frame") {
+            private static final long serialVersionUID = 1L;
 
             public void actionPerformed(ActionEvent evt) {
                 // Instantiate help JFrame
@@ -170,9 +179,12 @@ public class Main extends App {
         };
     }
 
-    /** Open help view action */
+    /** Open help view action
+     * @return
+     */
     private Action dismissableMessagePaneAction() {
         return new AbstractAction("Show dismissable message pane") {
+            private static final long serialVersionUID = 1L;
 
             public void actionPerformed(ActionEvent evt) {
                 DismissableMessagePane.show(getFramePanel(),

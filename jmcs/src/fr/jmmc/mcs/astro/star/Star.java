@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.19 2010-04-09 09:24:36 bourgesl Exp $"
+ * "@(#) $Id: Star.java,v 1.20 2010-10-13 20:56:11 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2010/04/09 09:24:36  bourgesl
+ * added radial velocity (required by OIFITS)
+ *
  * Revision 1.18  2010/04/08 13:34:32  bourgesl
  * added Star.fireNotification to use EDT instead of current thread
  *
@@ -70,7 +73,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
 
-import java.util.Hashtable;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.logging.Level;
@@ -103,8 +106,8 @@ public class Star extends Observable
     public Star()
     {
         super();
-        _stringContent     = new Hashtable<Property, String>();
-        _doubleContent     = new Hashtable<Property, Double>();
+        _stringContent     = new EnumMap<Property, String>(Property.class);
+        _doubleContent     = new EnumMap<Property, Double>(Property.class);
     }
 
     /**
@@ -112,7 +115,7 @@ public class Star extends Observable
      *
      * @param source the star whose content should be copied from.
      */
-    public void copy(Star source)
+    public void copy(final Star source)
     {
       _stringContent.clear();
       for (Map.Entry<Property, String> entry : source._stringContent.entrySet()) {
@@ -143,7 +146,7 @@ public class Star extends Observable
      * Define the star name
      * @param name star name
      */
-    public void setName(String name) {
+    public void setName(final String name) {
       setPropertyAsString(Property.NAME,name);
     }
 
@@ -164,9 +167,9 @@ public class Star extends Observable
      * @return the value of the previously stored value for the given property,
      * null otherwise.
      */
-    public String setPropertyAsString(Property property, String value)
+    public String setPropertyAsString(final Property property, final String value)
     {
-        String previousValue = _stringContent.put(property, value);
+        final String previousValue = _stringContent.put(property, value);
         setChanged();
 
         return previousValue;
@@ -181,9 +184,9 @@ public class Star extends Observable
      * @return the value of the previously stored value for the given property,
      * null otherwise.
      */
-    public Double setPropertyAsDouble(Property property, Double value)
+    public Double setPropertyAsDouble(final Property property, final Double value)
     {
-        Double previousValue = _doubleContent.put(property, value);
+        final Double previousValue = _doubleContent.put(property, value);
         setChanged();
 
         return previousValue;
@@ -200,13 +203,13 @@ public class Star extends Observable
      * @return the value of the stored value for the given property,
      * null otherwise.
      */
-    public String getPropertyAsString(Property property)
+    public String getPropertyAsString(final Property property)
     {
         String stringValue = _stringContent.get(property);
 
         if (stringValue == null)
         {
-            Double doubleValue = _doubleContent.get(property);
+            final Double doubleValue = _doubleContent.get(property);
 
             if (doubleValue != null)
             {
@@ -225,7 +228,7 @@ public class Star extends Observable
      * @return the value of the stored value for the given property,
      * null otherwise.
      */
-    public Double getPropertyAsDouble(Property property)
+    public Double getPropertyAsDouble(final Property property)
     {
         return _doubleContent.get(property);
     }
@@ -239,16 +242,21 @@ public class Star extends Observable
      *
      * @param message the error message to store.
      */
-    public void raiseCDSimbadErrorMessage(String message)
+    public void raiseCDSimbadErrorMessage(final String message)
     {
-        _cdsSimbadErrorMessage = message;
-        
-        if (_logger.isLoggable(Level.SEVERE)) {
-          _logger.severe("CDS Simbad problem : " + _cdsSimbadErrorMessage);
-        }
+        // Use EDT to ensure only 1 thread (EDT) set and consume the error message :
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+              _cdsSimbadErrorMessage = message;
 
-        setChanged();
-        fireNotification(Notification.QUERY_ERROR);
+              if (_logger.isLoggable(Level.SEVERE)) {
+                _logger.severe("CDS Simbad problem : " + _cdsSimbadErrorMessage);
+              }
+
+              setChanged();
+              fireNotification(Notification.QUERY_ERROR);
+          }
+      });
     }
 
     /**
@@ -286,27 +294,22 @@ public class Star extends Observable
         }
 
         return sb.toString();
-        /*return "Strings = " + _stringContent.toString() + " / Doubles = " +
-        _doubleContent.toString() + " / CDS Simbad error = '" +
-        _cdsSimbadErrorMessage + "'.";
-         * */
     }
 
     /**
-     * Fires the notification to the registered observers using the EDT thread
+     * Fires the notification to the registered observers
      * @param notification notification enum value
      */
     public void fireNotification(final Notification notification) {
       // notify observers (swing components) within EDT :
-      if (SwingUtilities.isEventDispatchThread()) {
-        notifyObservers(notification);
-      } else {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            notifyObservers(notification);
-          }
-        });
+      if (!SwingUtilities.isEventDispatchThread()) {
+        _logger.log(Level.SEVERE, "invalid thread : use EDT", new Throwable());
       }
+
+      if (_logger.isLoggable(Level.FINE)) {
+          _logger.fine("Fire notification : " + notification);
+      }
+      notifyObservers(notification);
     }
 
     /**
@@ -344,7 +347,7 @@ public class Star extends Observable
          *
          * @return the enum value from the corresponding string.
          */
-        public static Property fromString(String propertyName)
+        public static Property fromString(final String propertyName)
         {
             try
             {

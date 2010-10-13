@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.10 2010-09-30 13:27:38 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.11 2010-10-13 20:56:30 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2010/09/30 13:27:38  bourgesl
+ * removed import
+ *
  * Revision 1.9  2010/09/24 15:46:15  bourgesl
  * use MessagePane
  *
@@ -71,7 +74,7 @@ public class StarResolverWidget extends SearchField implements Observer
             "fr.jmmc.mcs.astro.star.StarResolverWidget");
 
     /** Container to store retrieved star properties */
-    private Star _star = null;
+    private final Star _star;
 
     /**
      * Creates a new StarResolverWidget object.
@@ -86,7 +89,7 @@ public class StarResolverWidget extends SearchField implements Observer
      *
      * @param star star model
      */
-    public StarResolverWidget(Star star)
+    public StarResolverWidget(final Star star)
     {
         super("Simbad");
 
@@ -109,6 +112,8 @@ public class StarResolverWidget extends SearchField implements Observer
                             starName +
                             "'... (please wait, this may take a while)");
 
+                        // TODO : check concurrency issues (multiple calls running at the same time) :
+                        // TODO : reject concurrent calls on the same object :
                         StarResolver resolver = new StarResolver(starName, _star);
                         resolver.resolve();
                     }

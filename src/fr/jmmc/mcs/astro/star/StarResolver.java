@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.15 2010-04-09 09:24:36 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.16 2010-10-13 20:56:30 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2010/04/09 09:24:36  bourgesl
+ * added radial velocity (required by OIFITS)
+ *
  * Revision 1.14  2010/04/08 13:33:32  bourgesl
  * fixed bug on standard exception
  * use Star.fireNotification to use EDT
@@ -74,6 +77,7 @@ import java.util.StringTokenizer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -372,12 +376,16 @@ public class StarResolver
              * If anything went wrong while querying or parsing, previous data
              * remain unchanged.
              */
-            synchronized(_starModel) {
-              _starModel.copy(_newStarModel);
 
-              // Notify all registered observers that the query went fine :
-              _starModel.fireNotification(Star.Notification.QUERY_COMPLETE);
-            }
+            // Use EDT to ensure only 1 thread (EDT) updates the model and handles the notification :
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                  _starModel.copy(_newStarModel);
+
+                  // Notify all registered observers that the query went fine :
+                  _starModel.fireNotification(Star.Notification.QUERY_COMPLETE);
+                }
+            });
         }
 
         private void parseCoordinates(String coordinates)

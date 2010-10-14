@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.12 2010-10-14 12:21:29 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.13 2010-10-14 13:11:09 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2010/10/14 12:21:29  bourgesl
+ * disable the search field while processing a simbad request
+ * enable it again once the notification (error or complete) is received
+ *
  * Revision 1.11  2010/10/13 20:56:30  bourgesl
  * corrected concurrency issues (error and query complete notifications) using EDT
  *
@@ -109,8 +113,6 @@ public class StarResolverWidget extends SearchField implements Observer {
                     // Disable search field while request processing to avoid concurrent calls :
                     setEnabled(false);
 
-                    // TODO : check concurrency issues (multiple calls running at the same time) :
-                    // TODO : reject concurrent calls on the same object :
                     final StarResolver resolver = new StarResolver(starName, _star);
                     resolver.resolve();
                 }

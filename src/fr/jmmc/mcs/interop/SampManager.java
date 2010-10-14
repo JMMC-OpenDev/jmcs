@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.13 2010-10-11 13:58:28 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.14 2010-10-14 13:11:09 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2010/10/11 13:58:28  bourgesl
+ * removed overriden disconnect method on GuiHubConnector
+ *
  * Revision 1.12  2010/10/06 16:04:45  bourgesl
  * removed TODO
  *
@@ -94,7 +97,7 @@ public final class SampManager {
   private static final Map<SampCapabilityAction, JMenu> _map = Collections.synchronizedMap(new HashMap<SampCapabilityAction, JMenu>());
 
   /* members */
-  /** Singleton instance : TODO : encapsulate this inside SampManager */
+  /** Gui hub connector */
   private final GuiHubConnector _connector;
 
   /**

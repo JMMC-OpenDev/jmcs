@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.5 2010-10-15 09:01:54 lafrasse Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.6 2010-10-15 09:26:46 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/10/15 09:01:54  lafrasse
+ * Back-ported the "File Overwriting ?" dialog box from SearchCal to showConfirmFileOverwrite().
+ *
  * Revision 1.4  2010/10/11 14:00:18  lafrasse
  * Enhanced error message formating.
  *
@@ -32,9 +35,6 @@ import javax.swing.SwingUtilities;
 
 /**
  * This class provides utility methods to create message panes (message, error) with/without exceptions
- *
- *
- * TODO : javadoc
  *
  * @author bourgesl
  */
@@ -149,13 +149,13 @@ public final class MessagePane {
      * @return true if the user wants the file replaced, false otherwise.
      */
     public static boolean showConfirmFileOverwrite(final String fileName) {
-        String message = "\"" + fileName + "\" alreadey exists. Do you want to replace it ?\n\n";
-        message += "A file or folder with the same name already exists in the current folder.\n";
-        message += "Replacing it will overwrite its current contents.";
+        final String message = "\"" + fileName + "\" already exists. Do you want to replace it ?\n\n"
+        + "A file or folder with the same name already exists in the current folder.\n"
+        + "Replacing it will overwrite its current contents.";
 
         // Ask the user if he wants to save modifications
-        Object[] options = {"Cancel", "Replace"};
-        int result = JOptionPane.showOptionDialog(getApplicationFrame(), message, null, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+        final Object[] options = {"Cancel", "Replace"};
+        final int result = JOptionPane.showOptionDialog(getApplicationFrame(), message, null, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
         // If the user clicked the "Replace" button
         if (result == 1) {

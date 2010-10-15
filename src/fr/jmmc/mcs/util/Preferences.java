@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.34 2010-10-14 07:43:38 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.35 2010-10-15 08:47:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2010/10/14 07:43:38  lafrasse
+ * Moved from Vector to ArrayList whenever possible (i.e without API breaks).
+ * Fixed comments typo.
+ * Reformatted code.
+ *
  * Revision 1.33  2010/09/02 09:45:35  mella
  * Declare savePreferences and restoreDefaultPreferences actions
  *
@@ -127,12 +132,15 @@ import java.awt.Color;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -275,11 +283,22 @@ public abstract class Preferences extends Observable {
         resetToDefaultPreferences();
 
         try {
+            // Loading preference file
+            FileInputStream inputFile = null;
+            try {
+                inputFile = new FileInputStream(_fullFilepath);
+            } catch (FileNotFoundException fnfe) {
+                _logger.warning("Cannot load '" + _fullFilepath + "' : " + fnfe);
+            }
             _logger.info("Loading '" + _fullFilepath + "' preference file.");
 
-            // Loading preference file
-            FileInputStream inputFile = new FileInputStream(_fullFilepath);
-            _currentProperties.loadFromXML(inputFile);
+            try {
+                _currentProperties.loadFromXML(inputFile);
+            } catch (InvalidPropertiesFormatException ipfe) {
+                _logger.severe("Cannot parse '" + _fullFilepath + "' preference file : " + ipfe);
+            } catch (IOException ioe) {
+                _logger.warning("Cannot input/ouput to'" + _fullFilepath + "' : " + ioe);
+            }
 
             // Getting loaded preference file version number
             int preferencesVersionNumber = getPreferencesVersionNumber();
@@ -287,9 +306,9 @@ public abstract class Preferences extends Observable {
 
             try {
                 loadedPreferenceVersion = getPreferenceAsInt(PREFERENCES_VERSION_NUMBER_ID);
-            } catch (Exception e) {
+            } catch (NumberFormatException nfe) {
                 _logger.log(Level.WARNING,
-                        "Cannot get loaded preference version number.", e);
+                        "Cannot get loaded preference version number.", nfe);
             }
 
             _logger.fine("Loaded preference version is '"
@@ -325,9 +344,9 @@ public abstract class Preferences extends Observable {
                     try {
                         // Otherwise save updated values to file
                         saveToFile();
-                    } catch (Exception ex) {
+                    } catch (PreferencesException pe) {
                         _logger.log(Level.WARNING,
-                                "Cannot save preference to disk: ", ex);
+                                "Cannot save preference to disk: ", pe);
                     }
                 }
             }
@@ -860,9 +879,9 @@ public abstract class Preferences extends Observable {
                 saveToFile();
                 //@todo move next line into Preferences
                 _logger.fine("Saving preferences");
-            } catch (Exception exc) {
+            } catch (PreferencesException pe) {
                 // @todo handle this error at user level
-                exc.printStackTrace();
+                pe.printStackTrace();
             }
         }
     }

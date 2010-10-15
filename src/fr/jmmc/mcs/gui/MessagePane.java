@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.4 2010-10-11 14:00:18 lafrasse Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.5 2010-10-15 09:01:54 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/10/11 14:00:18  lafrasse
+ * Enhanced error message formating.
+ *
  * Revision 1.3  2010/10/11 13:49:51  lafrasse
  * Ensures that error message dialogs are done in EDT.
  *
@@ -143,10 +146,23 @@ public final class MessagePane {
     /**
      * Show a confirmation dialog to ask if the user wants to overwrite the file with the same name
      * @param fileName file name
-     * @return true if the user answers yes
+     * @return true if the user wants the file replaced, false otherwise.
      */
     public static boolean showConfirmFileOverwrite(final String fileName) {
-        return showConfirmMessage("File \'" + fileName + "\' already exists.\nDo you want to overwrite this file ?");
+        String message = "\"" + fileName + "\" alreadey exists. Do you want to replace it ?\n\n";
+        message += "A file or folder with the same name already exists in the current folder.\n";
+        message += "Replacing it will overwrite its current contents.";
+
+        // Ask the user if he wants to save modifications
+        Object[] options = {"Cancel", "Replace"};
+        int result = JOptionPane.showOptionDialog(getApplicationFrame(), message, null, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
+        // If the user clicked the "Replace" button
+        if (result == 1) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

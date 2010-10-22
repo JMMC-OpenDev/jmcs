@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.72 2010-10-11 13:58:44 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.73 2010-10-22 11:00:13 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.72  2010/10/11 13:58:44  bourgesl
+ * create Main Menu bar in EDT (sync)
+ *
  * Revision 1.71  2010/10/08 08:39:09  mella
  * Add javadoc info
  *
@@ -274,6 +277,7 @@
 package fr.jmmc.mcs.gui;
 
 
+import fr.jmmc.mcs.interop.SampManager;
 import fr.jmmc.mcs.util.ActionRegistrar;
 import fr.jmmc.mcs.util.RegisteredAction;
 import fr.jmmc.mcs.util.Urls;
@@ -1057,7 +1061,7 @@ public abstract class App
      * TODO : workaround to let App create the frame (getFrame)...
      * Concrete applications must be later refactored to initialize correctly the GUI using getFrame()
      *
-     * @return application frame
+     * @param frame application frame
      */
     public static void setFrame(final JFrame frame)
     {
@@ -1227,6 +1231,9 @@ public abstract class App
                 if (_exitApplicationWhenClosed)
                 {
                     _logger.info("Killing the application.");
+
+                    SampManager.shutdown();
+
                     System.exit(-1);
                 }
                 else

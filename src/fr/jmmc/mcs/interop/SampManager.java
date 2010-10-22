@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.16 2010-10-22 11:02:32 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.17 2010-10-22 11:08:21 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2010/10/22 11:02:32  bourgesl
+ * disable JSamp logs
+ *
  * Revision 1.15  2010/10/22 11:01:10  bourgesl
  * added shutdown : close hub connection
  *
@@ -126,8 +129,8 @@ public final class SampManager {
      */
     protected SampManager() {
 
-        // disable JSamp verbose logs (WARNING) :
-        Logger.getLogger("org.astrogrid.samp").setLevel(Level.WARNING);
+        // define JSamp log verbosity (CONFIG/INFO/WARNING) :
+        Logger.getLogger("org.astrogrid.samp").setLevel(Level.INFO);
 
         // @TODO : init JSamp env.
         final ClientProfile profile = DefaultClientProfile.getProfile();

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.6 2010-10-15 09:26:46 bourgesl Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.7 2010-10-22 11:00:32 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/10/15 09:26:46  bourgesl
+ * fixed typo in confirme overwrite message
+ *
  * Revision 1.5  2010/10/15 09:01:54  lafrasse
  * Back-ported the "File Overwriting ?" dialog box from SearchCal to showConfirmFileOverwrite().
  *
@@ -56,7 +59,7 @@ public final class MessagePane {
 
     // --- ERROR MESSAGES --------------------------------------------------------
     /**
-     * Show an error with the given message
+     * Show an error with the given message using EDT if needed
      * @param message message to display
      */
     public static void showErrorMessage(final String message) {
@@ -64,7 +67,7 @@ public final class MessagePane {
     }
 
     /**
-     * Show an error with the given message plus the exception message (if any)
+     * Show an error with the given message plus the exception message (if any) using EDT if needed
      * and log the exception
      * @param message message to display
      * @param th exception to use
@@ -74,7 +77,7 @@ public final class MessagePane {
     }
 
     /**
-     * Show an error with the given message and window title
+     * Show an error with the given message and window title using EDT if needed
      * @param message message to display
      * @param title window title to use
      */
@@ -83,7 +86,7 @@ public final class MessagePane {
     }
 
     /**
-     * Show an error with the given message plus the exception message (if any)
+     * Show an error with the given message plus the exception message (if any) using EDT if needed
      * and window title and log the exception
      * @param message message to display
      * @param title window title to use
@@ -150,8 +153,8 @@ public final class MessagePane {
      */
     public static boolean showConfirmFileOverwrite(final String fileName) {
         final String message = "\"" + fileName + "\" already exists. Do you want to replace it ?\n\n"
-        + "A file or folder with the same name already exists in the current folder.\n"
-        + "Replacing it will overwrite its current contents.";
+                + "A file or folder with the same name already exists in the current folder.\n"
+                + "Replacing it will overwrite its current contents.";
 
         // Ask the user if he wants to save modifications
         final Object[] options = {"Cancel", "Replace"};

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.17 2010-10-22 11:08:21 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.18 2010-11-03 10:05:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2010/10/22 11:08:21  bourgesl
+ * enable JSamp logs until SAMP integration is production ready
+ *
  * Revision 1.16  2010/10/22 11:02:32  bourgesl
  * disable JSamp logs
  *
@@ -145,14 +148,30 @@ public final class SampManager {
         final String applicationName = applicationDataModel.getProgramName();
         meta.setName(applicationName);
 
-        final String applicationURL = applicationDataModel.getMainWebPageURL();
-        meta.setDescriptionText("More info at " + applicationURL);
+        // @TODO : embbed in ApplicationData.xml
+        // meta.setDescriptionText("Find Interferometric Calibrators for Optical Observations");
 
-        /*
-        @TODO : Add App metadata (cf. Aladin : icon, url, author, ... )
-        String iconURL = applicationDataModel.getLogoURL();
-        meta.setIconUrl(iconURL);
-         */
+        // @TODO : embbed the real HTML doc URL in ApplicationData.xml
+        // meta.setDocumentationUrl(applicationURL);
+
+        // @TODO : embbed the icon in each application JAR file
+        // meta.setIconUrl("http://apps.jmmc.fr/~sclws/SearchCal/AppIcon.png");
+
+        // Non-standard meatadata
+        meta.put("affiliation.name", "JMMC (Jean-Marie MARIOTTI Center)");
+        meta.put("affiliation.url", applicationDataModel.getMainWebPageURL());
+        meta.put("affiliation.feedback", "http://jmmc.fr/feedback/");
+        meta.put("affiliation.suppport", "http://www.jmmc.fr/support.htm");
+        final String lowerCaseApplicationName = applicationName.toLowerCase();
+        meta.put(lowerCaseApplicationName + ".authors", "Brought to you by the JMMC Team");
+        final String applicationURL = applicationDataModel.getLinkValue();
+        meta.put(lowerCaseApplicationName + ".homepage", applicationURL);
+        meta.put(lowerCaseApplicationName + ".version", applicationDataModel.getProgramVersion());
+        meta.put(lowerCaseApplicationName + ".news", applicationDataModel.getHotNewsRSSFeedLinkValue());
+        meta.put(lowerCaseApplicationName + ".compilationdate", applicationDataModel.getCompilationDate());
+        meta.put(lowerCaseApplicationName + ".compilatiorversion", applicationDataModel.getCompilatorVersion());
+        meta.put(lowerCaseApplicationName + ".releasenotes", applicationDataModel.getReleaseNotesLinkValue());
+        meta.put(lowerCaseApplicationName + ".faq", applicationDataModel.getFaqLinkValue());
 
         _connector.declareMetadata(meta);
 

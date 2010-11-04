@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.73 2010-10-22 11:00:13 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.74 2010-11-04 16:45:30 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.73  2010/10/22 11:00:13  bourgesl
+ * fixed setFrame javadoc
+ * added SampManager shutdown in QuitAction
+ *
  * Revision 1.72  2010/10/11 13:58:44  bourgesl
  * create Main Menu bar in EDT (sync)
  *
@@ -1040,17 +1044,32 @@ public abstract class App
     }
 
 
-    /** Tell if the application is one production or beta version.
-     * This flag is given searching one 'b' in the program version given by the
-     * applicationData.xml file.
+    /**
+     * Tell if the application is a beta version or not.
+     * This flag is given searching one 'b' in the program version number.
      *
-     * @return true for one development version, false in production.
+     * @return true if it is a beta, false otherwise.
      */
     public static boolean isBetaVersion()
     {
         if (_applicationDataModel!=null)
         {
             return _applicationDataModel.getProgramVersion().contains("b");
+        }
+        return false;
+    }
+
+    /**
+     * Tell if the application is an alpha version or not.
+     * This flag is given searching one 'a' in the program version number.
+     *
+     * @return true if it is a alpha, false otherwise.
+     */
+    public static boolean isAlphaVersion()
+    {
+        if (_applicationDataModel!=null)
+        {
+            return _applicationDataModel.getProgramVersion().contains("a");
         }
         return false;
     }

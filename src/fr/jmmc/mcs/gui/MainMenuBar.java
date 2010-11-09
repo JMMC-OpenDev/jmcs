@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.43 2010-10-06 09:18:07 mella Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.44 2010-11-09 12:43:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.43  2010/10/06 09:18:07  mella
+ * Build interop menu with jsamp entry menu comming from SampManager
+ *
  * Revision 1.42  2010/10/05 14:52:31  bourgesl
  * removed SampException in several method signatures
  *
@@ -307,8 +310,8 @@ public class MainMenuBar extends JMenuBar
             }
         }
 
-        // Create Interop menu only for beta version (LAURENT) :
-        if (App.isBetaVersion())
+        // Create Interop menu only for non production version (LAURENT) :
+        if (App.isBetaVersion()||App.isAlphaVersion())
         {
           createInteropMenu();
         }

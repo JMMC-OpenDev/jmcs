@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.18 2010-11-03 10:05:45 lafrasse Exp $"
+ * "@(#) $Id: SampManager.java,v 1.19 2010-11-14 13:50:39 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2010/11/03 10:05:45  lafrasse
+ * Added loads of meta-data exports.
+ *
  * Revision 1.17  2010/10/22 11:08:21  bourgesl
  * enable JSamp logs until SAMP integration is production ready
  *
@@ -132,8 +135,8 @@ public final class SampManager {
      */
     protected SampManager() {
 
-        // define JSamp log verbosity (CONFIG/INFO/WARNING) :
-        Logger.getLogger("org.astrogrid.samp").setLevel(Level.INFO);
+        // define JSamp log verbosity to warning level (avoid debug messages) :
+        Logger.getLogger("org.astrogrid.samp").setLevel(Level.WARNING);
 
         // @TODO : init JSamp env.
         final ClientProfile profile = DefaultClientProfile.getProfile();

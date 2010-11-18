@@ -63,6 +63,14 @@
     <xjc destdir="${sources}"
          schema="${sources}/fr/jmmc/mcs/model/targetModel.xsd" />
 
+
+    <echo>generating java code for ApplicationDataModel.xsd</echo>
+
+    <mkdir dir="${sources}/fr/jmmc/mcs/gui/appmodel" />
+
+    <xjc destdir="${sources}"
+         schema="${sources}/fr/jmmc/mcs/gui/ApplicationDataModel.xsd" />
+
   </target>
 
 

@@ -219,66 +219,68 @@ public class Model
     }
     
 //--simple--preserve
-
-  /**
-   * Define the name and type to the same value
-   * @param value value to set
-   */
-  public void setNameAndType(final String value) {
-    this.name = value;
-    this.type = value;
-  }
-
-  @Override
-  public final String toString() {
-    return this.name + " [" + this.type + "]";
-  }
-
-  /**
-   * Return the parameter of the given type
-   * @param type type of the parameter
-   * @return parameter or null if the parameter type is not present in this model
-   */
-  public final Parameter getParameter(final String type) {
-    for (Parameter p : getParameters()) {
-      if (type.equals(p.getType())) {
-        return p;
-      }
+    /**
+     * Define the name and type to the same value
+     * @param value value to set
+     */
+    public void setNameAndType(final String value) {
+        this.name = value;
+        this.type = value;
     }
-    return null;
-  }
 
-  /**
-   * Return a deep "copy" of this instance
-   * @return deep "copy" of this instance
-   */
-  @Override
-  public final Object clone() {
-    final Model copy = (Model) super.clone();
-
-    // Deep copy of models :
-    final List<Model> newModels = new ArrayList<Model>();
-    for (Model model : getModels()) {
-      newModels.add((Model) model.clone());
+    @Override
+    public final String toString() {
+        return this.name + " [" + this.type + "]";
     }
-    copy.models = newModels;
 
-    // Deep copy of parameters :
-    final List<Parameter> newParameters = new ArrayList<Parameter>();
-    for (Parameter parameter : getParameters()) {
-      newParameters.add((Parameter) parameter.clone());
+    /**
+     * Return the parameter of the given type
+     * @param type type of the parameter
+     * @return parameter or null if the parameter type is not present in this model
+     */
+    public final Parameter getParameter(final String type) {
+        for (Parameter p : getParameters()) {
+            if (type.equals(p.getType())) {
+                return p;
+            }
+        }
+        return null;
     }
-    copy.parameters = newParameters;
 
-    // Deep copy of parameters :
-    final List<ParameterLink> newParameterLinks = new ArrayList<ParameterLink>();
-    for (ParameterLink parameterLink : getParameterLinks()) {
-      newParameterLinks.add((ParameterLink) parameterLink.clone());
+    /**
+     * Return a deep "copy" of this instance
+     * @return deep "copy" of this instance
+     */
+    @Override
+    public final Object clone() {
+        final Model copy = (Model) super.clone();
+
+        // Deep copy of models :
+        final List<Model> oldModels = copy.getModels();
+        final List<Model> newModels = new ArrayList<Model>(oldModels.size());
+        for (Model model : oldModels) {
+            newModels.add((Model) model.clone());
+        }
+        copy.models = newModels;
+
+        // Deep copy of parameters :
+        final List<Parameter> oldParameters = copy.getParameters();
+        final List<Parameter> newParameters = new ArrayList<Parameter>(oldParameters.size());
+        for (Parameter parameter : oldParameters) {
+            newParameters.add((Parameter) parameter.clone());
+        }
+        copy.parameters = newParameters;
+
+        // Deep copy of parameter links :
+        final List<ParameterLink> oldParameterLinks = copy.getParameterLinks();
+        final List<ParameterLink> newParameterLinks = new ArrayList<ParameterLink>(oldParameterLinks.size());
+        for (ParameterLink parameterLink : oldParameterLinks) {
+            newParameterLinks.add((ParameterLink) parameterLink.clone());
+        }
+        copy.parameterLinks = newParameterLinks;
+
+        return copy;
     }
-    copy.parameterLinks = newParameterLinks;
-
-    return copy;
-  }
 //--simple--preserve
 
 }

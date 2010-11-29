@@ -256,28 +256,34 @@ public class Model
         final Model copy = (Model) super.clone();
 
         // Deep copy of models :
-        final List<Model> oldModels = copy.getModels();
-        final List<Model> newModels = new ArrayList<Model>(oldModels.size());
-        for (Model model : oldModels) {
-            newModels.add((Model) model.clone());
+        if (copy.models != null) {
+          final List<Model> oldModels = copy.models;
+          final List<Model> newModels = new ArrayList<Model>(oldModels.size());
+          for (Model model : oldModels) {
+              newModels.add((Model) model.clone());
+          }
+          copy.models = newModels;
         }
-        copy.models = newModels;
 
         // Deep copy of parameters :
-        final List<Parameter> oldParameters = copy.getParameters();
-        final List<Parameter> newParameters = new ArrayList<Parameter>(oldParameters.size());
-        for (Parameter parameter : oldParameters) {
-            newParameters.add((Parameter) parameter.clone());
+        if (copy.parameters != null) {
+          final List<Parameter> oldParameters = copy.parameters;
+          final List<Parameter> newParameters = new ArrayList<Parameter>(oldParameters.size());
+          for (Parameter parameter : oldParameters) {
+              newParameters.add((Parameter) parameter.clone());
+          }
+          copy.parameters = newParameters;
         }
-        copy.parameters = newParameters;
 
         // Deep copy of parameter links :
-        final List<ParameterLink> oldParameterLinks = copy.getParameterLinks();
-        final List<ParameterLink> newParameterLinks = new ArrayList<ParameterLink>(oldParameterLinks.size());
-        for (ParameterLink parameterLink : oldParameterLinks) {
-            newParameterLinks.add((ParameterLink) parameterLink.clone());
+        if (copy.parameterLinks != null) {
+          final List<ParameterLink> oldParameterLinks = copy.parameterLinks;
+          final List<ParameterLink> newParameterLinks = new ArrayList<ParameterLink>(oldParameterLinks.size());
+          for (ParameterLink parameterLink : oldParameterLinks) {
+              newParameterLinks.add((ParameterLink) parameterLink.clone());
+          }
+          copy.parameterLinks = newParameterLinks;
         }
-        copy.parameterLinks = newParameterLinks;
 
         return copy;
     }

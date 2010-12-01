@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: AbstractModelFunction.java,v 1.6 2010-05-17 15:54:50 bourgesl Exp $"
+ * "@(#) $Id: AbstractModelFunction.java,v 1.7 2010-12-01 10:13:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/05/17 15:54:50  bourgesl
+ * added model variant to support elongated / flattened models
+ * added validate(model) method to check parameter min/max bounds
+ * compute() is implemented to validate and delegate the weight computation to a function
+ * implement createFunction() to map the model to a computation function
+ *
  * Revision 1.5  2010/05/11 16:09:30  bourgesl
  * removed unused constants
  *
@@ -47,8 +53,11 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
   /** variant enumeration (standard, elongated and flattened models) */
   public enum ModelVariant {
 
+    /** default/standard model variant */
     Standard,
+    /** elongated model variant */
     Elongated,
+    /** flattened model variant */
     Flattened;
   }
 
@@ -105,6 +114,11 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
     return model;
   }
 
+  /**
+   * Add a parameter supporting only positive values
+   * @param model model to update
+   * @param name name of the parameter
+   */
   protected void addPositiveParameter(final Model model, final String name) {
     final Parameter param = new Parameter();
     param.setNameAndType(name);
@@ -114,6 +128,11 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
     model.getParameters().add(param);
   }
 
+  /**
+   * Add a parameter representing a ratio (value >= 1)
+   * @param model model to update
+   * @param name name of the parameter
+   */
   protected void addRatioParameter(final Model model, final String name) {
     final Parameter param = new Parameter();
     param.setNameAndType(name);
@@ -122,6 +141,11 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
     model.getParameters().add(param);
   }
 
+  /**
+   * Add a parameter supporting only angle values (0 - 180 degrees)
+   * @param model model to update
+   * @param name name of the parameter
+   */
   protected void addAngleParameter(final Model model, final String name) {
     final Parameter param = new Parameter();
     param.setNameAndType(name);

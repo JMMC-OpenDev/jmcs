@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.9 2010-05-12 08:47:10 mella Exp $"
+ * "@(#) $Id: ModelParameterTableModel.java,v 1.10 2010-12-01 10:13:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/05/12 08:47:10  mella
+ * setter of editMode is now public
+ *
  * Revision 1.8  2010/05/11 12:55:55  bourgesl
  * javadoc only
  *
@@ -55,40 +58,56 @@ public final class ModelParameterTableModel extends AbstractTableModel {
   /** Class Name */
   private static final String className_ = "fr.jmmc.mcs.model.gui.ModelParameterTableModel";
   /** Class logger */
-  private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
+  private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
           className_);
 
   /** Table mode enumeration (LITpro or ASPRO) */
   public enum Mode {
 
-    LITPRO, ASPRO;
+    /** LITPRO data model */
+    LITPRO,
+    /** ASPRO data model (less fields) */
+    ASPRO;
   }
 
   /** Table edit mode enumeration (X_Y or RHO_THETA) */
   public enum EditMode {
 
-    X_Y, RHO_THETA;
+    /** coordinates in carthesian (x/y) format */
+    X_Y,
+    /** coordinates in polar (rho/theta) format */
+    RHO_THETA;
   }
 
   /** Column definition enum */
   public enum ColumnDef {
 
+    /** model name */
     MODEL("Model", String.class, false),
+    /** parameter name */
     NAME("Name", String.class, false),
+    /** parameter type */
     TYPE("Type", String.class, false),
+    /** shared parameter flag */
     SHARED("Shared", Boolean.class, false),
+    /** parameter units */
     UNITS("Units", String.class, false),
+    /** parameter value */
     VALUE("Value", Double.class, true),
+    /** parameter minimum value */
     MIN_VALUE("MinValue", Double.class, true),
+    /** parameter maximum value */
     MAX_VALUE("MaxValue", Double.class, true),
+    /** parameter scale value */
     SCALE("Scale", Double.class, true),
+    /** fixed parameter value flag */
     FIXED_VALUE("HasFixedValue", Boolean.class, true);
 
     /**
      * Custom constructor
      * @param name name of the column
-     * @param type class of any column value
-     * @param editable flag to indicate if the column values are editable
+     * @param type class type of the column value
+     * @param editable flag to indicate if column values are editable
      */
     private ColumnDef(final String name, final Class<?> type, final boolean editable) {
       this.name = name;
@@ -102,18 +121,34 @@ public final class ModelParameterTableModel extends AbstractTableModel {
     /** editable flag */
     private final boolean editable;
 
+    /**
+     * Return the name of the column
+     * @return name of the column
+     */
     public String getName() {
       return name;
     }
 
+    /**
+     * Return the class type of the column value
+     * @return class type of the column value
+     */
     public Class<?> getType() {
       return type;
     }
 
+    /**
+     * Return the flag to indicate if column values are editable
+     * @return flag to indicate if column values are editable
+     */
     public boolean isEditable() {
       return editable;
     }
 
+    /**
+     * Return the name of the column
+     * @return name of the column
+     */
     @Override
     public String toString() {
       return name;

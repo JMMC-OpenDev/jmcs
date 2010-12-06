@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: CloneableObject.java,v 1.3 2010-12-03 16:28:09 bourgesl Exp $"
+ * "@(#) $Id: CloneableObject.java,v 1.4 2010-12-06 17:03:44 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/12/03 16:28:09  bourgesl
+ * Serializable support
+ *
  * Revision 1.2  2010/11/30 13:00:30  bourgesl
  * simpler clone method using generic deepCopyList method
  *
@@ -16,7 +19,6 @@
  */
 package fr.jmmc.mcs.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ import java.util.List;
  * This class supports the Cloneable interface and declare the clone() method (no deep copy)
  * @author bourgesl
  */
-public class CloneableObject implements Cloneable, Serializable {
+public class CloneableObject implements Cloneable {
 
   /**
    * Public constructor

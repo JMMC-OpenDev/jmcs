@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileFilterRepository.java,v 1.4 2010-09-30 13:28:35 bourgesl Exp $"
+ * "@(#) $Id: FileFilterRepository.java,v 1.5 2010-12-13 16:37:24 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/09/30 13:28:35  bourgesl
+ * changed warning log to fine level
+ *
  * Revision 1.3  2010/01/14 13:03:04  bourgesl
  * use Logger.isLoggable to avoid a lot of string.concat()
  *
@@ -20,7 +23,7 @@ package fr.jmmc.mcs.util;
 
 import java.io.File;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.logging.*;
 
 import javax.swing.filechooser.FileFilter;
@@ -42,7 +45,7 @@ public class FileFilterRepository
      * Hastable to associate string keys like
      * "application-x/scvot-file" to FileFilterRepository instances.
      */
-    private Hashtable<String, FileFilter> _repository = new Hashtable<String, FileFilter>();
+    private static HashMap<String, FileFilter> _repository = new HashMap<String, FileFilter>();
 
     /** Hidden constructor */
     protected FileFilterRepository()
@@ -150,7 +153,7 @@ public class FileFilterRepository
      *
      * @return the retrieved registered file filter, null otherwise.
      */
-    public FileFilter get(String mimeType)
+    public static FileFilter get(String mimeType)
     {
         _logger.entering("FileFilterRepository", "get");
 
@@ -174,6 +177,20 @@ public class FileFilterRepository
     }
 
     /**
+     * Return the previously registered file filter for the given mime type as enum.
+     *
+     * @param mimeType MimeType enum value
+     *
+     * @return the retrieved registered file filter, null otherwise.
+     */
+    public static FileFilter get(MimeType mimeType)
+    {
+        _logger.entering("FileFilterRepository", "get");
+
+        return get(mimeType.getName());
+    }
+
+    /**
      * Return the content of the object as a String for output.
      *
      * @return the content of the object as a String for output.
@@ -181,7 +198,7 @@ public class FileFilterRepository
     @Override
     public String toString()
     {
-        System.out.println("FileFilterRepository::toString()");
+        _logger.entering("FileFilterRepository", "toString");
 
         if (_repository == null)
         {
@@ -214,7 +231,7 @@ class GenericFileFilter extends FileFilter
             "fr.jmmc.mcs.util.GenericFileFilter");
 
     /** Hold each file extensions */
-    private Hashtable<String, String> _fileExtensions = new Hashtable<String, String>();
+    private HashMap<String, String> _fileExtensions = new HashMap<String, String>();
 
     /** Filter description */
     private String _description;

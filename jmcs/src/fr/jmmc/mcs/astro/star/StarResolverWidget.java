@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.13 2010-10-14 13:11:09 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.14 2010-12-16 16:40:45 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2010/10/14 13:11:09  bourgesl
+ * javadoc / comments
+ *
  * Revision 1.12  2010/10/14 12:21:29  bourgesl
  * disable the search field while processing a simbad request
  * enable it again once the notification (error or complete) is received
@@ -100,7 +103,7 @@ public class StarResolverWidget extends SearchField implements Observer {
         addActionListener(new ActionListener() {
 
             public void actionPerformed(final ActionEvent e) {
-                final String starName = e.getActionCommand();
+                final String starName = e.getActionCommand().trim();
 
                 if (starName.length() > 0) {
                     if (_logger.isLoggable(Level.INFO)) {

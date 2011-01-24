@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapabilityAction.java,v 1.10 2011-01-24 12:47:53 lafrasse Exp $"
+ * "@(#) $Id: SampCapabilityAction.java,v 1.11 2011-01-24 16:17:17 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2011/01/24 12:47:53  lafrasse
+ * Replaced an output trace with log.
+ *
  * Revision 1.9  2011/01/24 08:53:59  lafrasse
  * Added ability to preempt (dis)enabling, and change Menu label.
  *
@@ -78,7 +81,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     /** Capable clients for the registered capability */
     private final SubscribedClientListModel _capableClients;
     /** Store whether the action should be enabled once SAMP clients are registered for the given capability */
-    private boolean _couldBeEnabled = false;
+    private boolean _couldBeEnabled = true;
 
     /**
      * Constructor.
@@ -126,8 +129,12 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * @param flag allow enabling if true, disabling otherwise.
      */
     public void couldBeEnabled(boolean flag) {
-        _logger.entering("SampCapabilityAction","couldBeEnabled(" + flag + ")");
-        _couldBeEnabled = flag;
+        _logger.entering("SampCapabilityAction", "couldBeEnabled(" + flag + ")");
+        // Update menus only if needed
+        if (flag != _couldBeEnabled) {
+            _couldBeEnabled = flag;
+            updateMenuAndActionAfterSubscribedClientChange();
+        }
     }
 
     /**
@@ -135,6 +142,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * @param text
      */
     public void setText(String text) {
+        _logger.entering("SampCapabilityAction", "setText('" + text + "')");
         putValue(Action.NAME, text);
         updateMenuAndActionAfterSubscribedClientChange();
     }
@@ -146,7 +154,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
         // TODO : remove when code is clean !
         if (!SwingUtilities.isEventDispatchThread()) {
-          _logger.log(Level.SEVERE, "invalid thread : use EDT", new Throwable());
+            _logger.log(Level.SEVERE, "invalid thread : use EDT", new Throwable());
         }
 
         // Disabled until a client for the given capabily registers to the hub
@@ -168,7 +176,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         menu.removeAll();
 
         // If no client is able to handle specified capability
-        final int nbOfClients = _capableClients.getSize();        
+        final int nbOfClients = _capableClients.getSize();
         if (nbOfClients <= 0) {
             if (_logger.isLoggable(Level.FINE)) {
                 _logger.fine("No SAMP client available for capability '" + _mType + "'.");
@@ -205,7 +213,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Added '" + clientName + "' (" + clientId + ") menu entry for capability '" + _mType + "'.");
             }
-        }      
+        }
     }
 
     /** 

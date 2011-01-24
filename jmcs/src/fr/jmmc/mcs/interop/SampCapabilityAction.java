@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapabilityAction.java,v 1.9 2011-01-24 08:53:59 lafrasse Exp $"
+ * "@(#) $Id: SampCapabilityAction.java,v 1.10 2011-01-24 12:47:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2011/01/24 08:53:59  lafrasse
+ * Added ability to preempt (dis)enabling, and change Menu label.
+ *
  * Revision 1.8  2010/10/06 16:04:27  bourgesl
  * add severe log if the updateMenu method is called by a thread different than EDT
  *
@@ -123,7 +126,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * @param flag allow enabling if true, disabling otherwise.
      */
     public void couldBeEnabled(boolean flag) {
-        System.out.println("couldBeEnabled(" + flag + ")");
+        _logger.entering("SampCapabilityAction","couldBeEnabled(" + flag + ")");
         _couldBeEnabled = flag;
     }
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapabilityAction.java,v 1.8 2010-10-06 16:04:27 bourgesl Exp $"
+ * "@(#) $Id: SampCapabilityAction.java,v 1.9 2011-01-24 08:53:59 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/10/06 16:04:27  bourgesl
+ * add severe log if the updateMenu method is called by a thread different than EDT
+ *
  * Revision 1.7  2010/10/06 09:42:24  bourgesl
  * javadoc / comments
  *
@@ -39,6 +42,7 @@ import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
@@ -61,7 +65,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** label for broadcast to all */
-    private final static String BROADCAST_MENU_LABEL = "All";
+    private final static String BROADCAST_MENU_LABEL = "All Applications";
 
     /* members */
     /** SAMP capability to send */
@@ -70,6 +74,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     private final String _mType;
     /** Capable clients for the registered capability */
     private final SubscribedClientListModel _capableClients;
+    /** Store whether the action should be enabled once SAMP clients are registered for the given capability */
+    private boolean _couldBeEnabled = false;
 
     /**
      * Constructor.
@@ -112,6 +118,25 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     }
 
     /**
+     * (dis)Allow the menu entry to be enabled once SAMP clients are registered.
+     *
+     * @param flag allow enabling if true, disabling otherwise.
+     */
+    public void couldBeEnabled(boolean flag) {
+        System.out.println("couldBeEnabled(" + flag + ")");
+        _couldBeEnabled = flag;
+    }
+
+    /**
+     * Set action text.
+     * @param text
+     */
+    public void setText(String text) {
+        putValue(Action.NAME, text);
+        updateMenuAndActionAfterSubscribedClientChange();
+    }
+
+    /**
      * Updates linked JMenu entry to offer all capable clients, plus broadcast.
      */
     private void updateMenuAndActionAfterSubscribedClientChange() {
@@ -145,17 +170,17 @@ public abstract class SampCapabilityAction extends RegisteredAction {
             if (_logger.isLoggable(Level.FINE)) {
                 _logger.fine("No SAMP client available for capability '" + _mType + "'.");
             }
+            // Leave the menu disable with no sub-menus
             return;
         }
 
-        // Otherwise, enable action (and menu...)
-        setEnabled(true);
+        // Otherwise, enable menu (if needed)
+        setEnabled(_couldBeEnabled);
 
         // Add generic "All" entry to broadcast message to all capable clients at once
         final JMenuItem broadcastMenuItem = new JMenuItem(this);
         broadcastMenuItem.setText(BROADCAST_MENU_LABEL);
         menu.add(broadcastMenuItem);
-
         if (_logger.isLoggable(Level.FINEST)) {
             _logger.finest("Added '" + BROADCAST_MENU_LABEL + "' broadcast menu entry for capability '" + _mType + "'.");
         }
@@ -189,9 +214,9 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     /**
      * This method automatically sends the message returned by composeMessage()
      * to user selected client(s). Children classes should not overwrite this
-     * method or must call super implementation to keep samp message management.
+     * method or must call super implementation to keep SAMP message management.
      *
-     * @param e actionEvent comming from swing objects. It contains in its
+     * @param e actionEvent coming from SWING objects. It contains in its
      * command the name of the destination.
      */
     public final void actionPerformed(final ActionEvent e) {

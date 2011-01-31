@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.74 2010-11-04 16:45:30 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.75 2011-01-31 13:26:30 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.74  2010/11/04 16:45:30  lafrasse
+ * Added isAlphaVersion()
+ * .
+ *
  * Revision 1.73  2010/10/22 11:00:13  bourgesl
  * fixed setFrame javadoc
  * added SampManager shutdown in QuitAction
@@ -405,6 +409,7 @@ public abstract class App
     /** Show FAQ handling action */
     private static ShowFaqAction _showFaqAction = null;
 
+    /* members */
     /** Store a proxy to the shared ActionRegistrar facility */
     private ActionRegistrar _registrar = null;
 
@@ -979,9 +984,19 @@ public abstract class App
             public void run() {
               _registrar.getOpenAction()
                         .actionPerformed(new ActionEvent(_registrar, 0, _fileArgument));
+              // clear :
+              _fileArgument = null;
             }
           });
         }
+    }
+
+    /**
+     * Return true if there is a file name argument for the open action (during startup)
+     * @return true if there is a file name argument for the open action
+     */
+    protected final boolean hasFileArgument() {
+      return this._fileArgument != null;
     }
 
     /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedDocument.java,v 1.7 2011-01-31 15:03:36 mella Exp $"
+ * "@(#) $Id: PreferencedDocument.java,v 1.8 2011-01-31 15:05:35 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2011/01/31 15:03:36  mella
+ * Add one option to the getter so we write the preference file each time that the preference value change.
+ *
  * Revision 1.6  2010/09/30 13:28:02  bourgesl
  * comments
  *
@@ -185,8 +188,7 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
             _preferences.setPreference(_preferenceProperty, newValue);
             if(_autosave){
                 _preferences.saveToFile();
-            }
-            System.out.println("_autosave = " + _autosave);
+            }            
         }
         catch (Exception e)
         {

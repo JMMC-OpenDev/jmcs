@@ -42,4 +42,17 @@ public class CommonPreferences extends Preferences {
     protected int getPreferencesVersionNumber() {
         return 1;
     }
+
+    /**
+     *  run this program to generate the common preference file.
+     * @param args NC
+     */
+    public static void main(String[] args) {
+        try{
+            CommonPreferences.getInstance().saveToFile();
+        }catch(PreferencesException exc){
+            exc.printStackTrace();
+        }
+    }
+
 }

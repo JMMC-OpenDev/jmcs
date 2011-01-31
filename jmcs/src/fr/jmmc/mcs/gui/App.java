@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.75 2011-01-31 13:26:30 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.76 2011-01-31 15:06:46 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.75  2011/01/31 13:26:30  bourgesl
+ * added hasFileArgument() to let child class know if there is a file to open
+ *
  * Revision 1.74  2010/11/04 16:45:30  lafrasse
  * Added isAlphaVersion()
  * .
@@ -287,6 +290,7 @@ package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.interop.SampManager;
 import fr.jmmc.mcs.util.ActionRegistrar;
+import fr.jmmc.mcs.util.CommonPreferences;
 import fr.jmmc.mcs.util.RegisteredAction;
 import fr.jmmc.mcs.util.Urls;
 import gnu.getopt.Getopt;
@@ -438,31 +442,15 @@ public abstract class App
         this(args, waitBeforeExecution, true);
     }
 
-    /** Constructor whith possibility to specify if the splashscreen should be shown
-     *
-     * @param args command-line arguments
-     * @param waitBeforeExecution if true, do not launch run() automatically
-     * @param showSplashScreen if false, do not display splashscreen
-     */
-    protected App(String[] args, boolean waitBeforeExecution,
-        boolean showSplashScreen)
-    {
-        /* Start application and define that the it will
-           not stop itself when exit method will be called */
-        this(args, waitBeforeExecution, showSplashScreen, true);
-    }
-
     /**
      * Constructor whith possibility to specify if the application should be
      * stopped when the exit method is called
      *
      * @param args command-line arguments
-     * @param waitBeforeExecution if true, do not launch run() automatically
-     * @param showSplashScreen if false, do not display splashscreen
+     * @param waitBeforeExecution if true, do not launch run() automatically     
      * @param exitWhenClosed if true, the application will close when exit method is called
      */
-    protected App(String[] args, boolean waitBeforeExecution,
-        boolean showSplashScreen, boolean exitWhenClosed)
+    protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed)
     {
         try
         {
@@ -474,8 +462,10 @@ public abstract class App
 
             // Attributes affectations
             _args                          = args;
-            _showSplashScreen              = showSplashScreen;
             _exitApplicationWhenClosed     = exitWhenClosed;
+
+            // check in common preferences if the splashscreen must be show at startup
+            _showSplashScreen = CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SPLASH_SCREEN_SHOW);
 
             _logger.fine("App object instantiated and logger created.");
 

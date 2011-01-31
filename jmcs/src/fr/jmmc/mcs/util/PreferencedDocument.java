@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: PreferencedDocument.java,v 1.6 2010-09-30 13:28:02 bourgesl Exp $"
+ * "@(#) $Id: PreferencedDocument.java,v 1.7 2011-01-31 15:03:36 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/09/30 13:28:02  bourgesl
+ * comments
+ *
  * Revision 1.5  2010/09/23 19:38:16  bourgesl
  * comments when calling FeedBackReport
  *
@@ -57,6 +60,13 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
     /** Shared instance */
     private Preferences _preferences;
 
+    /** 
+     * Tells if preference must be saved automatically or not (default)
+     * Caution: the whole preference list associated in the preference 
+     * will also be saved ...
+     */
+     private boolean _autosave=false;
+     
     /**
      * PreferencedButtonModel constructor
      *
@@ -64,7 +74,7 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
      * preferenceProperty a string containing the reference to the boolean property to handle
      */
     protected PreferencedDocument(Preferences preferences,
-        String preferenceProperty)
+        String preferenceProperty, boolean autosave)
     {
         // Store the Preference shared instance of the main application
         _preferences            = preferences;
@@ -79,8 +89,12 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
 
         // Register the object as the observer of any property value change
         _preferences.addObserver(this);
-    }
 
+        // store beavior flag
+        _autosave=autosave;
+
+    }
+    
     /**
      * Return one shared instance associated to the preference property name.
      *
@@ -90,7 +104,7 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
      * @return the PreferencedDocument singleton
      */
     public static PreferencedDocument getInstance(Preferences preferences,
-        String preferenceProperty)
+        String preferenceProperty, boolean autosave)
     {
         PreferencedDocument d;
 
@@ -100,13 +114,19 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
         }
         else
         {
-            d = new PreferencedDocument(preferences, preferenceProperty);
+            d = new PreferencedDocument(preferences, preferenceProperty, autosave);
             _instancesHashtable.put(preferenceProperty, d);
         }
 
         return d;
     }
 
+    public static PreferencedDocument getInstance(Preferences preferences,
+        String preferenceProperty)
+    {
+        return getInstance(preferences,preferenceProperty,false);
+    }
+    
     /**
      * Get the widget content.
      *
@@ -163,6 +183,10 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
         try
         {
             _preferences.setPreference(_preferenceProperty, newValue);
+            if(_autosave){
+                _preferences.saveToFile();
+            }
+            System.out.println("_autosave = " + _autosave);
         }
         catch (Exception e)
         {

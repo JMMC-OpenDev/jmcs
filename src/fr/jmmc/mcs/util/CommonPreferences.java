@@ -4,12 +4,13 @@ package fr.jmmc.mcs.util;
  * Handle common properties.
  */
 public class CommonPreferences extends Preferences{
-    public static String FEEDBACK_EMAIL = "feedback.email";
+    public static final String FEEDBACK_EMAIL = "feedback.email";
+    public static final String SPLASH_SCREEN_SHOW = "splash.screen.show";
 
     @Override
     protected void setDefaultPreferences() throws PreferencesException {
         // Do not display the splash screen during app launch.
-        setDefaultPreference("splash.screen.show", false);
+        setDefaultPreference(SPLASH_SCREEN_SHOW, false);
     }
 
     @Override

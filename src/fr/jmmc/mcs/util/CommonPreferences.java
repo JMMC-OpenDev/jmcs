@@ -5,7 +5,7 @@ package fr.jmmc.mcs.util;
  */
 public class CommonPreferences extends Preferences {
     /** Store the filename of the common preference file */
-    public static final String PREFERENCES_FILENAME = "fr.jmmc.mcs.properties";
+    public static final String PREFERENCES_FILENAME = "fr.jmmc.jmcs.properties";
 
     /**  Name of the preference which stores the user email in the feedback report */
     public static final String FEEDBACK_EMAIL = "feedback.email";

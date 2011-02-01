@@ -1,108 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.28 2010-09-30 13:35:24 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.29 2011-02-01 16:10:50 mella Exp $"
  *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.27  2010/09/26 12:40:18  bourgesl
- * determine exit flag when used because the application frame can be displayed by EDT.invokeLater()
- *
- * Revision 1.26  2010/09/25 13:38:35  bourgesl
- * removed deprecated / unused constructors
- * exit flag is automatically set (application is not ready or not visible)
- *
- * Revision 1.25  2010/09/24 15:45:14  bourgesl
- * use use MessagePane
- *
- * Revision 1.24  2010/09/23 19:43:56  bourgesl
- * better EDT handling (refresh) but the mail report thread must be corrected later
- * automatic Frame (Dialog) association with the application main Frame / new constructor without frame argument
- * Free resources (thread ...) when the window is closed
- *
- * Revision 1.23  2010/09/17 14:18:58  mella
- * Do also set mail widget not static so that it is always shown.
- *
- * Revision 1.22  2010/09/17 14:04:37  mella
- * Do not share static widget between multiple feedback reports so that user as to acknowledge each report
- *
- * Revision 1.21  2009/03/31 07:19:15  mella
- * Fix layout
- *
- * Revision 1.20  2009/03/31 07:11:32  mella
- * Change Email label
- *
- * Revision 1.19  2009/01/19 11:06:28  lafrasse
- * Jalopization.
- *
- * Revision 1.18  2009/01/14 14:26:52  mella
- * Add enw constructor and set new level to log when exception is given
- *
- * Revision 1.17  2008/11/28 12:55:30  mella
- * Enable submit button only if text is description is not null
- *
- * Revision 1.16  2008/11/18 09:13:54  lafrasse
- * Jalopization.
- *
- * Revision 1.15  2008/11/06 13:44:44  mella
- * Add exception to log trace
- *
- * Revision 1.14  2008/10/07 13:42:43  mella
- * Use tip to return stacktrace
- *
- * Revision 1.13  2008/06/25 12:05:21  bcolucci
- * Add a surcharge of the constructor with a boolean
- * in order to specify that the application have to
- * be closed after that the report has been sent.
- *
- * Revision 1.12  2008/06/20 08:41:45  bcolucci
- * Remove unused imports and add class comments.
- *
- * Revision 1.11  2008/06/19 13:10:50  bcolucci
- * Fix the height of the exception textarea.
- *
- * Revision 1.10  2008/06/17 13:03:17  bcolucci
- * Create a function which returns an exception trace as a string.
- *
- * Revision 1.9  2008/06/17 12:37:40  bcolucci
- * Improve tabbed component conception.
- * Add the possibility to put an exception in the constructor.
- *
- * Revision 1.8  2008/06/17 11:13:05  bcolucci
- * Add tabbed pane in the window and the fact that the exception trace
- * is put in a textarea.
- *
- * Revision 1.7  2008/06/17 07:53:30  bcolucci
- * Extend from JDialog instead of JFrame in order to set it modal.
- * Reload progress bar after that a report has been sent.
- * Set the dialog visible after that it has been centered.
- *
- * Revision 1.6  2008/05/27 12:06:48  bcolucci
- * Moving the JOptionPane to view from model.
- * Stopping the report thread in background.
- * Reactivating the submit button after a report.
- *
- * Revision 1.5  2008/05/20 08:52:16  bcolucci
- * Changed communication between View and Model to Observer/Observable pattern.
- *
- * Revision 1.4  2008/05/19 14:56:21  lafrasse
- * Updated according to FeedbackReportModel() API changes.
- *
- * Revision 1.3  2008/05/16 13:01:34  bcolucci
- * Removed unecessary try/catch, and added argument checks.
- * Threaded it.
- *
- * Revision 1.2  2008/04/24 15:55:57  mella
- * Added applicationDataModel to constructor.
- *
- * Revision 1.1  2008/04/22 09:15:56  bcolucci
- * Created FeedbackReport.
- *
- ******************************************************************************/
+ */
 package fr.jmmc.mcs.gui;
 
-import java.awt.BorderLayout;
+import fr.jmmc.mcs.util.CommonPreferences;
+import fr.jmmc.mcs.util.PreferencedDocument;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -117,22 +23,8 @@ import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-
 
 /**
  * This class opens a new feedback report window. It uses the model
@@ -143,117 +35,18 @@ import javax.swing.SwingUtilities;
  * TODO : september 2010 : handle properly thread associated to FeedBackReportModel (start/stop/notify) ...
  *
  */
-public final class FeedbackReport extends JDialog implements Observer, KeyListener
-{
+public class FeedbackReport extends javax.swing.JDialog implements Observer, KeyListener {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
-
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
-
-    /** User mail */
-    private JTextField _mail = new JTextField();
-
-    /** Load bar */
-    private  JProgressBar _loadBar = new JProgressBar();
-
-    /** Kind of error/bug */
-    private JComboBox _typeComboBox = new JComboBox();
-
-    /** User bug description */
-    private JTextArea _description = new JTextArea();
-
-    /** Cancel button */
-    private JButton _cancelButton = new JButton();
-
-    /** Submit button */
-    private JButton _submitButton = new JButton();
-
     /** Model of the feedback report box */
     private FeedbackReportModel _feedbackReportModel = null;
-
-    /** Mail and description split */
-    private JSplitPane _mailAndDescriptionSplit = new JSplitPane();
-
-    /** Mail and space split */
-    private JSplitPane _mailAndSpaceSplit = new JSplitPane();
-
-    /** Mail and type split */
-    private JSplitPane _mailAndTypeSplit = new JSplitPane();
-
-    /** Mail label */
-    private JLabel _mailLabel = new JLabel();
-
-    /** Mail split */
-    private JSplitPane _mailSplit = new JSplitPane();
-
-    /** Space and mail split */
-    private JSplitPane _spaceAndMailSplit = new JSplitPane();
-
-    /** Type label */
-    private JLabel _typeLabel = new JLabel();
-
-    /** Type panel */
-    private JPanel _typePanel = new JPanel();
-
-    /** Type split */
-    private JSplitPane _typeSplit = new JSplitPane();
-
-    /** Description and buttons split */
-    private JSplitPane _descriptionAndButtonsSplit = new JSplitPane();
-
-    /** Description label */
-    private JLabel _descriptionLabel = new JLabel();
-
-    /** Description pane */
-    private JScrollPane _descriptionPane = new JScrollPane();
-
-    /** Description split */
-    private JSplitPane _descriptionSplit = new JSplitPane();
-
-    /** Cancel and Submit buttons panel */
-    private JPanel _buttonsPanel = new JPanel();
-
     /** Feedback report thread */
     private Thread _feedbackReportThread = null;
-
-    /** Tabbed pane */
-    private JTabbedPane _tabbedPane = null;
-
     /** Any Throwable (Exception, RuntimeException and Error) */
     private Throwable _exception = null;
-    
-    /** 
-     * Creates a new FeedbackReport object (not modal).
-     * Do not exit on close.
-     */
-    public FeedbackReport()
-    {
-        this(null, false, null);
-    }
-
-    /**
-     * Creates a new FeedbackReport object (not modal).
-     * Do not exit on close.
-     * @param exception exception
-     */
-    public FeedbackReport(final Throwable exception)
-    {
-        this(null, false, exception);
-    }
-
-    /**
-     * Creates a new FeedbackReport object.
-     * Do not exit on close.
-     *
-     * @param modal if true, this dialog is modal
-     * @param exception exception
-     */
-    public FeedbackReport(final boolean modal, final Throwable exception)
-    {
-        this(null, modal, exception);
-    }
 
     /**
      * Creates a new FeedbackReport object
@@ -265,24 +58,74 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
      *
      * @deprecated use new FeedbackReport(final boolean modal, final Throwable exception)
      */
-    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception)
-    {
+    /** Creates new form FeedbackReport */
+    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception) {
+
         super(MessagePane.getOwner(frame), modal);
 
+        _exception = exception;
+
+        initComponents();
+        postInit();
         // Force to dispose when the dialog closes :
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        _exception               = exception;
+        _logger.fine("All feedback report properties have been set");
+    }
 
+    /**
+     * Creates a new FeedbackReport object (not modal).
+     * Do not exit on close.
+     */
+    public FeedbackReport() {
+        this(null, false, null);
+    }
+
+    /**
+     * Creates a new FeedbackReport object (not modal).
+     * Do not exit on close.
+     * @param exception exception
+     */
+    public FeedbackReport(final Throwable exception) {
+        this(null, false, exception);
+    }
+
+    /**
+     * Creates a new FeedbackReport object.
+     * Do not exit on close.
+     *
+     * @param modal if true, this dialog is modal
+     * @param exception exception
+     */
+    public FeedbackReport(final boolean modal, final Throwable exception) {
+        this(null, modal, exception);
+    }
+
+    private void postInit() {
+        //setResizable(false);
+        this.setMinimumSize(new Dimension(600,600));        
+        this.setPreferredSize(new Dimension(600,600));
+
+        WindowCenterer.centerOnMainScreen(this);
+
+        cancelButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent evt) {
+                // Just use dispose() as it is overriden to :
+                // - stop the thread in background
+                // - exit if needed
+                dispose();
+            }
+        });
+        
         // Create the model and add the observer
         // GM has hacked api to temporary shortcut process and force presence of exception if any
-        _feedbackReportModel     = new FeedbackReportModel(this);
+        _feedbackReportModel = new FeedbackReportModel(this);
 
-        if (_exception != null)
-        {
-            _description.append("Following exception occured:\n" +
-                ((_exception.getMessage() != null) ? _exception.getMessage() : "no message") +
-                "\n\n--\n");
+        if (_exception != null) {
+            descriptionTextArea.append("Following exception occured:\n"
+                    + ((_exception.getMessage() != null) ? _exception.getMessage() : "no message")
+                    + "\n\n--\n");
 
             if (_logger.isLoggable(Level.SEVERE)) {
                 _logger.log(Level.SEVERE, "An exception was given to the feedback report", _exception);
@@ -297,229 +140,30 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
         // LAURENT : TODO CLEAN : the thread should only start when the report must be sent ...
         _feedbackReportThread.start();
 
-        // Draw the widgets
-        setSplitsProperties();
-        setMailProperties();
-        setTypeProperties();
-        setDescriptionProperties();
-        setButtonsProperties();
-        setTabbedProperties();
-        setFrameProperties();
-
         // Listen to key event to ensure
         // that send button is enable only if desc is not null
-        _description.addKeyListener(this);
+        descriptionTextArea.addKeyListener(this);
+
+        // Associate email to common preference
+        emailTextField.setDocument(PreferencedDocument.getInstance(CommonPreferences.getInstance(), CommonPreferences.FEEDBACK_EMAIL, true));
+
         // and update ui
         keyReleased(null);
 
-        _logger.fine("All feedback report properties have been set");
-    }
-    
-    /** Set tabbed pane properties */
-    private void setTabbedProperties()
-    {
-        // Get exception trace
-        String exceptionTrace = getExceptionTrace();
-
-        // Create tabbed pane
-        _tabbedPane = new JTabbedPane();
-
-        // Add send report tab
-        _tabbedPane.addTab("Send report", _mailAndTypeSplit);
-
-        // Create panel for scroll panes
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-
-        // Create scoll pane and textarea for the system properties
-        JScrollPane systemScrollPane = new JScrollPane();
-        JTextArea   systemTextArea   = new JTextArea();
-
-        systemScrollPane.setAutoscrolls(true);
-        systemScrollPane.setBorder(BorderFactory.createTitledBorder("System properties :"));
-        systemTextArea.setEditable(false);
-        systemTextArea.setLineWrap(true);
-        systemTextArea.setRows(10);
+        headerLabel.setText("<html><center><big>Welcome onto the <em>JMMC</em> feedback report!</big></center><br/>We are pleased to receive some users feedback, so do not hesitate to submit some. Moreover, we recommend to fill your contact email:<ul><li>you will be informed on the status of your request</li><li>we can ask more informations if needed</li></ul><br/> </html>");
+        typeComboBox.setModel(_feedbackReportModel.getTypeDataModel());
         systemTextArea.setText(_feedbackReportModel.getSystemConfig());
-        systemScrollPane.setViewportView(systemTextArea);
+        logTextArea.setText(_feedbackReportModel.getApplicationLog());
+        exceptionTextArea.setText(getExceptionTrace());
 
-        // Add scroll pane in panel
-        panel.add(systemScrollPane, BorderLayout.PAGE_START);
-
-        // Create scoll pane and textarea for the exception message
-        JScrollPane exceptionScrollPane = new JScrollPane();
-        JTextArea   exceptionTextArea   = new JTextArea();
-
-        exceptionScrollPane.setAutoscrolls(true);
-        exceptionScrollPane.setBorder(BorderFactory.createTitledBorder("Exception message :"));
-        exceptionTextArea.setEditable(false);
-        exceptionTextArea.setRows(10);
-        exceptionTextArea.setLineWrap(true);
-        exceptionTextArea.setText(exceptionTrace);
-        exceptionScrollPane.setViewportView(exceptionTextArea);
-
-        // Add scroll pane in panel
-        panel.add(exceptionScrollPane, BorderLayout.CENTER);
-
-        // Add panel to the tabbed pane
-        _tabbedPane.addTab("Details", panel);
-    }
-
-    /** Set frame properties */
-    private void setFrameProperties()
-    {
-        // Finish window configuration and draw it
-        getContentPane().add(_tabbedPane, BorderLayout.CENTER);
-        setTitle("Feedback Report");
-        setResizable(false);
-        pack();
-        WindowCenterer.centerOnMainScreen(this);
         setVisible(true);
-        _logger.fine("Frame properties have been set");
-    }
-
-    /** Draw mail-related widgets */
-    private void setMailProperties()
-    {
-        _mailSplit.setBorder(null);
-        _mailSplit.setDividerLocation(100);
-        _mailSplit.setDividerSize(0);
-
-        _mailLabel.setText("Your Email :");
-        _mailSplit.setLeftComponent(_mailLabel);
-        _mailSplit.setRightComponent(_mail);
-        _logger.fine("Mail properties have been set");
-    }
-
-    /** Draw report type-related widgets */
-    private void setTypeProperties()
-    {
-        _typePanel.setLayout(new BorderLayout());
-
-        _typeComboBox.setModel(_feedbackReportModel.getTypeDataModel());
-        _typePanel.add(_typeComboBox, BorderLayout.LINE_START);
-
-        _typeSplit.setBorder(null);
-        _typeSplit.setDividerLocation(100);
-        _typeSplit.setDividerSize(0);
-        _typeSplit.setEnabled(false);
-
-        _typeLabel.setText("Type :");
-        _typeSplit.setLeftComponent(_typeLabel);
-
-        _typeSplit.setRightComponent(_typePanel);
-        _logger.fine("Type properties have been set");
-    }
-
-    /** Draw description-related widgets */
-    private void setDescriptionProperties()
-    {
-        _description.setColumns(40);
-        _description.setLineWrap(true);
-        _description.setRows(15);
-        _descriptionPane.setViewportView(_description);
-        _descriptionSplit.setBorder(null);
-        _descriptionSplit.setDividerSize(0);
-        _descriptionSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        _descriptionSplit.setEnabled(false);
-
-        _descriptionLabel.setText("Description :");
-        _descriptionSplit.setRightComponent(_descriptionLabel);
-
-        _descriptionSplit.setTopComponent(new JLabel(" "));
-        _logger.fine("Description properties have been set");
-    }
-
-    /** Set Cancel and Submit buttons properties and actions */
-    private void setButtonsProperties()
-    {
-        _buttonsPanel.setLayout(new BorderLayout());
-
-        _cancelButton.setText("Cancel");
-        // Actions performed when there was a click on "Cancel" button
-        _cancelButton.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    // Just use dispose() as it is overriden to :
-                    // - stop the thread in background
-                    // - exit if needed
-                    dispose();
-                }
-            });
-        _buttonsPanel.add(_cancelButton, BorderLayout.LINE_START);
-
-        _submitButton.setText("Submit");
-        // Actions performed when there was a click on "Submit" button
-        _submitButton.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent evt)
-                {
-                    activateLoadBarProperties();
-
-                    // Sends report
-                    _feedbackReportModel.setReadyToSend(true);
-
-                    _submitButton.setEnabled(false);
-                }
-            });
-        _buttonsPanel.add(_submitButton, BorderLayout.LINE_END);
-    }
-
-    /** Set split properties */
-    private void setSplitsProperties()
-    {
-        _mailAndTypeSplit.setBorder(null);
-        _mailAndTypeSplit.setDividerSize(0);
-        _mailAndTypeSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-
-        _descriptionAndButtonsSplit.setBorder(null);
-        _descriptionAndButtonsSplit.setDividerSize(0);
-        _descriptionAndButtonsSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-
-        _descriptionAndButtonsSplit.setLeftComponent(_descriptionPane);
-        _descriptionAndButtonsSplit.setRightComponent(_buttonsPanel);
-        _buttonsPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
-
-        _mailAndTypeSplit.setBottomComponent(_descriptionAndButtonsSplit);
-
-        _mailAndDescriptionSplit.setBorder(null);
-        _mailAndDescriptionSplit.setDividerSize(0);
-        _mailAndDescriptionSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-
-        _spaceAndMailSplit.setBorder(null);
-        _spaceAndMailSplit.setDividerSize(0);
-        _spaceAndMailSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-
-        _spaceAndMailSplit.setBottomComponent(_typeSplit);
-
-        _mailAndSpaceSplit.setBorder(null);
-        _mailAndSpaceSplit.setDividerSize(0);
-        _mailAndSpaceSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-
-        _mailAndSpaceSplit.setTopComponent(new JLabel(" "));
-        _mailAndSpaceSplit.setRightComponent(_mailSplit);
-
-        _spaceAndMailSplit.setLeftComponent(_mailAndSpaceSplit);
-
-        _mailAndDescriptionSplit.setTopComponent(_spaceAndMailSplit);
-        _mailAndDescriptionSplit.setRightComponent(_descriptionSplit);
-
-        _mailAndTypeSplit.setLeftComponent(_mailAndDescriptionSplit);
-        _mailAndTypeSplit.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-
-        _logger.fine("Splits properties have been set");
     }
 
     /** Set load bar properties */
-    private void activateLoadBarProperties()
-    {
-        _loadBar.setStringPainted(true);
-        _loadBar.setIndeterminate(true);
-        _loadBar.setString("Sending report...");
-
-        _buttonsPanel.add(_loadBar, BorderLayout.CENTER);
-        _buttonsPanel.revalidate();
+    private void activateLoadBarProperties() {
+        loadProgressBar.setStringPainted(true);
+        loadProgressBar.setIndeterminate(true);
+        loadProgressBar.setString("Sending report...");
     }
 
     /**
@@ -527,37 +171,33 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
      * @param observable feedbackReportModel instance
      * @param object unused argument
      */
-    public void update(final Observable observable, final Object object)
-    {
+    public void update(final Observable observable, final Object object) {
 
         // This method is called by the feedbackReportModel using EDT :
 
         activateLoadBarProperties();
 
-        _loadBar.setIndeterminate(false);
+        loadProgressBar.setIndeterminate(false);
 
         final FeedbackReportModel feedbackReportModel = (FeedbackReportModel) observable;
 
-        if (feedbackReportModel.isReportSend())
-        {
+        if (feedbackReportModel.isReportSend()) {
             _logger.info("Feedback report sent");
 
-            _loadBar.setString("Thank you for your feedback.");
+            loadProgressBar.setString("Thank you for your feedback.");
 
             // Wait before closing
             // Use invokeLater to avoid blocking EDT to repaint current changes :
             SwingUtilities.invokeLater(new Runnable() {
+
                 public void run() {
 
                     final int delay = 2000;
-                    try
-                    {
+                    try {
                         Thread.sleep(delay);
-                    }
-                    catch (InterruptedException ie)
-                    {
+                    } catch (InterruptedException ie) {
                         if (_logger.isLoggable(Level.WARNING)) {
-                          _logger.log(Level.WARNING, "Cannot wait " + delay + "ms", ie);
+                            _logger.log(Level.WARNING, "Cannot wait " + delay + "ms", ie);
                         }
                     }
 
@@ -567,15 +207,13 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
                     dispose();
                 }
             });
-        }
-        else
-        {
+        } else {
             MessagePane.showErrorMessage(
-                  "Feedback Report message has not been sent.\nPlease check your internet connection.",
-                  "Feedback Report Failed");
+                    "Feedback Report message has not been sent.\nPlease check your internet connection.",
+                    "Feedback Report Failed");
 
-            _submitButton.setEnabled(true);
-            _loadBar.setString("Error during report sending.");
+            submitButton.setEnabled(true);
+            loadProgressBar.setString("Error during report sending.");
         }
     }
 
@@ -585,21 +223,21 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
      */
     @Override
     public final void dispose() {
-      if (_logger.isLoggable(Level.FINE)) {
-        _logger.fine("dispose : " + this);
-      }
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("dispose : " + this);
+        }
 
-      _logger.fine("stopping background thread ...");
+        _logger.fine("stopping background thread ...");
 
-      // Stop the thread in background
-      // LAURENT : TODO CLEAN : ILLEGAL a thread must not be killed like this :
-      _feedbackReportThread.stop();
+        // Stop the thread in background
+        // LAURENT : TODO CLEAN : ILLEGAL a thread must not be killed like this :
+        _feedbackReportThread.stop();
 
-      // Exit or not the application
-      exit();
+        // Exit or not the application
+        exit();
 
-      // dispose Frame :
-      super.dispose();
+        // dispose Frame :
+        super.dispose();
     }
 
     /**
@@ -607,19 +245,8 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
      *
      * @return mail value
      */
-    public final String getMail()
-    {
-        return _mail.getText();
-    }
-
-    /**
-     * Return the default combo box model
-     *
-     * @return default combo box model
-     */
-    public final DefaultComboBoxModel getDefaultComboBoxModel()
-    {
-        return (DefaultComboBoxModel) _typeComboBox.getModel();
+    public final String getMail() {
+        return emailTextField.getText();
     }
 
     /**
@@ -627,9 +254,8 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
      *
      * @return description value
      */
-    public final String getDescription()
-    {
-        return _description.getText();
+    public final String getDescription() {
+        return descriptionTextArea.getText();
     }
 
     /**
@@ -637,10 +263,9 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
      * @param message to add
      * @return complete description value
      */
-    public final String addDescription(final String message)
-    {
-        _description.append(message);
-        return _description.getText();
+    public final String addDescription(final String message) {
+        descriptionTextArea.append(message);
+        return descriptionTextArea.getText();
     }
 
     /**
@@ -648,13 +273,11 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
      *
      * @return exception trace
      */
-    public final String getExceptionTrace()
-    {
+    public final String getExceptionTrace() {
         String exceptionTrace = "No stack trace";
 
         // Check if the exception is not null
-        if (_exception != null)
-        {
+        if (_exception != null) {
             final StringWriter stringWriter = new StringWriter();
             _exception.printStackTrace(new PrintWriter(stringWriter));
             exceptionTrace = stringWriter.toString();
@@ -664,8 +287,7 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
     }
 
     /** Exit the application if there was a fatal error */
-    private final void exit()
-    {
+    private final void exit() {
 
         // If the application is not ready, exit now :
         final boolean ready = App.isReady();
@@ -677,39 +299,222 @@ public final class FeedbackReport extends JDialog implements Observer, KeyListen
         final boolean exit = !ready || !App.getFrame().isVisible();
 
         // Exit or not the application
-        if (exit)
-        {
+        if (exit) {
             _logger.fine("exiting ...");
             System.exit(-1);
         }
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param e DOCUMENT ME!
-     */
-    public final void keyTyped(KeyEvent e)
-    {
+    /* Implementation of keylistener */
+    public final void keyTyped(KeyEvent e) {
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param e DOCUMENT ME!
-     */
-    public final void keyPressed(KeyEvent e)
-    {
+    public final void keyPressed(KeyEvent e) {
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param e DOCUMENT ME!
-     */
-    public final void keyReleased(KeyEvent e)
-    {
-        _submitButton.setEnabled(_description.getText().length() > 0);
+    public final void keyReleased(KeyEvent e) {
+        submitButton.setEnabled(descriptionTextArea.getText().length() > 0);
     }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        sendReportPanel = new javax.swing.JPanel();
+        emailLabel = new javax.swing.JLabel();
+        typeLabel = new javax.swing.JLabel();
+        emailTextField = new javax.swing.JTextField();
+        typeComboBox = new javax.swing.JComboBox();
+        headerLabel = new javax.swing.JLabel();
+        descriptionScrollPane = new javax.swing.JScrollPane();
+        descriptionTextArea = new javax.swing.JTextArea();
+        cancelButton = new javax.swing.JButton();
+        submitButton = new javax.swing.JButton();
+        loadProgressBar = new javax.swing.JProgressBar();
+        detailPanel = new javax.swing.JPanel();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
+        systemScrollPane = new javax.swing.JScrollPane();
+        systemTextArea = new javax.swing.JTextArea();
+        exceptionScrollPane = new javax.swing.JScrollPane();
+        exceptionTextArea = new javax.swing.JTextArea();
+        logScrollPane = new javax.swing.JScrollPane();
+        logTextArea = new javax.swing.JTextArea();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Feedback Report");
+
+        sendReportPanel.setLayout(new java.awt.GridBagLayout());
+
+        emailLabel.setText("Your Email : ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        sendReportPanel.add(emailLabel, gridBagConstraints);
+
+        typeLabel.setText("Type : ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        sendReportPanel.add(typeLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        sendReportPanel.add(emailTextField, gridBagConstraints);
+
+        typeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        sendReportPanel.add(typeComboBox, gridBagConstraints);
+
+        headerLabel.setText("<html>headerLabel<br> changed  by code</html>");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        sendReportPanel.add(headerLabel, gridBagConstraints);
+
+        descriptionScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Description :"));
+
+        descriptionTextArea.setColumns(20);
+        descriptionTextArea.setRows(5);
+        descriptionScrollPane.setViewportView(descriptionTextArea);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        sendReportPanel.add(descriptionScrollPane, gridBagConstraints);
+
+        cancelButton.setText("Cancel");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        sendReportPanel.add(cancelButton, gridBagConstraints);
+
+        submitButton.setText("Submit");
+        submitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                submitButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        sendReportPanel.add(submitButton, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        sendReportPanel.add(loadProgressBar, gridBagConstraints);
+
+        jTabbedPane1.addTab("Send report", sendReportPanel);
+
+        detailPanel.setLayout(new java.awt.GridBagLayout());
+
+        systemTextArea.setColumns(20);
+        systemTextArea.setEditable(false);
+        systemTextArea.setRows(5);
+        systemScrollPane.setViewportView(systemTextArea);
+
+        jTabbedPane2.addTab("System properties :", systemScrollPane);
+
+        exceptionTextArea.setColumns(20);
+        exceptionTextArea.setEditable(false);
+        exceptionTextArea.setRows(5);
+        exceptionScrollPane.setViewportView(exceptionTextArea);
+
+        jTabbedPane2.addTab("Exception message :", exceptionScrollPane);
+
+        logTextArea.setColumns(20);
+        logTextArea.setEditable(false);
+        logTextArea.setRows(5);
+        logScrollPane.setViewportView(logTextArea);
+
+        jTabbedPane2.addTab("Log content :", logScrollPane);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        detailPanel.add(jTabbedPane2, gridBagConstraints);
+
+        jTabbedPane1.addTab("Details", detailPanel);
+
+        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
+        activateLoadBarProperties();
+        // Sends report
+        _feedbackReportModel.setReadyToSend(true);
+        submitButton.setEnabled(false);
+    }//GEN-LAST:event_submitButtonActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+                FeedbackReport dialog = new FeedbackReport();
+                dialog.setVisible(true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
+            }
+        });
+    }
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JScrollPane descriptionScrollPane;
+    private javax.swing.JTextArea descriptionTextArea;
+    private javax.swing.JPanel detailPanel;
+    private javax.swing.JLabel emailLabel;
+    private javax.swing.JTextField emailTextField;
+    private javax.swing.JScrollPane exceptionScrollPane;
+    private javax.swing.JTextArea exceptionTextArea;
+    private javax.swing.JLabel headerLabel;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JProgressBar loadProgressBar;
+    private javax.swing.JScrollPane logScrollPane;
+    private javax.swing.JTextArea logTextArea;
+    private javax.swing.JPanel sendReportPanel;
+    private javax.swing.JButton submitButton;
+    private javax.swing.JScrollPane systemScrollPane;
+    private javax.swing.JTextArea systemTextArea;
+    private javax.swing.JComboBox typeComboBox;
+    private javax.swing.JLabel typeLabel;
+    // End of variables declaration//GEN-END:variables
 }
-/*___oOo___*/

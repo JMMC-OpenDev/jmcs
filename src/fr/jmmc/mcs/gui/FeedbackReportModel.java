@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.17 2010-09-30 13:33:18 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.18 2011-02-01 16:11:29 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2010/09/30 13:33:18  bourgesl
+ * minor cleanup
+ * use Http.getHttpClient to get proxy settings and default timeouts
+ * fixed bug : release http connection in any case
+ *
  * Revision 1.16  2010/09/24 15:45:14  bourgesl
  * use use MessagePane
  *
@@ -69,7 +74,6 @@ import fr.jmmc.mcs.util.MCSObservable;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 
-import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -91,6 +95,8 @@ public final class FeedbackReportModel extends MCSObservable implements Runnable
 
     /** URL of the PHP script that handles form parameters */
     private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
+    // developpers can use the fake script that do not store incomming reports
+    //private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedbackFake.php";
 
     /** Feedback report type definition array */
     private static final String[] _feedbackTypes = new String[]
@@ -134,7 +140,6 @@ public final class FeedbackReportModel extends MCSObservable implements Runnable
 
     /** Component that store user's input*/
     private final FeedbackReport _feedbackReport;
-
 
     /** 
      * Creates a new FeedbackReportModel object
@@ -247,20 +252,6 @@ public final class FeedbackReportModel extends MCSObservable implements Runnable
         return _feedbackTypeDataModel;
     }
 
-    /**
-     * Set the default combo box model
-     *
-     * @param typeDataModel default combo box model
-     */
-    public final void setTypeDataModel(final DefaultComboBoxModel typeDataModel)
-    {
-        if (typeDataModel != null)
-        {
-            _feedbackTypeDataModel = typeDataModel;
-            _logger.fine("Type data model value has been set");
-        }
-    }
-
     /** 
      * Send the report per mail
      */
@@ -285,7 +276,6 @@ public final class FeedbackReportModel extends MCSObservable implements Runnable
 
                 setMail(_mail);
                 if (_feedbackReport != null) {
-                    setTypeDataModel(_feedbackReport.getDefaultComboBoxModel());
                     setDescription(_feedbackReport.getDescription());
                 }
 
@@ -379,28 +369,32 @@ public final class FeedbackReportModel extends MCSObservable implements Runnable
     /**
      * Returns system configuration
      *
-     * @return system configuration
+     * @return sorted list of system properties
      */
     public final String getSystemConfig()
     {
         // Get all informations about the system running the application
         final Properties  hostProperties            = System.getProperties();
-        final Enumeration<?> hostPropertiesEnumeration = hostProperties.propertyNames();
+
+        String [] keys = hostProperties.stringPropertyNames().toArray(new String[]{});
+        java.util.Arrays.sort(keys);                
 
         final StringBuilder sb = new StringBuilder(2048);
-
-        String propertyName, propertyValue;
-
         // For each system property, we make a string like "{name} : {value}"
-        while (hostPropertiesEnumeration.hasMoreElements())
-        {
-            propertyName  = String.valueOf(hostPropertiesEnumeration.nextElement());
-            propertyValue = System.getProperty(propertyName);
-
-            sb.append(propertyName).append(" : ").append(propertyValue).append("\n");
+        for (String key : keys) {            
+            sb.append(key).append(" : ").append(System.getProperty(key)).append("\n");
         }
 
         return sb.toString();
     }
+
+    /**
+     * Returns the log stored by application which is associated to this report.
+     * @return log report
+     */
+     public String getApplicationLog() {
+        return _applicationLog;
+    }
+
 }
 /*___oOo___*/

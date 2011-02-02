@@ -4,15 +4,14 @@ package fr.jmmc.mcs.util;
  * Singleton object which handles common preferences.
  */
 public class CommonPreferences extends Preferences {
+
     /** Store the filename of the common preference file */
     public static final String PREFERENCES_FILENAME = "fr.jmmc.jmcs.properties";
 
     /**  Name of the preference which stores the user email in the feedback report */
-    public static final String FEEDBACK_EMAIL = "feedback.email";
-
+    public static final String FEEDBACK_REPORT_USER_EMAIL = "feedback_report.user_email";
     /** Name of the preference which stores the flag to display or not the splashscreen */
-    public static final String SPLASH_SCREEN_SHOW = "splash.screen.show";
-
+    public static final String SHOW_STARTUP_SPLASHSCREEN = "startup.splashscreen.show";
     /** Store the singleton instance */
     private static CommonPreferences _instance = null;
 
@@ -30,7 +29,7 @@ public class CommonPreferences extends Preferences {
     @Override
     protected void setDefaultPreferences() throws PreferencesException {
         // Display the splash screen during app launch.
-        setDefaultPreference(SPLASH_SCREEN_SHOW, true);
+        setDefaultPreference(SHOW_STARTUP_SPLASHSCREEN, true);
     }
 
     @Override
@@ -48,11 +47,10 @@ public class CommonPreferences extends Preferences {
      * @param args NC
      */
     public static void main(String[] args) {
-        try{
+        try {
             CommonPreferences.getInstance().saveToFile();
-        }catch(PreferencesException exc){
+        } catch (PreferencesException exc) {
             exc.printStackTrace();
         }
     }
-
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.29 2011-02-01 16:10:50 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.30 2011-02-02 10:08:25 lafrasse Exp $"
  *
  */
 package fr.jmmc.mcs.gui;
@@ -145,7 +145,7 @@ public class FeedbackReport extends javax.swing.JDialog implements Observer, Key
         descriptionTextArea.addKeyListener(this);
 
         // Associate email to common preference
-        emailTextField.setDocument(PreferencedDocument.getInstance(CommonPreferences.getInstance(), CommonPreferences.FEEDBACK_EMAIL, true));
+        emailTextField.setDocument(PreferencedDocument.getInstance(CommonPreferences.getInstance(), CommonPreferences.FEEDBACK_REPORT_USER_EMAIL, true));
 
         // and update ui
         keyReleased(null);

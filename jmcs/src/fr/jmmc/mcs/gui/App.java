@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.76 2011-01-31 15:06:46 mella Exp $"
+ * "@(#) $Id: App.java,v 1.77 2011-02-02 10:08:25 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.76  2011/01/31 15:06:46  mella
+ * use common preferences to display or not splashscreen at startup
+ *
  * Revision 1.75  2011/01/31 13:26:30  bourgesl
  * added hasFileArgument() to let child class know if there is a file to open
  *
@@ -287,7 +290,6 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
-
 import fr.jmmc.mcs.interop.SampManager;
 import fr.jmmc.mcs.util.ActionRegistrar;
 import fr.jmmc.mcs.util.CommonPreferences;
@@ -316,8 +318,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-
-
 /**
  * This class represents an application. In order to use
  * fonctionnalities that are implemented here, you have to
@@ -335,14 +335,12 @@ import javax.swing.SwingUtilities;
  * in order to do that and which has been written to abstract the way
  * to acces to these informations.
  */
-public abstract class App
-{
+public abstract class App {
+
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _mainLogger = Logger.getLogger("fr.jmmc");
-
     /** Stream handler which permit us to keep logs report in strings */
     private static final StreamHandler _streamHandler;
-
     /** ByteArrayOutputStream which keeps logs report */
     private static final ByteArrayOutputStream _byteArrayOutputStream = new ByteArrayOutputStream(32768);
 
@@ -360,63 +358,44 @@ public abstract class App
         _mainLogger.finer("Main Logger properties set");
         _mainLogger.fine("Memory handler created and fixed to feedback logger.");
     }
-
-
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.gui.App");
-
     /** Singleton reference */
     private static App _sharedInstance;
-
     /** flag indicating if the application started properly and is ready (visible) */
     private static boolean _applicationReady = false;
-
     /** Shared application data model */
     private static ApplicationDataModel _applicationDataModel;
-
     /** Splash screen thread */
     private static Thread _splashScreenThread = null;
-
     /** Splash screen */
     private static SplashScreen _splashScreen = null;
-
     /** Show the splash screen? */
     private static boolean _showSplashScreen = true;
-
     /** AboutBox */
     private static AboutBox _aboutBox = null;
-
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
-
     /** Arguments */
     private static String[] _args;
-
     /** If it's true, exit the application after the exit method */
     private static boolean _exitApplicationWhenClosed = true;
-
     /** Quit handling action */
     private static QuitAction _quitAction = null;
-
     /** Acknowledgement handling action */
     private static AcknowledgementAction _acknowledgementAction = null;
-
     /** Show help handling action */
     private static ShowHelpAction _showHelpAction = null;
-
     /** Show hto news handling action */
     private static ShowHotNewsAction _showHotNewsAction = null;
-
     /** Show release handling action */
     private static ShowReleaseAction _showReleaseAction = null;
-
     /** Show FAQ handling action */
     private static ShowFaqAction _showFaqAction = null;
 
     /* members */
     /** Store a proxy to the shared ActionRegistrar facility */
     private ActionRegistrar _registrar = null;
-
     /** temporarly store the file name argument for the open action */
     private String _fileArgument = null;
 
@@ -425,8 +404,7 @@ public abstract class App
      *
      * @param args command-line arguments
      */
-    protected App(String[] args)
-    {
+    protected App(String[] args) {
         // Start application imediatly, with splashscreen
         this(args, false);
     }
@@ -436,24 +414,21 @@ public abstract class App
      * @param args command-line arguments
      * @param waitBeforeExecution if true, do not launch run() automatically
      */
-    protected App(String[] args, boolean waitBeforeExecution)
-    {
+    protected App(String[] args, boolean waitBeforeExecution) {
         // Start application with splashscreen
         this(args, waitBeforeExecution, true);
     }
 
     /**
-     * Constructor whith possibility to specify if the application should be
+     * Constructor with possibility to specify if the application should be
      * stopped when the exit method is called
      *
      * @param args command-line arguments
      * @param waitBeforeExecution if true, do not launch run() automatically     
      * @param exitWhenClosed if true, the application will close when exit method is called
      */
-    protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed)
-    {
-        try
-        {
+    protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed) {
+        try {
             _registrar = ActionRegistrar.getInstance();
 
             String classPath = getClass().getName();
@@ -461,11 +436,11 @@ public abstract class App
             _quitAction = new QuitAction(classPath, "_quitAction");
 
             // Attributes affectations
-            _args                          = args;
-            _exitApplicationWhenClosed     = exitWhenClosed;
+            _args = args;
+            _exitApplicationWhenClosed = exitWhenClosed;
 
-            // check in common preferences if the splashscreen must be show at startup
-            _showSplashScreen = CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SPLASH_SCREEN_SHOW);
+            // Check in common preferences whether startup splashscreen should be shown or not
+            _showSplashScreen = CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN);
 
             _logger.fine("App object instantiated and logger created.");
 
@@ -477,24 +452,23 @@ public abstract class App
             interpretArguments(args);
 
             // Set shared instance
-            _sharedInstance            = this;
+            _sharedInstance = this;
 
             // Build Acknowledgment, ShowRelease and ShowHelp Actions
             // (the creation must be done after applicationModel instanciation)
-            _acknowledgementAction     = new AcknowledgementAction("fr.jmmc.mcs.gui.App",
+            _acknowledgementAction = new AcknowledgementAction("fr.jmmc.mcs.gui.App",
                     "_acknowledgementAction");
-            _showHotNewsAction         = new ShowHotNewsAction("fr.jmmc.mcs.gui.App",
+            _showHotNewsAction = new ShowHotNewsAction("fr.jmmc.mcs.gui.App",
                     "_showHotNewsAction");
-            _showReleaseAction         = new ShowReleaseAction("fr.jmmc.mcs.gui.App",
+            _showReleaseAction = new ShowReleaseAction("fr.jmmc.mcs.gui.App",
                     "_showReleaseAction");
-            _showFaqAction             = new ShowFaqAction("fr.jmmc.mcs.gui.App",
+            _showFaqAction = new ShowFaqAction("fr.jmmc.mcs.gui.App",
                     "_showFaqAction");
-            _showHelpAction            = new ShowHelpAction("fr.jmmc.mcs.gui.App",
+            _showHelpAction = new ShowHelpAction("fr.jmmc.mcs.gui.App",
                     "_showHelpAction");
 
             // If execution should not be delayed
-            if (!waitBeforeExecution)
-            {
+            if (!waitBeforeExecution) {
                 // Run the application imediately
                 run();
             }
@@ -503,16 +477,14 @@ public abstract class App
             _logger.severe("Error while initializing the application");
 
             // In order to see the error window
-            if (_splashScreen != null)
-            {
-                if (_splashScreen.isVisible())
-                {
+            if (_splashScreen != null) {
+                if (_splashScreen.isVisible()) {
                     _splashScreen.setVisible(false);
                 }
             }
 
             MessagePane.showErrorMessage(
-                "An error occured while initializing the application");
+                    "An error occured while initializing the application");
 
             // Show the feedback report (modal) :
             new FeedbackReport(true, th);
@@ -523,39 +495,30 @@ public abstract class App
      * Load application data if Applicationdata.xml exists into the module.
      * Otherwise, uses the default ApplicationData.xml.
      */
-    private void loadApplicationData()
-    {
+    private void loadApplicationData() {
         URL fileURL = getURLFromResourceFilename("ApplicationData.xml");
 
-        if (fileURL == null)
-        {
+        if (fileURL == null) {
             // Take the defaultData XML in order to take the default menus
             loadDefaultApplicationData();
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 // We reinstantiate the application data model
                 _applicationDataModel = new ApplicationDataModel(fileURL);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.log(Level.SEVERE,
-                    "Could not load application data from '" + fileURL +
-                    "' file.", ex);
+                        "Could not load application data from '" + fileURL
+                        + "' file.", ex);
                 loadDefaultApplicationData();
             }
         }
     }
 
     /** Load the default ApplicationData.xml */
-    private void loadDefaultApplicationData()
-    {
+    private void loadDefaultApplicationData() {
         String defaultXmlLocation = "";
 
-        try
-        {
+        try {
             // The App class
             Class<?> app = Introspection.getClass("fr.jmmc.mcs.gui.App");
 
@@ -563,25 +526,21 @@ public abstract class App
             Package defaultPackage = app.getPackage();
 
             // Replace '.' by '/' of package name
-            String defaultPackageName = defaultPackage.getName()
-                                                      .replace(".", "/");
+            String defaultPackageName = defaultPackage.getName().replace(".", "/");
 
             // Default XML location
-            defaultXmlLocation = defaultPackageName + "/" +
-                "ApplicationData.xml";
+            defaultXmlLocation = defaultPackageName + "/"
+                    + "ApplicationData.xml";
 
-            URL defaultXmlURL = app.getClassLoader()
-                                   .getResource(defaultXmlLocation);
+            URL defaultXmlURL = app.getClassLoader().getResource(defaultXmlLocation);
 
             // We reinstantiate the application data model
             _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             if (_logger.isLoggable(Level.WARNING)) {
                 _logger.log(Level.WARNING,
-                    "Cannot laod '" + defaultXmlLocation +
-                    "' default application data", ex);
+                        "Cannot laod '" + defaultXmlLocation
+                        + "' default application data", ex);
             }
             System.exit(-1);
         }
@@ -591,8 +550,7 @@ public abstract class App
      * Return the action which displays and copy acknowledgement to clipboard
      * @return action which displays and copy acknowledgement to clipboard
      */
-    public static Action acknowledgementAction()
-    {
+    public static Action acknowledgementAction() {
         return _acknowledgementAction;
     }
 
@@ -600,47 +558,37 @@ public abstract class App
      * Creates the action which open the about box window
      * @return action which open the about box window
      */
-    public static Action aboutBoxAction()
-    {
-        return new AbstractAction("About...")
-            {
-                /** default serial UID for Serializable interface */
-                private static final long serialVersionUID = 1;
+    public static Action aboutBoxAction() {
+        return new AbstractAction("About...") {
 
-                /**
-                 * Handle the action event
-                 * @param evt action event
-                 */
-                public void actionPerformed(ActionEvent evt)
-                {
-                    if (_applicationDataModel != null)
-                    {
-                        if (_aboutBox != null)
-                        {
-                            if (!_aboutBox.isVisible())
-                            {
-                                _aboutBox.setVisible(true);
-                            }
-                            else
-                            {
-                                _aboutBox.toFront();
-                            }
+            /** default serial UID for Serializable interface */
+            private static final long serialVersionUID = 1;
+
+            /**
+             * Handle the action event
+             * @param evt action event
+             */
+            public void actionPerformed(ActionEvent evt) {
+                if (_applicationDataModel != null) {
+                    if (_aboutBox != null) {
+                        if (!_aboutBox.isVisible()) {
+                            _aboutBox.setVisible(true);
+                        } else {
+                            _aboutBox.toFront();
                         }
-                        else
-                        {
-                            _aboutBox = new AboutBox();
-                        }
+                    } else {
+                        _aboutBox = new AboutBox();
                     }
                 }
-            };
+            }
+        };
     }
 
     /**
      * Creates the feedback action which open the feedback window
      * @return feedback action which open the feedback window
      */
-    public static Action feedbackReportAction()
-    {
+    public static Action feedbackReportAction() {
         return feedbackReportAction(null);
     }
 
@@ -649,34 +597,30 @@ public abstract class App
      * @param ex exception that occured
      * @return feedback action which open the feedback window
      */
-    public static Action feedbackReportAction(final Exception ex)
-    {
-        return new AbstractAction("Report Feedback to JMMC...")
-            {
-                /** default serial UID for Serializable interface */
-                private static final long serialVersionUID = 1;
+    public static Action feedbackReportAction(final Exception ex) {
+        return new AbstractAction("Report Feedback to JMMC...") {
 
-                /**
-                 * Handle the action event
-                 * @param evt action event
-                 */
-                public void actionPerformed(ActionEvent evt)
-                {
-                    if (_applicationDataModel != null)
-                    {
-                        // Show the feedback report :
-                        new FeedbackReport(ex);
-                    }
+            /** default serial UID for Serializable interface */
+            private static final long serialVersionUID = 1;
+
+            /**
+             * Handle the action event
+             * @param evt action event
+             */
+            public void actionPerformed(ActionEvent evt) {
+                if (_applicationDataModel != null) {
+                    // Show the feedback report :
+                    new FeedbackReport(ex);
                 }
-            };
+            }
+        };
     }
 
     /**
      * Return the action which tries to display the help
      * @return action which tries to display the help
      */
-    public static Action showHelpAction()
-    {
+    public static Action showHelpAction() {
         return _showHelpAction;
     }
 
@@ -684,8 +628,7 @@ public abstract class App
      * Return the action which tries to quit the application
      * @return action which tries to quit the application
      */
-    public static Action quitAction()
-    {
+    public static Action quitAction() {
         return _quitAction;
     }
 
@@ -693,8 +636,7 @@ public abstract class App
      * Return the action dedicated to display hot news
      * @return action dedicated to display hot news 
      */
-    public static Action showHotNewsAction()
-    {
+    public static Action showHotNewsAction() {
         return _showHotNewsAction;
     }
 
@@ -702,8 +644,7 @@ public abstract class App
      * Return the action dedicated to display release
      * @return action dedicated to display release
      */
-    public static Action showReleaseAction()
-    {
+    public static Action showReleaseAction() {
         return _showReleaseAction;
     }
 
@@ -711,8 +652,7 @@ public abstract class App
      * Return the action dedicated to display FAQ
      * @return action dedicated to display FAQ 
      */
-    public static Action showFaqAction()
-    {
+    public static Action showFaqAction() {
         return _showFaqAction;
     }
 
@@ -721,130 +661,110 @@ public abstract class App
      *
      * @param args arguments
      */
-    private final void interpretArguments(String[] args)
-    {
+    private final void interpretArguments(String[] args) {
         // List received arguments
         if (_logger.isLoggable(Level.FINEST)) {
-            for (int i = 0; i < args.length; i++)
-            {
+            for (int i = 0; i < args.length; i++) {
                 _logger.finest("args[" + i + "] = '" + args[i] + "'.");
             }
         }
 
         // Just leave method if no argument has been given
-        if (args == null)
-        {
+        if (args == null) {
             return;
         }
 
         // Array for long arguments (help & version)
-        final LongOpt[] longopts = new LongOpt[]
-            {
-                new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
-                new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1),
-                new LongOpt("loggui", LongOpt.NO_ARGUMENT, null, 2),
-                new LongOpt("open", LongOpt.REQUIRED_ARGUMENT, null, 3)
-            };
+        final LongOpt[] longopts = new LongOpt[]{
+            new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
+            new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1),
+            new LongOpt("loggui", LongOpt.NO_ARGUMENT, null, 2),
+            new LongOpt("open", LongOpt.REQUIRED_ARGUMENT, null, 3)
+        };
 
         // Instantiate the getopt object
         final Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(),
                 args, "hv:", longopts, true);
 
-        int    c; // argument key
-        String arg    = null; // argument value
+        int c; // argument key
+        String arg = null; // argument value
 
         // While there is a argument key
-        while ((c = getOpt.getopt()) != -1)
-        {
+        while ((c = getOpt.getopt()) != -1) {
             if (_logger.isLoggable(Level.FINEST)) {
-              _logger.finest("opt = " + c);
+                _logger.finest("opt = " + c);
             }
 
-            switch (c)
-            {
-            // Show the arguments help
-            case 'h':
-                showArgumentsHelp();
+            switch (c) {
+                // Show the arguments help
+                case 'h':
+                    showArgumentsHelp();
 
-                break;
+                    break;
 
-            // Show the name and the version of the program
-            case 1:
-                // Show the application name on the shell
-                System.out.println(_applicationDataModel.getProgramName() + " v" + _applicationDataModel.getProgramVersion());
-                // Exit the application
-                System.exit(0);
+                // Show the name and the version of the program
+                case 1:
+                    // Show the application name on the shell
+                    System.out.println(_applicationDataModel.getProgramName() + " v" + _applicationDataModel.getProgramVersion());
+                    // Exit the application
+                    System.exit(0);
 
-                break;
+                    break;
 
-            // Display the LogGUI panel
-            case 2:
-                showLogGui();
+                // Display the LogGUI panel
+                case 2:
+                    showLogGui();
 
-                break;
+                    break;
 
-            // Open the given file
-            case 3:
-                // get the file path argument and store it temporarly :
-                this._fileArgument = getOpt.getOptarg();
-                if (_logger.isLoggable(Level.INFO)) {
-                  _logger.info("Should open '" + this._fileArgument + "'.");
-                }
-                break;
-
-            // Set the logger level
-            case 'v':
-                arg = getOpt.getOptarg();
-
-                if (arg != null)
-                {
+                // Open the given file
+                case 3:
+                    // get the file path argument and store it temporarly :
+                    this._fileArgument = getOpt.getOptarg();
                     if (_logger.isLoggable(Level.INFO)) {
-                      _logger.info("Set logger level to '" + arg + "'.");
+                        _logger.info("Should open '" + this._fileArgument + "'.");
+                    }
+                    break;
+
+                // Set the logger level
+                case 'v':
+                    arg = getOpt.getOptarg();
+
+                    if (arg != null) {
+                        if (_logger.isLoggable(Level.INFO)) {
+                            _logger.info("Set logger level to '" + arg + "'.");
+                        }
+
+                        if (arg.equals("0")) {
+                            _mainLogger.setLevel(Level.OFF);
+                        } else if (arg.equals("1")) {
+                            _mainLogger.setLevel(Level.SEVERE);
+                        } else if (arg.equals("2")) {
+                            _mainLogger.setLevel(Level.WARNING);
+                        } else if (arg.equals("3")) {
+                            _mainLogger.setLevel(Level.INFO);
+                        } else if (arg.equals("4")) {
+                            _mainLogger.setLevel(Level.FINE);
+                        } else if (arg.equals("5")) {
+                            _mainLogger.setLevel(Level.ALL);
+                        } else {
+                            showArgumentsHelp();
+                        }
                     }
 
-                    if (arg.equals("0"))
-                    {
-                        _mainLogger.setLevel(Level.OFF);
-                    }
-                    else if (arg.equals("1"))
-                    {
-                        _mainLogger.setLevel(Level.SEVERE);
-                    }
-                    else if (arg.equals("2"))
-                    {
-                        _mainLogger.setLevel(Level.WARNING);
-                    }
-                    else if (arg.equals("3"))
-                    {
-                        _mainLogger.setLevel(Level.INFO);
-                    }
-                    else if (arg.equals("4"))
-                    {
-                        _mainLogger.setLevel(Level.FINE);
-                    }
-                    else if (arg.equals("5"))
-                    {
-                        _mainLogger.setLevel(Level.ALL);
-                    }
-                    else
-                    {
-                        showArgumentsHelp();
-                    }
-                }
+                    break;
 
-                break;
+                // Show the arguments help
+                case '?':
+                    showArgumentsHelp();
 
-            // Show the arguments help
-            case '?':
-                showArgumentsHelp();
+                    break;
 
-                break;
+                default:
+                    System.out.println("Unknow command");
+                    System.exit(-1);
 
-            default:
-                System.out.println("Unknow command");
-                System.exit(-1);
-
-                break;
+                    break;
             }
         }
 
@@ -852,28 +772,27 @@ public abstract class App
     }
 
     /** Show command arguments help */
-    public static void showArgumentsHelp()
-    {
+    public static void showArgumentsHelp() {
         System.out.println(
-            "------------- Arguments help --------------------------------------------");
+                "------------- Arguments help --------------------------------------------");
         System.out.println(
-            "| Key          Value           Description                              |");
+                "| Key          Value           Description                              |");
         System.out.println(
-            "|-----------------------------------------------------------------------|");
+                "|-----------------------------------------------------------------------|");
         System.out.println(
-            "| [-h]                         Show the options help                    |");
+                "| [-h]                         Show the options help                    |");
         System.out.println(
-            "| [-loggui]                    Show the logging tool                    |");
+                "| [-loggui]                    Show the logging tool                    |");
         System.out.println(
-            "| [-v]         [0|1|2|3|4|5]   Define console logging level             |");
+                "| [-v]         [0|1|2|3|4|5]   Define console logging level             |");
         System.out.println(
-            "| [-version]                   Show application name and version        |");
+                "| [-version]                   Show application name and version        |");
         System.out.println(
-            "| [-h|-help]                   Show arguments help                      |");
+                "| [-h|-help]                   Show arguments help                      |");
         System.out.println(
-            "-------------------------------------------------------------------------");
+                "-------------------------------------------------------------------------");
         System.out.println(
-            "LEVEL : O=OFF, 1=SEVERE, 2=WARNING, 3=INFO, 4=FINE, 5=ALL\n");
+                "LEVEL : O=OFF, 1=SEVERE, 2=WARNING, 3=INFO, 4=FINE, 5=ALL\n");
 
         System.exit(0);
     }
@@ -906,19 +825,16 @@ public abstract class App
      * @return should return true if the application can exit, false otherwise
      * to cancel exit.
      */
-    protected boolean finish()
-    {
+    protected boolean finish() {
         _logger.info("Default App.finish() handler called.");
 
         return true;
     }
 
     /** Describe the life cycle of the application */
-    protected final void run()
-    {
+    protected final void run() {
         // Show splash screen if we have to
-        if (_showSplashScreen)
-        {
+        if (_showSplashScreen) {
             showSplashScreen();
         }
 
@@ -927,34 +843,33 @@ public abstract class App
 
         try {
 
-          // Using invokeAndWait to be in sync with the main thread :
-          SwingUtilities.invokeAndWait(new Runnable() {
+            // Using invokeAndWait to be in sync with the main thread :
+            SwingUtilities.invokeAndWait(new Runnable() {
 
-            /**
-             * Initializes swing components in EDT
-             */
-            public void run() {
-              // Set JMenuBar
-              final JFrame frame = getFrame();
+                /**
+                 * Initializes swing components in EDT
+                 */
+                public void run() {
+                    // Set JMenuBar
+                    final JFrame frame = getFrame();
 
-              frame.setJMenuBar(new MainMenuBar(frame));
+                    frame.setJMenuBar(new MainMenuBar(frame));
 
-              // Set application frame common properties
-              frame.pack();
-            }
-          });
+                    // Set application frame common properties
+                    frame.pack();
+                }
+            });
 
         } catch (InterruptedException ie) {
-          // propagate the exception :
-          throw new IllegalStateException("App.run : interrupted", ie);
+            // propagate the exception :
+            throw new IllegalStateException("App.run : interrupted", ie);
         } catch (InvocationTargetException ite) {
-          // propagate the internal exception :
-          throw new IllegalStateException("App.run : exception", ite.getCause());
+            // propagate the internal exception :
+            throw new IllegalStateException("App.run : exception", ite.getCause());
         }
 
         // Close the splash screen if we have to
-        if (_showSplashScreen)
-        {
+        if (_showSplashScreen) {
             closeSplashScreen();
         }
 
@@ -965,19 +880,18 @@ public abstract class App
         _applicationReady = true;
 
         // If any file argument exists, open that file using the registered open action :
-        if (_fileArgument != null)
-        {
-          SwingUtilities.invokeLater(new Runnable() {
-            /**
-             * Open the file using EDT :
-             */
-            public void run() {
-              _registrar.getOpenAction()
-                        .actionPerformed(new ActionEvent(_registrar, 0, _fileArgument));
-              // clear :
-              _fileArgument = null;
-            }
-          });
+        if (_fileArgument != null) {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                /**
+                 * Open the file using EDT :
+                 */
+                public void run() {
+                    _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, _fileArgument));
+                    // clear :
+                    _fileArgument = null;
+                }
+            });
         }
     }
 
@@ -986,7 +900,7 @@ public abstract class App
      * @return true if there is a file name argument for the open action
      */
     protected final boolean hasFileArgument() {
-      return this._fileArgument != null;
+        return this._fileArgument != null;
     }
 
     /**
@@ -994,8 +908,7 @@ public abstract class App
      *
      * @return logs report into a unique string
      */
-    public static String getLogOutput()
-    {
+    public static String getLogOutput() {
         // Needed in order to write all logs in the ouput stream buffer
         if (_streamHandler != null) {
             _streamHandler.flush();
@@ -1007,29 +920,25 @@ public abstract class App
     /**
      * Show third party logging utility.
      */
-    public static void showLogGui()
-    {
+    public static void showLogGui() {
         imx.loggui.LogMaster.startLogGui();
     }
 
     /** Show splash screen */
-    private static void showSplashScreen()
-    {
-        if (_applicationDataModel != null)
-        {
+    private static void showSplashScreen() {
+        if (_applicationDataModel != null) {
             _logger.fine("Show splashscreen");
 
             // Instantiate splash screen
-            _splashScreen           = new SplashScreen();
+            _splashScreen = new SplashScreen();
 
             // Instantiate the splash screen thread
-            _splashScreenThread     = new Thread(_splashScreen);
+            _splashScreenThread = new Thread(_splashScreen);
         }
     }
 
     /** Close splash screen and stop the thread */
-    private static void closeSplashScreen()
-    {
+    private static void closeSplashScreen() {
         _logger.fine("Close splashscreen");
         _splashScreen.dispose();
 
@@ -1043,11 +952,9 @@ public abstract class App
      *
      * @return ApplicationDataModel instance.
      */
-    public static ApplicationDataModel getSharedApplicationDataModel()
-    {
+    public static ApplicationDataModel getSharedApplicationDataModel() {
         return _applicationDataModel;
     }
-
 
     /**
      * Tell if the application is a beta version or not.
@@ -1055,10 +962,8 @@ public abstract class App
      *
      * @return true if it is a beta, false otherwise.
      */
-    public static boolean isBetaVersion()
-    {
-        if (_applicationDataModel!=null)
-        {
+    public static boolean isBetaVersion() {
+        if (_applicationDataModel != null) {
             return _applicationDataModel.getProgramVersion().contains("b");
         }
         return false;
@@ -1070,10 +975,8 @@ public abstract class App
      *
      * @return true if it is a alpha, false otherwise.
      */
-    public static boolean isAlphaVersion()
-    {
-        if (_applicationDataModel!=null)
-        {
+    public static boolean isAlphaVersion() {
+        if (_applicationDataModel != null) {
             return _applicationDataModel.getProgramVersion().contains("a");
         }
         return false;
@@ -1087,8 +990,7 @@ public abstract class App
      *
      * @param frame application frame
      */
-    public static void setFrame(final JFrame frame)
-    {
+    public static void setFrame(final JFrame frame) {
         _applicationFrame = frame;
     }
 
@@ -1097,12 +999,10 @@ public abstract class App
      *
      * @return application frame
      */
-    public static JFrame getFrame()
-    {
-      if (_applicationFrame == null)
-      {
-        _applicationFrame = new JFrame();
-      }
+    public static JFrame getFrame() {
+        if (_applicationFrame == null) {
+            _applicationFrame = new JFrame();
+        }
         return _applicationFrame;
     }
 
@@ -1111,8 +1011,7 @@ public abstract class App
      *
      * @return application frame panel
      */
-    public static Container getFramePanel()
-    {
+    public static Container getFramePanel() {
         return getFrame().getContentPane();
     }
 
@@ -1121,8 +1020,7 @@ public abstract class App
      *
      * @return shared instance
      */
-    public static App getSharedInstance()
-    {
+    public static App getSharedInstance() {
         return _sharedInstance;
     }
 
@@ -1131,8 +1029,7 @@ public abstract class App
      *
      * @return true if the Application is ready
      */
-    public final static boolean isReady()
-    {
+    public final static boolean isReady() {
         return _applicationReady;
     }
 
@@ -1143,8 +1040,7 @@ public abstract class App
      *
      * @return resource file URL
      */
-    public URL getURLFromResourceFilename(String fileName)
-    {
+    public URL getURLFromResourceFilename(String fileName) {
         // The class which is extended from App
         Class<?> actualClass = getClass();
 
@@ -1156,23 +1052,20 @@ public abstract class App
 
         // Replace '.' by '/' of package name
         String packagePath = packageName.replace(".", "/");
-        String filePath    = packagePath + "/" + fileName;
+        String filePath = packagePath + "/" + fileName;
         if (_logger.isLoggable(Level.FINE)) {
             _logger.fine("filePath = '" + filePath + "'.");
         }
 
         URL fileURL = null;
 
-        try
-        {
+        try {
             // Open XML file at path
             fileURL = actualClass.getClassLoader().getResource(filePath);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             if (_logger.isLoggable(Level.WARNING)) {
                 _logger.log(Level.WARNING,
-                    "Cannot load '" + filePath + "' resource file.", ex);
+                        "Cannot load '" + filePath + "' resource file.", ex);
             }
         }
 
@@ -1184,8 +1077,8 @@ public abstract class App
     }
 
     /** Action to correctly handle file opening. */
-    protected class OpenAction extends RegisteredAction
-    {
+    protected class OpenAction extends RegisteredAction {
+
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
 
@@ -1195,8 +1088,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public OpenAction(String classPath, String fieldName)
-        {
+        public OpenAction(String classPath, String fieldName) {
             super(classPath, fieldName);
 
             // Disabled as this default implementation does nothing
@@ -1209,8 +1101,7 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("OpenAction", "actionPerformed");
 
             _logger.warning("No handler for default file opening.");
@@ -1218,8 +1109,8 @@ public abstract class App
     }
 
     /** Action to correctly handle operations before closing application. */
-    protected class QuitAction extends RegisteredAction
-    {
+    protected class QuitAction extends RegisteredAction {
+
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
 
@@ -1229,8 +1120,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public QuitAction(String classPath, String fieldName)
-        {
+        public QuitAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Quit", "ctrl Q");
 
             flagAsQuitAction();
@@ -1240,44 +1130,36 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("QuitAction", "actionPerformed");
 
             _logger.fine("Should we kill the application ?");
 
             // If we are ready to finish application execution
-            if (finish())
-            {
+            if (finish()) {
                 _logger.fine("Application should be killed.");
 
                 // Verify if we are authorized to kill the application or not
-                if (_exitApplicationWhenClosed)
-                {
+                if (_exitApplicationWhenClosed) {
                     _logger.info("Killing the application.");
 
                     SampManager.shutdown();
 
                     System.exit(-1);
-                }
-                else
-                {
+                } else {
                     _logger.fine("Application left opened as required.");
                 }
-            }
-            else
-            {
+            } else {
                 _logger.fine("Application killing cancelled.");
             }
         }
     }
 
     /** Action to copy acknowledgement text to the clipboard. */
-    protected class AcknowledgementAction extends RegisteredAction
-    {
+    protected class AcknowledgementAction extends RegisteredAction {
+
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
-
         /** acknowlegment content */
         private String _acknowledgement = null;
 
@@ -1287,20 +1169,18 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public AcknowledgementAction(String classPath, String fieldName)
-        {
+        public AcknowledgementAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
             _acknowledgement = _applicationDataModel.getAcknowledgment();
 
             // If the application does not provide an acknowledgement
-            if (_acknowledgement == null)
-            {
+            if (_acknowledgement == null) {
                 // Generate one instead
-                String appName   = _applicationDataModel.getProgramName();
-                String appURL    = _applicationDataModel.getLinkValue();
-                _acknowledgement = "This research has made use of the " +
-                    "Jean-Marie Mariotti Center\\texttt{" + appName +
-                    "} service\n\\footnote{Available at " + appURL + "}";
+                String appName = _applicationDataModel.getProgramName();
+                String appURL = _applicationDataModel.getLinkValue();
+                _acknowledgement = "This research has made use of the "
+                        + "Jean-Marie Mariotti Center\\texttt{" + appName
+                        + "} service\n\\footnote{Available at " + appURL + "}";
             }
 
             // If the application does not provide an ApplicationData.xml file,
@@ -1311,28 +1191,27 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("AcknowledgementAction", "actionPerformed");
 
             StringSelection ss = new StringSelection(_acknowledgement);
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 
-            final String delimiter     = "---------------------------------------------------------------------------\n";
-            final String message       = "The previous message has already been copied to your clipboard, in order to\n" +
-                "let you conveniently paste it in your related publication.";
-            final String windowTitle   = _applicationDataModel.getProgramName() +
-                " Acknowledgment Note";
-            final String windowContent = delimiter + _acknowledgement + "\n" +
-                delimiter + "\n" + message;
+            final String delimiter = "---------------------------------------------------------------------------\n";
+            final String message = "The previous message has already been copied to your clipboard, in order to\n"
+                    + "let you conveniently paste it in your related publication.";
+            final String windowTitle = _applicationDataModel.getProgramName()
+                    + " Acknowledgment Note";
+            final String windowContent = delimiter + _acknowledgement + "\n"
+                    + delimiter + "\n" + message;
 
             MessagePane.showMessage(windowContent, windowTitle);
         }
     }
 
     /** Action to show hot news RSS feed. */
-    protected class ShowHotNewsAction extends RegisteredAction
-    {
+    protected class ShowHotNewsAction extends RegisteredAction {
+
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
 
@@ -1342,8 +1221,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public ShowHotNewsAction(String classPath, String fieldName)
-        {
+        public ShowHotNewsAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Hot News (RSS Feed)");
         }
 
@@ -1351,16 +1229,15 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("ShowReleaseAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getHotNewsRSSFeedLinkValue());
         }
     }
 
     /** Action to show release. */
-    protected class ShowReleaseAction extends RegisteredAction
-    {
+    protected class ShowReleaseAction extends RegisteredAction {
+
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
 
@@ -1370,8 +1247,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public ShowReleaseAction(String classPath, String fieldName)
-        {
+        public ShowReleaseAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Release Notes");
         }
 
@@ -1379,16 +1255,15 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("ShowReleaseAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getReleaseNotesLinkValue());
         }
     }
 
     /** Action to show FAQ. */
-    protected class ShowFaqAction extends RegisteredAction
-    {
+    protected class ShowFaqAction extends RegisteredAction {
+
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
 
@@ -1398,8 +1273,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public ShowFaqAction(String classPath, String fieldName)
-        {
+        public ShowFaqAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Frequently Asked Questions");
         }
 
@@ -1407,16 +1281,15 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("ShowFaqAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getFaqLinkValue());
         }
     }
 
     /** Action to show help. */
-    protected class ShowHelpAction extends RegisteredAction
-    {
+    protected class ShowHelpAction extends RegisteredAction {
+
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
 
@@ -1426,23 +1299,21 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public ShowHelpAction(String classPath, String fieldName)
-        {
+        public ShowHelpAction(String classPath, String fieldName) {
             super(classPath, fieldName, "User Manual");
             setEnabled(HelpView.isAvailable());
 
             // Set Icon
             String icon = "/fr/jmmc/mcs/gui/help.png";
             this.putValue(SMALL_ICON,
-                new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
+                    new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
         }
 
         /**
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("ShowHelpAction", "actionPerformed");
             HelpView.setVisible(true);
         }

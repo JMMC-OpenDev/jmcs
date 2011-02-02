@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.35 2010-10-15 08:47:06 lafrasse Exp $"
+ * "@(#) $Id: Preferences.java,v 1.36 2011-02-02 13:54:42 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2010/10/15 08:47:06  lafrasse
+ * (Hopefully) better exception handling.
+ *
  * Revision 1.34  2010/10/14 07:43:38  lafrasse
  * Moved from Vector to ArrayList whenever possible (i.e without API breaks).
  * Fixed comments typo.
@@ -175,16 +178,16 @@ public abstract class Preferences extends Observable {
     private static final String PREFERENCES_VERSION_NUMBER_ID = "preferences.version";
     /** Store hidden properties index prefix. */
     private static final String PREFERENCES_ORDER_INDEX_PREFIX = "MCSPropertyIndexes.";
-    /** Store hidden preference version number name. */
-    private static String _fullFilepath = null;
+    /** Store preference filename. */
+    private String _fullFilepath = null;
     /** Internal storage of preferences. */
     private Properties _currentProperties = new Properties();
     /** Default property. */
     protected Properties _defaultProperties = new Properties();
     /** Save to file action */
-    protected Action _savePreferences = new SavePrefAction();
+    protected Action _savePreferences;
     /** Restore preferences that get one default value */
-    protected Action _restoreDefaultPreferences = new RestoreDefaultPrefAction();
+    protected Action _restoreDefaultPreferences;
 
     /**
      * Creates a new Preferences object.
@@ -201,6 +204,9 @@ public abstract class Preferences extends Observable {
         } catch (Exception ex) {
             _logger.log(Level.WARNING, "Preference initialization FAILED.", ex);
         }
+        // parent class name must be given to register one action per inherited Preference class
+        _savePreferences= new SavePrefAction(this.getClass().getName());
+        _restoreDefaultPreferences= new RestoreDefaultPrefAction(this.getClass().getName());
 
     }
 
@@ -280,7 +286,7 @@ public abstract class Preferences extends Observable {
     final public void loadFromFile() {
         _logger.entering(_className, "loadFromFile");
 
-        resetToDefaultPreferences();
+        resetToDefaultPreferences(true);
 
         try {
             // Loading preference file
@@ -398,6 +404,7 @@ public abstract class Preferences extends Observable {
         try {
             FileOutputStream outputFile = new FileOutputStream(_fullFilepath);
             _currentProperties.storeToXML(outputFile, comment);
+             _logger.info("Saving '" + _fullFilepath + "' preference file.");
             outputFile.close();
         } catch (Exception e) {
             throw new PreferencesException("Cannot store preferences to file", e);
@@ -408,9 +415,18 @@ public abstract class Preferences extends Observable {
      * Restore default values to preferences and notify listeners.
      */
     final public void resetToDefaultPreferences() {
+        resetToDefaultPreferences(false);
+    }
+    /**
+     * Restore default values to preferences and notify listeners.
+     * @param quiet display one info message log if true.
+     */
+    final public void resetToDefaultPreferences(boolean quiet) {
         _logger.entering(_className, "resetToDefaultPreferences");
 
         _currentProperties = (Properties) _defaultProperties.clone();
+
+        _logger.info("Restoring default preferences.");
 
         // Notify all preferences listener.
         triggerObserversNotification();
@@ -866,19 +882,17 @@ public abstract class Preferences extends Observable {
     public Action getRestoreDefaultPreferences() {
         return _restoreDefaultPreferences;
     }
-
+    
     // @todo try to move it into the mcs preferences area
     protected class SavePrefAction extends RegisteredAction {
 
-        public SavePrefAction() {
-            super(_className, "savePreferences");
+        public SavePrefAction(String parentClassName) {
+            super(parentClassName, "savePreferences");
         }
 
         public void actionPerformed(java.awt.event.ActionEvent e) {
             try {
-                saveToFile();
-                //@todo move next line into Preferences
-                _logger.fine("Saving preferences");
+                saveToFile();                
             } catch (PreferencesException pe) {
                 // @todo handle this error at user level
                 pe.printStackTrace();
@@ -888,15 +902,13 @@ public abstract class Preferences extends Observable {
 
     protected class RestoreDefaultPrefAction extends RegisteredAction {
 
-        public RestoreDefaultPrefAction() {
-            super(_className, "restorePreferences");
+        public RestoreDefaultPrefAction(String parentClassName) {
+            super(parentClassName, "restorePreferences");
         }
 
         public void actionPerformed(java.awt.event.ActionEvent e) {
             try {
-                resetToDefaultPreferences();
-                //@todo move next line into Preferences
-                _logger.fine("Restoring preferences");
+                resetToDefaultPreferences();              
             } catch (Exception exc) {
                 // @todo handle this error at user level
                 exc.printStackTrace();

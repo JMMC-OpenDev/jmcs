@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelUVMapService.java,v 1.6 2010-09-24 15:44:15 bourgesl Exp $"
+ * "@(#) $Id: ModelUVMapService.java,v 1.7 2011-02-04 16:41:49 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/09/24 15:44:15  bourgesl
+ * removed catch RuntimeException to get it at higher level
+ *
  * Revision 1.5  2010/05/04 15:40:58  bourgesl
  * javadoc
  *
@@ -76,7 +79,7 @@ public final class ModelUVMapService {
    * @return UVMapData
    */
   public static UVMapData computeUVMap(final List<Model> models,
-                                       final Rectangle2D.Float uvRect,
+                                       final Rectangle2D.Double uvRect,
                                        final ImageMode mode) {
     return computeUVMap(models, uvRect, null, null, mode, DEFAULT_IMAGE_SIZE, DEFAULT_COLOR_MODEL);
   }
@@ -85,13 +88,13 @@ public final class ModelUVMapService {
    * Compute the UV Map for the given models and UV ranges
    * @param models list of models to use
    * @param uvRect UV frequency area in rad-1
-   * @param refMin minimum reference float value used only for sub images
-   * @param refMax maximum reference float value used only for sub images
+   * @param refMin minimum reference double value used only for sub images
+   * @param refMax maximum reference double value used only for sub images
    * @param mode image mode (amplitude or phase)
    * @return UVMapData
    */
   public static UVMapData computeUVMap(final List<Model> models,
-                                       final Rectangle2D.Float uvRect,
+                                       final Rectangle2D.Double uvRect,
                                        final Float refMin, final Float refMax,
                                        final ImageMode mode) {
     return computeUVMap(models, uvRect, refMin, refMax, mode, DEFAULT_IMAGE_SIZE, DEFAULT_COLOR_MODEL);
@@ -101,15 +104,15 @@ public final class ModelUVMapService {
    * Compute the UV Map for the given models and UV ranges
    * @param models list of models to use
    * @param uvRect UV frequency area in rad-1
-   * @param refMin minimum reference float value used only for sub images
-   * @param refMax maximum reference float value used only for sub images
+   * @param refMin minimum reference value used only for sub images
+   * @param refMax maximum reference value used only for sub images
    * @param mode image mode (amplitude or phase)
    * @param imageSize number of pixels for both width and height of the generated image
    * @param colorModel color model to use
    * @return UVMapData
    */
   public static UVMapData computeUVMap(final List<Model> models,
-                                       final Rectangle2D.Float uvRect,
+                                       final Rectangle2D.Double uvRect,
                                        final Float refMin, final Float refMax,
                                        final ImageMode mode,
                                        final int imageSize,
@@ -179,17 +182,19 @@ public final class ModelUVMapService {
         vfreq = null;
 
         // 3 - Extract the amplitude/phase to get the uv map :
+
+        // use single precision for performance (image needs not double precision) :
         float[] data = new float[size];
 
         float val;
-        float valMin = Float.MAX_VALUE;
-        float valMax = Float.MIN_VALUE;
+        float valMin = Float.POSITIVE_INFINITY;
+        float valMax = Float.NEGATIVE_INFINITY;
 
         switch (mode) {
           case AMP:
             for (int i = 0; i < size; i++) {
               // amplitude = complex modulus (abs in commons-math) :
-              val = (float) vis[i].abs();
+              val = (float)vis[i].abs();
               data[i] = val;
 
               if (val < valMin) {
@@ -210,7 +215,7 @@ public final class ModelUVMapService {
           case PHASE:
             for (int i = 0; i < size; i++) {
               // phase [-PI;PI] = complex phase (argument in commons-math) :
-              val = (float) vis[i].getArgument();
+              val = (float)vis[i].getArgument();
               data[i] = val;
 
               if (val < valMin) {
@@ -241,7 +246,7 @@ public final class ModelUVMapService {
 
         // 4 - Get the image with the given color model :
 
-        // use the given reference extrema to make the float to color conversion :
+        // use the given reference extrema to make the value to color conversion :
         final float min = (refMin != null) ? refMin.floatValue() : valMin;
         final float max = (refMax != null) ? refMax.floatValue() : valMax;
 
@@ -260,13 +265,7 @@ public final class ModelUVMapService {
         }
 
         // results :
-        uvMapData = new UVMapData();
-        uvMapData.setImageSize(imageSize);
-        uvMapData.setMode(mode);
-        uvMapData.setUvMap(uvMap);
-        uvMapData.setUvRect(uvRect);
-        uvMapData.setMin(min);
-        uvMapData.setMax(max);
+        uvMapData = new UVMapData(mode, imageSize, colorModel, uvRect, Float.valueOf(min), Float.valueOf(max), uvMap);
 
       } catch (IllegalArgumentException iae) {
         // ModelManager.compute throws an IllegalArgumentException if a parameter value is invalid :

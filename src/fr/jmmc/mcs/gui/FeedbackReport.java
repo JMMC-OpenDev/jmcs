@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.31 2011-02-04 16:18:08 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.32 2011-02-04 17:04:35 lafrasse Exp $"
  *
  */
 package fr.jmmc.mcs.gui;
@@ -157,12 +157,19 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         // and update ui
         keyReleased(null);
 
-        headerLabel.setText("<html><body><center><big>Welcome to the JMMC Feedback Report</big>"
-                + "<br/>We are eager to get your feedback, questions or comments !"
-                + "<br/>So please do not hesitate to use this form.</center>"
-                + "<br/><br/>Moreover, we encourage you to provide us with your email address, so :<ul>"
-                + "<li>you will be kept up to date on the status of your request</li>"
-                + "<li>we can ask you more information if needed</li></ul></body></html>");
+        headerLabel.setText("<html><body>"
+                + "<center>"
+                + "<big>Welcome to the JMMC Feedback Report</big><br/>"
+                + "We are eager to get your feedback, questions or comments !<br/>"
+                + "So please do not hesitate to use this form.<br/>"
+                + "</center>"
+                + "<br/><br/>"
+                + "Moreover, we encourage you to provide us with your e-mail address, so we can :"
+                + "<ul>"
+                + "<li>keep you up to date on the status of your request;</li>"
+                + "<li>ask you more information if needed.</li>"
+                + "</ul>"
+                + "</body></html>");
 
         typeComboBox.setModel(_feedbackTypeDataModel);
         systemTextArea.setText(getSystemConfig());
@@ -368,7 +375,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         sendReportPanel.setLayout(new java.awt.GridBagLayout());
 
-        emailLabel.setText("Your Email :");
+        emailLabel.setText("E-Mail :");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -404,7 +411,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         headerLabel.setText("<html>headerLabel<br> changed  by code</html>");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         sendReportPanel.add(headerLabel, gridBagConstraints);
@@ -429,7 +437,6 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
@@ -444,7 +451,6 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.weightx = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
@@ -453,7 +459,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.6;
+        gridBagConstraints.weightx = 200.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         sendReportPanel.add(loadProgressBar, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();

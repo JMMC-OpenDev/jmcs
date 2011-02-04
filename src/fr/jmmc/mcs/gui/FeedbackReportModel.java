@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReportModel.java,v 1.18 2011-02-01 16:11:29 mella Exp $"
+ * "@(#) $Id: FeedbackReportModel.java,v 1.19 2011-02-04 08:31:02 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2011/02/01 16:11:29  mella
+ * Minor modifications after rewrite of feedback GUI
+ *
  * Revision 1.17  2010/09/30 13:33:18  bourgesl
  * minor cleanup
  * use Http.getHttpClient to get proxy settings and default timeouts
@@ -71,10 +74,12 @@ package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.util.Http;
 import fr.jmmc.mcs.util.MCSObservable;
+import java.util.Collection;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -375,8 +380,7 @@ public final class FeedbackReportModel extends MCSObservable implements Runnable
     {
         // Get all informations about the system running the application
         final Properties  hostProperties            = System.getProperties();
-
-        String [] keys = hostProperties.stringPropertyNames().toArray(new String[]{});
+        String [] keys = hostProperties.keySet().toArray(new String[]{});
         java.util.Arrays.sort(keys);                
 
         final StringBuilder sb = new StringBuilder(2048);

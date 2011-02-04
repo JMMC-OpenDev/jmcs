@@ -25,6 +25,7 @@
         <jar href="jar/jmcs.jar" />
         <jar href="jar/loggui.jar" />
         <jar href="jar/ptplot5.6.jar" />
+        <jar href="jar/swing-worker-1.2.jar" />
         <jar href="jar/Tidy.jar" />
         <jar href="jar/xercesImpl.jar" />
         <jar href="jar/xmlenc.jar" />

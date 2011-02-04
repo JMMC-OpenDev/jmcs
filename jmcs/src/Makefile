@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.34 2010-09-13 15:57:18 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.35 2011-02-04 16:32:56 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.34  2010/09/13 15:57:18  lafrasse
+# First SAMP manager implementation.
+#
 # Revision 1.33  2010/09/06 14:27:57  bourgesl
 # added commons-maths-2.0 to install files
 #
@@ -265,6 +268,7 @@ INSTALL_FILES = ../lib/loggui.jar \
 		../lib/AppleJavaExtensions.jar \
 		../lib/commons-lang-2.4.jar \
 		../lib/sptype.jar \
+		../lib/swing-worker-1.2.jar \
 		../lib/commons-math-2.0.jar \
 		../lib/jsamp-1.1.jar \
 		../config/jmcsLatexIndex2HsTOC.xsl

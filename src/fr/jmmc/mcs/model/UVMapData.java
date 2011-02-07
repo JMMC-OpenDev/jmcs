@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: UVMapData.java,v 1.2 2011-02-04 16:41:33 bourgesl Exp $"
+ * "@(#) $Id: UVMapData.java,v 1.3 2011-02-07 15:21:37 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2011/02/04 16:41:33  bourgesl
+ * javadoc + values given in constructor
+ *
  * Revision 1.1  2010/02/04 14:43:36  bourgesl
  * added UVMapData bean to keep several data related to uv map in order to conserve the value / color mapping and uv area while zooming on uv map
  *
@@ -23,6 +26,7 @@ import java.awt.image.IndexColorModel;
  */
 public final class UVMapData {
 
+  /* inputs */
   /** number of pixels for both width and height of the generated image */
   private final int imageSize;
   /** image mode (amplitude or phase) */
@@ -31,6 +35,12 @@ public final class UVMapData {
   private final IndexColorModel colorModel;
   /** uv frequency area */
   private final Rectangle.Double uvRect;
+  /** target name */
+  private String targetName = null;
+  /** target model version */
+  private int targetVersion = -1;
+
+  /* outputs */
   /** visibility minimum value (amplitude or phase) */
   private final Float min;
   /** visibility maximum value (amplitude or phase) */
@@ -93,6 +103,38 @@ public final class UVMapData {
   }
 
   /**
+   * Return the target name
+   * @return target name
+   */
+  public String getTargetName() {
+    return targetName;
+  }
+
+  /**
+   * Define the target name
+   * @param targetName target name
+   */
+  public void setTargetName(final String targetName) {
+    this.targetName = targetName;
+  }
+
+  /**
+   * Return the target version
+   * @return target version
+   */
+  public int getTargetVersion() {
+    return targetVersion;
+  }
+
+  /**
+   * Define the target version
+   * @param targetVersion target version
+   */
+  public void setTargetVersion(final int targetVersion) {
+    this.targetVersion = targetVersion;
+  }
+
+  /**
    * Return the visibility minimum value (amplitude or phase)
    * @return visibility minimum value (amplitude or phase)
    */
@@ -114,5 +156,43 @@ public final class UVMapData {
    */
   public BufferedImage getUvMap() {
     return uvMap;
+  }
+
+  /**
+   * Check if this UV Map Data has the same input parameters to reuse its computed model image :
+   * @param targetName target name
+   * @param targetVersion target version
+   * @param uvRect uv frequency area
+   * @param mode image mode (amplitude or phase)
+   * @param imageSize number of pixels for both width and height of the generated image
+   * @param colorModel image color model
+   * @return true only if input parameters are equals
+   */
+  public boolean isValid(final String targetName, final int targetVersion,
+                         final Rectangle.Double uvRect,
+                         final ImageMode mode,
+                         final int imageSize,
+                         final IndexColorModel colorModel) {
+
+    if (!targetName.equals(getTargetName())) {
+      return false;
+    }
+    if (targetVersion != getTargetVersion()) {
+      return false;
+    }
+    if (!uvRect.equals(getUvRect())) {
+      return false;
+    }
+    if (mode != getImageMode()) {
+      return false;
+    }
+    if (imageSize != getImageSize()) {
+      return false;
+    }
+    if (colorModel != getColorModel()) {
+      return false;
+    }
+
+    return true;
   }
 }

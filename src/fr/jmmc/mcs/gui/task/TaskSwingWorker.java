@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: TaskSwingWorker.java,v 1.1 2011-02-04 16:21:05 mella Exp $"
+ * "@(#) $Id: TaskSwingWorker.java,v 1.2 2011-02-08 10:10:46 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2011/02/04 16:21:05  mella
+ * Extended SwingWorker to facilitate debugging and support version and Task for cancellation and consistency checks
+ *
  *
  */
 package fr.jmmc.mcs.gui.task;
@@ -24,7 +27,8 @@ import java.util.concurrent.ExecutionException;
  *
  * @param <T> the result type returned by this {@code TaskSwingWorker}
  */
-public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingWorker<T, Void> {
+public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingWorker<T, Void>
+{
 
     /** Class logger */
     protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
@@ -43,30 +47,48 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
      * @param task related task
      * @param logSuffix complementary suffix for log prefix
      */
-    public TaskSwingWorker(final Task task, final String logSuffix) {
+    public TaskSwingWorker(final Task task, final String logSuffix)
+    {
         this.task = task;
         this.logPrefix = (DEBUG_FLAG) ? ("SwingWorker[" + task.getName() + "]" + logSuffix + "@" + Integer.toHexString(hashCode())) : "SwingWorker";
+    }
+
+    /**
+     * Schedules this {@code TaskSwingWorker} for execution on a <i>worker</i>
+     * thread.
+     * @see TaskSwingWorkerExecutor#executeTask(TaskSwingWorker)
+     */
+    public final void executeTask()
+    {
+        // increment running worker :
+        TaskSwingWorkerExecutor.incRunningWorkerCounter();
+
+        // Cancel other observability task and execute this new task :
+        TaskSwingWorkerExecutor.executeTask(this);
     }
 
     /**
      * Return the task related to this SwingWorker
      * @return related task
      */
-    public final Task getTask() {
+    public final Task getTask()
+    {
         return task;
     }
 
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return this.logPrefix;
     }
 
     /**
-     * Do some comutation in background
+     * Do some computation in background
      * @return data computed data
      */
     @Override
-    public final T doInBackground() {
+    public final T doInBackground()
+    {
         if (DEBUG_FLAG) {
             logger.info(logPrefix + ".doInBackground : START");
         }
@@ -95,7 +117,8 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
      * This code is executed by the Swing Event Dispatcher thread (EDT)
      */
     @Override
-    public final void done() {
+    public final void done()
+    {
         // check if the worker was cancelled :
         if (isCancelled()) {
             if (DEBUG_FLAG) {
@@ -128,6 +151,8 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
                 handleException(ee);
             }
         }
+        // decrement running worker :
+        TaskSwingWorkerExecutor.decRunningWorkerCounter();
     }
 
     /**
@@ -150,7 +175,8 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
      *
      * @param ee execution exception
      */
-    public void handleException(final ExecutionException ee) {
+    public void handleException(final ExecutionException ee)
+    {
         // Show feedback report (modal and do not exit on close) :
         new FeedbackReport(true, ee.getCause());
     }

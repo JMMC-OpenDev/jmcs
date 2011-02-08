@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.78 2011-02-08 11:01:25 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.79 2011-02-08 11:08:43 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.78  2011/02/08 11:01:25  bourgesl
+ * SplashScreen refeactoring to use swing Timer to hide itself and do not block main thread during startup
+ *
  * Revision 1.77  2011/02/02 10:08:25  lafrasse
  * Code refactoring.
  *
@@ -907,18 +910,6 @@ public abstract class App {
                 }
             });
         }
-
-        // Close the splash screen if we have to
-        if (_showSplashScreen) {
-            SwingUtilities.invokeLater(new Runnable() {
-                /**
-                 * Close the Splash Screen using EDT :
-                 */
-                public void run() {
-                    closeSplashScreen();
-                }
-            });
-        }
     }
 
     /**
@@ -960,14 +951,6 @@ public abstract class App {
 
             // Show the splash screen :
             _splashScreen.display();
-        }
-    }
-
-    /** Close the splash screen */
-    private void closeSplashScreen() {
-        if (_splashScreen != null) {
-            _logger.fine("Close splash screen");
-            _splashScreen.close();
         }
     }
 

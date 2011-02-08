@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.77 2011-02-02 10:08:25 lafrasse Exp $"
+ * "@(#) $Id: App.java,v 1.78 2011-02-08 11:01:25 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.77  2011/02/02 10:08:25  lafrasse
+ * Code refactoring.
+ *
  * Revision 1.76  2011/01/31 15:06:46  mella
  * use common preferences to display or not splashscreen at startup
  *
@@ -56,7 +59,7 @@
  * Add getter method to check if the application is one production or development version
  *
  * Revision 1.61  2010/07/08 13:20:34  bourgesl
- * added a new method ready() called in run() method and after both execute() and open action in order to show the GUI only after open action done
+ * added a new method ready() called in show() method and after both execute() and open action in order to show the GUI only after open action done
  *
  * Revision 1.60  2010/06/28 14:26:18  lafrasse
  * Added actual software version when asked from CLI interface.
@@ -366,12 +369,6 @@ public abstract class App {
     private static boolean _applicationReady = false;
     /** Shared application data model */
     private static ApplicationDataModel _applicationDataModel;
-    /** Splash screen thread */
-    private static Thread _splashScreenThread = null;
-    /** Splash screen */
-    private static SplashScreen _splashScreen = null;
-    /** Show the splash screen? */
-    private static boolean _showSplashScreen = true;
     /** AboutBox */
     private static AboutBox _aboutBox = null;
     /** Main frame of the application (singleton) */
@@ -396,6 +393,11 @@ public abstract class App {
     /* members */
     /** Store a proxy to the shared ActionRegistrar facility */
     private ActionRegistrar _registrar = null;
+    /** Show the splash screen ? */
+    private boolean _showSplashScreen = true;
+    /** Splash screen */
+    private SplashScreen _splashScreen = null;
+
     /** temporarly store the file name argument for the open action */
     private String _fileArgument = null;
 
@@ -424,7 +426,7 @@ public abstract class App {
      * stopped when the exit method is called
      *
      * @param args command-line arguments
-     * @param waitBeforeExecution if true, do not launch run() automatically     
+     * @param waitBeforeExecution if true, do not launch run() automatically
      * @param exitWhenClosed if true, the application will close when exit method is called
      */
     protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed) {
@@ -469,7 +471,7 @@ public abstract class App {
 
             // If execution should not be delayed
             if (!waitBeforeExecution) {
-                // Run the application imediately
+                // Run the application immediately
                 run();
             }
 
@@ -835,7 +837,24 @@ public abstract class App {
     protected final void run() {
         // Show splash screen if we have to
         if (_showSplashScreen) {
-            showSplashScreen();
+            try {
+                // Using invokeAndWait to be in sync with the main thread :
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    /**
+                     * Initializes Splash Screen in EDT
+                     */
+                    public void run() {
+                        showSplashScreen();
+                    }
+                });
+
+            } catch (InterruptedException ie) {
+                // propagate the exception :
+                throw new IllegalStateException("App.run : interrupted", ie);
+            } catch (InvocationTargetException ite) {
+                // propagate the internal exception :
+                throw new IllegalStateException("App.run : exception", ite.getCause());
+            }
         }
 
         // Delegate initialization to daughter class through abstract init() call
@@ -868,11 +887,6 @@ public abstract class App {
             throw new IllegalStateException("App.run : exception", ite.getCause());
         }
 
-        // Close the splash screen if we have to
-        if (_showSplashScreen) {
-            closeSplashScreen();
-        }
-
         // Delegate execution to daughter class through abstract execute() call
         execute();
 
@@ -890,6 +904,18 @@ public abstract class App {
                     _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, _fileArgument));
                     // clear :
                     _fileArgument = null;
+                }
+            });
+        }
+
+        // Close the splash screen if we have to
+        if (_showSplashScreen) {
+            SwingUtilities.invokeLater(new Runnable() {
+                /**
+                 * Close the Splash Screen using EDT :
+                 */
+                public void run() {
+                    closeSplashScreen();
                 }
             });
         }
@@ -924,27 +950,25 @@ public abstract class App {
         imx.loggui.LogMaster.startLogGui();
     }
 
-    /** Show splash screen */
-    private static void showSplashScreen() {
+    /** Show the splash screen */
+    private void showSplashScreen() {
         if (_applicationDataModel != null) {
-            _logger.fine("Show splashscreen");
+            _logger.fine("Show splash screen");
 
-            // Instantiate splash screen
+            // Instantiate the splash screen :
             _splashScreen = new SplashScreen();
 
-            // Instantiate the splash screen thread
-            _splashScreenThread = new Thread(_splashScreen);
+            // Show the splash screen :
+            _splashScreen.display();
         }
     }
 
-    /** Close splash screen and stop the thread */
-    private static void closeSplashScreen() {
-        _logger.fine("Close splashscreen");
-        _splashScreen.dispose();
-
-        // Stop the splash screen thread
-        // LAURENT : TODO CLEAN : ILLEGAL a thread must not be killed like this :
-        _splashScreenThread.stop();
+    /** Close the splash screen */
+    private void closeSplashScreen() {
+        if (_splashScreen != null) {
+            _logger.fine("Close splash screen");
+            _splashScreen.close();
+        }
     }
 
     /**

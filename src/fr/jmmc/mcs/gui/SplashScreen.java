@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SplashScreen.java,v 1.8 2008-08-28 15:41:34 lafrasse Exp $"
+ * "@(#) $Id: SplashScreen.java,v 1.9 2011-02-08 11:01:25 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2008/08/28 15:41:34  lafrasse
+ * iChanged program version label.
+ * Corrected log messages and dicumentation.
+ *
  * Revision 1.7  2008/06/20 08:41:45  bcolucci
  * Remove unused imports and add class comments.
  *
@@ -34,6 +38,8 @@ package fr.jmmc.mcs.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import java.util.logging.Logger;
 
@@ -43,7 +49,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-
+import javax.swing.Timer;
 
 /**
  * This class opens a new splashscreen window. Informations of this window
@@ -57,25 +63,25 @@ import javax.swing.SwingConstants;
  * in order to do that and which has been written to abstract the way
  * to acces to these informations.
  */
-public class SplashScreen extends JFrame implements Runnable
+public class SplashScreen extends JFrame
 {
+
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
     /** Logger */
     private static final Logger _logger = Logger.getLogger(SplashScreen.class.getName());
 
+    /* members */
     /** Splash screen has got the same model than about box */
-    private ApplicationDataModel _applicationDataModel = null;
-
+    private final ApplicationDataModel _applicationDataModel;
     /** Logo label */
-    private JLabel _logoLabel = new JLabel();
-
+    private final JLabel _logoLabel = new JLabel();
     /** Panel */
-    private JPanel _panel = new JPanel();
-
+    private final JPanel _panel = new JPanel();
     /** Program name label */
-    private JLabel _programNameLabel = new JLabel();
-
+    private final JLabel _programNameLabel = new JLabel();
     /** Program version label */
-    private JLabel _programVersionLabel = new JLabel();
+    private final JLabel _programVersionLabel = new JLabel();
 
     /**
      * Creates a new SplashScreen object.
@@ -83,47 +89,57 @@ public class SplashScreen extends JFrame implements Runnable
     public SplashScreen()
     {
         _applicationDataModel = App.getSharedApplicationDataModel();
+    }
 
-        if (_applicationDataModel != null)
-        {
-            // Display the splashscreen
-            run();
+    /**
+     * Create the window fullfilled with all the information included in the Application data model.
+     */
+    public void display()
+    {
+        if (_applicationDataModel != null) {
+            // Draw window
+            setAllProperties();
+
+            pack();
+            WindowCenterer.centerOnMainScreen(this);
+
+            // Show window :
+            setVisible(true);
+
+            // Use Timer to wait 2,5s before closing this dialog :
+            final Timer timer = new Timer(2500, new ActionListener()
+            {
+
+                /**
+                 * Handle the timer call
+                 * @param ae action event
+                 */
+                public void actionPerformed(final ActionEvent ae)
+                {
+                    // Just call close to hide and dispose this frame :
+                    close();
+                }
+            });
+
+            // timer runs only once :
+            timer.setRepeats(false);
+            timer.start();
         }
     }
 
     /**
-     * Create the window fullfilled with all the information included in the XML
-     * file.
-     *
-     * The file should be located in "src", named "AboutBoxData.xml", following
-     * schema "src/AboutBoxSchema.xsd"
+     * Close this splash screen
      */
-    public void run()
+    public void close()
     {
-        // Draw window
-        setAllTheProperties();
-
-        // Show window
-        setVisible(true);
-
-        // Minimum waiting
-        int delay = 2500;
-
-        try
-        {
-            Thread.sleep(delay);
-        }
-        catch (Exception ex)
-        {
-            _logger.severe("Could not wait '" + delay + "' ms.");
-            ex.printStackTrace();
-        }
+        setVisible(false);
+        dispose();
     }
 
     /**
      * Calls all "set properties" methods
      */
-    private void setAllTheProperties()
+    private void setAllProperties()
     {
         setLogoLabelProperties();
         setProgramNameLabelProperties();
@@ -151,9 +167,8 @@ public class SplashScreen extends JFrame implements Runnable
     {
         _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        ImageIcon logo = new ImageIcon(getClass()
-                                           .getResource(_applicationDataModel.getLogoURL()));
-        _logoLabel.setIcon(logo);
+        _logoLabel.setIcon(
+                new ImageIcon(getClass().getResource(_applicationDataModel.getLogoURL())));
 
         _logger.fine("Every logo label properties have been initialized");
     }
@@ -164,11 +179,10 @@ public class SplashScreen extends JFrame implements Runnable
         _programNameLabel.setFont(new Font(null, 1, 30));
         _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        String name = _applicationDataModel.getProgramName();
-        _programNameLabel.setText(name);
+        _programNameLabel.setText(_applicationDataModel.getProgramName());
 
         _logger.fine(
-            "Every program name label properties have been initialized");
+                "Every program name label properties have been initialized");
     }
 
     /** Sets program version label properties */
@@ -177,26 +191,23 @@ public class SplashScreen extends JFrame implements Runnable
         _programVersionLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // Pattern : "v{version} - {copyright}"
-        String version = _applicationDataModel.getProgramVersion();
-        version += (" - " + _applicationDataModel.getCopyrightValue());
-        _programVersionLabel.setText("Version " + version);
+        _programVersionLabel.setText("Version "
+                + _applicationDataModel.getProgramVersion()
+                + " - " + _applicationDataModel.getCopyrightValue());
 
         _logger.fine(
-            "Every program version label properties have been initialized");
+                "Every program version label properties have been initialized");
     }
 
     /** Sets frame properties */
     private void setFrameProperties()
     {
-        String programName = _applicationDataModel.getProgramName();
         getContentPane().add(_panel, BorderLayout.CENTER);
 
+        setTitle(_applicationDataModel.getProgramName());
         setResizable(false);
         setUndecorated(true);
-        setTitle(programName);
         setAlwaysOnTop(true);
-        pack();
-        WindowCenterer.centerOnMainScreen(this);
     }
 }
 /*___oOo___*/

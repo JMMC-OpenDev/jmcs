@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.79 2011-02-08 11:08:43 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.80 2011-02-08 11:15:45 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.79  2011/02/08 11:08:43  bourgesl
+ * do not close splashScreen explicitely (displayed for 2.5 seconds)
+ *
  * Revision 1.78  2011/02/08 11:01:25  bourgesl
  * SplashScreen refeactoring to use swing Timer to hide itself and do not block main thread during startup
  *
@@ -410,7 +413,7 @@ public abstract class App {
      * @param args command-line arguments
      */
     protected App(String[] args) {
-        // Start application imediatly, with splashscreen
+        // Start application immediatly, with splashscreen
         this(args, false);
     }
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: TaskSwingWorkerExecutor.java,v 1.1 2011-02-04 16:25:15 mella Exp $"
+ * "@(#) $Id: TaskSwingWorkerExecutor.java,v 1.2 2011-02-08 10:10:46 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2011/02/04 16:25:15  mella
+ * refactored SwingWorkerExecutor to use TaskSwingWorker and simplify and clean up the cancellation of child tasks before executing a new worker
+ *
  *
  */
 package fr.jmmc.mcs.gui.task;
@@ -26,7 +29,8 @@ import java.util.logging.Level;
  * processing workers because our computations require serialization and cancellation
  * @author bourgesl
  */
-public final class TaskSwingWorkerExecutor {
+public final class TaskSwingWorkerExecutor
+{
 
     /** Class logger */
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
@@ -35,12 +39,15 @@ public final class TaskSwingWorkerExecutor {
     protected final static boolean DEBUG_FLAG = false;
     /** singleton instance */
     private static TaskSwingWorkerExecutor instance;
+    /** running worker counter */
+    private final static AtomicInteger runningWorkerCounter = new AtomicInteger(0);
 
     /**
      * Create the TaskSwingWorkerExecutor singleton
      * @param registry task registry only used to get the number of tasks
      */
-    public static void create(final TaskRegistry registry) {
+    public static void create(final TaskRegistry registry)
+    {
         if (instance == null) {
             instance = new TaskSwingWorkerExecutor(registry);
 
@@ -53,7 +60,8 @@ public final class TaskSwingWorkerExecutor {
     /**
      * Shutdown the TaskSwingWorkerExecutor
      */
-    public static void stop() {
+    public static void stop()
+    {
         if (instance != null) {
             instance.shutdown();
             if (DEBUG_FLAG) {
@@ -64,10 +72,20 @@ public final class TaskSwingWorkerExecutor {
     }
 
     /**
+     * Return true if there is at least one worker running
+     * @return true if there is at least one worker running
+     */
+    public final static boolean isTaskRunning()
+    {
+        return runningWorkerCounter.get() > 0;
+    }
+
+    /**
      * This code returns the singleton instance.
      * @return TaskSwingWorkerExecutor
      */
-    private static TaskSwingWorkerExecutor getInstance() {
+    private static TaskSwingWorkerExecutor getInstance()
+    {
         if (instance == null) {
             throw new IllegalStateException("SwingWorkerExecutor singleton not available !");
         }
@@ -80,7 +98,8 @@ public final class TaskSwingWorkerExecutor {
      * @see #execute(TaskSwingWorker)
      * @param worker TaskSwingWorker instance to execute
      */
-    public final static void executeTask(final TaskSwingWorker<?> worker) {
+    final static void executeTask(final TaskSwingWorker<?> worker)
+    {
         getInstance().execute(worker);
     }
 
@@ -89,26 +108,47 @@ public final class TaskSwingWorkerExecutor {
      * NOTE : No synchronization HERE as it must be called from Swing EDTs
      * @param task task to find the current worker
      */
-    public final static void cancel(final Task task) {
+    public final static void cancel(final Task task)
+    {
         getInstance().cancel(task, null);
+    }
 
+    /**
+     * Increment the counter of running worker
+     */
+    final static void incRunningWorkerCounter()
+    {
+        final int count = runningWorkerCounter.incrementAndGet();
+
+        if (DEBUG_FLAG) {
+            logger.info("runningWorkerCounter : " + count);
+        }
+    }
+
+    /**
+     * Decrement the counter of running worker
+     */
+    final static void decRunningWorkerCounter()
+    {
+        final int count = runningWorkerCounter.decrementAndGet();
+
+        if (DEBUG_FLAG) {
+            logger.info("runningWorkerCounter : " + count);
+        }
     }
 
     /* members */
-    /**
-     * Single threaded thread pool
-     */
+    /** Single threaded thread pool */
     private final ExecutorService executorService;
-    /**
-     * Current (or old) worker atomic reference for all tasks
-     */
+    /** Current (or old) worker atomic reference for all tasks */
     private final AtomicReferenceArray<TaskSwingWorker<?>> currentTaskWorkers;
 
     /**
      * Private constructor
      * @param registry task registry only used to get the number of tasks
      */
-    private TaskSwingWorkerExecutor(final TaskRegistry registry) {
+    private TaskSwingWorkerExecutor(final TaskRegistry registry)
+    {
         super();
 
         this.currentTaskWorkers = new AtomicReferenceArray<TaskSwingWorker<?>>(registry.getTaskCount());
@@ -120,7 +160,8 @@ public final class TaskSwingWorkerExecutor {
     /**
      * Stop all active worker threads immediately (interrupted)
      */
-    private void shutdown() {
+    private void shutdown()
+    {
         this.executorService.shutdownNow();
     }
 
@@ -133,7 +174,8 @@ public final class TaskSwingWorkerExecutor {
      * NOTE : No synchronization HERE as it must be called from Swing EDT
      * @param worker TaskSwingWorker instance to execute
      */
-    private final void execute(final TaskSwingWorker<?> worker) {
+    private final void execute(final TaskSwingWorker<?> worker)
+    {
         // note : there is no synchronisation here because this method must be called from Swing EDT
         final Task task = worker.getTask();
 
@@ -159,7 +201,8 @@ public final class TaskSwingWorkerExecutor {
      * @param task to use
      * @param newWorker new worker for the given task
      */
-    private final void cancelRelatedTasks(final Task task, final TaskSwingWorker<?> newWorker) {
+    private final void cancelRelatedTasks(final Task task, final TaskSwingWorker<?> newWorker)
+    {
         if (DEBUG_FLAG) {
             logger.info("cancel related tasks for = " + task);
         }
@@ -178,7 +221,8 @@ public final class TaskSwingWorkerExecutor {
      * @param task task to find the current worker
      * @param newWorker new worker for the given task (can be null)
      */
-    private final void cancel(final Task task, final TaskSwingWorker<?> newWorker) {
+    private final void cancel(final Task task, final TaskSwingWorker<?> newWorker)
+    {
         // get current worker and set new worker :
         final TaskSwingWorker<?> currentWorker = this.currentTaskWorkers.getAndSet(task.getId(), newWorker);
 
@@ -200,7 +244,8 @@ public final class TaskSwingWorkerExecutor {
      * Useful when the worker terminates its execution (cancelled or not)
      * @param worker worker to remove
      */
-    private final void clearWorker(final TaskSwingWorker<?> worker) {
+    private final void clearWorker(final TaskSwingWorker<?> worker)
+    {
         // get current worker and clear reference :
         if (this.currentTaskWorkers.compareAndSet(worker.getTask().getId(), worker, null)) {
             if (DEBUG_FLAG) {
@@ -216,7 +261,8 @@ public final class TaskSwingWorkerExecutor {
     /**
      * Single threaded Swing Worker executor
      */
-    private static final class SwingWorkerSingleThreadExecutor extends ThreadPoolExecutor {
+    private static final class SwingWorkerSingleThreadExecutor extends ThreadPoolExecutor
+    {
 
         /* members */
         /** TaskSwingWorkerExecutor reference for clearWorker callback */
@@ -226,7 +272,8 @@ public final class TaskSwingWorkerExecutor {
          * Create a single threaded Swing Worker executor
          * @param executor TaskSwingWorkerExecutor reference for clearWorker callback
          */
-        public SwingWorkerSingleThreadExecutor(final TaskSwingWorkerExecutor executor) {
+        public SwingWorkerSingleThreadExecutor(final TaskSwingWorkerExecutor executor)
+        {
             super(1, 1,
                     0L, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>(),
@@ -252,7 +299,8 @@ public final class TaskSwingWorkerExecutor {
          * @param r the task that will be executed.
          */
         @Override
-        protected void beforeExecute(final Thread t, final Runnable r) {
+        protected void beforeExecute(final Thread t, final Runnable r)
+        {
             if (DEBUG_FLAG) {
                 logger.info("beforeExecute : " + r);
             }
@@ -281,7 +329,8 @@ public final class TaskSwingWorkerExecutor {
          * execution completed normally.
          */
         @Override
-        protected void afterExecute(final Runnable r, final Throwable t) {
+        protected void afterExecute(final Runnable r, final Throwable t)
+        {
             if (DEBUG_FLAG) {
                 if (t != null) {
                     logger.log(Level.INFO, "afterExecute : " + r, t);
@@ -301,7 +350,8 @@ public final class TaskSwingWorkerExecutor {
     /**
      * Custom ThreadFactory implementation
      */
-    private static final class SwingWorkerThreadFactory implements ThreadFactory {
+    private static final class SwingWorkerThreadFactory implements ThreadFactory
+    {
 
         /** thread count */
         private final AtomicInteger threadNumber = new AtomicInteger(1);
@@ -313,7 +363,8 @@ public final class TaskSwingWorkerExecutor {
          * @return constructed thread, or {@code null} if the request to
          *         create a thread is rejected
          */
-        public Thread newThread(final Runnable r) {
+        public Thread newThread(final Runnable r)
+        {
             final StringBuilder name = new StringBuilder("SwingWorker-pool-");
             name.append(threadNumber.getAndIncrement());
 

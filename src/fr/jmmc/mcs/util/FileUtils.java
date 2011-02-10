@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileUtils.java,v 1.1 2011-02-10 15:44:49 mella Exp $"
+ * "@(#) $Id: FileUtils.java,v 1.2 2011-02-10 15:48:53 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2011/02/10 15:44:49  mella
+ * Imported from aspro with new methods getTempFile
+ *
  * Revision 1.10  2010/12/15 13:30:38  bourgesl
  * removed to do
  *
@@ -232,8 +235,9 @@ public final class FileUtils {
 
     /**
      * Creates an empty file in the default temporary-file directory, using
-     * the given prefix and suffix to generate its name. 
-     *
+     * the given prefix and suffix to generate its name.      
+     * The file will be deleted on program exit.
+     * 
      * @param  prefix     The prefix string to be used in generating the file's
      *                    name; must be at least three characters long
      *
@@ -259,20 +263,24 @@ public final class FileUtils {
         File file = null;
         try {
             file = File.createTempFile(prefix, suffix);
+            file.deleteOnExit();
         } catch (IOException ex) {
             throw new IllegalStateException("unable to create a temporary file", ex);
-        }
+        }        
         return file;
     }
 
     /**
      * Return an tmp filename using temp directory and given filename.
      * The caller must consider that this file may already be present.
+     * The file will be deleted on program exit.
      * @param filename the short name to use in the computation of the temporary filename
      * @return the temporary filename
      */
     public static File getTempFile(String filename) {
-        return new File(getTempDir(), filename);
+        File file = new File(getTempDir(), filename);
+        file.deleteOnExit();
+        return file;
     }
 
     /**

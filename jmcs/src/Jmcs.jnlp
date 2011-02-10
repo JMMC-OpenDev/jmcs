@@ -40,7 +40,7 @@
         <jar href="jar/commons-math-2.0.jar" />
         <jar href="jar/colt.jar" />
 
-        <jar href="jar/jsamp-1.1.jar" />
+        <jar href="jar/jsamp-1.2.jar" />
 
     </resources>
     <application-desc main-class="fr.jmmc.mcs.TBD"/>

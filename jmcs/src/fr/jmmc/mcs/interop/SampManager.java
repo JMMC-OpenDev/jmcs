@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.19 2010-11-14 13:50:39 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.20 2011-02-10 10:45:14 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2010/11/14 13:50:39  bourgesl
+ * define JSamp log level to WARNING
+ *
  * Revision 1.18  2010/11/03 10:05:45  lafrasse
  * Added loads of meta-data exports.
  *
@@ -91,16 +94,16 @@ import org.astrogrid.samp.client.SampException;
 import org.astrogrid.samp.gui.GuiHubConnector;
 import org.astrogrid.samp.gui.SubscribedClientListModel;
 import org.astrogrid.samp.gui.SysTray;
-import org.astrogrid.samp.xmlrpc.HubMode;
-import org.astrogrid.samp.xmlrpc.HubRunner;
-import org.astrogrid.samp.xmlrpc.XmlRpcKit;
+import org.astrogrid.samp.hub.Hub;
+import org.astrogrid.samp.hub.HubServiceMode;
 
 /**
  * SampManager singleton class.
  *
  * @author lafrasse
  */
-public final class SampManager {
+public final class SampManager
+{
 
     /** Logger */
     private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.interop.SampManager");
@@ -119,7 +122,8 @@ public final class SampManager {
      * Return the singleton instance
      * @return singleton instance
      */
-    public static synchronized SampManager getInstance() {
+    public static synchronized SampManager getInstance()
+    {
         // DO NOT MODIFY !!!
         if (_instance == null) {
             _instance = new SampManager();
@@ -133,7 +137,8 @@ public final class SampManager {
     /**
      * Hidden constructor
      */
-    protected SampManager() {
+    protected SampManager()
+    {
 
         // define JSamp log verbosity to warning level (avoid debug messages) :
         Logger.getLogger("org.astrogrid.samp").setLevel(Level.WARNING);
@@ -178,30 +183,37 @@ public final class SampManager {
 
         _connector.declareMetadata(meta);
 
-        _connector.addConnectionListener(new ChangeListener() {
+        _connector.addConnectionListener(new ChangeListener()
+        {
 
-            public void stateChanged(final ChangeEvent e) {
+            public void stateChanged(final ChangeEvent e)
+            {
                 if (_logger.isLoggable(Level.INFO)) {
                     _logger.info("SAMP Hub connection status changed: " + getHubConnector().isConnected());
                 }
             }
         });
 
-        // Try to start an internal SAMP hub if none available
-        try {
-            // use an internal hub for JNLP issues :
-            HubRunner.runHub(getInternalHubMode(), XmlRpcKit.getInstance());
-        } catch (IOException ioe) {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.log(Level.FINE, "unable to start internal hub (probably another hub is already running)", ioe);
-            }
-        }
-
-        // try to connect
+        // try to connect :
         _connector.setActive(true);
 
+        if (!_connector.isConnected()) {
+
+            // Try to start an internal SAMP hub if none available (JNLP do not support external hub) :
+            try {
+                Hub.runHub(getInternalHubMode());
+            } catch (IOException ioe) {
+                if (_logger.isLoggable(Level.FINE)) {
+                    _logger.log(Level.FINE, "unable to start internal hub (probably another hub is already running)", ioe);
+                }
+            }
+
+            // retry to connect :
+            _connector.setActive(true);
+        }
+
         // Keep a look out for hubs if initial one shuts down
-        _connector.setAutoconnect(10);
+        _connector.setAutoconnect(5);
 
         if (!_connector.isConnected()) {
             StatusBar.show("Could not connect to an existing hub or start an internal SAMP hub.");
@@ -212,10 +224,24 @@ public final class SampManager {
     }
 
     /**
+     * Shutdown operations
+     */
+    private void shutdownNow()
+    {
+        // It is good practice to call setActive(false) when this object is finished with;
+        // however if it is not called explicitly, any open connection will unregister itself
+        // on object finalisation or JVM termination, as long as the JVM shuts down cleanly.
+
+        _connector.setActive(false);
+        _logger.info("SAMP Hub connection closed.");
+    }
+
+    /**
      * Return the JSamp Gui hub connector providing swing actions
      * @return JSamp Gui hub connector providing swing actions
      */
-    protected GuiHubConnector getHubConnector() {
+    protected GuiHubConnector getHubConnector()
+    {
         return _connector;
     }
 
@@ -223,23 +249,20 @@ public final class SampManager {
     /**
      * Explicitely shut down the hub connector
      */
-    public static void shutdown() {
-        // It is good practice to call setActive(false) when this object is finished with;
-        // however if it is not called explicitly, any open connection will unregister itself
-        // on object finalisation or JVM termination, as long as the JVM shuts down cleanly.
-        _logger.info("SAMP Hub connection closed.");
-        
-        getGuiHubConnector().setActive(false);
+    public static void shutdown()
+    {
+        getInstance().shutdownNow();
     }
 
     /**
-     * Return the hub mode for the internal Hub (CLIENT_GUI if system tray is supported)
+     * Return the hub service mode for the internal Hub (CLIENT_GUI if system tray is supported)
      * @return hub mode
      */
-    private static HubMode getInternalHubMode() {
-        final HubMode internalMode = SysTray.getInstance().isSupported()
-                ? HubMode.CLIENT_GUI
-                : HubMode.NO_GUI;
+    private static HubServiceMode getInternalHubMode()
+    {
+        final HubServiceMode internalMode = SysTray.getInstance().isSupported()
+                ? HubServiceMode.CLIENT_GUI
+                : HubServiceMode.NO_GUI;
         return internalMode;
     }
 
@@ -247,7 +270,8 @@ public final class SampManager {
      * Return the JSamp Gui hub connector providing swing actions
      * @return JSamp Gui hub connector providing swing actions
      */
-    private static GuiHubConnector getGuiHubConnector() {
+    private static GuiHubConnector getGuiHubConnector()
+    {
         return SampManager.getInstance().getHubConnector();
     }
 
@@ -256,7 +280,8 @@ public final class SampManager {
      * @param mType samp message type
      * @return list model for the registered clients
      */
-    protected static SubscribedClientListModel createSubscribedClientListModel(final String mType) {
+    protected static SubscribedClientListModel createSubscribedClientListModel(final String mType)
+    {
         return new SubscribedClientListModel(SampManager.getGuiHubConnector(), mType);
     }
 
@@ -265,7 +290,8 @@ public final class SampManager {
      *
      * @return   registration toggler action
      */
-    public static Action createToggleRegisterAction() {
+    public static Action createToggleRegisterAction()
+    {
         final GuiHubConnector connector = getGuiHubConnector();
 
         final Action[] hubStartActions = new Action[]{
@@ -280,7 +306,8 @@ public final class SampManager {
      *
      * @return   monitor window action
      */
-    public static Action createShowMonitorAction() {
+    public static Action createShowMonitorAction()
+    {
         return getGuiHubConnector().createShowMonitorAction();
     }
 
@@ -288,7 +315,8 @@ public final class SampManager {
      * Register an app-specific capability
      * @param handler message handler
      */
-    public static void registerCapability(final SampMessageHandler handler) {
+    public static void registerCapability(final SampMessageHandler handler)
+    {
         final GuiHubConnector connector = getGuiHubConnector();
 
         connector.addMessageHandler(handler);
@@ -305,7 +333,8 @@ public final class SampManager {
      * Link SampManager instance to the "Interop" menu
      * @param menu interop menu container
      */
-    public static synchronized void hookMenu(final JMenu menu) {
+    public static synchronized void hookMenu(final JMenu menu)
+    {
 
         if (_menu != null) {
             throw new IllegalStateException("the interoperability menu is already hooked by SampManager : \n" + _menu + "\n" + menu);
@@ -325,7 +354,8 @@ public final class SampManager {
      * @param menu menu entry
      * @param action samp capability action
      */
-    public static void addMenu(final JMenu menu, final SampCapabilityAction action) {
+    public static void addMenu(final JMenu menu, final SampCapabilityAction action)
+    {
         _map.put(action, menu);
     }
 
@@ -334,7 +364,8 @@ public final class SampManager {
      * @param action samp capability action
      * @return menu menu entry
      */
-    public static JMenu getMenu(final SampCapabilityAction action) {
+    public static JMenu getMenu(final SampCapabilityAction action)
+    {
         return _map.get(action);
     }
 
@@ -346,7 +377,8 @@ public final class SampManager {
      *
      * @throws SampException if any Samp exception occured
      */
-    public static void sendMessageTo(final String mType, final String recipient, final Map<?, ?> parameters) throws SampException {
+    public static void sendMessageTo(final String mType, final String recipient, final Map<?, ?> parameters) throws SampException
+    {
         final GuiHubConnector connector = getGuiHubConnector();
 
         connector.getConnection().notify(recipient, new Message(mType, parameters));
@@ -363,7 +395,8 @@ public final class SampManager {
      *
      * @throws SampException if any Samp exception occured
      */
-    public static void broadcastMessage(final String mType, final Map<?, ?> parameters) throws SampException {
+    public static void broadcastMessage(final String mType, final Map<?, ?> parameters) throws SampException
+    {
         final GuiHubConnector connector = getGuiHubConnector();
 
         connector.getConnection().notifyAll(new Message(mType, parameters));

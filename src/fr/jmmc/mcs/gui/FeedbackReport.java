@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.33 2011-02-08 10:09:36 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.34 2011-02-11 10:00:11 mella Exp $"
  *
  */
 package fr.jmmc.mcs.gui;
@@ -39,8 +39,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
  * the user system informations and the application logs and send all
  * using a HTTP POST request.
  */
-public class FeedbackReport extends javax.swing.JDialog implements KeyListener
-{
+public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
@@ -74,8 +73,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      *
      * @deprecated use new FeedbackReport(final boolean modal, final Throwable exception)
      */
-    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception)
-    {
+    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception) {
 
         super(MessagePane.getOwner(frame), modal);
 
@@ -101,8 +99,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      * Creates a new FeedbackReport object (not modal).
      * Do not exit on close.
      */
-    public FeedbackReport()
-    {
+    public FeedbackReport() {
         this(null, false, null);
     }
 
@@ -111,8 +108,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      * Do not exit on close.
      * @param exception exception
      */
-    public FeedbackReport(final Throwable exception)
-    {
+    public FeedbackReport(final Throwable exception) {
         this(null, false, exception);
     }
 
@@ -123,27 +119,23 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      * @param modal if true, this dialog is modal
      * @param exception exception
      */
-    public FeedbackReport(final boolean modal, final Throwable exception)
-    {
+    public FeedbackReport(final boolean modal, final Throwable exception) {
         this(null, modal, exception);
     }
 
     /**
      * This method is useful to set the models and specific features of initialized swing components :
      */
-    private void postInit()
-    {
+    private void postInit() {
         //setResizable(false);
         this.setMinimumSize(new Dimension(600, 600));
         this.setPreferredSize(new Dimension(600, 600));
 
         WindowCenterer.centerOnMainScreen(this);
 
-        cancelButton.addActionListener(new ActionListener()
-        {
+        cancelButton.addActionListener(new ActionListener() {
 
-            public void actionPerformed(final ActionEvent evt)
-            {
+            public void actionPerformed(final ActionEvent evt) {
                 // Just use dispose() as it is overriden to :
                 // - exit if needed
                 dispose();
@@ -151,9 +143,14 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
         });
 
         if (_exception != null) {
+            String msg = ((_exception.getMessage() != null) ? _exception.getMessage() : "no message");
+            String cause = "";
+            if (_exception.getCause() != null && _exception.getCause().getMessage() != null) {
+                cause = "\n" + _exception.getCause().getMessage();
+            }
+
             descriptionTextArea.append("Following exception occured:\n"
-                    + ((_exception.getMessage() != null) ? _exception.getMessage() : "no message")
-                    + "\n\n--\n");
+                    + msg + cause + "\n\n--\n");
 
             if (_logger.isLoggable(Level.SEVERE)) {
                 _logger.log(Level.SEVERE, "An exception was given to the feedback report", _exception);
@@ -201,8 +198,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
 
      * @param sent boolean flag indicating if the feedback report was sent
      */
-    public void shouldDispose(final boolean sent)
-    {
+    public void shouldDispose(final boolean sent) {
         loadProgressBar.setIndeterminate(false);
 
         if (sent) {
@@ -211,15 +207,13 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
             loadProgressBar.setString("Thank you for your feedback.");
 
             // Use Timer to wait 2s before closing this dialog :
-            final Timer timer = new Timer(2000, new ActionListener()
-            {
+            final Timer timer = new Timer(2000, new ActionListener() {
 
                 /**
                  * Handle the timer call
                  * @param ae action event
                  */
-                public void actionPerformed(final ActionEvent ae)
-                {
+                public void actionPerformed(final ActionEvent ae) {
                     // Just use dispose() as it is overriden to :
                     // - exit if needed
                     dispose();
@@ -245,8 +239,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      * remove this instance form Preference Observers
      */
     @Override
-    public final void dispose()
-    {
+    public final void dispose() {
         if (_logger.isLoggable(Level.FINE)) {
             _logger.fine("dispose : " + this);
         }
@@ -267,8 +260,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      *
      * @return mail value
      */
-    public final String getMail()
-    {
+    public final String getMail() {
         return emailTextField.getText();
     }
 
@@ -277,8 +269,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      *
      * @return description value
      */
-    public final String getDescription()
-    {
+    public final String getDescription() {
         return descriptionTextArea.getText();
     }
 
@@ -287,8 +278,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      *
      * @return summary value
      */
-    public final String getSummary()
-    {
+    public final String getSummary() {
         return summaryTextField.getText();
     }
 
@@ -297,8 +287,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      * @param message to add
      * @return complete description value
      */
-    public final String addDescription(final String message)
-    {
+    public final String addDescription(final String message) {
         descriptionTextArea.append(message);
         return descriptionTextArea.getText();
     }
@@ -308,8 +297,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      *
      * @return exception trace
      */
-    public final String getExceptionTrace()
-    {
+    public final String getExceptionTrace() {
         String exceptionTrace = "No stack trace";
 
         // Check if the exception is not null
@@ -323,8 +311,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
     }
 
     /** Exit the application if there was a fatal error */
-    private final void exit()
-    {
+    private final void exit() {
         // If the application is not ready, exit now :
         final boolean ready = App.isReady();
 
@@ -342,20 +329,17 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
     }
 
     /* Implementation of keylistener */
-    public final void keyTyped(final KeyEvent e)
-    {
+    public final void keyTyped(final KeyEvent e) {
     }
 
-    public final void keyPressed(final KeyEvent e)
-    {
+    public final void keyPressed(final KeyEvent e) {
     }
 
     /**
      * Enable submit button according desc and summary fields.
      * @param e event thrown by description or summary updates.
      */
-    public final void keyReleased(final KeyEvent e)
-    {
+    public final void keyReleased(final KeyEvent e) {
         final boolean hasDesc = descriptionTextArea.getText().length() > 0;
         final boolean hasSummary = summaryTextField.getText().length() > 0;
         submitButton.setEnabled(hasDesc && hasSummary);
@@ -563,8 +547,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      *
      * @return sorted list of system properties
      */
-    public final String getSystemConfig()
-    {
+    public final String getSystemConfig() {
         // Get all informations about the system running the application
         final Properties hostProperties = System.getProperties();
 
@@ -586,8 +569,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      * Return application log
      * @return application log
      */
-    private String getApplicationLog()
-    {
+    private String getApplicationLog() {
         final String logOutput = App.getLogOutput();
 
         if (_logger.isLoggable(Level.FINE)) {
@@ -601,21 +583,16 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      * Test the feedback Report dialog
      * @param args the command line arguments
      */
-    public static void main(String args[])
-    {
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-            public void run()
-            {
+            public void run() {
                 FeedbackReport dialog = new FeedbackReport();
                 dialog.setVisible(true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter()
-                {
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
                     @Override
-                    public void windowClosing(java.awt.event.WindowEvent e)
-                    {
+                    public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);
                     }
                 });
@@ -652,8 +629,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
      * This worker aims to send the feedback mail in background.
      * It replaces the old FeedbackReportModel which was runnable.
      */
-    private static final class FeedbackReportWorker extends TaskSwingWorker<Boolean>
-    {
+    private static final class FeedbackReportWorker extends TaskSwingWorker<Boolean> {
 
         /* members */
         /** feedback report dialog used for refreshUI callback */
@@ -688,8 +664,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
          */
         private FeedbackReportWorker(final FeedbackReport feedbackReport,
                 final String config, final String log, final String stackTrace,
-                final String type, final String mail, final String summary, final String comments)
-        {
+                final String type, final String mail, final String summary, final String comments) {
             super(JmcsTaskRegistry.TASK_FEEDBACK_REPORT, "send feed back report");
             this.feedbackReport = feedbackReport;
             this.config = config;
@@ -707,8 +682,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
          * @return boolean status flag
          */
         @Override
-        public Boolean computeInBackground()
-        {
+        public Boolean computeInBackground() {
             boolean statusFlag = false;
 
             // Create an HTTP client to send report information to our PHP script
@@ -784,8 +758,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener
          * @param sent boolean flag indicating if the feedback report was sent
          */
         @Override
-        public void refreshUI(final Boolean sent)
-        {
+        public void refreshUI(final Boolean sent) {
             feedbackReport.shouldDispose(sent.booleanValue());
         }
     }

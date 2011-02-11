@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.9 2010-10-11 14:27:31 lafrasse Exp $"
+ * "@(#) $Id: Main.java,v 1.10 2011-02-11 15:11:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/10/11 14:27:31  lafrasse
+ * API update and cleanup.
+ *
  * Revision 1.8  2010/10/05 07:57:21  lafrasse
  * To reflect fr.jmmc.mcs.interop API changes.
  *
@@ -55,7 +58,7 @@ import org.astrogrid.samp.SampUtils;
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class Main extends App {
 
@@ -76,7 +79,7 @@ public class Main extends App {
      * @param args
      */
     public Main(String[] args) {
-        super(args, false, true, true);
+        super(args, false, true);
     }
 
     /** Initialize application objects */

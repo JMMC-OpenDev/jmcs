@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.7 2010-10-22 11:00:32 bourgesl Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.8 2011-02-11 09:59:35 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2010/10/22 11:00:32  bourgesl
+ * javadoc
+ *
  * Revision 1.6  2010/10/15 09:26:46  bourgesl
  * fixed typo in confirme overwrite message
  *
@@ -98,9 +101,17 @@ public final class MessagePane {
             _logger.log(Level.SEVERE, "An exception occured", th);
         }
 
+        // try to get cause if possible
+        final String cause;
+        if (th != null && th.getCause() != null && th.getCause().getMessage() != null) {
+            cause = "\n" + "Cause : \"" + th.getCause().getMessage() + "\".\n";
+        } else {
+            cause = "";
+        }
+
         final String msg;
         if (th != null && th.getMessage() != null) {
-            msg = message + "\n\n" + "Explanation : \"" + th.getMessage() + "\".";
+            msg = message + "\n\n" + "Explanation : \"" + th.getMessage() + "\"."+cause;
         } else {
             msg = message;
         }

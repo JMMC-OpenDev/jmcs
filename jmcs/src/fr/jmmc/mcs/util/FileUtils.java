@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileUtils.java,v 1.3 2011-02-11 09:58:25 mella Exp $"
+ * "@(#) $Id: FileUtils.java,v 1.4 2011-02-11 15:40:27 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2011/02/11 09:58:25  mella
+ * Prevent some exceptions in getTempFile method
+ *
  * Revision 1.2  2011/02/10 15:48:53  mella
  * ask to delete temp files on exit
  *
@@ -49,10 +52,13 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URL;
 
@@ -237,6 +243,29 @@ public final class FileUtils {
     }
 
     /**
+     * Copy file.
+     * @param src source file
+     * @param dst destination file
+     * @throws IOException
+     *   if io problem occurs
+     * @throws FileNotFoundException
+     *   if input file is not found
+     */
+    public static void copy(File src, File dst) throws IOException, FileNotFoundException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
+    /**
      * Creates an empty file in the default temporary-file directory, using
      * the given prefix and suffix to generate its name.      
      * The file will be deleted on program exit.
@@ -304,5 +333,5 @@ public final class FileUtils {
      */
     private static String getTempDir() {
         return System.getProperty("java.io.tmpdir");
-    }
+    }    
 }

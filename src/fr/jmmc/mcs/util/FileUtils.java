@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileUtils.java,v 1.2 2011-02-10 15:48:53 mella Exp $"
+ * "@(#) $Id: FileUtils.java,v 1.3 2011-02-11 09:58:25 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2011/02/10 15:48:53  mella
+ * ask to delete temp files on exit
+ *
  * Revision 1.1  2011/02/10 15:44:49  mella
  * Imported from aspro with new methods getTempFile
  *
@@ -260,13 +263,24 @@ public final class FileUtils {
      *          method does not allow a file to be created
      */
     public static File getTempFile(String prefix, String suffix) {
+        // Prevent exception thrown by createTempFile that requires one prefix and
+        // suffix longer than 3 chars.
+        String p = prefix;
+        String s = suffix;
+        if (prefix.length() < 3) {
+            p = prefix + "___";
+        }
+        if (suffix.length() < 3) {
+            s = "___" + suffix;
+        }
+
         File file = null;
         try {
-            file = File.createTempFile(prefix, suffix);
+            file = File.createTempFile(p, s);
             file.deleteOnExit();
         } catch (IOException ex) {
             throw new IllegalStateException("unable to create a temporary file", ex);
-        }        
+        }
         return file;
     }
 

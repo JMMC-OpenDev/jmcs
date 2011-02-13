@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileUtils.java,v 1.4 2011-02-11 15:40:27 mella Exp $"
+ * "@(#) $Id: FileUtils.java,v 1.5 2011-02-13 17:03:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2011/02/11 15:40:27  mella
+ * Add a method to copy files
+ *
  * Revision 1.3  2011/02/11 09:58:25  mella
  * Prevent some exceptions in getTempFile method
  *
@@ -68,15 +71,14 @@ import java.util.logging.Logger;
 /**
  * Several File utility methods
  *
- * @author bourgesl
+ * @author bourgesl, mella
  */
 public final class FileUtils {
 
     /** Class Name */
     private static final String className = FileUtils.class.getName();
     /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-            className);
+    private static final Logger logger = Logger.getLogger(className);
     /** platform dependent line separator */
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -279,10 +281,6 @@ public final class FileUtils {
      *
      * @return  An abstract pathname denoting a newly-created empty file
      *
-     * @throws  IllegalArgumentException
-     *          If the <code>prefix</code> argument contains fewer than three
-     *          characters
-     *
      * @throws  IllegalStateException
      *         If a file could not be created
      *
@@ -333,5 +331,5 @@ public final class FileUtils {
      */
     private static String getTempDir() {
         return System.getProperty("java.io.tmpdir");
-    }    
+    }
 }

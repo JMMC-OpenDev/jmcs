@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.80 2011-02-08 11:15:45 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.81 2011-02-14 17:08:58 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.80  2011/02/08 11:15:45  bourgesl
+ * typo
+ *
  * Revision 1.79  2011/02/08 11:08:43  bourgesl
  * do not close splashScreen explicitely (displayed for 2.5 seconds)
  *
@@ -839,6 +842,16 @@ public abstract class App {
         return true;
     }
 
+    /**
+     * Hook to handle operations when closing application for JMCS.
+     */
+    private void onFinish() {
+
+        // Disconnect from SAMP Hub :
+        SampManager.shutdown();
+
+    }
+
     /** Describe the life cycle of the application */
     protected final void run() {
         // Show splash screen if we have to
@@ -1153,7 +1166,7 @@ public abstract class App {
                 if (_exitApplicationWhenClosed) {
                     _logger.info("Killing the application.");
 
-                    SampManager.shutdown();
+                    onFinish();
 
                     System.exit(-1);
                 } else {

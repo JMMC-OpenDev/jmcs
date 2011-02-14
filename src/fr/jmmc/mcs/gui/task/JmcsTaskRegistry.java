@@ -1,65 +1,59 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: JmcsTaskRegistry.java,v 1.1 2011-02-04 16:23:44 mella Exp $"
+ * "@(#) $Id: JmcsTaskRegistry.java,v 1.2 2011-02-14 17:11:10 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2011/02/04 16:23:44  mella
+ * create jmcs Tasks and describe their dependencies
+ *
  */
 package fr.jmmc.mcs.gui.task;
 
 /**
- * This class describes the Jmcs tasks associated to SwingWorker and their ordering
+ * This class describes the Jmcs tasks associated with SwingWorker(s)
  * @author bourgesl
  */
-public final class JmcsTaskRegistry implements TaskRegistry {
+public final class JmcsTaskRegistry extends TaskRegistry
+{
 
-    /* Jmcs tasks */
-    /** Observability task */
-    public final static Task TASK_FEEDBACK_REPORT;
-    /** task count */
-    public final static int TASK_COUNT;
     /** task registry singleton */
     private final static JmcsTaskRegistry instance;
 
+    /* JMCS tasks */
+    /** feedback Report task */
+    public final static Task TASK_FEEDBACK_REPORT;
+
     /**
-     * Static initializer to define tasks (id, name) and child tasks
+     * Static initializer to define tasks and their child tasks
      */
     static {
-        int n = 0;
+        // create the task registry singleton :
+        instance = new JmcsTaskRegistry();
 
         // create tasks :
-        TASK_FEEDBACK_REPORT = new Task(n++, "Feedback report");
+        TASK_FEEDBACK_REPORT = new Task("FeedbackReport");
 
-        final Task[] tasks = new Task[]{
-            TASK_FEEDBACK_REPORT};
-
-        TASK_COUNT = tasks.length;
-
-        instance = new JmcsTaskRegistry();
+        // register tasks :
+        instance.addTask(TASK_FEEDBACK_REPORT);
     }
 
     /**
      * Singleton pattern for the registry itself
      * @return registry instance
      */
-    public static TaskRegistry getInstance() {
+    public static TaskRegistry getInstance()
+    {
         return instance;
     }
 
     /**
-     * Private constructor
+     * Protected constructor
      */
-    private JmcsTaskRegistry() {
-        // no-op
-    }
-
-    /**
-     * Return the number of tasks
-     * @return number of tasks
-     */
-    public int getTaskCount() {
-        return TASK_COUNT;
+    protected JmcsTaskRegistry()
+    {
+        super();
     }
 }

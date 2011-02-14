@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: TaskSwingWorkerExecutor.java,v 1.2 2011-02-08 10:10:46 bourgesl Exp $"
+ * "@(#) $Id: TaskSwingWorkerExecutor.java,v 1.3 2011-02-14 17:12:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2011/02/08 10:10:46  bourgesl
+ * updated code from Aspro changes (running task counter)
+ *
  * Revision 1.1  2011/02/04 16:25:15  mella
  * refactored SwingWorkerExecutor to use TaskSwingWorker and simplify and clean up the cancellation of child tasks before executing a new worker
  *
@@ -14,14 +17,15 @@
 package fr.jmmc.mcs.gui.task;
 
 import fr.jmmc.mcs.util.MCSExceptionHandler;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 /**
@@ -43,18 +47,11 @@ public final class TaskSwingWorkerExecutor
     private final static AtomicInteger runningWorkerCounter = new AtomicInteger(0);
 
     /**
-     * Create the TaskSwingWorkerExecutor singleton
-     * @param registry task registry only used to get the number of tasks
+     * Start the TaskSwingWorkerExecutor
      */
-    public static void create(final TaskRegistry registry)
+    public static void start()
     {
-        if (instance == null) {
-            instance = new TaskSwingWorkerExecutor(registry);
-
-            if (DEBUG_FLAG) {
-                logger.info("created SwingWorkerExecutor : " + instance);
-            }
-        }
+        getInstance();
     }
 
     /**
@@ -64,20 +61,12 @@ public final class TaskSwingWorkerExecutor
     {
         if (instance != null) {
             instance.shutdown();
+
             if (DEBUG_FLAG) {
                 logger.info("stopped SwingWorkerExecutor : " + instance);
             }
+            instance = null;
         }
-        instance = null;
-    }
-
-    /**
-     * Return true if there is at least one worker running
-     * @return true if there is at least one worker running
-     */
-    public final static boolean isTaskRunning()
-    {
-        return runningWorkerCounter.get() > 0;
     }
 
     /**
@@ -87,9 +76,22 @@ public final class TaskSwingWorkerExecutor
     private static TaskSwingWorkerExecutor getInstance()
     {
         if (instance == null) {
-            throw new IllegalStateException("SwingWorkerExecutor singleton not available !");
+            instance = new TaskSwingWorkerExecutor();
+
+            if (DEBUG_FLAG) {
+                logger.info("created SwingWorkerExecutor : " + instance);
+            }
         }
         return instance;
+    }
+
+    /**
+     * Return true if there is at least one worker running
+     * @return true if there is at least one worker running
+     */
+    public final static boolean isTaskRunning()
+    {
+        return runningWorkerCounter.get() > 0;
     }
 
     /**
@@ -105,12 +107,12 @@ public final class TaskSwingWorkerExecutor
 
     /**
      * Cancel any busy worker for the given task
-     * NOTE : No synchronization HERE as it must be called from Swing EDTs
+     * NOTE : No synchronization HERE as it must be called from Swing EDT
      * @param task task to find the current worker
      */
-    public final static void cancel(final Task task)
+    public final static void cancelTask(final Task task)
     {
-        getInstance().cancel(task, null);
+        getInstance().cancel(task);
     }
 
     /**
@@ -141,17 +143,17 @@ public final class TaskSwingWorkerExecutor
     /** Single threaded thread pool */
     private final ExecutorService executorService;
     /** Current (or old) worker atomic reference for all tasks */
-    private final AtomicReferenceArray<TaskSwingWorker<?>> currentTaskWorkers;
+    private final Map<String, AtomicReference<TaskSwingWorker<?>>> currentTaskWorkers;
 
     /**
      * Private constructor
-     * @param registry task registry only used to get the number of tasks
      */
-    private TaskSwingWorkerExecutor(final TaskRegistry registry)
+    private TaskSwingWorkerExecutor()
     {
         super();
 
-        this.currentTaskWorkers = new AtomicReferenceArray<TaskSwingWorker<?>>(registry.getTaskCount());
+        // Use an unsynchronized Map as map modifications are only made by Swing EDT (put) :
+        this.currentTaskWorkers = new HashMap<String, AtomicReference<TaskSwingWorker<?>>>();
 
         // Prepare the custom executor service with a single thread :
         this.executorService = new SwingWorkerSingleThreadExecutor(this);
@@ -184,8 +186,10 @@ public final class TaskSwingWorkerExecutor
         }
 
         // cancel the running worker for the task and child tasks
-        // and memorize the reference to the new worker before execution :
-        this.cancelRelatedTasks(task, worker);
+        this.cancelRelatedTasks(task);
+
+        // memorize the reference to the new worker before execution :
+        defineReference(task, worker);
 
         if (DEBUG_FLAG) {
             logger.info("execute worker = " + worker);
@@ -199,19 +203,18 @@ public final class TaskSwingWorkerExecutor
      * Cancel any busy worker related to the given task and its child tasks
      * NOTE : No synchronization HERE as it must be called from Swing EDT
      * @param task to use
-     * @param newWorker new worker for the given task
      */
-    private final void cancelRelatedTasks(final Task task, final TaskSwingWorker<?> newWorker)
+    private final void cancelRelatedTasks(final Task task)
     {
         if (DEBUG_FLAG) {
             logger.info("cancel related tasks for = " + task);
         }
         // cancel any busy worker related to the given task :
-        cancel(task, newWorker);
+        cancel(task);
 
         // cancel any busy worker related to any child task :
         for (Task child : task.getChildTasks()) {
-            cancel(child, null);
+            cancel(child);
         }
     }
 
@@ -219,43 +222,99 @@ public final class TaskSwingWorkerExecutor
      * Cancel any busy worker for the given task
      * NOTE : No synchronization HERE as it must be called from Swing EDT
      * @param task task to find the current worker
-     * @param newWorker new worker for the given task (can be null)
      */
-    private final void cancel(final Task task, final TaskSwingWorker<?> newWorker)
+    private final void cancel(final Task task)
     {
-        // get current worker and set new worker :
-        final TaskSwingWorker<?> currentWorker = this.currentTaskWorkers.getAndSet(task.getId(), newWorker);
+        final AtomicReference<TaskSwingWorker<?>> workerRef = getReference(task);
+        if (workerRef != null) {
+            // get current worker and clear the reference :
+            final TaskSwingWorker<?> currentWorker = workerRef.getAndSet(null);
 
-        // cancel the current running worker for the given task :
-        if (currentWorker != null) {
-            // worker is still running ...
-            if (DEBUG_FLAG) {
-                logger.info("cancel worker = " + currentWorker);
+            // cancel the current running worker for the given task :
+            if (currentWorker != null) {
+                // worker is still running ...
+                if (DEBUG_FLAG) {
+                    logger.info("cancel worker = " + currentWorker);
+                }
+
+                // note : if the worker was previously cancelled, it has no effect.
+                // interrupt the thread to have Thread.isInterrupted() == true :
+                currentWorker.cancel(true);
             }
-
-            // note : if the worker was previously cancelled, it has no effect.
-            // interrupt the thread to have Thread.isInterrupted() == true :
-            currentWorker.cancel(true);
         }
     }
 
     /**
      * Remove the given worker from the busy workers for its task.
-     * Useful when the worker terminates its execution (cancelled or not)
+     * Useful when the worker terminates its execution (cancelled or not).
+     * NOTE : This method is invoked by the thread that executed the task.
+     *
      * @param worker worker to remove
      */
     private final void clearWorker(final TaskSwingWorker<?> worker)
     {
-        // get current worker and clear reference :
-        if (this.currentTaskWorkers.compareAndSet(worker.getTask().getId(), worker, null)) {
-            if (DEBUG_FLAG) {
-                logger.info("cleared worker = " + worker);
-            }
-        } else {
-            if (DEBUG_FLAG) {
-                logger.info("NOT cleared worker = " + worker + " - value is = " + this.currentTaskWorkers.get(worker.getTask().getId()));
+        final AtomicReference<TaskSwingWorker<?>> workerRef = getReference(worker.getTask());
+        if (workerRef != null) {
+            // check if the reference points to the given worker and then clear the reference :
+            if (workerRef.compareAndSet(worker, null)) {
+                if (DEBUG_FLAG) {
+                    logger.info("cleared worker = " + worker);
+                }
+            } else {
+                if (DEBUG_FLAG) {
+                    logger.info("NOT cleared worker = " + worker + " - value is = " + workerRef.get());
+                }
             }
         }
+    }
+
+    /**
+     * Define the worker thread related to the given task
+     * @param task task to find
+     * @param worker new worker
+     */
+    private final void defineReference(final Task task, final TaskSwingWorker<?> worker)
+    {
+
+        final AtomicReference<TaskSwingWorker<?>> workerRef = getOrCreateReference(task);
+        if (workerRef != null) {
+            // check if the reference is undefined and then set the reference :
+            if (workerRef.compareAndSet(null, worker)) {
+                if (DEBUG_FLAG) {
+                    logger.info("set worker = " + worker);
+                }
+            } else {
+                if (DEBUG_FLAG) {
+                    logger.info("NOT set worker = " + worker + " - value is = " + workerRef.get());
+                }
+            }
+        }
+    }
+
+    /**
+     * Return the atomic reference corresponding to the given task
+     * @param task task to find
+     * @return atomic reference corresponding to the given task
+     */
+    private final AtomicReference<TaskSwingWorker<?>> getReference(final Task task)
+    {
+        return this.currentTaskWorkers.get(task.getName());
+    }
+
+    /**
+     * Return the atomic reference corresponding to the given task.
+     * If it does not exist in the currentTaskWorkers, it creates a new ones.
+     * @param task task to find
+     * @return atomic reference corresponding to the given task
+     */
+    private final AtomicReference<TaskSwingWorker<?>> getOrCreateReference(final Task task)
+    {
+        AtomicReference<TaskSwingWorker<?>> workerRef = getReference(task);
+        if (workerRef == null) {
+            workerRef = new AtomicReference<TaskSwingWorker<?>>();
+            this.currentTaskWorkers.put(task.getName(), workerRef);
+        }
+        return workerRef;
     }
 
     /**

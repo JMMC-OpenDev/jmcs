@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.8 2011-02-11 09:59:35 mella Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.9 2011-02-14 17:09:41 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2011/02/11 09:59:35  mella
+ * Add message of the throwable.getCause() if any in the error dialog box
+ *
  * Revision 1.7  2010/10/22 11:00:32  bourgesl
  * javadoc
  *
@@ -32,7 +35,6 @@
 package fr.jmmc.mcs.gui;
 
 import java.awt.Component;
-import java.awt.Frame;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -198,15 +200,6 @@ public final class MessagePane {
         final int answer = JOptionPane.showConfirmDialog(getParent(parentComponent), message);
 
         return answer == JOptionPane.YES_OPTION;
-    }
-
-    /**
-     * Return a parent component / owner for a dialog window
-     * @param com component argument
-     * @return given component argument or the application frame if the given component is null
-     */
-    public final static Frame getOwner(final Frame com) {
-        return (Frame) getParent(com);
     }
 
     /**

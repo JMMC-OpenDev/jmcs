@@ -1,19 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.34 2011-02-11 10:00:11 mella Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.35 2011-02-14 17:09:41 bourgesl Exp $"
  *
  */
 package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.gui.task.JmcsTaskRegistry;
 import fr.jmmc.mcs.gui.task.TaskSwingWorker;
-import fr.jmmc.mcs.gui.task.TaskSwingWorkerExecutor;
 import fr.jmmc.mcs.util.CommonPreferences;
 import fr.jmmc.mcs.util.Http;
 import fr.jmmc.mcs.util.PreferencedDocument;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -64,23 +62,32 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     private final DefaultComboBoxModel _feedbackTypeDataModel;
 
     /**
-     * Creates a new FeedbackReport object
-     * Set the parent frame and specify if this dialog is modal or not.
+     * Creates a new FeedbackReport object (not modal).
+     * Do not exit on close.
+     */
+    public FeedbackReport() {
+        this(false, null);
+    }
+
+    /**
+     * Creates a new FeedbackReport object (not modal).
+     * Do not exit on close.
+     * @param exception exception
+     */
+    public FeedbackReport(final Throwable exception) {
+        this(false, exception);
+    }
+
+    /**
+     * Creates a new FeedbackReport object.
+     * Do not exit on close.
      *
-     * @param frame parent frame
      * @param modal if true, this dialog is modal
      * @param exception exception
-     *
-     * @deprecated use new FeedbackReport(final boolean modal, final Throwable exception)
      */
-    public FeedbackReport(final Frame frame, final boolean modal, final Throwable exception) {
+    public FeedbackReport(final boolean modal, final Throwable exception) {
 
-        super(MessagePane.getOwner(frame), modal);
-
-        // TODO supprimer une fois que ce bout de code est deplacé dans une partie commune
-        // Initialize tasks and the task executor :
-        TaskSwingWorkerExecutor.create(JmcsTaskRegistry.getInstance());
-
+        super(App.getFrame(), modal);
 
         _feedbackTypeDataModel = new DefaultComboBoxModel(_feedbackTypes);
 
@@ -93,34 +100,6 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         _logger.fine("All feedback report properties have been set");
-    }
-
-    /**
-     * Creates a new FeedbackReport object (not modal).
-     * Do not exit on close.
-     */
-    public FeedbackReport() {
-        this(null, false, null);
-    }
-
-    /**
-     * Creates a new FeedbackReport object (not modal).
-     * Do not exit on close.
-     * @param exception exception
-     */
-    public FeedbackReport(final Throwable exception) {
-        this(null, false, exception);
-    }
-
-    /**
-     * Creates a new FeedbackReport object.
-     * Do not exit on close.
-     *
-     * @param modal if true, this dialog is modal
-     * @param exception exception
-     */
-    public FeedbackReport(final boolean modal, final Throwable exception) {
-        this(null, modal, exception);
     }
 
     /**
@@ -665,7 +644,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         private FeedbackReportWorker(final FeedbackReport feedbackReport,
                 final String config, final String log, final String stackTrace,
                 final String type, final String mail, final String summary, final String comments) {
-            super(JmcsTaskRegistry.TASK_FEEDBACK_REPORT, "send feed back report");
+            super(JmcsTaskRegistry.TASK_FEEDBACK_REPORT);
             this.feedbackReport = feedbackReport;
             this.config = config;
             this.log = log;

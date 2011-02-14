@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileUtils.java,v 1.5 2011-02-13 17:03:39 mella Exp $"
+ * "@(#) $Id: FileUtils.java,v 1.6 2011-02-14 11:08:52 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2011/02/13 17:03:39  mella
+ * javadoc
+ *
  * Revision 1.4  2011/02/11 15:40:27  mella
  * Add a method to copy files
  *
@@ -258,13 +261,17 @@ public final class FileUtils {
         OutputStream out = new FileOutputStream(dst);
 
         // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
+        try {
+            byte[] buf = new byte[65536];
+
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+        } finally {
+            in.close();
+            out.close();
         }
-        in.close();
-        out.close();
     }
 
     /**

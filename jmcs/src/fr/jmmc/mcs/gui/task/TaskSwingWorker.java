@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: TaskSwingWorker.java,v 1.2 2011-02-08 10:10:46 bourgesl Exp $"
+ * "@(#) $Id: TaskSwingWorker.java,v 1.3 2011-02-14 17:11:26 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2011/02/08 10:10:46  bourgesl
+ * updated code from Aspro changes (running task counter)
+ *
  * Revision 1.1  2011/02/04 16:21:05  mella
  * Extended SwingWorker to facilitate debugging and support version and Task for cancellation and consistency checks
  *
@@ -45,12 +48,21 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
     /**
      * Create a new TaskSwingWorker instance
      * @param task related task
+     */
+    public TaskSwingWorker(final Task task)
+    {
+        this(task, "");
+    }
+    
+    /**
+     * Create a new TaskSwingWorker instance
+     * @param task related task
      * @param logSuffix complementary suffix for log prefix
      */
     public TaskSwingWorker(final Task task, final String logSuffix)
     {
         this.task = task;
-        this.logPrefix = (DEBUG_FLAG) ? ("SwingWorker[" + task.getName() + "]" + logSuffix + "@" + Integer.toHexString(hashCode())) : "SwingWorker";
+        this.logPrefix = (DEBUG_FLAG) ? ("SwingWorker[" + task.getName() + "]" + logSuffix + "@" + Integer.toHexString(hashCode())) : "SwingWorker[" + task.getName() + "]";
     }
 
     /**

@@ -4,6 +4,11 @@
     <compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
     <text></text>
     <dependences>
+
+        <package name="JSAMP"
+             description="JSAMP is a Java toolkit for use with the Simple Applications Messaging Protocol. Made by Mark Taylor, working in the Astrophysics Group at Bristol University."
+             link="http://software.astrogrid.org/doc/p/jsamp/1.2/"/>
+             
     </dependences>
     <releasenotes>
         <release version="0.0">
@@ -14,5 +19,6 @@
     </releasenotes>
     <acknowledgment><![CDATA[This research has made use of one of the services of the Jean-Marie Mariotti Center
 \footnote{Available at http://www.jmmc.fr}
-]]></acknowledgment>
+]]>
+    </acknowledgment>
 </ApplicationData>

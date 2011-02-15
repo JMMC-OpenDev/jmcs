@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.21 2011-02-15 09:16:13 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.22 2011-02-15 10:35:04 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2011/02/15 09:16:13  bourgesl
+ * added elapsed time in logs when sending any SAMP message
+ *
  * Revision 1.20  2011/02/10 10:45:14  bourgesl
  * update to JSamp 1.2
  *
@@ -186,16 +189,7 @@ public final class SampManager
 
         _connector.declareMetadata(meta);
 
-        _connector.addConnectionListener(new ChangeListener()
-        {
-
-            public void stateChanged(final ChangeEvent e)
-            {
-                if (_logger.isLoggable(Level.INFO)) {
-                    _logger.info("SAMP Hub connection status changed: " + getHubConnector().isConnected());
-                }
-            }
-        });
+        _connector.addConnectionListener(new SampConnectionChangeListener());
 
         // try to connect :
         _connector.setActive(true);
@@ -410,6 +404,28 @@ public final class SampManager
 
         if (_logger.isLoggable(Level.INFO)) {
             _logger.info("Broadcasted SAMP message to '" + mType + "' capable clients (" + 1e-6d * (System.nanoTime() - start) + " ms)");
+        }
+    }
+
+    /**
+     * Samp Hub Connection Change listener
+     */
+    private final static class SampConnectionChangeListener implements ChangeListener
+    {
+
+        /**
+         * Invoked when the hub connection has changed its state i.e.
+         * when this connector registers or unregisters with a hub.
+         *
+         * @param e  a ChangeEvent object
+         */
+        public void stateChanged(final ChangeEvent e)
+        {
+            final GuiHubConnector connector = (GuiHubConnector) e.getSource();
+
+            if (_logger.isLoggable(Level.INFO)) {
+                _logger.info("SAMP Hub connection status : " + ((connector.isConnected()) ? "registered" : "unregistered"));
+            }
         }
     }
 }

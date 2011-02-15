@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.25 2010-09-10 07:59:12 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.26 2011-02-15 17:02:21 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.25  2010/09/10 07:59:12  mella
+# Add programm name before version number in rss file
+#
 # Revision 1.24  2010/02/18 12:27:51  mella
 # add css to index.html
 #
@@ -529,6 +532,7 @@ createHtmlIndex()
     -i "//j2se" \
     -e "h4" -o "List of supported Java 2 SE Runtime Environment (JRE) versions:" -b \
     -e "ul" -m "//j2se" -e "li" -v "@version" -b -b -b \
+    -e "p" -e "a" -a "href" -o "./credits.htm" -b -o "View credits." -b -b \
     -e "p" -e "a" -a "href" -o "./releasenotes.htm" -b -o "View release notes." -b -b \
     -e "p" -e "a" -a "href" -o "./releasenotes.rss" -b -o "Subscribe to this rss feed to be informed of future releases." -b -b \
     -e "small" -e "pre" -o "--" -n \
@@ -597,6 +601,35 @@ createReleaseFiles()
         echo "    done"
     fi
     cd -
+}
+
+
+# this function generates one credit page
+# Warning next code works if only one Applicationdata is in the module
+# To solve it we could search ApplicationDara.xml under the package of main
+# class of jnlp file...
+createCreditFile()
+{
+    APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
+    OUTPUTFILE=credits.htm
+    echo "Creating '$OUTPUTFILE' ... "
+    cd $APP_WEBROOT
+    xml sel -I -t -e "html" \
+    -e "head" \
+    -e "title" -o "Credits of " -v "/ApplicationData/program/@name" -b -b \
+    -e "link" -a "rel" -o "alternate" -b -a "type" -o "application/rss+xml" -b  -a "title" -o "RSS" -b -a "href" -o "./releasenotes.rss" -b -b \
+    -e "link" -a "rel" -o "stylesheet" -b -a "type" -o "text/css" -b  -a "href" -o "/css/2col_leftNav.css" -b -b \
+    -e "body" \
+    -e "div" -a "id" -o "content" -b \
+    -e "h1" -e a -a href -o "./" -b -v "/ApplicationData/program/@name" -b -o " credits" -b \
+    -e "ul" -m "//package" \
+    -e "li" -e a -a href  -v "@link" -b -v "@name" -b -e br -b -v "@description" -b -b \
+    -b \
+    -e "small" -e "pre" -o "--" -n \
+    -o "This page and previous content was generated on " -v "date:date()" -b -b -b \
+    ${APPLICATION_DATA_XML} > $OUTPUTFILE 
+    cd -
+    echo "    done"
 }
 
 cleanup()
@@ -689,6 +722,7 @@ createReleaseFiles
 copyJnlpAndRelated $JNLPFILE $APP_WEBROOT $APP_CODEBASE || exit $?
 createAppJar
 createHtmlIndex
+createCreditFile
 createHtmlAcknowledgement
 
 echo "Installing application into '$REAL_APP_WEBROOT' directory..." 

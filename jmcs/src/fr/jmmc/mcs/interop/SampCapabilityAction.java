@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampCapabilityAction.java,v 1.11 2011-01-24 16:17:17 lafrasse Exp $"
+ * "@(#) $Id: SampCapabilityAction.java,v 1.12 2011-02-15 09:14:56 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2011/01/24 16:17:17  lafrasse
+ * Fixed action enabling/disabling state updating and default behavior.
+ *
  * Revision 1.10  2011/01/24 12:47:53  lafrasse
  * Replaced an output trace with log.
  *
@@ -63,7 +66,8 @@ import org.astrogrid.samp.gui.SubscribedClientListModel;
  *
  * Your action should extends SampCapabilityAction, implementing composeMessage() to forge the message to be sent by SAMP.
  */
-public abstract class SampCapabilityAction extends RegisteredAction {
+public abstract class SampCapabilityAction extends RegisteredAction
+{
 
     /** Logger */
     private static final Logger _logger = Logger.getLogger(
@@ -91,7 +95,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * @param fieldName the name of the field pointing to the action.
      * @param capability the SAMP mType to be sent.
      */
-    public SampCapabilityAction(final String classPath, final String fieldName, final SampCapability capability) {
+    public SampCapabilityAction(final String classPath, final String fieldName, final SampCapability capability)
+    {
         super(classPath, fieldName);
 
         _capability = capability;
@@ -101,19 +106,23 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         _capableClients = SampManager.createSubscribedClientListModel(_mType);
 
         // Monitor any modification to the capable clients list
-        _capableClients.addListDataListener(new ListDataListener() {
+        _capableClients.addListDataListener(new ListDataListener()
+        {
 
-            public void contentsChanged(final ListDataEvent e) {
+            public void contentsChanged(final ListDataEvent e)
+            {
                 _logger.entering("ListDataListener", "contentsChanged");
                 updateMenuAndActionAfterSubscribedClientChange();
             }
 
-            public void intervalAdded(final ListDataEvent e) {
+            public void intervalAdded(final ListDataEvent e)
+            {
                 _logger.entering("ListDataListener", "intervalAdded");
                 updateMenuAndActionAfterSubscribedClientChange();
             }
 
-            public void intervalRemoved(final ListDataEvent e) {
+            public void intervalRemoved(final ListDataEvent e)
+            {
                 _logger.entering("ListDataListener", "intervalRemoved");
                 updateMenuAndActionAfterSubscribedClientChange();
             }
@@ -128,7 +137,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      *
      * @param flag allow enabling if true, disabling otherwise.
      */
-    public void couldBeEnabled(boolean flag) {
+    public void couldBeEnabled(boolean flag)
+    {
         _logger.entering("SampCapabilityAction", "couldBeEnabled(" + flag + ")");
         // Update menus only if needed
         if (flag != _couldBeEnabled) {
@@ -141,7 +151,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * Set action text.
      * @param text
      */
-    public void setText(String text) {
+    public void setText(String text)
+    {
         _logger.entering("SampCapabilityAction", "setText('" + text + "')");
         putValue(Action.NAME, text);
         updateMenuAndActionAfterSubscribedClientChange();
@@ -150,7 +161,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     /**
      * Updates linked JMenu entry to offer all capable clients, plus broadcast.
      */
-    private void updateMenuAndActionAfterSubscribedClientChange() {
+    private void updateMenuAndActionAfterSubscribedClientChange()
+    {
 
         // TODO : remove when code is clean !
         if (!SwingUtilities.isEventDispatchThread()) {
@@ -230,7 +242,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * @param e actionEvent coming from SWING objects. It contains in its
      * command the name of the destination.
      */
-    public final void actionPerformed(final ActionEvent e) {
+    public final void actionPerformed(final ActionEvent e)
+    {
         _logger.entering("SampCapabilityAction", "actionPerformed");
 
         // Delegate message forging to app-specific code
@@ -239,6 +252,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         if (parameters != null) {
             StatusBar.show("Sending data through SAMP ...");
 
+            boolean ok = false;
             try {
                 // Get the user clicked menu label
                 final String command = e.getActionCommand();
@@ -248,27 +262,20 @@ public abstract class SampCapabilityAction extends RegisteredAction {
                     // Broadcast the forged message to all capable clients
                     SampManager.broadcastMessage(_mType, parameters);
 
-                    if (_logger.isLoggable(Level.INFO)) {
-                        _logger.info("Broadcasted SAMP message to '" + _mType + "' capable clients.");
-                    }
-
                 } else {
                     // Otherwise only send forged message to the selected client
                     SampManager.sendMessageTo(_mType, command, parameters);
-
-                    if (_logger.isLoggable(Level.INFO)) {
-                        _logger.info("Sent '" + _mType + "' SAMP message to '" + command + "' client.");
-                    }
-
                 }
+
+                ok = true;
+
             } catch (SampException se) {
                 _logger.log(Level.SEVERE, "Samp message send failure", se);
-
-                StatusBar.show("Sending data through SAMP ... failed.");
-                return;
             }
 
-            StatusBar.show("Sending data through SAMP ... done.");
+            StatusBar.show(
+                    (ok) ? "Sending data through SAMP ... done."
+                    : "Sending data through SAMP ... failed.");
         }
     }
 }

@@ -4,6 +4,86 @@
     <compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
     <text></text>
     <dependences>
+        <package name="loggui"
+        description="Adjust logging facilities"
+        link="http://www.informatrix.ch/loggui/index.html"
+        jars="loggui.jar">
+        </package>
+        <package name="jfits"
+        description="Fits file manipulation"
+        link="http://www.hq.eso.org/~pgrosbol/fits_java/jfits.html"
+        jars="jfits-0.93.jar">
+        </package>
+        <package name="plot*"
+        description="2D plots"
+        link="http://ptolemy.eecs.berkeley.edu/java/ptplot5.6/ptolemy/plot/doc/index.htm"
+        jars="plot*.jar microstar_xml.jar">
+        </package>
+        <package name="castor"
+        description="Create Java classes from XSD schema"
+        link="http://www.castor.org/"
+        jars="castor.jar">
+        </package>
+        <package name="BrowserLauncher2"
+        description="Permit to use the default web browser"
+        link="http://browserlaunch2.sourceforge.net/"
+        jars="BrowserLauncher2-1_3.jar">
+        </package>
+        <package name="xercesImpl"
+        description="XML validation"
+        link="http://xerces.apache.org/"
+        jars="xercesImpl.jar xmlParserAPIs.jar">
+        </package>
+        <package name="commons-httpclient"
+        description="Use to send HTTP POST request"
+        link="http://hc.apache.org/httpclient-3.x/"
+        jars=" commons-httpclient-3.1.jar ">
+        </package>
+        <package name="commons-logging"
+        description="We do not use this library. It is a third party requirement. JMCS and JMMC software should use java.util.logging facilities."
+        link="http://commons.apache.org/logging/"
+        jars="commons-logging-1.1.1.jar">
+        </package>
+        <package name="commons-codec"
+        description="Commons Codec provides implementations of common encoders and decoders such as Base64, Hex, Phonetic and URLs. "
+        link="http://commons.apache.org/codec/"
+        jars="commons-codec-1.3.jar">
+        </package>
+        <package name="xmlenc"
+        description="xmlenc is a light-weight XML encoding library for Java. It fills the gap between a light-weight parser like SAX, and a heavy-weight XML output library, like JDOM. "
+        link="http://freshmeat.net/projects/xmlenc/"
+        jars=" xmlenc.jar ">        
+        </package>
+        <package name="jhall"
+        description=" Show a help window from JavaHelp Jar file "
+        link="http://java.sun.com/javase/technologies/desktop/javahelp/"
+        jars=" jhall.jar ">
+        </package>
+        <package name="jhelpdev"
+        description="Generate TOC, JHM and HS files from HTML files"
+        link="http://jhelpdev.sourceforge.net/"
+        jars="jhelpdev.jar">
+        </package>
+        <package name="Tidy"
+        description="Parse and validate HTML file"
+        link="http://tidy.sourceforge.net/"
+        jars="Tidy.jar">
+        </package>
+        <package name="java-getopt"
+        description="Interpret command line arguments"
+        link="http://www.urbanophile.com/arenn/hacking/download.html"
+        jars="java-getopt-1.0.13.jar">
+        </package>
+        <package name="AppleJavaExtensions"
+        description="Adapt menus for Mac OS X"
+        link="http://developer.apple.com/samplecode/AppleJavaExtensions/index.html"
+        jars="AppleJavaExtensions.jar">
+        </package>
+        <package name="commons-lang-2.4"
+        description="Provide much needed additions to the standard JDK's java.lang package "
+        link="http://commons.apache.org/lang/"
+        jars="commons-lang-2.4.jar">
+        </package>
 
         <package name="JSAMP"
              description="JSAMP is a Java toolkit for use with the Simple Applications Messaging Protocol. Made by Mark Taylor, working in the Astrophysics Group at Bristol University."

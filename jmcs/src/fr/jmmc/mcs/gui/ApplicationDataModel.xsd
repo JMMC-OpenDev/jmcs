@@ -33,6 +33,8 @@
                                     <xsd:attribute name="name" type="xsd:string"/>
                                     <xsd:attribute name="description" type="xsd:string"/>
                                     <xsd:attribute name="link" type="xsd:string"/>
+                                    <xsd:attribute name="jars" type="xsd:string"/>
+                                    <xsd:attribute name="license" type="xsd:string"/>
                                 </xsd:complexType>
                             </xsd:element>
                         </xsd:sequence>
@@ -85,6 +87,7 @@
                 </xsd:element>
             </xsd:sequence>
             <xsd:attribute name="link" type="xsd:string"/>
+            <xsd:attribute name="iconlink" type="xsd:string"/>
         </xsd:complexType>
     </xsd:element>
 

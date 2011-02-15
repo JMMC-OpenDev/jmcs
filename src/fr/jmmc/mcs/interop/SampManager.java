@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.20 2011-02-10 10:45:14 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.21 2011-02-15 09:16:13 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2011/02/10 10:45:14  bourgesl
+ * update to JSamp 1.2
+ *
  * Revision 1.19  2010/11/14 13:50:39  bourgesl
  * define JSamp log level to WARNING
  *
@@ -381,10 +384,12 @@ public final class SampManager
     {
         final GuiHubConnector connector = getGuiHubConnector();
 
+        final long start = System.nanoTime();
+
         connector.getConnection().notify(recipient, new Message(mType, parameters));
 
         if (_logger.isLoggable(Level.INFO)) {
-            _logger.info("Sent '" + mType + "' SAMP message to '" + recipient + "' client.");
+            _logger.info("Sent '" + mType + "' SAMP message to '" + recipient + "' client (" + 1e-6d * (System.nanoTime() - start) + " ms)");
         }
     }
 
@@ -399,10 +404,12 @@ public final class SampManager
     {
         final GuiHubConnector connector = getGuiHubConnector();
 
+        final long start = System.nanoTime();
+
         connector.getConnection().notifyAll(new Message(mType, parameters));
 
         if (_logger.isLoggable(Level.INFO)) {
-            _logger.info("Broadcasted SAMP message to '" + mType + "' capable clients.");
+            _logger.info("Broadcasted SAMP message to '" + mType + "' capable clients (" + 1e-6d * (System.nanoTime() - start) + " ms)");
         }
     }
 }

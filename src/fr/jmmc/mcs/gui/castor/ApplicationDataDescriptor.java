@@ -2,7 +2,7 @@
  * This class was automatically generated with 
  * <a href="http://www.castor.org">Castor 0.9.4.3</a>, using an XML
  * Schema.
- * $Id: ApplicationDataDescriptor.java,v 1.1 2010-06-18 08:32:49 mella Exp $
+ * $Id: ApplicationDataDescriptor.java,v 1.2 2011-02-15 17:01:57 mella Exp $
  */
 
 package fr.jmmc.mcs.gui.castor;
@@ -19,7 +19,7 @@ import org.exolab.castor.xml.validators.*;
 /**
  * Class ApplicationDataDescriptor.
  * 
- * @version $Revision: 1.1 $ $Date: 2010-06-18 08:32:49 $
+ * @version $Revision: 1.2 $ $Date: 2011-02-15 17:01:57 $
  */
 public class ApplicationDataDescriptor extends org.exolab.castor.xml.util.XMLClassDescriptorImpl {
 
@@ -93,6 +93,42 @@ public class ApplicationDataDescriptor extends org.exolab.castor.xml.util.XMLCla
         addFieldDescriptor(desc);
         
         //-- validation code for: _link
+        fieldValidator = new org.exolab.castor.xml.FieldValidator();
+        { //-- local scope
+            StringValidator typeValidator = new StringValidator();
+            typeValidator.setWhiteSpace("preserve");
+            fieldValidator.setValidator(typeValidator);
+        }
+        desc.setValidator(fieldValidator);
+        //-- _iconlink
+        desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(java.lang.String.class, "_iconlink", "iconlink", org.exolab.castor.xml.NodeType.Attribute);
+        desc.setImmutable(true);
+        handler = (new org.exolab.castor.xml.XMLFieldHandler() {
+            public java.lang.Object getValue( java.lang.Object object ) 
+                throws IllegalStateException
+            {
+                ApplicationData target = (ApplicationData) object;
+                return target.getIconlink();
+            }
+            public void setValue( java.lang.Object object, java.lang.Object value) 
+                throws IllegalStateException, IllegalArgumentException
+            {
+                try {
+                    ApplicationData target = (ApplicationData) object;
+                    target.setIconlink( (java.lang.String) value);
+                }
+                catch (java.lang.Exception ex) {
+                    throw new IllegalStateException(ex.toString());
+                }
+            }
+            public java.lang.Object newInstance( java.lang.Object parent ) {
+                return null;
+            }
+        } );
+        desc.setHandler(handler);
+        addFieldDescriptor(desc);
+        
+        //-- validation code for: _iconlink
         fieldValidator = new org.exolab.castor.xml.FieldValidator();
         { //-- local scope
             StringValidator typeValidator = new StringValidator();

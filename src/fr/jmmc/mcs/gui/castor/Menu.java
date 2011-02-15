@@ -2,7 +2,7 @@
  * This class was automatically generated with 
  * <a href="http://www.castor.org">Castor 0.9.4.3</a>, using an XML
  * Schema.
- * $Id: Menu.java,v 1.1 2010-06-18 08:32:50 mella Exp $
+ * $Id: Menu.java,v 1.2 2011-02-15 17:01:57 mella Exp $
  */
 
 package fr.jmmc.mcs.gui.castor;
@@ -26,7 +26,7 @@ import org.xml.sax.ContentHandler;
 /**
  * Class Menu.
  * 
- * @version $Revision: 1.1 $ $Date: 2010-06-18 08:32:50 $
+ * @version $Revision: 1.2 $ $Date: 2011-02-15 17:01:57 $
  */
 public class Menu implements java.io.Serializable {
 

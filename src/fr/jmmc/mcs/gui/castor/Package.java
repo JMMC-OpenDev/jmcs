@@ -2,7 +2,7 @@
  * This class was automatically generated with 
  * <a href="http://www.castor.org">Castor 0.9.4.3</a>, using an XML
  * Schema.
- * $Id: Package.java,v 1.1 2010-06-18 08:32:50 mella Exp $
+ * $Id: Package.java,v 1.2 2011-02-15 17:01:57 mella Exp $
  */
 
 package fr.jmmc.mcs.gui.castor;
@@ -24,7 +24,7 @@ import org.xml.sax.ContentHandler;
 /**
  * Class Package.
  * 
- * @version $Revision: 1.1 $ $Date: 2010-06-18 08:32:50 $
+ * @version $Revision: 1.2 $ $Date: 2011-02-15 17:01:57 $
  */
 public class Package implements java.io.Serializable {
 
@@ -47,6 +47,16 @@ public class Package implements java.io.Serializable {
      * Field _link
      */
     private java.lang.String _link;
+
+    /**
+     * Field _jars
+     */
+    private java.lang.String _jars;
+
+    /**
+     * Field _license
+     */
+    private java.lang.String _license;
 
 
       //----------------/
@@ -71,6 +81,26 @@ public class Package implements java.io.Serializable {
     {
         return this._description;
     } //-- java.lang.String getDescription() 
+
+    /**
+     * Returns the value of field 'jars'.
+     * 
+     * @return the value of field 'jars'.
+     */
+    public java.lang.String getJars()
+    {
+        return this._jars;
+    } //-- java.lang.String getJars() 
+
+    /**
+     * Returns the value of field 'license'.
+     * 
+     * @return the value of field 'license'.
+     */
+    public java.lang.String getLicense()
+    {
+        return this._license;
+    } //-- java.lang.String getLicense() 
 
     /**
      * Returns the value of field 'link'.
@@ -139,6 +169,26 @@ public class Package implements java.io.Serializable {
     {
         this._description = description;
     } //-- void setDescription(java.lang.String) 
+
+    /**
+     * Sets the value of field 'jars'.
+     * 
+     * @param jars the value of field 'jars'.
+     */
+    public void setJars(java.lang.String jars)
+    {
+        this._jars = jars;
+    } //-- void setJars(java.lang.String) 
+
+    /**
+     * Sets the value of field 'license'.
+     * 
+     * @param license the value of field 'license'.
+     */
+    public void setLicense(java.lang.String license)
+    {
+        this._license = license;
+    } //-- void setLicense(java.lang.String) 
 
     /**
      * Sets the value of field 'link'.

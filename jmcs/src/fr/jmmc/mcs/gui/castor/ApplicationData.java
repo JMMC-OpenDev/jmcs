@@ -2,7 +2,7 @@
  * This class was automatically generated with 
  * <a href="http://www.castor.org">Castor 0.9.4.3</a>, using an XML
  * Schema.
- * $Id: ApplicationData.java,v 1.1 2010-06-18 08:32:49 mella Exp $
+ * $Id: ApplicationData.java,v 1.2 2011-02-15 17:01:57 mella Exp $
  */
 
 package fr.jmmc.mcs.gui.castor;
@@ -24,7 +24,7 @@ import org.xml.sax.ContentHandler;
 /**
  * Class ApplicationData.
  * 
- * @version $Revision: 1.1 $ $Date: 2010-06-18 08:32:49 $
+ * @version $Revision: 1.2 $ $Date: 2011-02-15 17:01:57 $
  */
 public class ApplicationData implements java.io.Serializable {
 
@@ -37,6 +37,11 @@ public class ApplicationData implements java.io.Serializable {
      * Field _link
      */
     private java.lang.String _link;
+
+    /**
+     * Field _iconlink
+     */
+    private java.lang.String _iconlink;
 
     /**
      * Field _program
@@ -116,6 +121,16 @@ public class ApplicationData implements java.io.Serializable {
     {
         return this._dependences;
     } //-- fr.jmmc.mcs.gui.castor.Dependences getDependences() 
+
+    /**
+     * Returns the value of field 'iconlink'.
+     * 
+     * @return the value of field 'iconlink'.
+     */
+    public java.lang.String getIconlink()
+    {
+        return this._iconlink;
+    } //-- java.lang.String getIconlink() 
 
     /**
      * Returns the value of field 'link'.
@@ -234,6 +249,16 @@ public class ApplicationData implements java.io.Serializable {
     {
         this._dependences = dependences;
     } //-- void setDependences(fr.jmmc.mcs.gui.castor.Dependences) 
+
+    /**
+     * Sets the value of field 'iconlink'.
+     * 
+     * @param iconlink the value of field 'iconlink'.
+     */
+    public void setIconlink(java.lang.String iconlink)
+    {
+        this._iconlink = iconlink;
+    } //-- void setIconlink(java.lang.String) 
 
     /**
      * Sets the value of field 'link'.

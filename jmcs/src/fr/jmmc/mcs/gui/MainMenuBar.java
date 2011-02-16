@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.44 2010-11-09 12:43:57 mella Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.45 2011-02-16 14:34:44 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.44  2010/11/09 12:43:57  mella
+ * Add interop menu for Beta and Alpha releases
+ *
  * Revision 1.43  2010/10/06 09:18:07  mella
  * Build interop menu with jsamp entry menu comming from SampManager
  *
@@ -159,6 +162,9 @@ import fr.jmmc.mcs.util.Urls;
 import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Component;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import java.lang.reflect.Method;
 
@@ -182,9 +188,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
-import org.astrogrid.samp.gui.GuiHubConnector;
 
 
 /**
@@ -202,6 +209,12 @@ public class MainMenuBar extends JMenuBar
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
+
+    /**
+     * This System property controls the Look & Feel menu (useful for debugging purposes).
+     * To show this menu, add "-Djmcs.laf.menu=true" to your JVM options.
+     */
+    public final static String SYSTEM_PROPERTY_LAF_MENU = "jmcs.laf.menu";
 
     /** Logger */
     private static final Logger _logger = Logger.getLogger(
@@ -314,6 +327,12 @@ public class MainMenuBar extends JMenuBar
         if (App.isBetaVersion()||App.isAlphaVersion())
         {
           createInteropMenu();
+        }
+
+        final String lafMenu = System.getProperty(SYSTEM_PROPERTY_LAF_MENU);
+        if (lafMenu != null && "true".equals(lafMenu))
+        {
+          createLAFMenu();
         }
 
         createHelpMenu();
@@ -482,6 +501,54 @@ public class MainMenuBar extends JMenuBar
         // Keep this menu invisible until (at least) one capability is registered
         SampManager.hookMenu(interopMenu);
         _logger.fine("Add 'Interop' into the menubar.");
+    }
+
+    /** Create the 'Look & Feel' menu. */
+    private void createLAFMenu()
+    {
+        // Create menu
+        final JMenu lafMenu = new JMenu("Look & Feel");
+
+        final ActionListener lafActionListener = new ActionListener() {
+
+            /**
+             * Invoked when an action occurs.
+             */
+            public void actionPerformed(final ActionEvent ae) {
+              final String className = ae.getActionCommand();
+              final String currentClassName = UIManager.getLookAndFeel().getClass().getName();
+
+              if (!className.equals(currentClassName)) {
+                try {
+                  if (_logger.isLoggable(Level.INFO)) {
+                    _logger.info("use Look and Feel : " + className);
+                  }
+                  UIManager.setLookAndFeel(className);
+
+                  final Frame mainFrame = App.getFrame();
+
+                  SwingUtilities.updateComponentTreeUI(mainFrame);
+                  mainFrame.pack();
+
+                } catch (Exception e) {
+                  throw new RuntimeException("Change LAF failed !", e);
+                }
+              }
+            }
+        };
+
+        JMenuItem menuItem;
+
+        for (UIManager.LookAndFeelInfo lookAndFeelInfo: UIManager.getInstalledLookAndFeels()) {
+            
+            menuItem = new JMenuItem(lookAndFeelInfo.getName());
+            menuItem.setActionCommand(lookAndFeelInfo.getClassName());
+            menuItem.addActionListener(lafActionListener);
+
+            lafMenu.add(menuItem);
+        }
+        
+        add(lafMenu);
     }
 
 

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.36 2011-02-10 10:46:31 bourgesl Exp $"
+# "@(#) $Id: Makefile,v 1.37 2011-02-18 16:37:58 bourgesl Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.36  2011/02/10 10:46:31  bourgesl
+# update to JSamp 1.2
+#
 # Revision 1.35  2011/02/04 16:32:56  mella
 # add swingworker jar
 #
@@ -255,7 +258,6 @@ MAN8 =
 #----------------------------
 INSTALL_FILES = ../lib/loggui.jar \
 		../lib/ptplot5.6.jar \
-		../lib/jfits-0.93.jar \
 		../lib/castor.jar \
 		../lib/BrowserLauncher2-1_3.jar \
 		../lib/xercesImpl.jar \

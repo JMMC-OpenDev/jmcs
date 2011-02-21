@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.26 2011-02-15 17:02:21 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.27 2011-02-21 17:10:32 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.26  2011/02/15 17:02:21  mella
+# generate one credits.htm page
+#
 # Revision 1.25  2010/09/10 07:59:12  mella
 # Add programm name before version number in rss file
 #
@@ -101,7 +104,8 @@ WEBROOT="$HOME/public_html"
 SCRIPTNAME=$(basename "$0" 2> /dev/null)
 
 # define ModuleArea
-SCRIPTROOT=$(cd ..; pwd)
+# (leave endding slash to allow files retrieval even if some dirs are aliases
+SCRIPTROOT=$(cd ..; pwd)/
 
 # define command root
 COMMANDROOT=$(pwd)

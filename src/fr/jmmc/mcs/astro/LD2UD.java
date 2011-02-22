@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.13 2010-01-20 13:55:08 mella Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.14 2011-02-22 16:02:19 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2010/01/20 13:55:08  mella
+ * Remove unused exception throw
+ *
  * Revision 1.12  2010/01/18 15:25:52  mella
  * Fix default call
  *
@@ -262,7 +265,12 @@ public class LD2UD {
         // I, II/III and IV/V
         // TODO make it doublechecked by a scientist
         double[][] table = supergiantsSpToTeffAndLogg;
-        if (lumCode > 20) {
+
+        // Daniel wrote:
+        // If the luminosity class is unknown, by default one can suppose that
+        // the star is a giant (III)
+        // cds sptypes returns 0 when luminosity code is missing
+        if (lumCode > 20 || lumCode == 0 ) {
             table = giantsSpToTeffAndLogg;
         }
         if (lumCode > 36) {

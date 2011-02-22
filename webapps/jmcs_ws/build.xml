@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="jmcs_ws" default="about" basedir=".">
+
+<description>
+build web app based on jmcs library:
+- ld2ud conversion of limb darkened diameter into uniform diameters
+</description>
+
+<!-- first load local config file -->
+<property file="build.properties"/>
+
+<fail unless="jmcs.module.path" message="Must provide 'jmcs.module.path' property, indicating jmcs module top directory"/>
+
+<!-- path & files -->
+<property name="root" location="."/>
+<property name="sources" location="${jmcs.module.path}/src/"/>
+<property name="web-content" location="./web"/>
+<property name="libs" location="./lib"/>
+
+<!--  output locations  -->
+<property name="web" location="web"/>
+<property name="dist" location="dist"/>
+<property name="javadoc" location="${dist}/doc" />
+<!-- build outputs -->
+<property name="build" location="build"/>
+<property name="build.lib" location="${build}/lib"/>
+<property name="build.meta" location="${build}/META-INF"/>
+<property name="build.src" location="${build}/src"/>
+
+<!-- properties from project -->
+<property name="project.name"  value="jmcs_ws"/>
+<property name="webapp.name"  value="${project.name}"/>
+<property name="build.war.file"  value="${webapp.name}.war"/>
+
+<!-- classpath -->
+<path id="project.class.path">
+
+<fileset dir="${build.lib}">
+<include name="*.jar"/>
+</fileset>
+
+</path>
+
+
+<!-- checks if build is necessary : java source code & libraries -->
+<uptodate property="build.notRequired">
+<srcfiles dir= "${sources}" includes="**/*"/>
+<srcfiles dir= "${web-content}" includes="**/*"/>
+<srcfiles dir= "${libs}" includes="**/*.jar"/>
+<mapper type="merge" to="${dist}/${build.war.file}"/>
+</uptodate>
+
+
+<!-- targets -->
+
+<!-- target about : -->
+<target name="about" depends="init" description="show information for public targets">
+<echo>available ant targets : </echo>
+<echo>-------------------------------------------------------------------------------</echo>
+<echo>  - makeAll            : makes all tasks (clean, compile, jar, javadoc) </echo>
+<echo>  - forceMakeAll       : CLEANS outputs and then make all transformations (makeAll) </echo>
+<echo>  - makeDoc            : makes javadoc only </echo>
+<echo>-------------------------------------------------------------------------------</echo>
+</target>
+
+
+<!-- target init : timestamp -->
+<target name="init">
+<tstamp>
+<format property="build.date" pattern="dd/MM/yyyy HH:mm:ss" />
+</tstamp>
+
+<echo>-------------------------------------------------------------------------------</echo>
+<echo>  ${vendor}  ::  ${title} - ${version} </echo>
+<echo>-------------------------------------------------------------------------------</echo>
+<echo> Build File </echo>
+<echo>-------------------------------------------------------------------------------</echo>
+<echo> contacts     : ${build.by}  </echo>
+<echo> build date   : ${build.date} </echo>
+<echo></echo>
+<echo> war filename    : </echo>
+<echo> ${build.war.file} </echo>
+<echo></echo>
+<echo></echo>
+<echo>-------------------------------------------------------------------------------</echo>
+
+<mkdir dir="${web}"/>
+
+</target>
+
+
+
+
+<!-- target importJmcs : get libraries and properties from jmcs project -->
+<target name="importLibraries">
+<available property="jmcs.lib.path.check" file="${jmcs.module.path}/lib" />
+<fail unless="jmcs.lib.path.check" message="jmcs module directory (${jmcs.module.path}) is not defined properly !" />
+
+<echo message="update jmcs libraries from ${jmcs.lib.path} ..."/>
+
+<mkdir dir="${build.lib}"/>
+
+<copy todir="${build.lib}" preservelastmodified="true" verbose="true">
+<fileset dir="${jmcs.module.path}/lib">
+<!--TODO remplacer jmcs.jar par de la compile ....-->
+<include name="jmcs.jar"/>
+<include name="sptype.jar"/>
+</fileset>
+</copy>
+<echo message="update jmcs libraries : done."/>
+
+</target>
+
+
+
+
+<!-- target cleanup : clean imported properties and build -->
+<target name="cleanup">
+
+<echo message="cleaning directory : ${properties} ..." />
+
+<delete includeemptydirs="false" verbose="true" failonerror="no">
+<fileset dir="${properties}">
+<include name="*.properties"/>
+<include name="log4j.xml"/>
+<exclude name="XmlCatalogManager.properties"/>
+</fileset>
+</delete>
+
+<echo message="cleaned directory : ${properties} ." />
+
+<echo message="cleaning directory : ${build} ..." />
+
+<delete includeemptydirs="true" verbose="true" failonerror="no">
+<fileset dir="${build}" includes="**/*"/>
+</delete>
+
+<echo message="cleaned directory : ${build} ." />
+
+</target>
+
+
+<!-- target clean : clean build files -->
+<target name="clean" depends="cleanup">
+
+<echo message="creating directories ..." />
+
+<mkdir dir="${dist}"/>
+<mkdir dir="${javadoc}"/>
+
+<echo message="cleaning directory : ${dist} ..." />
+
+<delete includeemptydirs="false" verbose="true">
+<fileset dir="${dist}" includes="**/*"/>
+</delete>
+
+<echo message="cleaned directory : ${dist} ." />
+
+</target>
+
+
+
+
+<!-- target makeAll : cleans, compiles, packages -->
+<target name="makeAll" description="make all transformations">
+<ant target="makeAllIfNeeded" inheritAll="false" />
+<echo message="makeAll ${title} : done."/>
+</target>
+
+
+
+
+<!-- main target : force to makeAll -->
+<target name="forceMakeAll" depends="clean" description="make all targets (forced)">
+<ant target="makeAllIfNeeded" inheritAll="false" />
+<echo>forceMakeAll ${title} : done.</echo>
+</target>
+
+
+
+
+<target name="makeAllIfNeeded" depends="init" unless="build.notRequired">
+<buildnumber file="build.number"/>
+
+<echo>-------------------------------------------------------------------------------</echo>
+<echo> Build Number : ${build.number}</echo>
+<echo>-------------------------------------------------------------------------------</echo>
+
+<ant target="importLibraries" />
+
+<ant target="compile" />
+<ant target="package" />
+<!--
+<ant target="makeDoc" />
+<ant target="cleanup" />
+-->
+<echo message="makeAllIfNeeded ${title} : done."/>
+</target>
+
+
+
+
+<!-- target makeDoc : creates javadoc from source code -->
+<target name="makeDoc">
+
+<echo message="making ${title} javadoc ..."/>
+
+<javadoc  additionalparam="-notimestamp"
+destdir="${javadoc}"
+access="private" 
+author="true"
+use="false"
+windowtitle="${title} ${version}" >
+
+<classpath refid="project.class.path"/>
+
+<fileset dir="${sources}" includes="**/*.java" defaultexcludes="yes" />
+
+</javadoc>
+
+<echo message="${title} javadoc : done."/>
+</target>
+
+
+
+
+<!-- Compile java files and jar them -->
+<target name="compile" depends="init" unless="build.notRequired">
+
+<echo message="compile ${title} ..."/>
+<echo message="compile from : ${sources}"/>
+<echo message="compile to   : ${build.src}"/>
+
+<mkdir dir="${build.src}"/>
+
+<javac sourcepath="" srcdir="${jmcs.module.path}/src/fr/jmmc/mcs/util" destdir="${build.src}" listfiles="false"
+fork="true" verbose="false" encoding="UTF-8"
+debug="on" deprecation="on" optimize="on" casesensitive="true" 
+source="1.5" target="1.5">
+<classpath refid="project.class.path" />
+<include name="ColorEncoder.java"/>
+</javac>
+
+
+<javac sourcepath="" srcdir="${jmcs.module.path}/src/fr/jmmc/mcs/astro" destdir="${build.src}" listfiles="false"
+fork="true" verbose="false" encoding="UTF-8"
+debug="on" deprecation="on" optimize="on" casesensitive="true" 
+source="1.5" target="1.5">
+<classpath refid="project.class.path" />
+<include name="*.java"/>
+<include name="star/Star.java"/>
+</javac>
+
+<echo message="compile ${title} : done."/>
+
+</target>
+
+
+
+
+<!-- Compile java files and jar them -->
+<target name="package" depends="init" unless="build.notRequired">
+
+<!-- Copy web.xml to build so that the @project.name@ can be replaced -->
+<echo message="copying web.xml"/>
+<copy todir="${build}" file="${web-content}/WEB-INF/web.xml" filtering="true" overwrite="true"/>
+
+<!-- Copy context.xml to build/META-INF so that @value@ can be replaced 
+<echo message="copying context.xml"/>
+
+<mkdir dir="${build.meta}"/>
+<copy todir="${build.meta}" file="${web-content}/META-INF/context.xml" filtering="true" overwrite="true">
+<filterset>
+<filter token="tomcat.realm.url" value="${tomcat.realm.url}" />
+<filter token="tomcat.realm.dbuser" value="${tomcat.realm.dbuser}" />
+<filter token="tomcat.realm.password" value="${tomcat.realm.password}" />
+</filterset>
+</copy>
+     -->
+
+
+<mkdir dir="${dist}"/>
+<!-- make web application archive -->
+<war destfile="${dist}/${build.war.file}" webxml="${build}/web.xml" compress="true" roundup="true">
+<fileset dir="${web-content}">
+<include name="WEB-INF/tags/**/*.tag"/>
+<include name="index.html"/>
+<include name="*.jsp"/>
+<include name="list/*.jsp"/>
+<include name="page/*.jsp"/>
+<include name="secure/*.jsp"/>
+<include name="show/*.jsp"/>
+<include name="manage/*.jsp"/>
+<include name="query/*.jsp"/>
+<include name="tap/*.jsp"/>
+<include name="static/**/*.*"/>
+<exclude name=".*"/>
+</fileset>
+<fileset dir="${build}">
+<include name="META-INF/*.*"/>
+<include name="xsd/**/*.xsd"/>
+</fileset>
+<lib dir="${build.lib}">
+<include name="*.jar"/>
+</lib>
+<classes dir="${build.src}">
+<include name="**/*"/>
+</classes>
+</war>
+
+<delete dir="${web-content}/WEB-INF/tags"/>
+
+</target>
+
+</project>

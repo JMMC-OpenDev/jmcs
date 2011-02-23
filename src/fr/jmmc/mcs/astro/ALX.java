@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.22 2010-09-24 13:15:32 bourgesl Exp $"
+ * "@(#) $Id: ALX.java,v 1.23 2011-02-23 16:43:51 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2010/09/24 13:15:32  bourgesl
+ * removed debug messages in toMS
+ *
  * Revision 1.21  2010/09/24 11:58:53  lafrasse
  * Fixed round bug in toDms().
  * Renamed toDms() to toDMS()
@@ -523,9 +526,11 @@ public class ALX
     public static int getLuminosityClass(String spectype) throws ParseException{
       Sptype sp = new Sptype(spectype);
       String spNum = sp.getSpNumeric();
-      int firstDotIndex = spNum.indexOf(".");
+      //int firstDotIndex = spNum.indexOf(".");
       int secondDotIndex = spNum.lastIndexOf(".");
-      return Integer.parseInt(spNum.substring(firstDotIndex+1,secondDotIndex));
+      // we must only use the two last chars of lum part as significative
+      // I classes returned 113 instead of 13
+      return Integer.parseInt(spNum.substring(secondDotIndex-2,secondDotIndex));
     }
 
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.14 2011-02-22 16:02:19 mella Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.15 2011-02-23 16:56:20 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2011/02/22 16:02:19  mella
+ * Handle properly the stars without luminosity class to compute the logg and teff
+ *
  * Revision 1.13  2010/01/20 13:55:08  mella
  * Remove unused exception throw
  *
@@ -96,12 +99,12 @@ public class LD2UD {
         return result;
     }
 
-    public static double getLimbDarkenedCorrectionFactor(Property requestedUD, double teff, double logg){
+    public static double getLimbDarkenedCorrectionFactor(Property requestedUD, double teff, double logg) {
         double[][] table = getCoefficientsTable(requestedUD);
         double c = searchCoeff(table, logg, teff);
         double result = getCorrectionFactor(c);
-        logger_.fine("LimbdarkenedCorrectionFactor of star with teff=" + teff +
-                " and logg=" + logg + " in band " + requestedUD + " is " + result);
+        logger_.fine("LimbdarkenedCorrectionFactor of star with teff=" + teff
+                + " and logg=" + logg + " in band " + requestedUD + " is " + result);
         return result;
     }
 
@@ -150,8 +153,8 @@ public class LD2UD {
             double[] ds = table[i];
             comparedValue = ds[searchedIndex];
             value = ds[columnIndex];
-            if (((growingSearchedValue && searchedValue >= comparedValue) ||
-                    (!growingSearchedValue && searchedValue <= comparedValue)) && !found) {
+            if (((growingSearchedValue && searchedValue >= comparedValue)
+                    || (!growingSearchedValue && searchedValue <= comparedValue)) && !found) {
                 result = value;
                 try {
                     double[] ds2 = table[i + 1];
@@ -235,8 +238,8 @@ public class LD2UD {
                 }
             }
         }
-        logger_.fine("Coeff for Teff=" + teff + " and logg=" + logg +
-                " is " + result);
+        logger_.fine("Coeff for Teff=" + teff + " and logg=" + logg
+                + " is " + result);
         return result;
     }
 
@@ -266,14 +269,19 @@ public class LD2UD {
         // TODO make it doublechecked by a scientist
         double[][] table = supergiantsSpToTeffAndLogg;
 
+        // Check that luminosity code has been extracted from
+        if (lumCode < 0 || lumCode > 100) {
+            throw new IllegalStateException("Invalid luminosity code extracted ");
+        }
+
         // Daniel wrote:
         // If the luminosity class is unknown, by default one can suppose that
-        // the star is a giant (III)
+        // the star is a giant (III) 
         // cds sptypes returns 0 when luminosity code is missing
-        if (lumCode > 20 || lumCode == 0 ) {
+        if (lumCode > 23) {
             table = giantsSpToTeffAndLogg;
         }
-        if (lumCode > 36) {
+        if (lumCode > 37 || lumCode == 0) {
             table = dwarfsSpToTeffAndLogg;
         }
 

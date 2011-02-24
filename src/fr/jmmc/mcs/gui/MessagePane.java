@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.9 2011-02-14 17:09:41 bourgesl Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.10 2011-02-24 16:20:24 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2011/02/14 17:09:41  bourgesl
+ * removed deprecated / dead code
+ *
  * Revision 1.8  2011/02/11 09:59:35  mella
  * Add message of the throwable.getCause() if any in the error dialog box
  *
@@ -34,11 +37,17 @@
  */
 package fr.jmmc.mcs.gui;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 /**
@@ -118,26 +127,37 @@ public final class MessagePane {
             msg = message;
         }
 
-        // update the status bar within EDT :
+        // display the message within EDT :
         if (SwingUtilities.isEventDispatchThread()) {
-            showMessageDialog(msg, title);
+            showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
         } else {
             SwingUtilities.invokeLater(new Runnable() {
 
                 public void run() {
-                    showMessageDialog(msg, title);
+                    showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
     }
 
     /**
-     * Show an error with the given message
+     * Show the given message.    
+     * The frame size is limited so long messages appear in a scrollpane.
      * @param message message to display
      * @param title window title to use
      */
-    private static void showMessageDialog(final String message, final String title) {
-        JOptionPane.showMessageDialog(getApplicationFrame(), message, title, JOptionPane.ERROR_MESSAGE);
+    private static void showMessageDialog(final String message, final String title, final int type) {
+        JTextArea t = new JTextArea(message);
+        t.setEditable(false);
+        t.setBackground(null);
+        JScrollPane sp = new JScrollPane(t);
+        sp.setBorder(null);
+        // Try not to display windows bigger than screen for huge messages
+        Dimension d=new Dimension(Math.min(t.getMinimumSize().width,600),
+                Math.min(t.getMinimumSize().height,500));        
+        sp.setMaximumSize(d);
+        sp.setPreferredSize(d);
+        JOptionPane.showMessageDialog(getApplicationFrame(), sp, title, type);
     }
 
     // --- INFO MESSAGES ---------------------------------------------------------
@@ -155,7 +175,7 @@ public final class MessagePane {
      * @param title window title to use
      */
     public static void showMessage(final String message, final String title) {
-        JOptionPane.showMessageDialog(getApplicationFrame(), message, title, JOptionPane.INFORMATION_MESSAGE);
+        showMessageDialog(message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
     // --- CONFIRM MESSAGES ------------------------------------------------------

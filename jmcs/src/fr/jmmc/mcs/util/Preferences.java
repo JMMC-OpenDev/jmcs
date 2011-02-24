@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.36 2011-02-02 13:54:42 mella Exp $"
+ * "@(#) $Id: Preferences.java,v 1.37 2011-02-24 17:15:12 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2011/02/02 13:54:42  mella
+ * Fix bug with static member describing filename
+ * Do info log during restore and save actions
+ * Use parent classname for registering of save and register actions to remove registrar overwriting
+ *
  * Revision 1.35  2010/10/15 08:47:06  lafrasse
  * (Hopefully) better exception handling.
  *
@@ -168,7 +173,8 @@ import javax.swing.Action;
  *  &lt;menu label="Set default values" classpath="fr.jmmc.mcs.util.Preferences" action="restorePreferences"/&gt;
  * &lt;/menu&gt;
  */
-public abstract class Preferences extends Observable {
+public abstract class Preferences extends Observable
+{
 
     /** Class name */
     private static final String _className = "fr.jmmc.mcs.util.Preferences";
@@ -178,16 +184,17 @@ public abstract class Preferences extends Observable {
     private static final String PREFERENCES_VERSION_NUMBER_ID = "preferences.version";
     /** Store hidden properties index prefix. */
     private static final String PREFERENCES_ORDER_INDEX_PREFIX = "MCSPropertyIndexes.";
+    /* members */
     /** Store preference filename. */
     private String _fullFilepath = null;
     /** Internal storage of preferences. */
     private Properties _currentProperties = new Properties();
     /** Default property. */
-    protected Properties _defaultProperties = new Properties();
+    protected final Properties _defaultProperties = new Properties();
     /** Save to file action */
-    protected Action _savePreferences;
+    protected final Action _savePreferences;
     /** Restore preferences that get one default value */
-    protected Action _restoreDefaultPreferences;
+    protected final Action _restoreDefaultPreferences;
 
     /**
      * Creates a new Preferences object.
@@ -195,19 +202,21 @@ public abstract class Preferences extends Observable {
      * This will set default preferences values (by invoking user overridden
      * setDefaultPreferences()), then try to load the preference file, if any.
      */
-    public Preferences() {
+    public Preferences()
+    {
         computePreferenceFilepath();
 
         try {
             setDefaultPreferences();
+
             loadFromFile();
         } catch (Exception ex) {
             _logger.log(Level.WARNING, "Preference initialization FAILED.", ex);
         }
-        // parent class name must be given to register one action per inherited Preference class
-        _savePreferences= new SavePrefAction(this.getClass().getName());
-        _restoreDefaultPreferences= new RestoreDefaultPrefAction(this.getClass().getName());
 
+        // parent class name must be given to register one action per inherited Preference class
+        _savePreferences = new SavePrefAction(this.getClass().getName());
+        _restoreDefaultPreferences = new RestoreDefaultPrefAction(this.getClass().getName());
     }
 
     /**
@@ -270,7 +279,8 @@ public abstract class Preferences extends Observable {
      * @return should return true if the update went fine and new values should
      * be saved, false otherwise to automatically trigger default values load.
      */
-    protected boolean updatePreferencesVersion(int loadedVersionNumber) {
+    protected boolean updatePreferencesVersion(int loadedVersionNumber)
+    {
         _logger.entering(_className, "updatePreferencesVersion");
 
         // By default, triggers default values load.
@@ -283,7 +293,8 @@ public abstract class Preferences extends Observable {
      *
      * @warning Any preference value change not yet saved will be LOST.
      */
-    final public void loadFromFile() {
+    final public void loadFromFile()
+    {
         _logger.entering(_className, "loadFromFile");
 
         resetToDefaultPreferences(true);
@@ -383,7 +394,8 @@ public abstract class Preferences extends Observable {
      *
      * @throws PreferencesException DOCUMENT ME!
      */
-    final public void saveToFile() throws PreferencesException {
+    final public void saveToFile() throws PreferencesException
+    {
         saveToFile(null);
     }
 
@@ -394,7 +406,8 @@ public abstract class Preferences extends Observable {
      *
      * @throws PreferencesException DOCUMENT ME!
      */
-    final public void saveToFile(String comment) throws PreferencesException {
+    final public void saveToFile(String comment) throws PreferencesException
+    {
         _logger.entering(_className, "saveToFile");
 
         // Store current Preference object revision number
@@ -404,7 +417,7 @@ public abstract class Preferences extends Observable {
         try {
             FileOutputStream outputFile = new FileOutputStream(_fullFilepath);
             _currentProperties.storeToXML(outputFile, comment);
-             _logger.info("Saving '" + _fullFilepath + "' preference file.");
+            _logger.info("Saving '" + _fullFilepath + "' preference file.");
             outputFile.close();
         } catch (Exception e) {
             throw new PreferencesException("Cannot store preferences to file", e);
@@ -414,19 +427,24 @@ public abstract class Preferences extends Observable {
     /**
      * Restore default values to preferences and notify listeners.
      */
-    final public void resetToDefaultPreferences() {
+    final public void resetToDefaultPreferences()
+    {
         resetToDefaultPreferences(false);
     }
+
     /**
      * Restore default values to preferences and notify listeners.
      * @param quiet display one info message log if true.
      */
-    final public void resetToDefaultPreferences(boolean quiet) {
+    final public void resetToDefaultPreferences(final boolean quiet)
+    {
         _logger.entering(_className, "resetToDefaultPreferences");
 
         _currentProperties = (Properties) _defaultProperties.clone();
 
-        _logger.info("Restoring default preferences.");
+        if (quiet) {
+            _logger.info("Restoring default preferences.");
+        }
 
         // Notify all preferences listener.
         triggerObserversNotification();
@@ -440,7 +458,8 @@ public abstract class Preferences extends Observable {
      * @param preferenceValue the preference value.
      */
     final public void setPreference(String preferenceName,
-            Object preferenceValue) throws PreferencesException {
+            Object preferenceValue) throws PreferencesException
+    {
         _logger.entering(_className, "setPreference");
 
         setPreferenceToProperties(_currentProperties, preferenceName,
@@ -455,7 +474,8 @@ public abstract class Preferences extends Observable {
      * @param preferenceValue the preference value.
      */
     final public void setDefaultPreference(String preferenceName,
-            Object preferenceValue) throws PreferencesException {
+            Object preferenceValue) throws PreferencesException
+    {
         _logger.entering(_className, "setDefaultPreference");
 
         setPreferenceToProperties(_defaultProperties, preferenceName,
@@ -471,7 +491,8 @@ public abstract class Preferences extends Observable {
      */
     final private void setPreferenceToProperties(Properties properties,
             String preferenceName, Object preferenceValue)
-            throws PreferencesException {
+            throws PreferencesException
+    {
         // Will automatically get -1 for a yet undefined preference
         int order = getPreferenceOrder(preferenceName);
 
@@ -489,7 +510,8 @@ public abstract class Preferences extends Observable {
      */
     final private void setPreferenceToProperties(Properties properties,
             String preferenceName, int preferenceIndex, Object preferenceValue)
-            throws PreferencesException {
+            throws PreferencesException
+    {
         _logger.entering(_className, "setPreferenceToProperties");
 
         String currentValue = properties.getProperty(preferenceName);
@@ -540,7 +562,8 @@ public abstract class Preferences extends Observable {
      * @param preferenceValue the preference value.
      */
     final public void setPreference(String preferenceName, int preferenceIndex,
-            Object preferenceValue) throws PreferencesException {
+            Object preferenceValue) throws PreferencesException
+    {
         setPreferenceToProperties(_currentProperties, preferenceName,
                 preferenceIndex, preferenceValue);
     }
@@ -554,7 +577,8 @@ public abstract class Preferences extends Observable {
      */
     final public void setDefaultPreference(String preferenceName,
             int preferenceIndex, Object preferenceValue)
-            throws PreferencesException {
+            throws PreferencesException
+    {
         setPreferenceToProperties(_defaultProperties, preferenceName,
                 preferenceIndex, preferenceValue);
     }
@@ -566,7 +590,8 @@ public abstract class Preferences extends Observable {
      * @param preferenceIndex the order number for the property (-1 for no order).
      */
     final public void setPreferenceOrder(String preferenceName,
-            int preferenceIndex) {
+            int preferenceIndex)
+    {
         setPreferenceOrderToProperties(_currentProperties, preferenceName,
                 preferenceIndex);
         // Notify all preferences listener.
@@ -581,7 +606,8 @@ public abstract class Preferences extends Observable {
      * @param preferenceIndex the order number for the property (-1 for no order).
      */
     final private void setPreferenceOrderToProperties(Properties properties,
-            String preferenceName, int preferenceIndex) {
+            String preferenceName, int preferenceIndex)
+    {
         // Add property index for order if needed
         if (preferenceIndex > -1) {
             properties.setProperty(PREFERENCES_ORDER_INDEX_PREFIX + preferenceName,
@@ -599,7 +625,8 @@ public abstract class Preferences extends Observable {
      *
      * @return the order number for the property (-1 for no order).
      */
-    final public int getPreferenceOrder(String preferenceName) {
+    final public int getPreferenceOrder(String preferenceName)
+    {
         _logger.entering(_className, "getPreferenceOrder");
 
         // -1 is the flag value for no order found, so it is the default value.
@@ -631,7 +658,8 @@ public abstract class Preferences extends Observable {
      *
      * @return the preference value.
      */
-    final public String getPreference(String preferenceName) {
+    final public String getPreference(String preferenceName)
+    {
         _logger.entering(_className, "getPreference");
 
         return _currentProperties.getProperty(preferenceName);
@@ -644,7 +672,8 @@ public abstract class Preferences extends Observable {
      *
      * @return one boolean representing the preference value.
      */
-    final public boolean getPreferenceAsBoolean(String preferenceName) {
+    final public boolean getPreferenceAsBoolean(String preferenceName)
+    {
         _logger.entering(_className, "getPreferenceAsBoolean");
 
         String value = _currentProperties.getProperty(preferenceName);
@@ -659,7 +688,8 @@ public abstract class Preferences extends Observable {
      *
      * @return one double representing the preference value.
      */
-    final public double getPreferenceAsDouble(String preferenceName) {
+    final public double getPreferenceAsDouble(String preferenceName)
+    {
         _logger.entering(_className, "getPreferenceAsDouble");
 
         String value = _currentProperties.getProperty(preferenceName);
@@ -674,7 +704,8 @@ public abstract class Preferences extends Observable {
      *
      * @return one integer representing the preference value.
      */
-    final public int getPreferenceAsInt(String preferenceName) {
+    final public int getPreferenceAsInt(String preferenceName)
+    {
         _logger.entering(_className, "getPreferenceAsInt");
 
         String value = _currentProperties.getProperty(preferenceName);
@@ -690,7 +721,8 @@ public abstract class Preferences extends Observable {
      * @return one Color object representing the preference value.
      */
     final public Color getPreferenceAsColor(String preferenceName)
-            throws PreferencesException {
+            throws PreferencesException
+    {
         _logger.entering(_className, "getPreferenceAsColor");
 
         String stringValue = _currentProperties.getProperty(preferenceName);
@@ -716,7 +748,8 @@ public abstract class Preferences extends Observable {
      *
      * @param preferenceName the preference name.
      */
-    final public void removePreference(String preferenceName) {
+    final public void removePreference(String preferenceName)
+    {
         _logger.entering(_className, "removePreference");
 
         _logger.fine("Removing preference '" + preferenceName + "'.");
@@ -770,7 +803,8 @@ public abstract class Preferences extends Observable {
      *
      * @return Enumeration a string enumeration of preference names
      */
-    final public Enumeration getPreferences(String prefix) {
+    final public Enumeration getPreferences(String prefix)
+    {
         _logger.entering(_className, "getPreferences");
 
         int size = 0;
@@ -821,7 +855,8 @@ public abstract class Preferences extends Observable {
      * @return a string containing the full file path to the preference file,
      * according to execution platform.
      */
-    final private String computePreferenceFilepath() {
+    final private String computePreferenceFilepath()
+    {
         _logger.entering(_className, "computePreferenceFilepath");
 
         // [USER_HOME]/
@@ -857,7 +892,8 @@ public abstract class Preferences extends Observable {
     /**
      * Trigger a notification of change to all registered Observers.
      */
-    final public void triggerObserversNotification() {
+    final public void triggerObserversNotification()
+    {
         _logger.entering(_className, "triggerObserversNotification");
 
         // Notify all preferences listener of maybe new values coming from file.
@@ -870,29 +906,35 @@ public abstract class Preferences extends Observable {
      *
      * @return the representation.
      */
-    final public String toString() {
+    final public String toString()
+    {
         return "Preferences file '" + _fullFilepath + "' contains :\n"
                 + _currentProperties;
     }
 
-    public Action getSavePreferences() {
+    public Action getSavePreferences()
+    {
         return _savePreferences;
     }
 
-    public Action getRestoreDefaultPreferences() {
+    public Action getRestoreDefaultPreferences()
+    {
         return _restoreDefaultPreferences;
     }
-    
-    // @todo try to move it into the mcs preferences area
-    protected class SavePrefAction extends RegisteredAction {
 
-        public SavePrefAction(String parentClassName) {
+    // @todo try to move it into the mcs preferences area
+    protected class SavePrefAction extends RegisteredAction
+    {
+
+        public SavePrefAction(String parentClassName)
+        {
             super(parentClassName, "savePreferences");
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e) {
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
             try {
-                saveToFile();                
+                saveToFile();
             } catch (PreferencesException pe) {
                 // @todo handle this error at user level
                 pe.printStackTrace();
@@ -900,15 +942,18 @@ public abstract class Preferences extends Observable {
         }
     }
 
-    protected class RestoreDefaultPrefAction extends RegisteredAction {
+    protected class RestoreDefaultPrefAction extends RegisteredAction
+    {
 
-        public RestoreDefaultPrefAction(String parentClassName) {
+        public RestoreDefaultPrefAction(String parentClassName)
+        {
             super(parentClassName, "restorePreferences");
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e) {
+        public void actionPerformed(java.awt.event.ActionEvent e)
+        {
             try {
-                resetToDefaultPreferences();              
+                resetToDefaultPreferences();
             } catch (Exception exc) {
                 // @todo handle this error at user level
                 exc.printStackTrace();

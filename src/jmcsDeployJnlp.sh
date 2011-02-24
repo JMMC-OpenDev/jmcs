@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.27 2011-02-21 17:10:32 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.28 2011-02-24 10:22:51 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.27  2011/02/21 17:10:32  mella
+# improve deployement on config where aliases are used
+#
 # Revision 1.26  2011/02/15 17:02:21  mella
 # generate one credits.htm page
 #
@@ -471,7 +474,15 @@ createAppJar()
     rm -rf META-INF
     MAINCLASS=$(xml sel -t -v "//application-desc/@main-class"  $APP_WEBROOT/$JNLPFILE)
     cd ..
-    echo "Main-class: $MAINCLASS" > MANIFEST.MF
+
+    echo "Built-By: JMMC (jmmc-tech-group@ujf-grenoble.fr)" > MANIFEST.MF
+    echo "Built-Date: $(date)" >> MANIFEST.MF
+    echo "Specification-Vendor: www.jmmc.fr" >> MANIFEST.MF
+    echo "Implementation-Title: $APPNAME" >> MANIFEST.MF
+    # TODO add version
+    # echo "Implementation-Version: $APPVERSION" >> MANIFEST.MF
+    echo "Main-class: $MAINCLASS" >> MANIFEST.MF
+
     #echo "" >> MANIFEST.MF
     #cat $BIGMANIFEST >> MANIFEST.MF
     if [ -e "$APPNAME.jar" ]

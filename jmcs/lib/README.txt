@@ -9,7 +9,7 @@ Runtime Libraries (JNLP) are described in the following files :
 -rw-r--r--. 1 mella mella 101K 16 avril  2008 BrowserLauncher2-1_3.jar
 -rw-r--r--. 1 mella mella 1,6M 21 mars   2009 castor.jar
 -rw-r--r--. 1 mella mella 569K 29 janv.  2010 colt.jar
--rw-r--r--. 1 mella mella  46K 22 avril  2008 commons-codec-1.3.jar		?????????????????
+-rw-r--r--. 1 mella mella  46K 22 avril  2008 commons-codec-1.3.jar
 -rw-r--r--. 1 mella mella 298K 22 avril  2008 commons-httpclient-3.1.jar
 -rw-r--r--. 1 mella mella 256K 30 juin   2008 commons-lang-2.4.jar
 -rw-r--r--. 1 mella mella  60K 22 avril  2008 commons-logging-1.1.1.jar
@@ -32,6 +32,14 @@ Libraries used by shell scripts (build) are defined in :
 
 -rw-r--r--. 1 mella mella 448K 15 mai    2008 jhelpdev.jar
 -rw-r--r--. 1 mella mella 174K 20 mai    2008 Tidy.jar
+-rw-r--r-- 1 mella laogsite   14204 2011-02-15 18:08 xmlenc.jar
+
+<package name="xmlenc"
+description="xmlenc is a light-weight XML encoding library for Java. It
+fills the gap between a light-weight parser like SAX, and a heavy-weight
+XML output library, like JDOM. "
+link="http://freshmeat.net/projects/xmlenc/"
+jars=" xmlenc.jar "/>
 
 
 Libraries used by ant scripts (JAXB XJC) are :

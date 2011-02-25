@@ -4,10 +4,13 @@
     <compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
     <text></text>
     <dependences>
+        <!-- See/complete lib/README.txt -->
 
-        <!-- Used by ld2ud computation (fr.jmmc.mcs.astro) -->
+        <!-- Science stuff -->
+
+        <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
         <package name="CDS_SpType"
-        description="Help to get informations from spectral type of stellar objects"
+        description="Get information from spectral type of stellar objects. Provided by CDS"
         link="nc"
         jars="sptype.jar"/>
 
@@ -16,15 +19,32 @@
         description="JSAMP is a Java toolkit for use with the Simple Applications Messaging Protocol. Made by Mark Taylor, working in the Astrophysics Group at Bristol University."
         link="http://software.astrogrid.org/doc/jsamp/"
         jars="jsamp-1.2.jar"
-        license="it is available under (at least) the Academic Free Licence and the BSD License."/>
+        license="(at least) the Academic Free Licence and the BSD License."/>
 
-        <!-- Graphical logging utility activated by App using -loggui on command line -->
-        <package name="loggui"
-        description="Adjust logging facilities"
-        link="http://www.informatrix.ch/loggui/index.html"
-        jars="loggui.jar"/>
 
-        <!-- Launch one desktop browser from our applications -->
+        <!-- Model computations -->
+        <package name="commons-math"
+        description="Commons Math is a library of lightweight, self-contained mathematics and statistics components addressing the most common problems not available in the Java programming language or Commons Lang."
+        link="http://commons.apache.org/math/"
+        jars="commons-math-2.0.jar"
+        license="APACHE_V2"/>
+
+        <!-- Model computations (bessel functions) -->
+        <package name="CERN colt"
+        description="provides a set of Open Source Libraries for High Performance Scientific and Technical Computing in Java"
+        link="http://acs.lbl.gov/software/colt/"
+        jars="colt.jar"
+        license="Copyright (c) 1999 CERN - European Organization for Nuclear Research"/>
+        <!--Copyright (c) 1999 CERN - European Organization for Nuclear Research.
+        Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose is
+        hereby granted without fee, provided that the above copyright notice appear in all copies and that both that
+        copyright notice and this permission notice appear in supporting documentation. CERN makes no representations
+        about the suitability of this software for any purpose. It is provided "as is" without expressed or implied warranty.
+        -->
+
+       <!-- Swing -->
+
+        <!-- Launch one desktop browser -->
         <package name="BrowserLauncher2"
         description="Permit to use the default web browser"
         link="http://browserlaunch2.sourceforge.net/"
@@ -35,27 +55,29 @@
         description=" Show a help window from JavaHelp Jar file "
         link="http://java.sun.com/javase/technologies/desktop/javahelp/"
         jars="jhall.jar "/>
-
-        <!-- Use by App to read their command arguments -->
-        <package name="java-getopt"
-        description="Interpret command line arguments"
-        link="http://www.urbanophile.com/arenn/hacking/download.html"
-        jars="java-getopt-1.0.13.jar"/>
-
-        <!-- Task management -->
+        
+        <!-- Swing Task management -->
         <package name="SwingWorker" description="backport of SwingWorker included into Java 1.6"
         link="https://swingworker.dev.java.net/"
         jars="swing-worker-1.2.jar"
         license="LGPL"/>     
 
-        <!-- Used by models and aspro2 setting files -->
+        <!-- Mac OS X Desktop integration -->
+        <package name="AppleJavaExtensions"
+        description="Adapt menus for Mac OS X"
+        link="http://developer.apple.com/samplecode/AppleJavaExtensions/index.html"
+        jars="AppleJavaExtensions.jar"/>
+
+        <!-- Tools -->
+
+        <!-- Xml binding (target models and aspro2) -->
         <package name="JAXB"
         description="Java Architecture for XML Binding (JAXB) allows Java developers to map Java classes to XML representations"
         link="https://jaxb.dev.java.net/"
         jars="activation.jar jaxb-api.jar jaxb-impl.jar jaxb-xjc.jar jsr173_1.0_api.jar"
         license="CDDL/GPL" />
 
-        <!-- Code binding library -->
+        <!--  Xml binding (ApplicationData and LITpro) -->
         <package name="castor"
         description="Create Java classes from XSD schema"
         link="http://www.castor.org/"
@@ -66,52 +88,43 @@
         link="http://xerces.apache.org/"
         jars="xercesImpl.jar xmlParserAPIs.jar"/>
 
-        <!-- Help the App integration as Mac Os X classical desktop application -->
-        <package name="AppleJavaExtensions"
-        description="Adapt menus for Mac OS X"
-        link="http://developer.apple.com/samplecode/AppleJavaExtensions/index.html"
-        jars="AppleJavaExtensions.jar"/>
-
-        <!-- Essentially used by some jmcs classes to detect the platform -->
-        <package name="commons-lang"
-        description="Provide much needed additions to the standard JDK's java.lang package "
-        link="http://commons.apache.org/lang/"
-        jars="commons-lang-2.4.jar"
-        license="APACHE_V2"/>
-
-        <!-- Use fr.jmmc.mcs.util.Http to get properly initialised classes -->
+        <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
         <package name="commons-httpclient"
         description="Used to send HTTP POST request"
         link="http://hc.apache.org/httpclient-3.x/"
         jars="commons-httpclient-3.1.jar "/>
 
-        <!-- Computation in models (fr.jmmc.mcs.model packages) -->
-        <package name="commons-math"
-        description="Commons Math is a library of lightweight, self-contained mathematics and statistics components addressing the most common problems not available in the Java programming language or Commons Lang."
-        link="http://commons.apache.org/math/"
-        jars="commons-math-2.0.jar"
-        license="APACHE_V2"/>
+        <!-- HttpClient dependency -->
+        <package name="commons-codec"
+        description="Commons Codec provides implementations of common encoders and decoders such as Base64, Hex, Phonetic and URLs. "
+        link="http://commons.apache.org/codec/"
+        jars="commons-codec-1.3.jar"/>
 
-        <!-- very common lib -->
+        <!-- Logging common interface (HttpClient, Axis dependencies at least) -->
         <package name="commons-logging"
         description="Ultra-thin bridge between different logging implementations"
         link="http://commons.apache.org/logging/"
         jars="commons-logging-1.1.1.jar"/>
 
-
-        <!-- Old stuff probably not used anylonger
-        TBD dependency - ->
-        <package name="xmlenc"
-        description="xmlenc is a light-weight XML encoding library for Java. It fills the gap between a light-weight parser like SAX, and a heavy-weight XML output library, like JDOM. "
-        link="http://freshmeat.net/projects/xmlenc/"
-        jars=" xmlenc.jar "/>                
-        <!- - TBD dependency - ->
-        <package name="commons-codec"
-        description="Commons Codec provides implementations of common encoders and decoders such as Base64, Hex, Phonetic and URLs. "
-        link="http://commons.apache.org/codec/"
-        jars="commons-codec-1.3.jar"/>
-        -->
+        <!-- Graphical logging utility (-loggui option) -->
+        <package name="loggui"
+        description="Adjust logging facilities"
+        link="http://www.informatrix.ch/loggui/index.html"
+        jars="loggui.jar"/>
         
+        <!-- Parse command line arguments -->
+        <package name="java-getopt"
+        description="Interpret command line arguments"
+        link="http://www.urbanophile.com/arenn/hacking/download.html"
+        jars="java-getopt-1.0.13.jar"/>
+
+        <!-- Only used to detect the platform -->
+        <package name="commons-lang"
+        description="Provide much needed additions to the standard JDK's java.lang package "
+        link="http://commons.apache.org/lang/"
+        jars="commons-lang-2.4.jar"
+        license="APACHE_V2"/>
+       
     </dependences>
     <releasenotes>
         <release version="0.0">

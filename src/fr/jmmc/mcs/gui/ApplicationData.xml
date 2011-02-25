@@ -35,11 +35,12 @@
         link="http://acs.lbl.gov/software/colt/"
         jars="colt.jar"
         license="Copyright (c) 1999 CERN - European Organization for Nuclear Research"/>
-        <!--Copyright (c) 1999 CERN - European Organization for Nuclear Research.
-        Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose is
-        hereby granted without fee, provided that the above copyright notice appear in all copies and that both that
-        copyright notice and this permission notice appear in supporting documentation. CERN makes no representations
-        about the suitability of this software for any purpose. It is provided "as is" without expressed or implied warranty.
+        <!--
+          Copyright (c) 1999 CERN - European Organization for Nuclear Research.
+          Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose is
+          hereby granted without fee, provided that the above copyright notice appear in all copies and that both that
+          copyright notice and this permission notice appear in supporting documentation. CERN makes no representations
+          about the suitability of this software for any purpose. It is provided "as is" without expressed or implied warranty.
         -->
 
        <!-- Swing -->
@@ -90,7 +91,7 @@
 
         <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
         <package name="commons-httpclient"
-        description="Used to send HTTP POST request"
+        description="HTTP Client (used to send HTTP POST requests)"
         link="http://hc.apache.org/httpclient-3.x/"
         jars="commons-httpclient-3.1.jar "/>
 
@@ -120,7 +121,7 @@
 
         <!-- Only used to detect the platform -->
         <package name="commons-lang"
-        description="Provide much needed additions to the standard JDK's java.lang package "
+        description="Provide much needed additions to the standard JDK's java.lang package"
         link="http://commons.apache.org/lang/"
         jars="commons-lang-2.4.jar"
         license="APACHE_V2"/>

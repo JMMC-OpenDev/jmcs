@@ -74,7 +74,7 @@
         <package name="JAXB"
         description="Java Architecture for XML Binding (JAXB) allows Java developers to map Java classes to XML representations"
         link="https://jaxb.dev.java.net/"
-        jars="activation.jar jaxb-api.jar jaxb-impl.jar jaxb-xjc.jar jsr173_1.0_api.jar"
+        jars="activation.jar jaxb-api.jar jaxb-impl.jar jsr173_1.0_api.jar"
         license="CDDL/GPL" />
 
         <!--  Xml binding (ApplicationData and LITpro) -->

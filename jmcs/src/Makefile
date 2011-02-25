@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.37 2011-02-18 16:37:58 bourgesl Exp $"
+# "@(#) $Id: Makefile,v 1.38 2011-02-25 08:28:32 mella Exp $"
 #
 # Makefile of jmcs module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.37  2011/02/18 16:37:58  bourgesl
+# removed jfits library
+#
 # Revision 1.36  2011/02/10 10:46:31  bourgesl
 # update to JSamp 1.2
 #
@@ -256,27 +259,13 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../lib/loggui.jar \
-		../lib/ptplot5.6.jar \
-		../lib/castor.jar \
-		../lib/BrowserLauncher2-1_3.jar \
-		../lib/xercesImpl.jar \
-		../lib/xmlParserAPIs.jar \
-		../lib/commons-httpclient-3.1.jar \
-		../lib/commons-logging-1.1.1.jar \
-		../lib/commons-codec-1.3.jar \
-		../lib/xmlenc.jar \
-		../lib/jhall.jar \
-		../lib/jhelpdev.jar \
-		../lib/Tidy.jar \
-		../lib/java-getopt-1.0.13.jar \
-		../lib/AppleJavaExtensions.jar \
-		../lib/commons-lang-2.4.jar \
-		../lib/sptype.jar \
-		../lib/swing-worker-1.2.jar \
-		../lib/commons-math-2.0.jar \
-		../lib/jsamp-1.2.jar \
-		../config/jmcsLatexIndex2HsTOC.xsl
+# Most of required jars are installed during Jnlp deployement
+# leave here the jars that are used by executables but not jnlp applications
+# See ../lib/README.txt
+INSTALL_FILES = ../lib/Tidy.jar \
+				../lib/jhelpdev.jar \
+				../lib/xmlenc.jar \
+				../config/jmcsLatexIndex2HsTOC.xsl
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

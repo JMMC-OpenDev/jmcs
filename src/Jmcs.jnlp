@@ -5,52 +5,57 @@
         <vendor>JMMC</vendor>
         <homepage href="http://www.jmmc.fr"/>
         <description>Jmcs - JMMC common libraries.</description>
-    </information>
-    <security>
+        </information>
+        <security>
         <all-permissions/>
-    </security>
-    <resources>
+        </security>
+        <resources>
         <j2se version="1.5+"/>
 
         <!-- JMMC modules -->
         <jar href="jar/jmcs.jar" />
+       
+        <!-- Generated using TBD -->
+        <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
+        <jar href="jar/sptype.jar"/>
+        <!-- VO interoperability -->
+        <jar href="jar/jsamp-1.2.jar"/>
+        <!-- Model computations -->
+        <jar href="jar/commons-math-2.0.jar"/>
+        <!-- Model computations (bessel functions) -->
+        <jar href="jar/colt.jar"/>
+        <!-- Launch one desktop browser -->
+        <jar href="jar/BrowserLauncher2-1_3.jar"/>
+        <!-- Documentation reader -->
+        <jar href="jar/jhall.jar "/>
+        <!-- Swing Task management -->
+        <jar href="jar/swing-worker-1.2.jar"/>
+        <!-- Mac OS X Desktop integration -->
+        <jar href="jar/AppleJavaExtensions.jar"/>
+        <!-- Xml binding (target models and aspro2) -->
+        <jar href="jar/activation.jar"/>
+        <jar href="jaxb-api.jar"/>
+        <jar href="jaxb-impl.jar"/>
+        <jar href="jar/jsr173_1.0_api.jar"/>
+        <!--  Xml binding (ApplicationData and LITpro) -->
+        <jar href="jar/castor.jar"/>
+        <!-- castor dependency -->
+        <jar href="jar/xercesImpl.jar"/>
+        <jar href="jar/xmlParserAPIs.jar"/>
+        <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
+        <jar href="jar/commons-httpclient-3.1.jar "/>
+        <!-- HttpClient dependency -->
+        <jar href="jar/commons-codec-1.3.jar"/>
+        <!-- Logging common interface (HttpClient, Axis dependencies at least) -->
+        <jar href="jar/commons-logging-1.1.1.jar"/>
+        <!-- Graphical logging utility (-loggui option) -->
+        <jar href="jar/loggui.jar"/>
+        <!-- Parse command line arguments -->
+        <jar href="jar/java-getopt-1.0.13.jar"/>
+        <!-- Only used to detect the platform -->
+        <jar href="jar/commons-lang-2.4.jar"/>
 
-        <!-- libraries : TODO comments -->
-        <jar href="jar/BrowserLauncher2-1_3.jar" />
-        <jar href="jar/castor.jar" />
-        <jar href="jar/commons-codec-1.3.jar" />
-        <jar href="jar/commons-httpclient-3.1.jar" />
-        <jar href="jar/commons-logging-1.1.1.jar" />
-        <jar href="jar/commons-lang-2.4.jar" />
-        <jar href="jar/java-getopt-1.0.13.jar" />
-        <jar href="jar/jhall.jar" />
-        <jar href="jar/jhelpdev.jar" />
-        <jar href="jar/loggui.jar" />
-        <jar href="jar/ptplot5.6.jar" />
-        <jar href="jar/Tidy.jar" />
-        <jar href="jar/xercesImpl.jar" />
-        <jar href="jar/xmlenc.jar" />
-        <jar href="jar/xmlParserAPIs.jar" />
 
-        <!-- jaxb 2.1 -->
-        <jar href="jar/activation.jar" />
-        <jar href="jar/jaxb-api.jar" />
-        <jar href="jar/jaxb-impl.jar" />
-        <jar href="jar/jsr173_1.0_api.jar" />
-
-        <!-- 
-        Model computations :
-        * Apache commons math 2.0
-        * cern colt
-        -->
-        <jar href="jar/commons-math-2.0.jar" />
-        <jar href="jar/colt.jar" />
-
-        <!-- JSAMP 1.2 -->
-        <jar href="jar/jsamp-1.2.jar" />
-
-        <!-- backport of Swing worker -->
-        <jar href="jar/swing-worker-1.2.jar" />
     </resources>
     <application-desc main-class="fr.jmmc.mcs.TBD"/>
 </jnlp>

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.24 2011-02-28 08:47:53 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.25 2011-02-28 08:49:23 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2011/02/28 08:47:53  mella
+ * Move star type analyser from LD2UD part
+ * Add minimum doc to explain magic numbers
+ *
  * Revision 1.23  2011/02/23 16:43:51  mella
  * Fix lum class analysis returned by sptype of CDS
  *
@@ -579,12 +583,12 @@ public class ALX {
      * If no argument is given, then it prints out the usage form.
      */
     public static void main(String[] args) {
-
+        /*
         System.out.println("" + STARTYPE.DWARF);
         System.out.println("" + STARTYPE.GIANT);
         System.out.println("" + STARTYPE.SUPERGIANT);
 
-        /*
+        
         for (int i = -10050; i < 11000; i++) {
         double f = i / 27.9;
         System.out.println("toDMS(" + f + ") = '" + toDMS(f) + "'.");

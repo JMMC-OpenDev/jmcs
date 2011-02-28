@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.16 2011-02-28 08:47:12 mella Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.17 2011-02-28 10:43:42 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2011/02/28 08:47:12  mella
+ * Move star type analyser into ALX
+ * Use static initialisation of main big arrays
+ *
  * Revision 1.15  2011/02/23 16:56:20  mella
  * Fix bound values that switch to wrong conversion tables
  *
@@ -56,6 +60,7 @@ import fr.jmmc.mcs.astro.star.Star.Property;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -127,7 +132,10 @@ public class LD2UD {
         double logg = getGravity(sptype);
         double teff = getEffectiveTemperature(sptype);
         double result = getLimbDarkenedCorrectionFactor(requestedUD, teff, logg);
-        logger_.fine("LimbdarkenedCorrectionFactor of star with sptype = " + sptype + " in band " + requestedUD + " is " + result);
+
+        if (logger_.isLoggable(Level.FINE)) {
+            logger_.fine("LimbdarkenedCorrectionFactor of star with sptype = " + sptype + " in band " + requestedUD + " is " + result);
+        }
         return result;
     }
 
@@ -135,8 +143,11 @@ public class LD2UD {
         double[][] table = coefficientsTables.get(requestedUD);
         double c = searchCoeff(table, logg, teff);
         double result = getCorrectionFactor(c);
-        logger_.fine("LimbdarkenedCorrectionFactor of star with teff=" + teff
+
+        if (logger_.isLoggable(Level.FINE)) {
+            logger_.fine("LimbdarkenedCorrectionFactor of star with teff=" + teff
                 + " and logg=" + logg + " in band " + requestedUD + " is " + result);
+        }
         return result;
     }
 
@@ -153,7 +164,10 @@ public class LD2UD {
         double[][] table = loggAndTeffTables.get(ALX.getStarType(sptype));
         int tempCode = ALX.getTemperatureClass(sptype);
         double result = searchLogg(table, tempCode);
-        logger_.fine("Gravity of star with sptype = " + sptype + " is " + result);
+
+        if (logger_.isLoggable(Level.FINE)) {
+            logger_.fine("Gravity of star with sptype = " + sptype + " is " + result);
+        }
         return result;
     }
 
@@ -170,7 +184,10 @@ public class LD2UD {
         double[][] table = loggAndTeffTables.get(ALX.getStarType(sptype));
         int tempCode = ALX.getTemperatureClass(sptype);
         double result = searchTeff(table, tempCode);
-        logger_.fine("Effective temperature of star with sptype = " + sptype + " is " + result);
+
+        if (logger_.isLoggable(Level.FINE)) {
+            logger_.fine("Effective temperature of star with sptype = " + sptype + " is " + result);
+        }
         return result;
     }
 
@@ -190,13 +207,19 @@ public class LD2UD {
 
     private static double searchLogg(double[][] table, int tempClassCode) {
         double result = path1(table, tempClassCode, 0, false, 2) + ALX.SUN_LOGG;
-        logger_.finest("Logg of star with tempCode = " + tempClassCode + " is " + result);
+
+        if (logger_.isLoggable(Level.FINEST)) {
+            logger_.finest("Logg of star with tempCode = " + tempClassCode + " is " + result);
+        }
         return result;
     }
 
     private static double searchTeff(double[][] table, int tempClassCode) {
         double result = path1(table, tempClassCode, 0, false, 1);
-        logger_.finest("Teff of star with tempCode = " + tempClassCode + " is " + result);
+
+        if (logger_.isLoggable(Level.FINEST)) {
+            logger_.finest("Teff of star with tempCode = " + tempClassCode + " is " + result);
+        }
         return result;
     }
 
@@ -221,14 +244,20 @@ public class LD2UD {
                 firstGroupIndex = i;
                 // We are into two different temperature groups.
                 if (teff < currentTeff && teff >= prevTeff && !found) {
-                    logger_.fine("first index  = " + firstGroupIndex + " , second index was " + secondGroupIndex + " where teff=" + currentTeff);
+                    if (logger_.isLoggable(Level.FINE)) {
+                        logger_.fine("first index  = " + firstGroupIndex + " , second index was " + secondGroupIndex + " where teff=" + currentTeff);
+                    }
                     found = true;
                     if (teff >= (currentTeff + prevTeff) / 2) {
                         result = currentCoeff;
-                        logger_.fine("Using Temp = " + currentTeff);
+                        if (logger_.isLoggable(Level.FINE)) {
+                            logger_.fine("Using Temp = " + currentTeff);
+                        }
                     } else {
                         result = prevCoeff;
-                        logger_.fine("Using temp = " + prevTeff);
+                        if (logger_.isLoggable(Level.FINE)) {
+                            logger_.fine("Using temp = " + prevTeff);
+                        }
                     }
                     // Now we need to jump to the next nearest logg values in the
                     // same temperature group.
@@ -237,17 +266,21 @@ public class LD2UD {
                     for (int j = secondGroupIndex; j < firstGroupIndex; j++) {
                         double[] ds2 = table[j];
                         currentLogg = ds2[0];
-                        //logger_.fine("logg["+j+"] = "+ currentLogg);
+
                         if (logg <= currentLogg && !loggFound) {
                             result = ds2[2];
                             double[] ds3 = table[j - 1];
                             prevLogg = ds3[0];
                             double prevValue = ds3[2];
                             if (logg < (currentLogg + prevLogg) / 2 && (j + 1) < firstGroupIndex) {
-                                logger_.fine("using logg = " + prevLogg + " .");
+                                if (logger_.isLoggable(Level.FINE)) {
+                                    logger_.fine("using logg = " + prevLogg + " .");
+                                }
                                 result = prevValue;
                             } else {
-                                logger_.fine("using Logg = " + currentLogg);
+                                if (logger_.isLoggable(Level.FINE)) {
+                                    logger_.fine("using Logg = " + currentLogg);
+                                }
                             }
                             loggFound = true;
                         }
@@ -255,8 +288,11 @@ public class LD2UD {
                 }
             }
         }
-        logger_.fine("Coeff for Teff=" + teff + " and logg=" + logg
+
+        if (logger_.isLoggable(Level.FINE)) {
+            logger_.fine("Coeff for Teff=" + teff + " and logg=" + logg
                 + " is " + result);
+        }
         return result;
     }
 

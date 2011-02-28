@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="JMCS" default="about" basedir=".">
+
+  <description>
+  	JMCS ant build file
+  </description>
+
+  <property name="root" location=".."/>
+
+  <property name="libs" location="${root}/lib"/>
+  <property name="sources" location="${root}/src"/>
+
+
+  <!-- custom macro to enhance XJC -->
+  <macrodef name="xjc">
+    <attribute name="destdir"/>
+    <attribute name="schema"/>
+
+    <sequential>
+      <java jar="${libs}/jaxb-xjc.jar">
+        <arg value="-classpath"/>
+        <arg value="${libs}/simple-regenerator-1.0.jar"/>
+
+        <arg value="-no-header"/>
+
+        <arg value="-extension"/>
+        <!-- preserve code extension -->
+        <arg value="-simple-preserve"/>
+
+        <arg value="-d"/>
+        <arg value="@{destdir}"/>
+
+        <arg value="@{schema}"/>
+      </java>
+      <!-- remove backup files -->
+      <delete dir="@{destdir}">
+        <include name="**/*.java.backup"/>
+      </delete>
+      </sequential>
+  </macrodef>
+
+
+  <!-- targets -->
+
+  <!-- target about : -->
+  <target name="about" description="show information for public targets">
+    <echo>available ant targets : </echo>
+    <echo>-------------------------------------------------------------------------------</echo>
+    <echo>  - genXsdCode         : generates the java code from xml schemas (xsd)</echo>
+    <echo>-------------------------------------------------------------------------------</echo>
+  </target>
+
+
+
+
+  <target name="genXsdCode">
+
+    <echo>generating java code for targetModel.xsd</echo>
+    
+    <mkdir dir="${sources}/fr/jmmc/mcs/model/targetmodel" />
+
+    <xjc destdir="${sources}"
+         schema="${sources}/fr/jmmc/mcs/model/targetModel.xsd" />
+
+
+    <echo>generating java code for ApplicationDataModel.xsd</echo>
+
+    <mkdir dir="${sources}/fr/jmmc/mcs/gui/appmodel" />
+
+    <xjc destdir="${sources}"
+         schema="${sources}/fr/jmmc/mcs/gui/ApplicationDataModel.xsd" />
+
+  </target>
+
+
+</project>

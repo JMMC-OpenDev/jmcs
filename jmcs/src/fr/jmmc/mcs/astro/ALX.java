@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.23 2011-02-23 16:43:51 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.24 2011-02-28 08:47:53 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2011/02/23 16:43:51  mella
+ * Fix lum class analysis returned by sptype of CDS
+ *
  * Revision 1.22  2010/09/24 13:15:32  bourgesl
  * removed debug messages in toMS
  *
@@ -85,7 +88,7 @@ import java.text.DecimalFormat;
 
 import java.text.ParseException;
 import java.util.Vector;
-
+import java.util.logging.Logger;
 
 /**
  * Astronomical Library Extension.
@@ -93,28 +96,36 @@ import java.util.Vector;
  * Class regrouping usefull statics method to convert star coordinates between
  * different formats and units.
  */
-public class ALX
-{
+public class ALX {
+
+    /** Class name */
+    static final String className_ = LD2UD.class.getName();
+    /** Logger */
+    static final Logger logger_ = Logger.getLogger(className_);
     /** Describe the micrometer (micron, or um) unit */
     public static final double MICRON = 1.0d;
-
     /** Describe the meter unit */
     public static final double METER = 1.0d;
-
     /** Describe the arcminute unit */
     public static final double ARCMIN = 1.0d;
-
     /** Specify the value of one arcminute in degrees */
     public static final double ARCMIN_IN_DEGREES = (1.0d / 60.0d);
-
     /** Describe the arcsecond unit */
     public static final double ARCSEC = 1.0d;
-
     /** Specify the value of one arcsecond in degrees */
     public static final double ARCSEC_IN_DEGREES = (1.0d / 3600.0d);
-
     /** Specify the value of one milli arcsecond in degrees */
     public static final double MILLI_ARCSEC_IN_DEGREES = ARCSEC_IN_DEGREES / 1000d;
+    /** Sun surface gravity  = 4.378 cm s-2 (AQ, 340/14 SUN) */
+    public static final double SUN_LOGG = 4.378;
+
+    /** Star type enumeration DWARF/GIANT/SUPERGIANT */
+    public enum STARTYPE {
+
+        DWARF,
+        GIANT,
+        SUPERGIANT
+    }
 
     /**
      * Convert the given Right Ascension (RA).
@@ -123,30 +134,26 @@ public class ALX
      *
      * @return the right ascension as a double in degrees.
      */
-    public static double parseHMS(String raHms)
-    {
+    public static double parseHMS(String raHms) {
         double hh;
         double hm;
         double hs;
 
         // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
         // Replace ':' by ' ', and remove trailing and leading space
-        raHms     = raHms.replace(':', ' ');
-        raHms     = raHms.trim();
+        raHms = raHms.replace(':', ' ');
+        raHms = raHms.trim();
 
         // Parse the given string
-        try
-        {
+        try {
             String[] tokens = raHms.split(" ");
-            hh     = Double.parseDouble(tokens[0]);
-            hm     = Double.parseDouble(tokens[1]);
-            hs     = Double.parseDouble(tokens[2]);
-        }
-        catch (Exception e)
-        {
-            hh     = 0.0;
-            hm     = 0.0;
-            hs     = 0.0;
+            hh = Double.parseDouble(tokens[0]);
+            hm = Double.parseDouble(tokens[1]);
+            hs = Double.parseDouble(tokens[2]);
+        } catch (Exception e) {
+            hh = 0.0;
+            hm = 0.0;
+            hs = 0.0;
         }
 
         // Get sign of hh which has to be propagated to hm and hs
@@ -156,11 +163,10 @@ public class ALX
         // note : dd already includes the sign :
         final double ra = (hh + sign * (hm / 60d + hs / 3600d)) * 15d;
 
-//        MCSLogger.debug("HMS  : ’" + raHms + "' = '" + ra + "'.");
+        logger_.fine("HMS  : ’" + raHms + "' = '" + ra + "'.");
 
         return ra;
     }
-
 
     /**
      * Convert the given Right Ascension (RA).
@@ -169,17 +175,15 @@ public class ALX
      *
      * @return the right ascension as a double in degrees  [-180 - 180].
      */
-    public static double parseRA(String raHms)
-    {
+    public static double parseRA(String raHms) {
         double ra = parseHMS(raHms);
 
         // Set angle range [-180 - 180]
-        if (ra > 180d)
-        {
+        if (ra > 180d) {
             ra = -1d * (360d - ra);
         }
 
-//        MCSLogger.debug("RA  : ’" + raHms + "' = '" + ra + "'.");
+        logger_.fine("RA  : ’" + raHms + "' = '" + ra + "'.");
 
         return ra;
     }
@@ -191,30 +195,26 @@ public class ALX
      *
      * @return the declinaison as a double in degrees.
      */
-    public static double parseDEC(String decDms)
-    {
+    public static double parseDEC(String decDms) {
         double dd;
         double dm;
         double ds;
 
         // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
         // Replace ':' by ' ', and remove trailing and leading space
-        decDms     = decDms.replace(':', ' ');
-        decDms     = decDms.trim();
+        decDms = decDms.replace(':', ' ');
+        decDms = decDms.trim();
 
         // Parse the given string
-        try
-        {
+        try {
             String[] tokens = decDms.split(" ");
-            dd     = Double.parseDouble(tokens[0]);
-            dm     = Double.parseDouble(tokens[1]);
-            ds     = Double.parseDouble(tokens[2]);
-        }
-        catch (Exception e)
-        {
-            dd     = 0.0;
-            dm     = 0.0;
-            ds     = 0.0;
+            dd = Double.parseDouble(tokens[0]);
+            dm = Double.parseDouble(tokens[1]);
+            ds = Double.parseDouble(tokens[2]);
+        } catch (Exception e) {
+            dd = 0.0;
+            dm = 0.0;
+            ds = 0.0;
         }
 
         // Get sign of dd which has to be propagated to dm and ds
@@ -224,7 +224,7 @@ public class ALX
         // note : dd already includes the sign :
         double dec = dd + sign * (dm / 60d + ds / 3600d);
 
-//        MCSLogger.debug("DEC : ’" + decDms + "' = '" + dec + "'.");
+        logger_.fine("DEC : ’" + decDms + "' = '" + dec + "'.");
 
         return dec;
     }
@@ -234,10 +234,8 @@ public class ALX
      * @param angle angle in degrees > -360.0
      * @return string DMS representation
      */
-    public final static String toDMS(final double angle)
-    {
-        if (angle < -360.0)
-        {
+    public final static String toDMS(final double angle) {
+        if (angle < -360.0) {
             return null;
         }
 
@@ -247,8 +245,7 @@ public class ALX
         final double rest = normalizedAngle - iDeg;
 
         final StringBuilder sb = new StringBuilder();
-        if (angle < 0.0)
-        {
+        if (angle < 0.0) {
             sb.append("-");
         }
         sb.append(iDeg).append(toMS(rest));
@@ -261,8 +258,7 @@ public class ALX
      * @return string HMS representation, null otherwise
      */
     public final static String toHMS(final double angle) {
-        if (angle < -360.0)
-        {
+        if (angle < -360.0) {
             return null;
         }
         double normalizedAngle = (angle + 360.0) % 360.0;
@@ -275,8 +271,7 @@ public class ALX
         return sb.toString();
     }
 
-    private final static String toMS(final double angle)
-    {
+    private final static String toMS(final double angle) {
         double fMinute = 60.0 * angle;
         int iMinute = (int) Math.floor(fMinute);
 
@@ -299,32 +294,27 @@ public class ALX
      *
      * @return a Vector of String containing found spectral types (if any).
      */
-    public static Vector spectralTypes(String rawSpectralType)
-    {
+    public static Vector spectralTypes(String rawSpectralType) {
         // Remove any "SB" token (Feedback Report ID : #1259360028)
-        if (rawSpectralType.contains("SB"))
-        {
+        if (rawSpectralType.contains("SB")) {
             rawSpectralType = rawSpectralType.replaceAll("SB", "");
         }
 
         Vector foundSpectralTypes = new Vector();
 
-        for (int i = 0; i < rawSpectralType.length(); i++)
-        {
+        for (int i = 0; i < rawSpectralType.length(); i++) {
             char c = rawSpectralType.charAt(i);
 
             // If the luminosity class has been reached
-            if ((c == 'I') || (c == 'V'))
-            {
+            if ((c == 'I') || (c == 'V')) {
                 // Skip those characters
                 continue;
             }
 
             // If the spectral type has been reached
             // eg. the uppercase alphabetic parts of a spectral type
-            if ((Character.isLetter(c) == true) &&
-                    (Character.isUpperCase(c) == true))
-            {
+            if ((Character.isLetter(c) == true)
+                    && (Character.isUpperCase(c) == true)) {
                 // Re-copy its content for later use (as a String object)
                 foundSpectralTypes.add("" + c);
             }
@@ -340,48 +330,41 @@ public class ALX
      *
      * @return a Vector of String containing found luminosity classes (if any).
      */
-    public static Vector luminosityClasses(String rawSpectralType)
-    {
+    public static Vector luminosityClasses(String rawSpectralType) {
 
-        Vector  foundLuminosityClasses = new Vector();
-        String  foundLuminosityClass   = "";
-        boolean luminosityClassFound   = false;
+        Vector foundLuminosityClasses = new Vector();
+        String foundLuminosityClass = "";
+        boolean luminosityClassFound = false;
 
-        int     rawSpectralTypeSize    = rawSpectralType.length();
+        int rawSpectralTypeSize = rawSpectralType.length();
 
         // Scan every given spectral type characters
-        for (int i = 0; i < rawSpectralTypeSize; i++)
-        {
+        for (int i = 0; i < rawSpectralTypeSize; i++) {
             char c = rawSpectralType.charAt(i);
 
             // If a luminosity class has been reached
             // eg. a part of a spectral type composed of I & V (roman numbers)
-            if ((c == 'I') || (c == 'V'))
-            {
+            if ((c == 'I') || (c == 'V')) {
                 // Re-copy its content to build a result string
-                foundLuminosityClass     = foundLuminosityClass + c;
+                foundLuminosityClass = foundLuminosityClass + c;
 
                 // Mark the discovery
-                luminosityClassFound     = true;
+                luminosityClassFound = true;
 
                 // If we are on the last char of the spectral type
-                if (i == (rawSpectralTypeSize - 1))
-                {
+                if (i == (rawSpectralTypeSize - 1)) {
                     // Store the luminosity class as a result
                     foundLuminosityClasses.add(foundLuminosityClass);
                 }
-            }
-            else
-            {
+            } else {
                 // if a luminosiy class was just entirely found
-                if (luminosityClassFound == true)
-                {
+                if (luminosityClassFound == true) {
                     // Store the luminosity class as a result
                     foundLuminosityClasses.add(foundLuminosityClass);
 
                     // Reset in case another luminosity class can be found
-                    foundLuminosityClass     = "";
-                    luminosityClassFound     = false;
+                    foundLuminosityClass = "";
+                    luminosityClassFound = false;
                 }
             }
         }
@@ -396,8 +379,7 @@ public class ALX
      *
      * @return a double containing the converted value.
      */
-    public static double arcmin2minutes(double arcmin)
-    {
+    public static double arcmin2minutes(double arcmin) {
         double minutes = (arcmin / 15);
 
         return minutes;
@@ -410,8 +392,7 @@ public class ALX
      *
      * @return a double containing the converted value.
      */
-    public static double minutes2arcmin(double minutes)
-    {
+    public static double minutes2arcmin(double minutes) {
         double arcmin = (minutes * 15);
 
         return arcmin;
@@ -424,8 +405,7 @@ public class ALX
      *
      * @return a double containing the converted value.
      */
-    public static double arcmin2degrees(double arcmin)
-    {
+    public static double arcmin2degrees(double arcmin) {
         double degrees = (arcmin / 60);
 
         return degrees;
@@ -438,8 +418,7 @@ public class ALX
      *
      * @return a double containing the converted value.
      */
-    public static double degrees2arcmin(double degrees)
-    {
+    public static double degrees2arcmin(double degrees) {
         double arcmin = (degrees * 60);
 
         return arcmin;
@@ -452,8 +431,7 @@ public class ALX
      *
      * @return a double containing the converted value.
      */
-    public static double minutes2degrees(double minutes)
-    {
+    public static double minutes2degrees(double minutes) {
         double degrees = minutes / 4;
 
         return degrees;
@@ -466,8 +444,7 @@ public class ALX
      *
      * @return a double containing the converted value.
      */
-    public static double degrees2minutes(double degrees)
-    {
+    public static double degrees2minutes(double degrees) {
         double minutes = degrees * 4;
 
         return minutes;
@@ -485,10 +462,10 @@ public class ALX
      * @return a Star with UD properties.
      * @throws ParseException
      */
-    public static Star ld2ud(double ld, String sptype) throws ParseException{
+    public static Star ld2ud(double ld, String sptype) throws ParseException {
         double teff = LD2UD.getEffectiveTemperature(sptype);
         double logg = LD2UD.getGravity(sptype);
-        return ld2ud(ld,teff,logg);
+        return ld2ud(ld, teff, logg);
     }
 
     /**
@@ -500,39 +477,95 @@ public class ALX
      * @param logg
      * @return a Star with UD properties.     
      */
-    public static Star ld2ud(double ld, double teff, double logg){
+    public static Star ld2ud(double ld, double teff, double logg) {
         Star star = new Star();
         star.setPropertyAsDouble(Property.TEFF, teff);
         star.setPropertyAsDouble(Property.LOGG, logg);
-        Property [] uds = new Property[]{
-          Property.UD_B, Property.UD_I, Property.UD_J, Property.UD_H, Property.UD_K ,
-          Property.UD_L, Property.UD_N, Property.UD_R, Property.UD_U, Property.UD_V
+        Property[] uds = new Property[]{
+            Property.UD_B, Property.UD_I, Property.UD_J, Property.UD_H, Property.UD_K,
+            Property.UD_L, Property.UD_N, Property.UD_R, Property.UD_U, Property.UD_V
         };
 
         for (Property ud : uds) {
-          double diam = ld / LD2UD.getLimbDarkenedCorrectionFactor(ud, teff, logg);
-          star.setPropertyAsDouble(ud,diam);
+            double diam = ld / LD2UD.getLimbDarkenedCorrectionFactor(ud, teff, logg);
+            star.setPropertyAsDouble(ud, diam);
         }
         return star;
     }
 
-    public static int getTemperatureClass(String spectype) throws ParseException{
-      Sptype sp = new Sptype(spectype);
-      String spNum = sp.getSpNumeric();
-      int firstDotIndex = spNum.indexOf(".");
-      return Integer.parseInt(spNum.substring(0, firstDotIndex));
+    public static int getTemperatureClass(String spectype) throws ParseException {
+        Sptype sp = new Sptype(spectype);
+        String spNum = sp.getSpNumeric();
+        int firstDotIndex = spNum.indexOf(".");
+        return Integer.parseInt(spNum.substring(0, firstDotIndex));
     }
 
-    public static int getLuminosityClass(String spectype) throws ParseException{
-      Sptype sp = new Sptype(spectype);
-      String spNum = sp.getSpNumeric();
-      //int firstDotIndex = spNum.indexOf(".");
-      int secondDotIndex = spNum.lastIndexOf(".");
-      // we must only use the two last chars of lum part as significative
-      // I classes returned 113 instead of 13
-      return Integer.parseInt(spNum.substring(secondDotIndex-2,secondDotIndex));
+    /**
+     * Return one luminosity class code from 00 to 99 according given spectral type.
+     * 00 is a special case that indicated one missing luminosity class.
+     * 
+     *        >NN<
+     * 0112.00113.000000000 I
+     * 0112.00024.000000000 II
+     * 0112.00032.000000000 III
+     * 0112.00040.000000000 IV
+     * 0112.00048.000000000 V
+     *     
+     * @param spectype spectral type value
+     * @return the luminosity integer value
+     * @throws ParseException
+     */
+    public static int getLuminosityClass(String spectype) throws ParseException {
+        Sptype sp = new Sptype(spectype);
+        String spNum = sp.getSpNumeric();
+        //int firstDotIndex = spNum.indexOf(".");
+        int secondDotIndex = spNum.lastIndexOf(".");
+        // we must only use the two last chars of lum part as significative
+        // I classes returned 113 instead of 13
+
+        int lumCode = Integer.parseInt(spNum.substring(secondDotIndex - 2, secondDotIndex));
+
+        // Check that luminosity code has been extracted properly
+        if (lumCode < 0 || lumCode > 100) {
+            throw new IllegalStateException("Luminosity code extracted must not exceed 99 was " + lumCode);
+        }
+
+        return lumCode;
     }
 
+    /**
+     * Return STARTYPE according given spectral type.
+     * @see getLuminosityClass javadoc for magic numbers
+     * @param sptype
+     * @return dwarf, giant or supergiant
+     */
+    public static STARTYPE getStarType(String sptype) {
+        // Daniel wrote:
+        // If the luminosity class is unknown, by default one can suppose that
+        // the star is a giant (III)
+        // (cds sptypes returns 0 when luminosity code is missing)
+
+        int lumCode;
+        try {
+            lumCode = ALX.getLuminosityClass(sptype);
+        } catch (ParseException ex) {
+            logger_.warning("Returning Dwarf because spectral type can not be parsed (" + sptype + ")");
+            return STARTYPE.DWARF;
+        }
+
+        if (lumCode > 37 || lumCode == 0) {
+            logger_.fine("This star his handled has a Dwarf");
+            return STARTYPE.DWARF;
+        }
+        //Giants
+        if (lumCode > 23) {
+            logger_.fine("This star his handled has a Giant");
+            return STARTYPE.GIANT;
+        }
+        // Supergiants
+        logger_.fine("This star his handled has a SuperGiant");
+        return STARTYPE.SUPERGIANT;
+    }
 
     /**
      * Set this class with limited executable features.
@@ -545,35 +578,37 @@ public class ALX
      *
      * If no argument is given, then it prints out the usage form.
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
+
+        System.out.println("" + STARTYPE.DWARF);
+        System.out.println("" + STARTYPE.GIANT);
+        System.out.println("" + STARTYPE.SUPERGIANT);
+
+        /*
         for (int i = -10050; i < 11000; i++) {
-            double f = i / 27.9;
-            System.out.println("toDMS(" + f + ") = '" + toDMS(f) + "'.");
-            System.out.println("toHMS(" + f + ") = '" + toHMS(f) + "'.");
-        }
+        double f = i / 27.9;
+        System.out.println("toDMS(" + f + ") = '" + toDMS(f) + "'.");
+        System.out.println("toHMS(" + f + ") = '" + toHMS(f) + "'.");
+        }         
+         */
 
         Class c = null;
 
-        try
-        {
+        try {
             c = Class.forName(ALX.class.getName());
 
-            String                   method     = args[0];
-            String                   arg        = args[1];
+            String method = args[0];
+            String arg = args[1];
 
             java.lang.reflect.Method userMethod = c.getMethod(method,
                     String.class);
             System.out.println("" + userMethod.invoke(arg, arg));
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             java.lang.reflect.Method[] m = c.getDeclaredMethods();
             System.out.println("Usage: <progname> <methodName> <arg>");
             System.out.println("     where <methodName> can be:");
 
-            for (int i = 0; i < m.length; i++)
-            {
+            for (int i = 0; i < m.length; i++) {
                 System.out.println("       - " + m[i].getName());
             }
         }

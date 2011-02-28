@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.15 2011-02-23 16:56:20 mella Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.16 2011-02-28 08:47:12 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2011/02/23 16:56:20  mella
+ * Fix bound values that switch to wrong conversion tables
+ *
  * Revision 1.14  2011/02/22 16:02:19  mella
  * Handle properly the stars without luminosity class to compute the logg and teff
  *
@@ -51,6 +54,8 @@ package fr.jmmc.mcs.astro;
 
 import fr.jmmc.mcs.astro.star.Star.Property;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -64,18 +69,48 @@ import java.util.logging.Logger;
  *  - extract gravity (logg) and effective temp (teff) according spectraltype
  *  - extract coefficient factor according band, logg and teff
  *
+ * Most of the following code follow the JMMC-MEM-2610-0001.
+ * This class uses one CDS tool to parse the various spectral types.
+ *
  * One hack has been done to split into multiple methods the big tables
  * because of the method limitation of 64k that throws a "Code too large" error
+ *
+ * Ref-doc : http://www.jmmc.fr/doc/index.php?search=MEM-2610-0001
  *
  */
 public class LD2UD {
 
-    static final double SUN_LOGG = 4.378;
-    static final String className_ = "fr.jmmc.mcs.astro.LD2UD";
-    static final Logger logger_ = Logger.getLogger(className_);
-    static final double[][] dwarfsSpToTeffAndLogg = dwarfsSpToTeffAndLogg();
-    static final double[][] giantsSpToTeffAndLogg = giantsSpToTeffAndLogg();
-    static final double[][] supergiantsSpToTeffAndLogg = supergiantsSpToTeffAndLogg();
+    static final String className_;
+    static final Logger logger_;
+    /** Store tables extracted from three publications for given bands */
+    static final Map<ALX.STARTYPE, double[][]> loggAndTeffTables;
+    /** Store tables of coefficient extracted from three publications for given bands */
+    static final Map<Property, double[][]> coefficientsTables;
+
+    /**
+     * Static initializer to define tasks and their child tasks
+     */
+    static {
+        className_ = LD2UD.class.getName();
+        logger_ = Logger.getLogger(className_);
+
+        loggAndTeffTables = new HashMap<ALX.STARTYPE, double[][]>();
+        loggAndTeffTables.put(ALX.STARTYPE.DWARF, dwarfsSpToTeffAndLogg());
+        loggAndTeffTables.put(ALX.STARTYPE.GIANT, giantsSpToTeffAndLogg());
+        loggAndTeffTables.put(ALX.STARTYPE.SUPERGIANT, supergiantsSpToTeffAndLogg());
+
+        coefficientsTables = new HashMap<Property, double[][]>();
+        coefficientsTables.put(Property.UD_B, logGAndTeffToB());
+        coefficientsTables.put(Property.UD_I, logGAndTeffToI());
+        coefficientsTables.put(Property.UD_J, logGAndTeffToJ());
+        coefficientsTables.put(Property.UD_H, logGAndTeffToH());
+        coefficientsTables.put(Property.UD_K, logGAndTeffToK());
+        coefficientsTables.put(Property.UD_L, logGAndTeffToL());
+        coefficientsTables.put(Property.UD_N, logGAndTeffToN());
+        coefficientsTables.put(Property.UD_R, logGAndTeffToR());
+        coefficientsTables.put(Property.UD_U, logGAndTeffToU());
+        coefficientsTables.put(Property.UD_V, logGAndTeffToV());
+    }
 
     public static void main(String[] args) {
         try {
@@ -88,9 +123,6 @@ public class LD2UD {
         System.exit(1);
     }
 
-    /* Most of the following code follow the JMMC-MEM-2610-0001.
-     * This class uses one CDS tool to parse the various spectral types.
-     */
     public static double getLimbDarkenedCorrectionFactor(Property requestedUD, String sptype) throws ParseException {
         double logg = getGravity(sptype);
         double teff = getEffectiveTemperature(sptype);
@@ -100,7 +132,7 @@ public class LD2UD {
     }
 
     public static double getLimbDarkenedCorrectionFactor(Property requestedUD, double teff, double logg) {
-        double[][] table = getCoefficientsTable(requestedUD);
+        double[][] table = coefficientsTables.get(requestedUD);
         double c = searchCoeff(table, logg, teff);
         double result = getCorrectionFactor(c);
         logger_.fine("LimbdarkenedCorrectionFactor of star with teff=" + teff
@@ -108,22 +140,34 @@ public class LD2UD {
         return result;
     }
 
-    // TODO Add units
+    /**
+     * Return the star surface gravity according to given spectral type.
+     *
+     * @todo Add units
+     * @param sptype Spectral Type
+     * @return effective temperature
+     * @throws ParseException
+     */
     public static double getGravity(String sptype) throws ParseException {
-        // Select one table to get logg and Teff
-        int lumCode = ALX.getLuminosityClass(sptype);
-        double[][] table = getSpToLoggAndTeffTable(lumCode);
+        // Select one table to get logg and Teff       
+        double[][] table = loggAndTeffTables.get(ALX.getStarType(sptype));
         int tempCode = ALX.getTemperatureClass(sptype);
         double result = searchLogg(table, tempCode);
         logger_.fine("Gravity of star with sptype = " + sptype + " is " + result);
         return result;
     }
 
-    // TODO Add units
+    /**
+     * Return the effective temparature according to given spectral type.
+     *
+     * @todo Add units
+     * @param sptype Spectral Type
+     * @return effective temperature
+     * @throws ParseException
+     */
     public static double getEffectiveTemperature(String sptype) throws ParseException {
-        // Select one table to get logg and Teff
-        int lumCode = ALX.getLuminosityClass(sptype);
-        double[][] table = getSpToLoggAndTeffTable(lumCode);
+        // Select one table to get logg and Teff      
+        double[][] table = loggAndTeffTables.get(ALX.getStarType(sptype));
         int tempCode = ALX.getTemperatureClass(sptype);
         double result = searchTeff(table, tempCode);
         logger_.fine("Effective temperature of star with sptype = " + sptype + " is " + result);
@@ -131,48 +175,21 @@ public class LD2UD {
     }
 
     /**
-     * This private method is used to get one value in the
-     * supergiant/giant/dwarf tables.
+     * Returns one correction factor given to on coefficient extracted from the tables.
      *
-     * @todo add test code ( especially for array limits )
+     * A correction factor ρθ[λ] = θLD / θUD[λ] shall be applied to obtain θUD[λ].
+     * According to Hanbury Brown et al. (1974, MNRAS, 167, 475):
+     * ρθ[λ] = [(1 - uλ/3)/( 1 - 7uλ/15)]1/2
      *
-     * @param table table of double[]
-     * @param searchedValue value to be compared in the column searchedIndex
-     * @param searchedIndex index of the column to be compared
-     * @param growingSearchedValue true indicates that the searchedColumn is sorted ascending
-     * @param columnIndex index of the column that must be returned.
-     * @return the value extracted from the columnIndex
-     * @return
+     * @param u one extracted coefficient
+     * @return the correction factor
      */
-    private static double path1(double[][] table, double searchedValue, int searchedIndex, boolean growingSearchedValue, int columnIndex) {
-        double result = 0;
-        double value = 0;
-        double comparedValue = 0;
-        boolean found = false;
-        for (int i = 0; i < table.length; i++) {
-            double[] ds = table[i];
-            comparedValue = ds[searchedIndex];
-            value = ds[columnIndex];
-            if (((growingSearchedValue && searchedValue >= comparedValue)
-                    || (!growingSearchedValue && searchedValue <= comparedValue)) && !found) {
-                result = value;
-                try {
-                    double[] ds2 = table[i + 1];
-                    double nextComparedValue = ds2[searchedIndex];
-                    double nextValue = ds2[columnIndex];
-                    if ((nextComparedValue + comparedValue) / 2 < searchedValue) {
-                        result = nextValue;
-                    }
-                } catch (Exception e) { //just to prevent end of array
-                }
-                found = true;
-            }
-        }
-        return result;
+    public static double getCorrectionFactor(double u) {
+        return Math.sqrt((1 - u / 3) / (1 - 7 * u / 15));
     }
 
     private static double searchLogg(double[][] table, int tempClassCode) {
-        double result = path1(table, tempClassCode, 0, false, 2) + SUN_LOGG;
+        double result = path1(table, tempClassCode, 0, false, 2) + ALX.SUN_LOGG;
         logger_.finest("Logg of star with tempCode = " + tempClassCode + " is " + result);
         return result;
     }
@@ -244,103 +261,44 @@ public class LD2UD {
     }
 
     /**
-     * Returns one correction factor given to on coefficient extracted from the tables.
+     * This private method is used to get one value in the
+     * supergiant/giant/dwarf tables.
      *
-     * A correction factor ρθ[λ] = θLD / θUD[λ] shall be applied to obtain θUD[λ].
-     * According to Hanbury Brown et al. (1974, MNRAS, 167, 475):
-     * ρθ[λ] = [(1 - uλ/3)/( 1 - 7uλ/15)]1/2
+     * @todo add test code ( especially for array limits )
      *
-     * @param u one extracted coefficient
-     * @return the correction factor
-     */
-    public static double getCorrectionFactor(double u) {
-        return Math.sqrt((1 - u / 3) / (1 - 7 * u / 15));
-    }
-
-    /** Return one of the three tables that contains the gravity and
-     * effective temperature for a given luminosity class.
-     *
-     * @param lumCode numerical code computed by SpType
+     * @param table table of double[]
+     * @param searchedValue value to be compared in the column searchedIndex
+     * @param searchedIndex index of the column to be compared
+     * @param growingSearchedValue true indicates that the searchedColumn is sorted ascending
+     * @param columnIndex index of the column that must be returned.
+     * @return the value extracted from the columnIndex
      * @return
      */
-    private static double[][] getSpToLoggAndTeffTable(int lumCode) {
-        // The choice is made on the intermediate values of three groups :
-        // I, II/III and IV/V
-        // TODO make it doublechecked by a scientist
-        double[][] table = supergiantsSpToTeffAndLogg;
-
-        // Check that luminosity code has been extracted from
-        if (lumCode < 0 || lumCode > 100) {
-            throw new IllegalStateException("Invalid luminosity code extracted ");
+    private static double path1(double[][] table, double searchedValue, int searchedIndex, boolean growingSearchedValue, int columnIndex) {
+        double result = 0;
+        double value = 0;
+        double comparedValue = 0;
+        boolean found = false;
+        for (int i = 0; i < table.length; i++) {
+            double[] ds = table[i];
+            comparedValue = ds[searchedIndex];
+            value = ds[columnIndex];
+            if (((growingSearchedValue && searchedValue >= comparedValue)
+                    || (!growingSearchedValue && searchedValue <= comparedValue)) && !found) {
+                result = value;
+                try {
+                    double[] ds2 = table[i + 1];
+                    double nextComparedValue = ds2[searchedIndex];
+                    double nextValue = ds2[columnIndex];
+                    if ((nextComparedValue + comparedValue) / 2 < searchedValue) {
+                        result = nextValue;
+                    }
+                } catch (Exception e) { //just to prevent end of array
+                }
+                found = true;
+            }
         }
-
-        // Daniel wrote:
-        // If the luminosity class is unknown, by default one can suppose that
-        // the star is a giant (III) 
-        // cds sptypes returns 0 when luminosity code is missing
-        if (lumCode > 23) {
-            table = giantsSpToTeffAndLogg;
-        }
-        if (lumCode > 37 || lumCode == 0) {
-            table = dwarfsSpToTeffAndLogg;
-        }
-
-        if (table == dwarfsSpToTeffAndLogg) {
-            logger_.fine("This star his handled has a Dwarf");
-        } else if (table == giantsSpToTeffAndLogg) {
-            logger_.fine("This star his handled has a Giant");
-        } else {
-            logger_.fine("This star his handled has a SuperGiant");
-        }
-
-        return table;
-    }
-
-    /** Return one of the tables extracted from three publications
-     * for a given band of diam.
-     *
-     * @param requestedUD UD property that specifies the requested band
-     * @return
-     */
-    private static double[][] getCoefficientsTable(Property requestedUD) {
-        logger_.fine("Trying to find coef table for band " + requestedUD);
-        double[][] table = null;
-        switch (requestedUD) {
-            case UD_B:
-                table = logGAndTeffToB();
-                break;
-            case UD_I:
-                table = logGAndTeffToI();
-                break;
-            case UD_J:
-                table = logGAndTeffToJ();
-                break;
-            case UD_H:
-                table = logGAndTeffToH();
-                break;
-            case UD_K:
-                table = logGAndTeffToK();
-                break;
-            case UD_L:
-                table = logGAndTeffToL();
-                break;
-            case UD_N:
-                table = logGAndTeffToN();
-                break;
-            case UD_R:
-                table = logGAndTeffToR();
-                break;
-            case UD_U:
-                table = logGAndTeffToU();
-                break;
-            case UD_V:
-                table = logGAndTeffToV();
-                break;
-            default:
-                // we could throw one exception ?
-                table = null;
-        }
-        return table;
+        return result;
     }
 
     /////////////////////////////////////////////////

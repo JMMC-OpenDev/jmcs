@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.25 2011-02-28 08:49:23 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.26 2011-02-28 10:43:43 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2011/02/28 08:49:23  mella
+ * Remove test code from main to keeep executable form
+ *
  * Revision 1.24  2011/02/28 08:47:53  mella
  * Move star type analyser from LD2UD part
  * Add minimum doc to explain magic numbers
@@ -92,6 +95,7 @@ import java.text.DecimalFormat;
 
 import java.text.ParseException;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -167,7 +171,9 @@ public class ALX {
         // note : dd already includes the sign :
         final double ra = (hh + sign * (hm / 60d + hs / 3600d)) * 15d;
 
-        logger_.fine("HMS  : ’" + raHms + "' = '" + ra + "'.");
+        if (logger_.isLoggable(Level.FINE)) {
+            logger_.fine("HMS  : ’" + raHms + "' = '" + ra + "'.");
+        }
 
         return ra;
     }
@@ -187,7 +193,9 @@ public class ALX {
             ra = -1d * (360d - ra);
         }
 
-        logger_.fine("RA  : ’" + raHms + "' = '" + ra + "'.");
+        if (logger_.isLoggable(Level.FINE)) {
+            logger_.fine("RA  : ’" + raHms + "' = '" + ra + "'.");
+        }
 
         return ra;
     }
@@ -228,7 +236,9 @@ public class ALX {
         // note : dd already includes the sign :
         double dec = dd + sign * (dm / 60d + ds / 3600d);
 
-        logger_.fine("DEC : ’" + decDms + "' = '" + dec + "'.");
+        if (logger_.isLoggable(Level.FINE)) {
+            logger_.fine("DEC : ’" + decDms + "' = '" + dec + "'.");
+        }
 
         return dec;
     }
@@ -553,7 +563,9 @@ public class ALX {
         try {
             lumCode = ALX.getLuminosityClass(sptype);
         } catch (ParseException ex) {
-            logger_.warning("Returning Dwarf because spectral type can not be parsed (" + sptype + ")");
+            if (logger_.isLoggable(Level.WARNING)) {
+                logger_.warning("Returning Dwarf because spectral type can not be parsed (" + sptype + ")");
+            }
             return STARTYPE.DWARF;
         }
 

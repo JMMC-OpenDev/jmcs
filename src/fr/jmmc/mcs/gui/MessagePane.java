@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.10 2011-02-24 16:20:24 mella Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.11 2011-02-28 12:37:23 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2011/02/24 16:20:24  mella
+ * Limit size of dialog box for long messages using scrollpane
+ *
  * Revision 1.9  2011/02/14 17:09:41  bourgesl
  * removed deprecated / dead code
  *
@@ -115,14 +118,14 @@ public final class MessagePane {
         // try to get cause if possible
         final String cause;
         if (th != null && th.getCause() != null && th.getCause().getMessage() != null) {
-            cause = "\n" + "Cause : \"" + th.getCause().getMessage() + "\".\n";
+            cause = "\n" + "Cause : " + th.getCause().getMessage();
         } else {
             cause = "";
         }
 
         final String msg;
         if (th != null && th.getMessage() != null) {
-            msg = message + "\n\n" + "Explanation : \"" + th.getMessage() + "\"."+cause;
+            msg = message + "\n\n" + "Explanation : " + th.getMessage() + cause;
         } else {
             msg = message;
         }
@@ -153,8 +156,9 @@ public final class MessagePane {
         JScrollPane sp = new JScrollPane(t);
         sp.setBorder(null);
         // Try not to display windows bigger than screen for huge messages
-        Dimension d=new Dimension(Math.min(t.getMinimumSize().width,600),
-                Math.min(t.getMinimumSize().height,500));        
+        // 50px margins are here to avoid some scrollbars...
+        Dimension d=new Dimension(Math.min(t.getMinimumSize().width,600)+50,
+                Math.min(t.getMinimumSize().height,500)+50);
         sp.setMaximumSize(d);
         sp.setPreferredSize(d);
         JOptionPane.showMessageDialog(getApplicationFrame(), sp, title, type);

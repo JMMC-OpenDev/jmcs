@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-09-09 09:01:23 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.3 2011-02-28 14:47:46 lafrasse Exp $"
 #
 # Makefile of ........
 #
@@ -65,8 +65,8 @@ lllll_OBJECTS   =
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = modshExample1.sh \
-				  modshExample2.sh
+SCRIPTS         = modshExample1 \
+				  modshExample2
 SCRIPTS_L       =
 
 #
@@ -163,7 +163,7 @@ CSOURCENAMES = \
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/mcsMakefile
+include $(MAKEDIR)/mkfMakefile
 
 #
 # TARGETS

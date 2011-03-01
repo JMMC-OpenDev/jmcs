@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Catalog.java,v 1.8 2011-03-01 15:45:08 mella Exp $"
+ * "@(#) $Id: Catalog.java,v 1.9 2011-03-01 15:46:46 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2011/03/01 15:45:08  mella
+ * fix list catalogs html
+ *
  * Revision 1.7  2011/03/01 14:38:03  mella
  * Add toHtmlTable method to list all catalogs
  *
@@ -196,7 +199,7 @@ public enum Catalog {
             String ref = catalog.reference();
             sb.append("<tr style='background-color:");
             sb.append(fr.jmmc.mcs.util.ColorEncoder.encode(getDefaultColor(catalog)) );
-            sb.append("><td>" );
+            sb.append("'><td>" );
             sb.append( catalog.title() );
             sb.append( "</td><td><a href='http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=");
             sb.append( ref );

@@ -1,4 +1,4 @@
-<%@page contentType="text" session="false" pageEncoding="UTF-8"%>
+<%@page contentType="text/plain" session="false" pageEncoding="UTF-8" buffer="1kb" autoFlush="false"%>
 <%@page import="fr.jmmc.mcs.astro.ALX"%>
 # Read the http://www.jmmc.fr/doc/index.php?search=JMMC-MEM-2610-0001
 # reference document to get more details on diameters conversions

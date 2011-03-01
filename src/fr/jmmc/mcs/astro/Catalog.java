@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Catalog.java,v 1.6 2010-08-24 13:22:33 mella Exp $"
+ * "@(#) $Id: Catalog.java,v 1.7 2011-03-01 14:38:03 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2010/08/24 13:22:33  mella
+ * Fix bug
+ *
  * Revision 1.5  2010/08/24 12:59:51  mella
  * Define default color association
  *
@@ -29,43 +32,38 @@ package fr.jmmc.mcs.astro;
 import java.awt.Color;
 import java.util.Hashtable;
 
-
 /**
  * Enumeration of all different catalogs and their properties.
+ * If catalog list get updated, please deploy new jmcs_webapp.
  */
-public enum Catalog
-{
-    ASCC_2_5    ("I/280",                   "ASCC-2.5",     "All-sky Compiled Catalogue of 2.5 million stars"),
-    USNO_B      ("I/284",                   "USNO-B",       "The USNO-B1.0 Catalog"),
-    CIO         ("II/225/catalog",          "CIO",          "Catalog of Infrared Observations, Edition 5"),
-    JP11        ("II/7A/catalog",           "JP11",         "UBVRIJKLMNH Photoelectric Catalogue"),
-    _2MASS      ("II/246/out",              "2MASS",        "2MASS All-Sky Catalog of Point Sources"),
-    BSC         ("V/50/catalog",            "BSC",          "Bright Star Catalogue, 5th Revised Ed."),
-    Merand      ("J/A+A/433/1155",          "Merand",       "Calibrator stars for 200m baseline interferometry"),
-    CHARM2      ("J/A+A/431/773/charm2",    "CHARM2",       "CHARM2, an updated of CHARM catalog"),
-    DENIS       ("B/denis",                 "DENIS",        "The DENIS database"),
-    J_K_DENIS   ("J/A+A/413/1037",          "J-K DENIS",    "J-K DENIS photometry of bright southern stars"),
-    HIC         ("I/196/main",              "HIC",          "Hipparcos Input Catalogue, Version 2"),
-    LBSI        ("J/A+A/393/183/catalog",   "LBSI",         "Catalogue of calibrator stars for LBSI"),
-    MIDI        ("MIDI",                    "MIDI",         "Photometric observations and angular size estimates of mid infrared interferometric calibration sources"),
-    SBSC        ("V/36B/bsc4s",             "SBSC",         "The Supplement to the Bright Star Catalogue"),
-    SB9         ("B/sb9/main",              "SB9",          "SB9: 9th Catalogue of Spectroscopic Binary Orbits"),
-    WDS         ("B/wds/wds",               "WDS",          "The Washington Visual Double Star Catalog");
+public enum Catalog {
 
+    ASCC_2_5("I/280", "ASCC-2.5", "All-sky Compiled Catalogue of 2.5 million stars"),
+    USNO_B("I/284", "USNO-B", "The USNO-B1.0 Catalog"),
+    CIO("II/225/catalog", "CIO", "Catalog of Infrared Observations, Edition 5"),
+    JP11("II/7A/catalog", "JP11", "UBVRIJKLMNH Photoelectric Catalogue"),
+    _2MASS("II/246/out", "2MASS", "2MASS All-Sky Catalog of Point Sources"),
+    BSC("V/50/catalog", "BSC", "Bright Star Catalogue, 5th Revised Ed."),
+    Merand("J/A+A/433/1155", "Merand", "Calibrator stars for 200m baseline interferometry"),
+    CHARM2("J/A+A/431/773/charm2", "CHARM2", "CHARM2, an updated of CHARM catalog"),
+    DENIS("B/denis", "DENIS", "The DENIS database"),
+    J_K_DENIS("J/A+A/413/1037", "J-K DENIS", "J-K DENIS photometry of bright southern stars"),
+    HIC("I/196/main", "HIC", "Hipparcos Input Catalogue, Version 2"),
+    LBSI("J/A+A/393/183/catalog", "LBSI", "Catalogue of calibrator stars for LBSI"),
+    MIDI("MIDI", "MIDI", "Photometric observations and angular size estimates of mid infrared interferometric calibration sources"),
+    SBSC("V/36B/bsc4s", "SBSC", "The Supplement to the Bright Star Catalogue"),
+    SB9("B/sb9/main", "SB9", "SB9: 9th Catalogue of Spectroscopic Binary Orbits"),
+    WDS("B/wds/wds", "WDS", "The Washington Visual Double Star Catalog");
     /** Store the catalog CDS 'cryptic' reference */
     private final String _reference;
-
     /** Store the catalog CDS 'human-readable' name */
     private final String _title;
-
     /** Store the catalog CDS 'abbreviated' description */
     private final String _description;
-
     /** Blanking value for undefined Strings (null, ...) */
     public static final String UNKNOWN = "Unknown";
 
-    Catalog(String reference, String title, String description)
-    {
+    Catalog(String reference, String title, String description) {
         _reference = (reference == null ? UNKNOWN : reference);
         addCatalog(_reference);
 
@@ -76,18 +74,15 @@ public enum Catalog
         addDescription(_reference, _description);
     }
 
-    private void addTitle(String reference, String title)
-    {
+    private void addTitle(String reference, String title) {
         NastyTrick._titles.put(reference, title);
     }
 
-    private void addDescription(String reference, String description)
-    {
+    private void addDescription(String reference, String description) {
         NastyTrick._descriptions.put(reference, description);
     }
 
-    private void addCatalog(String reference)
-    {
+    private void addCatalog(String reference) {
         NastyTrick._catalogs.put(reference, this);
     }
 
@@ -96,21 +91,27 @@ public enum Catalog
      *
      * @return a String containing the given catalog reference, Catalog.UNKNOWN otherwise.
      */
-    public String reference()   { return _reference; }
+    public String reference() {
+        return _reference;
+    }
 
     /**
      * Give back the catalog title.
      *
      * @return a String containing the given catalog title, Catalog.UNKNOWN otherwise.
      */
-    public String title()       { return _title; }
+    public String title() {
+        return _title;
+    }
 
     /**
      * Give back the catalog description.
      *
      * @return a String containing the given catalog description, Catalog.UNKNOWN otherwise.
      */
-    public String description() { return _description; }
+    public String description() {
+        return _description;
+    }
 
     /**
      * Give back the catalog title of the corresponding reference.
@@ -124,16 +125,13 @@ public enum Catalog
      *
      * @return a String containing the given catalog title, the reference if not found, Catalog.UNKNOWN otherwise.
      */
-    public static String titleFromReference(String reference)
-    {
-        if (reference == null)
-        {
+    public static String titleFromReference(String reference) {
+        if (reference == null) {
             return UNKNOWN;
         }
 
         String title = NastyTrick._titles.get(reference);
-        if (title == null)
-        {
+        if (title == null) {
             title = reference;
         }
 
@@ -152,16 +150,13 @@ public enum Catalog
      *
      * @return a String containing the given catalog description, the reference if not found, Catalog.UNKNOWN otherwise.
      */
-    public static String descriptionFromReference(String reference)
-    {
-        if (reference == null)
-        {
+    public static String descriptionFromReference(String reference) {
+        if (reference == null) {
             return UNKNOWN;
         }
 
         String description = NastyTrick._descriptions.get(reference);
-        if (description == null)
-        {
+        if (description == null) {
             description = reference;
         }
 
@@ -175,14 +170,44 @@ public enum Catalog
      *
      * @return the seeked catalog, null otherwise.
      */
-    public static Catalog catalogFromReference(String reference)
-    {
+    public static Catalog catalogFromReference(String reference) {
         return (reference == null ? null : NastyTrick._catalogs.get(reference));
     }
 
-    public String toString()
-    {
+    public String toString() {
         return _title + " - '" + _description + "' (" + _reference + ")";
+    }
+
+    /**
+     *  Display html table with the list of catalogs.
+     *  (Used by catalogs.jsp in jmcs webapps.)
+     * @return one html table
+     */
+    public static String toHtmlTable() {
+        StringBuilder sb = new StringBuilder(1024);
+        sb.append("<table>\n");
+        sb.append("<tr><th>Title</th><th>Reference</th><th>Description</th>\n");
+        sb.append("");
+        // Display one tr by catalog in the enum
+        for (Catalog catalog : Catalog.values()) {
+            String ref = catalog.reference();
+            sb.append("<tr style='background-color:");
+            sb.append(fr.jmmc.mcs.util.ColorEncoder.encode(getDefaultColor(catalog)) );
+            sb.append("'><td><a href='http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=");
+            sb.append( ref );
+            sb.append( "'>" );
+            sb.append( ref );
+            sb.append( "</td>");
+            sb.append("<td>" );
+            sb.append( catalog.title() );
+            sb.append( "'</td>");
+            sb.append("<td>" );
+            sb.append( catalog.description() );
+            sb.append( "</td>\n");
+            sb.append("</tr>");
+        }
+        sb.append("</table>\n");
+        return sb.toString();
     }
 
     public static Color getDefaultColor(Catalog cat) {
@@ -194,8 +219,8 @@ public enum Catalog
         for (Catalog catalog : Catalog.values()) {
             float computedHue = ((float) (i + 1) / (total + 1));
             Color catalogColor = Color.getHSBColor(computedHue, saturation,
-                    brightness);            
-            if (cat==catalog) {
+                    brightness);
+            if (cat == catalog) {
                 return catalogColor;
             }
             i++;
@@ -207,11 +232,9 @@ public enum Catalog
     /**
      * For test and debug purpose only.
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         // For each catalog in the enum
-        for (Catalog catalog : Catalog.values())
-        {
+        for (Catalog catalog : Catalog.values()) {
             String reference = catalog.reference();
             String title = catalog.title();
             String description = catalog.description();
@@ -233,16 +256,18 @@ public enum Catalog
         System.out.println();
         System.out.println();
         // Display in xml each catalog in the enum
-        for (Catalog catalog : Catalog.values())
-        {
+        for (Catalog catalog : Catalog.values()) {
             String reference = catalog.reference();
             String title = catalog.title();
             String description = catalog.description();
-            System.out.println("<catalog ref='" + reference +
-                    "' title='" + title +
-                    "' color='" + fr.jmmc.mcs.util.ColorEncoder.encode(getDefaultColor(catalog)) +
-                    "' description='" + description + "'/>");
+            System.out.println("<catalog ref='" + reference
+                    + "' title='" + title
+                    + "' color='" + fr.jmmc.mcs.util.ColorEncoder.encode(getDefaultColor(catalog))
+                    + "' description='" + description + "'/>");
         }
+
+        // Display in html
+        System.out.println("HTML version  :\n" + Catalog.toHtmlTable());
     }
 }
 
@@ -252,9 +277,9 @@ public enum Catalog
  * @sa http://www.velocityreviews.com/forums/t145807-an-enum-mystery-solved.html
  * @sa http://www.jroller.com/ethdsy/entry/static_fields_in_enum
  */
-class NastyTrick
-{
-    public static final Hashtable<String, String>  _titles       = new Hashtable();
-    public static final Hashtable<String, String>  _descriptions = new Hashtable();
-    public static final Hashtable<String, Catalog> _catalogs     = new Hashtable();
+class NastyTrick {
+
+    public static final Hashtable<String, String> _titles = new Hashtable();
+    public static final Hashtable<String, String> _descriptions = new Hashtable();
+    public static final Hashtable<String, Catalog> _catalogs = new Hashtable();
 }

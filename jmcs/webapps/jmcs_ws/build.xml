@@ -5,6 +5,7 @@
 <description>
 build web app based on jmcs library:
 - ld2ud conversion of limb darkened diameter into uniform diameters
+- html catalog list
 </description>
 
 <!-- first load local config file -->

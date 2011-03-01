@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.26 2011-02-28 10:43:43 bourgesl Exp $"
+ * "@(#) $Id: ALX.java,v 1.27 2011-03-01 09:44:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2011/02/28 10:43:43  bourgesl
+ * use isLoggable(level) for logging statements containing string concatenations (optimisation)
+ *
  * Revision 1.25  2011/02/28 08:49:23  mella
  * Remove test code from main to keeep executable form
  *
@@ -564,7 +567,7 @@ public class ALX {
             lumCode = ALX.getLuminosityClass(sptype);
         } catch (ParseException ex) {
             if (logger_.isLoggable(Level.WARNING)) {
-                logger_.warning("Returning Dwarf because spectral type can not be parsed (" + sptype + ")");
+                logger_.warning("Returning Dwarf because spectral type can not be parsed (" + sptype + ") reason : "+ex.getMessage());
             }
             return STARTYPE.DWARF;
         }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Catalog.java,v 1.7 2011-03-01 14:38:03 mella Exp $"
+ * "@(#) $Id: Catalog.java,v 1.8 2011-03-01 15:45:08 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2011/03/01 14:38:03  mella
+ * Add toHtmlTable method to list all catalogs
+ *
  * Revision 1.6  2010/08/24 13:22:33  mella
  * Fix bug
  *
@@ -186,27 +189,26 @@ public enum Catalog {
     public static String toHtmlTable() {
         StringBuilder sb = new StringBuilder(1024);
         sb.append("<table>\n");
-        sb.append("<tr><th>Title</th><th>Reference</th><th>Description</th>\n");
+        sb.append("<tr><th>Title</th><th>Reference</th><th>Description</th></tr>\n");
         sb.append("");
         // Display one tr by catalog in the enum
         for (Catalog catalog : Catalog.values()) {
             String ref = catalog.reference();
             sb.append("<tr style='background-color:");
             sb.append(fr.jmmc.mcs.util.ColorEncoder.encode(getDefaultColor(catalog)) );
-            sb.append("'><td><a href='http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=");
+            sb.append("><td>" );
+            sb.append( catalog.title() );
+            sb.append( "</td><td><a href='http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=");
             sb.append( ref );
             sb.append( "'>" );
             sb.append( ref );
-            sb.append( "</td>");
-            sb.append("<td>" );
-            sb.append( catalog.title() );
-            sb.append( "'</td>");
+            sb.append( "</a></td>");
             sb.append("<td>" );
             sb.append( catalog.description() );
             sb.append( "</td>\n");
             sb.append("</tr>");
         }
-        sb.append("</table>\n");
+        sb.append("\n</table>\n");
         return sb.toString();
     }
 

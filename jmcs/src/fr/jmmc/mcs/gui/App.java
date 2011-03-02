@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.81 2011-02-14 17:08:58 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.82 2011-03-02 10:59:29 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.81  2011/02/14 17:08:58  bourgesl
+ * added onFinish method to handle JMCS operations at shutdown (SAMP)
+ *
  * Revision 1.80  2011/02/08 11:15:45  bourgesl
  * typo
  *
@@ -507,7 +510,7 @@ public abstract class App {
      * Otherwise, uses the default ApplicationData.xml.
      */
     private void loadApplicationData() {
-        URL fileURL = getURLFromResourceFilename("ApplicationData.xml");
+        final URL fileURL = getURLFromResourceFilename("ApplicationData.xml");
 
         if (fileURL == null) {
             // Take the defaultData XML in order to take the default menus
@@ -531,29 +534,30 @@ public abstract class App {
 
         try {
             // The App class
-            Class<?> app = Introspection.getClass("fr.jmmc.mcs.gui.App");
+            Class<?> appClass = App.class;
 
             // The App package
-            Package defaultPackage = app.getPackage();
+            final Package defaultPackage = appClass.getPackage();
 
             // Replace '.' by '/' of package name
-            String defaultPackageName = defaultPackage.getName().replace(".", "/");
+            final String defaultPackageName = defaultPackage.getName().replace(".", "/");
 
             // Default XML location
-            defaultXmlLocation = defaultPackageName + "/"
-                    + "ApplicationData.xml";
+            defaultXmlLocation = defaultPackageName + "/ApplicationData.xml";
 
-            URL defaultXmlURL = app.getClassLoader().getResource(defaultXmlLocation);
+            final URL defaultXmlURL = appClass.getClassLoader().getResource(defaultXmlLocation);
 
             // We reinstantiate the application data model
             _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
-        } catch (Exception ex) {
+            
+        } catch (Exception e) {
             if (_logger.isLoggable(Level.WARNING)) {
                 _logger.log(Level.WARNING,
-                        "Cannot laod '" + defaultXmlLocation
-                        + "' default application data", ex);
+                        "Cannot load '" + defaultXmlLocation + "' default application data", e);
             }
-            System.exit(-1);
+
+            // Exit the application
+            App.exit(-1);
         }
     }
 
@@ -710,22 +714,20 @@ public abstract class App {
                 // Show the arguments help
                 case 'h':
                     showArgumentsHelp();
-
                     break;
 
                 // Show the name and the version of the program
                 case 1:
                     // Show the application name on the shell
                     System.out.println(_applicationDataModel.getProgramName() + " v" + _applicationDataModel.getProgramVersion());
+                    
                     // Exit the application
-                    System.exit(0);
-
+                    App.exit(0);
                     break;
 
                 // Display the LogGUI panel
                 case 2:
                     showLogGui();
-
                     break;
 
                 // Open the given file
@@ -762,19 +764,18 @@ public abstract class App {
                             showArgumentsHelp();
                         }
                     }
-
                     break;
 
                 // Show the arguments help
                 case '?':
                     showArgumentsHelp();
-
                     break;
 
                 default:
                     System.out.println("Unknow command");
-                    System.exit(-1);
 
+                    // Exit the application
+                    App.exit(-1);
                     break;
             }
         }
@@ -805,7 +806,8 @@ public abstract class App {
         System.out.println(
                 "LEVEL : O=OFF, 1=SEVERE, 2=WARNING, 3=INFO, 4=FINE, 5=ALL\n");
 
-        System.exit(0);
+        // Exit the application
+        App.exit(0);
     }
 
     /**
@@ -843,16 +845,38 @@ public abstract class App {
     }
 
     /**
-     * Hook to handle operations when closing application for JMCS.
+     * Hook to handle operations when exiting application.
+     * @see App#exit(int)
      */
-    private void onFinish() {
-
+    protected void onFinish() {
         // Disconnect from SAMP Hub :
         SampManager.shutdown();
+    }
+    
+    /**
+     * Exit the application :
+     * - calls onFinish()
+     * - System.exit(statusCode)
+     * @param statusCode status code to return
+     */
+    public final static void exit(final int statusCode) {
+        _logger.info("Killing the application.");
 
+       try {
+           final App application = App.getSharedInstance();
+           
+           if (application != null) {
+                application.onFinish();
+           }
+        } finally {
+            // anyway, exit :
+            System.exit(statusCode);
+        }
     }
 
-    /** Describe the life cycle of the application */
+    /** 
+     * Describe the life cycle of the application
+     */
     protected final void run() {
         // Show splash screen if we have to
         if (_showSplashScreen) {
@@ -1065,26 +1089,27 @@ public abstract class App {
      */
     public URL getURLFromResourceFilename(String fileName) {
         // The class which is extended from App
-        Class<?> actualClass = getClass();
+        final Class<?> actualClass = getClass();
 
-        // It's package
-        Package p = actualClass.getPackage();
+        // Its package
+        final Package p = actualClass.getPackage();
 
         // the package name
-        String packageName = p.getName();
+        final String packageName = p.getName();
 
         // Replace '.' by '/' of package name
-        String packagePath = packageName.replace(".", "/");
-        String filePath = packagePath + "/" + fileName;
+        final String packagePath = packageName.replace(".", "/");
+
+        final String filePath = packagePath + "/" + fileName;
         if (_logger.isLoggable(Level.FINE)) {
             _logger.fine("filePath = '" + filePath + "'.");
         }
 
         URL fileURL = null;
-
         try {
             // Open XML file at path
             fileURL = actualClass.getClassLoader().getResource(filePath);
+            
         } catch (Exception ex) {
             if (_logger.isLoggable(Level.WARNING)) {
                 _logger.log(Level.WARNING,
@@ -1164,11 +1189,10 @@ public abstract class App {
 
                 // Verify if we are authorized to kill the application or not
                 if (_exitApplicationWhenClosed) {
-                    _logger.info("Killing the application.");
 
-                    onFinish();
-
-                    System.exit(-1);
+                    // Exit the application
+                    App.exit(0);
+                    
                 } else {
                     _logger.fine("Application left opened as required.");
                 }

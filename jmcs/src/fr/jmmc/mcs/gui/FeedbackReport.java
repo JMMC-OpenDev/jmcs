@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.35 2011-02-14 17:09:41 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.36 2011-03-02 10:59:29 bourgesl Exp $"
  *
  */
 package fr.jmmc.mcs.gui;
@@ -300,10 +300,12 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         final boolean exit = !ready || !App.getFrame().isVisible();
 
-        // Exit or not the application
+        // Exit or not the application ?
         if (exit) {
-            _logger.fine("exiting ...");
-            System.exit(-1);
+
+            // Exit the application
+            App.exit(-1);
+
         }
     }
 

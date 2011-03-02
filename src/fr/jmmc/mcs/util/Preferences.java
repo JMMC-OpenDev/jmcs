@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.37 2011-02-24 17:15:12 bourgesl Exp $"
+ * "@(#) $Id: Preferences.java,v 1.38 2011-03-02 16:14:37 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2011/02/24 17:15:12  bourgesl
+ * use quiet flag to hide a logging message
+ *
  * Revision 1.36  2011/02/02 13:54:42  mella
  * Fix bug with static member describing filename
  * Do info log during restore and save actions
@@ -442,7 +445,7 @@ public abstract class Preferences extends Observable
 
         _currentProperties = (Properties) _defaultProperties.clone();
 
-        if (quiet) {
+        if (!quiet) {
             _logger.info("Restoring default preferences.");
         }
 

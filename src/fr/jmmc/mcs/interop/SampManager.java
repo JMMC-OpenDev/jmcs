@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.22 2011-02-15 10:35:04 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.23 2011-03-02 10:58:18 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2011/02/15 10:35:04  bourgesl
+ * added SampConnectionChangeListener class to provide better log messages
+ *
  * Revision 1.21  2011/02/15 09:16:13  bourgesl
  * added elapsed time in logs when sending any SAMP message
  *
@@ -141,6 +144,17 @@ public final class SampManager
     }
 
     /**
+     * Explicitely shut down the hub connector
+     */
+    public static synchronized void shutdown()
+    {
+        if (_instance != null) {
+            _instance.shutdownNow();
+            _instance = null;
+        }
+    }
+
+    /**
      * Hidden constructor
      */
     protected SampManager()
@@ -243,14 +257,6 @@ public final class SampManager
     }
 
     /* --- STATIC METHODS --------------------------------------------------- */
-    /**
-     * Explicitely shut down the hub connector
-     */
-    public static void shutdown()
-    {
-        getInstance().shutdownNow();
-    }
-
     /**
      * Return the hub service mode for the internal Hub (CLIENT_GUI if system tray is supported)
      * @return hub mode

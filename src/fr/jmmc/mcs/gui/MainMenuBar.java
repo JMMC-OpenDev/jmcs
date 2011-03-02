@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.45 2011-02-16 14:34:44 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.46 2011-03-02 09:03:34 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.45  2011/02/16 14:34:44  bourgesl
+ * added Look & Feel menu only shown if the system property jmcs.laf.menu =true
+ *
  * Revision 1.44  2010/11/09 12:43:57  mella
  * Add interop menu for Beta and Alpha releases
  *
@@ -323,11 +326,8 @@ public class MainMenuBar extends JMenuBar
             }
         }
 
-        // Create Interop menu only for non production version (LAURENT) :
-        if (App.isBetaVersion()||App.isAlphaVersion())
-        {
-          createInteropMenu();
-        }
+        // Create Interop menu :
+        createInteropMenu();
 
         final String lafMenu = System.getProperty(SYSTEM_PROPERTY_LAF_MENU);
         if (lafMenu != null && "true".equals(lafMenu))

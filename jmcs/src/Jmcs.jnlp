@@ -34,8 +34,8 @@
         <jar href="jar/AppleJavaExtensions.jar"/>
         <!-- Xml binding (target models and aspro2) -->
         <jar href="jar/activation.jar"/>
-        <jar href="jaxb-api.jar"/>
-        <jar href="jaxb-impl.jar"/>
+        <jar href="jar/jaxb-api.jar"/>
+        <jar href="jar/jaxb-impl.jar"/>
         <jar href="jar/jsr173_1.0_api.jar"/>
         <!--  Xml binding (ApplicationData and LITpro) -->
         <jar href="jar/castor.jar"/>
@@ -54,7 +54,6 @@
         <jar href="jar/java-getopt-1.0.13.jar"/>
         <!-- Only used to detect the platform -->
         <jar href="jar/commons-lang-2.4.jar"/>
-
 
     </resources>
     <application-desc main-class="fr.jmmc.mcs.TBD"/>

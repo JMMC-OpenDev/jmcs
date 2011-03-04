@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ModelUVMapService.java,v 1.8 2011-03-03 17:36:14 bourgesl Exp $"
+ * "@(#) $Id: ModelUVMapService.java,v 1.9 2011-03-04 14:33:28 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2011/03/03 17:36:14  bourgesl
+ * define correct range [0-1 for AMP; -PI-PI for PHASE] to apply the linear LUT mapping
+ *
  * Revision 1.7  2011/02/04 16:41:49  bourgesl
  * comments + use UVMapData constructor
  *
@@ -156,6 +159,9 @@ public final class ModelUVMapService
                 if (currentThread.isInterrupted()) {
                     return null;
                 }
+
+                // TODO : reduce memory footprint and use threads to compute slices instead of complete arrays[size]
+                // and reuse ufreq/vfreq/vis complex arrays
 
                 double[] ufreq = new double[size];
                 double[] vfreq = new double[size];

@@ -30,6 +30,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Model }
+     * 
+     */
+    public Model createModel() {
+        return new Model();
+    }
+
+    /**
      * Create an instance of {@link Parameter }
      * 
      */
@@ -43,14 +51,6 @@ public class ObjectFactory {
      */
     public ParameterLink createParameterLink() {
         return new ParameterLink();
-    }
-
-    /**
-     * Create an instance of {@link Model }
-     * 
-     */
-    public Model createModel() {
-        return new Model();
     }
 
 }

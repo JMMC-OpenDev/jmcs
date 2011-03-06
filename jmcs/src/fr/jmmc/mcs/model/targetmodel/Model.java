@@ -54,9 +54,9 @@ public class Model
     protected List<Parameter> parameters;
     @XmlElement(name = "parameterLink", namespace = "http://www.jmmc.fr/jmcs/models/0.1")
     protected List<ParameterLink> parameterLinks;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "type", required = true)
     protected String type;
 
     /**

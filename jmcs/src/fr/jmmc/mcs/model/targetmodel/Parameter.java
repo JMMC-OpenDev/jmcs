@@ -57,11 +57,11 @@ public class Parameter
     protected Double scale;
     protected boolean hasFixedValue;
     protected Boolean editable;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "type", required = true)
     protected String type;
-    @XmlAttribute
+    @XmlAttribute(name = "id")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     @XmlSchemaType(name = "ID")

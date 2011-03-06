@@ -36,11 +36,11 @@ public class ParameterLink
     extends CloneableObject
 {
 
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "parameterRef", required = true)
     @XmlIDREF
     @XmlSchemaType(name = "IDREF")
     protected Parameter parameterRef;
-    @XmlAttribute
+    @XmlAttribute(name = "type")
     protected String type;
 
     /**

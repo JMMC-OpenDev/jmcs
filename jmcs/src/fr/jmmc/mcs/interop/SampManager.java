@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SampManager.java,v 1.23 2011-03-02 10:58:18 bourgesl Exp $"
+ * "@(#) $Id: SampManager.java,v 1.24 2011-03-08 13:40:08 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2011/03/02 10:58:18  bourgesl
+ * shutdown do not use getInstance() to avoid creating the singleton to shutdown it !
+ *
  * Revision 1.22  2011/02/15 10:35:04  bourgesl
  * added SampConnectionChangeListener class to provide better log messages
  *
@@ -94,6 +97,7 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.astrogrid.samp.Client;
 
 import org.astrogrid.samp.Message;
 import org.astrogrid.samp.Metadata;
@@ -189,15 +193,15 @@ public final class SampManager
         meta.put("affiliation.name", "JMMC (Jean-Marie MARIOTTI Center)");
         meta.put("affiliation.url", applicationDataModel.getMainWebPageURL());
         meta.put("affiliation.feedback", "http://jmmc.fr/feedback/");
-        meta.put("affiliation.suppport", "http://www.jmmc.fr/support.htm");
+        meta.put("affiliation.support", "http://www.jmmc.fr/support.htm");
+
         final String lowerCaseApplicationName = applicationName.toLowerCase();
         meta.put(lowerCaseApplicationName + ".authors", "Brought to you by the JMMC Team");
-        final String applicationURL = applicationDataModel.getLinkValue();
-        meta.put(lowerCaseApplicationName + ".homepage", applicationURL);
+        meta.put(lowerCaseApplicationName + ".homepage", applicationDataModel.getLinkValue());
         meta.put(lowerCaseApplicationName + ".version", applicationDataModel.getProgramVersion());
         meta.put(lowerCaseApplicationName + ".news", applicationDataModel.getHotNewsRSSFeedLinkValue());
         meta.put(lowerCaseApplicationName + ".compilationdate", applicationDataModel.getCompilationDate());
-        meta.put(lowerCaseApplicationName + ".compilatiorversion", applicationDataModel.getCompilatorVersion());
+        meta.put(lowerCaseApplicationName + ".compilatorversion", applicationDataModel.getCompilatorVersion());
         meta.put(lowerCaseApplicationName + ".releasenotes", applicationDataModel.getReleaseNotesLinkValue());
         meta.put(lowerCaseApplicationName + ".faq", applicationDataModel.getFaqLinkValue());
 
@@ -370,6 +374,20 @@ public final class SampManager
     public static JMenu getMenu(final SampCapabilityAction action)
     {
         return _map.get(action);
+    }
+
+    /**
+     * Return the meta data correponding to the given client Id known by the hub
+     * @param clientId client id
+     * @return meta data or null
+     */
+    public static Metadata getMetaData(final String clientId)
+    {
+        final Client client = (Client) getGuiHubConnector().getClientMap().get(clientId);
+        if (client != null) {
+            return client.getMetadata();
+        }
+        return null;
     }
 
     /**

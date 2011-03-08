@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.17 2011-02-28 10:43:42 bourgesl Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.18 2011-03-08 15:24:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2011/02/28 10:43:42  bourgesl
+ * use isLoggable(level) for logging statements containing string concatenations (optimisation)
+ *
  * Revision 1.16  2011/02/28 08:47:12  mella
  * Move star type analyser into ALX
  * Use static initialisation of main big arrays
@@ -48,7 +51,7 @@
  * add test examples when command is executed without parameters
  *
  * Revision 1.3  2010/01/07 12:53:26  mella
- * Use command line arguments
+ * Use command row arguments
  *
  * Revision 1.2  2010/01/07 10:30:36  lafrasse
  * Added MCS header.
@@ -146,7 +149,7 @@ public class LD2UD {
 
         if (logger_.isLoggable(Level.FINE)) {
             logger_.fine("LimbdarkenedCorrectionFactor of star with teff=" + teff
-                + " and logg=" + logg + " in band " + requestedUD + " is " + result);
+                    + " and logg=" + logg + " in band " + requestedUD + " is " + result);
         }
         return result;
     }
@@ -206,7 +209,7 @@ public class LD2UD {
     }
 
     private static double searchLogg(double[][] table, int tempClassCode) {
-        double result = path1(table, tempClassCode, 0, false, 2) + ALX.SUN_LOGG;
+        double result = path1(table, tempClassCode, 0, 2) + ALX.SUN_LOGG;
 
         if (logger_.isLoggable(Level.FINEST)) {
             logger_.finest("Logg of star with tempCode = " + tempClassCode + " is " + result);
@@ -215,7 +218,7 @@ public class LD2UD {
     }
 
     private static double searchTeff(double[][] table, int tempClassCode) {
-        double result = path1(table, tempClassCode, 0, false, 1);
+        double result = path1(table, tempClassCode, 0, 1);
 
         if (logger_.isLoggable(Level.FINEST)) {
             logger_.finest("Teff of star with tempCode = " + tempClassCode + " is " + result);
@@ -291,7 +294,7 @@ public class LD2UD {
 
         if (logger_.isLoggable(Level.FINE)) {
             logger_.fine("Coeff for Teff=" + teff + " and logg=" + logg
-                + " is " + result);
+                    + " is " + result);
         }
         return result;
     }
@@ -299,39 +302,38 @@ public class LD2UD {
     /**
      * This private method is used to get one value in the
      * supergiant/giant/dwarf tables.
-     *
+     * The first colum of luminosityClasses codes must be sorted in ascending order.
      * @todo add test code ( especially for array limits )
      *
      * @param table table of double[]
      * @param searchedValue value to be compared in the column searchedIndex
-     * @param searchedIndex index of the column to be compared
-     * @param growingSearchedValue true indicates that the searchedColumn is sorted ascending
+     * @param searchedIndex index of the column to be compared   
      * @param columnIndex index of the column that must be returned.
      * @return the value extracted from the columnIndex
      * @return
      */
-    private static double path1(double[][] table, double searchedValue, int searchedIndex, boolean growingSearchedValue, int columnIndex) {
-        double result = 0;
-        double value = 0;
-        double comparedValue = 0;
-        boolean found = false;
-        for (int i = 0; i < table.length; i++) {
-            double[] ds = table[i];
-            comparedValue = ds[searchedIndex];
-            value = ds[columnIndex];
-            if (((growingSearchedValue && searchedValue >= comparedValue)
-                    || (!growingSearchedValue && searchedValue <= comparedValue)) && !found) {
-                result = value;
-                try {
-                    double[] ds2 = table[i + 1];
-                    double nextComparedValue = ds2[searchedIndex];
-                    double nextValue = ds2[columnIndex];
-                    if ((nextComparedValue + comparedValue) / 2 < searchedValue) {
-                        result = nextValue;
+    private static double path1(double[][] table, double searchedValue, int searchedIndex, int columnIndex) {
+        double result = table[0][columnIndex];
+
+        if (searchedValue >= table[0][searchedIndex]) {
+            double value;
+            double rowIndexValue;
+            for (int i = 0; i < table.length; i++) {
+                double[] row = table[i];
+                rowIndexValue = row[searchedIndex];
+                value = row[columnIndex];
+                if (searchedValue <= rowIndexValue) {
+                    result = value;
+                    if (i + 1 < table.length) {
+                        // use next data value if the next index value is nearer from searchedIndex
+                        double[] nextRow = table[i + 1];
+                        double nextRowIndexValue = nextRow[searchedIndex];
+                        if ((nextRowIndexValue + rowIndexValue) / 2d < searchedValue) {
+                            result = nextRow[columnIndex];
+                        }
                     }
-                } catch (Exception e) { //just to prevent end of array
+                    return result;
                 }
-                found = true;
             }
         }
         return result;

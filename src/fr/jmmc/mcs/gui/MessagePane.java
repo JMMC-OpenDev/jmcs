@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.11 2011-02-28 12:37:23 mella Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.12 2011-03-08 12:53:45 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2011/02/28 12:37:23  mella
+ * Add some margin to avoid some scrollbars in the message dialogs
+ * Remove some quotes characters during error display
+ *
  * Revision 1.10  2011/02/24 16:20:24  mella
  * Limit size of dialog box for long messages using scrollpane
  *
@@ -40,15 +44,12 @@
  */
 package fr.jmmc.mcs.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -58,7 +59,8 @@ import javax.swing.SwingUtilities;
  *
  * @author bourgesl
  */
-public final class MessagePane {
+public final class MessagePane
+{
 
     /** Logger */
     private static final Logger _logger = Logger.getLogger(MessagePane.class.getName());
@@ -70,7 +72,8 @@ public final class MessagePane {
     /**
      * Forbidden constructor
      */
-    private MessagePane() {
+    private MessagePane()
+    {
         super();
     }
 
@@ -79,7 +82,8 @@ public final class MessagePane {
      * Show an error with the given message using EDT if needed
      * @param message message to display
      */
-    public static void showErrorMessage(final String message) {
+    public static void showErrorMessage(final String message)
+    {
         showErrorMessage(message, TITLE_ERROR, null);
     }
 
@@ -89,7 +93,8 @@ public final class MessagePane {
      * @param message message to display
      * @param th exception to use
      */
-    public static void showErrorMessage(final String message, final Throwable th) {
+    public static void showErrorMessage(final String message, final Throwable th)
+    {
         showErrorMessage(message, TITLE_ERROR, th);
     }
 
@@ -98,7 +103,8 @@ public final class MessagePane {
      * @param message message to display
      * @param title window title to use
      */
-    public static void showErrorMessage(final String message, final String title) {
+    public static void showErrorMessage(final String message, final String title)
+    {
         showErrorMessage(message, title, null);
     }
 
@@ -109,7 +115,8 @@ public final class MessagePane {
      * @param title window title to use
      * @param th exception to use
      */
-    public static void showErrorMessage(final String message, final String title, final Throwable th) {
+    public static void showErrorMessage(final String message, final String title, final Throwable th)
+    {
 
         if (th != null && _logger.isLoggable(Level.SEVERE)) {
             _logger.log(Level.SEVERE, "An exception occured", th);
@@ -134,9 +141,11 @@ public final class MessagePane {
         if (SwingUtilities.isEventDispatchThread()) {
             showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
         } else {
-            SwingUtilities.invokeLater(new Runnable() {
+            SwingUtilities.invokeLater(new Runnable()
+            {
 
-                public void run() {
+                public void run()
+                {
                     showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
                 }
             });
@@ -148,20 +157,27 @@ public final class MessagePane {
      * The frame size is limited so long messages appear in a scrollpane.
      * @param message message to display
      * @param title window title to use
+     * @param messageType the type of message to be displayed:
+     *          <code>ERROR_MESSAGE</code>,
+     *			<code>INFORMATION_MESSAGE</code>,
+     *			<code>WARNING_MESSAGE</code>,
+     *          <code>QUESTION_MESSAGE</code>,
+     *			or <code>PLAIN_MESSAGE</code>
      */
-    private static void showMessageDialog(final String message, final String title, final int type) {
-        JTextArea t = new JTextArea(message);
-        t.setEditable(false);
-        t.setBackground(null);
-        JScrollPane sp = new JScrollPane(t);
+    private static void showMessageDialog(final String message, final String title, final int messageType)
+    {
+        final JTextArea textArea = new JTextArea(message);
+        textArea.setEditable(false);
+        textArea.setBackground(null);
+        final JScrollPane sp = new JScrollPane(textArea);
         sp.setBorder(null);
         // Try not to display windows bigger than screen for huge messages
-        // 50px margins are here to avoid some scrollbars...
-        Dimension d=new Dimension(Math.min(t.getMinimumSize().width,600)+50,
-                Math.min(t.getMinimumSize().height,500)+50);
-        sp.setMaximumSize(d);
-        sp.setPreferredSize(d);
-        JOptionPane.showMessageDialog(getApplicationFrame(), sp, title, type);
+        // 40px margins are here to avoid some scrollbars...
+        final Dimension dims = new Dimension(Math.min(textArea.getMinimumSize().width + 50, 600),
+                Math.min(textArea.getMinimumSize().height + 50, 500));
+        sp.setMaximumSize(dims);
+        sp.setPreferredSize(dims);
+        JOptionPane.showMessageDialog(getApplicationFrame(), sp, title, messageType);
     }
 
     // --- INFO MESSAGES ---------------------------------------------------------
@@ -169,7 +185,8 @@ public final class MessagePane {
      * Show an information with the given message
      * @param message message to display
      */
-    public static void showMessage(final String message) {
+    public static void showMessage(final String message)
+    {
         showMessage(message, TITLE_INFO);
     }
 
@@ -178,7 +195,8 @@ public final class MessagePane {
      * @param message message to display
      * @param title window title to use
      */
-    public static void showMessage(final String message, final String title) {
+    public static void showMessage(final String message, final String title)
+    {
         showMessageDialog(message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -188,7 +206,8 @@ public final class MessagePane {
      * @param fileName file name
      * @return true if the user wants the file replaced, false otherwise.
      */
-    public static boolean showConfirmFileOverwrite(final String fileName) {
+    public static boolean showConfirmFileOverwrite(final String fileName)
+    {
         final String message = "\"" + fileName + "\" already exists. Do you want to replace it ?\n\n"
                 + "A file or folder with the same name already exists in the current folder.\n"
                 + "Replacing it will overwrite its current contents.";
@@ -210,7 +229,8 @@ public final class MessagePane {
      * @param message message to ask
      * @return true if the user answers yes
      */
-    public static boolean showConfirmMessage(final String message) {
+    public static boolean showConfirmMessage(final String message)
+    {
         return showConfirmMessage(getApplicationFrame(), message);
     }
 
@@ -220,7 +240,8 @@ public final class MessagePane {
      * @param message message to ask
      * @return true if the user answers yes
      */
-    public static boolean showConfirmMessage(final Component parentComponent, final String message) {
+    public static boolean showConfirmMessage(final Component parentComponent, final String message)
+    {
         final int answer = JOptionPane.showConfirmDialog(getParent(parentComponent), message);
 
         return answer == JOptionPane.YES_OPTION;
@@ -231,7 +252,8 @@ public final class MessagePane {
      * @param com component argument
      * @return given component argument or the application frame if the given component is null
      */
-    public final static Component getParent(final Component com) {
+    public final static Component getParent(final Component com)
+    {
         Component owner = com;
         if (owner == null) {
             owner = getApplicationFrame();
@@ -246,7 +268,8 @@ public final class MessagePane {
      * Return the shared application frame
      * @return application frame
      */
-    private final static JFrame getApplicationFrame() {
+    private final static JFrame getApplicationFrame()
+    {
         return App.getFrame();
     }
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: DismissableMessagePane.java,v 1.4 2010-09-30 13:28:57 bourgesl Exp $"
+ * "@(#) $Id: DismissableMessagePane.java,v 1.5 2011-03-08 12:53:45 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/09/30 13:28:57  bourgesl
+ * comments
+ *
  * Revision 1.3  2010/09/24 15:45:38  bourgesl
  * format
  *
@@ -21,7 +24,6 @@ package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.util.Preferences;
 import fr.jmmc.mcs.util.PreferencesException;
-import java.awt.Component;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
@@ -41,12 +43,11 @@ public final class DismissableMessagePane {
    * Show a message dialog until the user choose to hide this kind
    * of message permanently.
    *
-   * @param parentComponent Parent component or null
    * @param message Message to display
    * @param preferences Reference to the dedicated Preferences singleton
    * @param preferenceName Name of the preference related to this message
    */
-  public final static void show(final Component parentComponent, final String message,
+  public final static void show(final String message,
                                 final Preferences preferences, final String preferenceName) {
 
     final String dontShowPreferenceName = "MCSGUI.DismissableMessagePane."
@@ -58,7 +59,7 @@ public final class DismissableMessagePane {
         final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
         final Object[] params = {message, checkbox};
 
-        JOptionPane.showMessageDialog(parentComponent, params);
+        JOptionPane.showMessageDialog(App.getFrame(), params);
 
         dontShow = checkbox.isSelected();
 
@@ -70,6 +71,5 @@ public final class DismissableMessagePane {
       // Show the feedback report :
       new FeedbackReport(pe);
     }
-
   }
 }

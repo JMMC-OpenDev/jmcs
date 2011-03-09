@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALXTimerTest.java,v 1.1 2011-03-09 10:28:07 bourgesl Exp $"
+ * "@(#) $Id: ALXTimerTest.java,v 1.2 2011-03-09 10:40:34 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2011/03/09 10:28:07  bourgesl
+ * added ALX Timer tests (ld2ud)
+ *
  */
 package fr.jmmc.mcs.timer;
 
@@ -81,9 +84,11 @@ public class ALXTimerTest
             }
             
             // force gc :
+/*
             for (int i = 0; i < 10; i++) {
                 System.gc();
             }
+ */
         }
         TimerFactory.onExit();
     }

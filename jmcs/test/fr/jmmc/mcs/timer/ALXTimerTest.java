@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALXTimerTest.java,v 1.2 2011-03-09 10:40:34 bourgesl Exp $"
+ * "@(#) $Id: ALXTimerTest.java,v 1.3 2011-03-09 13:48:55 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2011/03/09 10:40:34  bourgesl
+ * disable force GC
+ *
  * Revision 1.1  2011/03/09 10:28:07  bourgesl
  * added ALX Timer tests (ld2ud)
  *
@@ -36,6 +39,58 @@ public class ALXTimerTest
     {
         // Set the default locale to en-US locale (for Numerical Fields "." ",")
         Locale.setDefault(Locale.US);
+
+        testProfiler();
+//        testTimers();
+    }
+
+    /**
+     * Use this test with Netbeans Profiler enabled
+     */
+    private static void testProfiler()
+    {
+
+        final int N = 50000;
+
+        for (int n = 0; n < 10; n++) {
+            // repeat tests n times :
+
+            for (int i = 0; i < N; i++) {
+
+                // do something : use ALX
+                try {
+                    ALX.ld2ud(1d, "A0");
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "test fail", e);
+                }
+
+            }
+
+            for (int i = 0; i < N; i++) {
+
+                // do something : use ALX
+                try {
+                    ALX.ld2ud(1d, "A0");
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "test fail", e);
+                }
+
+            }
+
+            // pause for 10 ms :
+            try {
+                Thread.sleep(10l);
+            } catch (InterruptedException ex) {
+                log.log(Level.SEVERE, "interrupted", ex);
+            }
+        }
+    }
+
+    /**
+     * Use this test to have micro benchmarks
+     */
+    private static void testTimers()
+    {
 
         /** ALX ld2ud - threshold = 0.5 ms */
         final double threshold = 0.5d;
@@ -82,13 +137,13 @@ public class ALXTimerTest
             if (!TimerFactory.isEmpty()) {
                 log.warning("TimerFactory : statistics : " + TimerFactory.dumpTimers());
             }
-            
-            // force gc :
-/*
-            for (int i = 0; i < 10; i++) {
-                System.gc();
+
+            // pause for 10 ms :
+            try {
+                Thread.sleep(10l);
+            } catch (InterruptedException ex) {
+                log.log(Level.SEVERE, "interrupted", ex);
             }
- */
         }
         TimerFactory.onExit();
     }

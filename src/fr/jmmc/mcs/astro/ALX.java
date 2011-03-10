@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.27 2011-03-01 09:44:55 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.28 2011-03-10 08:09:45 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2011/03/01 09:44:55  mella
+ * Add more information in the warning message of getStarType method thrown for unparsable spectraltype
+ *
  * Revision 1.26  2011/02/28 10:43:43  bourgesl
  * use isLoggable(level) for logging statements containing string concatenations (optimisation)
  *
@@ -467,21 +470,40 @@ public class ALX {
         return minutes;
     }
 
-    /** 
-     * ld should be a diamvk.
+    /**
+     * Return on Sptype object (CDS lib) according to given spectral type as string.
+     * Please use this method instead of directly instantiating Sptype object so we can
+     * adapt some feature in the futur. Fallback may probably be implemented to improve parsability.
+     *
+     * @param spectralType spectral type value
+     * @return initialized Sptype object
+     * @throws ParseException if given spectral type is not being parsable
      */
+    public static Sptype getSptype(String spectralType) throws ParseException {
+        Sptype s = new Sptype(spectralType);
+
+        if (logger_.isLoggable(Level.FINE)) {
+            logger_.fine("Parsing of sptype '" + spectralType + "' get numerical value of: " + s.getSpNumeric());
+        }
+
+        return s;
+    }
+
     /**
      * Compute teff and logg from given spectral type and return a star
      * with Uniform diameters properties computed from the nearest
      * teff and logg found in the various tables .
-     * @param ld
-     * @param sptype
+     * ld sign is not checked, so negative values will be returned for a given
+     * negative diameter.
+     * @param ld limb darkened diameter
+     * @param sptype spectral type value
      * @return a Star with UD properties.
-     * @throws ParseException
+     * @throws ParseException if given spectral type is not being parsable
      */
     public static Star ld2ud(double ld, String sptype) throws ParseException {
-        double teff = LD2UD.getEffectiveTemperature(sptype);
-        double logg = LD2UD.getGravity(sptype);
+        Sptype s = getSptype(sptype);
+        double teff = LD2UD.getEffectiveTemperature(s);
+        double logg = LD2UD.getGravity(s);
         return ld2ud(ld, teff, logg);
     }
 
@@ -490,8 +512,8 @@ public class ALX {
      * teff and logg found in the various tables.
      *
      * @param ld should be a diamvk.
-     * @param teff
-     * @param logg
+     * @param teff effective temperature
+     * @param logg surface gravity
      * @return a Star with UD properties.     
      */
     public static Star ld2ud(double ld, double teff, double logg) {
@@ -510,9 +532,26 @@ public class ALX {
         return star;
     }
 
+    /**
+     * Helper that returns the first part of the numeric code for a given spectral type as string.
+     * @see #getTemperatureClass(cds.astro.Sptype) 
+     *
+     * @param spectype spectral type value
+     * @return integer corresponding to first numeric code part.
+     * @throws ParseException if given spectral type is not being parsable
+     */
     public static int getTemperatureClass(String spectype) throws ParseException {
-        Sptype sp = new Sptype(spectype);
-        String spNum = sp.getSpNumeric();
+        return getTemperatureClass(getSptype(spectype));
+    }
+
+    /**
+     * Return the first part of the numeric code return by CDS tool.
+     *
+     * @param sptype
+     * @return integer corresponding to first numeric code part.
+     */
+    public static int getTemperatureClass(Sptype sptype) {
+        String spNum = sptype.getSpNumeric();
         int firstDotIndex = spNum.indexOf(".");
         return Integer.parseInt(spNum.substring(0, firstDotIndex));
     }
@@ -530,11 +569,28 @@ public class ALX {
      *     
      * @param spectype spectral type value
      * @return the luminosity integer value
-     * @throws ParseException
+     * @throws ParseException if given spectral type is not being parsable
      */
     public static int getLuminosityClass(String spectype) throws ParseException {
-        Sptype sp = new Sptype(spectype);
-        String spNum = sp.getSpNumeric();
+        return getLuminosityClass(getSptype(spectype));
+    }
+
+    /**
+     * Return one luminosity class code from 00 to 99 according given spectral type.
+     * 00 is a special case that indicated one missing luminosity class.
+     * 
+     *        >NN<
+     * 0112.00113.000000000 I
+     * 0112.00024.000000000 II
+     * 0112.00032.000000000 III
+     * 0112.00040.000000000 IV
+     * 0112.00048.000000000 V
+     *     
+     * @param sptype spectral type value
+     * @return the luminosity integer value     
+     */
+    public static int getLuminosityClass(Sptype sptype) {
+        String spNum = sptype.getSpNumeric();
         //int firstDotIndex = spNum.indexOf(".");
         int secondDotIndex = spNum.lastIndexOf(".");
         // we must only use the two last chars of lum part as significative
@@ -551,9 +607,9 @@ public class ALX {
     }
 
     /**
-     * Return STARTYPE according given spectral type.
-     * @see getLuminosityClass javadoc for magic numbers
-     * @param sptype
+     * Helper that returns one  STARTYPE according given spectral type.
+     * @see #getStarType(cds.astro.Sptype)
+     * @param sptype spectral type value
      * @return dwarf, giant or supergiant
      */
     public static STARTYPE getStarType(String sptype) {
@@ -561,16 +617,27 @@ public class ALX {
         // If the luminosity class is unknown, by default one can suppose that
         // the star is a giant (III)
         // (cds sptypes returns 0 when luminosity code is missing)
-
         int lumCode;
         try {
-            lumCode = ALX.getLuminosityClass(sptype);
+            Sptype s = getSptype(sptype);
+            return getStarType(s);
         } catch (ParseException ex) {
             if (logger_.isLoggable(Level.WARNING)) {
-                logger_.warning("Returning Dwarf because spectral type can not be parsed (" + sptype + ") reason : "+ex.getMessage());
+                logger_.warning("Returning Dwarf because spectral type can not be parsed (" + sptype + ") reason : " + ex.getMessage());
             }
             return STARTYPE.DWARF;
         }
+    }
+
+    /**
+     * Return one STARTYPE according given spectral type.
+     * @see #getLuminosityClass(cds.astro.Sptype) javadoc for magic numbers
+     * @param sptype spectral type value
+     * @return dwarf, giant or supergiant
+     */
+    public static STARTYPE getStarType(Sptype sptype) {
+
+        int lumCode = ALX.getLuminosityClass(sptype);
 
         if (lumCode > 37 || lumCode == 0) {
             logger_.fine("This star his handled has a Dwarf");

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.18 2011-03-08 15:24:55 mella Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.19 2011-03-10 08:09:07 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2011/03/08 15:24:55  mella
+ * Fix bug in algo which searched in the indexed tables
+ *
  * Revision 1.17  2011/02/28 10:43:42  bourgesl
  * use isLoggable(level) for logging statements containing string concatenations (optimisation)
  *
@@ -59,6 +62,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.astro;
 
+import cds.astro.Sptype;
 import fr.jmmc.mcs.astro.star.Star.Property;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -132,8 +136,10 @@ public class LD2UD {
     }
 
     public static double getLimbDarkenedCorrectionFactor(Property requestedUD, String sptype) throws ParseException {
-        double logg = getGravity(sptype);
-        double teff = getEffectiveTemperature(sptype);
+
+        Sptype s = ALX.getSptype(sptype);
+        double logg = getGravity(s);
+        double teff = getEffectiveTemperature(s);
         double result = getLimbDarkenedCorrectionFactor(requestedUD, teff, logg);
 
         if (logger_.isLoggable(Level.FINE)) {
@@ -155,15 +161,30 @@ public class LD2UD {
     }
 
     /**
+     * Helper that returns the star surface gravity according to given spectral type as string.
+     * @see #getGravity(cds.astro.Sptype)
+     *
+     * todo Add units
+     * @param sptype Spectral Type value
+     * @return effective temperature
+     */
+    public static double getGravity(String sptype) {
+        try {
+            return getGravity(ALX.getSptype(sptype));
+        } catch (ParseException ex) {
+            return Double.NaN;
+        }
+    }
+
+    /**
      * Return the star surface gravity according to given spectral type.
      *
-     * @todo Add units
+     * todo Add units
      * @param sptype Spectral Type
      * @return effective temperature
-     * @throws ParseException
      */
-    public static double getGravity(String sptype) throws ParseException {
-        // Select one table to get logg and Teff       
+    public static double getGravity(Sptype sptype) {
+        // Select one table to get logg and Teff
         double[][] table = loggAndTeffTables.get(ALX.getStarType(sptype));
         int tempCode = ALX.getTemperatureClass(sptype);
         double result = searchLogg(table, tempCode);
@@ -175,15 +196,31 @@ public class LD2UD {
     }
 
     /**
-     * Return the effective temparature according to given spectral type.
+     * Helper that returns the effective temparature according to given spectral type as string.
+     * @see #getEffectiveTemperature(cds.astro.Sptype)
      *
-     * @todo Add units
+     * todo Add units
+     * @param sptype Spectral Type value
+     * @return effective temperature or NaN if sptype can't be decoded
+
+     */
+    public static double getEffectiveTemperature(String sptype) {
+        try {
+            return getEffectiveTemperature(ALX.getSptype(sptype));
+        } catch (ParseException ex) {
+            return Double.NaN;
+        }
+    }
+
+    /**
+     * Return the effective temparature according to given spectral type object.
+     *
+     * todo Add units
      * @param sptype Spectral Type
      * @return effective temperature
-     * @throws ParseException
      */
-    public static double getEffectiveTemperature(String sptype) throws ParseException {
-        // Select one table to get logg and Teff      
+    public static double getEffectiveTemperature(Sptype sptype) {
+        // Select one table to get logg and Teff
         double[][] table = loggAndTeffTables.get(ALX.getStarType(sptype));
         int tempCode = ALX.getTemperatureClass(sptype);
         double result = searchTeff(table, tempCode);
@@ -316,14 +353,12 @@ public class LD2UD {
         double result = table[0][columnIndex];
 
         if (searchedValue >= table[0][searchedIndex]) {
-            double value;
             double rowIndexValue;
             for (int i = 0; i < table.length; i++) {
                 double[] row = table[i];
                 rowIndexValue = row[searchedIndex];
-                value = row[columnIndex];
-                if (searchedValue <= rowIndexValue) {
-                    result = value;
+                result = row[columnIndex];
+                if (searchedValue <= rowIndexValue) {                    
                     if (i + 1 < table.length) {
                         // use next data value if the next index value is nearer from searchedIndex
                         double[] nextRow = table[i + 1];

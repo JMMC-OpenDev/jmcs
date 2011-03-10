@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALXTimerTest.java,v 1.3 2011-03-09 13:48:55 bourgesl Exp $"
+ * "@(#) $Id: ALXTimerTest.java,v 1.4 2011-03-10 13:40:28 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2011/03/09 13:48:55  bourgesl
+ * added profiler test
+ *
  * Revision 1.2  2011/03/09 10:40:34  bourgesl
  * disable force GC
  *
@@ -40,14 +43,18 @@ public class ALXTimerTest
         // Set the default locale to en-US locale (for Numerical Fields "." ",")
         Locale.setDefault(Locale.US);
 
-        testProfiler();
-//        testTimers();
+        // Fastest : M5
+        // slowest : O5
+//        testProfiler("M5");
+
+        testTimers("O5");
     }
 
     /**
      * Use this test with Netbeans Profiler enabled
+     * @param sptype spectral type
      */
-    private static void testProfiler()
+    private static void testProfiler(final String sptype)
     {
 
         final int N = 50000;
@@ -59,7 +66,7 @@ public class ALXTimerTest
 
                 // do something : use ALX
                 try {
-                    ALX.ld2ud(1d, "A0");
+                    ALX.ld2ud(1d, sptype);
                 } catch (Exception e) {
                     log.log(Level.SEVERE, "test fail", e);
                 }
@@ -70,7 +77,7 @@ public class ALXTimerTest
 
                 // do something : use ALX
                 try {
-                    ALX.ld2ud(1d, "A0");
+                    ALX.ld2ud(1d, sptype);
                 } catch (Exception e) {
                     log.log(Level.SEVERE, "test fail", e);
                 }
@@ -88,8 +95,9 @@ public class ALXTimerTest
 
     /**
      * Use this test to have micro benchmarks
+     * @param sptype spectral type
      */
-    private static void testTimers()
+    private static void testTimers(final String sptype)
     {
 
         /** ALX ld2ud - threshold = 0.5 ms */
@@ -112,7 +120,7 @@ public class ALXTimerTest
 
                 // do something : use ALX
                 try {
-                    ALX.ld2ud(1d, "A0");
+                    ALX.ld2ud(1d, sptype);
                 } catch (Exception e) {
                     log.log(Level.SEVERE, "test fail", e);
                 }
@@ -126,7 +134,7 @@ public class ALXTimerTest
 
                 // do something : use ALX
                 try {
-                    ALX.ld2ud(1d, "A0");
+                    ALX.ld2ud(1d, sptype);
                 } catch (Exception e) {
                     log.log(Level.SEVERE, "test fail", e);
                 }

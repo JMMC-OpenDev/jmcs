@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.82 2011-03-02 10:59:29 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.83 2011-03-11 12:54:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.82  2011/03/02 10:59:29  bourgesl
+ * Added and use exit(statusCode) method to properly exit (calls onFinish) instead of System.exit
+ *
  * Revision 1.81  2011/02/14 17:08:58  bourgesl
  * added onFinish method to handle JMCS operations at shutdown (SAMP)
  *
@@ -375,6 +378,8 @@ public abstract class App {
     }
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.gui.App");
+    /** flag to avoid calls to System.exit() (JUnit) */
+    private static boolean _avoidSystemExit = false;
     /** Singleton reference */
     private static App _sharedInstance;
     /** flag indicating if the application started properly and is ready (visible) */
@@ -848,7 +853,7 @@ public abstract class App {
      * Hook to handle operations when exiting application.
      * @see App#exit(int)
      */
-    protected void onFinish() {
+    public void onFinish() {
         // Disconnect from SAMP Hub :
         SampManager.shutdown();
     }
@@ -869,9 +874,21 @@ public abstract class App {
                 application.onFinish();
            }
         } finally {
-            // anyway, exit :
-            System.exit(statusCode);
+            _sharedInstance = null;
+            
+            if (!_avoidSystemExit) {
+                // anyway, exit :
+                System.exit(statusCode);
+           }
         }
+    }
+
+    /**
+     * Define the  flag to avoid calls to System.exit() (JUnit)
+     * @param flag true to avoid calls to System.exit()
+     */
+    public final static void setAvoidSystemExit(final boolean flag) {
+        _avoidSystemExit = flag;
     }
 
     /** 

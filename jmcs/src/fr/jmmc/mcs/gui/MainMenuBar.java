@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.46 2011-03-02 09:03:34 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.47 2011-03-14 16:43:47 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.46  2011/03/02 09:03:34  bourgesl
+ * Interop menu is now ready for production
+ *
  * Revision 1.45  2011/02/16 14:34:44  bourgesl
  * added Look & Feel menu only shown if the system property jmcs.laf.menu =true
  *
@@ -454,11 +457,10 @@ public class MainMenuBar extends JMenuBar
     /** Create the 'Interop' menu. */
     private void createInteropMenu()
     {
-        // Create menu (invisible by default)
+        // Create menu
         JMenu interopMenu = new JMenu("Interop");
-        interopMenu.setVisible(false);
 
-        // Add auto-toggeling menu entry to regiter/unregister to/from hub
+        // Add auto-toggling menu entry to regiter/unregister to/from hub
         interopMenu.add(SampManager.createToggleRegisterAction());
 
         // To visually monitor hub activity
@@ -474,8 +476,6 @@ public class MainMenuBar extends JMenuBar
 
             if (components.length > 0)
             {
-                interopMenu.setVisible(true);
-
                 interopMenu.add(new JSeparator());
 
                 // Add each component

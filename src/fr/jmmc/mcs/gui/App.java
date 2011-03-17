@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.83 2011-03-11 12:54:33 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.84 2011-03-17 15:33:21 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.83  2011/03/11 12:54:33  bourgesl
+ * added flag _avoidSystemExit to avoid calls to System.exit() - useful for JUnit tests
+ *
  * Revision 1.82  2011/03/02 10:59:29  bourgesl
  * Added and use exit(statusCode) method to properly exit (calls onFinish) instead of System.exit
  *
@@ -875,6 +878,7 @@ public abstract class App {
            }
         } finally {
             _sharedInstance = null;
+            _applicationFrame = null;
             
             if (!_avoidSystemExit) {
                 // anyway, exit :

@@ -34,13 +34,6 @@ Libraries used by shell scripts (build) are defined in :
 -rw-r--r--. 1 mella mella 174K 20 mai    2008 Tidy.jar
 -rw-r--r-- 1 mella laogsite   14204 2011-02-15 18:08 xmlenc.jar
 
-<package name="xmlenc"
-description="xmlenc is a light-weight XML encoding library for Java. It
-fills the gap between a light-weight parser like SAX, and a heavy-weight
-XML output library, like JDOM. "
-link="http://freshmeat.net/projects/xmlenc/"
-jars=" xmlenc.jar "/>
-
 
 Libraries used by ant scripts (JAXB XJC) are :
 -rw-r--r--. 1 mella mella 3,0M 29 janv.  2010 jaxb-xjc.jar

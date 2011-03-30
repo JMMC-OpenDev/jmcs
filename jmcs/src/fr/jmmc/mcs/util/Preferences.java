@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.39 2011-03-30 09:08:24 bourgesl Exp $"
+ * "@(#) $Id: Preferences.java,v 1.40 2011-03-30 09:20:04 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2011/03/30 09:08:24  bourgesl
+ * added dumpProperties(Properties) to have sorted properties
+ *
  * Revision 1.38  2011/03/02 16:14:37  bourgesl
  * fixed quiet mode
  *
@@ -230,6 +233,8 @@ public abstract class Preferences extends Observable
      *
      * @warning Classes that inherits from Preferences MUST overload this method
      * to set default preferences.
+     *
+     * @throws PreferencesException if any preference value has a unsupported class type
      */
     protected abstract void setDefaultPreferences() throws PreferencesException;
 
@@ -462,6 +467,8 @@ public abstract class Preferences extends Observable
      *
      * @param preferenceName the preference name.
      * @param preferenceValue the preference value.
+     *
+     * @throws PreferencesException if any preference value has a unsupported class type
      */
     final public void setPreference(String preferenceName,
             Object preferenceValue) throws PreferencesException
@@ -478,6 +485,8 @@ public abstract class Preferences extends Observable
      *
      * @param preferenceName the preference name.
      * @param preferenceValue the preference value.
+     *
+     * @throws PreferencesException if any preference value has a unsupported class type
      */
     final public void setDefaultPreference(String preferenceName,
             Object preferenceValue) throws PreferencesException
@@ -494,6 +503,8 @@ public abstract class Preferences extends Observable
      * @param properties the properties set to modify.
      * @param preferenceName the preference name.
      * @param preferenceValue the preference value.
+     *
+     * @throws PreferencesException if any preference value has a unsupported class type
      */
     final private void setPreferenceToProperties(Properties properties,
             String preferenceName, Object preferenceValue)
@@ -513,6 +524,8 @@ public abstract class Preferences extends Observable
      * @param preferenceName the preference name.
      * @param preferenceIndex the order number for the property (-1 for no order).
      * @param preferenceValue the preference value.
+     *
+     * @throws PreferencesException if any preference value has a unsupported class type
      */
     final private void setPreferenceToProperties(Properties properties,
             String preferenceName, int preferenceIndex, Object preferenceValue)
@@ -566,6 +579,8 @@ public abstract class Preferences extends Observable
      * @param preferenceName the preference name.
      * @param preferenceIndex the order number for the property (-1 for no order).
      * @param preferenceValue the preference value.
+     *
+     * @throws PreferencesException if any preference value has a unsupported class type
      */
     final public void setPreference(String preferenceName, int preferenceIndex,
             Object preferenceValue) throws PreferencesException
@@ -580,6 +595,8 @@ public abstract class Preferences extends Observable
      * @param preferenceName the preference name.
      * @param preferenceIndex the order number for the property (-1 for no order).
      * @param preferenceValue the preference value.
+     *
+     * @throws PreferencesException if any preference value has a unsupported class type
      */
     final public void setDefaultPreference(String preferenceName,
             int preferenceIndex, Object preferenceValue)

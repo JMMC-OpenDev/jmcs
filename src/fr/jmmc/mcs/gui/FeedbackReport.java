@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FeedbackReport.java,v 1.36 2011-03-02 10:59:29 bourgesl Exp $"
+ * "@(#) $Id: FeedbackReport.java,v 1.37 2011-03-30 09:06:49 bourgesl Exp $"
  *
  */
 package fr.jmmc.mcs.gui;
@@ -11,6 +11,7 @@ import fr.jmmc.mcs.gui.task.TaskSwingWorker;
 import fr.jmmc.mcs.util.CommonPreferences;
 import fr.jmmc.mcs.util.Http;
 import fr.jmmc.mcs.util.PreferencedDocument;
+import fr.jmmc.mcs.util.Preferences;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,9 +20,7 @@ import java.awt.event.KeyListener;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
 
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -530,20 +529,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      */
     public final String getSystemConfig() {
         // Get all informations about the system running the application
-        final Properties hostProperties = System.getProperties();
-
-        // sort system properties :
-        final String[] keys = new String[hostProperties.size()];
-        hostProperties.keySet().toArray(keys);
-        Arrays.sort(keys);
-
-        final StringBuilder sb = new StringBuilder(2048);
-        // For each system property, we make a string like "{name} : {value}"
-        for (String key : keys) {
-            sb.append(key).append(" : ").append(System.getProperty(key)).append("\n");
-        }
-
-        return sb.toString();
+        return Preferences.dumpProperties(System.getProperties());
     }
 
     /**

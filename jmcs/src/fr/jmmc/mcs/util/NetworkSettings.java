@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: NetworkSettings.java,v 1.2 2011-03-30 14:51:53 bourgesl Exp $"
+ * "@(#) $Id: NetworkSettings.java,v 1.3 2011-03-30 15:01:48 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2011/03/30 14:51:53  bourgesl
+ * dump all known net properties to help us to debug proxy problems
+ *
  * Revision 1.1  2011/03/30 09:31:06  bourgesl
  * define general network settings (timeouts / proxy)
  *
@@ -46,9 +49,9 @@ public final class NetworkSettings
     /** HTTP proxy port */
     public static final String PROPERTY_HTTP_PROXY_PORT = "http.proxyPort";
     /** SOCKS proxy host */
-    public static final String PROPERTY_SOCKS_PROXY_HOST = "socks.proxyHost";
+    public static final String PROPERTY_SOCKS_PROXY_HOST = "socksProxyHost";
     /** SOCKS proxy port */
-    public static final String PROPERTY_SOCKS_PROXY_PORT = "socks.proxyPort";
+    public static final String PROPERTY_SOCKS_PROXY_PORT = "socksProxyPort";
     /* JMMC standard values */
     /** default value for the connection timeout in milliseconds (15 s) */
     public static final int DEFAULT_CONNECT_TIMEOUT = 15 * 1000;

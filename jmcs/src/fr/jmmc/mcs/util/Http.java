@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Http.java,v 1.5 2011-03-30 14:51:53 bourgesl Exp $"
+ * "@(#) $Id: Http.java,v 1.6 2011-03-30 15:01:48 bourgesl Exp $"
  *
  */
 package fr.jmmc.mcs.util;
@@ -36,7 +36,7 @@ public final class Http
     /** Jmmc web to detect proxies */
     private final static String JMMC_WEB = "http://www.jmmc.fr";
     /** Jmmc socks to detect proxies */
-    private final static String JMMC_SOCKS = "socks://jmmc.fr";
+    private final static String JMMC_SOCKS = "socket://jmmc.fr";
     /** cached Jmmc web URL */
     private static URI JMMC_WEB_URI = null;
     /** cached Jmmc socks URL */

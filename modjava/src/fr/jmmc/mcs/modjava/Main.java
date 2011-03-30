@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Main.java,v 1.10 2011-02-11 15:11:43 lafrasse Exp $"
+ * "@(#) $Id: Main.java,v 1.11 2011-03-30 15:18:54 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2011/02/11 15:11:43  lafrasse
+ * Fixed JMCS::App API change for SplashScreen management.
+ *
  * Revision 1.9  2010/10/11 14:27:31  lafrasse
  * API update and cleanup.
  *
@@ -58,7 +61,7 @@ import org.astrogrid.samp.SampUtils;
  * Class for tests
  *
  * @author $author$
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class Main extends App {
 
@@ -190,7 +193,7 @@ public class Main extends App {
             private static final long serialVersionUID = 1L;
 
             public void actionPerformed(ActionEvent evt) {
-                DismissableMessagePane.show(getFramePanel(),
+                DismissableMessagePane.show(
                         "Try to show a test message\n which can be deactivated by user!!",
                         Preferences.getInstance(), "msgTest");
             }

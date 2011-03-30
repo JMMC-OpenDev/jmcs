@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.21 2010-10-14 12:18:53 bourgesl Exp $"
+ * "@(#) $Id: Star.java,v 1.22 2011-03-30 09:05:40 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2010/10/14 12:18:53  bourgesl
+ * clear when an error occurs (shared model)
+ * trace in fireNotification
+ * code format
+ *
  * Revision 1.20  2010/10/13 20:56:11  bourgesl
  * corrected concurrency issues (error and query complete notifications) using EDT
  *
@@ -87,7 +92,8 @@ import javax.swing.SwingUtilities;
  * Store data relative to a star.
  * If the star has a name, it is stored into one string property.
  */
-public class Star extends Observable {
+public class Star extends Observable
+{
 
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = Logger.getLogger(
@@ -102,7 +108,8 @@ public class Star extends Observable {
     /**
      * Constructor.
      */
-    public Star() {
+    public Star()
+    {
         super();
         _stringContent = new EnumMap<Property, String>(Property.class);
         _doubleContent = new EnumMap<Property, Double>(Property.class);
@@ -113,7 +120,8 @@ public class Star extends Observable {
      *
      * @param source the star whose content should be copied from.
      */
-    public final void copy(final Star source) {
+    public final void copy(final Star source)
+    {
         _stringContent.clear();
         for (Map.Entry<Property, String> entry : source._stringContent.entrySet()) {
             _stringContent.put(entry.getKey(), entry.getValue());
@@ -130,7 +138,8 @@ public class Star extends Observable {
     /**
      * Clear all content.
      */
-    public final void clear() {
+    public final void clear()
+    {
         _stringContent.clear();
         _doubleContent.clear();
         _cdsSimbadErrorMessage = null;
@@ -142,7 +151,8 @@ public class Star extends Observable {
      * Define the star name
      * @param name star name
      */
-    public final void setName(final String name) {
+    public final void setName(final String name)
+    {
         setPropertyAsString(Property.NAME, name);
     }
 
@@ -150,7 +160,8 @@ public class Star extends Observable {
      * Return the star name or null if it is undefined
      * @return star name or null
      */
-    public final String getName() {
+    public final String getName()
+    {
         return _stringContent.get(Property.NAME);
     }
 
@@ -163,7 +174,8 @@ public class Star extends Observable {
      * @return the value of the previously stored value for the given property,
      * null otherwise.
      */
-    public final String setPropertyAsString(final Property property, final String value) {
+    public final String setPropertyAsString(final Property property, final String value)
+    {
         final String previousValue = _stringContent.put(property, value);
         setChanged();
 
@@ -179,7 +191,8 @@ public class Star extends Observable {
      * @return the value of the previously stored value for the given property,
      * null otherwise.
      */
-    public final Double setPropertyAsDouble(final Property property, final Double value) {
+    public final Double setPropertyAsDouble(final Property property, final Double value)
+    {
         final Double previousValue = _doubleContent.put(property, value);
         setChanged();
 
@@ -197,7 +210,8 @@ public class Star extends Observable {
      * @return the value of the stored value for the given property,
      * null otherwise.
      */
-    public final String getPropertyAsString(final Property property) {
+    public final String getPropertyAsString(final Property property)
+    {
         String stringValue = _stringContent.get(property);
 
         if (stringValue == null) {
@@ -219,7 +233,8 @@ public class Star extends Observable {
      * @return the value of the stored value for the given property,
      * null otherwise.
      */
-    public final Double getPropertyAsDouble(final Property property) {
+    public final Double getPropertyAsDouble(final Property property)
+    {
         return _doubleContent.get(property);
     }
 
@@ -232,11 +247,14 @@ public class Star extends Observable {
      *
      * @param message the error message to store.
      */
-    public final void raiseCDSimbadErrorMessage(final String message) {
+    public final void raiseCDSimbadErrorMessage(final String message)
+    {
         // Use EDT to ensure only 1 thread (EDT) set and consume the error message :
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable()
+        {
 
-            public void run() {
+            public void run()
+            {
                 clear();
 
                 _cdsSimbadErrorMessage = message;
@@ -258,7 +276,8 @@ public class Star extends Observable {
      * @return A String object containing the error message, or null if
      * everything went fine.
      */
-    public final String consumeCDSimbadErrorMessage() {
+    public final String consumeCDSimbadErrorMessage()
+    {
         String message = _cdsSimbadErrorMessage;
         _cdsSimbadErrorMessage = null; // reset error message
         return message;
@@ -270,7 +289,8 @@ public class Star extends Observable {
      * @return a String object containing the data stored inside a star.
      */
     @Override
-    public String toString() {
+    public String toString()
+    {
         final StringBuilder sb = new StringBuilder(255);
 
         for (Property key : _stringContent.keySet()) {
@@ -287,7 +307,8 @@ public class Star extends Observable {
      * Fires the notification to the registered observers
      * @param notification notification enum value
      */
-    public final void fireNotification(final Notification notification) {
+    public final void fireNotification(final Notification notification)
+    {
         // notify observers (swing components) within EDT :
         if (!SwingUtilities.isEventDispatchThread()) {
             _logger.log(Level.SEVERE, "invalid thread : use EDT", new Throwable());
@@ -302,7 +323,8 @@ public class Star extends Observable {
     /**
      * Enumeration of all different observers notification a star can raise.
      */
-    public enum Notification {
+    public enum Notification
+    {
 
         QUERY_COMPLETE, QUERY_ERROR, UNKNOWN;
     };
@@ -310,7 +332,8 @@ public class Star extends Observable {
     /**
      * Enumeration of all different properties a star can handle.
      */
-    public enum Property {
+    public enum Property
+    {
 
         RA, DEC, RA_d, DEC_d,
         FLUX_N, FLUX_V, FLUX_I, FLUX_J, FLUX_H, FLUX_K,
@@ -334,10 +357,11 @@ public class Star extends Observable {
          *
          * @return the enum value from the corresponding string.
          */
-        public static Property fromString(final String propertyName) {
+        public static Property fromString(final String propertyName)
+        {
             try {
                 return valueOf(propertyName);
-            } catch (Exception ex) {
+            } catch (IllegalArgumentException iae) {
                 return NOPROPERTY;
             }
         }

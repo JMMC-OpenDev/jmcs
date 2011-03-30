@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MessagePane.java,v 1.12 2011-03-08 12:53:45 bourgesl Exp $"
+ * "@(#) $Id: MessagePane.java,v 1.13 2011-03-30 09:07:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2011/03/08 12:53:45  bourgesl
+ * fixed imports
+ * code formating
+ *
  * Revision 1.11  2011/02/28 12:37:23  mella
  * Add some margin to avoid some scrollbars in the message dialogs
  * Remove some quotes characters during error display
@@ -118,8 +122,12 @@ public final class MessagePane
     public static void showErrorMessage(final String message, final String title, final Throwable th)
     {
 
-        if (th != null && _logger.isLoggable(Level.SEVERE)) {
-            _logger.log(Level.SEVERE, "An exception occured", th);
+        if (_logger.isLoggable(Level.SEVERE)) {
+            if (th != null) {
+                _logger.log(Level.SEVERE, "An exception occured: " + message, th);
+            } else {
+                _logger.severe("A problem occured: " + message);
+            }
         }
 
         // try to get cause if possible

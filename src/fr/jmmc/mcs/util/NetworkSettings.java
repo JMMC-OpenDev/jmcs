@@ -1,14 +1,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: NetworkSettings.java,v 1.1 2011-03-30 09:31:06 bourgesl Exp $"
+ * "@(#) $Id: NetworkSettings.java,v 1.2 2011-03-30 14:51:53 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2011/03/30 09:31:06  bourgesl
+ * define general network settings (timeouts / proxy)
+ *
  */
 package fr.jmmc.mcs.util;
 
+import java.lang.reflect.Method;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -28,16 +33,22 @@ public final class NetworkSettings
     /** logger */
     private final static Logger logger = Logger.getLogger(NetworkSettings.class.getName());
     /* system properties */
-    /** Use System Proxies */
-    public static final String PROPERTY_USE_SYSTEM_PROXIES = "java.net.useSystemProxies";
     /** Timeout to establish connection in millis (sun classes) */
     public static final String PROPERTY_DEFAULT_CONNECT_TIMEOUT = "sun.net.client.defaultConnectTimeout";
     /** Timeout "waiting for data" (read timeout) in millis (sun classes) */
     public static final String PROPERTY_DEFAULT_READ_TIMEOUT = "sun.net.client.defaultReadTimeout";
+    /** Use System Proxies */
+    public static final String PROPERTY_USE_SYSTEM_PROXIES = "java.net.useSystemProxies";
+    /** Java plugin proxy list */
+    public static final String PROPERTY_JAVA_PLUGIN_PROXY_LIST = "javaplugin.proxy.config.list";
     /** HTTP proxy host */
     public static final String PROPERTY_HTTP_PROXY_HOST = "http.proxyHost";
     /** HTTP proxy port */
     public static final String PROPERTY_HTTP_PROXY_PORT = "http.proxyPort";
+    /** SOCKS proxy host */
+    public static final String PROPERTY_SOCKS_PROXY_HOST = "socks.proxyHost";
+    /** SOCKS proxy port */
+    public static final String PROPERTY_SOCKS_PROXY_PORT = "socks.proxyPort";
     /* JMMC standard values */
     /** default value for the connection timeout in milliseconds (15 s) */
     public static final int DEFAULT_CONNECT_TIMEOUT = 15 * 1000;
@@ -54,6 +65,15 @@ public final class NetworkSettings
     private NetworkSettings()
     {
         super();
+    }
+
+    /**
+     * Main entry point : calls defineDefaults()
+     * @param args unused
+     */
+    public static void main(final String[] args)
+    {
+        defineDefaults();
     }
 
     /**
@@ -88,13 +108,72 @@ public final class NetworkSettings
      */
     public static void defineProxy()
     {
-        // force JVM to use System proxies if System properties are not defined (or given by JNLP RE):
+        // FIRST STEP: force JVM to use System proxies if System properties are not defined (or given by JNLP RE):
 
         // NOTE: can cause problems with SOCKS / HTTPS / Other protocols ?
         System.setProperty(PROPERTY_USE_SYSTEM_PROXIES, "true");
 
+
+
+
+        // first, dump all known network properties:
+        final Method netPropertiesGetMethod = getNetPropertiesGetMethod();
+        if (netPropertiesGetMethod != null) {
+            final Properties netProperties = new Properties();
+            String value;
+
+            // HTTP Proxy:
+            value = getNetProperty(netPropertiesGetMethod, PROPERTY_HTTP_PROXY_HOST);
+            if (value != null) {
+                netProperties.put(PROPERTY_HTTP_PROXY_HOST, value);
+            }
+            value = getNetProperty(netPropertiesGetMethod, PROPERTY_HTTP_PROXY_PORT);
+            if (value != null) {
+                netProperties.put(PROPERTY_HTTP_PROXY_PORT, value);
+            }
+
+            // SOCKS Proxy:
+            value = getNetProperty(netPropertiesGetMethod, PROPERTY_SOCKS_PROXY_HOST);
+            if (value != null) {
+                netProperties.put(PROPERTY_SOCKS_PROXY_HOST, value);
+            }
+            value = getNetProperty(netPropertiesGetMethod, PROPERTY_SOCKS_PROXY_PORT);
+            if (value != null) {
+                netProperties.put(PROPERTY_SOCKS_PROXY_PORT, value);
+            }
+
+            if (!netProperties.isEmpty() && logger.isLoggable(Level.INFO)) {
+                logger.info("Java net properties:\n" + Preferences.dumpProperties(netProperties));
+            }
+        }
+
+        final String proxyList = System.getProperty(PROPERTY_JAVA_PLUGIN_PROXY_LIST);
+        if (proxyList != null) {
+            if (logger.isLoggable(Level.INFO)) {
+                logger.info("Java plugin proxy list : " + proxyList);
+            }
+        }
+
+        // Dump Http Proxy settings from ProxySelector:
+        HostConfiguration hostConfiguration = Http.getHttpProxyConfiguration();
+
+        if (hostConfiguration.getProxyHost() != null) {
+            if (logger.isLoggable(Level.INFO)) {
+                logger.info("Found http proxy : " + hostConfiguration.getProxyHost() + ":" + hostConfiguration.getProxyPort());
+            }
+        }
+
+        // Dump Socks Proxy settings from ProxySelector:
+        hostConfiguration = Http.getSocksProxyConfiguration();
+
+        if (hostConfiguration.getProxyHost() != null) {
+            if (logger.isLoggable(Level.INFO)) {
+                logger.info("Found socks proxy : " + hostConfiguration.getProxyHost() + ":" + hostConfiguration.getProxyPort());
+            }
+        }
+
         // Get Proxy settings (available at least in JNLP runtime environement):
-        final HostConfiguration hostConfiguration = Http.getProxyConfiguration();
+        hostConfiguration = Http.getHttpProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
             if (logger.isLoggable(Level.INFO)) {
@@ -151,5 +230,45 @@ public final class NetworkSettings
         // # http.proxyUser
         // # http.proxyPassword
         // # http.nonProxyHosts
+    }
+
+    /**
+     * Returns the sun.net.NetProperties specific property
+     *
+     * @param netPropertiesGetMethod sun.net.NetProperties.get(String)
+     * @param key the property key
+     * @return a networking system property. If no system property was defined
+     * returns the default value, if it exists, otherwise returns <code>null</code>.
+     */
+    private static String getNetProperty(final Method netPropertiesGetMethod, final String key)
+    {
+        String result = null;
+        if (netPropertiesGetMethod != null) {
+            try {
+                result = (String) netPropertiesGetMethod.invoke(null, new Object[]{key});
+
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "unable to access to NetProperties.get(String) : ", e);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Return the sun.net.NetProperties.get(String) method
+     * @return NetProperties.get(String) method or null if unavailable
+     */
+    private static Method getNetPropertiesGetMethod()
+    {
+        try {
+            // Look around for the sun NetProperties class...
+            final Class<?> netPropertiesClass = Class.forName("sun.net.NetProperties");
+
+            return netPropertiesClass.getDeclaredMethod("get", new Class<?>[]{String.class});
+
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "unable to access to NetProperties : ", e);
+        }
+        return null;
     }
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Http.java,v 1.4 2011-03-30 09:32:38 bourgesl Exp $"
+ * "@(#) $Id: Http.java,v 1.5 2011-03-30 14:51:53 bourgesl Exp $"
  *
  */
 package fr.jmmc.mcs.util;
@@ -35,8 +35,12 @@ public final class Http
     private final static Logger logger_ = Logger.getLogger(className_);
     /** Jmmc web to detect proxies */
     private final static String JMMC_WEB = "http://www.jmmc.fr";
-    /** cached Jmmc URL */
-    private static URI JMMC_URI = null;
+    /** Jmmc socks to detect proxies */
+    private final static String JMMC_SOCKS = "socks://jmmc.fr";
+    /** cached Jmmc web URL */
+    private static URI JMMC_WEB_URI = null;
+    /** cached Jmmc socks URL */
+    private static URI JMMC_SOCKS_URI = null;
 
     /**
      * Forbidden constructor
@@ -56,7 +60,7 @@ public final class Http
      */
     public static HttpClient getHttpClient()
     {
-        return getHttpClient(getJmmcURI(), true);
+        return getHttpClient(getJmmcHttpURI(), true);
     }
 
     /**
@@ -70,7 +74,7 @@ public final class Http
      */
     public static HttpClient getHttpClient(final boolean multiThreaded)
     {
-        return getHttpClient(getJmmcURI(), multiThreaded);
+        return getHttpClient(getJmmcHttpURI(), multiThreaded);
     }
 
     /**
@@ -127,28 +131,53 @@ public final class Http
     }
 
     /**
-     * Get JMMC URI
-     * @return JMMC URI
+     * Get JMMC Http URI
+     * @return JMMC Http URI
      */
-    private static URI getJmmcURI()
+    private static URI getJmmcHttpURI()
     {
-        if (JMMC_URI == null) {
+        if (JMMC_WEB_URI == null) {
             try {
-                JMMC_URI = new URI(JMMC_WEB);
+                JMMC_WEB_URI = new URI(JMMC_WEB);
             } catch (URISyntaxException use) {
                 logger_.log(Level.SEVERE, "invalid URL", use);
             }
         }
-        return JMMC_URI;
+        return JMMC_WEB_URI;
     }
 
     /**
-     * This class returns the proxy configuration (based on http://www.jmmc.fr).
+     * Get JMMC Socks URI
+     * @return JMMC Socks URI
+     */
+    private static URI getJmmcSocksURI()
+    {
+        if (JMMC_SOCKS_URI == null) {
+            try {
+                JMMC_SOCKS_URI = new URI(JMMC_SOCKS);
+            } catch (URISyntaxException use) {
+                logger_.log(Level.SEVERE, "invalid URL", use);
+            }
+        }
+        return JMMC_SOCKS_URI;
+    }
+
+    /**
+     * This class returns the http proxy configuration (based on http://www.jmmc.fr).
      * @return HostConfiguration instance (proxy host and port only are defined)
      */
-    public static HostConfiguration getProxyConfiguration()
+    public static HostConfiguration getHttpProxyConfiguration()
     {
-        return getProxyConfiguration(getJmmcURI());
+        return getProxyConfiguration(getJmmcHttpURI());
+    }
+
+    /**
+     * This class returns the socks proxy configuration (based on socks://jmmc.fr).
+     * @return HostConfiguration instance (proxy host and port only are defined)
+     */
+    public static HostConfiguration getSocksProxyConfiguration()
+    {
+        return getProxyConfiguration(getJmmcSocksURI());
     }
 
     /**

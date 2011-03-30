@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.38 2011-03-02 16:14:37 bourgesl Exp $"
+ * "@(#) $Id: Preferences.java,v 1.39 2011-03-30 09:08:24 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.38  2011/03/02 16:14:37  bourgesl
+ * fixed quiet mode
+ *
  * Revision 1.37  2011/02/24 17:15:12  bourgesl
  * use quiet flag to hide a logging message
  *
@@ -962,5 +965,29 @@ public abstract class Preferences extends Observable
                 exc.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Dump all properties (sorted by keys)
+     * @param properties properties to dump
+     * @return string representation of properties using the format "{name} : {value}"
+     */
+    public static final String dumpProperties(final Properties properties)
+    {
+        if (properties != null) {
+            // sort properties :
+            final String[] keys = new String[properties.size()];
+            properties.keySet().toArray(keys);
+            Arrays.sort(keys);
+
+            final StringBuilder sb = new StringBuilder(2048);
+            // For each property, we make a string like "{name} : {value}"
+            for (String key : keys) {
+                sb.append(key).append(" : ").append(properties.getProperty(key)).append("\n");
+            }
+
+            return sb.toString();
+        }
+        return "";
     }
 }

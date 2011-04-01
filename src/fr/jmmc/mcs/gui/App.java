@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.85 2011-03-30 09:34:20 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.86 2011-04-01 16:10:27 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.85  2011/03/30 09:34:20  bourgesl
+ * use NetworkSettings in static initializer to be initialized before using java.net classes
+ *
  * Revision 1.84  2011/03/17 15:33:21  bourgesl
  * free also applicationFrame when exit is called
  *
@@ -388,6 +391,10 @@ public abstract class App
         // Define default network settings:
         // note: settings must be set before using any URLConnection (loadApplicationData)
         NetworkSettings.defineDefaults();
+
+        // Define swing settings (laf, locale...)
+        SwingSettings.defineDefaults();
+
     }
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.gui.App");

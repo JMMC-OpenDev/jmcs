@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.18 2011-03-30 09:06:23 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.19 2011-04-04 13:58:24 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2011/03/30 09:06:23  bourgesl
+ * added MCSExceptionHandler
+ * code format
+ *
  * Revision 1.17  2010/10/14 12:20:12  bourgesl
  * use EDT to send notifications (error and complete)
  * better exception handling
@@ -69,10 +73,10 @@
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
 
+import fr.jmmc.mcs.util.FileUtils;
 import fr.jmmc.mcs.util.MCSExceptionHandler;
 import java.io.BufferedReader;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -243,7 +247,7 @@ public final class StarResolver
             }
 
             // Try to get star data from CDS
-            InputStream inputStream = null;
+            BufferedReader bufferedReader = null;
             try {
                 // Forge the URL int UTF8 unicode charset
                 final String encodedScript = URLEncoder.encode(simbadScript, "UTF-8");
@@ -254,9 +258,9 @@ public final class StarResolver
                 }
 
                 // Launch the network query
-                inputStream = new URL(simbadURL).openStream();
-                final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                final InputStream inputStream = new URL(simbadURL).openStream();
+
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
                 // Read incoming data line by line
                 String currentLine = null;
@@ -277,17 +281,11 @@ public final class StarResolver
                 if (_logger.isLoggable(Level.FINER)) {
                     _logger.finer("CDS Simbad raw result :\n" + _result);
                 }
-            } catch (Exception ex) {
-                _logger.log(Level.SEVERE, "CDS Connection failed.", ex);
+            } catch (Exception e) {
+                _logger.log(Level.SEVERE, "CDS Connection failed.", e);
 
             } finally {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException ioe) {
-                        _logger.log(Level.FINE, "CDS Connection closed.", ioe);
-                    }
-                }
+                FileUtils.closeFile(bufferedReader);
             }
         }
 

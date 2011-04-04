@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.28 2011-03-10 08:09:45 mella Exp $"
+ * "@(#) $Id: ALX.java,v 1.29 2011-04-04 15:29:59 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2011/03/10 08:09:45  mella
+ * Improve API and efficiency avoiding duplicated Sptype instances for LD2UD related
+ *
  * Revision 1.27  2011/03/01 09:44:55  mella
  * Add more information in the warning message of getStarType method thrown for unparsable spectraltype
  *
@@ -100,7 +103,8 @@ import fr.jmmc.mcs.astro.star.Star.Property;
 import java.text.DecimalFormat;
 
 import java.text.ParseException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -110,12 +114,13 @@ import java.util.logging.Logger;
  * Class regrouping usefull statics method to convert star coordinates between
  * different formats and units.
  */
-public class ALX {
+public class ALX
+{
 
     /** Class name */
-    static final String className_ = LD2UD.class.getName();
+    private static final String className_ = LD2UD.class.getName();
     /** Logger */
-    static final Logger logger_ = Logger.getLogger(className_);
+    private static final Logger logger_ = Logger.getLogger(className_);
     /** Describe the micrometer (micron, or um) unit */
     public static final double MICRON = 1.0d;
     /** Describe the meter unit */
@@ -134,11 +139,23 @@ public class ALX {
     public static final double SUN_LOGG = 4.378;
 
     /** Star type enumeration DWARF/GIANT/SUPERGIANT */
-    public enum STARTYPE {
+    public enum STARTYPE
+    {
 
+        /** Dwarf */
         DWARF,
+        /** Giant */
         GIANT,
+        /** Super Giant */
         SUPERGIANT
+    }
+
+    /**
+     * Forbidden constructor : utility class
+     */
+    private ALX()
+    {
+        super();
     }
 
     /**
@@ -148,33 +165,38 @@ public class ALX {
      *
      * @return the right ascension as a double in degrees.
      */
-    public static double parseHMS(String raHms) {
-        double hh;
-        double hm;
-        double hs;
+    public static double parseHMS(final String raHms)
+    {
 
         // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
         // Replace ':' by ' ', and remove trailing and leading space
-        raHms = raHms.replace(':', ' ');
-        raHms = raHms.trim();
+        final String input = raHms.replace(':', ' ').trim();
 
+        double hh;
+        double hm;
+        double hs;
         // Parse the given string
         try {
-            String[] tokens = raHms.split(" ");
+            final String[] tokens = input.split(" ");
+
             hh = Double.parseDouble(tokens[0]);
             hm = Double.parseDouble(tokens[1]);
             hs = Double.parseDouble(tokens[2]);
-        } catch (Exception e) {
-            hh = 0.0;
-            hm = 0.0;
-            hs = 0.0;
+
+        } catch (NumberFormatException nfe) {
+            if (logger_.isLoggable(Level.FINE)) {
+                logger_.log(Level.FINE, "format exception : ", nfe);
+            }
+            hh = 0d;
+            hm = 0d;
+            hs = 0d;
         }
 
         // Get sign of hh which has to be propagated to hm and hs
-        final double sign = (raHms.startsWith("-")) ? -1d : 1d;
+        final double sign = (input.startsWith("-")) ? -1d : 1d;
 
         // Convert to degrees
-        // note : dd already includes the sign :
+        // note : hh already includes the sign :
         final double ra = (hh + sign * (hm / 60d + hs / 3600d)) * 15d;
 
         if (logger_.isLoggable(Level.FINE)) {
@@ -189,9 +211,10 @@ public class ALX {
      *
      * @param raHms the right ascension as a HH:MM:SS.TT or HH MM SS.TT string.
      *
-     * @return the right ascension as a double in degrees  [-180 - 180].
+     * @return the right ascension as a double in degrees  [-180; -180].
      */
-    public static double parseRA(String raHms) {
+    public static double parseRA(final String raHms)
+    {
         double ra = parseHMS(raHms);
 
         // Set angle range [-180 - 180]
@@ -213,34 +236,39 @@ public class ALX {
      *
      * @return the declinaison as a double in degrees.
      */
-    public static double parseDEC(String decDms) {
-        double dd;
-        double dm;
-        double ds;
+    public static double parseDEC(final String decDms)
+    {
 
         // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
         // Replace ':' by ' ', and remove trailing and leading space
-        decDms = decDms.replace(':', ' ');
-        decDms = decDms.trim();
+        final String input = decDms.replace(':', ' ').trim();
 
+        double dd;
+        double dm;
+        double ds;
         // Parse the given string
         try {
-            String[] tokens = decDms.split(" ");
+            String[] tokens = input.split(" ");
+
             dd = Double.parseDouble(tokens[0]);
             dm = Double.parseDouble(tokens[1]);
             ds = Double.parseDouble(tokens[2]);
-        } catch (Exception e) {
-            dd = 0.0;
-            dm = 0.0;
-            ds = 0.0;
+
+        } catch (NumberFormatException nfe) {
+            if (logger_.isLoggable(Level.FINE)) {
+                logger_.log(Level.FINE, "format exception : ", nfe);
+            }
+            dd = 0d;
+            dm = 0d;
+            ds = 0d;
         }
 
         // Get sign of dd which has to be propagated to dm and ds
-        final double sign = (decDms.startsWith("-")) ? -1d : 1d;
+        final double sign = (input.startsWith("-")) ? -1d : 1d;
 
         // Convert to degrees
         // note : dd already includes the sign :
-        double dec = dd + sign * (dm / 60d + ds / 3600d);
+        final double dec = dd + sign * (dm / 60d + ds / 3600d);
 
         if (logger_.isLoggable(Level.FINE)) {
             logger_.fine("DEC : ’" + decDms + "' = '" + dec + "'.");
@@ -254,21 +282,23 @@ public class ALX {
      * @param angle angle in degrees > -360.0
      * @return string DMS representation
      */
-    public final static String toDMS(final double angle) {
-        if (angle < -360.0) {
+    public final static String toDMS(final double angle)
+    {
+        if (angle < -360d) {
             return null;
         }
 
-        double normalizedAngle = Math.abs(angle) % 360.0;
+        final double normalizedAngle = Math.abs(angle) % 360d;
 
         final int iDeg = (int) Math.floor(normalizedAngle);
         final double rest = normalizedAngle - iDeg;
 
         final StringBuilder sb = new StringBuilder();
-        if (angle < 0.0) {
+        if (angle < 0d) {
             sb.append("-");
         }
-        sb.append(iDeg).append(toMS(rest));
+        sb.append(iDeg);
+        toMS(rest, sb);
         return sb.toString();
     }
 
@@ -277,27 +307,31 @@ public class ALX {
      * @param angle angle in degrees > -360.0
      * @return string HMS representation, null otherwise
      */
-    public final static String toHMS(final double angle) {
-        if (angle < -360.0) {
+    public final static String toHMS(final double angle)
+    {
+        if (angle < -360d) {
             return null;
         }
-        double normalizedAngle = (angle + 360.0) % 360.0;
-        double fHour = 24.0 * (normalizedAngle / 360.0);
-        int iHour = (int) Math.floor(fHour);
-        double rest = normalizedAngle - (iHour / 24.0 * 360.0);
+
+        final double normalizedAngle = (angle + 360d) % 360d;
+
+        final double fHour = 24d * (normalizedAngle / 360d);
+        final int iHour = (int) Math.floor(fHour);
+        final double rest = normalizedAngle - (iHour / 24d * 360d);
 
         final StringBuilder sb = new StringBuilder();
-        sb.append(iHour).append(toMS(rest));
+        sb.append(iHour);
+        toMS(rest, sb);
         return sb.toString();
     }
 
-    private final static String toMS(final double angle) {
-        double fMinute = 60.0 * angle;
-        int iMinute = (int) Math.floor(fMinute);
+    private final static String toMS(final double angle, final StringBuilder sb)
+    {
+        final double fMinute = 60d * angle;
+        final int iMinute = (int) Math.floor(fMinute);
 
-        double fSecond = 60.0 * (fMinute - iMinute);
+        final double fSecond = 60d * (fMinute - iMinute);
 
-        final StringBuilder sb = new StringBuilder();
         DecimalFormat formatter = new DecimalFormat(":00");
         sb.append(formatter.format(iMinute));
 
@@ -312,18 +346,22 @@ public class ALX {
      *
      * @param rawSpectralType the spectral type to analyze.
      *
-     * @return a Vector of String containing found spectral types (if any).
+     * @return a List of String containing found spectral types (if any).
      */
-    public static Vector spectralTypes(String rawSpectralType) {
+    public static List<String> spectralTypes(final String rawSpectralType)
+    {
+
+        String spectralType = rawSpectralType;
+
         // Remove any "SB" token (Feedback Report ID : #1259360028)
-        if (rawSpectralType.contains("SB")) {
-            rawSpectralType = rawSpectralType.replaceAll("SB", "");
+        if (spectralType.contains("SB")) {
+            spectralType = spectralType.replaceAll("SB", "");
         }
 
-        Vector foundSpectralTypes = new Vector();
+        final List<String> foundSpectralTypes = new ArrayList<String>();
 
-        for (int i = 0; i < rawSpectralType.length(); i++) {
-            char c = rawSpectralType.charAt(i);
+        for (int i = 0, len = spectralType.length(); i < len; i++) {
+            final char c = spectralType.charAt(i);
 
             // If the luminosity class has been reached
             if ((c == 'I') || (c == 'V')) {
@@ -333,10 +371,9 @@ public class ALX {
 
             // If the spectral type has been reached
             // eg. the uppercase alphabetic parts of a spectral type
-            if ((Character.isLetter(c) == true)
-                    && (Character.isUpperCase(c) == true)) {
+            if (Character.isLetter(c) && Character.isUpperCase(c)) {
                 // Re-copy its content for later use (as a String object)
-                foundSpectralTypes.add("" + c);
+                foundSpectralTypes.add(Character.valueOf(c).toString());
             }
         }
 
@@ -350,9 +387,11 @@ public class ALX {
      *
      * @return a Vector of String containing found luminosity classes (if any).
      */
-    public static Vector luminosityClasses(String rawSpectralType) {
+    public static List<String> luminosityClasses(final String rawSpectralType)
+    {
 
-        Vector foundLuminosityClasses = new Vector();
+        final List<String> foundLuminosityClasses = new ArrayList<String>();
+
         String foundLuminosityClass = "";
         boolean luminosityClassFound = false;
 
@@ -399,8 +438,9 @@ public class ALX {
      *
      * @return a double containing the converted value.
      */
-    public static double arcmin2minutes(double arcmin) {
-        double minutes = (arcmin / 15);
+    public static double arcmin2minutes(final double arcmin)
+    {
+        final double minutes = (arcmin / 15d);
 
         return minutes;
     }
@@ -412,8 +452,9 @@ public class ALX {
      *
      * @return a double containing the converted value.
      */
-    public static double minutes2arcmin(double minutes) {
-        double arcmin = (minutes * 15);
+    public static double minutes2arcmin(final double minutes)
+    {
+        final double arcmin = (minutes * 15d);
 
         return arcmin;
     }
@@ -425,8 +466,9 @@ public class ALX {
      *
      * @return a double containing the converted value.
      */
-    public static double arcmin2degrees(double arcmin) {
-        double degrees = (arcmin / 60);
+    public static double arcmin2degrees(final double arcmin)
+    {
+        final double degrees = (arcmin / 60d);
 
         return degrees;
     }
@@ -438,8 +480,9 @@ public class ALX {
      *
      * @return a double containing the converted value.
      */
-    public static double degrees2arcmin(double degrees) {
-        double arcmin = (degrees * 60);
+    public static double degrees2arcmin(final double degrees)
+    {
+        final double arcmin = (degrees * 60d);
 
         return arcmin;
     }
@@ -451,8 +494,9 @@ public class ALX {
      *
      * @return a double containing the converted value.
      */
-    public static double minutes2degrees(double minutes) {
-        double degrees = minutes / 4;
+    public static double minutes2degrees(final double minutes)
+    {
+        final double degrees = minutes / 4d;
 
         return degrees;
     }
@@ -464,8 +508,9 @@ public class ALX {
      *
      * @return a double containing the converted value.
      */
-    public static double degrees2minutes(double degrees) {
-        double minutes = degrees * 4;
+    public static double degrees2minutes(final double degrees)
+    {
+        final double minutes = degrees * 4d;
 
         return minutes;
     }
@@ -479,8 +524,9 @@ public class ALX {
      * @return initialized Sptype object
      * @throws ParseException if given spectral type is not being parsable
      */
-    public static Sptype getSptype(String spectralType) throws ParseException {
-        Sptype s = new Sptype(spectralType);
+    public static Sptype getSptype(final String spectralType) throws ParseException
+    {
+        final Sptype s = new Sptype(spectralType);
 
         if (logger_.isLoggable(Level.FINE)) {
             logger_.fine("Parsing of sptype '" + spectralType + "' get numerical value of: " + s.getSpNumeric());
@@ -500,10 +546,11 @@ public class ALX {
      * @return a Star with UD properties.
      * @throws ParseException if given spectral type is not being parsable
      */
-    public static Star ld2ud(double ld, String sptype) throws ParseException {
-        Sptype s = getSptype(sptype);
-        double teff = LD2UD.getEffectiveTemperature(s);
-        double logg = LD2UD.getGravity(s);
+    public static Star ld2ud(final double ld, final String sptype) throws ParseException
+    {
+        final Sptype s = getSptype(sptype);
+        final double teff = LD2UD.getEffectiveTemperature(s);
+        final double logg = LD2UD.getGravity(s);
         return ld2ud(ld, teff, logg);
     }
 
@@ -516,17 +563,18 @@ public class ALX {
      * @param logg surface gravity
      * @return a Star with UD properties.     
      */
-    public static Star ld2ud(double ld, double teff, double logg) {
-        Star star = new Star();
+    public static Star ld2ud(final double ld, final double teff, final double logg)
+    {
+        final Star star = new Star();
         star.setPropertyAsDouble(Property.TEFF, teff);
         star.setPropertyAsDouble(Property.LOGG, logg);
-        Property[] uds = new Property[]{
+        final Property[] uds = new Property[]{
             Property.UD_B, Property.UD_I, Property.UD_J, Property.UD_H, Property.UD_K,
             Property.UD_L, Property.UD_N, Property.UD_R, Property.UD_U, Property.UD_V
         };
 
         for (Property ud : uds) {
-            double diam = ld / LD2UD.getLimbDarkenedCorrectionFactor(ud, teff, logg);
+            final double diam = ld / LD2UD.getLimbDarkenedCorrectionFactor(ud, teff, logg);
             star.setPropertyAsDouble(ud, diam);
         }
         return star;
@@ -540,7 +588,8 @@ public class ALX {
      * @return integer corresponding to first numeric code part.
      * @throws ParseException if given spectral type is not being parsable
      */
-    public static int getTemperatureClass(String spectype) throws ParseException {
+    public static int getTemperatureClass(final String spectype) throws ParseException
+    {
         return getTemperatureClass(getSptype(spectype));
     }
 
@@ -550,9 +599,10 @@ public class ALX {
      * @param sptype
      * @return integer corresponding to first numeric code part.
      */
-    public static int getTemperatureClass(Sptype sptype) {
-        String spNum = sptype.getSpNumeric();
-        int firstDotIndex = spNum.indexOf(".");
+    public static int getTemperatureClass(final Sptype sptype)
+    {
+        final String spNum = sptype.getSpNumeric();
+        final int firstDotIndex = spNum.indexOf(".");
         return Integer.parseInt(spNum.substring(0, firstDotIndex));
     }
 
@@ -571,7 +621,8 @@ public class ALX {
      * @return the luminosity integer value
      * @throws ParseException if given spectral type is not being parsable
      */
-    public static int getLuminosityClass(String spectype) throws ParseException {
+    public static int getLuminosityClass(final String spectype) throws ParseException
+    {
         return getLuminosityClass(getSptype(spectype));
     }
 
@@ -589,14 +640,15 @@ public class ALX {
      * @param sptype spectral type value
      * @return the luminosity integer value     
      */
-    public static int getLuminosityClass(Sptype sptype) {
-        String spNum = sptype.getSpNumeric();
+    public static int getLuminosityClass(final Sptype sptype)
+    {
+        final String spNum = sptype.getSpNumeric();
         //int firstDotIndex = spNum.indexOf(".");
-        int secondDotIndex = spNum.lastIndexOf(".");
+        final int secondDotIndex = spNum.lastIndexOf(".");
         // we must only use the two last chars of lum part as significative
         // I classes returned 113 instead of 13
 
-        int lumCode = Integer.parseInt(spNum.substring(secondDotIndex - 2, secondDotIndex));
+        final int lumCode = Integer.parseInt(spNum.substring(secondDotIndex - 2, secondDotIndex));
 
         // Check that luminosity code has been extracted properly
         if (lumCode < 0 || lumCode > 100) {
@@ -612,14 +664,14 @@ public class ALX {
      * @param sptype spectral type value
      * @return dwarf, giant or supergiant
      */
-    public static STARTYPE getStarType(String sptype) {
+    public static STARTYPE getStarType(final String sptype)
+    {
         // Daniel wrote:
         // If the luminosity class is unknown, by default one can suppose that
         // the star is a giant (III)
         // (cds sptypes returns 0 when luminosity code is missing)
-        int lumCode;
         try {
-            Sptype s = getSptype(sptype);
+            final Sptype s = getSptype(sptype);
             return getStarType(s);
         } catch (ParseException ex) {
             if (logger_.isLoggable(Level.WARNING)) {
@@ -635,9 +687,10 @@ public class ALX {
      * @param sptype spectral type value
      * @return dwarf, giant or supergiant
      */
-    public static STARTYPE getStarType(Sptype sptype) {
+    public static STARTYPE getStarType(final Sptype sptype)
+    {
 
-        int lumCode = ALX.getLuminosityClass(sptype);
+        final int lumCode = ALX.getLuminosityClass(sptype);
 
         if (lumCode > 37 || lumCode == 0) {
             logger_.fine("This star his handled has a Dwarf");
@@ -664,7 +717,8 @@ public class ALX {
      *
      * If no argument is given, then it prints out the usage form.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         /*
         System.out.println("" + STARTYPE.DWARF);
         System.out.println("" + STARTYPE.GIANT);

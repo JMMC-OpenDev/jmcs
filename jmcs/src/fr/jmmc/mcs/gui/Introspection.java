@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Introspection.java,v 1.6 2008-09-02 12:31:00 lafrasse Exp $"
+ * "@(#) $Id: Introspection.java,v 1.7 2011-04-04 16:13:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/09/02 12:31:00  lafrasse
+ * Code, documentation and logging cleanup.
+ *
  * Revision 1.5  2008/09/01 11:07:45  lafrasse
  * Improved logging.
  *
@@ -25,10 +28,11 @@
 package fr.jmmc.mcs.gui;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import java.util.logging.*;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class provides helper functions related to object introspection.
@@ -39,8 +43,13 @@ import java.util.logging.*;
  */
 public class Introspection
 {
+
     /** Logger */
-    private static final Logger _logger = Logger.getLogger("fr.jmmc");
+    private static final Logger _logger = Logger.getLogger(Introspection.class.getName());
+    /** empty class array */
+    private final static Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[]{};
+    /** empty object array */
+    private final static Object[] EMPTY_OBJECT_ARRAY = new Object[]{};
 
     /**
      * Returns a class object according to a given class path.
@@ -49,18 +58,14 @@ public class Introspection
      *
      * @return found class, null otherwise.
      */
-    public static Class getClass(String classPath)
+    public static Class<?> getClass(final String classPath)
     {
-        Class searchedClass = null;
+        Class<?> searchedClass = null;
 
-        try
-        {
+        try {
             searchedClass = Class.forName(classPath);
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot find class '" + classPath + "'",
-                ex);
+        } catch (ClassNotFoundException cnfe) {
+            _logger.log(Level.WARNING, "Cannot find class '" + classPath + "'", cnfe);
         }
 
         return searchedClass;
@@ -73,11 +78,12 @@ public class Introspection
      *
      * @return true if the class exists, false otherwise.
      */
-    public static boolean hasClass(String classPath)
+    public static boolean hasClass(final String classPath)
     {
-        if (getClass(classPath) != null)
-        {
-            _logger.fine("Found class '" + classPath + "'.");
+        if (getClass(classPath) != null) {
+            if (_logger.isLoggable(Level.FINE)) {
+                _logger.fine("Found class '" + classPath + "'.");
+            }
 
             return true;
         }
@@ -93,9 +99,9 @@ public class Introspection
      *
      * @return found class package, null otherwise.
      */
-    public static Package getClassPackage(String classPath)
+    public static Package getClassPackage(final String classPath)
     {
-        Package packageSearched = getClass(classPath).getPackage();
+        final Package packageSearched = getClass(classPath).getPackage();
 
         return packageSearched;
     }
@@ -107,7 +113,7 @@ public class Introspection
      *
      * @return found class package, null otherwise.
      */
-    public static Package getClassPackage(Class seekedClass)
+    public static Package getClassPackage(final Class<?> seekedClass)
     {
         return seekedClass.getPackage();
     }
@@ -120,7 +126,7 @@ public class Introspection
      *
      * @return found class package name, null otherwise.
      */
-    public static String getClassPackageName(String classPath)
+    public static String getClassPackageName(final String classPath)
     {
         return getClassPackage(classPath).getName();
     }
@@ -132,7 +138,7 @@ public class Introspection
      *
      * @return found class package name, null otherwise.
      */
-    public static String getClassPackageName(Class seekedClass)
+    public static String getClassPackageName(final Class<?> seekedClass)
     {
         return seekedClass.getPackage().getName();
     }
@@ -144,18 +150,16 @@ public class Introspection
      *
      * @return new instance of the class, null otherwise.
      */
-    public static Object getInstance(String classPath)
+    public static Object getInstance(final String classPath)
     {
         Object instance = null;
 
-        try
-        {
+        try {
             instance = getClass(classPath).newInstance();
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot get instance of class '" + classPath + "'", ex);
+        } catch (InstantiationException ie) {
+            _logger.log(Level.WARNING, "Cannot get instance of class '" + classPath + "'", ie);
+        } catch (IllegalAccessException iae) {
+            _logger.log(Level.WARNING, "Cannot get instance of class '" + classPath + "'", iae);
         }
 
         return instance;
@@ -169,7 +173,7 @@ public class Introspection
      *
      * @return Array of found methods, null otherwise.
      */
-    public static Method[] getMethods(String classPath)
+    public static Method[] getMethods(final String classPath)
     {
         return getClass(classPath).getMethods();
     }
@@ -183,9 +187,9 @@ public class Introspection
      *
      * @return seeked method in class, null otherwise.
      */
-    public static Method getMethod(String classPath, String methodName)
+    public static Method getMethod(final String classPath, final String methodName)
     {
-        return getMethod(classPath, methodName, new Class[] {  });
+        return getMethod(classPath, methodName, EMPTY_CLASS_ARRAY);
     }
 
     /**
@@ -199,20 +203,14 @@ public class Introspection
      *
      * @return seeked method with parameters in class, null otherwise.
      */
-    public static Method getMethod(String classPath, String methodName,
-        Class[] parameters)
+    public static Method getMethod(final String classPath, final String methodName,
+            final Class<?>[] parameters)
     {
         Method methodSearched = null;
-
-        try
-        {
-            methodSearched = getClass(classPath)
-                                 .getMethod(methodName, parameters);
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot find method '" + methodName + "'", ex);
+        try {
+            methodSearched = getClass(classPath).getMethod(methodName, parameters);
+        } catch (NoSuchMethodException nsme) {
+            _logger.log(Level.WARNING, "Cannot find method '" + methodName + " of class '" + classPath + "'", nsme);
         }
 
         return methodSearched;
@@ -226,9 +224,9 @@ public class Introspection
      *
      * @return true if the method exists, false otherwise.
      */
-    public static boolean hasMethod(String classPath, String methodName)
+    public static boolean hasMethod(final String classPath, final String methodName)
     {
-        return hasMethod(classPath, methodName, new Class[] {  });
+        return hasMethod(classPath, methodName, EMPTY_CLASS_ARRAY);
     }
 
     /**
@@ -241,13 +239,14 @@ public class Introspection
      *
      * @return true if the method exists, false otherwise.
      */
-    public static boolean hasMethod(String classPath, String methodName,
-        Class[] parameters)
+    public static boolean hasMethod(final String classPath, final String methodName,
+            final Class<?>[] parameters)
     {
-        if (getMethod(classPath, methodName, parameters) != null)
-        {
-            _logger.fine("Found method '" + methodName + "' in class '" +
-                classPath + "'.");
+        if (getMethod(classPath, methodName, parameters) != null) {
+            if (_logger.isLoggable(Level.FINE)) {
+                _logger.fine("Found method '" + methodName + "' in class '"
+                        + classPath + "'.");
+            }
 
             return true;
         }
@@ -264,9 +263,9 @@ public class Introspection
      *
      * @return result of the method execution, null otherwise.
      */
-    public static Object getMethodValue(String classPath, String methodName)
+    public static Object getMethodValue(final String classPath, final String methodName)
     {
-        return getMethodValue(classPath, methodName, new Class[] {  });
+        return getMethodValue(classPath, methodName, EMPTY_CLASS_ARRAY);
     }
 
     /**
@@ -279,11 +278,10 @@ public class Introspection
      *
      * @return result of the method execution, null otherwise.
      */
-    public static Object getMethodValue(String classPath, String methodName,
-        Class[] parameters)
+    public static Object getMethodValue(final String classPath, final String methodName,
+            final Class<?>[] parameters)
     {
-        return getMethodValue(classPath, methodName, parameters,
-            new Object[] {  });
+        return getMethodValue(classPath, methodName, parameters, EMPTY_OBJECT_ARRAY);
     }
 
     /**
@@ -297,20 +295,61 @@ public class Introspection
      *
      * @return result of the method execution, null otherwise.
      */
-    public static Object getMethodValue(String classPath, String methodName,
-        Class[] parameters, Object[] arguments)
+    public static Object getMethodValue(final String classPath, final String methodName,
+            final Class<?>[] parameters, final Object[] arguments)
     {
-        Method method = getMethod(classPath, methodName, parameters);
-        Object value  = null;
+        final Method method = getMethod(classPath, methodName, parameters);
 
-        try
-        {
-            value = method.invoke(getInstance(classPath), arguments);
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot get result of method '" + methodName + "'", ex);
+        return getMethodValue(method, getInstance(classPath), arguments);
+    }
+
+    /**
+     * Returns the execution result of the method (no-args) with the given class instance.
+     *
+     * @param method method to invoke.
+     * @param instance class instance to use
+     *
+     * @return result of the method execution, null otherwise.
+     */
+    public static Object getMethodValue(final Method method, final Object instance)
+    {
+        return getMethodValue(method, instance, EMPTY_OBJECT_ARRAY);
+    }
+
+    /**
+     * Returns the execution result of the method with given argument values (static method).
+     *
+     * @param method method to invoke.
+     * @param arguments arguments array.
+     *
+     * @return result of the method execution, null otherwise.
+     */
+    public static Object getMethodValue(final Method method, final Object[] arguments)
+    {
+        return getMethodValue(method, null, arguments);
+    }
+
+    /**
+     * Returns the execution result of the method with given argument values.
+     *
+     * @param method method to invoke.
+     * @param instance class instance to use
+     * @param arguments arguments array.
+     *
+     * @return result of the method execution, null otherwise.
+     */
+    public static Object getMethodValue(final Method method, final Object instance, final Object[] arguments)
+    {
+        Object value = null;
+
+        try {
+            value = method.invoke(instance, arguments);
+        } catch (IllegalAccessException iae) {
+            _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", iae);
+        } catch (IllegalArgumentException iae) {
+            _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", iae);
+        } catch (InvocationTargetException ite) {
+            _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", ite);
         }
 
         return value;
@@ -323,9 +362,9 @@ public class Introspection
      * @param classPath path to the seeked class.
      * @param methodName seeked method name.
      */
-    public static void executeMethod(String classPath, String methodName)
+    public static void executeMethod(final String classPath, final String methodName)
     {
-        executeMethod(classPath, methodName, new Class[] {  });
+        executeMethod(classPath, methodName, EMPTY_CLASS_ARRAY);
     }
 
     /**
@@ -336,10 +375,10 @@ public class Introspection
      * @param methodName seeked method name.
      * @param parameters parameters array.
      */
-    public static void executeMethod(String classPath, String methodName,
-        Class[] parameters)
+    public static void executeMethod(final String classPath, final String methodName,
+            final Class<?>[] parameters)
     {
-        executeMethod(classPath, methodName, parameters, new Object[] {  });
+        executeMethod(classPath, methodName, parameters, EMPTY_OBJECT_ARRAY);
     }
 
     /**
@@ -351,8 +390,8 @@ public class Introspection
      * @param parameters parameters array.
      * @param arguments arguments array.
      */
-    public static void executeMethod(String classPath, String methodName,
-        Class[] parameters, Object[] arguments)
+    public static void executeMethod(final String classPath, final String methodName,
+            final Class<?>[] parameters, final Object[] arguments)
     {
         getMethodValue(classPath, methodName, parameters, arguments);
     }
@@ -365,7 +404,7 @@ public class Introspection
      *
      * @return Array of found fields, null otherwise.
      */
-    public static Field[] getFields(String classPath)
+    public static Field[] getFields(final String classPath)
     {
         return getClass(classPath).getFields();
     }
@@ -378,18 +417,14 @@ public class Introspection
      *
      * @return seeked field in class, null otherwise.
      */
-    public static Field getField(String classPath, String fieldName)
+    public static Field getField(final String classPath, final String fieldName)
     {
         Field field = null;
 
-        try
-        {
+        try {
             field = getClass(classPath).getField(fieldName);
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING, "Cannot get field '" + fieldName + "'",
-                ex);
+        } catch (Exception ex) {
+            _logger.log(Level.WARNING, "Cannot get field '" + fieldName + "'", ex);
         }
 
         return field;
@@ -403,12 +438,13 @@ public class Introspection
      *
      * @return true if the field exists, false otherwise.
      */
-    public static boolean hasField(String classPath, String fieldName)
+    public static boolean hasField(final String classPath, final String fieldName)
     {
-        if (getField(classPath, fieldName) != null)
-        {
-            _logger.fine("Found field '" + fieldName + "' in class '" +
-                classPath + "'.");
+        if (getField(classPath, fieldName) != null) {
+            if (_logger.isLoggable(Level.FINE)) {
+                _logger.fine("Found field '" + fieldName + "' in class '"
+                        + classPath + "'.");
+            }
 
             return true;
         }
@@ -425,22 +461,26 @@ public class Introspection
      *
      * @return value of the seeked field, null otherwise.
      */
-    public static Object getFieldValue(String classPath, String fieldName)
+    public static Object getFieldValue(final String classPath, final String fieldName)
     {
-        Field  field = getField(classPath, fieldName);
+        final Field field = getField(classPath, fieldName);
         Object value = null;
 
-        try
-        {
+        try {
             value = field.get(getInstance(classPath));
-        }
-        catch (Exception ex)
-        {
-            _logger.log(Level.WARNING,
-                "Cannot get value of field '" + fieldName + "'", ex);
+        } catch (Exception ex) {
+            _logger.log(Level.WARNING, "Cannot get value of field '" + fieldName + "'", ex);
         }
 
         return value;
+    }
+
+    /**
+     * Private constructor
+     */
+    private Introspection()
+    {
+        super();
     }
 }
 /*___oOo___*/

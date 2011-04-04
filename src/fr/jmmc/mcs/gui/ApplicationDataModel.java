@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.17 2009-05-13 09:24:24 lafrasse Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.18 2011-04-04 15:30:13 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2009/05/13 09:24:24  lafrasse
+ * Added a generic "Hot News (RSS Feed)" Help menu item.
+ *
  * Revision 1.16  2009/03/21 07:23:13  mella
  * revert to previous castor
  *
@@ -68,6 +71,7 @@ import fr.jmmc.mcs.gui.castor.Program;
 import java.io.InputStreamReader;
 
 import java.net.URL;
+import java.text.ParseException;
 
 import java.text.SimpleDateFormat;
 
@@ -372,11 +376,11 @@ public class ApplicationDataModel
             cal.setTime(date);
             year = cal.get(Calendar.YEAR);
         }
-        catch (Exception ex)
+        catch (ParseException pe)
         {
             _logger.log(Level.WARNING,
                 "Cannot parse date '" + compilationDate +
-                "' will use current year instead.", ex);
+                "' will use current year instead.", pe);
 
             // Otherwise use the current year
             Calendar cal = new GregorianCalendar();

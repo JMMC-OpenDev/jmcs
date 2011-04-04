@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ColorModels.java,v 1.6 2011-04-04 13:58:25 bourgesl Exp $"
+ * "@(#) $Id: ColorModels.java,v 1.7 2011-04-04 16:13:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2011/04/04 13:58:25  bourgesl
+ * use FileUtils.closeStream()
+ *
  * Revision 1.5  2010/02/09 16:49:34  bourgesl
  * force zero values to black
  *
@@ -30,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
@@ -1738,9 +1742,11 @@ public class ColorModels
 
             return new byte[][]{r, g, b};
 
-        } catch (Exception e) {
+        } catch (UnsupportedEncodingException uee) {
+            throw new IllegalStateException("loadLutFromFile failure : ", uee);
+        } catch (IOException ioe) {
             if (logger.isLoggable(Level.INFO)) {
-                logger.log(Level.INFO, "loadFromFile failure : " + name, e);
+                logger.log(Level.INFO, "loadFromFile failure : " + name, ioe);
             }
         } finally {
             FileUtils.closeFile(reader);
@@ -1806,7 +1812,7 @@ public class ColorModels
                 logger.severe("lut files :\n" + sb.toString());
             }
 
-        } catch (Exception e) {
+        } catch (Exception e) { // main (test)
             if (logger.isLoggable(Level.INFO)) {
                 logger.log(Level.INFO, "resource listing failure : ", e);
             }

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.41 2011-04-04 13:42:39 bourgesl Exp $"
+ * "@(#) $Id: Preferences.java,v 1.42 2011-04-04 13:58:24 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.41  2011/04/04 13:42:39  bourgesl
+ * exception handling
+ * wrapped logs
+ *
  * Revision 1.40  2011/03/30 09:20:04  bourgesl
  * javadoc
  *
@@ -427,16 +431,19 @@ public abstract class Preferences extends Observable
         int preferencesVersionNumber = getPreferencesVersionNumber();
         setPreference(PREFERENCES_VERSION_NUMBER_ID, preferencesVersionNumber);
 
+        FileOutputStream outputFile = null;
         try {
-            FileOutputStream outputFile = new FileOutputStream(_fullFilepath);
+            outputFile = new FileOutputStream(_fullFilepath);
             _currentProperties.storeToXML(outputFile, comment);
 
             if (_logger.isLoggable(Level.INFO)) {
                 _logger.info("Saving '" + _fullFilepath + "' preference file.");
             }
-            outputFile.close();
+
         } catch (Exception e) {
             throw new PreferencesException("Cannot store preferences to file", e);
+        } finally {
+            FileUtils.closeStream(outputFile);
         }
     }
 

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.29 2011-04-04 15:29:59 bourgesl Exp $"
+ * "@(#) $Id: ALX.java,v 1.30 2011-04-04 16:13:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2011/04/04 15:29:59  bourgesl
+ * exception handling
+ * minor coding fixes
+ *
  * Revision 1.28  2011/03/10 08:09:45  mella
  * Improve API and efficiency avoiding duplicated Sptype instances for LD2UD related
  *
@@ -743,7 +747,7 @@ public class ALX
             java.lang.reflect.Method userMethod = c.getMethod(method,
                     String.class);
             System.out.println("" + userMethod.invoke(arg, arg));
-        } catch (Throwable e) {
+        } catch (Throwable th) { // main (test)
             java.lang.reflect.Method[] m = c.getDeclaredMethods();
             System.out.println("Usage: <progname> <methodName> <arg>");
             System.out.println("     where <methodName> can be:");

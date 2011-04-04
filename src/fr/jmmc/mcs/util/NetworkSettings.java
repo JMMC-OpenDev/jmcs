@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: NetworkSettings.java,v 1.3 2011-03-30 15:01:48 bourgesl Exp $"
+ * "@(#) $Id: NetworkSettings.java,v 1.4 2011-04-04 16:14:07 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2011/03/30 15:01:48  bourgesl
+ * fixed socks proxy detector
+ *
  * Revision 1.2  2011/03/30 14:51:53  bourgesl
  * dump all known net properties to help us to debug proxy problems
  *
@@ -15,6 +18,7 @@
  */
 package fr.jmmc.mcs.util;
 
+import fr.jmmc.mcs.gui.Introspection;
 import java.lang.reflect.Method;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -247,12 +251,7 @@ public final class NetworkSettings
     {
         String result = null;
         if (netPropertiesGetMethod != null) {
-            try {
-                result = (String) netPropertiesGetMethod.invoke(null, new Object[]{key});
-
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "unable to access to NetProperties.get(String) : ", e);
-            }
+            result = (String) Introspection.getMethodValue(netPropertiesGetMethod, new Object[]{key});
         }
         return result;
     }
@@ -263,15 +262,6 @@ public final class NetworkSettings
      */
     private static Method getNetPropertiesGetMethod()
     {
-        try {
-            // Look around for the sun NetProperties class...
-            final Class<?> netPropertiesClass = Class.forName("sun.net.NetProperties");
-
-            return netPropertiesClass.getDeclaredMethod("get", new Class<?>[]{String.class});
-
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "unable to access to NetProperties : ", e);
-        }
-        return null;
+        return Introspection.getMethod("sun.net.NetProperties", "get", new Class<?>[]{String.class});
     }
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.40 2011-03-30 09:20:04 bourgesl Exp $"
+ * "@(#) $Id: Preferences.java,v 1.41 2011-04-04 13:42:39 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2011/03/30 09:20:04  bourgesl
+ * javadoc
+ *
  * Revision 1.39  2011/03/30 09:08:24  bourgesl
  * added dumpProperties(Properties) to have sorted properties
  *
@@ -146,6 +149,7 @@ package fr.jmmc.mcs.util;
 import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -316,16 +320,20 @@ public abstract class Preferences extends Observable
             try {
                 inputFile = new FileInputStream(_fullFilepath);
             } catch (FileNotFoundException fnfe) {
-                _logger.warning("Cannot load '" + _fullFilepath + "' : " + fnfe);
+                if (_logger.isLoggable(Level.WARNING)) {
+                    _logger.warning("Cannot load '" + _fullFilepath + "' : " + fnfe);
+                }
             }
-            _logger.info("Loading '" + _fullFilepath + "' preference file.");
+            if (_logger.isLoggable(Level.INFO)) {
+                _logger.info("Loading '" + _fullFilepath + "' preference file.");
+            }
 
             try {
                 _currentProperties.loadFromXML(inputFile);
             } catch (InvalidPropertiesFormatException ipfe) {
-                _logger.severe("Cannot parse '" + _fullFilepath + "' preference file : " + ipfe);
+                _logger.log(Level.SEVERE, "Cannot parse '" + _fullFilepath + "' preference file : ", ipfe);
             } catch (IOException ioe) {
-                _logger.warning("Cannot input/ouput to'" + _fullFilepath + "' : " + ioe);
+                _logger.log(Level.WARNING, "Cannot input/ouput to'" + _fullFilepath + "' : ", ioe);
             }
 
             // Getting loaded preference file version number
@@ -335,29 +343,27 @@ public abstract class Preferences extends Observable
             try {
                 loadedPreferenceVersion = getPreferenceAsInt(PREFERENCES_VERSION_NUMBER_ID);
             } catch (NumberFormatException nfe) {
-                _logger.log(Level.WARNING,
-                        "Cannot get loaded preference version number.", nfe);
+                _logger.log(Level.WARNING, "Cannot get loaded preference version number.", nfe);
             }
 
-            _logger.fine("Loaded preference version is '"
-                    + loadedPreferenceVersion
-                    + "', current preferences version number is '"
-                    + preferencesVersionNumber + "'.");
+            if (_logger.isLoggable(Level.FINE)) {
+                _logger.fine("Loaded preference version is '" + loadedPreferenceVersion
+                        + "', current preferences version number is '" + preferencesVersionNumber + "'.");
+            }
 
             // If the preference file version is older than the current default version
             if (loadedPreferenceVersion < preferencesVersionNumber) {
-                _logger.warning(
-                        "Loaded an 'anterior to current version' preference file, will try to update preference file.");
+                _logger.warning("Loaded an 'anterior to current version' preference file, will try to update preference file.");
 
                 // Handle version differences
                 int currentPreferenceVersion = loadedPreferenceVersion;
                 boolean shouldWeContinue = true;
 
-                while ((shouldWeContinue == true)
-                        && (currentPreferenceVersion < preferencesVersionNumber)) {
-                    _logger.fine(
-                            "Trying to update loaded preferences from revision '"
-                            + currentPreferenceVersion + "'.");
+                while ((shouldWeContinue == true) && (currentPreferenceVersion < preferencesVersionNumber)) {
+                    if (_logger.isLoggable(Level.FINE)) {
+                        _logger.fine("Trying to update loaded preferences from revision '"
+                                + currentPreferenceVersion + "'.");
+                    }
 
                     shouldWeContinue = updatePreferencesVersion(currentPreferenceVersion);
 
@@ -365,7 +371,7 @@ public abstract class Preferences extends Observable
                 }
 
                 // If update went wrong (or was not handled)
-                if (shouldWeContinue == false) {
+                if (!shouldWeContinue) {
                     // Use default values instead
                     resetToDefaultPreferences();
                 } else {
@@ -373,25 +379,21 @@ public abstract class Preferences extends Observable
                         // Otherwise save updated values to file
                         saveToFile();
                     } catch (PreferencesException pe) {
-                        _logger.log(Level.WARNING,
-                                "Cannot save preference to disk: ", pe);
+                        _logger.log(Level.WARNING, "Cannot save preference to disk: ", pe);
                     }
                 }
             }
 
             // If the preference file version is newer the the current default version
             if (loadedPreferenceVersion > preferencesVersionNumber) {
-                _logger.warning(
-                        "Loaded a 'posterior to current version' preference file, so fall back to default values instead.");
+                _logger.warning("Loaded a 'posterior to current version' preference file, so fall back to default values instead.");
 
                 // Use current default values instead
                 resetToDefaultPreferences();
             }
-        } catch (Exception ex) {
+        } catch (Exception e) {
             // Do nothing just default values will be into the preferences.
-            _logger.log(Level.FINE,
-                    "Failed loading preference file, so fall back to default values instead : ",
-                    ex);
+            _logger.log(Level.FINE, "Failed loading preference file, so fall back to default values instead : ", e);
 
             resetToDefaultPreferences();
         }
@@ -428,7 +430,10 @@ public abstract class Preferences extends Observable
         try {
             FileOutputStream outputFile = new FileOutputStream(_fullFilepath);
             _currentProperties.storeToXML(outputFile, comment);
-            _logger.info("Saving '" + _fullFilepath + "' preference file.");
+
+            if (_logger.isLoggable(Level.INFO)) {
+                _logger.info("Saving '" + _fullFilepath + "' preference file.");
+            }
             outputFile.close();
         } catch (Exception e) {
             throw new PreferencesException("Cannot store preferences to file", e);
@@ -536,7 +541,9 @@ public abstract class Preferences extends Observable
         String currentValue = properties.getProperty(preferenceName);
         if (currentValue != null && currentValue.equals(preferenceValue.toString())) {
             // nothing to do
-            _logger.finest("Preference '" + preferenceName + "' not changed");
+            if (_logger.isLoggable(Level.FINEST)) {
+                _logger.finest("Preference '" + preferenceName + "' not changed");
+            }
             return;
         }
 
@@ -775,7 +782,9 @@ public abstract class Preferences extends Observable
     {
         _logger.entering(_className, "removePreference");
 
-        _logger.fine("Removing preference '" + preferenceName + "'.");
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("Removing preference '" + preferenceName + "'.");
+        }
 
         // Get the given preference order, if any
         int preferenceOrder = getPreferenceOrder(preferenceName);
@@ -790,8 +799,9 @@ public abstract class Preferences extends Observable
                 preferencesPrefix = preferenceName.substring(0, indexOfLastDot);
             }
 
-            _logger.finer("Removing preference from ordered group '"
-                    + preferencesPrefix + "'.");
+            if (_logger.isLoggable(Level.FINER)) {
+                _logger.finer("Removing preference from ordered group '" + preferencesPrefix + "'.");
+            }
 
             // For each group preferences
             Enumeration orderedPreferences = getPreferences(preferencesPrefix);
@@ -804,10 +814,12 @@ public abstract class Preferences extends Observable
                 if (preferenceIndex > preferenceOrder) {
                     int destinationIndex = preferenceIndex - 1;
 
-                    _logger.finest("Re-ordering preference '"
-                            + orderedPreferenceName + "' from index '"
-                            + preferenceIndex + "' to index '" + destinationIndex
-                            + "'.");
+                    if (_logger.isLoggable(Level.FINEST)) {
+                        _logger.finest("Re-ordering preference '"
+                                + orderedPreferenceName + "' from index '"
+                                + preferenceIndex + "' to index '" + destinationIndex
+                                + "'.");
+                    }
 
                     setPreferenceOrder(orderedPreferenceName, destinationIndex);
                 }
@@ -906,8 +918,9 @@ public abstract class Preferences extends Observable
         // MAC OS X : [USER_HOME]/Library/Preferences/fr.jmmc..._rev4.properties
         _fullFilepath += getPreferenceFilename();
 
-        _logger.fine("Computed preference file path = '" + _fullFilepath
-                + "'.");
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("Computed preference file path = '" + _fullFilepath + "'.");
+        }
 
         return _fullFilepath;
     }
@@ -954,13 +967,13 @@ public abstract class Preferences extends Observable
             super(parentClassName, "savePreferences");
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
+        public void actionPerformed(ActionEvent ae)
         {
             try {
                 saveToFile();
             } catch (PreferencesException pe) {
                 // @todo handle this error at user level
-                pe.printStackTrace();
+                _logger.log(Level.WARNING, "saveToFile failure : ", pe);
             }
         }
     }
@@ -973,13 +986,13 @@ public abstract class Preferences extends Observable
             super(parentClassName, "restorePreferences");
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
+        public void actionPerformed(final ActionEvent ae)
         {
             try {
                 resetToDefaultPreferences();
-            } catch (Exception exc) {
+            } catch (Exception e) {
                 // @todo handle this error at user level
-                exc.printStackTrace();
+                _logger.log(Level.WARNING, "resetToDefaultPreferences failure : ", e);
             }
         }
     }

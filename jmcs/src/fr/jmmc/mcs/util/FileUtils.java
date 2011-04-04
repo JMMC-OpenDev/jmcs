@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileUtils.java,v 1.6 2011-02-14 11:08:52 mella Exp $"
+ * "@(#) $Id: FileUtils.java,v 1.7 2011-04-04 13:43:33 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2011/02/14 11:08:52  mella
+ * Closes fluxes in copy method even if one exception occurs
+ *
  * Revision 1.5  2011/02/13 17:03:39  mella
  * javadoc
  *
@@ -54,6 +57,8 @@
  */
 package fr.jmmc.mcs.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -65,6 +70,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 
@@ -76,7 +82,8 @@ import java.util.logging.Logger;
  *
  * @author bourgesl, mella
  */
-public final class FileUtils {
+public final class FileUtils
+{
 
     /** Class Name */
     private static final String className = FileUtils.class.getName();
@@ -88,7 +95,8 @@ public final class FileUtils {
     /**
      * Forbidden constructor
      */
-    private FileUtils() {
+    private FileUtils()
+    {
         // no-op
     }
 
@@ -97,7 +105,8 @@ public final class FileUtils {
      * @param file file to use
      * @return the extension of the file (without the dot char) or null
      */
-    public static String getExtension(final File file) {
+    public static String getExtension(final File file)
+    {
         final String fileName = file.getName();
         final int i = fileName.lastIndexOf('.');
 
@@ -117,7 +126,8 @@ public final class FileUtils {
      *
      * @throws IllegalStateException if the file is not found
      */
-    public static URL getResource(final String classpathLocation) throws IllegalStateException {
+    public static URL getResource(final String classpathLocation) throws IllegalStateException
+    {
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("getResource : " + classpathLocation);
         }
@@ -139,7 +149,8 @@ public final class FileUtils {
      *
      * @throws IllegalStateException if the file is not found or an I/O exception occured
      */
-    public static String readFile(final String classpathLocation) throws IllegalStateException {
+    public static String readFile(final String classpathLocation) throws IllegalStateException
+    {
         final URL url = getResource(classpathLocation);
 
         try {
@@ -158,7 +169,8 @@ public final class FileUtils {
      *
      * @throws IOException if an I/O exception occured
      */
-    public static String readFile(final File file) throws IOException {
+    public static String readFile(final File file) throws IOException
+    {
         return readFile(new FileInputStream(file), (int) file.length());
     }
 
@@ -171,12 +183,13 @@ public final class FileUtils {
      *
      * @throws IOException if an I/O exception occured
      */
-    private static String readFile(final InputStream inputStream, final int bufferCapacity) throws IOException {
+    private static String readFile(final InputStream inputStream, final int bufferCapacity) throws IOException
+    {
 
         String result = null;
-
+        BufferedReader bufferedReader = null;
         try {
-            final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
             final StringBuilder sb = new StringBuilder(bufferCapacity);
 
@@ -193,13 +206,7 @@ public final class FileUtils {
             result = sb.toString();
 
         } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException ioe) {
-                    logger.log(Level.FINE, "close failure.", ioe);
-                }
-            }
+            closeFile(bufferedReader);
         }
         return result;
     }
@@ -211,7 +218,8 @@ public final class FileUtils {
      *
      * @throws IOException if an I/O exception occured
      */
-    public static void writeFile(final File file, final String content) throws IOException {
+    public static void writeFile(final File file, final String content) throws IOException
+    {
         final Writer w = openFile(file);
         try {
             w.write(content);
@@ -228,8 +236,25 @@ public final class FileUtils {
      *
      * @throws IOException if an I/O exception occured
      */
-    public static Writer openFile(final File file) throws IOException {
+    public static Writer openFile(final File file) throws IOException
+    {
         return new BufferedWriter(new FileWriter(file));
+    }
+
+    /**
+     * Close the given reader
+     *
+     * @param r reader to close
+     */
+    public static void closeFile(final Reader r)
+    {
+        if (r != null) {
+            try {
+                r.close();
+            } catch (IOException ioe) {
+                logger.log(Level.FINE, "IO close failure.", ioe);
+            }
+        }
     }
 
     /**
@@ -237,7 +262,8 @@ public final class FileUtils {
      *
      * @param w writer to close
      */
-    public static void closeFile(final Writer w) {
+    public static void closeFile(final Writer w)
+    {
         if (w != null) {
             try {
                 w.close();
@@ -248,29 +274,60 @@ public final class FileUtils {
     }
 
     /**
-     * Copy file.
+     * Close the given input stream
+     *
+     * @param in input stream to close
+     */
+    public static void closeStream(final InputStream in)
+    {
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException ioe) {
+                logger.log(Level.FINE, "IO close failure.", ioe);
+            }
+        }
+    }
+
+    /**
+     * Close the given output stream
+     *
+     * @param out output stream to close
+     */
+    public static void closeStream(final OutputStream out)
+    {
+        if (out != null) {
+            try {
+                out.close();
+            } catch (IOException ioe) {
+                logger.log(Level.FINE, "IO close failure.", ioe);
+            }
+        }
+    }
+
+    /**
+     * Copy file
      * @param src source file
      * @param dst destination file
-     * @throws IOException
-     *   if io problem occurs
-     * @throws FileNotFoundException
-     *   if input file is not found
+     * @throws IOException if io problem occurs
+     * @throws FileNotFoundException if input file is not found
      */
-    public static void copy(File src, File dst) throws IOException, FileNotFoundException {
-        InputStream in = new FileInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
+    public static void copy(final File src, final File dst) throws IOException, FileNotFoundException
+    {
+        final InputStream in = new BufferedInputStream(new FileInputStream(src));
+        final OutputStream out = new BufferedOutputStream(new FileOutputStream(dst));
 
         // Transfer bytes from in to out
         try {
-            byte[] buf = new byte[65536];
+            final byte[] buf = new byte[65536];
 
             int len;
             while ((len = in.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }
         } finally {
-            in.close();
-            out.close();
+            closeStream(in);
+            closeStream(out);
         }
     }
 
@@ -296,24 +353,29 @@ public final class FileUtils {
      *          java.lang.SecurityManager#checkWrite(java.lang.String)}</code>
      *          method does not allow a file to be created
      */
-    public static File getTempFile(String prefix, String suffix) {
+    public static File getTempFile(final String prefix, final String suffix)
+    {
         // Prevent exception thrown by createTempFile that requires one prefix and
         // suffix longer than 3 chars.
-        String p = prefix;
-        String s = suffix;
+        final String p;
         if (prefix.length() < 3) {
             p = prefix + "___";
+        } else {
+            p = prefix;
         }
+        final String s;
         if (suffix.length() < 3) {
             s = "___" + suffix;
+        } else {
+            s = suffix;
         }
 
         File file = null;
         try {
             file = File.createTempFile(p, s);
             file.deleteOnExit();
-        } catch (IOException ex) {
-            throw new IllegalStateException("unable to create a temporary file", ex);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("unable to create a temporary file", ioe);
         }
         return file;
     }
@@ -325,8 +387,9 @@ public final class FileUtils {
      * @param filename the short name to use in the computation of the temporary filename
      * @return the temporary filename
      */
-    public static File getTempFile(String filename) {
-        File file = new File(getTempDir(), filename);
+    public static File getTempFile(final String filename)
+    {
+        final File file = new File(getTempDir(), filename);
         file.deleteOnExit();
         return file;
     }
@@ -336,7 +399,8 @@ public final class FileUtils {
      * 
      * @return the tmp directory name
      */
-    private static String getTempDir() {
+    private static String getTempDir()
+    {
         return System.getProperty("java.io.tmpdir");
     }
 }

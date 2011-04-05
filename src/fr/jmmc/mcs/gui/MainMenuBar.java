@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.47 2011-03-14 16:43:47 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.48 2011-04-05 15:20:52 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.47  2011/03/14 16:43:47  bourgesl
+ * always show the Interop Menu
+ *
  * Revision 1.46  2011/03/02 09:03:34  bourgesl
  * Interop menu is now ready for production
  *
@@ -194,8 +197,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultEditorKit;
 
 
@@ -523,15 +528,18 @@ public class MainMenuBar extends JMenuBar
                   if (_logger.isLoggable(Level.INFO)) {
                     _logger.info("use Look and Feel : " + className);
                   }
-                  UIManager.setLookAndFeel(className);
+
+                  final LookAndFeel newLaf = (LookAndFeel)Introspection.getInstance(className);
+
+                  UIManager.setLookAndFeel(newLaf);
 
                   final Frame mainFrame = App.getFrame();
 
                   SwingUtilities.updateComponentTreeUI(mainFrame);
                   mainFrame.pack();
 
-                } catch (Exception e) {
-                  throw new RuntimeException("Change LAF failed !", e);
+                } catch (UnsupportedLookAndFeelException ulafe) {
+                  throw new RuntimeException("Change LAF failed : " + className, ulafe);
                 }
               }
             }
@@ -845,6 +853,7 @@ public class MainMenuBar extends JMenuBar
             // Set the menu bar under Mac OS X
             System.setProperty("apple.laf.useScreenMenuBar", "true");
 
+            // TODO : use Introspection class instead:
             try
             {
                 Class   osxAdapter     = this.getClass().getClassLoader()

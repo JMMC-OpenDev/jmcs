@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Introspection.java,v 1.7 2011-04-04 16:13:33 bourgesl Exp $"
+ * "@(#) $Id: Introspection.java,v 1.8 2011-04-05 15:20:27 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2011/04/04 16:13:33  bourgesl
+ * exception handling
+ *
  * Revision 1.6  2008/09/02 12:31:00  lafrasse
  * Code, documentation and logging cleanup.
  *
@@ -41,7 +44,7 @@ import java.util.logging.Logger;
  * seeked class. and the method name. Or you can also discover at runtime if a
  * field exists, retireve a method execution result, etc ...
  */
-public class Introspection
+public final class Introspection
 {
 
     /** Logger */
@@ -101,9 +104,8 @@ public class Introspection
      */
     public static Package getClassPackage(final String classPath)
     {
-        final Package packageSearched = getClass(classPath).getPackage();
-
-        return packageSearched;
+        final Class<?> clazz = getClass(classPath);
+        return (clazz != null) ? clazz.getPackage() : null;
     }
 
     /**
@@ -111,7 +113,7 @@ public class Introspection
      *
      * @param seekedClass class.
      *
-     * @return found class package, null otherwise.
+     * @return found class package.
      */
     public static Package getClassPackage(final Class<?> seekedClass)
     {
@@ -128,7 +130,8 @@ public class Introspection
      */
     public static String getClassPackageName(final String classPath)
     {
-        return getClassPackage(classPath).getName();
+        final Package p = getClassPackage(classPath);
+        return (p != null) ? p.getName() : null;
     }
 
     /**
@@ -136,7 +139,7 @@ public class Introspection
      *
      * @param seekedClass class.
      *
-     * @return found class package name, null otherwise.
+     * @return found class package name.
      */
     public static String getClassPackageName(final Class<?> seekedClass)
     {
@@ -152,17 +155,17 @@ public class Introspection
      */
     public static Object getInstance(final String classPath)
     {
-        Object instance = null;
-
-        try {
-            instance = getClass(classPath).newInstance();
-        } catch (InstantiationException ie) {
-            _logger.log(Level.WARNING, "Cannot get instance of class '" + classPath + "'", ie);
-        } catch (IllegalAccessException iae) {
-            _logger.log(Level.WARNING, "Cannot get instance of class '" + classPath + "'", iae);
+        final Class<?> clazz = getClass(classPath);
+        if (clazz != null) {
+            try {
+                return clazz.newInstance();
+            } catch (InstantiationException ie) {
+                _logger.log(Level.WARNING, "Cannot get instance of class '" + classPath + "'", ie);
+            } catch (IllegalAccessException iae) {
+                _logger.log(Level.WARNING, "Cannot get instance of class '" + classPath + "'", iae);
+            }
         }
-
-        return instance;
+        return null;
     }
 
     /**
@@ -175,7 +178,8 @@ public class Introspection
      */
     public static Method[] getMethods(final String classPath)
     {
-        return getClass(classPath).getMethods();
+        final Class<?> clazz = getClass(classPath);
+        return (clazz != null) ? clazz.getMethods() : null;
     }
 
     /**
@@ -206,14 +210,16 @@ public class Introspection
     public static Method getMethod(final String classPath, final String methodName,
             final Class<?>[] parameters)
     {
-        Method methodSearched = null;
-        try {
-            methodSearched = getClass(classPath).getMethod(methodName, parameters);
-        } catch (NoSuchMethodException nsme) {
-            _logger.log(Level.WARNING, "Cannot find method '" + methodName + " of class '" + classPath + "'", nsme);
+        final Class<?> clazz = getClass(classPath);
+        if (clazz != null) {
+            try {
+                return clazz.getMethod(methodName, parameters);
+            } catch (NoSuchMethodException nsme) {
+                _logger.log(Level.WARNING, "Cannot find method '" + methodName + " of class '" + classPath + "'", nsme);
+            }
         }
 
-        return methodSearched;
+        return null;
     }
 
     /**
@@ -340,19 +346,18 @@ public class Introspection
      */
     public static Object getMethodValue(final Method method, final Object instance, final Object[] arguments)
     {
-        Object value = null;
-
-        try {
-            value = method.invoke(instance, arguments);
-        } catch (IllegalAccessException iae) {
-            _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", iae);
-        } catch (IllegalArgumentException iae) {
-            _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", iae);
-        } catch (InvocationTargetException ite) {
-            _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", ite);
+        if (method != null) {
+            try {
+                return method.invoke(instance, arguments);
+            } catch (IllegalAccessException iae) {
+                _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", iae);
+            } catch (IllegalArgumentException iae) {
+                _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", iae);
+            } catch (InvocationTargetException ite) {
+                _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", ite);
+            }
         }
-
-        return value;
+        return null;
     }
 
     /**
@@ -406,7 +411,8 @@ public class Introspection
      */
     public static Field[] getFields(final String classPath)
     {
-        return getClass(classPath).getFields();
+        final Class<?> clazz = getClass(classPath);
+        return (clazz != null) ? clazz.getFields() : null;
     }
 
     /**
@@ -419,15 +425,15 @@ public class Introspection
      */
     public static Field getField(final String classPath, final String fieldName)
     {
-        Field field = null;
-
-        try {
-            field = getClass(classPath).getField(fieldName);
-        } catch (Exception ex) {
-            _logger.log(Level.WARNING, "Cannot get field '" + fieldName + "'", ex);
+        final Class<?> clazz = getClass(classPath);
+        if (clazz != null) {
+            try {
+                return clazz.getField(fieldName);
+            } catch (NoSuchFieldException nsfe) {
+                _logger.log(Level.WARNING, "Cannot get field '" + fieldName + "'", nsfe);
+            }
         }
-
-        return field;
+        return null;
     }
 
     /**
@@ -468,8 +474,10 @@ public class Introspection
 
         try {
             value = field.get(getInstance(classPath));
-        } catch (Exception ex) {
-            _logger.log(Level.WARNING, "Cannot get value of field '" + fieldName + "'", ex);
+        } catch (IllegalArgumentException iae) {
+            _logger.log(Level.WARNING, "Cannot get value of field '" + fieldName + "'", iae);
+        } catch (IllegalAccessException iae) {
+            _logger.log(Level.WARNING, "Cannot get value of field '" + fieldName + "'", iae);
         }
 
         return value;

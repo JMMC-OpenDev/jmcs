@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: NetworkSettings.java,v 1.4 2011-04-04 16:14:07 bourgesl Exp $"
+ * "@(#) $Id: NetworkSettings.java,v 1.5 2011-04-05 15:20:27 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2011/04/04 16:14:07  bourgesl
+ * use Introspection to handle properly exception concerning introspection
+ *
  * Revision 1.3  2011/03/30 15:01:48  bourgesl
  * fixed socks proxy detector
  *
@@ -249,11 +252,7 @@ public final class NetworkSettings
      */
     private static String getNetProperty(final Method netPropertiesGetMethod, final String key)
     {
-        String result = null;
-        if (netPropertiesGetMethod != null) {
-            result = (String) Introspection.getMethodValue(netPropertiesGetMethod, new Object[]{key});
-        }
-        return result;
+        return (String) Introspection.getMethodValue(netPropertiesGetMethod, new Object[]{key});
     }
 
     /**

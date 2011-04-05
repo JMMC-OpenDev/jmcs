@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Urls.java,v 1.2 2009-04-16 15:44:51 lafrasse Exp $"
+ * "@(#) $Id: Urls.java,v 1.3 2011-04-05 15:18:09 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2009/04/16 15:44:51  lafrasse
+ * Jalopization.
+ *
  * Revision 1.1  2009/02/26 13:31:17  mella
  * First revision (moved from HelpView)
  *
@@ -26,7 +29,7 @@ import java.security.Permission;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Urls
 {
@@ -81,7 +84,7 @@ public class Urls
                 throw new Exception("urlConnection is null");
             }
         }
-        catch (Exception e)
+        catch (Exception e) // skip complex case
         {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: openConnection() exception", e); }
             return url;
@@ -99,7 +102,7 @@ public class Urls
                 throw new Exception("urlConnectionPermission is null");
             }
         }
-        catch (Exception e)
+        catch (Exception e) // skip complex case
         {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: getPermission() exception", e); }
             return url;

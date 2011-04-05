@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: HelpView.java,v 1.18 2010-01-14 13:20:38 bourgesl Exp $"
+ * "@(#) $Id: HelpView.java,v 1.19 2011-04-05 15:18:09 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2010/01/14 13:20:38  bourgesl
+ * No exception logged if the helpset url is null
+ *
  * Revision 1.17  2009/04/16 15:44:51  lafrasse
  * Jalopization.
  *
@@ -197,7 +200,7 @@ public class HelpView
             _helpBroker.setLocation(WindowCenterer.getCenteringPoint(
                     _helpBroker.getSize()));
         }
-        catch (Exception ex)
+        catch (Exception ex) // skip complex case
         {
             if (_logger.isLoggable(Level.SEVERE)) {
                 _logger.log(Level.SEVERE,

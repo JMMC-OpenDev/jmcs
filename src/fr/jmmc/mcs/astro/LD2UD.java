@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: LD2UD.java,v 1.20 2011-03-10 13:41:02 bourgesl Exp $"
+ * "@(#) $Id: LD2UD.java,v 1.21 2011-04-05 15:18:08 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2011/03/10 13:41:02  bourgesl
+ * optimize loops in searchCoeff (break)
+ *
  * Revision 1.19  2011/03/10 08:09:07  mella
  * Improve API and efficiency avoiding duplicated Sptype instances
  *
@@ -133,7 +136,7 @@ public final class LD2UD
         try {
             System.out.println(ALX.ld2ud(Double.parseDouble(args[0]), args[1]));
             System.exit(0);
-        } catch (Exception e) {
+        } catch (Exception e) { // main
             System.err.println(e);
             System.err.println("Usage: jmcsLD2UD <limb darkened diameter> <spectral type>");
         }

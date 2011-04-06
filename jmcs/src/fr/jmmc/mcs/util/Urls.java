@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Urls.java,v 1.3 2011-04-05 15:18:09 bourgesl Exp $"
+ * "@(#) $Id: Urls.java,v 1.4 2011-04-06 15:44:19 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2011/04/05 15:18:09  bourgesl
+ * added comments
+ *
  * Revision 1.2  2009/04/16 15:44:51  lafrasse
  * Jalopization.
  *
@@ -17,22 +20,28 @@
 package fr.jmmc.mcs.util;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import java.security.Permission;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * DOCUMENT ME!
- *
- * @author $author$
- * @version $Revision: 1.3 $
+ * This class contains URL related utility methods.
  */
 public class Urls
 {
+
+    /** Class logger */
+    private static final Logger logger = Logger.getLogger(Urls.class.getName());
+    /** URL encoding use UTF-8 */
+    private static final String URL_ENCODING = "UTF-8";
+
     /**
      * http://forums.sun.com/thread.jspa?messageID=10522645
      *
@@ -42,8 +51,7 @@ public class Urls
      */
     public static URL fixJarURL(URL url)
     {
-        if (url == null)
-        {
+        if (url == null) {
             return null;
         }
 
@@ -51,8 +59,7 @@ public class Urls
         String originalURLProtocol = url.getProtocol();
 
         // if (log.isDebugEnabled()) { log.debug(method + " examining '" + originalURLProtocol + "' protocol url: " + url); }
-        if ("jar".equalsIgnoreCase(originalURLProtocol) == false)
-        {
+        if (!"jar".equalsIgnoreCase(originalURLProtocol)) {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: URL is not 'jar' protocol: " + url); }
             return url;
         }
@@ -63,8 +70,7 @@ public class Urls
         // if (log.isDebugEnabled()) { log.debug(method + " using originalURLString: " + originalURLString); }
         int bangSlashIndex = originalURLString.indexOf("!/");
 
-        if (bangSlashIndex > -1)
-        {
+        if (bangSlashIndex > -1) {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: originalURLString already has bang-slash: " + originalURLString); }
             return url;
         }
@@ -75,16 +81,13 @@ public class Urls
         // if (log.isDebugEnabled()) { log.debug(method + " using originalURLPath: " + originalURLPath); }
         URLConnection urlConnection;
 
-        try
-        {
-            urlConnection      = url.openConnection();
+        try {
+            urlConnection = url.openConnection();
 
-            if (urlConnection == null)
-            {
+            if (urlConnection == null) {
                 throw new Exception("urlConnection is null");
             }
-        }
-        catch (Exception e) // skip complex case
+        } catch (Exception e) // skip complex case
         {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: openConnection() exception", e); }
             return url;
@@ -93,16 +96,13 @@ public class Urls
         // if (log.isDebugEnabled()) { log.debug(method + " using urlConnection: " + urlConnection); }
         Permission urlConnectionPermission;
 
-        try
-        {
+        try {
             urlConnectionPermission = urlConnection.getPermission();
 
-            if (urlConnectionPermission == null)
-            {
+            if (urlConnectionPermission == null) {
                 throw new Exception("urlConnectionPermission is null");
             }
-        }
-        catch (Exception e) // skip complex case
+        } catch (Exception e) // skip complex case
         {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: getPermission() exception", e); }
             return url;
@@ -111,8 +111,7 @@ public class Urls
         // if (log.isDebugEnabled()) { log.debug(method + " using urlConnectionPermission: " + urlConnectionPermission); }
         String urlConnectionPermissionName = urlConnectionPermission.getName();
 
-        if (urlConnectionPermissionName == null)
-        {
+        if (urlConnectionPermissionName == null) {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: urlConnectionPermissionName is null"); }
             return url;
         }
@@ -120,8 +119,7 @@ public class Urls
         // if (log.isDebugEnabled()) { log.debug(method + " using urlConnectionPermissionName: " + urlConnectionPermissionName); }
         File file = new File(urlConnectionPermissionName);
 
-        if (file.exists() == false)
-        {
+        if (!file.exists()) {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: file does not exist: " + file); }
             return url;
         }
@@ -129,28 +127,60 @@ public class Urls
         // if (log.isDebugEnabled()) { log.debug(method + " using file: " + file); }
         String newURLStr;
 
-        try
-        {
-            newURLStr = "jar:" + file.toURL().toExternalForm() + "!/" +
-                originalURLPath;
-        }
-        catch (MalformedURLException e)
-        {
+        try {
+            newURLStr = "jar:" + file.toURL().toExternalForm() + "!/"
+                    + originalURLPath;
+        } catch (MalformedURLException mue) {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: exception creating newURLStr", e); }
             return url;
         }
 
         // if (log.isDebugEnabled()) { log.debug(method + " using newURLStr: " + newURLStr); }
-        try
-        {
+        try {
             url = new URL(newURLStr);
-        }
-        catch (MalformedURLException e)
-        {
+        } catch (MalformedURLException mue) {
             // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: exception creating new URL", e); }
             return url;
         }
 
         return url;
+    }
+
+    /**
+     * Parse the given url
+     * @param url url as string
+     * @return URL object
+     * @throws IllegalStateException if the url is malformed
+     */
+    public static URL parseURL(final String url) throws IllegalStateException
+    {
+        try {
+            return new URL(url);
+        } catch (MalformedURLException mue) {
+            throw new IllegalStateException("Cannot parse url " + url, mue);
+        }
+    }
+
+    /**
+     * Encode the given query string into <code>application/x-www-form-urlencoded</code>
+     * @param queryString query string to encode
+     * @return encoded query string
+     * @throws IllegalStateException if the UTF-8 encoding is not supported
+     */
+    public static String encode(final String queryString) throws IllegalStateException
+    {
+        try {
+            return URLEncoder.encode(queryString, URL_ENCODING);
+        } catch (UnsupportedEncodingException uee) {
+            throw new IllegalStateException("Unsupported encoding : " + URL_ENCODING, uee);
+        }
+    }
+
+    /**
+     * Private constructor
+     */
+    private Urls()
+    {
+        super();
     }
 }

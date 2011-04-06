@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.22 2011-03-30 09:05:40 bourgesl Exp $"
+ * "@(#) $Id: Star.java,v 1.23 2011-04-06 15:38:03 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2011/03/30 09:05:40  bourgesl
+ * exception handling
+ * code format
+ *
  * Revision 1.21  2010/10/14 12:18:53  bourgesl
  * clear when an error occurs (shared model)
  * trace in fireNotification
@@ -217,7 +221,9 @@ public class Star extends Observable
         if (stringValue == null) {
             final Double doubleValue = _doubleContent.get(property);
 
-            if (doubleValue != null) {
+            if (doubleValue == null) {
+                return "";
+            } else {
                 stringValue = doubleValue.toString();
             }
         }
@@ -258,8 +264,6 @@ public class Star extends Observable
                 clear();
 
                 _cdsSimbadErrorMessage = message;
-
-                _logger.severe("CDS Simbad problem : " + _cdsSimbadErrorMessage);
 
                 fireNotification(Notification.QUERY_ERROR);
             }

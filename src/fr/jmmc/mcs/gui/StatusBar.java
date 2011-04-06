@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StatusBar.java,v 1.10 2010-10-11 13:28:52 lafrasse Exp $"
+ * "@(#) $Id: StatusBar.java,v 1.11 2011-04-06 15:42:13 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2010/10/11 13:28:52  lafrasse
+ * Ensures that GUI updates are done in EDT.
+ *
  * Revision 1.9  2010/05/20 13:13:35  mella
  * Open the application web page by one logo click
  *
@@ -107,7 +110,7 @@ public class StatusBar extends JPanel {
          * Add a space on the right bottom angle because Mac OS X corner is
          * already decored with its resize handle
          */
-        if (SystemUtils.IS_OS_MAC_OSX == true) {
+        if (SystemUtils.IS_OS_MAC_OSX) {
             hBox.add(Box.createHorizontalStrut(14));
         }
 

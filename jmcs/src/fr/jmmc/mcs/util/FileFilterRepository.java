@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileFilterRepository.java,v 1.5 2010-12-13 16:37:24 mella Exp $"
+ * "@(#) $Id: FileFilterRepository.java,v 1.6 2011-04-06 15:42:19 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/12/13 16:37:24  mella
+ * Define some static getter
+ * Use HashMap instead of Hashtables
+ * Handle new MimeType Enums
+ *
  * Revision 1.4  2010/09/30 13:28:35  bourgesl
  * changed warning log to fine level
  *
@@ -288,7 +293,7 @@ class GenericFileFilter extends FileFilter
             String fileName = currentFile.getName();
 
             // If current file is not reguler (e.g directory, links, ...)
-            if (currentFile.isFile() == false)
+            if (!currentFile.isFile())
             {
                 if (_logger.isLoggable(Level.FINEST)) {
                   _logger.finest("Accepting non-regular file '" + fileName +

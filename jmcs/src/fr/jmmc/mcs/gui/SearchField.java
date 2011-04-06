@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SearchField.java,v 1.5 2010-10-14 12:12:19 bourgesl Exp $"
+ * "@(#) $Id: SearchField.java,v 1.6 2011-04-06 15:42:06 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/10/14 12:12:19  bourgesl
+ * minor code cleanup
+ *
  * Revision 1.4  2009/10/08 14:09:11  lafrasse
  * Moved form fr.jmmc.mcs.astro.star.StarResolverWidget .
  * Refined documentation and layout.
@@ -93,7 +96,7 @@ public class SearchField extends JTextField {
      */
     private void initBorder() {
         // On Mac OS X, simply use the OS specific search textfield widget
-        if (SystemUtils.IS_OS_MAC_OSX == true) {
+        if (SystemUtils.IS_OS_MAC_OSX) {
             // http://developer.apple.com/mac/library/technotes/tn2007/tn2196.html#//apple_ref/doc/uid/DTS10004439
             putClientProperty("JTextField.variant", "search");
             putClientProperty("JTextField.FindAction",
@@ -138,7 +141,7 @@ public class SearchField extends JTextField {
     @Override
     protected void paintComponent(Graphics g) {
         // On anything but Mac OS X
-        if (SystemUtils.IS_OS_MAC_OSX == false) {
+        if (!SystemUtils.IS_OS_MAC_OSX) {
             int width = getWidth();
             int height = getHeight();
 
@@ -279,7 +282,7 @@ public class SearchField extends JTextField {
         private boolean isOverButton(MouseEvent e) {
             // If the button is down, we might be outside the component
             // without having had mouseExited invoked.
-            if (contains(e.getPoint()) == false) {
+            if (!contains(e.getPoint())) {
                 return false;
             }
 
@@ -288,7 +291,7 @@ public class SearchField extends JTextField {
             Rectangle innerArea = SwingUtilities.calculateInnerArea(SearchField.this,
                     null);
 
-            return (innerArea.contains(e.getPoint()) == false);
+            return (!innerArea.contains(e.getPoint()));
         }
 
         @Override

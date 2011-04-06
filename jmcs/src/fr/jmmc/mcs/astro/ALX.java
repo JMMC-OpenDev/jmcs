@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.30 2011-04-04 16:13:33 bourgesl Exp $"
+ * "@(#) $Id: ALX.java,v 1.31 2011-04-06 15:37:09 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2011/04/04 16:13:33  bourgesl
+ * exception handling
+ *
  * Revision 1.29  2011/04/04 15:29:59  bourgesl
  * exception handling
  * minor coding fixes
@@ -421,7 +424,7 @@ public class ALX
                 }
             } else {
                 // if a luminosiy class was just entirely found
-                if (luminosityClassFound == true) {
+                if (luminosityClassFound) {
                     // Store the luminosity class as a result
                     foundLuminosityClasses.add(foundLuminosityClass);
 

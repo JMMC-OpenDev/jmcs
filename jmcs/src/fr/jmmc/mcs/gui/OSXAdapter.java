@@ -58,7 +58,7 @@ import javax.swing.JFrame;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class OSXAdapter extends ApplicationAdapter
 {
@@ -152,7 +152,7 @@ public class OSXAdapter extends ApplicationAdapter
              * routine that chooses whether or not to quit, so the functionality is identical
              * on all platforms.  This example simply cancels the AppleEvent-based quit and
              * defers to that universal method. */
-            if (alreadyQuitting == false)
+            if (!alreadyQuitting)
             {
                 alreadyQuitting = true; // Prevent handleQuit() to be called twice (known Apple bug)
                 _registrar.getQuitAction().actionPerformed(null);

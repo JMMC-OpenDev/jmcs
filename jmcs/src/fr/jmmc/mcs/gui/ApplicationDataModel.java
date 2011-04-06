@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ApplicationDataModel.java,v 1.18 2011-04-04 15:30:13 bourgesl Exp $"
+ * "@(#) $Id: ApplicationDataModel.java,v 1.19 2011-04-06 15:40:39 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2011/04/04 15:30:13  bourgesl
+ * exception handling
+ *
  * Revision 1.17  2009/05/13 09:24:24  lafrasse
  * Added a generic "Hot News (RSS Feed)" Help menu item.
  *
@@ -67,6 +70,8 @@ package fr.jmmc.mcs.gui;
 import fr.jmmc.mcs.gui.castor.ApplicationData;
 import fr.jmmc.mcs.gui.castor.Compilation;
 import fr.jmmc.mcs.gui.castor.Program;
+import fr.jmmc.mcs.util.FileUtils;
+import java.io.IOException;
 
 import java.io.InputStreamReader;
 
@@ -81,6 +86,8 @@ import java.util.GregorianCalendar;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.ValidationException;
 
 
 /**
@@ -108,18 +115,35 @@ public class ApplicationDataModel
     /** Main web page URL */
     private String _mainWebPageURL = "http://www.jmmc.fr/";
 
-    /** Constructor */
-    public ApplicationDataModel(URL dataModelURL) throws Exception
+    /** 
+     * Public constructor
+     * @param dataModelURL location of the file to load
+     * @throws IllegalStateException if the given URL can not be loaded
+     */
+    public ApplicationDataModel(final URL dataModelURL) throws IllegalStateException
     {
-        _logger.fine("Loading Application data model from " + dataModelURL);
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("Loading Application data model from " + dataModelURL);
+        }
 
         // Read the XML file
-        InputStreamReader inputStreamReader;
+        InputStreamReader inputStreamReader = null;
+        try {
+            inputStreamReader               = new InputStreamReader(dataModelURL.openStream());
 
-        inputStreamReader               = new InputStreamReader(dataModelURL.openStream());
-        _applicationDataCastorModel     = ApplicationData.unmarshal(inputStreamReader);
+            _applicationDataCastorModel     = ApplicationData.unmarshal(inputStreamReader);
 
-        _logger.fine("Application data model loaded.");
+            _logger.fine("Application data model loaded.");
+
+        } catch (MarshalException me) {
+          throw new IllegalStateException("Can't read application data : " + dataModelURL, me);
+        } catch (ValidationException ve) {
+          throw new IllegalStateException("Can't read application data : " + dataModelURL, ve);
+        } catch (IOException ioe) {
+          throw new IllegalStateException("Can't read application data : " + dataModelURL, ioe);
+        } finally {
+            FileUtils.closeFile(inputStreamReader);
+        }
     }
 
     /**
@@ -154,7 +178,9 @@ public class ApplicationDataModel
      */
     public String getLogoURL()
     {
-        _logger.fine("logoUrl=" + _logoFileName);
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("logoUrl=" + _logoFileName);
+        }
 
         return _logoFileName;
     }
@@ -238,7 +264,9 @@ public class ApplicationDataModel
     public String getReleaseNotesLinkValue()
     {
         String releaseNotesLink = getLinkValue() + "/releasenotes.htm";
-        _logger.fine("ReleaseNotesLink value is :" + releaseNotesLink);
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("ReleaseNotesLink value is :" + releaseNotesLink);
+        }
 
         return releaseNotesLink;
     }
@@ -251,7 +279,9 @@ public class ApplicationDataModel
     public String getFaqLinkValue()
     {
         String faqLink = getLinkValue() + "/faq/";
-        _logger.fine("FaqLink value is :" + faqLink);
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("FaqLink value is :" + faqLink);
+        }
 
         return faqLink;
     }
@@ -268,7 +298,9 @@ public class ApplicationDataModel
 
         String hotNewsRSSFeedLink = getLinkValue() + "/" + programName +
             ".rss";
-        _logger.fine("HotNewsRSSFeedLink value is :" + hotNewsRSSFeedLink);
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("HotNewsRSSFeedLink value is :" + hotNewsRSSFeedLink);
+        }
 
         return hotNewsRSSFeedLink;
     }
@@ -379,8 +411,7 @@ public class ApplicationDataModel
         catch (ParseException pe)
         {
             _logger.log(Level.WARNING,
-                "Cannot parse date '" + compilationDate +
-                "' will use current year instead.", pe);
+                "Cannot parse date '" + compilationDate + "' will use current year instead.", pe);
 
             // Otherwise use the current year
             Calendar cal = new GregorianCalendar();

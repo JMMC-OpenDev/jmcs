@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Introspection.java,v 1.8 2011-04-05 15:20:27 bourgesl Exp $"
+ * "@(#) $Id: Introspection.java,v 1.9 2011-04-06 15:40:54 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2011/04/05 15:20:27  bourgesl
+ * exception and null handling
+ *
  * Revision 1.7  2011/04/04 16:13:33  bourgesl
  * exception handling
  *
@@ -200,7 +203,6 @@ public final class Introspection
      * Returns the seeked method with given argument list in the class
      * identified by the given class path.
      *
-     *
      * @param classPath path to the seeked class.
      * @param methodName seeked method name.
      * @param parameters seeked method parameter Class array.
@@ -212,10 +214,29 @@ public final class Introspection
     {
         final Class<?> clazz = getClass(classPath);
         if (clazz != null) {
+            return getMethod(clazz, methodName, parameters);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the seeked method with given argument list in the given class.
+     *
+     * @param clazz class.
+     * @param methodName seeked method name.
+     * @param parameters seeked method parameter Class array.
+     *
+     * @return seeked method with parameters in class, null otherwise.
+     */
+    public static Method getMethod(final Class<?> clazz, final String methodName,
+            final Class<?>[] parameters)
+    {
+        if (clazz != null) {
             try {
                 return clazz.getMethod(methodName, parameters);
             } catch (NoSuchMethodException nsme) {
-                _logger.log(Level.WARNING, "Cannot find method '" + methodName + " of class '" + classPath + "'", nsme);
+                _logger.log(Level.WARNING, "Cannot find method '" + methodName + " of class '" + clazz + "'", nsme);
             }
         }
 
@@ -366,10 +387,12 @@ public final class Introspection
      *
      * @param classPath path to the seeked class.
      * @param methodName seeked method name.
+     *
+     * @return true if invocation succeeded, false otherwise.
      */
-    public static void executeMethod(final String classPath, final String methodName)
+    public static boolean executeMethod(final String classPath, final String methodName)
     {
-        executeMethod(classPath, methodName, EMPTY_CLASS_ARRAY);
+        return executeMethod(classPath, methodName, EMPTY_CLASS_ARRAY);
     }
 
     /**
@@ -379,11 +402,13 @@ public final class Introspection
      * @param classPath path to the seeked class.
      * @param methodName seeked method name.
      * @param parameters parameters array.
+     *
+     * @return true if invocation succeeded, false otherwise.
      */
-    public static void executeMethod(final String classPath, final String methodName,
+    public static boolean executeMethod(final String classPath, final String methodName,
             final Class<?>[] parameters)
     {
-        executeMethod(classPath, methodName, parameters, EMPTY_OBJECT_ARRAY);
+        return executeMethod(classPath, methodName, parameters, EMPTY_OBJECT_ARRAY);
     }
 
     /**
@@ -394,11 +419,57 @@ public final class Introspection
      * @param methodName seeked method name.
      * @param parameters parameters array.
      * @param arguments arguments array.
+     *
+     * @return true if invocation succeeded, false otherwise.
      */
-    public static void executeMethod(final String classPath, final String methodName,
+    public static boolean executeMethod(final String classPath, final String methodName,
             final Class<?>[] parameters, final Object[] arguments)
     {
-        getMethodValue(classPath, methodName, parameters, arguments);
+        final Method method = getMethod(classPath, methodName, parameters);
+
+        return executeMethod(method, null, arguments);
+    }
+
+    /**
+     * Execute the given method with given argument values, without returning the result.
+     *
+     * @param method method to invoke.
+     * @param arguments arguments array.
+     *
+     * @return true if invocation succeeded, false otherwise.
+     */
+    public static boolean executeMethod(final Method method, final Object[] arguments)
+    {
+        return executeMethod(method, null, arguments);
+    }
+
+    /**
+     * Execute the given method with given argument values, without returning the result.
+     *
+     * @param method method to invoke.
+     * @param instance class instance to use
+     * @param arguments arguments array.
+     *
+     * @return true if invocation succeeded, false otherwise.
+     */
+    public static boolean executeMethod(final Method method, final Object instance, final Object[] arguments)
+    {
+        boolean ok = false;
+        if (method != null) {
+            try {
+                method.invoke(instance, arguments);
+
+                ok = true;
+
+            } catch (IllegalAccessException iae) {
+                _logger.log(Level.WARNING, "Cannot invoke method '" + method.getName() + "'", iae);
+            } catch (IllegalArgumentException iae) {
+                _logger.log(Level.WARNING, "Cannot invoke method '" + method.getName() + "'", iae);
+            } catch (InvocationTargetException ite) {
+                _logger.log(Level.WARNING, "Cannot invoke method '" + method.getName() + "'", ite);
+            }
+        }
+        return ok;
     }
 
     /**

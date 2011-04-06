@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.15 2010-01-14 13:03:04 bourgesl Exp $"
+ * "@(#) $Id: Resources.java,v 1.16 2011-04-06 15:43:39 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2010/01/14 13:03:04  bourgesl
+ * use Logger.isLoggable to avoid a lot of string.concat()
+ *
  * Revision 1.14  2008/11/06 13:45:37  mella
  * fix logging levels
  *
@@ -53,12 +56,15 @@
 package fr.jmmc.mcs.util;
 
 import java.net.URL;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
-import javax.swing.*;
-
+import org.apache.commons.lang.SystemUtils;
 
 /**
  * Class used to get resources informations from one central point (xml file).
@@ -67,22 +73,19 @@ import javax.swing.*;
  */
 public abstract class Resources
 {
+
     /** the logger facility */
-    protected static java.util.logging.Logger logger_ = java.util.logging.Logger.getLogger(
-            "fr.jmmc.mcs.util.Resources");
-
+    protected static final Logger logger_ = Logger.getLogger("fr.jmmc.mcs.util.Resources");
     /** Contains the class nale for logging */
-    static String _loggerClassName = "Resources";
-
+    private static String _loggerClassName = "Resources";
     /** resource filename  that must be overloaded by subclasses */
     protected static String _resourceName = "fr/jmmc/mcs/util/Resources";
-
-    /** Properties */
+    /** cached resource bundle */
     private static ResourceBundle _resources = null;
-
+    /** flag to indicate that the resource bundle is resolved */
+    private static boolean _resolved = false;
     /** Store whether the execution platform is a Mac or not */
-    public static boolean MAC_OS_X = (System.getProperty("os.name").toLowerCase()
-                                            .startsWith("mac os x"));
+    public static boolean MAC_OS_X = SystemUtils.IS_OS_MAC_OSX;
 
     /**
      * Indicates the property file where informations will be exctracted.
@@ -91,14 +94,15 @@ public abstract class Resources
      *
      * @param name Indicates property file to use.
      */
-    public static void setResourceName(String name)
+    public static void setResourceName(final String name)
     {
         logger_.entering(_loggerClassName, "setResourceName");
 
         if (logger_.isLoggable(Level.FINE)) {
-          logger_.fine("Application will grab resources from '" + name + "'");
+            logger_.fine("Application will grab resources from '" + name + "'");
         }
         _resourceName = name;
+        _resolved = false;
     }
 
     /**
@@ -108,7 +112,7 @@ public abstract class Resources
      *
      * @return the content of the resource or null indicating error
      */
-    public static String getResource(String resourceName)
+    public static String getResource(final String resourceName)
     {
         return getResource(resourceName, Level.WARNING);
     }
@@ -116,43 +120,45 @@ public abstract class Resources
     /**
      * Get content from resource file.
      *
-     * @param resourceName name of resource
+     * @param resourceKey name of resource
      * @param notFoundLogLevel level to use if resource is not found
      *
      * @return the content of the resource or null indicating error
      */
-    public static String getResource(String resourceName, Level notFoundLogLevel)
+    public static String getResource(final String resourceKey, final Level notFoundLogLevel)
     {
         logger_.entering(_loggerClassName, "getResource");
 
-        if (_resources == null)
-        {
-            try
-            {
-                _resources = java.util.ResourceBundle.getBundle(_resourceName);
-            }
-            catch (Exception e)
-            {
-              if (logger_.isLoggable(notFoundLogLevel)) {
-                  logger_.log(notFoundLogLevel,
-                    "Resource bundle can't be found :" + e.getMessage());
-              }
+        if (_resources == null) {
 
+            if (!_resolved) {
+                if (logger_.isLoggable(Level.FINE)) {
+                    logger_.fine("getResource for " + _resourceName);
+                }
+                try {
+                    // update the resolve flag to avoid redundant calls to getBundle when no bundle is available:
+                    _resolved = true;
+                    _resources = ResourceBundle.getBundle(_resourceName);
+                } catch (MissingResourceException mre) {
+                    if (logger_.isLoggable(notFoundLogLevel)) {
+                        logger_.log(notFoundLogLevel, "Resource bundle can't be found : " + mre.getMessage());
+                    }
+                }
+            }
+
+            if (_resources == null) {
                 return null;
             }
         }
 
         if (logger_.isLoggable(Level.FINE)) {
-          logger_.fine("getResource for " + resourceName);
+            logger_.fine("getResource for " + resourceKey);
         }
 
-        try
-        {
-            return _resources.getString(resourceName);
-        }
-        catch (Exception e)
-        {
-            logger_.log(notFoundLogLevel, "Entry not found :" + e.getMessage());
+        try {
+            return _resources.getString(resourceKey);
+        } catch (MissingResourceException mre) {
+            logger_.log(notFoundLogLevel, "Entry not found :" + mre.getMessage());
         }
 
         return null;
@@ -165,7 +171,7 @@ public abstract class Resources
      *
      * @return the associated text
      */
-    public static String getActionText(String actionName)
+    public static String getActionText(final String actionName)
     {
         logger_.entering(_loggerClassName, "getActionText");
 
@@ -179,12 +185,11 @@ public abstract class Resources
      *
      * @return the associated description
      */
-    public static String getActionDescription(String actionName)
+    public static String getActionDescription(final String actionName)
     {
         logger_.entering(_loggerClassName, "getActionDescription");
 
-        return getResource("actions.action." + actionName + ".description",
-            Level.FINE);
+        return getResource("actions.action." + actionName + ".description", Level.FINE);
     }
 
     /**
@@ -194,12 +199,11 @@ public abstract class Resources
      *
      * @return the tooltip text
      */
-    public static String getToolTipText(String widgetName)
+    public static String getToolTipText(final String widgetName)
     {
         logger_.entering(_loggerClassName, "getToolTipText");
 
-        return getResource("widgets.widget." + widgetName + ".tooltip",
-            Level.FINE);
+        return getResource("widgets.widget." + widgetName + ".tooltip", Level.FINE);
     }
 
     /**
@@ -209,27 +213,22 @@ public abstract class Resources
      *
      * @return the associated accelerator
      */
-    public static KeyStroke getActionAccelerator(String actionName)
+    public static KeyStroke getActionAccelerator(final String actionName)
     {
         logger_.entering(_loggerClassName, "getActionAccelerator");
 
         // Get the accelerator string description from the Resource.properties file
-        String keyString = getResource("actions.action." + actionName +
-                ".accelerator", Level.FINE);
+        String keyString = getResource("actions.action." + actionName + ".accelerator", Level.FINE);
 
-        if (keyString == null)
-        {
+        if (keyString == null) {
             return null;
         }
 
         // If the execution is on Mac OS X
-        if (MAC_OS_X == true)
-        {
+        if (MAC_OS_X) {
             // The 'command' key (aka Apple key) is used
             keyString = "meta " + keyString;
-        }
-        else
-        {
+        } else {
             // The 'control' key ise used elsewhere
             keyString = "ctrl " + keyString;
         }
@@ -238,8 +237,8 @@ public abstract class Resources
         KeyStroke accelerator = KeyStroke.getKeyStroke(keyString);
 
         if (logger_.isLoggable(Level.FINE)) {
-          logger_.fine("keyString['" + actionName + "'] = '" + keyString +
-            "' -> accelerator = '" + accelerator + "'.");
+            logger_.fine("keyString['" + actionName + "'] = '" + keyString
+                    + "' -> accelerator = '" + accelerator + "'.");
         }
 
         return accelerator;
@@ -252,19 +251,16 @@ public abstract class Resources
      *
      * @return the associated icon
      */
-    public static ImageIcon getActionIcon(String actionName)
+    public static ImageIcon getActionIcon(final String actionName)
     {
         logger_.entering(_loggerClassName, "getActionIcon");
 
         // Get back the icon image path
-        String iconPath = getResource("actions.action." + actionName + ".icon",
-                Level.FINE);
+        String iconPath = getResource("actions.action." + actionName + ".icon", Level.FINE);
 
-        if (iconPath == null)
-        {
+        if (iconPath == null) {
             if (logger_.isLoggable(Level.FINE)) {
-              logger_.fine("No icon resource found for action name '" +
-                actionName + "'.");
+                logger_.fine("No icon resource found for action name '" + actionName + "'.");
             }
 
             return null;
@@ -273,20 +269,27 @@ public abstract class Resources
         // Get the image from path
         URL imgURL = Resources.class.getResource(iconPath);
 
-        if (imgURL == null)
-        {
+        if (imgURL == null) {
             if (logger_.isLoggable(Level.FINE)) {
-              logger_.fine("Could not load icon '" + iconPath + "'.");
+                logger_.fine("Could not load icon '" + iconPath + "'.");
             }
 
             return null;
         }
 
         if (logger_.isLoggable(Level.FINE)) {
-          logger_.fine("Using imgUrl for icon resource  '" + imgURL);
+            logger_.fine("Using imgUrl for icon resource  '" + imgURL);
         }
 
         return new ImageIcon(imgURL);
+    }
+
+    /**
+     * Private constructor
+     */
+    private Resources()
+    {
+        super();
     }
 }
 /*___oOo___*/

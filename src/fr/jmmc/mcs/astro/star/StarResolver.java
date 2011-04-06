@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.19 2011-04-04 13:58:24 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.20 2011-04-06 15:39:49 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2011/04/04 13:58:24  bourgesl
+ * use FileUtils.closeStream()
+ *
  * Revision 1.18  2011/03/30 09:06:23  bourgesl
  * added MCSExceptionHandler
  * code format
@@ -75,13 +78,13 @@ package fr.jmmc.mcs.astro.star;
 
 import fr.jmmc.mcs.util.FileUtils;
 import fr.jmmc.mcs.util.MCSExceptionHandler;
+import fr.jmmc.mcs.util.Urls;
 import java.io.BufferedReader;
+import java.io.IOException;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import java.net.URL;
-import java.net.URLEncoder;
 
 import java.text.ParseException;
 
@@ -175,8 +178,7 @@ public final class StarResolver
             public void update(Observable o, Object arg)
             {
                 // Outpout results
-                System.out.println("Star '" + starName + "' contains:\n"
-                        + star);
+                System.out.println("Star '" + starName + "' contains:\n" + star);
             }
         });
 
@@ -191,6 +193,8 @@ public final class StarResolver
     private final class ResolveStarThread extends Thread
     {
 
+        /** flag to indicate that an error occured */
+        private boolean _error = false;
         /** Simbad querying result */
         private String _result = null;
 
@@ -201,7 +205,51 @@ public final class StarResolver
 
             querySimbad();
 
-            parseResult();
+            if (!isError()) {
+                parseResult();
+            }
+        }
+
+        /**
+         * Set an error message from CDS Simbad query execution, and notify
+         * registered observers.
+         * @param message the error message to store.
+         */
+        private void raiseCDSimbadErrorMessage(final String message)
+        {
+            raiseCDSimbadErrorMessage(message, null);
+        }
+
+        /**
+         * Set an error message from CDS Simbad query execution, and notify
+         * registered observers.
+         * @param message the error message to store.
+         * @param exception exception (optional)
+         */
+        private void raiseCDSimbadErrorMessage(final String message, final Exception exception)
+        {
+            _error = true;
+
+            if (exception != null) {
+                String msg = message + " : " + exception.getMessage();
+
+                // avoid too long messages:
+                if (msg.length() > 128) {
+                    msg = msg.substring(0, 128);
+                }
+                _starModel.raiseCDSimbadErrorMessage(msg);
+            } else {
+                _starModel.raiseCDSimbadErrorMessage(message);
+            }
+        }
+
+        /**
+         * Return the flag indicating that an error occured
+         * @return true if an error occured
+         */
+        private boolean isError()
+        {
+            return _error;
         }
 
         /**
@@ -213,10 +261,7 @@ public final class StarResolver
 
             // Should never receive an empty scence object name
             if (_starName.length() == 0) {
-                _logger.severe("Received an empty star name");
-                _starModel.raiseCDSimbadErrorMessage("Could not resolve star '"
-                        + _starName + "'.");
-
+                raiseCDSimbadErrorMessage("Could not resolve empty star name.");
                 return;
             }
 
@@ -250,7 +295,7 @@ public final class StarResolver
             BufferedReader bufferedReader = null;
             try {
                 // Forge the URL int UTF8 unicode charset
-                final String encodedScript = URLEncoder.encode(simbadScript, "UTF-8");
+                final String encodedScript = Urls.encode(simbadScript);
                 final String simbadURL = _simbadBaseURL + encodedScript;
 
                 if (_logger.isLoggable(Level.FINE)) {
@@ -258,7 +303,7 @@ public final class StarResolver
                 }
 
                 // Launch the network query
-                final InputStream inputStream = new URL(simbadURL).openStream();
+                final InputStream inputStream = Urls.parseURL(simbadURL).openStream();
 
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -269,11 +314,7 @@ public final class StarResolver
                 sb.setLength(0);
 
                 while ((currentLine = bufferedReader.readLine()) != null) {
-                    if (sb.length() > 0) {
-                        sb.append('\n');
-                    }
-
-                    sb.append(currentLine);
+                    sb.append(currentLine).append('\n');
                 }
 
                 _result = sb.toString();
@@ -281,9 +322,8 @@ public final class StarResolver
                 if (_logger.isLoggable(Level.FINER)) {
                     _logger.finer("CDS Simbad raw result :\n" + _result);
                 }
-            } catch (Exception e) {
-                _logger.log(Level.SEVERE, "CDS Connection failed.", e);
-
+            } catch (IOException ioe) {
+                raiseCDSimbadErrorMessage("CDS connection failed", ioe);
             } finally {
                 FileUtils.closeFile(bufferedReader);
             }
@@ -296,29 +336,42 @@ public final class StarResolver
         {
             _logger.entering("ResolveStarThread", "parseResult");
 
+            // If the result string is empty
+            if (_result.length() < 1) {
+                raiseCDSimbadErrorMessage("No data for star '" + _starName + "'.");
+                return;
+            }
+
+            // If there was an error during query
+            if (_result.startsWith("::error")) {
+                // sample error (name not found):
+                /*
+                ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+                [3] Identifier not found in the database : NAME TEST
+                
+
+                 */
+                // try to get error message:
+                String errorMessage = null;
+                final int pos = _result.indexOf('\n');
+                if (pos != -1) {
+                    errorMessage = _result.substring(pos + 1).replaceAll("\\s+", " ").trim();
+                }
+
+                raiseCDSimbadErrorMessage("Querying script execution failed for star '" + _starName + "' "
+                        + ((errorMessage != null) ? ":\n" + errorMessage : "."));
+                return;
+            }
+
+            // Remove any blanking character (~) :
+            _result = _result.replaceAll("~[ ]*", "");
+
+            if (_logger.isLoggable(Level.FINEST)) {
+                _logger.finest("CDS Simbad result without blanking values :\n" + _result);
+            }
+
             try {
-                // If the result string is empty
-                if (_result.length() < 1) {
-                    _starModel.raiseCDSimbadErrorMessage("No data for star '"
-                            + _starName + "'.");
-                    return;
-                }
-
-                // If there was an error during query
-                if (_result.startsWith("::error")) {
-                    _starModel.raiseCDSimbadErrorMessage(
-                            "Querying script execution failed for star '"
-                            + _starName + "'.");
-                    return;
-                }
-
-                // Remove any blanking character (~) :
-                _result = _result.replaceAll("~[ ]*", "");
-
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("CDS Simbad result without blanking values :\n" + _result);
-                }
-
                 // Parsing result line by line :
 
                 // Special line tokenizer because it is possible to have a blank lines (no flux at all) :
@@ -356,38 +409,35 @@ public final class StarResolver
                 final String identifiers = lineTokenizer.nextToken();
                 parseIdentifiers(identifiers);
 
-            } catch (Exception ex) {
-                _logger.log(Level.SEVERE, "CDS Simbad result parsing failed", ex);
-                _starModel.raiseCDSimbadErrorMessage(
-                        "Could not parse received data for star '" + _starName
-                        + "'.");
+                /*
+                 * At this stage parsing went fine.
+                 * So copy back the new CDS Simbad result in the original Star object.
+                 *
+                 * Done only after all data were fetched and parsed successfully, to
+                 * always have consistent data in _starModel.
+                 *
+                 * If anything went wrong while querying or parsing, previous data
+                 * remain unchanged.
+                 */
 
-                return;
-            }
-
-            /*
-             * At this stage parsing went fine.
-             * So copy back the new CDS Simbad result in the original Star object.
-             *
-             * Done only after all data were fetched and parsed successfully, to
-             * always have consistent data in _starModel.
-             *
-             * If anything went wrong while querying or parsing, previous data
-             * remain unchanged.
-             */
-
-            // Use EDT to ensure only 1 thread (EDT) updates the model and handles the notification :
-            SwingUtilities.invokeLater(new Runnable()
-            {
-
-                public void run()
+                // Use EDT to ensure only 1 thread (EDT) updates the model and handles the notification :
+                SwingUtilities.invokeLater(new Runnable()
                 {
-                    _starModel.copy(_newStarModel);
 
-                    // Notify all registered observers that the query went fine :
-                    _starModel.fireNotification(Star.Notification.QUERY_COMPLETE);
-                }
-            });
+                    public void run()
+                    {
+                        _starModel.copy(_newStarModel);
+
+                        // Notify all registered observers that the query went fine :
+                        _starModel.fireNotification(Star.Notification.QUERY_COMPLETE);
+                    }
+                });
+
+            } catch (NumberFormatException nfe) {
+                raiseCDSimbadErrorMessage("Could not parse data for star '" + _starName + "'", nfe);
+            } catch (ParseException pe) {
+                raiseCDSimbadErrorMessage("Could not parse data for star '" + _starName + "'", pe);
+            }
         }
 
         /**
@@ -429,12 +479,7 @@ public final class StarResolver
                 }
                 _newStarModel.setPropertyAsString(Star.Property.DEC, dmsDec);
             } else {
-                _starModel.raiseCDSimbadErrorMessage(
-                        "Could not parse received coordinates for star '"
-                        + _starName + "'.");
-                throw new ParseException(
-                        "Could not parse SIMBAD returned coordinates '"
-                        + coordinates + "'", -1);
+                throw new ParseException("Invalid coordinates '" + coordinates + "'", -1);
             }
         }
 
@@ -448,8 +493,7 @@ public final class StarResolver
                 _logger.finer("Object Types contains '" + objectTypes + "'.");
             }
 
-            _newStarModel.setPropertyAsString(Star.Property.OTYPELIST,
-                    objectTypes);
+            _newStarModel.setPropertyAsString(Star.Property.OTYPELIST, objectTypes);
         }
 
         /**
@@ -476,8 +520,8 @@ public final class StarResolver
                     _logger.finest(magnitudeBand + " = '" + value + "'.");
                 }
 
-                _newStarModel.setPropertyAsDouble(Star.Property.fromString(
-                        magnitudeBand), Double.parseDouble(value));
+                _newStarModel.setPropertyAsDouble(Star.Property.fromString(magnitudeBand),
+                        Double.parseDouble(value));
             }
         }
 
@@ -499,15 +543,13 @@ public final class StarResolver
                 if (_logger.isLoggable(Level.FINEST)) {
                     _logger.finest("PROPERMOTION_RA = '" + pm_ra + "'.");
                 }
-                _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_RA,
-                        pm_ra);
+                _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_RA, pm_ra);
 
                 final double pm_dec = Double.parseDouble(properMotionTokenizer.nextToken());
                 if (_logger.isLoggable(Level.FINEST)) {
                     _logger.finest("PROPERMOTION_DEC = '" + pm_dec + "'.");
                 }
-                _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_DEC,
-                        pm_dec);
+                _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_DEC, pm_dec);
             } else {
                 if (_logger.isLoggable(Level.FINEST)) {
                     _logger.finest("No proper motion data for star '" + _starName + "'.");
@@ -539,8 +581,7 @@ public final class StarResolver
                 if (_logger.isLoggable(Level.FINEST)) {
                     _logger.finest("PARALLAX_err = '" + plx_err + "'.");
                 }
-                _newStarModel.setPropertyAsDouble(Star.Property.PARALLAX_err,
-                        plx_err);
+                _newStarModel.setPropertyAsDouble(Star.Property.PARALLAX_err, plx_err);
             } else {
                 if (_logger.isLoggable(Level.FINEST)) {
                     _logger.finest("No parallax data for star '" + _starName + "'.");
@@ -558,8 +599,7 @@ public final class StarResolver
                 _logger.finer("Spectral Types contains '" + spectralTypes + "'.");
             }
 
-            _newStarModel.setPropertyAsString(Star.Property.SPECTRALTYPES,
-                    spectralTypes);
+            _newStarModel.setPropertyAsString(Star.Property.SPECTRALTYPES, spectralTypes);
         }
 
         /**
@@ -587,8 +627,7 @@ public final class StarResolver
                     if (_logger.isLoggable(Level.FINEST)) {
                         _logger.finest("RV_DEF = '" + rv_def + "'.");
                     }
-                    _newStarModel.setPropertyAsString(Star.Property.RV_DEF,
-                            rv_def);
+                    _newStarModel.setPropertyAsString(Star.Property.RV_DEF, rv_def);
                 }
             } else {
                 if (_logger.isLoggable(Level.FINEST)) {

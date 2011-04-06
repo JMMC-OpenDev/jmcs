@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.86 2011-04-01 16:10:27 mella Exp $"
+ * "@(#) $Id: App.java,v 1.87 2011-04-06 15:40:07 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.86  2011/04/01 16:10:27  mella
+ * use SwingSettings.defineDefaults()
+ *
  * Revision 1.85  2011/03/30 09:34:20  bourgesl
  * use NetworkSettings in static initializer to be initialized before using java.net classes
  *
@@ -514,7 +517,7 @@ public abstract class App
                 run();
             }
 
-        } catch (Throwable th) {
+        } catch (Throwable th) { // main initialization
             _logger.severe("Error while initializing the application");
 
             // In order to see the error window
@@ -545,6 +548,8 @@ public abstract class App
             loadDefaultApplicationData();
         } else {
             try {
+                // TODO : LAURENT HERE
+
                 // We reinstantiate the application data model
                 _applicationDataModel = new ApplicationDataModel(fileURL);
             } catch (Exception ex) {
@@ -575,6 +580,8 @@ public abstract class App
             defaultXmlLocation = defaultPackageName + "/ApplicationData.xml";
 
             final URL defaultXmlURL = appClass.getClassLoader().getResource(defaultXmlLocation);
+
+            // TODO : LAURENT HERE
 
             // We reinstantiate the application data model
             _applicationDataModel = new ApplicationDataModel(defaultXmlURL);

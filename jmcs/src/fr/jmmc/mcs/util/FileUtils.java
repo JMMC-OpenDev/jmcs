@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileUtils.java,v 1.7 2011-04-04 13:43:33 bourgesl Exp $"
+ * "@(#) $Id: FileUtils.java,v 1.8 2011-04-06 15:42:36 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2011/04/04 13:43:33  bourgesl
+ * added closeStream()
+ *
  * Revision 1.6  2011/02/14 11:08:52  mella
  * Closes fluxes in copy method even if one exception occurs
  *
@@ -84,11 +87,8 @@ import java.util.logging.Logger;
  */
 public final class FileUtils
 {
-
-    /** Class Name */
-    private static final String className = FileUtils.class.getName();
     /** Class logger */
-    private static final Logger logger = Logger.getLogger(className);
+    private static final Logger logger = Logger.getLogger(FileUtils.class.getName());
     /** platform dependent line separator */
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 

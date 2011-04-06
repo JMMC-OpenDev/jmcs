@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: MainMenuBar.java,v 1.48 2011-04-05 15:20:52 bourgesl Exp $"
+ * "@(#) $Id: MainMenuBar.java,v 1.49 2011-04-06 15:41:41 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.48  2011/04/05 15:20:52  bourgesl
+ * use Introspection to change LAF
+ *
  * Revision 1.47  2011/03/14 16:43:47  bourgesl
  * always show the Interop Menu
  *
@@ -203,8 +206,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultEditorKit;
 
-
-
 /**
  * This class which extends from JMenuBar, generates all menus from the
  * <b>ApplicationData.xml</b> file.
@@ -220,87 +221,75 @@ public class MainMenuBar extends JMenuBar
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
-
     /**
      * This System property controls the Look & Feel menu (useful for debugging purposes).
      * To show this menu, add "-Djmcs.laf.menu=true" to your JVM options.
      */
     public final static String SYSTEM_PROPERTY_LAF_MENU = "jmcs.laf.menu";
-
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.gui.MainMenuBar");
-
+    private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.gui.MainMenuBar");
     /** Store wether we are running under Mac OS X or not */
-    private boolean _isRunningUnderMacOSX = false;
-
+    private final boolean _isRunningUnderMacOSX;
     /** Table where are stocked the menus */
-    private Hashtable<String, JMenu> _menusTable = null;
-
+    private final Hashtable<String, JMenu> _menusTable;
     /** Store a proxy to the shared ActionRegistrar facility */
-    private ActionRegistrar _registrar = null;
-
+    private final ActionRegistrar _registrar;
     /** Store a proxy to the parent frame */
-    private JFrame _frame = null;
+    private final JFrame _frame;
 
     /**
      * Instantiate all defaults menus, plus application-specific ones.
      *
      * @param frame the JFrame against which the menubar is linked.
      */
-    public MainMenuBar(JFrame frame)
+    public MainMenuBar(final JFrame frame)
     {
         // Get the parent frame
         _frame = frame;
 
         // Get the host operating system type
-        _isRunningUnderMacOSX     = SystemUtils.IS_OS_MAC_OSX;
+        _isRunningUnderMacOSX = SystemUtils.IS_OS_MAC_OSX;
 
         // Member initilization
-        _menusTable               = new Hashtable<String, JMenu>();
-        _registrar                = ActionRegistrar.getInstance();
+        _menusTable = new Hashtable<String, JMenu>();
+        _registrar = ActionRegistrar.getInstance();
 
         // Get the application data model
         ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
         // Contains the name of the others menus
-        Vector<String>       otherMenus           = new Vector<String>();
+        Vector<String> otherMenus = new Vector<String>();
 
         // If it's null, we exit
-        if (applicationDataModel != null)
-        {
+        if (applicationDataModel != null) {
             // Get the menubar element from XML
             fr.jmmc.mcs.gui.castor.Menubar menuBar = applicationDataModel.getMenubar();
 
             // If it's null, we exit
-            if (menuBar != null)
-            {
+            if (menuBar != null) {
                 // Get the menu elements from menubar
                 fr.jmmc.mcs.gui.castor.Menu[] menus = menuBar.getMenu();
 
                 // If it's null, we exit
-                if (menus != null)
-                {
-                    for (fr.jmmc.mcs.gui.castor.Menu menu : menus)
-                    {
+                if (menus != null) {
+                    for (fr.jmmc.mcs.gui.castor.Menu menu : menus) {
                         // Get menu label
                         String currentMenuLabel = menu.getLabel();
 
                         if (_logger.isLoggable(Level.FINE)) {
-                          _logger.fine("Make '" + currentMenuLabel + "' menu.");
+                            _logger.fine("Make '" + currentMenuLabel + "' menu.");
                         }
 
                         // Keep it if it's an other menu
-                        if ((currentMenuLabel.equals("File") == false) &&
-                                (currentMenuLabel.equals("Edit") == false) &&
-                                (currentMenuLabel.equals("Interop") == false) &&
-                                (currentMenuLabel.equals("Help") == false))
-                        {
+                        if (!currentMenuLabel.equals("File")
+                                && !currentMenuLabel.equals("Edit")
+                                && !currentMenuLabel.equals("Interop")
+                                && !currentMenuLabel.equals("Help")) {
                             otherMenus.add(currentMenuLabel);
 
                             if (_logger.isLoggable(Level.FINE)) {
-                              _logger.fine("Add '" + currentMenuLabel +
-                                "' to other menus vector.");
+                                _logger.fine("Add '" + currentMenuLabel
+                                        + "' to other menus vector.");
                             }
                         }
 
@@ -312,8 +301,8 @@ public class MainMenuBar extends JMenuBar
                         _menusTable.put(currentMenuLabel, completeMenu);
 
                         if (_logger.isLoggable(Level.FINE)) {
-                          _logger.fine("Put '" + completeMenu.getName() +
-                            "' into the menus table.");
+                            _logger.fine("Put '" + completeMenu.getName()
+                                    + "' into the menus table.");
                         }
                     }
                 }
@@ -325,12 +314,11 @@ public class MainMenuBar extends JMenuBar
         createEditMenu();
 
         // Create others (application-specifics) menus
-        for (String menuLabel : otherMenus)
-        {
+        for (String menuLabel : otherMenus) {
             add(_menusTable.get(menuLabel));
 
             if (_logger.isLoggable(Level.FINE)) {
-              _logger.fine("Add '" + menuLabel + "' menu into the menubar.");
+                _logger.fine("Add '" + menuLabel + "' menu into the menubar.");
             }
         }
 
@@ -338,9 +326,8 @@ public class MainMenuBar extends JMenuBar
         createInteropMenu();
 
         final String lafMenu = System.getProperty(SYSTEM_PROPERTY_LAF_MENU);
-        if (lafMenu != null && "true".equals(lafMenu))
-        {
-          createLAFMenu();
+        if (lafMenu != null && "true".equals(lafMenu)) {
+            createLAFMenu();
         }
 
         createHelpMenu();
@@ -361,36 +348,30 @@ public class MainMenuBar extends JMenuBar
         // Get file menu from table
         JMenu file = _menusTable.get("File");
 
-        if (file != null)
-        {
+        if (file != null) {
             Component[] components = file.getMenuComponents();
 
-            if (components.length > 0)
-            {
+            if (components.length > 0) {
                 haveMenu = true;
 
                 // Add each component
-                for (Component currentComponent : components)
-                {
+                for (Component currentComponent : components) {
                     fileMenu.add(currentComponent);
                 }
 
-                if (_isRunningUnderMacOSX == false)
-                {
+                if (!_isRunningUnderMacOSX) {
                     fileMenu.add(new JSeparator());
                 }
             }
         }
 
-        if (_isRunningUnderMacOSX == false)
-        {
+        if (!_isRunningUnderMacOSX) {
             fileMenu.add(_registrar.getQuitAction());
             haveMenu = true;
         }
 
         // Add menu to menubar if there is a menuitem at least
-        if (haveMenu)
-        {
+        if (haveMenu) {
             add(fileMenu);
             _logger.fine("Add 'File' menu into the menubar.");
         }
@@ -406,48 +387,43 @@ public class MainMenuBar extends JMenuBar
         Action cutAction = new DefaultEditorKit.CutAction();
         cutAction.putValue(Action.NAME, "Cut");
         cutAction.putValue(Action.ACCELERATOR_KEY,
-            KeyStroke.getKeyStroke(getPrefixKey() + "X"));
+                KeyStroke.getKeyStroke(getPrefixKey() + "X"));
         editMenu.add(cutAction);
 
         // Add copy action
         Action copyAction = new DefaultEditorKit.CopyAction();
         copyAction.putValue(Action.NAME, "Copy");
         copyAction.putValue(Action.ACCELERATOR_KEY,
-            KeyStroke.getKeyStroke(getPrefixKey() + "C"));
+                KeyStroke.getKeyStroke(getPrefixKey() + "C"));
         editMenu.add(copyAction);
 
         // Add paste action
         Action pasteAction = new DefaultEditorKit.PasteAction();
         pasteAction.putValue(Action.NAME, "Paste");
         pasteAction.putValue(Action.ACCELERATOR_KEY,
-            KeyStroke.getKeyStroke(getPrefixKey() + "V"));
+                KeyStroke.getKeyStroke(getPrefixKey() + "V"));
         editMenu.add(pasteAction);
 
         // Get edit menu from table
         JMenu edit = _menusTable.get("Edit");
 
-        if (edit != null)
-        {
+        if (edit != null) {
             Component[] components = edit.getMenuComponents();
 
-            if (components.length > 0)
-            {
+            if (components.length > 0) {
                 editMenu.add(new JSeparator());
 
                 // Add each component
-                for (Component currentComponent : components)
-                {
+                for (Component currentComponent : components) {
                     editMenu.add(currentComponent);
                 }
             }
         }
 
-        if (_isRunningUnderMacOSX == false)
-        {
+        if (!_isRunningUnderMacOSX) {
             Action preferenceAction = _registrar.getPreferenceAction();
 
-            if (preferenceAction != null)
-            {
+            if (preferenceAction != null) {
                 editMenu.add(new JSeparator());
 
                 editMenu.add(preferenceAction);
@@ -475,26 +451,23 @@ public class MainMenuBar extends JMenuBar
         JMenu interop = _menusTable.get("Interop");
 
         // Add app-specific menu entries (if any)
-        if (interop != null)
-        {
+        if (interop != null) {
             Component[] components = interop.getMenuComponents();
 
-            if (components.length > 0)
-            {
+            if (components.length > 0) {
                 interopMenu.add(new JSeparator());
 
                 // Add each component
-                for (Component currentComponent : components)
-                {
+                for (Component currentComponent : components) {
                     // Get menuitem initialised from ApplicationData
-                    JMenuItem menuItem = (JMenuItem)currentComponent;
+                    JMenuItem menuItem = (JMenuItem) currentComponent;
                     // @TODO : cast SAMP-flagged menus only !
-                    SampCapabilityAction action = (SampCapabilityAction)(menuItem.getAction());
+                    SampCapabilityAction action = (SampCapabilityAction) (menuItem.getAction());
                     // get previously created menu by samp action
                     JMenu menu = SampManager.getMenu(action);
                     // set text coming from applicationData.xml
                     menu.setText(menuItem.getText());
-                    
+
                     interopMenu.add(menu);
                 }
             }
@@ -514,51 +487,52 @@ public class MainMenuBar extends JMenuBar
         // Create menu
         final JMenu lafMenu = new JMenu("Look & Feel");
 
-        final ActionListener lafActionListener = new ActionListener() {
+        final ActionListener lafActionListener = new ActionListener()
+        {
 
             /**
              * Invoked when an action occurs.
              */
-            public void actionPerformed(final ActionEvent ae) {
-              final String className = ae.getActionCommand();
-              final String currentClassName = UIManager.getLookAndFeel().getClass().getName();
+            public void actionPerformed(final ActionEvent ae)
+            {
+                final String className = ae.getActionCommand();
+                final String currentClassName = UIManager.getLookAndFeel().getClass().getName();
 
-              if (!className.equals(currentClassName)) {
-                try {
-                  if (_logger.isLoggable(Level.INFO)) {
-                    _logger.info("use Look and Feel : " + className);
-                  }
+                if (!className.equals(currentClassName)) {
+                    try {
+                        if (_logger.isLoggable(Level.INFO)) {
+                            _logger.info("use Look and Feel : " + className);
+                        }
 
-                  final LookAndFeel newLaf = (LookAndFeel)Introspection.getInstance(className);
+                        final LookAndFeel newLaf = (LookAndFeel) Introspection.getInstance(className);
 
-                  UIManager.setLookAndFeel(newLaf);
+                        UIManager.setLookAndFeel(newLaf);
 
-                  final Frame mainFrame = App.getFrame();
+                        final Frame mainFrame = App.getFrame();
 
-                  SwingUtilities.updateComponentTreeUI(mainFrame);
-                  mainFrame.pack();
+                        SwingUtilities.updateComponentTreeUI(mainFrame);
+                        mainFrame.pack();
 
-                } catch (UnsupportedLookAndFeelException ulafe) {
-                  throw new RuntimeException("Change LAF failed : " + className, ulafe);
+                    } catch (UnsupportedLookAndFeelException ulafe) {
+                        throw new RuntimeException("Change LAF failed : " + className, ulafe);
+                    }
                 }
-              }
             }
         };
 
         JMenuItem menuItem;
 
-        for (UIManager.LookAndFeelInfo lookAndFeelInfo: UIManager.getInstalledLookAndFeels()) {
-            
+        for (UIManager.LookAndFeelInfo lookAndFeelInfo : UIManager.getInstalledLookAndFeels()) {
+
             menuItem = new JMenuItem(lookAndFeelInfo.getName());
             menuItem.setActionCommand(lookAndFeelInfo.getClassName());
             menuItem.addActionListener(lafActionListener);
 
             lafMenu.add(menuItem);
         }
-        
+
         add(lafMenu);
     }
-
 
     /** Create the 'Help' menu. */
     private void createHelpMenu()
@@ -577,17 +551,14 @@ public class MainMenuBar extends JMenuBar
         // Get help menu from table
         JMenu help = _menusTable.get("Help");
 
-        if (help != null)
-        {
+        if (help != null) {
             Component[] components = help.getMenuComponents();
 
-            if (components.length > 0)
-            {
+            if (components.length > 0) {
                 helpMenu.add(new JSeparator());
 
                 // Add each component
-                for (Component currentComponent : components)
-                {
+                for (Component currentComponent : components) {
                     helpMenu.add(currentComponent);
                 }
             }
@@ -609,8 +580,7 @@ public class MainMenuBar extends JMenuBar
         // Add Faq action
         helpMenu.add(App.showFaqAction());
 
-        if (_isRunningUnderMacOSX == false)
-        {
+        if (!_isRunningUnderMacOSX) {
             helpMenu.add(new JSeparator());
 
             // Add aboutbox action
@@ -634,35 +604,31 @@ public class MainMenuBar extends JMenuBar
      * @return the instantiated JComponent according to the XML menu hierarchy.
      */
     private JComponent recursiveParser(fr.jmmc.mcs.gui.castor.Menu menu,
-        JComponent parent, boolean createMenu, ButtonGroup buttonGroup)
+            JComponent parent, boolean createMenu, ButtonGroup buttonGroup)
     {
         // Create the current component
         JComponent component = createComponent(menu, createMenu, buttonGroup);
 
         // Add it to the parent if any
-        if (parent != null)
-        {
+        if (parent != null) {
             parent.add(component);
 
             if (_logger.isLoggable(Level.FINE)) {
-              _logger.fine("'" + component.getName() + "' linked to '" +
-                parent.getName() + "'.");
+                _logger.fine("'" + component.getName() + "' linked to '"
+                        + parent.getName() + "'.");
             }
         }
 
         // Get submenus
         fr.jmmc.mcs.gui.castor.Menu[] submenus = menu.getMenu();
-        ButtonGroup                   group    = null;
+        ButtonGroup group = null;
 
-        if (submenus != null)
-        {
-            if (menu.getRadiogroup() != null)
-            {
+        if (submenus != null) {
+            if (menu.getRadiogroup() != null) {
                 group = new ButtonGroup();
             }
 
-            for (fr.jmmc.mcs.gui.castor.Menu submenu : submenus)
-            {
+            for (fr.jmmc.mcs.gui.castor.Menu submenu : submenus) {
                 // The submenu will be a jmenu?
                 boolean isMenu = ((submenu.getMenu()).length > 0);
 
@@ -686,23 +652,22 @@ public class MainMenuBar extends JMenuBar
      * @return the instantiated JComponent according to the XML description.
      */
     private JComponent createComponent(fr.jmmc.mcs.gui.castor.Menu menu,
-        boolean isMenu, ButtonGroup buttonGroup)
+            boolean isMenu, ButtonGroup buttonGroup)
     {
         // Component to create
         JMenuItem item = null;
 
         // Attributes
-        boolean hasLabel     = (menu.getLabel() != null);
+        boolean hasLabel = (menu.getLabel() != null);
         boolean hasClasspath = (menu.getClasspath() != null);
-        boolean hasAction    = (menu.getAction() != null);
-        boolean isCheckbox   = (menu.getCheckbox() != null);
+        boolean hasAction = (menu.getAction() != null);
+        boolean isCheckbox = (menu.getCheckbox() != null);
 
         // flag new component as separator or not
-        boolean isSeparator = ! (isMenu || hasClasspath || hasAction);
+        boolean isSeparator = !(isMenu || hasClasspath || hasAction);
 
         // Is it a separator?
-        if (isSeparator)
-        {
+        if (isSeparator) {
             _logger.fine("Component is a separator.");
 
             return new JSeparator();
@@ -716,27 +681,23 @@ public class MainMenuBar extends JMenuBar
         setAttributes(menu, action);
 
         // Is it a checkbox ?
-        if (isCheckbox == true)
-        {
+        if (isCheckbox) {
             _logger.fine("Component is a JCheckBoxMenuItem.");
             item = new JCheckBoxMenuItem(action);
 
-            if (action instanceof RegisteredPreferencedBooleanAction)
-            {
+            if (action instanceof RegisteredPreferencedBooleanAction) {
                 _logger.fine(
-                    "Component is bound to a RegisteredPreferencedBooleanAction.");
+                        "Component is bound to a RegisteredPreferencedBooleanAction.");
                 ((RegisteredPreferencedBooleanAction) action).addBoundButton((JCheckBoxMenuItem) item);
             }
 
-            if (isMenu == true)
-            {
+            if (isMenu) {
                 _logger.warning(
-                    "The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
+                        "The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
 
                 return null;
             }
-        }
-        else if (buttonGroup != null) // Is it a radio-button ?
+        } else if (buttonGroup != null) // Is it a radio-button ?
         {
             _logger.fine("Component is a JRadioButtonMenuItem.");
             item = new JRadioButtonMenuItem(action);
@@ -744,35 +705,30 @@ public class MainMenuBar extends JMenuBar
             // Put the radiobutton menu item in a the ButtonGroup to only have a single one selected at any time.
             buttonGroup.add((JRadioButtonMenuItem) item);
 
-            if (action instanceof RegisteredPreferencedBooleanAction)
-            {
+            if (action instanceof RegisteredPreferencedBooleanAction) {
                 _logger.fine(
-                    "Component is bound to a RegisteredPreferencedBooleanAction.");
+                        "Component is bound to a RegisteredPreferencedBooleanAction.");
                 ((RegisteredPreferencedBooleanAction) action).addBoundButton((JRadioButtonMenuItem) item);
             }
 
-            if (isMenu == true)
-            {
+            if (isMenu) {
                 _logger.warning(
-                    "The current menuitem is a radiobutton AND a sub-menu, which is impossible !!!");
+                        "The current menuitem is a radiobutton AND a sub-menu, which is impossible !!!");
 
                 return null;
             }
-        }
-        else if (isMenu == true) // is it a menu containig other menu item ?
+        } else if (isMenu) // is it a menu containig other menu item ?
         {
             _logger.fine("Component is a JMenu.");
             item = new JMenu(action);
-        }
-        else // It is a menu item.
+        } else // It is a menu item.
         {
             _logger.fine("Component is a JMenuItem.");
             item = new JMenuItem(action);
         }
 
         // If the menu object has its own name
-        if (menu.getLabel() != null)
-        {
+        if (menu.getLabel() != null) {
             // Superseed the name of the item associated action
             item.setText(menu.getLabel());
         }
@@ -788,45 +744,38 @@ public class MainMenuBar extends JMenuBar
      */
     private void setAttributes(fr.jmmc.mcs.gui.castor.Menu menu, Action action)
     {
-        if ((menu == null) || (action == null))
-        {
+        if ((menu == null) || (action == null)) {
             return;
         }
 
         // Set action accelerator
         String accelerator = menu.getAccelerator();
 
-        if (accelerator != null)
-        {
+        if (accelerator != null) {
             String keyStrokeString = getPrefixKey() + accelerator;
             action.putValue(Action.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(keyStrokeString));
+                    KeyStroke.getKeyStroke(keyStrokeString));
         }
 
         // Set action tooltip
-        String xmlTooltip    = menu.getDescription();
+        String xmlTooltip = menu.getDescription();
         String actionTooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
 
-        if ((actionTooltip == null) && (xmlTooltip != null))
-        {
+        if ((actionTooltip == null) && (xmlTooltip != null)) {
             action.putValue(Action.SHORT_DESCRIPTION, xmlTooltip);
         }
 
         // Set action icon
         String icon = menu.getIcon();
 
-        if (icon != null)
-        {
+        if (icon != null) {
             // Open XML file at path
             URL iconURL = getClass().getResource(icon);
 
-            if (iconURL != null)
-            {
+            if (iconURL != null) {
                 action.putValue(Action.SMALL_ICON,
-                    new ImageIcon(Urls.fixJarURL(iconURL)));
-            }
-            else
-            {
+                        new ImageIcon(Urls.fixJarURL(iconURL)));
+            } else {
                 if (_logger.isLoggable(Level.WARNING)) {
                     _logger.warning("Can't find iconUrl : " + icon);
                 }
@@ -834,7 +783,7 @@ public class MainMenuBar extends JMenuBar
         }
 
         if (_logger.isLoggable(Level.FINE)) {
-          _logger.fine("Attributes set on '" + menu.getLabel() + "'.");
+            _logger.fine("Attributes set on '" + menu.getLabel() + "'.");
         }
     }
 
@@ -848,60 +797,35 @@ public class MainMenuBar extends JMenuBar
     public final void macOSXRegistration(final JFrame frame)
     {
         // If running under Mac OS X
-        if (_isRunningUnderMacOSX == true)
-        {
+        if (_isRunningUnderMacOSX) {
+
+            // TODO : system properties must be set before using any Swing component:
+
             // Set the menu bar under Mac OS X
             System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-            // TODO : use Introspection class instead:
-            try
-            {
-                Class   osxAdapter     = this.getClass().getClassLoader()
-                                             .loadClass("fr.jmmc.mcs.gui.OSXAdapter");
+            final Class<?> osxAdapter = Introspection.getClass("fr.jmmc.mcs.gui.OSXAdapter");
 
-                Class[] defArgs        = { JFrame.class };
-                Method  registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication",
-                        defArgs);
-
-                if (registerMethod != null)
-                {
-                    Object[] args = { (JFrame) frame };
-                    registerMethod.invoke(osxAdapter, args);
-                }
-
-                // This is slightly gross.  to reflectively access methods with boolean args, 
-                // use "boolean.class", then pass a Boolean object in as the arg, which apparently
-                // gets converted for you by the reflection system.
-                defArgs[0] = boolean.class;
-
-                Method prefsEnableMethod = osxAdapter.getDeclaredMethod("enablePrefs",
-                        defArgs);
-
-                if (prefsEnableMethod != null)
-                {
-                    Object[] args = { Boolean.TRUE };
-                    prefsEnableMethod.invoke(osxAdapter, args);
-                }
-            }
-            catch (NoClassDefFoundError e)
-            {
+            if (osxAdapter == null) {
                 // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
                 // because OSXAdapter extends ApplicationAdapter in its def
-               _logger.severe(
-                    "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" +
-                    e + ").");
-            }
-            catch (ClassNotFoundException e)
-            {
-                // This shouldn't be reached; if there's a problem with the OSXAdapter we should get the 
-                // above NoClassDefFoundError first.
                 _logger.severe(
-                    "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" +
-                    e + ").");
-            }
-            catch (Exception e)
-            {
-                _logger.log(Level.SEVERE, "Exception while loading the OSXAdapter:", e);
+                        "This version of Mac OS X does not support the Apple EAWT. Application Menu handling has been disabled.");
+            } else {
+                final Method registerMethod = Introspection.getMethod(osxAdapter, "registerMacOSXApplication", new Class<?>[]{JFrame.class});
+
+                if (registerMethod != null) {
+                    Introspection.executeMethod(registerMethod, new Object[]{frame});
+                }
+
+                // This is slightly gross.  to reflectively access methods with boolean args,
+                // use "boolean.class", then pass a Boolean object in as the arg, which apparently
+                // gets converted for you by the reflection system.
+                final Method prefsEnableMethod = Introspection.getMethod(osxAdapter, "enablePrefs", new Class<?>[]{boolean.class});
+
+                if (prefsEnableMethod != null) {
+                    Introspection.executeMethod(prefsEnableMethod, new Object[]{Boolean.TRUE});
+                }
             }
         }
     }
@@ -913,7 +837,7 @@ public class MainMenuBar extends JMenuBar
      */
     private String getPrefixKey()
     {
-        return (_isRunningUnderMacOSX == true) ? "meta " : "ctrl ";
+        return (_isRunningUnderMacOSX) ? "meta " : "ctrl ";
     }
 }
 /*___oOo___*/

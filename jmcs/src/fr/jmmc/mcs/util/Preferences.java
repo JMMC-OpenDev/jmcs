@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Preferences.java,v 1.42 2011-04-04 13:58:24 bourgesl Exp $"
+ * "@(#) $Id: Preferences.java,v 1.43 2011-04-06 15:42:55 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.42  2011/04/04 13:58:24  bourgesl
+ * use FileUtils.closeStream()
+ *
  * Revision 1.41  2011/04/04 13:42:39  bourgesl
  * exception handling
  * wrapped logs
@@ -174,6 +177,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
+import javax.swing.SwingUtilities;
 
 /**
  * Preferences can be managed using String values with this class.
@@ -363,7 +367,7 @@ public abstract class Preferences extends Observable
                 int currentPreferenceVersion = loadedPreferenceVersion;
                 boolean shouldWeContinue = true;
 
-                while ((shouldWeContinue == true) && (currentPreferenceVersion < preferencesVersionNumber)) {
+                while (shouldWeContinue && (currentPreferenceVersion < preferencesVersionNumber)) {
                     if (_logger.isLoggable(Level.FINE)) {
                         _logger.fine("Trying to update loaded preferences from revision '"
                                 + currentPreferenceVersion + "'.");
@@ -670,7 +674,7 @@ public abstract class Preferences extends Observable
         int result = -1;
 
         // If the asked order is NOT about an internal MCS index property
-        if (preferenceName.startsWith(PREFERENCES_ORDER_INDEX_PREFIX) == false) {
+        if (!preferenceName.startsWith(PREFERENCES_ORDER_INDEX_PREFIX)) {
             // Get the corresponding order as a String
             String orderString = _currentProperties.getProperty(PREFERENCES_ORDER_INDEX_PREFIX
                     + preferenceName);
@@ -907,13 +911,11 @@ public abstract class Preferences extends Observable
         // Under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
             // [USER_HOME]/Library/Preferences/
-            _fullFilepath += ("Library" + File.separator + "Preferences"
-                    + File.separator);
+            _fullFilepath += ("Library" + File.separator + "Preferences" + File.separator);
         } // Under Windows
         else if (SystemUtils.IS_OS_WINDOWS) {
             // [USER_HOME]/Local Settings/Application Data/
-            _fullFilepath += ("Local Settings" + File.separator
-                    + "Application Data" + File.separator);
+            _fullFilepath += ("Local Settings" + File.separator + "Application Data" + File.separator);
         } // Under Linux, and anything else
         else {
             // [USER_HOME]/.
@@ -939,9 +941,17 @@ public abstract class Preferences extends Observable
     {
         _logger.entering(_className, "triggerObserversNotification");
 
-        // Notify all preferences listener of maybe new values coming from file.
-        setChanged();
-        notifyObservers();
+        // Use EDT to ensure that Swing component(s) is updated by EDT :
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
+                // Notify all preferences listener of maybe new values coming from file.
+                setChanged();
+                notifyObservers();
+            }
+        });
     }
 
     /**
@@ -949,6 +959,7 @@ public abstract class Preferences extends Observable
      *
      * @return the representation.
      */
+    @Override
     final public String toString()
     {
         return "Preferences file '" + _fullFilepath + "' contains :\n"

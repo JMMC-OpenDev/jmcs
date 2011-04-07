@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.16 2011-04-07 13:20:55 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.17 2011-04-07 14:55:49 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2011/04/07 13:20:55  bourgesl
+ * code formatting
+ *
  * Revision 1.15  2011/04/06 15:38:35  bourgesl
  * updated main
  *
@@ -70,7 +73,6 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -84,6 +86,7 @@ public class StarResolverWidget extends SearchField implements Observer {
     private static final long serialVersionUID = 1;
     /** Container to store retrieved star properties */
     private final Star _star;
+
 
     /**
      * Creates a new StarResolverWidget object.

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SwingSettings.java,v 1.3 2011-04-07 13:53:32 mella Exp $"
+ * "@(#) $Id: SwingSettings.java,v 1.4 2011-04-07 14:08:27 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2011/04/07 13:53:32  mella
+ * Javadoc
+ *
  * Revision 1.2  2011/04/07 13:52:31  mella
  * Add locale and timezone inits
  *
@@ -16,6 +19,7 @@
  */
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.util.MCSExceptionHandler;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Level;
@@ -45,11 +49,14 @@ public class SwingSettings {
     /**
      * Init maximum of things to get uniform application running inn the scientific context.
      */
-    public static void defineDefaults() {
+    public static void setup() {
 
         setMandatory();
         setSwingDefaults();
         setSystemProps();
+
+        // Install exception handlers :
+        MCSExceptionHandler.installSwingHandler();
 
         /* in the future ?
         initLookAndFeel();

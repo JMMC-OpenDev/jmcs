@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolverWidget.java,v 1.15 2011-04-06 15:38:35 bourgesl Exp $"
+ * "@(#) $Id: StarResolverWidget.java,v 1.16 2011-04-07 13:20:55 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2011/04/06 15:38:35  bourgesl
+ * updated main
+ *
  * Revision 1.14  2010/12/16 16:40:45  bourgesl
  * trim the text field value before calling SimBad
  *
@@ -61,8 +64,6 @@ import fr.jmmc.mcs.gui.App;
 import fr.jmmc.mcs.gui.MessagePane;
 import fr.jmmc.mcs.gui.SearchField;
 import fr.jmmc.mcs.gui.StatusBar;
-import fr.jmmc.mcs.util.NetworkSettings;
-import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -77,22 +78,17 @@ import javax.swing.JPanel;
 /**
  * Store informations relative to a star.
  */
-public class StarResolverWidget extends SearchField implements Observer
-{
+public class StarResolverWidget extends SearchField implements Observer {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
-    /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.astro.star.StarResolverWidget");
     /** Container to store retrieved star properties */
     private final Star _star;
 
     /**
      * Creates a new StarResolverWidget object.
      */
-    public StarResolverWidget()
-    {
+    public StarResolverWidget() {
         this(new Star());
     }
 
@@ -101,24 +97,20 @@ public class StarResolverWidget extends SearchField implements Observer
      *
      * @param star star model
      */
-    public StarResolverWidget(final Star star)
-    {
+    public StarResolverWidget(final Star star) {
         super("Simbad");
 
         _star = star;
         _star.addObserver(this);
 
-        addActionListener(new ActionListener()
-        {
+        addActionListener(new ActionListener() {
 
-            public void actionPerformed(final ActionEvent e)
-            {
+            public void actionPerformed(final ActionEvent e) {
                 final String starName = e.getActionCommand().trim();
 
                 if (starName.length() > 0) {
                     if (_logger.isLoggable(Level.INFO)) {
-                        _logger.info("Searching CDS Simbad data for star '"
-                                + starName + "'.");
+                        _logger.info("Searching CDS Simbad data for star '" + starName + "'.");
                     }
                     StatusBar.show("searching CDS Simbad data for star '"
                             + starName + "'... (please wait, this may take a while)");
@@ -137,16 +129,14 @@ public class StarResolverWidget extends SearchField implements Observer
      * Return the star model
      * @return star model
      */
-    public final Star getStar()
-    {
+    public final Star getStar() {
         return _star;
     }
 
     /**
      * Automatically called on attached Star changes.
      */
-    public final void update(final Observable o, final Object arg)
-    {
+    public final void update(final Observable o, final Object arg) {
         Star.Notification notification = Star.Notification.UNKNOWN;
 
         if (arg != null) {
@@ -177,8 +167,7 @@ public class StarResolverWidget extends SearchField implements Observer
      * Main - for StarResolverWidget demonstration and test only.
      * @param args unused
      */
-    public static void main(final String[] args)
-    {
+    public static void main(final String[] args) {
         // GUI initialization
         final JFrame frame = App.getFrame();
         frame.setTitle("StarResolverWidget Demo");
@@ -188,11 +177,9 @@ public class StarResolverWidget extends SearchField implements Observer
 
         // Resolver initialization
         final Star star = new Star();
-        star.addObserver(new Observer()
-        {
+        star.addObserver(new Observer() {
 
-            public void update(Observable o, Object arg)
-            {
+            public void update(Observable o, Object arg) {
                 _logger.severe("Star changed:\n" + star);
             }
         });

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Resources.java,v 1.16 2011-04-06 15:43:39 bourgesl Exp $"
+ * "@(#) $Id: Resources.java,v 1.17 2011-04-07 10:09:24 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2011/04/06 15:43:39  bourgesl
+ * better exception handling
+ * avoid unnecessary getBundle when no bundle is available
+ *
  * Revision 1.15  2010/01/14 13:03:04  bourgesl
  * use Logger.isLoggable to avoid a lot of string.concat()
  *
@@ -85,7 +89,7 @@ public abstract class Resources
     /** flag to indicate that the resource bundle is resolved */
     private static boolean _resolved = false;
     /** Store whether the execution platform is a Mac or not */
-    public static boolean MAC_OS_X = SystemUtils.IS_OS_MAC_OSX;
+    private static boolean MAC_OS_X = SystemUtils.IS_OS_MAC_OSX;
 
     /**
      * Indicates the property file where informations will be exctracted.

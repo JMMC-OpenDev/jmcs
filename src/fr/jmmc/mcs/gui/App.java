@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.90 2011-04-07 14:59:18 mella Exp $"
+ * "@(#) $Id: App.java,v 1.91 2011-04-07 15:42:28 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.90  2011/04/07 14:59:18  mella
+ * Move macos hint to define appname before Jframe instanciation
+ *
  * Revision 1.89  2011/04/07 14:25:13  mella
  * Try to set application Name in the MacOsX menubars
  *
@@ -526,7 +529,6 @@ public abstract class App {
             }
 
         } catch (Throwable th) { // main initialization
-            _logger.severe("Error while initializing the application");
 
             // In order to see the error window
             if (_splashScreen != null) {
@@ -535,8 +537,7 @@ public abstract class App {
                 }
             }
 
-            MessagePane.showErrorMessage(
-                    "An error occured while initializing the application");
+            MessagePane.showErrorMessage("An error occured while initializing the application");
 
             // Show the feedback report (modal) :
             new FeedbackReport(true, th);
@@ -555,52 +556,46 @@ public abstract class App {
             loadDefaultApplicationData();
         } else {
             try {
-                // TODO : LAURENT HERE
-
                 // We reinstantiate the application data model
                 _applicationDataModel = new ApplicationDataModel(fileURL);
-            } catch (Exception ex) {
-                _logger.log(Level.SEVERE,
-                        "Could not load application data from '" + fileURL
-                        + "' file.", ex);
+            } catch (IllegalStateException iae) {
+                _logger.log(Level.SEVERE, "Could not load application data from '" + fileURL + "' file.", iae);
+
+                // Take the defaultData XML in order to take the default menus:
                 loadDefaultApplicationData();
             }
         }
     }
 
-    /** Load the default ApplicationData.xml */
-    private void loadDefaultApplicationData() {
+    /**
+     * Load the default ApplicationData.xml
+     * @throws IllegalStateException if the default ApplicationData.xml can not be loaded
+     */
+    private void loadDefaultApplicationData() throws IllegalStateException {
         String defaultXmlLocation = "";
 
-        try {
-            // The App class
-            Class<?> appClass = App.class;
+        // The App class
+        final Class<?> appClass = App.class;
 
-            // The App package
-            final Package defaultPackage = appClass.getPackage();
+        // The App package
+        final Package defaultPackage = appClass.getPackage();
 
-            // Replace '.' by '/' of package name
-            final String defaultPackageName = defaultPackage.getName().replace(".", "/");
+        // Replace '.' by '/' of package name
+        final String defaultPackageName = defaultPackage.getName().replace(".", "/");
 
-            // Default XML location
-            defaultXmlLocation = defaultPackageName + "/ApplicationData.xml";
+        // Default XML location
+        defaultXmlLocation = defaultPackageName + "/ApplicationData.xml";
 
-            final URL defaultXmlURL = appClass.getClassLoader().getResource(defaultXmlLocation);
+        final URL defaultXmlURL = appClass.getClassLoader().getResource(defaultXmlLocation);
 
-            // TODO : LAURENT HERE
-
-            // We reinstantiate the application data model
-            _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
-
-        } catch (Exception e) {
-            if (_logger.isLoggable(Level.WARNING)) {
-                _logger.log(Level.WARNING,
-                        "Cannot load '" + defaultXmlLocation + "' default application data", e);
-            }
-
-            // Exit the application
-            App.exit(-1);
+        if (defaultXmlURL == null) {
+            throw new IllegalStateException("Cannot load default application data.");
         }
+
+        _logger.log(Level.SEVERE, "Loading application data from '" + defaultXmlURL + "' file.");
+
+        // We reinstantiate the application data model
+        _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
     }
 
     /**
@@ -1157,7 +1152,7 @@ public abstract class App {
      *
      * @return resource file URL
      */
-    public URL getURLFromResourceFilename(String fileName) {
+    public URL getURLFromResourceFilename(final String fileName) {
         // The class which is extended from App
         final Class<?> actualClass = getClass();
 
@@ -1175,17 +1170,8 @@ public abstract class App {
             _logger.fine("filePath = '" + filePath + "'.");
         }
 
-        URL fileURL = null;
-        try {
-            // Open XML file at path
-            fileURL = actualClass.getClassLoader().getResource(filePath);
-
-        } catch (Exception ex) {
-            if (_logger.isLoggable(Level.WARNING)) {
-                _logger.log(Level.WARNING,
-                        "Cannot load '" + filePath + "' resource file.", ex);
-            }
-        }
+        // resolve file path:
+        final URL fileURL = actualClass.getClassLoader().getResource(filePath);
 
         if (_logger.isLoggable(Level.FINE)) {
             _logger.fine("fileURL = '" + fileURL + "'.");

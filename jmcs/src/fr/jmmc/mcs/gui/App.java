@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.87 2011-04-06 15:40:07 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.88 2011-04-07 10:09:24 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.87  2011/04/06 15:40:07  bourgesl
+ * comments
+ *
  * Revision 1.86  2011/04/01 16:10:27  mella
  * use SwingSettings.defineDefaults()
  *
@@ -336,6 +339,7 @@ import java.awt.event.ActionEvent;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import java.net.URL;
 
@@ -349,6 +353,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.lang.SystemUtils;
 
 /**
  * This class represents an application. In order to use
@@ -992,6 +997,9 @@ public abstract class App
                     // Set JMenuBar
                     final JFrame frame = getFrame();
 
+                    // Use OSXAdapter on the frame
+                    macOSXRegistration(frame);
+
                     frame.setJMenuBar(new MainMenuBar(frame));
 
                     // Set application frame common properties
@@ -1476,6 +1484,49 @@ public abstract class App
         {
             _logger.entering("ShowHelpAction", "actionPerformed");
             HelpView.setVisible(true);
+        }
+    }
+
+    /**
+     * Generic registration with the Mac OS X application menu.
+     *
+     * Checks the platform, then attempts.
+     *
+     * @param frame application frame
+     */
+    public final void macOSXRegistration(final JFrame frame)
+    {
+        // If running under Mac OS X
+        if (SystemUtils.IS_OS_MAC_OSX) {
+
+            // TODO : system properties must be set before using any Swing component:
+
+            // Set the menu bar under Mac OS X
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+            final Class<?> osxAdapter = Introspection.getClass("fr.jmmc.mcs.gui.OSXAdapter");
+
+            if (osxAdapter == null) {
+                // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
+                // because OSXAdapter extends ApplicationAdapter in its def
+                _logger.severe(
+                        "This version of Mac OS X does not support the Apple EAWT. Application Menu handling has been disabled.");
+            } else {
+                final Method registerMethod = Introspection.getMethod(osxAdapter, "registerMacOSXApplication", new Class<?>[]{JFrame.class});
+
+                if (registerMethod != null) {
+                    Introspection.executeMethod(registerMethod, new Object[]{frame});
+                }
+
+                // This is slightly gross.  to reflectively access methods with boolean args,
+                // use "boolean.class", then pass a Boolean object in as the arg, which apparently
+                // gets converted for you by the reflection system.
+                final Method prefsEnableMethod = Introspection.getMethod(osxAdapter, "enablePrefs", new Class<?>[]{boolean.class});
+
+                if (prefsEnableMethod != null) {
+                    Introspection.executeMethod(prefsEnableMethod, new Object[]{Boolean.TRUE});
+                }
+            }
         }
     }
 }

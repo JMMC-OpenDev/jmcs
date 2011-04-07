@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Star.java,v 1.24 2011-04-07 13:20:55 bourgesl Exp $"
+ * "@(#) $Id: Star.java,v 1.25 2011-04-07 14:51:14 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2011/04/07 13:20:55  bourgesl
+ * code formatting
+ *
  * Revision 1.23  2011/04/06 15:38:03  bourgesl
  * removed duplicate log messages when an error occurs
  * getPropertyAsString returns "" instead of null
@@ -127,17 +130,15 @@ public class Star extends Observable {
      * @param source the star whose content should be copied from.
      */
     public final void copy(final Star source) {
-        _stringContent.clear();
+        clear();
+
         for (Map.Entry<Property, String> entry : source._stringContent.entrySet()) {
             _stringContent.put(entry.getKey(), entry.getValue());
         }
 
-        _doubleContent.clear();
         for (Map.Entry<Property, Double> entry : source._doubleContent.entrySet()) {
             _doubleContent.put(entry.getKey(), entry.getValue());
         }
-
-        setChanged();
     }
 
     /**
@@ -251,9 +252,10 @@ public class Star extends Observable {
         // Use EDT to ensure only 1 thread (EDT) set and consume the error message :
         SwingUtilities.invokeLater(new Runnable() {
 
+            /**
+             * The state is left unchanged (no clear), only the error message is notified
+             */
             public void run() {
-                clear();
-
                 _cdsSimbadErrorMessage = message;
 
                 fireNotification(Notification.QUERY_ERROR);

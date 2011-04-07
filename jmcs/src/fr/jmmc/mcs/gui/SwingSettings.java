@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SwingSettings.java,v 1.2 2011-04-07 13:52:31 mella Exp $"
+ * "@(#) $Id: SwingSettings.java,v 1.3 2011-04-07 13:53:32 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2011/04/07 13:52:31  mella
+ * Add locale and timezone inits
+ *
  * Revision 1.1  2011/04/01 16:09:44  mella
  * new class to define swing defaults
  *
@@ -26,7 +29,9 @@ import org.apache.commons.lang.SystemUtils;
  * 
  * This code is called in the App instanciation, but you are strongly invited
  * to place following code at the first lines of the main method in your 
- * applications.
+ * applications:
+ *
+ * <code>SwingSettings.defineDefaults</code>
  *
  * Copied and adapted from voparis code.
  * 

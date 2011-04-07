@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.89 2011-04-07 14:25:13 mella Exp $"
+ * "@(#) $Id: App.java,v 1.90 2011-04-07 14:59:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.89  2011/04/07 14:25:13  mella
+ * Try to set application Name in the MacOsX menubars
+ *
  * Revision 1.88  2011/04/07 10:09:24  bourgesl
  * moved macOS related into App
  *
@@ -375,8 +378,7 @@ import org.apache.commons.lang.SystemUtils;
  * in order to do that and which has been written to abstract the way
  * to acces to these informations.
  */
-public abstract class App
-{
+public abstract class App {
 
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _mainLogger = Logger.getLogger("fr.jmmc");
@@ -454,8 +456,7 @@ public abstract class App
      *
      * @param args command-line arguments
      */
-    protected App(String[] args)
-    {
+    protected App(String[] args) {
         // Start application immediatly, with splashscreen
         this(args, false);
     }
@@ -465,8 +466,7 @@ public abstract class App
      * @param args command-line arguments
      * @param waitBeforeExecution if true, do not launch run() automatically
      */
-    protected App(String[] args, boolean waitBeforeExecution)
-    {
+    protected App(String[] args, boolean waitBeforeExecution) {
         // Start application with splashscreen
         this(args, waitBeforeExecution, true);
     }
@@ -479,8 +479,7 @@ public abstract class App
      * @param waitBeforeExecution if true, do not launch run() automatically
      * @param exitWhenClosed if true, the application will close when exit method is called
      */
-    protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed)
-    {
+    protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed) {
         try {
             _registrar = ActionRegistrar.getInstance();
 
@@ -548,8 +547,7 @@ public abstract class App
      * Load application data if Applicationdata.xml exists into the module.
      * Otherwise, uses the default ApplicationData.xml.
      */
-    private void loadApplicationData()
-    {
+    private void loadApplicationData() {
         final URL fileURL = getURLFromResourceFilename("ApplicationData.xml");
 
         if (fileURL == null) {
@@ -571,8 +569,7 @@ public abstract class App
     }
 
     /** Load the default ApplicationData.xml */
-    private void loadDefaultApplicationData()
-    {
+    private void loadDefaultApplicationData() {
         String defaultXmlLocation = "";
 
         try {
@@ -610,8 +607,7 @@ public abstract class App
      * Return the action which displays and copy acknowledgement to clipboard
      * @return action which displays and copy acknowledgement to clipboard
      */
-    public static Action acknowledgementAction()
-    {
+    public static Action acknowledgementAction() {
         return _acknowledgementAction;
     }
 
@@ -619,10 +615,8 @@ public abstract class App
      * Creates the action which open the about box window
      * @return action which open the about box window
      */
-    public static Action aboutBoxAction()
-    {
-        return new AbstractAction("About...")
-        {
+    public static Action aboutBoxAction() {
+        return new AbstractAction("About...") {
 
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
@@ -631,8 +625,7 @@ public abstract class App
              * Handle the action event
              * @param evt action event
              */
-            public void actionPerformed(ActionEvent evt)
-            {
+            public void actionPerformed(ActionEvent evt) {
                 if (_applicationDataModel != null) {
                     if (_aboutBox != null) {
                         if (!_aboutBox.isVisible()) {
@@ -652,8 +645,7 @@ public abstract class App
      * Creates the feedback action which open the feedback window
      * @return feedback action which open the feedback window
      */
-    public static Action feedbackReportAction()
-    {
+    public static Action feedbackReportAction() {
         return feedbackReportAction(null);
     }
 
@@ -662,10 +654,8 @@ public abstract class App
      * @param ex exception that occured
      * @return feedback action which open the feedback window
      */
-    public static Action feedbackReportAction(final Exception ex)
-    {
-        return new AbstractAction("Report Feedback to JMMC...")
-        {
+    public static Action feedbackReportAction(final Exception ex) {
+        return new AbstractAction("Report Feedback to JMMC...") {
 
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
@@ -674,8 +664,7 @@ public abstract class App
              * Handle the action event
              * @param evt action event
              */
-            public void actionPerformed(ActionEvent evt)
-            {
+            public void actionPerformed(ActionEvent evt) {
                 if (_applicationDataModel != null) {
                     // Show the feedback report :
                     new FeedbackReport(ex);
@@ -688,8 +677,7 @@ public abstract class App
      * Return the action which tries to display the help
      * @return action which tries to display the help
      */
-    public static Action showHelpAction()
-    {
+    public static Action showHelpAction() {
         return _showHelpAction;
     }
 
@@ -697,8 +685,7 @@ public abstract class App
      * Return the action which tries to quit the application
      * @return action which tries to quit the application
      */
-    public static Action quitAction()
-    {
+    public static Action quitAction() {
         return _quitAction;
     }
 
@@ -706,8 +693,7 @@ public abstract class App
      * Return the action dedicated to display hot news
      * @return action dedicated to display hot news 
      */
-    public static Action showHotNewsAction()
-    {
+    public static Action showHotNewsAction() {
         return _showHotNewsAction;
     }
 
@@ -715,8 +701,7 @@ public abstract class App
      * Return the action dedicated to display release
      * @return action dedicated to display release
      */
-    public static Action showReleaseAction()
-    {
+    public static Action showReleaseAction() {
         return _showReleaseAction;
     }
 
@@ -724,8 +709,7 @@ public abstract class App
      * Return the action dedicated to display FAQ
      * @return action dedicated to display FAQ 
      */
-    public static Action showFaqAction()
-    {
+    public static Action showFaqAction() {
         return _showFaqAction;
     }
 
@@ -734,8 +718,7 @@ public abstract class App
      *
      * @param args arguments
      */
-    private final void interpretArguments(String[] args)
-    {
+    private final void interpretArguments(String[] args) {
         // List received arguments
         if (_logger.isLoggable(Level.FINEST)) {
             for (int i = 0; i < args.length; i++) {
@@ -843,8 +826,7 @@ public abstract class App
     }
 
     /** Show command arguments help */
-    public static void showArgumentsHelp()
-    {
+    public static void showArgumentsHelp() {
         System.out.println(
                 "------------- Arguments help --------------------------------------------");
         System.out.println(
@@ -898,8 +880,7 @@ public abstract class App
      * @return should return true if the application can exit, false otherwise
      * to cancel exit.
      */
-    protected boolean finish()
-    {
+    protected boolean finish() {
         _logger.info("Default App.finish() handler called.");
 
         return true;
@@ -909,8 +890,7 @@ public abstract class App
      * Hook to handle operations when exiting application.
      * @see App#exit(int)
      */
-    public void onFinish()
-    {
+    public void onFinish() {
         // Disconnect from SAMP Hub :
         SampManager.shutdown();
 
@@ -924,8 +904,7 @@ public abstract class App
      * - System.exit(statusCode)
      * @param statusCode status code to return
      */
-    public final static void exit(final int statusCode)
-    {
+    public final static void exit(final int statusCode) {
         _logger.info("Killing the application.");
 
         try {
@@ -949,28 +928,24 @@ public abstract class App
      * Define the  flag to avoid calls to System.exit() (JUnit)
      * @param flag true to avoid calls to System.exit()
      */
-    public final static void setAvoidSystemExit(final boolean flag)
-    {
+    public final static void setAvoidSystemExit(final boolean flag) {
         _avoidSystemExit = flag;
     }
 
     /** 
      * Describe the life cycle of the application
      */
-    protected final void run()
-    {
+    protected final void run() {
         // Show splash screen if we have to
         if (_showSplashScreen) {
             try {
                 // Using invokeAndWait to be in sync with the main thread :
-                SwingUtilities.invokeAndWait(new Runnable()
-                {
+                SwingUtilities.invokeAndWait(new Runnable() {
 
                     /**
                      * Initializes Splash Screen in EDT
                      */
-                    public void run()
-                    {
+                    public void run() {
                         showSplashScreen();
                     }
                 });
@@ -990,15 +965,21 @@ public abstract class App
         try {
 
             // Using invokeAndWait to be in sync with the main thread :
-            SwingUtilities.invokeAndWait(new Runnable()
-            {
+            SwingUtilities.invokeAndWait(new Runnable() {
 
                 /**
                  * Initializes swing components in EDT
                  */
-                public void run()
-                {
-                    // Set JMenuBar
+                public void run() {
+                    // If running under Mac OS X
+                    if (SystemUtils.IS_OS_MAC_OSX) {
+                        // Set application name :
+                        // system properties must be set before using any Swing component:
+                        // Hope nothing as already been done...
+                        System.setProperty("com.apple.mrj.application.apple.menu.about.name", _applicationDataModel.getProgramName());
+                    }
+
+                    // Define the jframe associated to the application which will get the JmenuBar
                     final JFrame frame = getFrame();
 
                     // Use OSXAdapter on the frame
@@ -1027,14 +1008,12 @@ public abstract class App
 
         // If any file argument exists, open that file using the registered open action :
         if (_fileArgument != null) {
-            SwingUtilities.invokeLater(new Runnable()
-            {
+            SwingUtilities.invokeLater(new Runnable() {
 
                 /**
                  * Open the file using EDT :
                  */
-                public void run()
-                {
+                public void run() {
                     _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, _fileArgument));
                     // clear :
                     _fileArgument = null;
@@ -1047,8 +1026,7 @@ public abstract class App
      * Return true if there is a file name argument for the open action (during startup)
      * @return true if there is a file name argument for the open action
      */
-    protected final boolean hasFileArgument()
-    {
+    protected final boolean hasFileArgument() {
         return this._fileArgument != null;
     }
 
@@ -1057,8 +1035,7 @@ public abstract class App
      *
      * @return logs report into a unique string
      */
-    public static String getLogOutput()
-    {
+    public static String getLogOutput() {
         // Needed in order to write all logs in the ouput stream buffer
         if (_streamHandler != null) {
             _streamHandler.flush();
@@ -1070,14 +1047,12 @@ public abstract class App
     /**
      * Show third party logging utility.
      */
-    public static void showLogGui()
-    {
+    public static void showLogGui() {
         imx.loggui.LogMaster.startLogGui();
     }
 
     /** Show the splash screen */
-    private void showSplashScreen()
-    {
+    private void showSplashScreen() {
         if (_applicationDataModel != null) {
             _logger.fine("Show splash screen");
 
@@ -1094,8 +1069,7 @@ public abstract class App
      *
      * @return ApplicationDataModel instance.
      */
-    public static ApplicationDataModel getSharedApplicationDataModel()
-    {
+    public static ApplicationDataModel getSharedApplicationDataModel() {
         return _applicationDataModel;
     }
 
@@ -1105,8 +1079,7 @@ public abstract class App
      *
      * @return true if it is a beta, false otherwise.
      */
-    public static boolean isBetaVersion()
-    {
+    public static boolean isBetaVersion() {
         if (_applicationDataModel != null) {
             return _applicationDataModel.getProgramVersion().contains("b");
         }
@@ -1119,8 +1092,7 @@ public abstract class App
      *
      * @return true if it is a alpha, false otherwise.
      */
-    public static boolean isAlphaVersion()
-    {
+    public static boolean isAlphaVersion() {
         if (_applicationDataModel != null) {
             return _applicationDataModel.getProgramVersion().contains("a");
         }
@@ -1135,8 +1107,7 @@ public abstract class App
      *
      * @param frame application frame
      */
-    public static void setFrame(final JFrame frame)
-    {
+    public static void setFrame(final JFrame frame) {
         _applicationFrame = frame;
     }
 
@@ -1145,8 +1116,7 @@ public abstract class App
      *
      * @return application frame
      */
-    public static JFrame getFrame()
-    {
+    public static JFrame getFrame() {
         if (_applicationFrame == null) {
             _applicationFrame = new JFrame();
         }
@@ -1158,8 +1128,7 @@ public abstract class App
      *
      * @return application frame panel
      */
-    public static Container getFramePanel()
-    {
+    public static Container getFramePanel() {
         return getFrame().getContentPane();
     }
 
@@ -1168,8 +1137,7 @@ public abstract class App
      *
      * @return shared instance
      */
-    public static App getSharedInstance()
-    {
+    public static App getSharedInstance() {
         return _sharedInstance;
     }
 
@@ -1178,8 +1146,7 @@ public abstract class App
      *
      * @return true if the Application is ready
      */
-    public final static boolean isReady()
-    {
+    public final static boolean isReady() {
         return _applicationReady;
     }
 
@@ -1190,8 +1157,7 @@ public abstract class App
      *
      * @return resource file URL
      */
-    public URL getURLFromResourceFilename(String fileName)
-    {
+    public URL getURLFromResourceFilename(String fileName) {
         // The class which is extended from App
         final Class<?> actualClass = getClass();
 
@@ -1229,8 +1195,7 @@ public abstract class App
     }
 
     /** Action to correctly handle file opening. */
-    protected class OpenAction extends RegisteredAction
-    {
+    protected class OpenAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1241,8 +1206,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public OpenAction(String classPath, String fieldName)
-        {
+        public OpenAction(String classPath, String fieldName) {
             super(classPath, fieldName);
 
             // Disabled as this default implementation does nothing
@@ -1255,8 +1219,7 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("OpenAction", "actionPerformed");
 
             _logger.warning("No handler for default file opening.");
@@ -1264,8 +1227,7 @@ public abstract class App
     }
 
     /** Action to correctly handle operations before closing application. */
-    protected class QuitAction extends RegisteredAction
-    {
+    protected class QuitAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1276,8 +1238,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public QuitAction(String classPath, String fieldName)
-        {
+        public QuitAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Quit", "ctrl Q");
 
             flagAsQuitAction();
@@ -1287,8 +1248,7 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("QuitAction", "actionPerformed");
 
             _logger.fine("Should we kill the application ?");
@@ -1313,8 +1273,7 @@ public abstract class App
     }
 
     /** Action to copy acknowledgement text to the clipboard. */
-    protected class AcknowledgementAction extends RegisteredAction
-    {
+    protected class AcknowledgementAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1327,8 +1286,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public AcknowledgementAction(String classPath, String fieldName)
-        {
+        public AcknowledgementAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
             _acknowledgement = _applicationDataModel.getAcknowledgment();
 
@@ -1350,8 +1308,7 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("AcknowledgementAction", "actionPerformed");
 
             StringSelection ss = new StringSelection(_acknowledgement);
@@ -1370,8 +1327,7 @@ public abstract class App
     }
 
     /** Action to show hot news RSS feed. */
-    protected class ShowHotNewsAction extends RegisteredAction
-    {
+    protected class ShowHotNewsAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1382,8 +1338,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public ShowHotNewsAction(String classPath, String fieldName)
-        {
+        public ShowHotNewsAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Hot News (RSS Feed)");
         }
 
@@ -1391,16 +1346,14 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("ShowReleaseAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getHotNewsRSSFeedLinkValue());
         }
     }
 
     /** Action to show release. */
-    protected class ShowReleaseAction extends RegisteredAction
-    {
+    protected class ShowReleaseAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1411,8 +1364,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public ShowReleaseAction(String classPath, String fieldName)
-        {
+        public ShowReleaseAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Release Notes");
         }
 
@@ -1420,16 +1372,14 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("ShowReleaseAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getReleaseNotesLinkValue());
         }
     }
 
     /** Action to show FAQ. */
-    protected class ShowFaqAction extends RegisteredAction
-    {
+    protected class ShowFaqAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1440,8 +1390,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public ShowFaqAction(String classPath, String fieldName)
-        {
+        public ShowFaqAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Frequently Asked Questions");
         }
 
@@ -1449,16 +1398,14 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("ShowFaqAction", "actionPerformed");
             BrowserLauncher.openURL(_applicationDataModel.getFaqLinkValue());
         }
     }
 
     /** Action to show help. */
-    protected class ShowHelpAction extends RegisteredAction
-    {
+    protected class ShowHelpAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1469,8 +1416,7 @@ public abstract class App
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        public ShowHelpAction(String classPath, String fieldName)
-        {
+        public ShowHelpAction(String classPath, String fieldName) {
             super(classPath, fieldName, "User Manual");
             setEnabled(HelpView.isAvailable());
 
@@ -1484,8 +1430,7 @@ public abstract class App
          * Handle the action event
          * @param evt action event
          */
-        public void actionPerformed(ActionEvent evt)
-        {
+        public void actionPerformed(ActionEvent evt) {
             _logger.entering("ShowHelpAction", "actionPerformed");
             HelpView.setVisible(true);
         }
@@ -1498,8 +1443,7 @@ public abstract class App
      *
      * @param frame application frame
      */
-    public final void macOSXRegistration(final JFrame frame)
-    {
+    public final void macOSXRegistration(final JFrame frame) {
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: App.java,v 1.88 2011-04-07 10:09:24 bourgesl Exp $"
+ * "@(#) $Id: App.java,v 1.89 2011-04-07 14:25:13 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.88  2011/04/07 10:09:24  bourgesl
+ * moved macOS related into App
+ *
  * Revision 1.87  2011/04/06 15:40:07  bourgesl
  * comments
  *
@@ -400,8 +403,9 @@ public abstract class App
         // note: settings must be set before using any URLConnection (loadApplicationData)
         NetworkSettings.defineDefaults();
 
-        // Define swing settings (laf, locale...)
-        SwingSettings.defineDefaults();
+        // Try to define swing settings (laf, locale...) again if
+        // next line was not present at the first line of the main method.
+        SwingSettings.setup();
 
     }
     /** Logger - register on fr.jmmc to collect all logs under this path */
@@ -1499,7 +1503,10 @@ public abstract class App
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
 
-            // TODO : system properties must be set before using any Swing component:
+            // Set application name :
+            // system properties must be set before using any Swing component:
+            // Hope nothing as already been done...
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", _applicationDataModel.getProgramName());
 
             // Set the menu bar under Mac OS X
             System.setProperty("apple.laf.useScreenMenuBar", "true");

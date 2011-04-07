@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: SearchField.java,v 1.6 2011-04-06 15:42:06 bourgesl Exp $"
+ * "@(#) $Id: SearchField.java,v 1.7 2011-04-07 13:22:01 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2011/04/06 15:42:06  bourgesl
+ * avoid explicit boolean values
+ *
  * Revision 1.5  2010/10/14 12:12:19  bourgesl
  * minor code cleanup
  *
@@ -38,6 +41,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -62,24 +66,32 @@ public class SearchField extends JTextField {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
+    /** Logger */
+    protected static final Logger _logger = Logger.getLogger(SearchField.class.getName());
     /** The border that draws the magnifying glass and the cancel cross */
     private static final Border CANCEL_BORDER = new CancelBorder();
     /** Store wether notifications should be sent every time a key is pressed */
     private boolean sendsNotificationForEachKeystroke = false;
     /** Store wether a text should be drawn when nothing else in textfield */
     private boolean showingPlaceholderText = false;
-    /** store wether the cnacell cross is currently clicked */
+    /** store wether the cancel cross is currently clicked */
     private boolean armed = false;
+    /** the text displayed when nothing in */
+    private final String placeholderText;
+    /** previous entered text */
+    private String previousText = "";
 
     /**
      * Creates a new SearchField object.
      *
      * @param placeholderText the text displayed when nothing in.
      */
-    public SearchField(String placeholderText) {
+    public SearchField(final String placeholderText) {
         super(8); // 8 characters wide by default
 
-        addFocusListener(new PlaceholderText(placeholderText));
+        this.placeholderText = placeholderText;
+
+        addFocusListener(new PlaceholderText());
         initBorder();
         initKeyListener();
     }
@@ -124,7 +136,7 @@ public class SearchField extends JTextField {
 
         setBorder(new CompoundBorder(getBorder(), CANCEL_BORDER));
 
-        MouseInputListener mouseInputListener = new CancelListener();
+        final MouseInputListener mouseInputListener = new CancelListener();
         addMouseListener(mouseInputListener);
         addMouseMotionListener(mouseInputListener);
 
@@ -139,7 +151,7 @@ public class SearchField extends JTextField {
      * @param g the graphical context to draw in.
      */
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         // On anything but Mac OS X
         if (!SystemUtils.IS_OS_MAC_OSX) {
             int width = getWidth();
@@ -190,6 +202,39 @@ public class SearchField extends JTextField {
     }
 
     /**
+     * Sets the text of this <code>TextComponent</code>
+     * to the specified text.
+     *
+     * This overrides the default behaviour to tell the placeholder to use this new text value
+     *
+     * @param txt the new text to be set
+     */
+    @Override
+    public void setText(final String txt) {
+        super.setText(txt);
+
+        if (!this.placeholderText.equals(txt)) {
+            this.previousText = txt;
+        }
+    }
+
+    /**
+     * Returns the text contained in this <code>TextComponent</code>.
+     *
+     * If the text corresponds to the placeholder text then it returns "".
+     *
+     * @return the text, not the placeholder text
+     */
+    public final String getRealText() {
+        final String txt = super.getText();
+
+        if (this.placeholderText.equals(txt)) {
+            return "";
+        }
+        return txt;
+    }
+
+    /**
      * Trap notifications when showing place holder.
      */
     private void maybeNotify() {
@@ -205,7 +250,7 @@ public class SearchField extends JTextField {
      *
      * @param eachKeystroke true to notify any key pressed, false otherwise.
      */
-    public void setSendsNotificationForEachKeystroke(boolean eachKeystroke) {
+    public void setSendsNotificationForEachKeystroke(final boolean eachKeystroke) {
         this.sendsNotificationForEachKeystroke = eachKeystroke;
     }
 
@@ -216,20 +261,23 @@ public class SearchField extends JTextField {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
+        /** disarm color */
         private static final Color DISARMED_GRAY = new Color(0.7f, 0.7f, 0.7f);
 
+        /**
+         * Constructor
+         */
         CancelBorder() {
             super(0, 0, 0, 8);
         }
 
         @Override
-        public void paintBorder(Component c, Graphics oldGraphics, int x,
-                int y, int width, int height) {
-            SearchField field = (SearchField) c;
-            Color backgroundColor = field.getBackground();
-            Graphics2D g = (Graphics2D) oldGraphics;
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+        public void paintBorder(final Component c, final Graphics oldGraphics,
+                final int x, final int y, final int width, final int height) {
+            final SearchField field = (SearchField) c;
+            final Color backgroundColor = field.getBackground();
+            final Graphics2D g = (Graphics2D) oldGraphics;
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             // Draw magnifying glass lens
             final int diskL = 9;
@@ -250,8 +298,7 @@ public class SearchField extends JTextField {
             g.drawLine(downX, downY, upX, upY);
             g.drawLine(downX + 1, downY, upX, upY);
 
-            if (field.showingPlaceholderText
-                    || (field.getText().length() == 0)) {
+            if (field.showingPlaceholderText || field.getText().length() == 0) {
                 // Don't draw the cancel cross
                 return;
             }
@@ -279,43 +326,47 @@ public class SearchField extends JTextField {
      */
     private final class CancelListener extends MouseInputAdapter {
 
-        private boolean isOverButton(MouseEvent e) {
+        /**
+         * Return true if the mouse is over the cancel button
+         * @param me mouse event
+         * @return true if the mouse is over the cancel button
+         */
+        private boolean isOverButton(final MouseEvent me) {
             // If the button is down, we might be outside the component
             // without having had mouseExited invoked.
-            if (!contains(e.getPoint())) {
+            if (!contains(me.getPoint())) {
                 return false;
             }
 
             // In lieu of proper hit-testing for the circle, check that
             // the mouse is somewhere in the border.
-            Rectangle innerArea = SwingUtilities.calculateInnerArea(SearchField.this,
-                    null);
+            final Rectangle innerArea = SwingUtilities.calculateInnerArea(SearchField.this, null);
 
-            return (!innerArea.contains(e.getPoint()));
+            return (!innerArea.contains(me.getPoint()));
         }
 
         @Override
-        public void mouseDragged(MouseEvent e) {
-            arm(e);
+        public void mouseDragged(final MouseEvent me) {
+            arm(me);
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {
-            arm(e);
+        public void mouseEntered(final MouseEvent me) {
+            arm(me);
         }
 
         @Override
-        public void mouseExited(MouseEvent e) {
+        public void mouseExited(final MouseEvent me) {
             disarm();
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            arm(e);
+        public void mousePressed(final MouseEvent me) {
+            arm(me);
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) {
+        public void mouseReleased(final MouseEvent me) {
             if (armed) {
                 cancel();
             }
@@ -323,11 +374,18 @@ public class SearchField extends JTextField {
             disarm();
         }
 
-        private void arm(MouseEvent e) {
-            armed = (isOverButton(e) && SwingUtilities.isLeftMouseButton(e));
+        /**
+         * Enable the arm flag and repaint
+         * @param me mouse event
+         */
+        private void arm(final MouseEvent me) {
+            armed = (isOverButton(me) && SwingUtilities.isLeftMouseButton(me));
             repaint();
         }
 
+        /**
+         * Disable the arm flag and repaint
+         */
         private void disarm() {
             armed = false;
             repaint();
@@ -341,25 +399,28 @@ public class SearchField extends JTextField {
      */
     private final class PlaceholderText implements FocusListener {
 
-        private String placeholderText;
-        private String previousText = "";
+        /** color used when the field has the focus */
         private Color previousColor;
 
-        PlaceholderText(String placeholderText) {
-            this.placeholderText = placeholderText;
+        /**
+         * Constructor
+         */
+        PlaceholderText() {
+            // get initial text and colors:
             focusLost(null);
         }
 
-        public void focusGained(FocusEvent e) {
-            setForeground(previousColor);
+        public void focusGained(final FocusEvent fe) {
+            setForeground(this.previousColor);
             setText(previousText);
             showingPlaceholderText = false;
         }
 
-        public void focusLost(FocusEvent e) {
-            previousText = getText();
-            previousColor = getForeground();
+        public void focusLost(final FocusEvent fe) {
+            previousText = getRealText();
+            this.previousColor = getForeground();
 
+            // if the field is empty :
             if (previousText.length() == 0) {
                 showingPlaceholderText = true;
                 setForeground(Color.GRAY);

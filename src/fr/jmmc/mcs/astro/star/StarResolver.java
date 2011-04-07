@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: StarResolver.java,v 1.20 2011-04-06 15:39:49 bourgesl Exp $"
+ * "@(#) $Id: StarResolver.java,v 1.21 2011-04-07 13:20:55 bourgesl Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2011/04/06 15:39:49  bourgesl
+ * better exception handling : single error message (stop parsing if I/O failed)
+ * use Urls.encode and Urls.parseURL to handle properly URL exceptions
+ * better exception handling
+ *
  * Revision 1.19  2011/04/04 13:58:24  bourgesl
  * use FileUtils.closeStream()
  *
@@ -99,8 +104,7 @@ import javax.swing.SwingUtilities;
 /**
  * Store informations relative to a star.
  */
-public final class StarResolver
-{
+public final class StarResolver {
 
     /** Logger - register on the current class to collect local logs */
     private static final Logger _logger = Logger.getLogger(
@@ -131,8 +135,7 @@ public final class StarResolver
      * @param name the name of the satr to resolve.
      * @param star the star to fulfill.
      */
-    public StarResolver(final String name, final Star star)
-    {
+    public StarResolver(final String name, final Star star) {
         _starName = name;
         _starModel = star;
     }
@@ -140,8 +143,7 @@ public final class StarResolver
     /**
      * Asynchroneously query CDS Simbad to retrieve a given star information according to its name.
      */
-    public void resolve()
-    {
+    public void resolve() {
         _logger.entering("StarResolver", "resolve");
 
         if (_resolveStarThread != null) {
@@ -167,16 +169,13 @@ public final class StarResolver
      * Command-line tool that tries to resolve the star name given as first parameter.
      * @param args first argument is the star name
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         // Context initialization
         final String starName = args[0];
         final Star star = new Star();
-        star.addObserver(new Observer()
-        {
+        star.addObserver(new Observer() {
 
-            public void update(Observable o, Object arg)
-            {
+            public void update(Observable o, Object arg) {
                 // Outpout results
                 System.out.println("Star '" + starName + "' contains:\n" + star);
             }
@@ -190,8 +189,7 @@ public final class StarResolver
     /**
      * Star resolver thread : launch and handle CDS SimBad query
      */
-    private final class ResolveStarThread extends Thread
-    {
+    private final class ResolveStarThread extends Thread {
 
         /** flag to indicate that an error occured */
         private boolean _error = false;
@@ -199,8 +197,7 @@ public final class StarResolver
         private String _result = null;
 
         @Override
-        public void run()
-        {
+        public void run() {
             _logger.entering("ResolveStarThread", "run");
 
             querySimbad();
@@ -215,8 +212,7 @@ public final class StarResolver
          * registered observers.
          * @param message the error message to store.
          */
-        private void raiseCDSimbadErrorMessage(final String message)
-        {
+        private void raiseCDSimbadErrorMessage(final String message) {
             raiseCDSimbadErrorMessage(message, null);
         }
 
@@ -226,8 +222,7 @@ public final class StarResolver
          * @param message the error message to store.
          * @param exception exception (optional)
          */
-        private void raiseCDSimbadErrorMessage(final String message, final Exception exception)
-        {
+        private void raiseCDSimbadErrorMessage(final String message, final Exception exception) {
             _error = true;
 
             if (exception != null) {
@@ -247,16 +242,14 @@ public final class StarResolver
          * Return the flag indicating that an error occured
          * @return true if an error occured
          */
-        private boolean isError()
-        {
+        private boolean isError() {
             return _error;
         }
 
         /**
          * Query Simbad using script
          */
-        public void querySimbad()
-        {
+        public void querySimbad() {
             _logger.entering("ResolveStarThread", "querySimbad");
 
             // Should never receive an empty scence object name
@@ -332,8 +325,7 @@ public final class StarResolver
         /**
          * Parse Simbad response
          */
-        public void parseResult()
-        {
+        public void parseResult() {
             _logger.entering("ResolveStarThread", "parseResult");
 
             // If the result string is empty
@@ -421,11 +413,9 @@ public final class StarResolver
                  */
 
                 // Use EDT to ensure only 1 thread (EDT) updates the model and handles the notification :
-                SwingUtilities.invokeLater(new Runnable()
-                {
+                SwingUtilities.invokeLater(new Runnable() {
 
-                    public void run()
-                    {
+                    public void run() {
                         _starModel.copy(_newStarModel);
 
                         // Notify all registered observers that the query went fine :
@@ -446,8 +436,7 @@ public final class StarResolver
          * @throws ParseException if parsing simbad RA/DEC failed
          * @throws NumberFormatException if parsing number(s) failed
          */
-        private void parseCoordinates(final String coordinates) throws ParseException, NumberFormatException
-        {
+        private void parseCoordinates(final String coordinates) throws ParseException, NumberFormatException {
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Coordinates contains '" + coordinates + "'.");
             }
@@ -487,8 +476,7 @@ public final class StarResolver
          * Parse object types
          * @param objectTypes simbad object types
          */
-        private void parseObjectTypes(final String objectTypes)
-        {
+        private void parseObjectTypes(final String objectTypes) {
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Object Types contains '" + objectTypes + "'.");
             }
@@ -501,8 +489,7 @@ public final class StarResolver
          * @param fluxes simbad fluxes
          * @throws NumberFormatException if parsing number(s) failed
          */
-        private void parseFluxes(final String fluxes) throws NumberFormatException
-        {
+        private void parseFluxes(final String fluxes) throws NumberFormatException {
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Fluxes contains '" + fluxes + "'.");
             }
@@ -530,8 +517,7 @@ public final class StarResolver
          * @param properMotion
          * @throws NumberFormatException if parsing number(s) failed
          */
-        private void parseProperMotion(final String properMotion) throws NumberFormatException
-        {
+        private void parseProperMotion(final String properMotion) throws NumberFormatException {
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Proper Motion contains '" + properMotion + "'.");
             }
@@ -562,8 +548,7 @@ public final class StarResolver
          * @param parallax simbad parallax
          * @throws NumberFormatException if parsing number(s) failed
          */
-        private void parseParallax(final String parallax) throws NumberFormatException
-        {
+        private void parseParallax(final String parallax) throws NumberFormatException {
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Parallax contains '" + parallax + "'.");
             }
@@ -593,8 +578,7 @@ public final class StarResolver
          * Parse spectral types
          * @param spectralTypes simbad spectral types
          */
-        private void parseSpectralTypes(final String spectralTypes)
-        {
+        private void parseSpectralTypes(final String spectralTypes) {
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Spectral Types contains '" + spectralTypes + "'.");
             }
@@ -607,8 +591,7 @@ public final class StarResolver
          * @param radialVelocity Simbad radial velocity
          * @throws NumberFormatException if parsing number(s) failed
          */
-        private void parseRadialVelocity(final String radialVelocity) throws NumberFormatException
-        {
+        private void parseRadialVelocity(final String radialVelocity) throws NumberFormatException {
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Radial velocity contains '" + radialVelocity + "'.");
             }
@@ -640,8 +623,7 @@ public final class StarResolver
          * Parse optional identifiers
          * @param identifiers simbad identifiers
          */
-        private void parseIdentifiers(final String identifiers)
-        {
+        private void parseIdentifiers(final String identifiers) {
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Identifier contains '" + identifiers + "'.");
             }
@@ -667,8 +649,7 @@ public final class StarResolver
      *
      * @see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4140850
      */
-    private static final class StrictStringTokenizer
-    {
+    private static final class StrictStringTokenizer {
 
         /** delimiter */
         private String delimiter;
@@ -682,8 +663,7 @@ public final class StarResolver
          * @param input input string
          * @param delimiter delimiter
          */
-        public StrictStringTokenizer(final String input, final String delimiter)
-        {
+        public StrictStringTokenizer(final String input, final String delimiter) {
             this.delimiter = delimiter;
             this.st = new StringTokenizer(input, delimiter, true);
             this.lastToken = delimiter;// if first token is separator
@@ -694,8 +674,7 @@ public final class StarResolver
          *
          * @return     the next token from this string tokenizer.
          */
-        public String nextToken()
-        {
+        public String nextToken() {
             String result = null;
 
             String token;

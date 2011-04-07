@@ -45,11 +45,10 @@
  */
 package fr.jmmc.mcs.gui;
 
-import com.apple.eawt.*;
-
+import com.apple.eawt.ApplicationAdapter;
+import com.apple.eawt.ApplicationEvent;
 import fr.jmmc.mcs.util.ActionRegistrar;
-
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
 
@@ -58,7 +57,7 @@ import javax.swing.JFrame;
  * DOCUMENT ME!
  *
  * @author $author$
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class OSXAdapter extends ApplicationAdapter
 {

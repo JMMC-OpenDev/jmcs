@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.28 2011-02-24 10:22:51 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.29 2011-04-13 13:23:29 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.28  2011/02/24 10:22:51  mella
+# Add information into generated MANIFEST.MF file
+#
 # Revision 1.27  2011/02/21 17:10:32  mella
 # improve deployement on config where aliases are used
 #
@@ -100,7 +103,8 @@
 #*******************************************************************************
 
 # define default values 
-CODEBASE="http://$(uname -n)/~$USER"
+# use hardcoded value : used to be : CODEBASE="http://$(uname -n)/~$USER"
+CODEBASE="http://apps.jmmc.fr/~$USER"
 WEBROOT="$HOME/public_html"
 
 # define script name

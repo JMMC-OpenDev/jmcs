@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: ALX.java,v 1.31 2011-04-06 15:37:09 bourgesl Exp $"
+ * "@(#) $Id: ALX.java,v 1.32 2011-04-19 07:33:52 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2011/04/06 15:37:09  bourgesl
+ * avoid explicit boolean values
+ *
  * Revision 1.30  2011/04/04 16:13:33  bourgesl
  * exception handling
  *
@@ -675,7 +678,7 @@ public class ALX
     {
         // Daniel wrote:
         // If the luminosity class is unknown, by default one can suppose that
-        // the star is a giant (III)
+        // the star is a -g-i-a-n-t- dwarf
         // (cds sptypes returns 0 when luminosity code is missing)
         try {
             final Sptype s = getSptype(sptype);

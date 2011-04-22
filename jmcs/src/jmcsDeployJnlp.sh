@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: jmcsDeployJnlp.sh,v 1.29 2011-04-13 13:23:29 mella Exp $"
+# "@(#) $Id: jmcsDeployJnlp.sh,v 1.30 2011-04-22 17:01:17 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.29  2011/04/13 13:23:29  mella
+# hard code apps.jmmc.fr as deployement server
+#
 # Revision 1.28  2011/02/24 10:22:51  mella
 # Add information into generated MANIFEST.MF file
 #
@@ -395,14 +398,16 @@ copyJnlpAndRelated()
 
     # transformation builds shell variables : 
     # eval command source them into into bash world
-    eval $(xml sel -t -o "local INCLUDEDJNLPLIST=&quot;" \
+    TMPVARS=$(xml sel -t -o "local INCLUDEDJNLPLIST=\"" \
     -m "//extension/@href[not(contains(.,'tp://'))]" -v "." -o " " -b \
-    -o "&quot;;&#10;" \
-    -o "local INCLUDEDJARLIST=&quot;" \
-    -m "//jar" -v "@href[not(contains(.,'tp://'))]" -o " " -b -o "&quot;;&#10;" \
-    -o "local INCLUDEDICONLIST=&quot;" \
-    -m "//icon" -v "@href[not(contains(.,'tp://'))]" -o " " -b -o "&quot;;&#10;" \
+    -o "\";" -n \
+    -o "local INCLUDEDJARLIST=\"" \
+    -m "//jar" -v "@href[not(contains(.,'tp://'))]" -o " " -b -o "\";" -n \
+    -o "local INCLUDEDICONLIST=\"" \
+    -m "//icon" -v "@href[not(contains(.,'tp://'))]" -o " " -b -o "\";" -n \
     $SHORTGIVENJNLP)
+
+   eval $TMPVARS
 
     for icon in $INCLUDEDICONLIST
     do

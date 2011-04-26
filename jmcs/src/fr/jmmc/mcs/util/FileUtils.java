@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: FileUtils.java,v 1.8 2011-04-06 15:42:36 bourgesl Exp $"
+ * "@(#) $Id: FileUtils.java,v 1.9 2011-04-26 20:29:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2011/04/06 15:42:36  bourgesl
+ * removed class name
+ *
  * Revision 1.7  2011/04/04 13:43:33  bourgesl
  * added closeStream()
  *
@@ -79,14 +82,16 @@ import java.net.URL;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Several File utility methods
  *
  * @author bourgesl, mella
  */
-public final class FileUtils
-{
+public final class FileUtils {
+
     /** Class logger */
     private static final Logger logger = Logger.getLogger(FileUtils.class.getName());
     /** platform dependent line separator */
@@ -95,8 +100,7 @@ public final class FileUtils
     /**
      * Forbidden constructor
      */
-    private FileUtils()
-    {
+    private FileUtils() {
         // no-op
     }
 
@@ -105,8 +109,7 @@ public final class FileUtils
      * @param file file to use
      * @return the extension of the file (without the dot char) or null
      */
-    public static String getExtension(final File file)
-    {
+    public static String getExtension(final File file) {
         final String fileName = file.getName();
         final int i = fileName.lastIndexOf('.');
 
@@ -126,8 +129,7 @@ public final class FileUtils
      *
      * @throws IllegalStateException if the file is not found
      */
-    public static URL getResource(final String classpathLocation) throws IllegalStateException
-    {
+    public static URL getResource(final String classpathLocation) throws IllegalStateException {
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("getResource : " + classpathLocation);
         }
@@ -149,8 +151,7 @@ public final class FileUtils
      *
      * @throws IllegalStateException if the file is not found or an I/O exception occured
      */
-    public static String readFile(final String classpathLocation) throws IllegalStateException
-    {
+    public static String readFile(final String classpathLocation) throws IllegalStateException {
         final URL url = getResource(classpathLocation);
 
         try {
@@ -169,8 +170,7 @@ public final class FileUtils
      *
      * @throws IOException if an I/O exception occured
      */
-    public static String readFile(final File file) throws IOException
-    {
+    public static String readFile(final File file) throws IOException {
         return readFile(new FileInputStream(file), (int) file.length());
     }
 
@@ -183,8 +183,7 @@ public final class FileUtils
      *
      * @throws IOException if an I/O exception occured
      */
-    private static String readFile(final InputStream inputStream, final int bufferCapacity) throws IOException
-    {
+    private static String readFile(final InputStream inputStream, final int bufferCapacity) throws IOException {
 
         String result = null;
         BufferedReader bufferedReader = null;
@@ -218,8 +217,7 @@ public final class FileUtils
      *
      * @throws IOException if an I/O exception occured
      */
-    public static void writeFile(final File file, final String content) throws IOException
-    {
+    public static void writeFile(final File file, final String content) throws IOException {
         final Writer w = openFile(file);
         try {
             w.write(content);
@@ -236,8 +234,7 @@ public final class FileUtils
      *
      * @throws IOException if an I/O exception occured
      */
-    public static Writer openFile(final File file) throws IOException
-    {
+    public static Writer openFile(final File file) throws IOException {
         return new BufferedWriter(new FileWriter(file));
     }
 
@@ -246,8 +243,7 @@ public final class FileUtils
      *
      * @param r reader to close
      */
-    public static void closeFile(final Reader r)
-    {
+    public static void closeFile(final Reader r) {
         if (r != null) {
             try {
                 r.close();
@@ -262,8 +258,7 @@ public final class FileUtils
      *
      * @param w writer to close
      */
-    public static void closeFile(final Writer w)
-    {
+    public static void closeFile(final Writer w) {
         if (w != null) {
             try {
                 w.close();
@@ -278,8 +273,7 @@ public final class FileUtils
      *
      * @param in input stream to close
      */
-    public static void closeStream(final InputStream in)
-    {
+    public static void closeStream(final InputStream in) {
         if (in != null) {
             try {
                 in.close();
@@ -294,8 +288,7 @@ public final class FileUtils
      *
      * @param out output stream to close
      */
-    public static void closeStream(final OutputStream out)
-    {
+    public static void closeStream(final OutputStream out) {
         if (out != null) {
             try {
                 out.close();
@@ -316,6 +309,31 @@ public final class FileUtils
     {
         final InputStream in = new BufferedInputStream(new FileInputStream(src));
         final OutputStream out = new BufferedOutputStream(new FileOutputStream(dst));
+
+        // Transfer bytes from in to out
+        try {
+            final byte[] buf = new byte[65536];
+
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+        } finally {
+            closeStream(in);
+            closeStream(out);
+        }
+    }
+
+    /**
+     * Zip source file into destination one.
+     * @param src source file to be zipped
+     * @param dst destination file corresponding to the zipped source file
+     * @throws IOException if io problem occurs
+     * @throws FileNotFoundException if input file is not found
+     */
+    public static void zip(final File src, final File dst) throws IOException, FileNotFoundException {
+        final InputStream in = new BufferedInputStream(new FileInputStream(src));
+        final OutputStream out = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(dst)));
 
         // Transfer bytes from in to out
         try {
@@ -353,8 +371,7 @@ public final class FileUtils
      *          java.lang.SecurityManager#checkWrite(java.lang.String)}</code>
      *          method does not allow a file to be created
      */
-    public static File getTempFile(final String prefix, final String suffix)
-    {
+    public static File getTempFile(final String prefix, final String suffix) {
         // Prevent exception thrown by createTempFile that requires one prefix and
         // suffix longer than 3 chars.
         final String p;
@@ -387,8 +404,7 @@ public final class FileUtils
      * @param filename the short name to use in the computation of the temporary filename
      * @return the temporary filename
      */
-    public static File getTempFile(final String filename)
-    {
+    public static File getTempFile(final String filename) {
         final File file = new File(getTempDir(), filename);
         file.deleteOnExit();
         return file;
@@ -399,8 +415,7 @@ public final class FileUtils
      * 
      * @return the tmp directory name
      */
-    private static String getTempDir()
-    {
+    private static String getTempDir() {
         return System.getProperty("java.io.tmpdir");
     }
 }

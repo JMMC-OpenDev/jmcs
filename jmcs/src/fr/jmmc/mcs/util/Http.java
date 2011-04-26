@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: Http.java,v 1.6 2011-03-30 15:01:48 bourgesl Exp $"
+ * "@(#) $Id: Http.java,v 1.7 2011-04-26 20:29:18 mella Exp $"
  *
  */
 package fr.jmmc.mcs.util;
@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 
 /**
@@ -128,6 +129,10 @@ public final class Http
         // define connection parameters:
         httpParams.setMaxTotalConnections(NetworkSettings.DEFAULT_MAX_TOTAL_CONNECTIONS);
         httpParams.setDefaultMaxConnectionsPerHost(NetworkSettings.DEFAULT_MAX_HOST_CONNECTIONS);
+
+        // set content-encoding to UTF-8 instead of default ISO-8859
+        //final HttpClientParams httpClientParams = httpClient.getParams();
+        //httpClientParams.setParameter(HttpClientParams.HTTP_CONTENT_CHARSET ,"UTF-8");
     }
 
     /**
@@ -192,6 +197,10 @@ public final class Http
         if (uri != null) {
             final ProxySelector proxySelector = ProxySelector.getDefault();
             final List<Proxy> proxyList = proxySelector.select(uri);
+
+            for (Proxy proxy : proxyList) {
+                logger_.info("proxy list proposes:"+proxy);
+            }
             final Proxy proxy = proxyList.get(0);
 
             if (logger_.isLoggable(Level.FINE)) {

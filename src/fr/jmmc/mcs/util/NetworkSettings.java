@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: NetworkSettings.java,v 1.5 2011-04-05 15:20:27 bourgesl Exp $"
+ * "@(#) $Id: NetworkSettings.java,v 1.6 2011-04-26 20:29:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2011/04/05 15:20:27  bourgesl
+ * exception and null handling
+ *
  * Revision 1.4  2011/04/04 16:14:07  bourgesl
  * use Introspection to handle properly exception concerning introspection
  *
@@ -121,7 +124,7 @@ public final class NetworkSettings
         // FIRST STEP: force JVM to use System proxies if System properties are not defined (or given by JNLP RE):
 
         // NOTE: can cause problems with SOCKS / HTTPS / Other protocols ?
-        System.setProperty(PROPERTY_USE_SYSTEM_PROXIES, "true");
+        //System.setProperty(PROPERTY_USE_SYSTEM_PROXIES, "true");
 
 
 

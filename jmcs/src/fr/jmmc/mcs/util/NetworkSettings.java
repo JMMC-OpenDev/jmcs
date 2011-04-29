@@ -123,11 +123,9 @@ public final class NetworkSettings
     {
         // FIRST STEP: force JVM to use System proxies if System properties are not defined (or given by JNLP RE):
 
-        // NOTE: can cause problems with SOCKS / HTTPS / Other protocols ?
-        //System.setProperty(PROPERTY_USE_SYSTEM_PROXIES, "true");
-
-
-
+        // NOTE: USE of SYSTEM_PROXIES can cause problems with SOCKS / HTTPS / Other protocols ?
+        // unset env var all_proxy=socks://w and ALL_PROXY
+        System.setProperty(PROPERTY_USE_SYSTEM_PROXIES, "true");
 
         // first, dump all known network properties:
         final Method netPropertiesGetMethod = getNetPropertiesGetMethod();

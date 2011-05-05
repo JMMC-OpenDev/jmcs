@@ -53,8 +53,6 @@ footer="</projectdir><startpage>index.html</startpage><popupicon></popupicon></c
 # Latex tempory folder, we checkout all CVS modules into it
 latex_tempory_folder=../doc/tmp
 
-cvs_root=cvslaog.obs.ujf-grenoble.fr:/cvs/doc
-
 # Name of the current module
 module_name=$(ctooGetModuleName)
 
@@ -67,9 +65,6 @@ if [ $# -le 0 ]; then
     echo "Error : Please specify at least one documentation reference to get associted module..."
     exit 1
 fi
-
-# Export CVSROOT in order to checkout modules
-export CVSROOT=$cvs_root
 
 # Remove tmp folder if exists
 # in order to avoid previous files inclusion
@@ -87,6 +82,8 @@ mkdir $latex_tempory_folder
 # path like ../xx/ too...
 cd $latex_tempory_folder
 
+repos="https://svn.jmmc.fr/jmmc-doc/trunk"
+
 echo "Checkout each documentation modules ..."
 # For each module
 for module in $@
@@ -101,7 +98,7 @@ do
         echo "Configuring $module ..."
 
         # CVS export
-        cvs co $module
+        svn co "$repos/$module"
         # Exit if export failed
         if [ $? -eq 1 ]; then
             exit 1;

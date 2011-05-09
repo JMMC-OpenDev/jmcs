@@ -47,7 +47,14 @@ function getModules ()
     shift 3
     modules=$*
 
-    # echo "Retrieving modules '$modules' for '${project}' project ..."
+    case "${svnOptions}" in 
+        update)
+        CMD="svn ${svnOptions} ${moduleName}" ;;
+        *)
+        CMD="svn ${svnOptions} ${prjSvnroot}/${module}" ;;
+    esac
+
+    echo "Retrieving following modules for '${project}' project :"
     # Checkout modules ( if they do not already exists)
     for module in $modules ; do
         moduleName=${module##*/}
@@ -56,23 +63,32 @@ function getModules ()
             echo "ERROR: directory '$moduleName' already exists."
             exit 1
         fi
-
-        echo "Retrieving module '${prjSvnroot}/${module}' ..."
         case "${svnOptions}" in 
-        update)
-            CMD="svn ${svnOptions} ${moduleName}" ;;
-        *)
-            CMD="svn ${svnOptions} ${prjSvnroot}/${module}" ;;
+            update)
+                CMD="$CMD ${moduleName}" ;;
+            *)
+                CMD="$CMD ${prjSvnroot}/${module}" ;;
         esac
-        $CMD
-        if [ $? != 0 ]
-        then
-            echo -e "\nERROR: '$CMD' failed ... \n"; 
-            #tail "$logFile"
-            #echo -e "See log file '$logFile' for details."
-            exit 1;
-        fi
+        echo "'${prjSvnroot}/${module}' ..."
     done
+
+    # export/checkout in current dir
+    case "${svnOptions}" in 
+            update) ;;
+            *)
+            CMD="$CMD ." ;;
+    esac
+ 
+    # executing previously built command:
+    $CMD 
+    if [ $? != 0 ]
+    then
+        echo -e "\nERROR: '$CMD' failed ... \n"; 
+        #tail "$logFile"
+        #echo -e "See log file '$logFile' for details."
+        exit 1;
+    fi
+    
 }
 
 function displayModules()

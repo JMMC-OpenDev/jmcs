@@ -49,9 +49,9 @@ function getModules ()
 
     case "${svnOptions}" in 
         update)
-        CMD="svn ${svnOptions} ${moduleName}" ;;
+        CMD="svn ${svnOptions}" ;;
         *)
-        CMD="svn ${svnOptions} ${prjSvnroot}/${module}" ;;
+        CMD="svn ${svnOptions}" ;;
     esac
 
     echo "Retrieving following modules for '${project}' project :"

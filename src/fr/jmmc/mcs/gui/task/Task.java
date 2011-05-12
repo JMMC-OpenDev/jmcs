@@ -1,16 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Task.java,v 1.2 2011-02-14 17:10:26 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2011/02/04 16:21:50  mella
- * Generic Task definition (id, name, child tasks)
- *
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.gui.task;
 
 /**

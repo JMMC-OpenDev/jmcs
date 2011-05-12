@@ -1,15 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ImageCanvas.java,v 1.5 2010-02-09 16:50:07 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2010/02/03 09:29:42  bourgesl
- * little paint changes on the wedge to have the float extrema + color models refactoring
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.image;
 
 import java.awt.Canvas;

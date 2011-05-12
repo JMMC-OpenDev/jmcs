@@ -1,13 +1,7 @@
 <?xml version="1.0"?>
 <!--
 ********************************************************************************
-JMMC project
-
-"@(#) $Id: jmcsLatexIndex2HsTOC.xsl,v 1.1 2009-06-04 10:16:51 mella Exp $"
-
-History
-~~~~~~~
-$Log: not supported by cvs2svn $
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
 NAME
 jmcLatexIndex2HsTOC.xsl - convert the latex2html index file into java help TOC 

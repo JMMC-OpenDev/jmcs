@@ -1,18 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Functions.java,v 1.3 2010-05-18 15:34:47 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2010/05/18 12:43:06  bourgesl
- * added Gaussian Models
- *
- * Revision 1.1  2010/05/17 16:04:01  bourgesl
- * Added this static class to gather model compute functions
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model.function.math;
 
 import cern.jet.math.Bessel;

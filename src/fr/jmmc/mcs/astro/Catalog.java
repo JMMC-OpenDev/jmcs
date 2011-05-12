@@ -1,37 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Catalog.java,v 1.9 2011-03-01 15:46:46 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2011/03/01 15:45:08  mella
- * fix list catalogs html
- *
- * Revision 1.7  2011/03/01 14:38:03  mella
- * Add toHtmlTable method to list all catalogs
- *
- * Revision 1.6  2010/08/24 13:22:33  mella
- * Fix bug
- *
- * Revision 1.5  2010/08/24 12:59:51  mella
- * Define default color association
- *
- * Revision 1.4  2010/08/24 12:26:31  mella
- * fix xml wellformness
- *
- * Revision 1.3  2010/08/24 12:20:09  mella
- * Display list of cats in xml in main function
- *
- * Revision 1.2  2010/01/29 13:03:57  lafrasse
- * Enhanced titleFromReference() and descriptionFromReference() behavior when an
- * unkonown is given.
- * Added WDS catalog definition.
- *
- * Revision 1.1  2009/11/27 15:57:39  lafrasse
- * Added fr/jmmc/mcs/astro/Catalog;
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.astro;
 

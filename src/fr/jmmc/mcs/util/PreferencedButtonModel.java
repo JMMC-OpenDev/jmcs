@@ -1,37 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: PreferencedButtonModel.java,v 1.9 2010-09-30 13:28:02 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2010/09/23 19:38:16  bourgesl
- * comments when calling FeedBackReport
- *
- * Revision 1.7  2009/08/28 09:01:44  lafrasse
- * Jalopization.
- *
- * Revision 1.6  2009/07/16 09:14:37  mella
- * Add proper logger
- * Handle exception triggering a bugreport dialog
- *
- * Revision 1.5  2007/02/13 13:48:51  lafrasse
- * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
- *
- * Revision 1.4  2006/10/16 14:29:49  lafrasse
- * Updated to reflect MCSLogger API changes.
- *
- * Revision 1.3  2006/09/28 15:23:20  lafrasse
- * Updated to handle jmmc.util.Preferences API modifications.
- *
- * Revision 1.2  2006/07/28 08:41:20  mella
- * factory one shared model per preference
- *
- * Revision 1.1  2006/07/07 09:16:23  mella
- * First revision
- *
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 

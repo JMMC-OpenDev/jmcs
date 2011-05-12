@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
 Help to get JNLP and application Data package list uptodate
 Usage sample (from XXX/jmcs/src):
 xsltproc jmcsGenerateJnlpClasspath.xsl fr/jmmc/mcs/gui/ApplicationData.xml

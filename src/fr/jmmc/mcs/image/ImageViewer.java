@@ -1,12 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ImageViewer.java,v 1.3 2010-02-03 09:31:00 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.image;
 
 import java.util.Observable;

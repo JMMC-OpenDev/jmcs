@@ -1,51 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: MessagePane.java,v 1.13 2011-03-30 09:07:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.12  2011/03/08 12:53:45  bourgesl
- * fixed imports
- * code formating
- *
- * Revision 1.11  2011/02/28 12:37:23  mella
- * Add some margin to avoid some scrollbars in the message dialogs
- * Remove some quotes characters during error display
- *
- * Revision 1.10  2011/02/24 16:20:24  mella
- * Limit size of dialog box for long messages using scrollpane
- *
- * Revision 1.9  2011/02/14 17:09:41  bourgesl
- * removed deprecated / dead code
- *
- * Revision 1.8  2011/02/11 09:59:35  mella
- * Add message of the throwable.getCause() if any in the error dialog box
- *
- * Revision 1.7  2010/10/22 11:00:32  bourgesl
- * javadoc
- *
- * Revision 1.6  2010/10/15 09:26:46  bourgesl
- * fixed typo in confirme overwrite message
- *
- * Revision 1.5  2010/10/15 09:01:54  lafrasse
- * Back-ported the "File Overwriting ?" dialog box from SearchCal to showConfirmFileOverwrite().
- *
- * Revision 1.4  2010/10/11 14:00:18  lafrasse
- * Enhanced error message formating.
- *
- * Revision 1.3  2010/10/11 13:49:51  lafrasse
- * Ensures that error message dialogs are done in EDT.
- *
- * Revision 1.2  2010/09/30 15:13:03  bourgesl
- * added methods for information and confirmation messages
- * complete javadoc
- *
- * Revision 1.1  2010/09/24 15:44:54  bourgesl
- * initial version : utility class to show message dialogs
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
 import java.awt.Component;

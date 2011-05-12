@@ -1,14 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: RegisteredPreferencedBooleanAction.java,v 1.2 2009-11-03 16:22:04 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2008/09/18 20:59:13  lafrasse
- * First revision.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 

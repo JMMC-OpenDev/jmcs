@@ -1,25 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: SwingSettings.java,v 1.5 2011-04-07 14:26:02 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2011/04/07 14:08:27  mella
- * install ExceptionHandler into setup() call
- *
- * Revision 1.3  2011/04/07 13:53:32  mella
- * Javadoc
- *
- * Revision 1.2  2011/04/07 13:52:31  mella
- * Add locale and timezone inits
- *
- * Revision 1.1  2011/04/01 16:09:44  mella
- * new class to define swing defaults
- *
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.util.MCSExceptionHandler;

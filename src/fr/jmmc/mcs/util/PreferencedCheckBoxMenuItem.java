@@ -1,20 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: PreferencedCheckBoxMenuItem.java,v 1.4 2007-02-13 13:48:51 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2006/09/28 15:23:20  lafrasse
- * Updated to handle jmmc.util.Preferences API modifications.
- *
- * Revision 1.2  2006/06/23 09:19:35  mella
- * Jalopization
- *
- * Revision 1.1  2006/06/22 12:32:45  lafrasse
- * Creation
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 

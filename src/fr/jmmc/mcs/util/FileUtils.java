@@ -1,66 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: FileUtils.java,v 1.9 2011-04-26 20:29:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2011/04/06 15:42:36  bourgesl
- * removed class name
- *
- * Revision 1.7  2011/04/04 13:43:33  bourgesl
- * added closeStream()
- *
- * Revision 1.6  2011/02/14 11:08:52  mella
- * Closes fluxes in copy method even if one exception occurs
- *
- * Revision 1.5  2011/02/13 17:03:39  mella
- * javadoc
- *
- * Revision 1.4  2011/02/11 15:40:27  mella
- * Add a method to copy files
- *
- * Revision 1.3  2011/02/11 09:58:25  mella
- * Prevent some exceptions in getTempFile method
- *
- * Revision 1.2  2011/02/10 15:48:53  mella
- * ask to delete temp files on exit
- *
- * Revision 1.1  2011/02/10 15:44:49  mella
- * Imported from aspro with new methods getTempFile
- *
- * Revision 1.10  2010/12/15 13:30:38  bourgesl
- * removed to do
- *
- * Revision 1.9  2010/10/07 15:01:14  bourgesl
- * added readFile(file)
- *
- * Revision 1.8  2010/10/04 16:25:25  bourgesl
- * proper IO exception handling
- *
- * Revision 1.7  2010/09/24 15:51:09  bourgesl
- * better exception handling
- *
- * Revision 1.6  2010/07/07 09:29:13  bourgesl
- * javadoc
- *
- * Revision 1.5  2010/06/17 10:02:51  bourgesl
- * fixed warning hints - mainly not final static loggers
- *
- * Revision 1.4  2010/05/26 15:26:02  bourgesl
- * line separator is public
- *
- * Revision 1.3  2010/04/06 08:31:44  bourgesl
- * fixed classloader issue with JNLP
- *
- * Revision 1.2  2010/04/02 14:40:16  bourgesl
- * added writer methods for text files
- *
- * Revision 1.1  2010/01/13 16:12:31  bourgesl
- * added export to PDF button
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.util;
 
 import java.io.BufferedInputStream;

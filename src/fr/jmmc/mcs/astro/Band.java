@@ -1,12 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Band.java,v 1.1 2010-10-14 13:11:28 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.astro;
 
 import java.util.logging.Level;

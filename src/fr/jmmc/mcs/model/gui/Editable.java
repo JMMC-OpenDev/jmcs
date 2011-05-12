@@ -1,16 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Editable.java,v 1.2 2010-05-11 12:55:55 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2010/02/19 16:02:52  bourgesl
- * new Editable interface to represent parameter in the table model
- * new EditableRhoThetaParameter to implement rho/theta conversions
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model.gui;
 
 import fr.jmmc.mcs.model.targetmodel.Model;

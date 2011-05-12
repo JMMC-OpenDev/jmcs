@@ -1,22 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Urls.java,v 1.4 2011-04-06 15:44:19 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2011/04/05 15:18:09  bourgesl
- * added comments
- *
- * Revision 1.2  2009/04/16 15:44:51  lafrasse
- * Jalopization.
- *
- * Revision 1.1  2009/02/26 13:31:17  mella
- * First revision (moved from HelpView)
- *
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.util;
 
 import java.io.File;

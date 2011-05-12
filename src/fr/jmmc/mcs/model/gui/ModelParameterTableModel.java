@@ -1,41 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ModelParameterTableModel.java,v 1.10 2010-12-01 10:13:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.9  2010/05/12 08:47:10  mella
- * setter of editMode is now public
- *
- * Revision 1.8  2010/05/11 12:55:55  bourgesl
- * javadoc only
- *
- * Revision 1.7  2010/03/30 12:06:36  bourgesl
- * do not display rho/theta for the first model : use X/Y instead (read only)
- *
- * Revision 1.6  2010/02/19 16:02:52  bourgesl
- * new Editable interface to represent parameter in the table model
- * new EditableRhoThetaParameter to implement rho/theta conversions
- *
- * Revision 1.5  2010/02/18 09:59:37  bourgesl
- * new ModelDefinition interface to gather model and parameter types
- *
- * Revision 1.4  2010/02/17 17:05:45  bourgesl
- * first model X/Y parameters are not editable
- *
- * Revision 1.3  2010/02/17 15:10:12  bourgesl
- * added model name + shared parameter flag as columns
- *
- * Revision 1.2  2010/02/15 16:45:47  bourgesl
- * added getModelAt(rowIndex) method
- *
- * Revision 1.1  2010/02/12 15:52:32  bourgesl
- * added cloneable support for target model classes
- * added parameter table model
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model.gui;
 
 import fr.jmmc.mcs.model.ModelDefinition;

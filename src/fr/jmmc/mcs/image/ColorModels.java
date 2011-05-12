@@ -1,29 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ColorModels.java,v 1.7 2011-04-04 16:13:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2011/04/04 13:58:25  bourgesl
- * use FileUtils.closeStream()
- *
- * Revision 1.5  2010/02/09 16:49:34  bourgesl
- * force zero values to black
- *
- * Revision 1.4  2010/02/05 16:00:33  bourgesl
- * impossible to get the lut file list from signed jar (jnlp) then fixed bug using a generated hard-coded lut file list
- *
- * Revision 1.3  2010/02/05 13:13:07  bourgesl
- * added log messages
- *
- * Revision 1.2  2010/02/03 09:28:38  bourgesl
- * refactoring :
- * - list of color model names and a map[name; colorModel]
- * - automatic load of lut files to have more color models
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.image;
 
 import fr.jmmc.mcs.util.FileUtils;

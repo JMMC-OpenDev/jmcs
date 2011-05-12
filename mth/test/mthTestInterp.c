@@ -1,24 +1,5 @@
 /*******************************************************************************
- * LAOG project
- *
- * "@(#) $Id: mthTestInterp.c,v 1.5 2007-07-12 15:16:38 gluck Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2007/07/11 14:27:35  gluck
- * Updated to test mthDopplerShift
- *
- * Revision 1.3  2007/07/11 07:41:55  gluck
- * Updated tests for blanking value (behaviour at the limits)
- *
- * Revision 1.2  2007/07/11 06:45:04  gluck
- * - Better declaration of yInterpolatedList
- * - Minor details
- *
- * Revision 1.1  2007/07/09 15:29:15  gluck
- * Added
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

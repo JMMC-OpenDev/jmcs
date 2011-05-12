@@ -1,33 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: mthTestBesselK.c,v 1.4 2006-06-09 12:18:35 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2006/05/11 13:04:56  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.2  2006/02/01 13:31:07  lsauge
- * Add dTiny value in order to avoid infinity in the log calculation of BesselK1
- * and BesselK0 for large argument value.
- *
- * Revision 1.1  2006/02/01 13:08:40  lsauge
- * Rename mthTestBesselK-1.c to mthTestBesselK.c
- *
- * Revision 1.2  2006/02/01 11:57:23  lsauge
- * Minor Changes
- *
- * Revision 1.1  2006/02/01 11:46:04  lsauge
- * Rename file mthTest1.c to mthTestBesselK-1.c
- *
- * Revision 1.2  2006/02/01 08:41:44  lsauge
- * Test code now permit evaluation of the function on a log-log scale.
- *
- * Revision 1.1  2006/02/01 07:45:57  lsauge
- * Add first relaese of test file
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

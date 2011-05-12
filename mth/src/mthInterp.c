@@ -1,24 +1,5 @@
 /*******************************************************************************
- * LAOG project
- * 
- * "@(#) $Id: mthInterp.c,v 1.6 2007-07-12 15:14:05 gluck Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2007/07/11 14:22:24  gluck
- * Added mthDopplerShift function
- *
- * Revision 1.4  2007/07/11 07:41:10  gluck
- * Modified implementation at the limits: blanking value added for points out of range
- *
- * Revision 1.3  2007/07/11 06:47:33  gluck
- * - Changed prototype: array length transmission
- * - implementation at the limits: out of range x are set to y of the curve extremities
- *
- * Revision 1.2  2007/07/09 15:41:33  gluck
- * segment list (based on segment structure) not used anymore for optimisation/performance reasons
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

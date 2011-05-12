@@ -1,32 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.7 2007-07-12 15:12:53 gluck Exp $"
-#
-# Makefile of mth module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.6  2007/07/09 15:31:01  gluck
-# Added mthInterp
-#
-# Revision 1.5  2007/07/09 12:52:06  gzins
-# Added mthInterp
-# Added targets related to Yorick plugin
-#
-# Revision 1.4  2006/06/09 12:15:24  gzins
-# Moved mthNORM to mthGAUSSIAN_RANDOM
-#
-# Revision 1.3  2006/06/02 13:25:35  lsauge
-# Add class mthGAUSSIAN_RANDOM
-#
-# Revision 1.2  2006/01/31 10:34:54  gzins
-# Implemented mthBessKO function
-#
-# Revision 1.1  2006/01/31 01:13:28  sccmgr
-# Fix directory structure and add additional files
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

@@ -1,13 +1,7 @@
 #ifndef mthGAUSSIAN_RANDOM_H
 #define mthGAUSSIAN_RANDOM_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: mthGAUSSIAN_RANDOM.h,v 1.1 2006-06-09 12:22:19 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,26 +1,7 @@
 #ifndef mth_H
 #define mth_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: mth.h,v 1.5 2007-07-09 15:31:01 gluck Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2006/06/09 12:16:10  gzins
- * Moved mthNORM to mthGAUSSIAN_RANDOM
- *
- * Revision 1.3  2006/06/02 13:33:03  lsauge
- * Integrate mthGAUSSIAN_RANDOM.
- * mth.h became mthBesselK.h, mthGAUSSIAN_RANDOM.h created and mth.h creted, integrating the 2 previous header files
- *
- * Revision 1.2  2006/01/31 01:21:22  gzins
- * Added Bessel function declarations
- *
- * Revision 1.1  2006/01/31 01:13:28  sccmgr
- * Fix directory structure and add additional files
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,17 +1,6 @@
 /*******************************************************************************
-* JMMC project - MCS mathematical library plugin 
-*
-* Yorick plugin for MCS mathematical library
-*
-* "@(#) $Id: mthPlugin.i,v 1.2 2007-07-09 15:09:30 gluck Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.1  2007/07/09 12:52:42  gzins
-* Added
-*
-*/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 local package_mthPlugin;
 /* DOCUMENT package_mthPlugin -- mthPlugin.i

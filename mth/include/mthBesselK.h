@@ -1,13 +1,7 @@
 #ifndef mthBesselK_H
 #define mthBesselK_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

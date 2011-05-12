@@ -1,28 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.6 2007-07-09 15:31:33 gluck Exp $"
-#
-# Makefile of mth module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.5  2006/06/09 12:17:49  gzins
-# Moved mthNORMTest to mthTestGAUSSIAN_RANDOM
-#
-# Revision 1.4  2006/06/05 10:58:27  lsauge
-# Add rules for mthNORM test code
-#
-# Revision 1.3  2006/02/01 13:09:57  lsauge
-# Update of the Makefile script after renaming the example code
-#
-# Revision 1.2  2006/02/01 11:57:23  lsauge
-# Minor Changes
-#
-# Revision 1.1  2006/02/01 07:45:57  lsauge
-# Add first relaese of test file
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

@@ -1,14 +1,6 @@
 #*******************************************************************************
-# JMMC project 
-#
-# Yorick plugin for MCS mathematical library 
-#
-# "@(#) $Id: Makefile,v 1.1 2007-07-09 12:52:42 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-#  
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 
 # these values filled in by    yorick -batch make.i
 Y_MAKEDIR=/home/users/gzins/DISTRIB/yorick/lib/yorick/2.1

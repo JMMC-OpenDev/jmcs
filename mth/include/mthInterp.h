@@ -1,16 +1,7 @@
 #ifndef mthInterp_H
 #define mthInterp_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: mthInterp.h,v 1.2 2007-07-12 15:14:55 gluck Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2007/07/09 15:29:15  gluck
- * Added
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,26 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: mthBesselK.c,v 1.6 2006-06-09 12:14:35 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2006/03/03 13:03:48  scetre
- * changed rcsId to rcsId __attribute__  ((unused))
- *
- * Revision 1.4  2006/02/01 00:24:41  gzins
- * Updated documentation
- *
- * Revision 1.3  2006/02/01 00:18:21  gzins
- * Minor changes
- *
- * Revision 1.2  2006/01/31 16:46:25  lsauge
- * Added function mthBessK1
- *
- * Revision 1.1  2006/01/31 10:35:18  gzins
- * Implemented mthBessKO function
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

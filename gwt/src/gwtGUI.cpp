@@ -1,44 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtGUI.cpp,v 1.11 2007-02-22 12:49:10 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2006/05/11 13:04:55  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.9  2005/10/07 06:56:11  gzins
- * Inherited from evhSERVER class; handled connection to XML GUI server, and reception and dispatching of messages from this server.
- *
- * Revision 1.8  2005/09/28 14:02:10  mella
- * Improve memory deallocation into destructor
- *
- * Revision 1.7  2005/03/08 11:22:27  mella
- * Change %80 into %.80 for logInfo
- *
- * Revision 1.6  2005/03/08 11:08:33  mella
- * Place logInfo for message exchanges with Xml Java Side
- *
- * Revision 1.5  2005/02/24 13:38:15  mella
- * Correct doxygen missing param
- *
- * Revision 1.4  2005/02/24 12:34:58  mella
- * Correct xml syntax error for status
- *
- * Revision 1.3  2005/02/24 11:08:02  mella
- * Add reason to SetStatus
- *
- * Revision 1.2  2005/02/15 12:25:28  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.1  2005/01/27 18:09:35  gzins
- * Renamed .C to .cpp
- * Added CVS loh as modification history.
- *
- * mella     14-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

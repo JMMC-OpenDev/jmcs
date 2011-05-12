@@ -1,46 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtTest.C,v 1.16 2006-05-11 13:04:55 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.15  2005/10/07 06:56:55  gzins
- * Updated according to the inheritance change
- *
- * Revision 1.14  2005/09/27 07:29:12  scetre
- * Add delete of class member
- *
- * Revision 1.13  2005/03/08 14:17:28  mella
- * Add window's close event handling
- *
- * Revision 1.12  2005/03/08 12:41:25  mella
- * Add a close command
- *
- * Revision 1.11  2005/03/02 14:54:17  mella
- * Test dimension change for the table
- *
- * Revision 1.10  2005/03/02 13:08:09  mella
- * Test the window update mechanism
- *
- * Revision 1.9  2005/02/28 12:44:57  mella
- * Add height test for Table
- *
- * Revision 1.8  2005/02/24 13:33:04  mella
- * Add gwtLABEL
- *
- * Revision 1.7  2005/02/24 12:40:32  mella
- * Add a status that give a reason at startup
- *
- * Revision 1.6  2005/02/15 12:25:28  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.5  2005/02/15 12:17:52  gzins
- * Added CVS log as file modification history
- *
- * mella     14-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,24 +1,7 @@
 #ifndef gwtWIDGET_H
 #define gwtWIDGET_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtWIDGET.h,v 1.7 2005-08-26 13:02:04 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2005/02/28 13:00:11  mella
- * Implement SetAttribute
- *
- * Revision 1.5  2005/02/15 12:33:49  gzins
- * Updated file description
- *
- * Revision 1.4  2005/02/15 12:17:52  gzins
- * Added CVS log as file modification history
- *
- * mella     14-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

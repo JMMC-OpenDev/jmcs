@@ -1,24 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.11 2005-11-29 09:27:04 mella Exp $"
-#
-# Makefile of gwt module 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.10  2005/02/24 10:36:46  mella
-# Add new LABEL Widget
-#
-# Revision 1.9  2005/02/15 12:26:39  gzins
-# Removed unused target
-#
-# Revision 1.8  2005/02/15 12:17:52  gzins
-# Added CVS log as file modification history
-#
-# mella     13-Sep-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

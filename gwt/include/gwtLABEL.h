@@ -1,14 +1,7 @@
 #ifndef gwtLABEL_H
 #define gwtLABEL_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtLABEL.h,v 1.1 2005-02-24 10:35:04 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

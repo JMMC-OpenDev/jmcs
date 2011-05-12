@@ -1,32 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtWINDOW.cpp,v 1.7 2006-05-11 13:04:55 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2005/09/28 14:02:48  mella
- * Hide window inside destructor
- *
- * Revision 1.5  2005/03/08 14:19:38  mella
- * Add closing callback support
- *
- * Revision 1.4  2005/03/02 13:18:56  mella
- * Bug correction for to choose between update and creation
- *
- * Revision 1.3  2005/03/02 13:07:56  mella
- * Implement a basic update mechanism
- *
- * Revision 1.2  2005/02/15 12:25:28  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.1  2005/01/27 18:09:35  gzins
- * Renamed .C to .cpp
- * Added CVS loh as modification history.
- *
- * mella     14-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

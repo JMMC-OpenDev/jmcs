@@ -1,27 +1,7 @@
 #ifndef gwtTABLE_H
 #define gwtTABLE_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtTABLE.h,v 1.7 2005-03-02 14:53:03 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2005/03/02 13:54:33  mella
- * Make table updatable using the xml variable attribute
- *
- * Revision 1.5  2005/02/28 12:59:53  mella
- * Implement SetWidgth and SetHeight
- *
- * Revision 1.4  2005/02/15 12:33:49  gzins
- * Updated file description
- *
- * Revision 1.3  2005/02/15 12:17:52  gzins
- * Added CVS log as file modification history
- *
- * mella     16-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

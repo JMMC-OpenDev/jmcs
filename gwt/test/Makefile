@@ -1,18 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.3 2005-02-15 12:26:39 gzins Exp $"
-#
-# Makefile of gwt module 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.2  2005/02/15 12:17:52  gzins
-# Added CVS log as file modification history
-#
-# mella     14-Sep-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

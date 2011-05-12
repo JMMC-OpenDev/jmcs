@@ -1,25 +1,7 @@
 #ifndef gwtCONTAINER_H
 #define gwtCONTAINER_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtCONTAINER.h,v 1.7 2005-08-30 07:34:24 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2005/08/26 13:00:52  mella
- * Add IsContainer that returns true
- * And add GetXmlBlock to make possible to add a Container to a Window
- *
- * Revision 1.5  2005/02/15 12:33:49  gzins
- * Updated file description
- *
- * Revision 1.4  2005/02/15 12:17:52  gzins
- * Added CVS log as file modification history
- *
- * mella     15-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

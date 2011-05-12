@@ -1,24 +1,7 @@
 #ifndef gwtWindow_H
 #define gwtWindow_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtWINDOW.h,v 1.8 2005-03-08 14:21:13 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2005/03/02 13:07:54  mella
- * Implement a basic update mechanism
- *
- * Revision 1.6  2005/02/15 12:33:49  gzins
- * Updated file description
- *
- * Revision 1.5  2005/02/15 12:17:52  gzins
- * Added CVS log as file modification history
- *
- * mella     14-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

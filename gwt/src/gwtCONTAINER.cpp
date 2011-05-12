@@ -1,30 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtCONTAINER.cpp,v 1.6 2006-05-16 08:49:44 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2006/05/11 13:04:55  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.4  2005/08/30 07:33:59  mella
- * Add previous AddContainer for backward compatibility
- *
- * Revision 1.3  2005/08/26 12:42:23  mella
- * Remove AddContainer() and make Add() generic
- * add IsContainer()
- *
- * Revision 1.2  2005/02/15 12:25:28  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.1  2005/01/27 18:09:35  gzins
- * Renamed .C to .cpp
- * Added CVS loh as modification history.
- *
- * mella     15-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,36 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtTABLE.cpp,v 1.8 2007-02-22 12:47:22 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2006/05/11 13:04:55  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.6  2005/03/03 16:17:11  mella
- * Implement better deletion for columnHeaders for resizing
- *
- * Revision 1.5  2005/03/02 14:53:42  mella
- * Handle change for dimensions
- *
- * Revision 1.4  2005/03/02 13:54:34  mella
- * Make table updatable using the xml variable attribute
- *
- * Revision 1.3  2005/02/28 12:48:31  mella
- * Implement SetWidgth and SetHeight
- *
- * Revision 1.2  2005/02/07 14:36:24  mella
- * Add Background color management for cells
- *
- * Revision 1.1  2005/01/27 18:09:35  gzins
- * Renamed .C to .cpp
- * Added CVS loh as modification history.
- *
- * mella     16-Sep-2004  Created
- * gzins     12-Dec-2004  Fixed gcc 3.4 error 
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

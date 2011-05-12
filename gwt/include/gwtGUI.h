@@ -1,24 +1,7 @@
 #ifndef gwtGUI_H
 #define gwtGUI_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtGUI.h,v 1.6 2005-10-07 06:56:11 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2005/02/24 11:08:01  mella
- * Add reason to SetStatus
- *
- * Revision 1.4  2005/02/15 12:33:49  gzins
- * Updated file description
- *
- * Revision 1.3  2005/02/15 12:17:52  gzins
- * Added CVS log as file modification history
- *
- * mella     14-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

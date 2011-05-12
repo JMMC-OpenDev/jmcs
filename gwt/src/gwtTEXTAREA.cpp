@@ -1,21 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtTEXTAREA.cpp,v 1.3 2006-05-11 13:04:55 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2005/02/04 10:01:47  mella
- * replace userchain by text for attribute value
- *
- * Revision 1.1  2005/01/27 18:09:35  gzins
- * Renamed .C to .cpp
- * Added CVS loh as modification history.
- *
- * mella     16-Sep-2004  Created
- * gzins     10-Dec-2004  Fixed doxygen warning
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

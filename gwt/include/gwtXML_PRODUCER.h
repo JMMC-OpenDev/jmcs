@@ -1,18 +1,7 @@
 #ifndef gwtXML_PRODUCER_H
 #define gwtXML_PRODUCER_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtXML_PRODUCER.h,v 1.4 2005-02-15 12:33:49 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2005/02/15 12:17:52  gzins
- * Added CVS log as file modification history
- *
- * mella     09-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

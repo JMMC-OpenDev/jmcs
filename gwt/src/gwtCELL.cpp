@@ -1,20 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtCELL.cpp,v 1.4 2006-05-11 13:04:55 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2005/02/15 12:33:49  gzins
- * Updated file description
- *
- * Revision 1.2  2005/02/07 14:45:31  mella
- * Correct minor doxygen problem
- *
- * Revision 1.1  2005/02/07 14:36:24  mella
- * Add Background color management for cells
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

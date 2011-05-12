@@ -1,32 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: gwtWIDGET.cpp,v 1.7 2006-05-11 13:04:55 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2005/08/26 12:58:38  mella
- * Add IsContainer and set default widgetid with constant
- *
- * Revision 1.5  2005/03/08 14:19:01  mella
- * Add better handling for xml attributes
- *
- * Revision 1.4  2005/02/28 12:48:31  mella
- * Implement SetWidgth and SetHeight
- *
- * Revision 1.3  2005/02/15 12:33:49  gzins
- * Updated file description
- *
- * Revision 1.2  2005/01/28 09:31:40  mella
- * Add vertical axis capability to place the widget on the full window width.
- *
- * Revision 1.1  2005/01/27 18:09:35  gzins
- * Renamed .C to .cpp
- * Added CVS loh as modification history.
- *
- * mella     14-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

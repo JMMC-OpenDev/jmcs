@@ -1,24 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: FestSwingCustomJUnitTestCase.java,v 1.1 2011-03-30 08:30:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2011/03/15 15:44:16  bourgesl
- * added getScreenshotFolder()
- *
- * Revision 1.3  2011/03/14 14:46:20  bourgesl
- * added enableTooltips(boolean) and defineScreenshotDelay(millis)
- *
- * Revision 1.2  2011/03/11 15:04:08  bourgesl
- * added image operations (resize, crop ...)
- *
- * Revision 1.1  2011/03/11 12:55:35  bourgesl
- * added fest-swing test cases for Aspro 2
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fest.common;
 
 import static org.fest.swing.timing.Pause.*;

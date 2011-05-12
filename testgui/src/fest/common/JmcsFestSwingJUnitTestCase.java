@@ -1,21 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: JmcsFestSwingJUnitTestCase.java,v 1.1 2011-03-30 08:30:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2011/03/17 15:42:22  bourgesl
- * do not use window.cleanUp as robot is already cleaned up
- *
- * Revision 1.2  2011/03/14 14:47:18  bourgesl
- * added emergency abort listener associated to 'Ctrl + Shift + A' key combination
- *
- * Revision 1.1  2011/03/11 12:55:35  bourgesl
- * added fest-swing test cases for Aspro 2
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fest.common;
 
 import static org.fest.swing.launcher.ApplicationLauncher.*;

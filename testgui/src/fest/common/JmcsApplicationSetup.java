@@ -1,15 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: JmcsApplicationSetup.java,v 1.1 2011-03-30 08:30:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2011/03/11 12:55:35  bourgesl
- * added fest-swing test cases for Aspro 2
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fest.common;
 
 import fr.jmmc.mcs.gui.App;

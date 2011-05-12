@@ -1,13 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: TestFileUtils.java,v 1.1 2011-04-26 20:29:17 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
 import fr.jmmc.mcs.util.FileUtils;

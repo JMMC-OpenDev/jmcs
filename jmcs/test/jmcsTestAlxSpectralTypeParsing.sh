@@ -1,12 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: jmcsTestAlxSpectralTypeParsing.sh,v 1.1 2009-12-01 14:12:23 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

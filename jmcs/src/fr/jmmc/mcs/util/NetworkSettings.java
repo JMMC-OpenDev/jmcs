@@ -1,27 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: NetworkSettings.java,v 1.6 2011-04-26 20:29:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2011/04/05 15:20:27  bourgesl
- * exception and null handling
- *
- * Revision 1.4  2011/04/04 16:14:07  bourgesl
- * use Introspection to handle properly exception concerning introspection
- *
- * Revision 1.3  2011/03/30 15:01:48  bourgesl
- * fixed socks proxy detector
- *
- * Revision 1.2  2011/03/30 14:51:53  bourgesl
- * dump all known net properties to help us to debug proxy problems
- *
- * Revision 1.1  2011/03/30 09:31:06  bourgesl
- * define general network settings (timeouts / proxy)
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.util;
 
 import fr.jmmc.mcs.gui.Introspection;

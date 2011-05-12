@@ -1,27 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: RingModelFunction.java,v 1.6 2010-06-10 10:59:04 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2010/06/10 10:18:03  bourgesl
- * simplified model descriptions + formatting
- *
- * Revision 1.4  2010/05/18 15:34:03  bourgesl
- * javadoc
- *
- * Revision 1.3  2010/05/18 12:43:06  bourgesl
- * added Gaussian Models
- *
- * Revision 1.2  2010/05/17 16:03:08  bourgesl
- * major refactoring to simplify the code and delegate the model computation to a Function class
- *
- * Revision 1.1  2010/05/11 16:10:06  bourgesl
- * added new models + javadoc
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model.function;
 
 import fr.jmmc.mcs.model.AbstractModelFunction;

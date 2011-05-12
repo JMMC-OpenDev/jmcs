@@ -1,24 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ImageUtils.java,v 1.5 2011-03-04 14:33:28 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2011/02/04 16:40:11  bourgesl
- * javadoc
- *
- * Revision 1.3  2010/02/09 16:50:07  bourgesl
- * use rgb color interpolation for better image rendering
- *
- * Revision 1.2  2010/02/03 09:30:31  bourgesl
- * better float value to color mapping
- *
- * Revision 1.1  2010/01/29 15:50:07  bourgesl
- * Simple Image utilities to create an image from a float data array and use simple color models (lut)
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.image;
 
 import java.awt.Point;

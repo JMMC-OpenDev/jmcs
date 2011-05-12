@@ -1,9 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Http.java,v 1.6 2011-03-30 15:01:48 bourgesl Exp $"
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.util;
 
 import java.net.InetSocketAddress;

@@ -1,16 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: GaussianFunction.java,v 1.2 2010-05-18 15:34:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2010/05/18 12:43:06  bourgesl
- * added Gaussian Models
- *
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model.function.math;
 
 /**

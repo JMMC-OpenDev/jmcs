@@ -1,17 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: jmcsGenerateHelpsetFromHtml.java,v 1.3 2008-06-20 08:41:45 bcolucci Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2008/05/16 12:40:09  bcolucci
- * Added argument checks and updated output.
- *
- * Revision 1.1  2008/04/29 14:28:58  bcolucci
- * Added JavaHelp support and automatic documentation generation from HTML.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 

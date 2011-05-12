@@ -1,12 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: MCSObservable.java,v 1.1 2010-09-23 19:36:47 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.util;
 
 import java.util.Observable;

@@ -1,32 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: jmcs.doc,v 1.8 2011-02-15 16:49:27 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2008/11/06 14:15:29  mella
- * Fix dependencies layout
- *
- * Revision 1.6  2008/10/15 13:58:46  mella
- * Add jfits info
- *
- * Revision 1.5  2008/06/23 07:46:07  bcolucci
- * Add a library
- *
- * Revision 1.4  2008/06/20 07:09:37  bcolucci
- * Add informations about others Jar files.
- *
- * Revision 1.3  2007/03/14 10:27:30  mella
- * Add information about jar for plotting
- *
- * Revision 1.2  2007/03/12 14:09:54  mella
- * Added some informations
- *
- * Revision 1.1  2007/02/13 10:31:40  ccmgr
- * Fix directory structure and add additional files
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

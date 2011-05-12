@@ -1,33 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: PreferencedDocument.java,v 1.8 2011-01-31 15:05:35 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2011/01/31 15:03:36  mella
- * Add one option to the getter so we write the preference file each time that the preference value change.
- *
- * Revision 1.6  2010/09/30 13:28:02  bourgesl
- * comments
- *
- * Revision 1.5  2010/09/23 19:38:16  bourgesl
- * comments when calling FeedBackReport
- *
- * Revision 1.4  2009/08/28 09:01:44  lafrasse
- * Jalopization.
- *
- * Revision 1.3  2009/07/16 09:34:59  mella
- * Improve documentation and clean code
- *
- * Revision 1.2  2007/06/21 07:38:51  lafrasse
- * Jalopization.
- *
- * Revision 1.1  2007/02/14 10:14:38  mella
- * First revision
- *
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 

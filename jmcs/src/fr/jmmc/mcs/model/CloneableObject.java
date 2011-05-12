@@ -1,22 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: CloneableObject.java,v 1.4 2010-12-06 17:03:44 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2010/12/03 16:28:09  bourgesl
- * Serializable support
- *
- * Revision 1.2  2010/11/30 13:00:30  bourgesl
- * simpler clone method using generic deepCopyList method
- *
- * Revision 1.1  2010/02/12 15:52:32  bourgesl
- * added cloneable support for target model classes
- * added parameter table model
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model;
 
 import java.util.ArrayList;

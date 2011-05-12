@@ -1,33 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: AbstractModelFunction.java,v 1.7 2010-12-01 10:13:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2010/05/17 15:54:50  bourgesl
- * added model variant to support elongated / flattened models
- * added validate(model) method to check parameter min/max bounds
- * compute() is implemented to validate and delegate the weight computation to a function
- * implement createFunction() to map the model to a computation function
- *
- * Revision 1.5  2010/05/11 16:09:30  bourgesl
- * removed unused constants
- *
- * Revision 1.4  2010/02/18 15:51:18  bourgesl
- * added parameter argument validation and propagation (illegal argument exception)
- *
- * Revision 1.3  2010/02/16 14:43:06  bourgesl
- * use the model.getParameter(type) instead of ModelManager
- *
- * Revision 1.2  2010/02/12 15:52:05  bourgesl
- * refactoring due to changed generated classes by xjc
- *
- * Revision 1.1  2010/01/29 15:52:45  bourgesl
- * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model;
 
 import fr.jmmc.mcs.model.function.math.PunctFunction;

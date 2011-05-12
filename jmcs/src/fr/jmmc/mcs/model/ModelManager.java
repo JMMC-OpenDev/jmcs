@@ -1,62 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ModelManager.java,v 1.16 2010-10-01 11:51:52 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.15  2010/09/30 13:31:14  bourgesl
- * added cloneModels() and normalizeFluxes(models) to properly normalize fluxes before computing OIFits visibility amplitudes
- * javadoc
- *
- * Revision 1.14  2010/06/29 14:24:02  bourgesl
- * javadoc comment
- *
- * Revision 1.13  2010/05/18 15:34:47  bourgesl
- * added limb darkened disk model
- *
- * Revision 1.12  2010/05/18 12:43:06  bourgesl
- * added Gaussian Models
- *
- * Revision 1.11  2010/05/17 16:02:03  bourgesl
- * added elongated/flattened ring
- * changed validate() implementation
- *
- * Revision 1.10  2010/05/11 16:09:48  bourgesl
- * added new models + javadoc
- *
- * Revision 1.9  2010/02/18 15:51:18  bourgesl
- * added parameter argument validation and propagation (illegal argument exception)
- *
- * Revision 1.8  2010/02/18 09:59:37  bourgesl
- * new ModelDefinition interface to gather model and parameter types
- *
- * Revision 1.7  2010/02/17 17:06:47  bourgesl
- * resetParameter(parameter)
- * first model rules added on addModel & relocateModels(models)
- *
- * Revision 1.6  2010/02/17 15:11:52  bourgesl
- * changed how to define the unique model name and parameter names
- * added newModel and replaceModel methods useful for GUI
- *
- * Revision 1.5  2010/02/16 14:43:35  bourgesl
- * use the model.getParameter(type) instead of ModelManager
- * added generateUniqueIdentifier(models)
- *
- * Revision 1.4  2010/02/12 15:52:05  bourgesl
- * refactoring due to changed generated classes by xjc
- *
- * Revision 1.3  2010/02/08 16:56:26  bourgesl
- * added the normalize visibility function
- *
- * Revision 1.2  2010/02/03 16:05:46  bourgesl
- * Added fast thread interruption checks for asynchronous uv map computation
- *
- * Revision 1.1  2010/01/29 15:52:45  bourgesl
- * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model;
 
 import fr.jmmc.mcs.model.AbstractModelFunction.ModelVariant;

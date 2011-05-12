@@ -1,9 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: MimeType.java,v 1.1 2010-12-13 16:35:54 mella Exp $"
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.util;
 
 import javax.swing.filechooser.FileFilter;

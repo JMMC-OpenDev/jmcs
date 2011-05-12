@@ -1,39 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: WindowCenterer.java,v 1.10 2011-04-05 15:21:18 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.9  2008/06/20 08:41:45  bcolucci
- * Remove unused imports and add class comments.
- *
- * Revision 1.8  2008/06/17 07:50:52  bcolucci
- * Take a Window object instead of a JFrame object in order to use it on JDialog.
- *
- * Revision 1.7  2008/06/13 08:25:00  bcolucci
- * Use point returned by getCenteringPoint in setLocation instead of x and y.
- *
- * Revision 1.6  2008/06/13 08:13:43  bcolucci
- * Fix getDisplayMode null pointer exception.
- *
- * Revision 1.5  2008/06/13 06:14:38  mella
- * Fix again bug (with comments in code ;)
- *
- * Revision 1.4  2008/06/10 09:12:02  bcolucci
- * Create a function which returns a centered point on the screen in order
- * to center the helpview window.
- *
- * Revision 1.3  2008/05/29 10:00:10  mella
- * Fix bug when null is returned for the DisplayMode (was in VirtualBox)
- *
- * Revision 1.2  2008/05/16 12:37:05  bcolucci
- * Removed unnecessary try/catch.
- *
- * Revision 1.1  2008/04/16 14:15:27  bcolucci
- * Creation.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 

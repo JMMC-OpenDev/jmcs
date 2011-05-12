@@ -1,18 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.6 2008-02-13 07:56:24 mella Exp $"
-#
-# Makefile of C++ example module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.5  2005/02/15 10:40:17  gzins
-# Added CVS log as file modification history
-#
-# gluck     30-Jun-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

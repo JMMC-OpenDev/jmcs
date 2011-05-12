@@ -1,19 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: TaskSwingWorkerExecutor.java,v 1.3 2011-02-14 17:12:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2011/02/08 10:10:46  bourgesl
- * updated code from Aspro changes (running task counter)
- *
- * Revision 1.1  2011/02/04 16:25:15  mella
- * refactored SwingWorkerExecutor to use TaskSwingWorker and simplify and clean up the cancellation of child tasks before executing a new worker
- *
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.gui.task;
 
 import fr.jmmc.mcs.util.MCSExceptionHandler;

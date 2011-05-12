@@ -1,18 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: UVMapData.java,v 1.3 2011-02-07 15:21:37 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2011/02/04 16:41:33  bourgesl
- * javadoc + values given in constructor
- *
- * Revision 1.1  2010/02/04 14:43:36  bourgesl
- * added UVMapData bean to keep several data related to uv map in order to conserve the value / color mapping and uv area while zooming on uv map
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model;
 
 import fr.jmmc.mcs.model.ModelUVMapService.ImageMode;

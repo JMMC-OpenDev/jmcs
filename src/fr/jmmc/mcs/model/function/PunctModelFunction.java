@@ -1,39 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: PunctModelFunction.java,v 1.10 2010-06-10 10:18:03 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.9  2010/05/18 15:34:03  bourgesl
- * javadoc
- *
- * Revision 1.8  2010/05/17 16:03:09  bourgesl
- * major refactoring to simplify the code and delegate the model computation to a Function class
- *
- * Revision 1.7  2010/05/12 11:34:42  bourgesl
- * refactoring
- *
- * Revision 1.6  2010/05/11 16:10:06  bourgesl
- * added new models + javadoc
- *
- * Revision 1.5  2010/02/18 15:51:18  bourgesl
- * added parameter argument validation and propagation (illegal argument exception)
- *
- * Revision 1.4  2010/02/16 14:44:14  bourgesl
- * getParameter(mode, type) renamed to getParameterValue(model, type)
- *
- * Revision 1.3  2010/02/12 15:52:05  bourgesl
- * refactoring due to changed generated classes by xjc
- *
- * Revision 1.2  2010/02/03 16:05:46  bourgesl
- * Added fast thread interruption checks for asynchronous uv map computation
- *
- * Revision 1.1  2010/01/29 15:52:46  bourgesl
- * Beginning of the Target Model Java implementation = ModelManager and ModelFunction implementations (punct, disk)
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model.function;
 
 import fr.jmmc.mcs.model.AbstractModelFunction;

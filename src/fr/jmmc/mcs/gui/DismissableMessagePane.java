@@ -1,24 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: DismissableMessagePane.java,v 1.5 2011-03-08 12:53:45 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2010/09/30 13:28:57  bourgesl
- * comments
- *
- * Revision 1.3  2010/09/24 15:45:38  bourgesl
- * format
- *
- * Revision 1.2  2010/09/23 19:38:16  bourgesl
- * comments when calling FeedBackReport
- *
- * Revision 1.1  2010/09/01 14:43:51  mella
- * First revision
- *
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 

@@ -1,42 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: EditableStarResolverWidget.java,v 1.2 2011-04-07 13:20:55 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2010/10/14 12:55:29  bourgesl
- * editable star resolver moved in JMCS
- *
- * Revision 1.9  2010/10/14 12:22:31  bourgesl
- * class made final
- *
- * Revision 1.8  2010/10/13 20:57:05  bourgesl
- * added comment
- *
- * Revision 1.7  2010/09/26 12:11:45  bourgesl
- * avoid catch any exception but corect number format exception
- *
- * Revision 1.6  2010/09/24 15:53:07  bourgesl
- * use MessagePane
- *
- * Revision 1.5  2010/09/08 15:08:38  bourgesl
- * javadoc
- *
- * Revision 1.4  2010/05/11 10:17:31  mella
- * Add star name as optional field to put one new named star without simbad
- *
- * Revision 1.3  2010/04/12 14:32:27  bourgesl
- * updated input validation to check HMS and DMS fields to be consistent
- *
- * Revision 1.2  2010/04/09 09:25:07  bourgesl
- * disable tests
- *
- * Revision 1.1  2010/04/08 14:04:08  bourgesl
- * custom StarResolverWidget which allows the user to enter RA/DEC coordinates in 'HMS DMS' format and mimic the StarResolver behaviour
- *
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.astro.star;
 

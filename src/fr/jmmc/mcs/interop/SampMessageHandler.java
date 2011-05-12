@@ -1,31 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: SampMessageHandler.java,v 1.7 2010-10-11 14:14:59 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2010/10/07 14:59:56  bourgesl
- * added TODO processCall default impl
- *
- * Revision 1.5  2010/10/05 14:52:31  bourgesl
- * removed SampException in several method signatures
- *
- * Revision 1.4  2010/10/05 10:17:56  bourgesl
- * fixed warnings / javadoc
- * fixed exception handling / logs
- * fixed member visibility
- *
- * Revision 1.3  2010/10/05 09:44:19  bourgesl
- * fixed warnings / javadoc
- *
- * Revision 1.2  2010/09/24 12:06:16  lafrasse
- * Added mType facilities and SampCapability support.
- *
- * Revision 1.1  2010/09/14 14:29:49  lafrasse
- * First SAMP manager implementation.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 

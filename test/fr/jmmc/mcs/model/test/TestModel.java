@@ -1,28 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: TestModel.java,v 1.6 2011-03-04 14:33:28 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2010/02/19 16:02:52  bourgesl
- * new Editable interface to represent parameter in the table model
- * new EditableRhoThetaParameter to implement rho/theta conversions
- *
- * Revision 1.4  2010/02/12 15:52:05  bourgesl
- * refactoring due to changed generated classes by xjc
- *
- * Revision 1.3  2010/02/09 16:50:07  bourgesl
- * use rgb color interpolation for better image rendering
- *
- * Revision 1.2  2010/02/03 09:31:29  bourgesl
- * added Amplitude or Phase uv map
- *
- * Revision 1.1  2010/01/29 15:53:16  bourgesl
- * Test code for punct / disk models
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model.test;
 
 import fr.jmmc.mcs.image.ImageViewer;

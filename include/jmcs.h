@@ -1,13 +1,7 @@
 #ifndef jmcs_H
 #define jmcs_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: jmcs.h,v 1.1 2007-02-13 10:31:39 ccmgr Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

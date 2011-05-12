@@ -1,15 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: JmcsTaskRegistry.java,v 1.2 2011-02-14 17:11:10 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2011/02/04 16:23:44  mella
- * create jmcs Tasks and describe their dependencies
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.gui.task;
 
 /**

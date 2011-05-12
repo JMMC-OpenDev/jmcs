@@ -1,37 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: RegisteredAction.java,v 1.9 2010-09-24 15:43:12 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2009/04/30 09:00:50  lafrasse
- * Minor documentation update.
- *
- * Revision 1.7  2009/01/05 13:43:08  lafrasse
- * Added Open action handling.
- *
- * Revision 1.6  2008/10/16 08:55:49  mella
- * Inherit MCS action to first init action parameters like MCSAction
- *
- * Revision 1.5  2008/09/19 08:49:53  lafrasse
- * Minor compilation bug correction.
- *
- * Revision 1.4  2008/09/19 08:46:20  lafrasse
- * Forced 'preference' and 'quit' action names and aaccelerators.
- *
- * Revision 1.3  2008/09/08 14:28:18  lafrasse
- * Added third contructor with action name only.
- * Corrected a bug that was linking naled action with its actionName instead of
- * fieldName.
- *
- * Revision 1.2  2008/09/06 07:53:19  lafrasse
- * Added a second constructeur to set action name and accelerator.
- *
- * Revision 1.1  2008/09/04 15:47:29  lafrasse
- * First revision.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 

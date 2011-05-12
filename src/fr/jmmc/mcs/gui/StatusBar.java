@@ -1,51 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: StatusBar.java,v 1.11 2011-04-06 15:42:13 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2010/10/11 13:28:52  lafrasse
- * Ensures that GUI updates are done in EDT.
- *
- * Revision 1.9  2010/05/20 13:13:35  mella
- * Open the application web page by one logo click
- *
- * Revision 1.8  2009/04/30 13:02:14  lafrasse
- * Replaced MCSLog by standard logging.
- * Added protection against multiple thread concurrent access.
- * Documentation enhancement.
- * Moved logo only under Mac OS X.
- *
- * Revision 1.7  2009/04/20 08:22:33  lafrasse
- * Optimized space between the JMMC logo and the resizing handle.
- *
- * Revision 1.6  2009/04/16 15:44:51  lafrasse
- * Jalopization.
- *
- * Revision 1.5  2009/04/15 11:55:24  mella
- * fix space
- *
- * Revision 1.4  2009/04/09 06:26:07  sprette
- * Change small jmmc logo name
- * Add space on the right bottom corner into the status bar (for Mac OS X)
- *
- * Revision 1.3  2009/04/08 13:00:51  sprette
- * First CVS test
- *
- * Revision 1.2  2007/02/13 13:48:51  lafrasse
- * Moved sources from sclgui/src/jmmc into jmcs/src/fr and rename packages
- *
- * Revision 1.1  2006/11/18 22:52:56  lafrasse
- * Moved from jmmc.mcs.util .
- *
- * Revision 1.2  2006/07/12 15:49:21  lafrasse
- * Added class documentation
- *
- * Revision 1.1  2006/07/12 14:27:51  lafrasse
- * Creation
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 

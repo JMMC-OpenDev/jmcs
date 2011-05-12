@@ -1,16 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: LDDiskModelFunction.java,v 1.2 2010-06-10 10:59:09 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2010/05/18 15:34:48  bourgesl
- * added limb darkened disk model
- *
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model.function;
 
 import fr.jmmc.mcs.model.AbstractModelFunction;

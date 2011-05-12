@@ -1,17 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: BrowserLauncher.java,v 1.3 2011-04-04 16:13:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2008/06/20 08:41:45  bcolucci
- * Remove unused imports and add class comments.
- *
- * Revision 1.1  2008/05/16 12:33:30  bcolucci
- * Creation.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 

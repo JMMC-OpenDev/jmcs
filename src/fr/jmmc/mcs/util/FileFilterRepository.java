@@ -1,28 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: FileFilterRepository.java,v 1.6 2011-04-06 15:42:19 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2010/12/13 16:37:24  mella
- * Define some static getter
- * Use HashMap instead of Hashtables
- * Handle new MimeType Enums
- *
- * Revision 1.4  2010/09/30 13:28:35  bourgesl
- * changed warning log to fine level
- *
- * Revision 1.3  2010/01/14 13:03:04  bourgesl
- * use Logger.isLoggable to avoid a lot of string.concat()
- *
- * Revision 1.2  2009/04/30 12:59:21  lafrasse
- * Removed unused output trace.
- *
- * Revision 1.1  2009/04/30 09:03:47  lafrasse
- * Creation.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 

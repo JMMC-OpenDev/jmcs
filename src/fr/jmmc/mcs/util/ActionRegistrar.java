@@ -1,27 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ActionRegistrar.java,v 1.6 2010-01-14 13:41:45 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2010/01/14 13:03:04  bourgesl
- * use Logger.isLoggable to avoid a lot of string.concat()
- *
- * Revision 1.4  2009/01/05 13:43:08  lafrasse
- * Added Open action handling.
- *
- * Revision 1.3  2008/09/05 08:33:52  lafrasse
- * Added missing 'private' attribute to _register field, that was causing Jalopy to
- * behave strangely.
- *
- * Revision 1.2  2008/09/04 15:58:00  lafrasse
- * Typo corrections.
- *
- * Revision 1.1  2008/09/04 15:47:29  lafrasse
- * First revision.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 

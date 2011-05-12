@@ -1,26 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: SampCapability.java,v 1.6 2010-10-05 09:33:48 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2010/10/05 08:32:19  mella
- * Add SearchCal start query capability
- *
- * Revision 1.4  2010/10/05 07:54:19  mella
- * Add mtype to launch new setting in LITpro
- *
- * Revision 1.3  2010/10/04 23:42:07  lafrasse
- * Fixed common name for NastyTrick class.
- *
- * Revision 1.2  2010/10/04 21:59:41  lafrasse
- * Made mType() public.
- *
- * Revision 1.1  2010/09/14 14:29:49  lafrasse
- * First SAMP manager implementation.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 

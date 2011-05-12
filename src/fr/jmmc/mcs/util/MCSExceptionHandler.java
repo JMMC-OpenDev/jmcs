@@ -1,31 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: MCSExceptionHandler.java,v 1.7 2010-10-04 10:17:41 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2010/09/30 13:37:43  bourgesl
- * fixed JNLP issues
- * complete javadoc
- *
- * Revision 1.5  2010/09/25 13:54:07  bourgesl
- * disable security manager
- *
- * Revision 1.4  2010/09/25 13:41:14  bourgesl
- * new method installThreadHandler(thread) to set uncaughtException handler for new threads
- *
- * Revision 1.3  2010/09/25 12:17:42  bourgesl
- * more logs about threads, exception handler to inspect JNLP context
- *
- * Revision 1.2  2010/09/24 15:43:32  bourgesl
- * removed unused import
- *
- * Revision 1.1  2010/09/23 19:36:05  bourgesl
- * new generic exception handler (awt, thread) for uncaught exceptions
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.util;
 
 import fr.jmmc.mcs.gui.FeedbackReport;

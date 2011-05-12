@@ -1,9 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: FeedbackReport.java,v 1.39 2011-04-04 16:13:33 bourgesl Exp $"
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
 import fr.jmmc.mcs.gui.task.JmcsTaskRegistry;

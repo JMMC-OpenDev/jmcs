@@ -1,35 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Introspection.java,v 1.9 2011-04-06 15:40:54 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2011/04/05 15:20:27  bourgesl
- * exception and null handling
- *
- * Revision 1.7  2011/04/04 16:13:33  bourgesl
- * exception handling
- *
- * Revision 1.6  2008/09/02 12:31:00  lafrasse
- * Code, documentation and logging cleanup.
- *
- * Revision 1.5  2008/09/01 11:07:45  lafrasse
- * Improved logging.
- *
- * Revision 1.4  2008/06/25 08:12:22  bcolucci
- * Add functions.
- *
- * Revision 1.3  2008/06/20 08:41:45  bcolucci
- * Remove unused imports and add class comments.
- *
- * Revision 1.2  2008/06/12 11:54:11  bcolucci
- * Add functions in order to simply execute a method without get it's value.
- *
- * Revision 1.1  2008/06/12 09:30:06  bcolucci
- * *** empty log message ***
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 

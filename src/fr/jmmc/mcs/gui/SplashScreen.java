@@ -1,37 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: SplashScreen.java,v 1.9 2011-02-08 11:01:25 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2008/08/28 15:41:34  lafrasse
- * iChanged program version label.
- * Corrected log messages and dicumentation.
- *
- * Revision 1.7  2008/06/20 08:41:45  bcolucci
- * Remove unused imports and add class comments.
- *
- * Revision 1.6  2008/05/20 08:49:24  bcolucci
- * Improved thread delay definition.
- *
- * Revision 1.5  2008/05/16 12:44:54  bcolucci
- * Threaded it.
- * Removed unecessary try/cath.
- *
- * Revision 1.4  2008/04/24 15:55:57  mella
- * Added applicationDataModel to constructor.
- *
- * Revision 1.3  2008/04/22 09:17:36  bcolucci
- * Corrected user name to bcolucci in CVS $Log (was fgalland).
- *
- * Revision 1.2  2008/04/22 09:14:15  bcolucci
- * Removed unused setRelativePosition().
- *
- * Revision 1.1  2008/04/16 14:15:27  bcolucci
- * Creation.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 

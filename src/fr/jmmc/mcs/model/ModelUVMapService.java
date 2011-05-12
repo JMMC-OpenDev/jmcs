@@ -1,36 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ModelUVMapService.java,v 1.9 2011-03-04 14:33:28 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2011/03/03 17:36:14  bourgesl
- * define correct range [0-1 for AMP; -PI-PI for PHASE] to apply the linear LUT mapping
- *
- * Revision 1.7  2011/02/04 16:41:49  bourgesl
- * comments + use UVMapData constructor
- *
- * Revision 1.6  2010/09/24 15:44:15  bourgesl
- * removed catch RuntimeException to get it at higher level
- *
- * Revision 1.5  2010/05/04 15:40:58  bourgesl
- * javadoc
- *
- * Revision 1.4  2010/02/18 15:51:18  bourgesl
- * added parameter argument validation and propagation (illegal argument exception)
- *
- * Revision 1.3  2010/02/04 14:43:36  bourgesl
- * added UVMapData bean to keep several data related to uv map in order to conserve the value / color mapping and uv area while zooming on uv map
- *
- * Revision 1.2  2010/02/03 16:05:46  bourgesl
- * Added fast thread interruption checks for asynchronous uv map computation
- *
- * Revision 1.1  2010/02/03 09:51:46  bourgesl
- * uv map rendering service
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model;
 
 import fr.jmmc.mcs.image.ColorModels;

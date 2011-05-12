@@ -1,47 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: SampCapabilityAction.java,v 1.12 2011-02-15 09:14:56 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.11  2011/01/24 16:17:17  lafrasse
- * Fixed action enabling/disabling state updating and default behavior.
- *
- * Revision 1.10  2011/01/24 12:47:53  lafrasse
- * Replaced an output trace with log.
- *
- * Revision 1.9  2011/01/24 08:53:59  lafrasse
- * Added ability to preempt (dis)enabling, and change Menu label.
- *
- * Revision 1.8  2010/10/06 16:04:27  bourgesl
- * add severe log if the updateMenu method is called by a thread different than EDT
- *
- * Revision 1.7  2010/10/06 09:42:24  bourgesl
- * javadoc / comments
- *
- * Revision 1.6  2010/10/06 09:09:00  mella
- * Build interop menu entry if it does not always exists
- * Set menu and action state according current client state
- *
- * Revision 1.5  2010/10/05 15:48:35  bourgesl
- * do not send message if composeMessage returns null
- *
- * Revision 1.4  2010/10/05 14:52:31  bourgesl
- * removed SampException in several method signatures
- *
- * Revision 1.3  2010/10/05 12:56:22  mella
- * Add javadoc
- *
- * Revision 1.2  2010/10/05 10:01:54  bourgesl
- * fixed warnings / javadoc
- * fixed exception handling / logs
- * fixed member visibility
- *
- * Revision 1.1  2010/10/04 23:31:04  lafrasse
- * First revision.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.interop;
 

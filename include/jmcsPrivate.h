@@ -1,13 +1,7 @@
 #ifndef jmcsPrivate_H
 #define jmcsPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: jmcsPrivate.h,v 1.1 2007-02-13 10:31:40 ccmgr Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

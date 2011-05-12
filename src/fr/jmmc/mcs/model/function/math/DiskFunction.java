@@ -1,15 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: DiskFunction.java,v 1.2 2010-05-18 15:34:33 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2010/05/17 16:05:30  bourgesl
- * This function classes only contain parameters and use Functions for computation. Disk and Ring support elongated / flattened variants (i.e. transform UV coordinates)
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.model.function.math;
 
 /**

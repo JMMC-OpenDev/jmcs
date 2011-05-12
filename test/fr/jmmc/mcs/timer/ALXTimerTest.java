@@ -1,21 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ALXTimerTest.java,v 1.4 2011-03-10 13:40:28 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2011/03/09 13:48:55  bourgesl
- * added profiler test
- *
- * Revision 1.2  2011/03/09 10:40:34  bourgesl
- * disable force GC
- *
- * Revision 1.1  2011/03/09 10:28:07  bourgesl
- * added ALX Timer tests (ld2ud)
- *
- */
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.mcs.timer;
 
 import fr.jmmc.mcs.astro.ALX;

@@ -1,24 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: jmcsHTML2HelpSet.sh,v 1.5 2009-06-26 09:40:52 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.4  2009/01/15 16:00:14  mella
-# user can give a module name or existing html directory
-#
-# Revision 1.3  2008/11/21 11:15:10  mella
-# Improve html harvesting (especially in webstart mode for use)
-#
-# Revision 1.2  2008/05/16 12:33:10  bcolucci
-# Removing unnecessary 'cd' and added tidy HTML cleanup.
-#
-# Revision 1.1  2008/04/29 14:28:58  bcolucci
-# Added JavaHelp support and automatic documentation generation from HTML.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

@@ -1,21 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ColorEncoder.java,v 1.4 2007-02-13 13:48:51 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2006/04/06 14:35:39  lafrasse
- * Streamlined class documentation header
- *
- * Revision 1.2  2006/04/06 14:23:08  mella
- * *** empty log message ***
- *
- * Revision 1.1  2006/03/31 14:29:53  mella
- * First Revision
- *
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 

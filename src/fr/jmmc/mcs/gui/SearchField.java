@@ -1,30 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: SearchField.java,v 1.7 2011-04-07 13:22:01 bourgesl Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2011/04/06 15:42:06  bourgesl
- * avoid explicit boolean values
- *
- * Revision 1.5  2010/10/14 12:12:19  bourgesl
- * minor code cleanup
- *
- * Revision 1.4  2009/10/08 14:09:11  lafrasse
- * Moved form fr.jmmc.mcs.astro.star.StarResolverWidget .
- * Refined documentation and layout.
- *
- * Revision 1.3  2009/10/08 09:02:22  lafrasse
- * Added magnifying glass icon on the left.
- *
- * Revision 1.2  2009/10/08 08:26:47  lafrasse
- * Refined border color and anti-aliasing.
- *
- * Revision 1.1  2009/10/07 15:59:17  lafrasse
- * First release.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 

@@ -1,5 +1,7 @@
 #! /bin/bash
-#
+#*******************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #  REPLACE_BY_PROJECT_HEADER
 #
 # This script retrieves modules of the GIVEN project

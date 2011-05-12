@@ -1,20 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: ModjavaExample.java,v 1.4 2008-09-22 16:54:05 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2008/07/01 09:12:08  lafrasse
- * Moved old code into new package tree.
- *
- * Revision 1.2  2006/03/07 14:20:58  lafrasse
- * Corrected typos
- *
- * Revision 1.1  2006/03/07 14:13:37  lafrasse
- * initial release
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
 

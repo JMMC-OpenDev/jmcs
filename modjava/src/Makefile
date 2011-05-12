@@ -1,22 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.4 2008-07-01 09:12:08 lafrasse Exp $"
-#
-# Makefile of modjava module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.3  2008/07/01 08:58:13  lafrasse
-# Added jmcs test application from bcolucci.
-#
-# Revision 1.2  2006/03/07 14:13:37  lafrasse
-# initial release
-#
-# Revision 1.1  2006/03/07 09:55:50  sccmgr
-# Fix directory structure and add additional files
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

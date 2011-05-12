@@ -1,42 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Main.java,v 1.11 2011-03-30 15:18:54 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2011/02/11 15:11:43  lafrasse
- * Fixed JMCS::App API change for SplashScreen management.
- *
- * Revision 1.9  2010/10/11 14:27:31  lafrasse
- * API update and cleanup.
- *
- * Revision 1.8  2010/10/05 07:57:21  lafrasse
- * To reflect fr.jmmc.mcs.interop API changes.
- *
- * Revision 1.7  2010/09/17 09:45:28  lafrasse
- * Added SampMessageHandler usage.
- *
- * Revision 1.6  2010/09/13 15:57:29  lafrasse
- * First SAMP manager implementation.
- *
- * Revision 1.5  2010/09/02 09:34:03  mella
- * Add preference instantiation into init because the menu building need some internal actions of Preferences object
- * Add button to test the dismissable message pane
- *
- * Revision 1.4  2008/10/27 15:26:13  lafrasse
- * REflected JMCS help view action API change.
- *
- * Revision 1.3  2008/10/15 12:02:53  mella
- * rename finnish method into finish
- *
- * Revision 1.2  2008/09/22 16:53:50  lafrasse
- * Moved to new JMCS APIs.
- *
- * Revision 1.1  2008/07/01 08:58:13  lafrasse
- * Added jmcs test application from bcolucci.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
 

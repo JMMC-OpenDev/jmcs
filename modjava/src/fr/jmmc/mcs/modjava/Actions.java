@@ -1,17 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: Actions.java,v 1.3 2009-11-02 15:01:18 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2008/09/22 16:53:50  lafrasse
- * Moved to new JMCS APIs.
- *
- * Revision 1.1  2008/07/01 08:58:13  lafrasse
- * Added jmcs test application from bcolucci.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
 

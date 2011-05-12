@@ -1,15 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.3 2011-02-28 14:47:46 lafrasse Exp $"
-#
-# Makefile of ........
-#
-# who       when         what
-# --------  -----------  -------------------------------------------------------
-# sccmgr    09-Sep-2004  Created
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

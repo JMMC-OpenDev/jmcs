@@ -1,14 +1,6 @@
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: moduleDescription.xml,v 1.3 2005-02-13 17:37:11 gzins Exp $"
-
- Histroy 
- ~~~~~~~
- $Log: not supported by cvs2svn $
- gluck     02-Jul-2004  Created
-
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
  NAME
  moduleDescription.xml - Give module informations

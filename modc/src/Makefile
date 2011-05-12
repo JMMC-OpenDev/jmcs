@@ -1,18 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.6 2005-02-15 10:34:28 gzins Exp $"
-#
-# Makefile of modc
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.5  2005/02/13 17:37:11  gzins
-# Added CVS log as modification history
-#
-# gluck     09-Jun-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

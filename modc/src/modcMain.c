@@ -1,47 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: modcMain.c,v 1.14 2006-01-10 14:40:39 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.13  2005/06/20 13:17:16  swmgr
- * Changed logEXTDBG with logTRACE
- *
- * Revision 1.12  2005/02/13 17:37:11  gzins
- * Added CVS log as modification history
- *
- * gluck     11-Jun-2004  Created
- *
- *
- * IMPORTANT :
- * To make your own documentation, you have to substitute the general or
- * example comments, with your specific comments.
- * 
- * IMPORTANT:
- * To make AUTOMATIC DOCUMENTATION GENERATION by doxygen, you have to insert
- * your code documentation (about file, functions, define, enumeration, ...) as
- * shown below, in the special documentation blocks (beginning with 1 slash and
- * 2 stars), adding or deleting markers as needed.
- * Nevertheless, you also have to comment the code as usually.  For more
- * informations, you can report to Programming Standards (JRA4-PRO-2000-0001),
- * or doxygen documentation.
- *
- * IMPORTANT
- * Each time (except in certain case) there is a brief and a detailed
- * description, THE BRIEF DESCRIPTION IS A UNIQUE SENTENCE, WHICH ENDS AT THE
- * FIRST DOT FOLLOWED BY A SPACE OR A NEWLINE.
- * 
- * REMARKS
- * The documentation below, shows some possibilities of doxygen. The general
- * format of this documentation is recommended to make the documentation
- * easily. Some documentation lines are strongly recommended to get rapidly a
- * quite good documentation. Some others are optinonal, depending on the need.
- * They will be pointed out with the word OPTIONAL.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-
 
 /**
  * \file

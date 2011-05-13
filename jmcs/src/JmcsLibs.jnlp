@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <jnlp spec="1.0+" codebase="auto" href="auto">
     <information>
-        <title>Jmcs</title>
+        <title>Jmcs libraries</title>
         <vendor>JMMC</vendor>
         <homepage href="http://www.jmmc.fr"/>
-        <description>Jmcs - JMMC common libraries.</description>
+        <description>Jmcs libraries - JMMC shared libraries.</description>
         </information>
         <security>
         <all-permissions/>
@@ -13,9 +13,12 @@
         <j2se version="1.5+"/>
 
         <!-- JMMC modules -->
+        <!-- jmcs jar must be declared explicitely in application JNLP -->
+        <!--
         <jar href="jar/jmcs.jar" />
+        -->
        
-        <!-- Generated using TBD -->
+        <!-- Generated -->
         <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
         <jar href="jar/sptype.jar"/>
         <!-- VO interoperability -->
@@ -53,8 +56,7 @@
         <!-- Parse command line arguments -->
         <jar href="jar/java-getopt-1.0.13.jar"/>
         <!-- Only used to detect the platform -->
-        <jar href="jar/commons-lang-2.4.jar"/>
+        <jar href="jar/commons-lang-2.6.jar"/>
 
     </resources>
-    <application-desc main-class="fr.jmmc.mcs.TBD"/>
 </jnlp>

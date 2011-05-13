@@ -5,6 +5,7 @@
     <vendor>JMMC</vendor>
     <homepage href="http://www.jmmc.fr"/>
     <description>Jmcs libraries - JMMC shared libraries.</description>
+    <offline-allowed/>
   </information>
   <security>
     <all-permissions/>
@@ -52,4 +53,5 @@
     <!-- Only used to detect the platform -->
     <jar href="@SHARED@/commons-lang-2.6.jar"/>
   </resources>
+  <component-desc/>
 </jnlp>

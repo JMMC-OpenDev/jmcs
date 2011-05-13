@@ -5,6 +5,8 @@
 # define default values 
 # use hardcoded value : used to be : CODEBASE="http://$(uname -n)/~$USER"
 CODEBASE="http://apps.jmmc.fr/~$USER"
+SHAREDJARPATH="/var/www/html/jnlp/jar"
+SHAREDJARURL="http://apps.jmmc.fr/jnlp/jar"
 WEBROOT="$HOME/public_html"
 
 # define script name
@@ -290,13 +292,14 @@ copyJnlpAndRelated()
     xml ed -u "/jnlp/@codebase" -v "$destCodeBase" \
     -u "/jnlp/@href" -v "$SHORTGIVENJNLP" \
     $LONGGIVENJNLP > $destJnlp
+#    -u "//extension/@href" -x "str:replace(@href,'@SHARED@','')" \
 
     cd $(dirname $LONGGIVENJNLP 2> /dev/null)
 
     # transformation builds shell variables : 
     # eval command source them into into bash world
     TMPVARS=$(xml sel -t -o "local INCLUDEDJNLPLIST=\"" \
-    -m "//extension/@href[not(contains(.,'tp://'))]" -v "." -o " " -b \
+    -m "//extension/@href[not(contains(.,'tp://') or contains(.,'../'))]" -v "." -o " " -b \
     -o "\";" -n \
     -o "local INCLUDEDJARLIST=\"" \
     -m "//jar" -v "@href[not(contains(.,'tp://'))]" -o " " -b -o "\";" -n \
@@ -320,6 +323,13 @@ copyJnlpAndRelated()
     for jar in $INCLUDEDJARLIST
     do
         jarname=$(basename $jar 2> /dev/null) 
+
+        if [ -e "$SHAREDJARPATH/$jarname" ]
+        then
+            echo "$jarname already present in '$SHAREDJARPATH' should be the same (TODO check exact lib)"
+
+        fi
+
         if srcjar=$(miscLocateFile "$jarname" "../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib:$USERSEARCHPATH")
         then
             destjar=$destDir/$jar
@@ -367,7 +377,15 @@ createAppJar()
     mkdir tmpbigjar
     cd tmpbigjar
     shllibEchoDebug "Working dirtectory is $PWD "
-    for jarpath in  $(find $APP_WEBROOT -name '*.jar')
+
+    # Include JmcsLibs.jar if the given jnlp contains one JmcsLibs.jnlp links
+    # (even in comments)
+    if grep "JmcsLibs.jnlp" "$GIVENJNLPFILE" &> /dev/null
+    then
+        jmcsLibsJarFile=$(miscLocateFile "JmcsLibs.jar" "../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib:$USERSEARCHPATH")
+    fi
+
+    for jarpath in  $(find $APP_WEBROOT -name '*.jar') $jmcsLibsJarFile
     do
         shllibEchoDebug " Add '$jarpath' content into tmpbigjar"
         jar xf $jarpath
@@ -586,6 +604,7 @@ while true ; do
     esac
 done
 
+GIVENJNLPFILE="$(readlink -f $1)"
 # Check input file
 # Change to directory of given jnlp file and use its parent as MODULEROOT
 cd $(dirname "$1")

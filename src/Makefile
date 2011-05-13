@@ -163,7 +163,7 @@ CSOURCENAMES = \
 MAKEDIR = $(MCSROOT)/include
 include $(MAKEDIR)/mkfMakefile
 
-
+JNLP=JmcsLibs
 
 #
 # TARGETS
@@ -184,9 +184,13 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
-	@echo "Deploy Jmcs.jnlp and install Jmcs.jar"
-	jmcsDeployJnlp Jmcs.jnlp
-	@cp $$HOME/public_html/Jmcs/Jmcs.jar $(INSTALL_ROOT)/lib
+	@echo "Deploy $(JNLP).jnlp"
+	jmcsDeployJnlp $(JNLP).jnlp
+        
+	@echo "Install $(JNLP).jar"
+# JmcsLibs contains only shared libraries used to package application single jar file
+	@cp $$HOME/public_html/$(JNLP)/$(JNLP).jar $(INSTALL_ROOT)/lib
+        
 	@echo " . . . installation done"
 
 #___oOo___

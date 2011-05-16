@@ -20,9 +20,9 @@ public class Star extends Observable {
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.astro.star.Star");
     /** Star property-value backing store for String data */
-    private final Map<Property, String> _stringContent;
+    final Map<Property, String> _stringContent;
     /** Star property-value backing store for Double data */
-    private final Map<Property, Double> _doubleContent;
+    final Map<Property, Double> _doubleContent;
     /** CDS Simbad error message */
     private String _cdsSimbadErrorMessage = null;
 
@@ -169,6 +169,9 @@ public class Star extends Observable {
             public void run() {
                 _cdsSimbadErrorMessage = message;
 
+                // set changed to notify observers:
+                setChanged();
+
                 fireNotification(Notification.QUERY_ERROR);
             }
         });
@@ -185,7 +188,7 @@ public class Star extends Observable {
      * everything went fine.
      */
     public final String consumeCDSimbadErrorMessage() {
-        String message = _cdsSimbadErrorMessage;
+        final String message = _cdsSimbadErrorMessage;
         _cdsSimbadErrorMessage = null; // reset error message
         return message;
     }
@@ -230,7 +233,12 @@ public class Star extends Observable {
      */
     public enum Notification {
 
-        QUERY_COMPLETE, QUERY_ERROR, UNKNOWN;
+        /** sucessfull query */
+        QUERY_COMPLETE,
+        /** error state (CDS or parsing failure */
+        QUERY_ERROR,
+        /** unknow state */
+        UNKNOWN;
     };
 
     /**

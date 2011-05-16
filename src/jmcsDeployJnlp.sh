@@ -324,24 +324,91 @@ copyJnlpAndRelated()
     do
         jarname=$(basename $jar 2> /dev/null) 
 
-        if [ -e "$SHAREDJARPATH/$jarname" ]
-        then
-            echo "$jarname already present in '$SHAREDJARPATH' should be the same (TODO check exact lib)"
+        shllibEchoDebug "current jar $jar :: $jarname"
 
+        shared=false
+        sharedExist=false
+        if [[ $jar =~ ^@SHARED@ ]]
+        then
+            shared=true
+
+            if [ -e "$SHAREDJARPATH/$jarname" ]
+            then
+                sharedExist=true
+            fi
         fi
+        shllibEchoDebug "shared library = $shared. exist = $sharedExist"
 
         if srcjar=$(miscLocateFile "$jarname" "../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib:$USERSEARCHPATH")
         then
-            destjar=$destDir/$jar
-            # since jarpath can be on the form dir/dir/toto.jar , we have to ensure that
-            # $destDir/dir/dir does exist
-            mkdir -p $(dirname $destjar) &>/dev/null
-            shllibEchoInfo "Copying/signing '$srcjar' into '$destjar'"
-            cp $srcjar  $destjar  
-            if ! echo "$MYKEY" | jarsigner -keystore $KEYSTOREFILE $destjar mykey &> /dev/null
+
+            if [ $shared == true ]
             then
-                shllibEchoError "Can't sign '$destjar'"
-                exit 1
+                if [ $sharedExist == true ]
+                then
+                    echo "$jarname already present in '$SHAREDJARPATH' should be the same ..."
+
+                    sharedSize=$(stat -c%s $SHAREDJARPATH/original/$jarname)
+                    libSize=$(stat -c%s $srcjar)
+
+                    if (( $sharedSize != $libSize )) 
+                    then
+                        shllibEchoError "Shared library was modified : '$srcjar' ($libSize) <> '$SHAREDJARPATH/original/$jarname' ($sharedSize)"
+                        exit 1
+                    fi
+
+                else
+                    echo "copy original library to $SHAREDJARPATH/original"
+                    cp $srcjar $SHAREDJARPATH/original/$jarname
+
+                    destjar=$SHAREDJARPATH/$jarname
+
+                    #shared directory already exist, only use jarname:
+                    shllibEchoInfo "Copying/signing '$srcjar' into '$destjar'"
+                    cp $srcjar $destjar
+  
+                    if ! echo "$MYKEY" | jarsigner -keystore $KEYSTOREFILE $destjar mykey &> /dev/null
+                    then
+                        shllibEchoError "Can't sign '$destjar'"
+                        exit 1
+                    fi
+                fi
+
+                #replace @SHARED@ token by correct URL:
+                shllibEchoDebug "replace $jar by $SHAREDJARURL/$jarname ..."
+
+                jarEscaped=$(echo "$jar" | sed -e 's/\(\/\|\\\|&\)/\\&/g')
+                urlEscaped=$(echo "$SHAREDJARURL/$jarname" | sed -e 's/\(\/\|\\\|&\)/\\&/g')
+
+                shllibEchoDebug "escaped jar = $jarEscaped"
+                shllibEchoDebug "escaped URL = $urlEscaped"
+                shllibEchoDebug "cmd : sed -i 's/$jarEscaped/$urlEscaped/g' $destJnlp "
+
+                sed -i "s/$jarEscaped/$urlEscaped/g" $destJnlp 
+#                cat $destJnlp
+
+
+# hack: still copy jars into destDir to keep working createAppJar:
+                destjar=$destDir/shared/$jarname
+                # since jarpath can be on the form dir/dir/toto.jar , we have to ensure that
+                # $destDir/dir/dir does exist
+                mkdir -p $(dirname $destjar) &>/dev/null
+                shllibEchoInfo "Copying '$srcjar' into '$destjar'"
+                cp $srcjar  $destjar
+
+            else
+                destjar=$destDir/$jar
+                # since jarpath can be on the form dir/dir/toto.jar , we have to ensure that
+                # $destDir/dir/dir does exist
+                mkdir -p $(dirname $destjar) &>/dev/null
+                shllibEchoInfo "Copying/signing '$srcjar' into '$destjar'"
+                cp $srcjar  $destjar
+
+                if ! echo "$MYKEY" | jarsigner -keystore $KEYSTOREFILE $destjar mykey &> /dev/null
+                then
+                    shllibEchoError "Can't sign '$destjar'"
+                    exit 1
+                fi
             fi
         else
             shllibEchoError "Can't find '$jar'"
@@ -376,7 +443,7 @@ createAppJar()
     cd $APP_WEBROOT
     mkdir tmpbigjar
     cd tmpbigjar
-    shllibEchoDebug "Working dirtectory is $PWD "
+    shllibEchoDebug "Working directory is $PWD "
 
     # Include JmcsLibs.jar if the given jnlp contains one JmcsLibs.jnlp links
     # (even in comments)

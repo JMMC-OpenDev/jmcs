@@ -61,8 +61,7 @@ public class StarResolverWidget extends SearchField implements Observer {
                     // Disable search field while request processing to avoid concurrent calls :
                     setEnabled(false);
 
-                    final StarResolver resolver = new StarResolver(starName, _star);
-                    resolver.resolve();
+                    new StarResolver(starName, _star).resolve();
                 }
             }
         });
@@ -94,8 +93,7 @@ public class StarResolverWidget extends SearchField implements Observer {
             case QUERY_ERROR:
                 final String errorMessage = _star.consumeCDSimbadErrorMessage();
                 if (errorMessage != null) {
-                    MessagePane.showErrorMessage(
-                            "CDS Simbad problem :\n" + errorMessage);
+                    MessagePane.showErrorMessage("CDS Simbad problem :\n" + errorMessage);
                 }
 
                 StatusBar.show("CDS Simbad star resolution failed.");

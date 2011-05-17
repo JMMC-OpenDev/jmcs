@@ -18,8 +18,7 @@ import javax.swing.SwingUtilities;
  *
  * @author bourgesl
  */
-public final class MessagePane
-{
+public final class MessagePane {
 
     /** Logger */
     private static final Logger _logger = Logger.getLogger(MessagePane.class.getName());
@@ -31,8 +30,7 @@ public final class MessagePane
     /**
      * Forbidden constructor
      */
-    private MessagePane()
-    {
+    private MessagePane() {
         super();
     }
 
@@ -41,8 +39,7 @@ public final class MessagePane
      * Show an error with the given message using EDT if needed
      * @param message message to display
      */
-    public static void showErrorMessage(final String message)
-    {
+    public static void showErrorMessage(final String message) {
         showErrorMessage(message, TITLE_ERROR, null);
     }
 
@@ -52,8 +49,7 @@ public final class MessagePane
      * @param message message to display
      * @param th exception to use
      */
-    public static void showErrorMessage(final String message, final Throwable th)
-    {
+    public static void showErrorMessage(final String message, final Throwable th) {
         showErrorMessage(message, TITLE_ERROR, th);
     }
 
@@ -62,8 +58,7 @@ public final class MessagePane
      * @param message message to display
      * @param title window title to use
      */
-    public static void showErrorMessage(final String message, final String title)
-    {
+    public static void showErrorMessage(final String message, final String title) {
         showErrorMessage(message, title, null);
     }
 
@@ -74,8 +69,7 @@ public final class MessagePane
      * @param title window title to use
      * @param th exception to use
      */
-    public static void showErrorMessage(final String message, final String title, final Throwable th)
-    {
+    public static void showErrorMessage(final String message, final String title, final Throwable th) {
 
         if (_logger.isLoggable(Level.SEVERE)) {
             if (th != null) {
@@ -104,11 +98,9 @@ public final class MessagePane
         if (SwingUtilities.isEventDispatchThread()) {
             showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
         } else {
-            SwingUtilities.invokeLater(new Runnable()
-            {
+            SwingUtilities.invokeLater(new Runnable() {
 
-                public void run()
-                {
+                public void run() {
                     showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
                 }
             });
@@ -127,8 +119,7 @@ public final class MessagePane
      *          <code>QUESTION_MESSAGE</code>,
      *			or <code>PLAIN_MESSAGE</code>
      */
-    private static void showMessageDialog(final String message, final String title, final int messageType)
-    {
+    private static void showMessageDialog(final String message, final String title, final int messageType) {
         final JTextArea textArea = new JTextArea(message);
         textArea.setEditable(false);
         textArea.setBackground(null);
@@ -140,6 +131,10 @@ public final class MessagePane
                 Math.min(textArea.getMinimumSize().height + 50, 500));
         sp.setMaximumSize(dims);
         sp.setPreferredSize(dims);
+
+        // ensure window is visible (not iconified):
+        App.showFrameToFront();
+
         JOptionPane.showMessageDialog(getApplicationFrame(), sp, title, messageType);
     }
 
@@ -148,8 +143,7 @@ public final class MessagePane
      * Show an information with the given message
      * @param message message to display
      */
-    public static void showMessage(final String message)
-    {
+    public static void showMessage(final String message) {
         showMessage(message, TITLE_INFO);
     }
 
@@ -158,8 +152,7 @@ public final class MessagePane
      * @param message message to display
      * @param title window title to use
      */
-    public static void showMessage(final String message, final String title)
-    {
+    public static void showMessage(final String message, final String title) {
         showMessageDialog(message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -169,8 +162,7 @@ public final class MessagePane
      * @param fileName file name
      * @return true if the user wants the file replaced, false otherwise.
      */
-    public static boolean showConfirmFileOverwrite(final String fileName)
-    {
+    public static boolean showConfirmFileOverwrite(final String fileName) {
         final String message = "\"" + fileName + "\" already exists. Do you want to replace it ?\n\n"
                 + "A file or folder with the same name already exists in the current folder.\n"
                 + "Replacing it will overwrite its current contents.";
@@ -192,8 +184,7 @@ public final class MessagePane
      * @param message message to ask
      * @return true if the user answers yes
      */
-    public static boolean showConfirmMessage(final String message)
-    {
+    public static boolean showConfirmMessage(final String message) {
         return showConfirmMessage(getApplicationFrame(), message);
     }
 
@@ -203,8 +194,7 @@ public final class MessagePane
      * @param message message to ask
      * @return true if the user answers yes
      */
-    public static boolean showConfirmMessage(final Component parentComponent, final String message)
-    {
+    public static boolean showConfirmMessage(final Component parentComponent, final String message) {
         final int answer = JOptionPane.showConfirmDialog(getParent(parentComponent), message);
 
         return answer == JOptionPane.YES_OPTION;
@@ -215,8 +205,7 @@ public final class MessagePane
      * @param com component argument
      * @return given component argument or the application frame if the given component is null
      */
-    public final static Component getParent(final Component com)
-    {
+    public static Component getParent(final Component com) {
         Component owner = com;
         if (owner == null) {
             owner = getApplicationFrame();
@@ -231,8 +220,7 @@ public final class MessagePane
      * Return the shared application frame
      * @return application frame
      */
-    private final static JFrame getApplicationFrame()
-    {
+    private static JFrame getApplicationFrame() {
         return App.getFrame();
     }
 }

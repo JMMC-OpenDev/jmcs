@@ -75,7 +75,7 @@ public abstract class Preferences extends Observable {
      * setDefaultPreferences()), then try to load the preference file, if any.
      */
     public Preferences() {
-       this(true);
+        this(true);
     }
 
     /**
@@ -88,7 +88,7 @@ public abstract class Preferences extends Observable {
      */
     public Preferences(final boolean notify) {
         setNotify(notify);
-        
+
         computePreferenceFilepath();
 
         try {
@@ -885,5 +885,13 @@ public abstract class Preferences extends Observable {
             return sb.toString();
         }
         return "";
+    }
+
+    /**
+     * Dump current properties (for debugging purposes)
+     * @return string representation of properties using the format "{name} : {value}"
+     */
+    public String dumpCurrentProperties() {
+        return dumpProperties(_currentProperties);
     }
 }

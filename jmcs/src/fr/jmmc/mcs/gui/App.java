@@ -13,6 +13,7 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 import java.awt.Container;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -787,6 +788,21 @@ public abstract class App {
             _applicationFrame = new JFrame();
         }
         return _applicationFrame;
+    }
+    
+    /**
+     * Show the application frame and bring it to front
+     */
+    public static void showFrameToFront() {
+        final JFrame frame = getFrame();
+
+        if (frame.isVisible()) {
+            // ensure window is visible (not iconified):
+            if (frame.getState() == Frame.ICONIFIED) {
+                frame.setState(Frame.NORMAL);
+            }
+            frame.toFront();
+        }
     }
 
     /**

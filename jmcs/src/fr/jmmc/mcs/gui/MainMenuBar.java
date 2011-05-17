@@ -296,10 +296,13 @@ public class MainMenuBar extends JMenuBar
                     SampCapabilityAction action = (SampCapabilityAction) (menuItem.getAction());
                     // get previously created menu by samp action
                     JMenu menu = SampManager.getMenu(action);
-                    // set text coming from applicationData.xml
-                    menu.setText(menuItem.getText());
+                    
+                    if (menu != null) {
+                        // set text coming from applicationData.xml
+                        menu.setText(menuItem.getText());
 
-                    interopMenu.add(menu);
+                        interopMenu.add(menu);
+                    }
                 }
             }
         }
@@ -489,7 +492,6 @@ public class MainMenuBar extends JMenuBar
         JMenuItem item = null;
 
         // Attributes
-        boolean hasLabel = (menu.getLabel() != null);
         boolean hasClasspath = (menu.getClasspath() != null);
         boolean hasAction = (menu.getAction() != null);
         boolean isCheckbox = (menu.getCheckbox() != null);
@@ -505,8 +507,17 @@ public class MainMenuBar extends JMenuBar
         }
 
         // Get action
-        AbstractAction action = _registrar.get(menu.getClasspath(),
-                menu.getAction());
+        AbstractAction action = null;
+
+        if (hasClasspath && hasAction) {
+            action = _registrar.get(menu.getClasspath(),
+                    menu.getAction());
+
+            if (action == null) {
+                // Open a feeback report if an action is not found:
+                throw new IllegalStateException("Action [" + menu.getClasspath() + "," + menu.getAction() + "] not found !");
+            }
+        }
 
         // Set attributes
         setAttributes(menu, action);

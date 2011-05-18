@@ -26,6 +26,19 @@ public final class MessagePane {
     private final static String TITLE_ERROR = "Error";
     /** default title for information messages */
     private final static String TITLE_INFO = "Information";
+    /** save changes dialog options */
+    private final static Object[] SAVE_CHANGES_OPTIONS = {"Save", "Cancel", "Don't Save"};
+
+    /** Save changes before closing results */
+    public enum ConfirmSaveChanges {
+
+        /** Save */
+        Save,
+        /** Cancel */
+        Cancel,
+        /** Ignore */
+        Ignore
+    }
 
     /**
      * Forbidden constructor
@@ -186,6 +199,50 @@ public final class MessagePane {
      */
     public static boolean showConfirmMessage(final String message) {
         return showConfirmMessage(getApplicationFrame(), message);
+    }
+
+    /**
+     * Show a confirmation dialog to ask if the user wants to save changes before closing the application
+     * @return true if the user wants the file replaced, false otherwise.
+     */
+    public static ConfirmSaveChanges showConfirmSaveChangesBeforeClosing() {
+        return showConfirmSaveChanges("closing");
+    }
+
+    /**
+     * Show a confirmation dialog to ask if the user wants to save changes before closing the application
+     * @return true if the user wants the file replaced, false otherwise.
+     * @param beforeMessage part of the message inserted after 'before ' ?
+     */
+    public static ConfirmSaveChanges showConfirmSaveChanges(final String beforeMessage) {
+
+        // If the data are NOT saved, handle it before loosing any results !!!
+        // Ask the user if he wants to save modifications
+        final int result = JOptionPane.showOptionDialog(getApplicationFrame(),
+                "Do you want to save changes to this document before " + beforeMessage + "?\nIf you don't save, your changes will be definitively lost.\n\n",
+                null, JOptionPane.DEFAULT_OPTION,
+                JOptionPane.WARNING_MESSAGE, null, SAVE_CHANGES_OPTIONS, SAVE_CHANGES_OPTIONS[0]);
+
+        // Handle user choice
+        switch (result) {
+            // If the user clicked the "Save" button
+            case 0: // options[0] = "Save" button
+                // Save the current data if no cancel occured
+                return ConfirmSaveChanges.Save;
+//                canLostModifications = _saveFileAction.save();
+
+            // If the user clicked the "Don't Save" button
+            case 2: // options[2] = "Don't Save" button
+                // Exit
+                return ConfirmSaveChanges.Ignore;
+
+            // If the user clicked the "Cancel" button or pressed 'esc' key
+            case 1: // options[1] = "Cancel" button
+            case JOptionPane.CLOSED_OPTION: // 'esc' key
+            default: // Any other case
+                // Cancel the exit
+                return ConfirmSaveChanges.Cancel;
+        }
     }
 
     /**

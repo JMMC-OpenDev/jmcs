@@ -4,6 +4,7 @@
 package fr.jmmc.mcs.util;
 
 import java.util.*;
+import java.util.logging.Level;
 
 import javax.swing.event.*;
 import javax.swing.text.BadLocationException;
@@ -38,7 +39,7 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
     /**
      * Tells if changes must be notified as a preference change issued from user gesture.
      */
-    private boolean notify = false;
+    private boolean _notify = false;
 
     /**
      * PreferencedButtonModel constructor
@@ -115,8 +116,10 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
      *
      * @param newValue new value to be written into the widget.
      */
-    public void setMyText(String newValue) {
-        _logger.fine("setting new content to " + newValue);
+    public void setMyText(final String newValue) {
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("setting new content to " + newValue);
+        }
         try {
             replace(0, getLength(), newValue, null);
         } catch (BadLocationException ex) {
@@ -129,9 +132,9 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
      *
      * @param newValue new string value.
      */
-    private void setPrefValue(String newValue) {
+    private void setPrefValue(final String newValue) {
         // Must be true only if this is issued from one user input (could loop else)
-        if (notify) {
+        if (_notify) {
             try {
                 _preferences.setPreference(_preferenceProperty, newValue);
                 if (_autosave) {
@@ -148,9 +151,11 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
      *
      * @param evt document event.
      */
-    public void changedUpdate(DocumentEvent evt) {
+    public void changedUpdate(final DocumentEvent evt) {
         // this event is not used
-        _logger.finest("changeUpdate :\n event: " + evt + "\n text: " + getMyText());
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.finest("changeUpdate :\n event: " + evt + "\n text: " + getMyText());
+        }
     }
 
     /**
@@ -158,9 +163,11 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
      *
      * @param evt document event.
      */
-    public void insertUpdate(DocumentEvent evt) {
+    public void insertUpdate(final DocumentEvent evt) {
         // Gives notification that there was an insert into the document.        
-        _logger.finest("insertUpdate :\n event: " + evt + "\n text: " + getMyText());
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.finest("insertUpdate :\n event: " + evt + "\n text: " + getMyText());
+        }
         setPrefValue(getMyText());
     }
 
@@ -169,27 +176,35 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
      *
      * @param evt document event.
      */
-    public void removeUpdate(DocumentEvent evt) {
+    public void removeUpdate(final DocumentEvent evt) {
         // Gives notification that a portion of the document has been removed.        
-        _logger.finest("removeUpdate :\n event: " + evt + "\n text: " + getMyText());
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.finest("removeUpdate :\n event: " + evt + "\n text: " + getMyText());
+        }
         setPrefValue(getMyText());
     }
 
     /**
      * Triggerd if the preference shared instance has been modified.
      */
-    public void update(Observable o, Object arg) {
-        new Exception("PreferenceDocument.update(o,arg)").printStackTrace();
+    public void update(final Observable o, final Object arg) {
         // Notify event Listener (telling this that it is an internal update)
         _logger.fine("Fire action listeners ");
+
         // Update the widget view according property value changed
-        String nextValue = _preferences.getPreference(_preferenceProperty);
-        _logger.fine("Setting " + _preferenceProperty + " from " + getMyText() + " to " + nextValue);
+        final String nextValue = _preferences.getPreference(_preferenceProperty);
+
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("Setting " + _preferenceProperty + " from " + getMyText() + " to " + nextValue);
+        }
 
         // Modify changes but do not notify change back
-        notify = false;
-        setMyText(nextValue);
-        notify = true;
+        _notify = false;
+        try {
+            setMyText(nextValue);
+        } finally {
+            _notify = true;
+        }
     }
 }
 /*___oOo___*/

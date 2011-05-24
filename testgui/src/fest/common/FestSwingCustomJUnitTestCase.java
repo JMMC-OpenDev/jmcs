@@ -86,7 +86,7 @@ public class FestSwingCustomJUnitTestCase extends FestSwingCustomTestCaseTemplat
    * Prepare the screenshot taker stored in the folder ./fest-screenshots/
    */
   @BeforeClass
-  public static final void setUpOnce() {
+  public static void setUpOnce() {
     FailOnThreadViolationRepaintManager.install();
 
     // does not work within netbeans (fork JVM) :

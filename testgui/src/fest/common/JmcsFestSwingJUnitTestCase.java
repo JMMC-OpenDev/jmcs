@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fest.common;
 
+import static org.fest.swing.timing.Pause.*;
 import static org.fest.swing.launcher.ApplicationLauncher.*;
 import fr.jmmc.mcs.gui.App;
 import java.awt.image.BufferedImage;
@@ -11,6 +12,7 @@ import java.util.logging.Level;
 import org.fest.swing.core.EmergencyAbortListener;
 import org.fest.swing.fixture.FrameFixture;
 import org.fest.swing.fixture.JOptionPaneFixture;
+import org.fest.swing.timing.Condition;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -62,6 +64,25 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
 
           application(JmcsApplicationSetup.applicationClass).start();
         }
+
+        // Waits for slapshscreen to hide ...
+        pause(new Condition("AppReady") {
+
+          /**
+           * Checks if the condition has been satisfied.
+           * @return <code>true</code> if the condition has been satisfied, otherwise <code>false</code>.
+           */
+          public boolean test() {
+
+            return App.isReady();
+
+          }
+        });
+
+        pauseMedium();
+
+        // To be sure that application frame is available:
+        App.getFrame();
       }
 
       if (logger.isLoggable(Level.INFO)) {

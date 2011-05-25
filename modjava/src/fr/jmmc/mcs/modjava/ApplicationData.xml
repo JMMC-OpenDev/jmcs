@@ -11,15 +11,14 @@
     </dependences>
     <menubar>
         <menu label="Preferences">
-            <menu label="Save to file" classpath="fr.jmmc.mcs.util.Preferences" action="savePreferences"/>
-            <menu label="Set default values" classpath="fr.jmmc.mcs.util.Preferences" action="restorePreferences"/>
+            <menu label="Save to file" classpath="fr.jmmc.mcs.modjava.Preferences" action="savePreferences"/>
+            <menu label="Set default values" classpath="fr.jmmc.mcs.modjava.Preferences" action="restorePreferences"/>
         </menu>
         <menu label="Model fitting">
-            <menu label="Model fitting 1" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction1" accelerator="shift T" description="Raccourcis n-1 de Model fitting"/>
+            <menu label="Model fitting 3" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction3" accelerator="shift T" description="Raccourcis n-1 de Model fitting"/>
             <menu/>
-            <menu label="Model fitting 2" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction2" description="Raccourcis n-2 de Model fitting"/>
-            <menu label="Model fitting 3" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction3" accelerator="shift I" description="Raccourcis n-3 de Model fitting"/>
-            <menu label="Model fitting 4" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction4" accelerator="shift X"/>
+            <menu label="Model fitting 4" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction4" description="Raccourcis n-2 de Model fitting"/>
+            <menu label="Model fitting 5" classpath="fr.jmmc.mcs.modjava.Actions" action="mfaction5" accelerator="shift I" description="Raccourcis n-3 de Model fitting"/>
             <menu/>
             <menu label="Radio Test" radiogroup="true">
                 <menu label="Radio Menu 1" classpath="fr.jmmc.mcs.modjava.Actions" action="radio1" description="Raccourcis n-2 de Model fitting"/>
@@ -39,8 +38,7 @@
                 <menu label="SearchCal 12" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" accelerator="I"/>
             </menu>
             <menu label="SearchCal 2" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction2" accelerator="G"/>
-            <menu label="SearchCal 3" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction3" checkbox="true"/>
-            <menu label="SearchCal 4" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction4"/>
+            <menu label="SearchCal 3" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction3" checkbox="true"/>            
             <menu/>
             <menu label="SearchCal 5" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction5"/>
         </menu>

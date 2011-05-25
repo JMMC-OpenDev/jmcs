@@ -3,34 +3,29 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 
-
 /**
  * ActionRegistrar singleton class.
  */
-public class ActionRegistrar
-{
+public class ActionRegistrar {
+    
     /** Logger */
     private static final Logger _logger = Logger.getLogger(
             "fr.jmmc.mcs.util.ActionRegistrar");
-
     /** Singleton instance */
     private static ActionRegistrar _instance = null;
-
     /** Preference Action unic identifying key */
     private static final String _preferenceActionKey = "preferenceActionKey";
-
     /** File opening action unic identifying key */
     private static final String _openActionKey = "openActionKey";
-
     /** Quit Action unic identifying key */
     private static final String _quitActionKey = "quitActionKey";
-
     /**
      * Hastable to associate string keys like
      * "fr.jmmc.classpath.classname:fiedname" to AbstractAction instances.
@@ -38,17 +33,14 @@ public class ActionRegistrar
     private Hashtable<String, AbstractAction> _register = null;
 
     /** Hidden constructor */
-    protected ActionRegistrar()
-    {
+    protected ActionRegistrar() {
         _register = new Hashtable<String, AbstractAction>();
     }
 
     /** Return the singleton instance */
-    public static final synchronized ActionRegistrar getInstance()
-    {
+    public static final synchronized ActionRegistrar getInstance() {
         // DO NOT MODIFY !!!
-        if (_instance == null)
-        {
+        if (_instance == null) {
             _instance = new ActionRegistrar();
         }
 
@@ -68,33 +60,27 @@ public class ActionRegistrar
      * @return the previous registered action, null otherwise.
      */
     public AbstractAction put(String classPath, String fieldName,
-        AbstractAction action)
-    {
+            AbstractAction action) {
         _logger.entering("ActionRegistrar", "put");
 
-        String         internalActionKey = classPath + ":" + fieldName;
-        AbstractAction previousAction    = _register.put(internalActionKey,
+        String internalActionKey = classPath + ":" + fieldName;
+        AbstractAction previousAction = _register.put(internalActionKey,
                 action);
 
-        if (previousAction == null)
-        {
+        if (previousAction == null) {
             if (_logger.isLoggable(Level.FINEST)) {
-              _logger.finest("Registered '" + internalActionKey +
-                "' action for the first time.");
+                _logger.finest("Registered '" + internalActionKey
+                        + "' action for the first time.");
             }
-        }
-        else if (previousAction != action)
-        {
+        } else if (previousAction != action) {
             if (_logger.isLoggable(Level.WARNING)) {
-                _logger.warning("Overwritten the previously registered '" +
-                    internalActionKey + "' action.");
+                _logger.warning("Overwritten the previously registered '"
+                        + internalActionKey + "' action.");
             }
-        }
-        else
-        {
+        } else {
             if (_logger.isLoggable(Level.FINE)) {
-              _logger.fine("Registered '" + internalActionKey +
-                "' action succesfully.");
+                _logger.fine("Registered '" + internalActionKey
+                        + "' action succesfully.");
             }
         }
 
@@ -111,28 +97,25 @@ public class ActionRegistrar
      *
      * @return the retrieved registered action, null otherwise.
      */
-    public AbstractAction get(String classPath, String fieldName)
-    {
+    public AbstractAction get(String classPath, String fieldName) {
         _logger.entering("ActionRegistrar", "get");
 
         if (classPath == null && fieldName == null) {
-          return null;
+            return null;
         }
 
-        String         internalActionKey = classPath + ":" + fieldName;
-        AbstractAction retrievedAction   = _register.get(internalActionKey);
+        String internalActionKey = classPath + ":" + fieldName;
+        AbstractAction retrievedAction = _register.get(internalActionKey);
 
-        if (retrievedAction == null)
-        {
+        if (retrievedAction == null) {
             if (_logger.isLoggable(Level.SEVERE)) {
                 _logger.log(Level.SEVERE, "Cannot find '" + internalActionKey + "' action :", new Throwable());
+                _logger.log(Level.SEVERE, "Current registered actions are :" + dumpRegisteredActions());
             }
-        }
-        else
-        {
+        } else {
             if (_logger.isLoggable(Level.FINE)) {
-              _logger.fine("Retrieved '" + internalActionKey +
-                "' action succesfully.");
+                _logger.fine("Retrieved '" + internalActionKey
+                        + "' action succesfully.");
             }
         }
 
@@ -146,8 +129,7 @@ public class ActionRegistrar
      *
      * @return the previous registered action, null otherwise.
      */
-    public AbstractAction putPreferenceAction(AbstractAction action)
-    {
+    public AbstractAction putPreferenceAction(AbstractAction action) {
         _logger.entering("ActionRegistrar", "putPreferenceAction");
 
         return _register.put(_preferenceActionKey, action);
@@ -159,8 +141,7 @@ public class ActionRegistrar
      *
      * @return the retrieved registered action, null otherwise.
      */
-    public AbstractAction getPreferenceAction()
-    {
+    public AbstractAction getPreferenceAction() {
         _logger.entering("ActionRegistrar", "getPreferenceAction");
 
         return _register.get(_preferenceActionKey);
@@ -173,8 +154,7 @@ public class ActionRegistrar
      *
      * @return the previous registered action, null otherwise.
      */
-    public AbstractAction putOpenAction(AbstractAction action)
-    {
+    public AbstractAction putOpenAction(AbstractAction action) {
         _logger.entering("ActionRegistrar", "putOpenAction");
 
         return _register.put(_openActionKey, action);
@@ -186,8 +166,7 @@ public class ActionRegistrar
      *
      * @return the retrieved registered action, null otherwise.
      */
-    public AbstractAction getOpenAction()
-    {
+    public AbstractAction getOpenAction() {
         _logger.entering("ActionRegistrar", "getOpenAction");
 
         return _register.get(_openActionKey);
@@ -200,8 +179,7 @@ public class ActionRegistrar
      *
      * @return the previous registered action, null otherwise.
      */
-    public AbstractAction putQuitAction(AbstractAction action)
-    {
+    public AbstractAction putQuitAction(AbstractAction action) {
         _logger.entering("ActionRegistrar", "putQuitAction");
 
         return _register.put(_quitActionKey, action);
@@ -213,8 +191,7 @@ public class ActionRegistrar
      *
      * @return the retrieved registered action, null otherwise.
      */
-    public AbstractAction getQuitAction()
-    {
+    public AbstractAction getQuitAction() {
         _logger.entering("ActionRegistrar", "getQuitAction");
 
         return _register.get(_quitActionKey);
@@ -226,11 +203,30 @@ public class ActionRegistrar
      * @return the registrar content as a String.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         _logger.entering("ActionRegistrar", "toString");
 
         return _register.toString();
+    }
+
+    /**
+     * Dump name of all registered actions  (sorted by keys)
+     * @return string one line per name of registered action
+     */
+    public String dumpRegisteredActions() {
+        if (_register == null) {
+            return "";
+        }
+        // sort properties :
+        final String[] keys = new String[_register.size()];
+        _register.keySet().toArray(keys);
+        Arrays.sort(keys);
+
+        final StringBuilder sb = new StringBuilder(2048);
+        for (String key : keys) {
+            sb.append(key).append("\n");
+        }
+        return sb.toString();
     }
 }
 /*___oOo___*/

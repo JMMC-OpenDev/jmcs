@@ -3,10 +3,15 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Level;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
-import javax.swing.event.*;
 import javax.swing.text.BadLocationException;
 
 /**
@@ -17,43 +22,50 @@ import javax.swing.text.BadLocationException;
  * updated according preference change. Moreover actions should be associated to
  * implement application behaviour associated to user events.
  */
-public class PreferencedDocument extends javax.swing.text.PlainDocument
+public final class PreferencedDocument extends javax.swing.text.PlainDocument
         implements Observer, DocumentListener {
 
-    /** Store PreferencedButtonModel instances for a given preference name */
-    protected static Hashtable _instancesHashtable = new Hashtable();
-    /** Class name */
-    private final static String _className = "fr.jmmc.mcs.util.PreferencedDocument";
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
     /** Class logger */
-    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(_className);
-    /** Preference property */
-    private String _preferenceProperty;
+    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(PreferencedDocument.class.getName());
+    /** Store PreferencedDocument instances for a given preference name */
+    private static Map<String, PreferencedDocument> _instanceMap = Collections.synchronizedMap(new HashMap<String, PreferencedDocument>(8));
+    /* members */
     /** Shared instance */
-    private Preferences _preferences;
+    private final Preferences _preferences;
+    /** Preference property */
+    private final String _preferenceProperty;
     /** 
      * Tells if preference must be saved automatically or not (default)
      * Caution: the whole preference list associated in the preference 
      * will also be saved ...
      */
-    private boolean _autosave = false;
+    private final boolean _autosave;
     /**
      * Tells if changes must be notified as a preference change issued from user gesture.
      */
-    private boolean _notify = false;
+    private boolean _notify = true;
 
     /**
      * PreferencedButtonModel constructor
      *
-     * title a string containing the label to be displayed in the menu
-     * preferenceProperty a string containing the reference to the boolean property to handle
+     * @param preferences the preference that lists every entries
+     * @param preferenceProperty the preference name
+     * @param autosave Tells if preference must be saved automatically or not (default)
      */
-    protected PreferencedDocument(Preferences preferences,
-            String preferenceProperty, boolean autosave) {
+    private PreferencedDocument(final Preferences preferences,
+            final String preferenceProperty, final boolean autosave) {
+
         // Store the Preference shared instance of the main application
         _preferences = preferences;
 
         // Store the property name for later use
         _preferenceProperty = preferenceProperty;
+
+        // store beavior flag
+        _autosave = autosave;
+
         // Retrieve the property value and set the widget accordinaly
         setMyText(_preferences.getPreference(_preferenceProperty));
 
@@ -62,36 +74,40 @@ public class PreferencedDocument extends javax.swing.text.PlainDocument
 
         // Register the object as the observer of any property value change
         _preferences.addObserver(this);
-
-        // store beavior flag
-        _autosave = autosave;
-
     }
 
     /**
      * Return one shared instance associated to the preference property name.
      *
-     * @param preferences the preference that list every entries
+     * @param preferences the preference that lists every entries
      * @param preferenceProperty the preference name
+     * @param autosave Tells if preference must be saved automatically or not (default)
      *
      * @return the PreferencedDocument singleton
      */
-    public static PreferencedDocument getInstance(Preferences preferences,
-            String preferenceProperty, boolean autosave) {
-        PreferencedDocument d;
+    public static PreferencedDocument getInstance(final Preferences preferences,
+            final String preferenceProperty, final boolean autosave) {
 
-        if (_instancesHashtable.containsKey(preferenceProperty)) {
-            d = (PreferencedDocument) _instancesHashtable.get(preferenceProperty);
-        } else {
+        PreferencedDocument d = _instanceMap.get(preferenceProperty);
+
+        if (d == null) {
             d = new PreferencedDocument(preferences, preferenceProperty, autosave);
-            _instancesHashtable.put(preferenceProperty, d);
+            _instanceMap.put(preferenceProperty, d);
         }
 
         return d;
     }
 
-    public static PreferencedDocument getInstance(Preferences preferences,
-            String preferenceProperty) {
+    /**
+     * Return one shared instance associated to the preference property name
+     * which preference is not saved automatically (autosave = false)
+     * 
+     * @param preferences the preference that lists every entries
+     * @param preferenceProperty the preference name
+     * @return the PreferencedDocument singleton
+     */
+    public static PreferencedDocument getInstance(final Preferences preferences,
+            final String preferenceProperty) {
         return getInstance(preferences, preferenceProperty, false);
     }
 

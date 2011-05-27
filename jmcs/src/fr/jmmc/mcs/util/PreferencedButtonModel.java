@@ -4,12 +4,18 @@
 package fr.jmmc.mcs.util;
 
 import fr.jmmc.mcs.gui.FeedbackReport;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.logging.Level;
 
-import java.util.*;
+
 
 import javax.swing.DefaultButtonModel;
-
 
 /**
  * Menu item with a check box representing a MCS preference boolean property
@@ -19,38 +25,35 @@ import javax.swing.DefaultButtonModel;
  * updated according preference change. Moreover actions should be associated to
  * implement application behaviour associated to user events.
  */
-public class PreferencedButtonModel extends DefaultButtonModel
-    implements Observer, ActionListener
-{
-    /** Store PreferencedButtonModel instances for a given preference name */
-    protected static Hashtable _instancesHashtable = new Hashtable();
+public final class PreferencedButtonModel extends DefaultButtonModel
+        implements Observer, ActionListener {
 
-    /** Class name */
-    private final static String _className = "fr.jmmc.mcs.util.PreferencedButtonModel";
-
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
     /** Class logger */
-    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(_className);
-
-    /** Preference property */
-    private String _preferenceProperty;
-
+    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(PreferencedButtonModel.class.getName());
+    /** Store PreferencedButtonModel instances for a given preference name */
+    private static Map<String, PreferencedButtonModel> _instanceMap = Collections.synchronizedMap(new HashMap<String, PreferencedButtonModel>(8));
+    /* members */
     /** Shared instance */
-    private Preferences _preferences;
+    private final Preferences _preferences;
+    /** Preference property */
+    private final String _preferenceProperty;
 
     /**
      * PreferencedButtonModel constructor
      *
-     * title a string containing the label to be displayed in the menu
-     * preferenceProperty a string containing the reference to the boolean property to handle
+     * @param preferences the preference that lists every entries
+     * @param preferenceProperty the preference name
      */
-    protected PreferencedButtonModel(Preferences preferences,
-        String preferenceProperty)
-    {
+    private PreferencedButtonModel(final Preferences preferences,
+            final String preferenceProperty) {
         // Store the Preference shared instance of the main application
-        _preferences            = preferences;
+        _preferences = preferences;
 
         // Store the property name for later use
-        _preferenceProperty     = preferenceProperty;
+        _preferenceProperty = preferenceProperty;
+
         // Retrieve the property boolean value and set the widget accordinaly
         setSelected(_preferences.getPreferenceAsBoolean(_preferenceProperty));
 
@@ -61,26 +64,21 @@ public class PreferencedButtonModel extends DefaultButtonModel
     }
 
     /**
-     * DOCUMENT ME!
+     * Return one shared instance associated to the preference property name.
      *
-     * @param preferences DOCUMENT ME!
-     * @param preferenceProperty DOCUMENT ME!
+     * @param preferences the preference that lists every entries
+     * @param preferenceProperty the preference name
      *
-     * @return DOCUMENT ME!
+     * @return the PreferencedButtonModel singleton
      */
-    public static PreferencedButtonModel getInstance(Preferences preferences,
-        String preferenceProperty)
-    {
-        PreferencedButtonModel bm;
+    public static PreferencedButtonModel getInstance(final Preferences preferences,
+            final String preferenceProperty) {
 
-        if (_instancesHashtable.containsKey(preferenceProperty))
-        {
-            bm = (PreferencedButtonModel) _instancesHashtable.get(preferenceProperty);
-        }
-        else
-        {
+        PreferencedButtonModel bm = _instanceMap.get(preferenceProperty);
+
+        if (bm == null) {
             bm = new PreferencedButtonModel(preferences, preferenceProperty);
-            _instancesHashtable.put(preferenceProperty, bm);
+            _instanceMap.put(preferenceProperty, bm);
         }
 
         return bm;
@@ -88,36 +86,32 @@ public class PreferencedButtonModel extends DefaultButtonModel
 
     /**
      * Triggerd if the button has been clicked.
+     * @param evt action event (swing)
      */
-    public void actionPerformed(ActionEvent evt)
-    {
+    public void actionPerformed(final ActionEvent evt) {
         // Because actionPerformed is called before selected flag change :
         // invert isSelected returned value
-        boolean nextValue = ! isSelected();
+        final boolean nextValue = !isSelected();
 
         // If the widget changed due to user action,
         // update the property value
-        if (evt.getActionCommand() != null)
-        {
-            if (evt.getActionCommand().equals("internalUpdate"))
-            {
-                _logger.fine(
-                    "This event is due to a preference update and does nothing");
+        if (evt.getActionCommand() != null) {
+            if (evt.getActionCommand().equals("internalUpdate")) {
+                _logger.fine("This event is due to a preference update and does nothing");
 
                 return;
             }
         }
 
         _logger.fine("This event is due to a user interaction");
-        _logger.fine("Setting preference '" + _preferenceProperty + "' to " +
-            nextValue);
-
-        try
-        {
-            _preferences.setPreference(_preferenceProperty, nextValue);
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("Setting preference '" + _preferenceProperty + "' to "
+                    + nextValue);
         }
-        catch (Exception e)
-        {
+
+        try {
+            _preferences.setPreference(_preferenceProperty, nextValue);
+        } catch (Exception e) {
             // Show the feedback report (modal) :
             new FeedbackReport(true, e);
         }
@@ -126,16 +120,19 @@ public class PreferencedButtonModel extends DefaultButtonModel
     /**
      * Triggerd if the preference shared instance has been modified.
      */
-    public void update(Observable o, Object arg)
-    {
+    public void update(final Observable o, final Object arg) {
         // Notify event Listener (telling this that it is an internal update)
         _logger.fine("Fire action listeners ");
 
         fireActionPerformed(new ActionEvent(this, SELECTED, "internalUpdate"));
 
         // Update the widget view according property value changed
-        boolean nextValue = _preferences.getPreferenceAsBoolean(_preferenceProperty);
-        _logger.fine("Setting selected to " + nextValue);
+        final boolean nextValue = _preferences.getPreferenceAsBoolean(_preferenceProperty);
+
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("Setting selected to " + nextValue);
+        }
+
         setSelected(nextValue);
     }
 }

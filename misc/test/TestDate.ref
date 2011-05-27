@@ -1,0 +1,22 @@
+1 - miscGetUtcTimeStr() Function Test :
+1 - 
+1 -    UTC Time    (precision s=0)  =  '2011-05-27T09:17:56'
+1 -    UTC Time    (precision s=1)  =  '2011-05-27T09:17:56.0'
+1 -    UTC Time    (precision s=2)  =  '2011-05-27T09:17:56.00'
+1 -    UTC Time    (precision s=3)  =  '2011-05-27T09:17:56.999'
+1 -    UTC Time    (precision s=4)  =  '2011-05-27T09:17:56.9991'
+1 -    UTC Time    (precision s=5)  =  '2011-05-27T09:17:56.99905'
+1 -    UTC Time    (precision s=6)  =  '2011-05-27T09:17:56.999056'
+1 - 
+1 - 
+1 - miscGetLocalTimeStr() Function Test :
+1 - 
+1 -    Local Time  (precision s=0)  =  '2011-05-27T11:17:56'
+1 -    Local Time  (precision s=1)  =  '2011-05-27T11:17:56.0'
+1 -    Local Time  (precision s=2)  =  '2011-05-27T11:17:56.00'
+1 -    Local Time  (precision s=3)  =  '2011-05-27T11:17:56.999'
+1 -    Local Time  (precision s=4)  =  '2011-05-27T11:17:56.9991'
+1 -    Local Time  (precision s=5)  =  '2011-05-27T11:17:56.99907'
+1 -    Local Time  (precision s=6)  =  '2011-05-27T11:17:56.999073'
+1 - 
+1 - 

@@ -1,0 +1,263 @@
+1 - miscGetEnvVarValue() Function Test :
+1 - 
+1 -    Environment Variable name      | Env. Var. value
+1 -    -------------------------------+-------------------------
+1 -    toto                           | mcsFAILURE
+1 -    ~                              | mcsFAILURE
+1 -    ~lafrasse                      | mcsFAILURE
+1 -    $HOME                          | /home/users/lafrasse
+1 -    MCSENV                         | lafrasse
+1 -    $INTROOT                       | /home/users/lafrasse/dev/INTROOT
+1 -    MCSROOT                        | /home/MCS/DEVELOPMENT
+1 - 
+1 - 
+1 - miscGetEnvVarIntValue() Function Test :
+1 - 
+1 - export MCS_ENV_TEST_NUMBER=110278
+1 - 
+1 -    Environment Variable name      | Env. Var. value
+1 -    -------------------------------+-------------------------
+1 -    toto                           | mcsFAILURE
+1 -    $HOME                          | mcsFAILURE
+1 -    MCS_ENV_TEST_NUMBER            | 110278
+1 - 
+1 - 
+1 - miscGetFileName() Function Test :
+1 - 
+1 -    File Path                      | File Name
+1 -    -------------------------------+-------------------------
+1 -    fileName.txt                   | fileName.txt
+1 -    ./fileName.txt                 | fileName.txt
+1 -    ../fileName.txt                | fileName.txt
+1 -    /fileName.txt                  | fileName.txt
+1 -    /tmp/data/fileName.txt         | fileName.txt
+1 - 
+1 - 
+1 - miscGetExtension() Function Test :
+1 - 
+1 -    File Path                      | File Extension
+1 -    -------------------------------+-------------------------
+1 -    fileName                       | (null)
+1 -    fileName.txt                   | txt
+1 -    ./fileName                     | (null)
+1 -    ./fileName.txt                 | txt
+1 -    ../fileName                    | (null)
+1 -    ../fileName.txt                | txt
+1 -    /fileName                      | (null)
+1 -    /fileName.txt                  | txt
+1 -    /tmp/data/fileName             | (null)
+1 -    /tmp/data/fileName.txt         | txt
+1 -    /tmp/.data/fileName            | (null)
+1 -    /tmp/.data/fileName.txt        | txt
+1 -    /tmp/../p/.data/fileName       | (null)
+1 -    /tmp/../p/.data/fileName.txt   | txt
+1 - 
+1 - 
+1 - miscYankExtension() Function Test :
+1 - 
+1 -  File Path                      | Extension | Without Extension
+1 - --------------------------------+-----------+------------------
+1 -  fileName                       | (null)    | fileName
+1 -  fileName.txt                   | (null)    | fileName
+1 -  ./fileName                     | (null)    | ./fileName
+1 -  ./fileName.txt                 | (null)    | ./fileName
+1 -  ../fileName                    | (null)    | ../fileName
+1 -  ../fileName.txt                | (null)    | ../fileName
+1 -  /fileName                      | (null)    | /fileName
+1 -  /fileName.txt                  | (null)    | /fileName
+1 -  /tmp/data/fileName.txt         | (null)    | /tmp/data/fileName
+1 -  /tmp/.data/fileName            | (null)    | /tmp/.data/fileName
+1 -  /tmp/.data/fileName.txt        | (null)    | /tmp/.data/fileName
+1 -  /tmp/../p/.data/fileName       | (null)    | /tmp/../p/.data/fileName
+1 -  /tmp/../p/.data/fileName.txt   | (null)    | /tmp/../p/.data/fileName
+1 -  /.data/fileName.txtname        | (null)    | /.data/fileName
+1 -  /.data/fileName.txtname.txt    | (null)    | /.data/fileName.txtname
+1 - --------------------------------+-----------+------------------
+1 -  fileName                       | data      | fileName
+1 -  fileName.txt                   | data      | fileName.txt
+1 -  ./fileName                     | data      | ./fileName
+1 -  ./fileName.txt                 | data      | ./fileName.txt
+1 -  ../fileName                    | data      | ../fileName
+1 -  ../fileName.txt                | data      | ../fileName.txt
+1 -  /fileName                      | data      | /fileName
+1 -  /fileName.txt                  | data      | /fileName.txt
+1 -  /tmp/data/fileName.txt         | data      | /tmp/data/fileName.txt
+1 -  /tmp/.data/fileName            | data      | /tmp/.data/fileName
+1 -  /tmp/.data/fileName.txt        | data      | /tmp/.data/fileName.txt
+1 -  /tmp/../p/.data/fileName       | data      | /tmp/../p/.data/fileName
+1 -  /tmp/../p/.data/fileName.txt   | data      | /tmp/../p/.data/fileName.txt
+1 -  /.data/fileName.txtname        | data      | /.data/fileName.txtname
+1 -  /.data/fileName.txtname.txt    | data      | /.data/fileName.txtname.txt
+1 - --------------------------------+-----------+------------------
+1 -  fileName                       | txt       | fileName
+1 -  fileName.txt                   | txt       | fileName
+1 -  ./fileName                     | txt       | ./fileName
+1 -  ./fileName.txt                 | txt       | ./fileName
+1 -  ../fileName                    | txt       | ../fileName
+1 -  ../fileName.txt                | txt       | ../fileName
+1 -  /fileName                      | txt       | /fileName
+1 -  /fileName.txt                  | txt       | /fileName
+1 -  /tmp/data/fileName.txt         | txt       | /tmp/data/fileName
+1 -  /tmp/.data/fileName            | txt       | /tmp/.data/fileName
+1 -  /tmp/.data/fileName.txt        | txt       | /tmp/.data/fileName
+1 -  /tmp/../p/.data/fileName       | txt       | /tmp/../p/.data/fileName
+1 -  /tmp/../p/.data/fileName.txt   | txt       | /tmp/../p/.data/fileName
+1 -  /.data/fileName.txtname        | txt       | /.data/fileName.txtname
+1 -  /.data/fileName.txtname.txt    | txt       | /.data/fileName.txtname
+1 - --------------------------------+-----------+------------------
+1 -  fileName                       | .txt      | fileName
+1 -  fileName.txt                   | .txt      | fileName
+1 -  ./fileName                     | .txt      | ./fileName
+1 -  ./fileName.txt                 | .txt      | ./fileName
+1 -  ../fileName                    | .txt      | ../fileName
+1 -  ../fileName.txt                | .txt      | ../fileName
+1 -  /fileName                      | .txt      | /fileName
+1 -  /fileName.txt                  | .txt      | /fileName
+1 -  /tmp/data/fileName.txt         | .txt      | /tmp/data/fileName
+1 -  /tmp/.data/fileName            | .txt      | /tmp/.data/fileName
+1 -  /tmp/.data/fileName.txt        | .txt      | /tmp/.data/fileName
+1 -  /tmp/../p/.data/fileName       | .txt      | /tmp/../p/.data/fileName
+1 -  /tmp/../p/.data/fileName.txt   | .txt      | /tmp/../p/.data/fileName
+1 -  /.data/fileName.txtname        | .txt      | /.data/fileName.txtname
+1 -  /.data/fileName.txtname.txt    | .txt      | /.data/fileName.txtname
+1 - 
+1 - 
+1 - miscYankLastPath() Function Test :
+1 - 
+1 -    File Path                      | Without Last Path
+1 -    -------------------------------+-------------------------
+1 -    fileName                       | fileName
+1 -    fileName.txt                   | fileName.txt
+1 -    ./fileName                     | .
+1 -    ./fileName.txt                 | .
+1 -    ../fileName                    | ..
+1 -    ../fileName.txt                | ..
+1 -    /fileName                      | 
+1 -    /fileName.txt                  | 
+1 -    /tmp/data/fileName.txt         | /tmp/data
+1 -    /tmp/.data/fileName            | /tmp/.data
+1 -    /tmp/.data/fileName.txt        | /tmp/.data
+1 -    /tmp/../p/.data/fileName       | /tmp/../p/.data
+1 -    /tmp/../p/.data/fileName.txt   | /tmp/../p/.data
+1 - 
+1 - 
+1 - miscResolvePath() Function Test :
+1 - 
+1 -    ---------------------------------------------------------
+1 - Unresolved Path = "/tmp/../p/.data/fileName.txt"
+1 - Resolved Path   = "/tmp/../p/.data/fileName.txt"
+1 - 
+1 - Unresolved Path = "/tmp/../p/.data/"
+1 - Resolved Path   = "/tmp/../p/.data"
+1 - 
+1 - Unresolved Path = "~/../p/.data/fileName.txt"
+1 - Resolved Path   = "/home/users/lafrasse/../p/.data/fileName.txt"
+1 - 
+1 - Unresolved Path = "~/../p/.data/"
+1 - Resolved Path   = "/home/users/lafrasse/../p/.data"
+1 - 
+1 - Unresolved Path = "$INTROOT/data/fileName.txt"
+1 - Resolved Path   = "/home/users/lafrasse/dev/INTROOT/data/fileName.txt"
+1 - 
+1 - Unresolved Path = "$INTROOT/data/"
+1 - Resolved Path   = "/home/users/lafrasse/dev/INTROOT/data"
+1 - 
+1 - Unresolved Path = "/data/$INTROOT/data/fileName.txt"
+1 - Resolved Path   = "/data//home/users/lafrasse/dev/INTROOT/data/fileName.txt"
+1 - 
+1 - Unresolved Path = "/data/$INTROOT/data/fileName.txt"
+1 - Resolved Path   = "/data//home/users/lafrasse/dev/INTROOT/data/fileName.txt"
+1 - 
+1 - Unresolved Path = "$MCSROOT/$INTROOT/data/"
+1 - Resolved Path   = "/home/MCS/DEVELOPMENT//home/users/lafrasse/dev/INTROOT/data"
+1 - 
+1 - Unresolved Path = "/data/$MCSROOT/$INTROOT/data/fileName.txt"
+1 - Resolved Path   = "/data//home/MCS/DEVELOPMENT//home/users/lafrasse/dev/INTROOT/data/fileName.txt"
+1 - 
+1 - Unresolved Path = "/data/$MCSROOT/$INTROOT/data/"
+1 - Resolved Path   = "/data//home/MCS/DEVELOPMENT//home/users/lafrasse/dev/INTROOT/data"
+1 - 
+1 - Unresolved Path = "~/data/$MCSROOT/$INTROOT/data/fileName.txt"
+1 - Resolved Path   = "/home/users/lafrasse/data//home/MCS/DEVELOPMENT//home/users/lafrasse/dev/INTROOT/data/fileName.txt"
+1 - 
+1 - Unresolved Path = "~/data/$MCSROOT/$INTROOT/data/"
+1 - Resolved Path   = "/home/users/lafrasse/data//home/MCS/DEVELOPMENT//home/users/lafrasse/dev/INTROOT/data"
+1 - 
+1 - Unresolved Path = "~/data/$MCSROOT/$INTROOT/data/"
+1 - Resolved Path(Resolved Path())   = "/home/users/lafrasse/data//home/MCS/DEVELOPMENT//home/users/lafrasse/dev/INTROOT/data"
+1 - 
+1 - 
+1 - 
+1 - miscFileExists() Function Test (with error reporting OFF) :
+1 - 
+1 -    ---------------------------------------------------------
+1 - Tested File = "NULL"  -> DOESN'T EXIST
+1 - Tested File = "../miscErrors.xml"  -> DOESN'T EXIST
+1 - Tested File = "errors"  -> DOESN'T EXIST
+1 - Tested File = "errors/"  -> DOESN'T EXIST
+1 - Tested File = "../errors"  -> EXIST
+1 - Tested File = "../errors/"  -> EXIST
+1 - Tested File = "../errors/miscErrors.xml"  -> EXIST
+1 - Tested File = "$INTROOT/errors/miscErrors.xml"  -> EXIST
+1 - Tested File = "$MCSROOT/errors/miscErrors.xml"  -> EXIST
+1 - 
+1 - miscFileExists() Function Test (with error reporting ON) :
+1 - 
+1 -    ---------------------------------------------------------
+1 - Tested File = "NULL"  -> DOESN'T EXIST
+1 - Tested File = "../miscErrors.xml"  -> DOESN'T EXIST
+1 - Tested File = "../errors/miscErrors.xml"  -> EXIST
+1 - Tested File = "$INTROOT/errors/miscErrors.xml"  -> EXIST
+1 - Tested File = "$MCSROOT/errors/miscErrors.xml"  -> EXIST
+1 - 
+1 - 
+1 - miscLocateFileInPath() Function Test :
+1 - 
+1 -    ---------------------------------------------------------
+1 - Tested Path = 'NULL' - 'miscErrors.xml'
+1 - Valid Path = 'NONE'
+1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'NULL'
+1 - Valid Path = 'NONE'
+1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'err'
+1 - Valid Path = 'NONE'
+1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'errors'
+1 - Valid Path = '..//errors'
+1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'errors/'
+1 - Valid Path = '..//errors'
+1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'miscErrors.xml'
+1 - Valid Path = 'NONE'
+1 - Tested Path = '../:$INTROOT/errors/:$MCSROOT/errors/' - 'miscErrors.xml'
+1 - Valid Path = '/home/users/lafrasse/dev/INTROOT/errors//miscErrors.xml'
+1 - Tested Path = '../:$MCSROOT/errors/:$INTROOT/errors/' - 'miscErrors.xml'
+1 - Valid Path = '/home/MCS/DEVELOPMENT/errors//miscErrors.xml'
+1 - Tested Path = '../:/home/$INTROOT/errors/:/home/$MCSROOT/errors/' - 'miscErrors.xml'
+1 - Valid Path = 'NONE'
+1 - 
+1 - 
+1 - miscLocateFile() Function Test :
+1 - 
+1 -    ---------------------------------------------------------
+1 - Tested File = "NULL"  -> DOESN'T EXIST
+1 - Tested File = "miscErrors"  -> DOESN'T EXIST
+1 - Tested File = "miscErrors.xml"  -> EXIST at : ../errors/miscErrors.xml
+1 - Tested File = "miscConfig.cfg"  -> DOESN'T EXIST
+1 - 
+1 - 
+1 - miscLocateDir() Function Test :
+1 - 
+1 -    ---------------------------------------------------------
+1 - Tested Dir = "NULL"  -> DOESN'T EXIST
+1 - Tested Dir = "miscErrors"  -> DOESN'T EXIST
+1 - Tested Dir = "err"  -> DOESN'T EXIST
+1 - Tested Dir = "errors"  -> EXIST at : ..//errors
+1 - Tested Dir = "templates"  -> EXIST at : /home/users/lafrasse/dev/INTROOT//templates
+1 - Tested Dir = "etc"  -> DOESN'T EXIST
+1 - miscLocateExe() Function Test :
+1 - 
+1 -    ---------------------------------------------------------
+1 - Tested Exe = "NULL"  -> DOESN'T EXIST
+1 - Tested Exe = "miscLocateDir"  -> EXIST at : ../bin//miscLocateDir
+1 - Tested Exe = "sclsvrServer"  -> EXIST at : /home/users/lafrasse/dev/INTROOT/bin//sclsvrServer
+1 - Tested Exe = "logManager"  -> EXIST at : /home/MCS/DEVELOPMENT/bin//logManager
+1 - Tested Exe = "cvs"  -> DOESN'T EXIST
+1 - Tested Exe = "error"  -> DOESN'T EXIST

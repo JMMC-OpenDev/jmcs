@@ -1,0 +1,1179 @@
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufGetNbStoredBytes = mcsFAILURE.
+1 - miscDynBufGetNbAllocatedBytes = mcsFAILURE.
+1 - miscDynBufGetCommentPattern = mcsFAILURE.
+1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufGetNbStoredBytes = '0'.
+1 - miscDynBufGetNbAllocatedBytes = '0'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufAppendBytes(&dynBuf = NULL) : SUCCEED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufAppendBytes(NULL, 0) SUCCEED
+1 - 
+1 - miscDynBufAppendBytes("hello dynBuf", 12) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '12'.
+1 - miscDynBufGetNbAllocatedBytes = '12'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "hello dynBuf".
+1 - 
+1 - miscDynBufAppendBytes(" ... :)", 7) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '19'.
+1 - miscDynBufGetNbAllocatedBytes = '19'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "hello dynBuf ... :)".
+1 - 
+1 - miscDynBufAppendBytes(" !!!", 4) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "hello dynBuf ... :) !!!".
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufGetByteAt(NULL, 0) FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufGetByteAt(NULL, 0) FAILED
+1 - 
+1 - miscDynBufGetByteAt(0) FAILED
+1 - 
+1 - miscDynBufGetByteAt(1) = "h" SUCCEED
+1 - 
+1 - miscDynBufGetByteAt(7) = "d" SUCCEED
+1 - 
+1 - miscDynBufGetByteAt(23) = "!" SUCCEED
+1 - 
+1 - miscDynBufGetByteAt(24) FAILED
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufGetBytesFromTo(0, 4) FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufGetBytesFromTo(0, 4) FAILED
+1 - 
+1 - miscDynBufGetBytesFromTo(NULL, 1, 12) FAILED
+1 - 
+1 - miscDynBufGetBytesFromTo(1, 12) = "hello dynBuf" SUCCEED
+1 - 
+1 - miscDynBufGetBytesFromTo(7, 16) = "dynBuf ..." SUCCEED
+1 - 
+1 - miscDynBufGetBytesFromTo(6, 6) = " " SUCCEED
+1 - 
+1 - miscDynBufGetBytesFromTo(23, 18) FAILED
+1 - 
+1 - miscDynBufGetBytesFromTo(18, 23) = ":) !!!" SUCCEED
+1 - 
+1 - miscDynBufGetBytesFromTo(18, 24) FAILED
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufReplaceByteAt(0) FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufReplaceByteAt(0) FAILED
+1 - 
+1 - miscDynBufReplaceByteAt(1) = "H" SUCCEED
+1 - miscDynBufGetNbStoredBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello dynBuf ... :) !!!".
+1 - 
+1 - miscDynBufReplaceByteAt(7) = "B" SUCCEED
+1 - miscDynBufGetNbStoredBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello BynBuf ... :) !!!".
+1 - 
+1 - miscDynBufReplaceByteAt(13) = "'" SUCCEED
+1 - miscDynBufGetNbStoredBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello BynBuf'... :) !!!".
+1 - 
+1 - miscDynBufReplaceByteAt(23) = "@" SUCCEED
+1 - miscDynBufGetNbStoredBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello BynBuf'... :) !!@".
+1 - 
+1 - miscDynBufReplaceByteAt(24) FAILED
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufInsertBytesAt(NULL, 0, 0) SUCCEED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufInsertBytesAt(NULL, 0, 0) SUCCEED
+1 - 
+1 - miscDynBufInsertBytesAt(NULL, 0, 1) SUCCEED
+1 - 
+1 - miscDynBufInsertBytesAt("Encore un '", 0, 1) SUCCEED
+1 - 
+1 - miscDynBufInsertBytesAt("Encore un '", 11, 1) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '34'.
+1 - miscDynBufGetNbAllocatedBytes = '34'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Encore un 'Hello BynBuf'... :) !!@".
+1 - 
+1 - miscDynBufInsertBytesAt("misc", 0, 18) SUCCEED
+1 - 
+1 - miscDynBufInsertBytesAt("misc", 4, 18) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '38'.
+1 - miscDynBufGetNbAllocatedBytes = '38'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Encore un 'Hello miscBynBuf'... :) !!@".
+1 - 
+1 - miscDynBufInsertBytesAt("~~~", 0, 38) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '38'.
+1 - miscDynBufGetNbAllocatedBytes = '38'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Encore un 'Hello miscBynBuf'... :) !!@".
+1 - 
+1 - miscDynBufInsertBytesAt("~~~", 3, 38) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '41'.
+1 - miscDynBufGetNbAllocatedBytes = '41'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Encore un 'Hello miscBynBuf'... :) !!~~~@".
+1 - 
+1 - miscDynBufInsertBytesAt("~~~", 3, 42) FAILED
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufReplaceBytesFromTo("(null)", 0, 0, 9) SUCCEED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufReplaceBytesFromTo("(null)", 0, 0, 9) SUCCEED
+1 - 
+1 - miscDynBufReplaceBytesFromTo("Toujours ce", 11, 1, 9) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '43'.
+1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf'... :) !!~~~@".
+1 - 
+1 - miscDynBufReplaceBytesFromTo("X", 0, 42, 40) SUCCEED
+1 - 
+1 - miscDynBufReplaceBytesFromTo("X", 0, 40, 42) SUCCEED
+1 - 
+1 - miscDynBufReplaceBytesFromTo("X", 1, 40, 40) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '43'.
+1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf'... :) !!X~~@".
+1 - 
+1 - miscDynBufReplaceBytesFromTo(" !", 3, 31, 43) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '33'.
+1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf' !".
+1 - 
+1 - miscDynBufReplaceBytesFromTo(" !", 3, 31, 34) FAILED
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufDeleteBytesFromTo(0, 13) FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufDeleteBytesFromTo(0, 13) FAILED
+1 - 
+1 - miscDynBufDeleteBytesFromTo(1, 13) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '20'.
+1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello miscBynBuf' !".
+1 - 
+1 - miscDynBufDeleteBytesFromTo(10, 7) FAILED
+1 - 
+1 - miscDynBufDeleteBytesFromTo(7, 10) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '16'.
+1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello BynBuf' !".
+1 - 
+1 - miscDynBufDeleteBytesFromTo(13, 13) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '15'.
+1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello BynBuf !".
+1 - 
+1 - miscDynBufDeleteBytesFromTo(13, 14) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '13'.
+1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello BynBuf".
+1 - 
+1 - miscDynBufDeleteBytesFromTo(12, 14) FAILED
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufStrip() FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufStrip() SUCCEED
+1 - miscDynBufGetNbStoredBytes = '13'.
+1 - miscDynBufGetNbAllocatedBytes = '13'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello BynBuf".
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufReset() FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufReset() SUCCEED
+1 - miscDynBufGetNbStoredBytes = '0'.
+1 - miscDynBufGetNbAllocatedBytes = '13'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Hello BynBuf".
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufAppendString(&dynBuf = NULL) : FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufAppendString(NULL) FAILED
+1 - 
+1 - miscDynBufAppendString("hello dynStr") SUCCEED
+1 - miscDynBufGetNbStoredBytes = '13'.
+1 - miscDynBufGetNbAllocatedBytes = '13'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "hello dynStr".
+1 - 
+1 - miscDynBufAppendString(" ... :)") SUCCEED
+1 - miscDynBufGetNbStoredBytes = '20'.
+1 - miscDynBufGetNbAllocatedBytes = '20'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "hello dynStr ... :)".
+1 - 
+1 - miscDynBufAppendString(" !!!") SUCCEED
+1 - miscDynBufGetNbStoredBytes = '24'.
+1 - miscDynBufGetNbAllocatedBytes = '24'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "hello dynStr ... :) !!!".
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufInsertStringAt(NULL, 0) FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufInsertStringAt(NULL, 0) FAILED
+1 - 
+1 - miscDynBufInsertStringAt(NULL, 1) FAILED
+1 - 
+1 - miscDynBufInsertStringAt("Encore un '", 1) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '35'.
+1 - miscDynBufGetNbAllocatedBytes = '35'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Encore un 'hello dynStr ... :) !!!".
+1 - 
+1 - miscDynBufInsertStringAt("misc", 18) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '39'.
+1 - miscDynBufGetNbAllocatedBytes = '39'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Encore un 'hello miscdynStr ... :) !!!".
+1 - 
+1 - miscDynBufInsertStringAt("~~~", 39) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '42'.
+1 - miscDynBufGetNbAllocatedBytes = '42'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Encore un 'hello miscdynStr ... :) !!!~~~".
+1 - 
+1 - miscDynBufInsertStringAt("~~~", 43) FAILED
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufReplaceStringFromTo("(null)", 0, 9) FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufReplaceStringFromTo("(null)", 0, 9) FAILED
+1 - 
+1 - miscDynBufReplaceStringFromTo("Toujours ce", 1, 9) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '44'.
+1 - miscDynBufGetNbAllocatedBytes = '44'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr ... :) !!!~~~".
+1 - 
+1 - miscDynBufReplaceStringFromTo(" !", 42, 40) FAILED
+1 - 
+1 - miscDynBufReplaceStringFromTo(" !", 40, 42) SUCCEED
+1 - 
+1 - miscDynBufReplaceStringFromTo(" !", 31, 43) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '33'.
+1 - miscDynBufGetNbAllocatedBytes = '44'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr  !".
+1 - 
+1 - miscDynBufReplaceStringFromTo(" !", 31, 34) FAILED
+1 - 
+1 - ---------------------------------------------------------------
+1 - &dynBuf = NULL :
+1 - ----------------
+1 - miscDynBufDestroy() FAILED
+1 - 
+1 - dynBuf Allocated :
+1 - ------------------
+1 - miscDynBufDestroy() SUCCEED
+1 - miscDynBufGetNbStoredBytes = mcsFAILURE.
+1 - miscDynBufGetNbAllocatedBytes = mcsFAILURE.
+1 - miscDynBufGetCommentPattern = mcsFAILURE.
+1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - 
+1 - ---------------------------------------------------------------
+1 - miscDynBufSetCommentPattern(#) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '0'.
+1 - miscDynBufGetNbAllocatedBytes = '0'.
+1 - miscDynBufGetCommentPattern = "#".
+1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - ------------------
+1 - miscDynBufSetCommentPattern(//) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '0'.
+1 - miscDynBufGetNbAllocatedBytes = '0'.
+1 - miscDynBufGetCommentPattern = "//".
+1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - ------------------
+1 - miscDynBufSetCommentPattern(/**) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '0'.
+1 - miscDynBufGetNbAllocatedBytes = '0'.
+1 - miscDynBufGetCommentPattern = "/**".
+1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - ------------------
+1 - miscDynBufSetCommentPattern(;--;) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '0'.
+1 - miscDynBufGetNbAllocatedBytes = '0'.
+1 - miscDynBufGetCommentPattern = ";--".
+1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - ------------------
+1 - miscDynBufSetCommentPattern((null)) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '0'.
+1 - miscDynBufGetNbAllocatedBytes = '0'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - 
+1 - ---------------------------------------------------------------
+1 - miscDynBufLoadFile(../config/) FAILED
+1 - miscDynBufGetNbStoredBytes = '0'.
+1 - miscDynBufGetNbAllocatedBytes = '4096'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "".
+1 - miscDynBufLoadFile(../config/doxyfile) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '840'.
+1 - miscDynBufGetNbAllocatedBytes = '840'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - Á".
+1 - 
+1 - ---------------------------------------------------------------
+1 - miscDynBufSavePartInFile(0, ../tmp/0.txt) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '840'.
+1 - miscDynBufGetNbAllocatedBytes = '840'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - Á".
+1 - miscDynBufSavePartInFile(10, ../tmp/10.txt) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '840'.
+1 - miscDynBufGetNbAllocatedBytes = '840'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - Á".
+1 - 
+1 - ---------------------------------------------------------------
+1 - miscDynBufSaveInFile(../tmp/) FAILED
+1 - miscDynBufGetNbStoredBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - ".
+1 - miscDynBufSaveInFile(../tmp/test.txt) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - ".
+1 - 
+1 - ---------------------------------------------------------------
+1 - miscDynBufSaveInASCIIFile(../tmp/) FAILED
+1 - miscDynBufGetNbStoredBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - ".
+1 - miscDynBufSaveInASCIIFile(../tmp/testASCII.txt) SUCCEED
+1 - miscDynBufGetNbStoredBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - ".
+1 - 
+1 - ---------------------------------------------------------------
+1 - ------------------
+1 - skipFlag = 'WITHOUT Comment Skiping' | commentPattern = ''
+1 - miscDynBufGetNextLine() = '#*******************************************************************************'
+1 - miscDynBufGetNextLine() = '# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.'
+1 - miscDynBufGetNextLine() = '#*******************************************************************************'
+1 - miscDynBufGetNextLine() = '# This file describes the settings to be used by the documentation system'
+1 - miscDynBufGetNextLine() = '# doxygen (www.doxygen.org) for a project'
+1 - miscDynBufGetNextLine() = '#'
+1 - miscDynBufGetNextLine() = '# All text after a hash (#) is considered a comment and will be ignored'
+1 - miscDynBufGetNextLine() = '# The format is:'
+1 - miscDynBufGetNextLine() = '#       TAG = value [value, ...]'
+1 - miscDynBufGetNextLine() = '# For lists items can also be appended using:'
+1 - miscDynBufGetNextLine() = '#       TAG += value [value, ...]'
+1 - miscDynBufGetNextLine() = '# Values that contain spaces should be placed between quotes (" ")'
+1 - miscDynBufGetNextLine() = '#'
+1 - miscDynBufGetNextLine() = ''
+1 - miscDynBufGetNextLine() = '#---------------------------------------------------------------------------'
+1 - miscDynBufGetNextLine() = '# Module configuration options customization'
+1 - miscDynBufGetNextLine() = '#---------------------------------------------------------------------------'
+1 - miscDynBufGetNextLine() = 'OPTIMIZE_OUTPUT_FOR_C  = YES'
+1 - miscDynBufGetNextLine() = ''
+1 - miscDynBufGetNextLine() = ''
+1 - ------------------
+1 - skipFlag = 'WITHOUT Comment Skiping' | commentPattern = '#'
+1 - miscDynBufGetNextLine() = '#*******************************************************************************'
+1 - miscDynBufGetNextLine() = '# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.'
+1 - miscDynBufGetNextLine() = '#*******************************************************************************'
+1 - miscDynBufGetNextLine() = '# This file describes the settings to be used by the documentation system'
+1 - miscDynBufGetNextLine() = '# doxygen (www.doxygen.org) for a project'
+1 - miscDynBufGetNextLine() = '#'
+1 - miscDynBufGetNextLine() = '# All text after a hash (#) is considered a comment and will be ignored'
+1 - miscDynBufGetNextLine() = '# The format is:'
+1 - miscDynBufGetNextLine() = '#       TAG = value [value, ...]'
+1 - miscDynBufGetNextLine() = '# For lists items can also be appended using:'
+1 - miscDynBufGetNextLine() = '#       TAG += value [value, ...]'
+1 - miscDynBufGetNextLine() = '# Values that contain spaces should be placed between quotes (" ")'
+1 - miscDynBufGetNextLine() = '#'
+1 - miscDynBufGetNextLine() = ''
+1 - miscDynBufGetNextLine() = '#---------------------------------------------------------------------------'
+1 - miscDynBufGetNextLine() = '# Module configuration options customization'
+1 - miscDynBufGetNextLine() = '#---------------------------------------------------------------------------'
+1 - miscDynBufGetNextLine() = 'OPTIMIZE_OUTPUT_FOR_C  = YES'
+1 - miscDynBufGetNextLine() = ''
+1 - miscDynBufGetNextLine() = ''
+1 - ------------------
+1 - skipFlag = 'WITH Comment Skiping' | commentPattern = ''
+1 - miscDynBufGetNextLine() = '#*******************************************************************************'
+1 - miscDynBufGetNextLine() = '# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.'
+1 - miscDynBufGetNextLine() = '#*******************************************************************************'
+1 - miscDynBufGetNextLine() = '# This file describes the settings to be used by the documentation system'
+1 - miscDynBufGetNextLine() = '# doxygen (www.doxygen.org) for a project'
+1 - miscDynBufGetNextLine() = '#'
+1 - miscDynBufGetNextLine() = '# All text after a hash (#) is considered a comment and will be ignored'
+1 - miscDynBufGetNextLine() = '# The format is:'
+1 - miscDynBufGetNextLine() = '#       TAG = value [value, ...]'
+1 - miscDynBufGetNextLine() = '# For lists items can also be appended using:'
+1 - miscDynBufGetNextLine() = '#       TAG += value [value, ...]'
+1 - miscDynBufGetNextLine() = '# Values that contain spaces should be placed between quotes (" ")'
+1 - miscDynBufGetNextLine() = '#'
+1 - miscDynBufGetNextLine() = ''
+1 - miscDynBufGetNextLine() = '#---------------------------------------------------------------------------'
+1 - miscDynBufGetNextLine() = '# Module configuration options customization'
+1 - miscDynBufGetNextLine() = '#---------------------------------------------------------------------------'
+1 - miscDynBufGetNextLine() = 'OPTIMIZE_OUTPUT_FOR_C  = YES'
+1 - miscDynBufGetNextLine() = ''
+1 - miscDynBufGetNextLine() = ''
+1 - ------------------
+1 - skipFlag = 'WITH Comment Skiping' | commentPattern = '#'
+1 - miscDynBufGetNextLine() = ''
+1 - miscDynBufGetNextLine() = 'OPTIMIZE_OUTPUT_FOR_C  = YES'
+1 - miscDynBufGetNextLine() = ''
+1 - miscDynBufGetNextLine() = ''
+1 - 
+1 - ---------------------------------------------------------------
+1 - ------------------
+1 - commentPattern = ''
+1 - ------------------
+1 - commentPattern = '#'
+1 - miscDynBufGetNextCommentLine() = '#*******************************************************************************'
+1 - miscDynBufGetNextCommentLine() = '# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.'
+1 - miscDynBufGetNextCommentLine() = '#*******************************************************************************'
+1 - miscDynBufGetNextCommentLine() = '# This file describes the settings to be used by the documentation system'
+1 - miscDynBufGetNextCommentLine() = '# doxygen (www.doxygen.org) for a project'
+1 - miscDynBufGetNextCommentLine() = '#'
+1 - miscDynBufGetNextCommentLine() = '# All text after a hash (#) is considered a comment and will be ignored'
+1 - miscDynBufGetNextCommentLine() = '# The format is:'
+1 - miscDynBufGetNextCommentLine() = '#       TAG = value [value, ...]'
+1 - miscDynBufGetNextCommentLine() = '# For lists items can also be appended using:'
+1 - miscDynBufGetNextCommentLine() = '#       TAG += value [value, ...]'
+1 - miscDynBufGetNextCommentLine() = '# Values that contain spaces should be placed between quotes (" ")'
+1 - miscDynBufGetNextCommentLine() = '#'
+1 - miscDynBufGetNextCommentLine() = '#---------------------------------------------------------------------------'
+1 - miscDynBufGetNextCommentLine() = '# Module configuration options customization'
+1 - miscDynBufGetNextCommentLine() = '#---------------------------------------------------------------------------'
+1 - 
+1 - ---------------------------------------------------------------
+1 - ------------------
+1 - commentPattern = '#'
+1 - line           = '(null)'
+1 - FAILED
+1 - miscDynBufGetNbStoredBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetCommentPattern = "#".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - ".
+1 - 
+1 - ------------------
+1 - commentPattern = '#'
+1 - line           = 'Test de miscAppendLine() !'
+1 - SUCCEED
+1 - miscDynBufGetNbStoredBytes = '869'.
+1 - miscDynBufGetNbAllocatedBytes = '869'.
+1 - miscDynBufGetCommentPattern = "#".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - 
+1 - Test de miscAppendLine() !".
+1 - 
+1 - ---------------------------------------------------------------
+1 - ------------------
+1 - commentPattern = ''
+1 - line           = '(null)'
+1 - FAILED
+1 - miscDynBufGetNbStoredBytes = '869'.
+1 - miscDynBufGetNbAllocatedBytes = '869'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - 
+1 - Test de miscAppendLine() !".
+1 - 
+1 - ------------------
+1 - commentPattern = ''
+1 - line           = 'Test de miscAppendCommentLine() !'
+1 - SUCCEED
+1 - miscDynBufGetNbStoredBytes = '903'.
+1 - miscDynBufGetNbAllocatedBytes = '903'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - 
+1 - Test de miscAppendLine() !
+1 - Test de miscAppendCommentLine() !".
+1 - 
+1 - ------------------
+1 - commentPattern = '#'
+1 - line           = 'Test de miscAppendCommentLine() !'
+1 - SUCCEED
+1 - miscDynBufGetNbStoredBytes = '938'.
+1 - miscDynBufGetNbAllocatedBytes = '938'.
+1 - miscDynBufGetCommentPattern = "#".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - 
+1 - Test de miscAppendLine() !
+1 - Test de miscAppendCommentLine() !
+1 - #Test de miscAppendCommentLine() !".
+1 - 
+1 - ------------------
+1 - commentPattern = ' /*'
+1 - line           = 'Test de miscAppendCommentLine() !'
+1 - SUCCEED
+1 - miscDynBufGetNbStoredBytes = '975'.
+1 - miscDynBufGetNbAllocatedBytes = '975'.
+1 - miscDynBufGetCommentPattern = " /*".
+1 - miscDynBufGetBuffer= "#*******************************************************************************
+1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+1 - #*******************************************************************************
+1 - # This file describes the settings to be used by the documentation system
+1 - # doxygen (www.doxygen.org) for a project
+1 - #
+1 - # All text after a hash (#) is considered a comment and will be ignored
+1 - # The format is:
+1 - #       TAG = value [value, ...]
+1 - # For lists items can also be appended using:
+1 - #       TAG += value [value, ...]
+1 - # Values that contain spaces should be placed between quotes (" ")
+1 - #
+1 - 
+1 - #---------------------------------------------------------------------------
+1 - # Module configuration options customization
+1 - #---------------------------------------------------------------------------
+1 - OPTIMIZE_OUTPUT_FOR_C  = YES
+1 - 
+1 - 
+1 - Test de miscAppendLine() !
+1 - Test de miscAppendCommentLine() !
+1 - #Test de miscAppendCommentLine() !
+1 -  /*Test de miscAppendCommentLine() !".
+1 - 
+1 - ---------------------------------------------------------------
+1 - ------------------
+1 - Executing 'toto':
+1 - FAILED
+1 - miscDynBufGetNbStoredBytes = '1'.
+1 - miscDynBufGetNbAllocatedBytes = '1'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "".
+1 - 
+1 - ------------------
+1 - Executing 'echo "toto"':
+1 - SUCCEED
+1 - miscDynBufGetNbStoredBytes = '6'.
+1 - miscDynBufGetNbAllocatedBytes = '6'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "toto
+1 - ".
+1 - 
+1 - ------------------
+1 - Executing 'echo $PATH':
+1 - SUCCEED
+1 - miscDynBufGetNbStoredBytes = '487'.
+1 - miscDynBufGetNbAllocatedBytes = '487'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "/home/soft/shared/jdk1.5//bin:/usr/kerberos/bin:/home/soft/shared/jdk1.5//bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/libexec:/usr/local/bin:/bin:/usr/bin:/home/soft/shared/jalopy-console-0.1-1.5rc3:/home/soft/shared/stilts:/home/soft/shared/gasgano-2.2.7/bin:/home/soft/local/JmmcTools/:/home/soft/shared/bin/:/home/users/lafrasse/bin:../bin:/home/users/lafrasse/dev/INTROOT/bin:/home/MCS/DEVELOPMENT/bin
+1 - ".
+1 - 
+1 - ------------------
+1 - Executing 'pwd':
+1 - SUCCEED
+1 - miscDynBufGetNbStoredBytes = '40'.
+1 - miscDynBufGetNbAllocatedBytes = '40'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "/home/users/lafrasse/dev/MCS/misc/test
+1 - ".
+1 - 
+1 - ------------------
+1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://www.apple.com"':
+1 - SUCCEED
+1 - miscDynBufGetNbStoredBytes = '8420'.
+1 - miscDynBufGetNbAllocatedBytes = '8420'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "<!DOCTYPE html>
+1 - <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+1 - <head>
+1 - 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+1 - 	<meta name="Author" content="Apple Inc." />
+1 - 	<meta name="viewport" content="width=1024" />
+1 - 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7, IE=9" />
+1 - 	<link id="globalheader-stylesheet" rel="stylesheet" href="http://images.apple.com/global/nav/styles/navigation.css" type="text/css" />
+1 - 
+1 - 	<title>Apple</title>
+1 - 	<meta name="omni_page" content="Apple - Index" />
+1 - 	<meta name="Keywords" content="Apple" />
+1 - 	<meta name="Description" content="Apple designs and creates iPod and iTunes, Mac laptop and desktop computers, the OS X operating system, and the revolutionary iPhone and iPad." />
+1 - 	<script type="text/javascript">
+1 - 		var gomez = { gs:new Date().getTime(), acctId:'C2C738', pgId:'Home Page', grpId:'' };
+1 - 	</script>
+1 - 	<link rel="home" href="http://www.apple.com/" />
+1 - 	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://images.apple.com/main/rss/hotnews/hotnews.rss" />
+1 - 	<link rel="index" href="http://www.apple.com/sitemap/" />
+1 - 	<script src="http://images.apple.com/global/scripts/lib/prototype.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/global/scripts/lib/scriptaculous.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/global/scripts/browserdetect.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/global/scripts/apple_core.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/global/scripts/search_decorator.js" type="text/javascript" charset="utf-8"></script>
+1 - 
+1 - 	<script type="text/javascript" src="http://images.apple.com/global/scripts/ac_blackout.js"></script>
+1 - 	<link rel="stylesheet" href="http://images.apple.com/global/styles/ac_blackout.css" type="text/css" />
+1 - 	<script type="text/javascript" src="http://images.apple.com/global/scripts/promomanager.js"></script>
+1 - 	<script src="http://images.apple.com/home/scripts/ticker.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/home/scripts/promotracker.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<link rel="stylesheet" href="http://images.apple.com/global/styles/base.css" type="text/css" />
+1 - 	<link rel="stylesheet" href="http://images.apple.com/home/styles/home.css" type="text/css" />
+1 - 	<style type="text/css">
+1 - 		html, body { background: #ffffff; }
+1 - 
+1 - 		#billboard { margin-bottom: 15px; }
+1 - 		#billboard a.block { height: 605px; }
+1 - 		#billboard h1 { margin: 0; padding: 28px 0 15px; line-height: 1em; }
+1 - 		#billboard h1 img,
+1 - 		#billboard .hero-img { display: block; margin: 0 auto; }
+1 - 	</style>
+1 - </head>
+1 - <body id="home">
+1 - 	<script type="text/javascript">
+1 - 	var searchSection = 'global';
+1 - 	var searchCountry = 'us';
+1 - </script>
+1 - <script src="http://images.apple.com/global/nav/scripts/globalnav.js" type="text/javascript" charset="utf-8"></script>
+1 - <nav id="globalheader" class="apple">
+1 - 	<!--googleoff: all-->
+1 - 	<ul id="globalnav" role="navigation">
+1 - 		<li id="gn-apple"><a href="/"><span>Apple</span></a></li>
+1 - 		<li id="gn-store"><a href="http://store.apple.com/"><span>Store</span></a></li>
+1 - 		<li id="gn-mac"><a href="/mac/"><span>Mac</span></a></li>
+1 - 		<li id="gn-ipod"><a href="/ipod/"><span>iPod</span></a></li>
+1 - 		<li id="gn-iphone"><a href="/iphone/"><span>iPhone</span></a></li>
+1 - 		<li id="gn-ipad"><a href="/ipad/"><span>iPad</span></a></li>
+1 - 		<li id="gn-itunes"><a href="/itunes/"><span>iTunes</span></a></li>
+1 - 		<li id="gn-support" class="gn-last"><a href="/support/"><span>Support</span></a></li>
+1 - 	</ul>
+1 - 	<!--googleon: all-->
+1 - 	<div id="globalsearch">
+1 - 		<form action="/search/" method="post" class="search" id="g-search"><div class="sp-label">
+1 - 			<label for="sp-searchtext">Search</label>
+1 - 			<input type="text" name="q" id="sp-searchtext" accesskey="s" />
+1 - 		</div></form>
+1 - 		<div id="sp-magnify"><div class="magnify-searchmode"></div><div class="magnify"></div></div>
+1 - 		<div id="sp-results"></div>
+1 - 	</div>
+1 - </nav>
+1 - <script type="text/javascript">
+1 - 	AC.GlobalNav.Instance = new AC.GlobalNav();
+1 - </script>
+1 - 
+1 - 	<div id="top">
+1 - <!-- SiteCatalyst code version: H.8. Copyright 1997-2006 Omniture, Inc. -->
+1 - 
+1 - 
+1 - 	
+1 - 
+1 - 
+1 - 
+1 - 
+1 - 	
+1 - 
+1 - 
+1 - <script type="text/javascript">
+1 - /* RSID: */
+1 - 
+1 - var s_account="appleglobal,applehome"
+1 - 
+1 - </script>
+1 - 
+1 - 
+1 - <script type="text/javascript" src="http://images.apple.com/metrics/scripts/s_code_h.js"></script>
+1 - 
+1 - 
+1 - 
+1 - <script type="text/javascript">
+1 - 
+1 - s.pageName=AC.Tracking.pageName()+" (us)";
+1 - s.channel="www.us.homepage"
+1 - 
+1 - 
+1 - 
+1 - 
+1 - /************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+1 - var s_code=s.t();if(s_code)document.write(s_code)</script>
+1 - <!-- End SiteCatalyst code version: H.8. -->
+1 - </div>
+1 - 	<div id="main">
+1 - 		<div id="content">
+1 - 			<div id="billboard">
+1 - 				<a href="/iphone/" class="block hero trackH">
+1 - 					<h1><img src="http://images.apple.com/home/images/white_iphone_title_20110428.png" alt="Finally. The amazing iPhone 4. Now available in white." width="538" height="94" /></h1>
+1 - 					<img src="http://images.apple.com/home/images/white_iphone_hero_20110425.jpg" alt="" width="197" height="472" class="hero-img" />
+1 - 				</a>
+1 - 			</div><!--/billboard-->
+1 - 			<div id="headlines">
+1 - 				<div id="ticker"><p><a href="/hotnews/" id="ticker-headline">Hot News Headlines</a> <a href="/hotnews/" id="news-link">Mac App Store Downloads Top One Million in First Day.</a></p></div>
+1 - 				<a href="/hotnews/feeds/ticker.rss" id="ticker-rss-link"></a>
+1 - 			</div>
+1 - 			<ul class="promos">
+1 - 				<li>
+1 - 					<a class="trackP" href="/imac/"><img src="http://images.apple.com/home/images/promo_imac_20110426.png" alt="The new iMac. All quad-core power. Up to 3x faster graphics. High-speed Thunderbolt I/O." width="231" height="149" /></a>
+1 - 				</li>
+1 - 				<li>
+1 - 					<a class="trackP" href="/ipad/"><img src="http://images.apple.com/home/images/promo_ipad2_20110425.png" alt="iPad 2. Thinner. Lighter. Faster. FaceTime. Smart Covers. 10-hour battery." width="231" height="149" /></a>
+1 - 				</li>
+1 - 				<li>
+1 - 					<a class="trackP" href="/ipad/#if-you-asked"><img src="http://images.apple.com/home/images/promo_ipadad20110503.png" alt="Watch the new iPad TV ad." width="231" height="149" /></a>
+1 - 				</li>
+1 - 				<li>
+1 - 					<a class="trackP" href="/ios/"><img src="http://images.apple.com/home/images/promo_ios_4_3_20110308.png" alt="iOS 4.3 Software Update. Get all-new features free for iPhone, iPad, and iPod touch." width="231" height="149" /></a>
+1 - 				</li>
+1 - 			</ul><!--/promos-->
+1 - 		</div><!--/content-->
+1 - 			
+1 - 		<div id="homefooter">
+1 - 			<div id="links">
+1 - 				<p class="left">Shop the <a href="/store/">Apple Online Store</a> (1-800-MY-APPLE), visit an <a href="/retail/">Apple Retail Store</a>, or find a <a href="/buy/">reseller</a>.</p>
+1 - 				<ul class="piped right">
+1 - 					<li><a href="/sitemap/" class="first">Site Map</a></li>
+1 - 					<li><a href="/hotnews/">Hot News</a></li>
+1 - 					<li><a href="/rss/">RSS Feeds</a></li>
+1 - 					<li><a href="/pr/">Media Info</a></li>
+1 - 					<li><a href="/environment/">Environment</a></li>
+1 - 					<li><a href="/jobs/">Job Opportunities</a></li>
+1 - 					<li><a href="/contact/">Contact Us</a></li>
+1 - 				</ul>
+1 - 			</div><!--/links-->
+1 - 
+1 - 			<div class="sosumi">
+1 -                 <p class="copyright">Copyright Â© 2011  Apple Inc. All rights reserved.</p>
+1 - 				<ul class="piped">
+1 - 					<li><a href="/legal/" class="first">Terms of Use</a></li>
+1 - 					<li><a href="/legal/privacy/">Privacy Policy</a></li>
+1 - 				</ul>
+1 - 				<div id="worldwide">
+1 - 					<a href="/choose-your-country/">
+1 - 						<img src="http://images.apple.com/home/elements/worldwide_us.png" alt="United States of America" height="22" width="22" />
+1 - 						<span class="more">Choose your country or region</span>
+1 - 					</a>
+1 - 				</div>
+1 - 			</div><!--/sosumi-->
+1 - 		</div><!--/homefooter-->
+1 - 	</div><!--/main-->
+1 - 
+1 - 	<!-- Start of DoubleClick Spotlight Tag: Please do not remove-->
+1 - 	<!-- Creation Date:11/19/07 -->
+1 - 	<script type="text/javascript">
+1 - 		var axel = Math.random()+"";
+1 - 		var a = axel * 10000000000000;
+1 - 		document.write('<iframe src="http://fls.doubleclick.net/activityi;src=1566767;type=apple663;cat=apple249;ord='+ a + '?" width=1 height=1 frameborder=0><\/iframe>');
+1 - 	</script>
+1 - 	<noscript>
+1 - 	<iframe src="http://fls.doubleclick.net/activityi;src=1566767;type=apple663;cat=apple249;ord=1?" width=1 height=1 frameborder=0></iframe>
+1 - 	</noscript>
+1 - 	<!-- End of DoubleClick Spotlight Tag: Please do not remove-->
+1 - </body>
+1 - </html>
+1 - ".
+1 - 
+1 - ------------------
+1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*"':
+1 - SUCCEED
+1 - miscDynBufGetNbStoredBytes = '6075'.
+1 - miscDynBufGetNbAllocatedBytes = '6075'.
+1 - miscDynBufGetCommentPattern = "".
+1 - miscDynBufGetBuffer= "<?xml version="1.0" encoding="UTF-8"?>
+1 - <VOTABLE version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+1 -   xmlns="http://www.ivoa.net/xml/VOTable/v1.2" >
+1 -  <DESCRIPTION>
+1 -    VizieR Astronomical Server vizier.u-strasbg.fr 	2011-05-27T09:18:00 [V1.71]
+1 -    (replaces the 'Astrores' format originally described at
+1 -     http://vizier.u-strasbg.fr/doc/astrores.htx)
+1 -    In case of problem, please report to:	question@simbad.u-strasbg.fr
+1 -  </DESCRIPTION>
+1 - <!-- VOTable description at http://www.ivoa.net/Documents/latest/VOT.html -->
+1 - 
+1 - <DEFINITIONS>
+1 -   <COOSYS ID="J2000" system="eq_FK5" equinox="J2000"/>
+1 - </DEFINITIONS>
+1 - 
+1 - <INFO ID="Ref" name="-ref" value="VOTx14698"/>
+1 - <INFO ID="MaxTuples" name="-out.max" value="100"/>
+1 - 
+1 - <!--
+1 - Execution Reports
+1 -  -->
+1 - <INFO ID="Target" name="-c" value="344.412708-29.622250,bm=3391.000000/1200."/>
+1 - 
+1 - <RESOURCE ID="yCat_1280" name="I/280B">
+1 -   <DESCRIPTION>All-sky Compiled Catalogue of 2.5 million stars (Kharchenko+ 2009)</DESCRIPTION>
+1 -   <COOSYS ID="J2000_1991.250" system="eq_FK5" equinox="J2000" epoch="1991.250"/>
+1 -   <TABLE ID="I_280B_ascc" name="I/280B/ascc">
+1 -     <DESCRIPTION>ASCC-2.5 V3: All-sky Compiled Catalogue of 2.5 million stars, 3rd version</DESCRIPTION>
+1 -     <!-- RowName:  ${ASCC} -->
+1 -     <!-- Definitions of GROUPs and FIELDs -->
+1 -     <FIELD name="_RAJ2000" ucd="pos.eq.ra;meta.main" ref="J2000" datatype="char" arraysize="12" unit="&quot;h:m:s&quot;"><!-- ucd="POS_EQ_RA_MAIN" -->
+1 -       <DESCRIPTION>Right ascension (FK5) Equinox=J2000.0 Epoch=J2000.000, proper motions taken into account  (computed by VizieR, not part of the original data)</DESCRIPTION>
+1 -     </FIELD>
+1 -     <FIELD name="_DEJ2000" ucd="pos.eq.dec;meta.main" ref="J2000" datatype="char" arraysize="12" unit="&quot;d:m:s&quot;"><!-- ucd="POS_EQ_DEC_MAIN" -->
+1 -       <DESCRIPTION>Declination (FK5) Equinox=J2000.0 Epoch=J2000.000, proper motions taken into account  (computed by VizieR, not part of the original data)</DESCRIPTION>
+1 -     </FIELD>
+1 -     <FIELD name="pmDE" ucd="pos.pm;pos.eq.dec" ref="J2000_1991.250" datatype="double" width="8" precision="2" unit="mas/yr"><!-- ucd="POS_EQ_PMDEC" -->
+1 -       <DESCRIPTION>Proper Motion in Declination</DESCRIPTION>
+1 -     </FIELD>
+1 -     <FIELD name="pmRA" ucd="pos.pm;pos.eq.ra" ref="J2000_1991.250" datatype="double" width="8" precision="2" unit="mas/yr"><!-- ucd="POS_EQ_PMRA" -->
+1 -       <DESCRIPTION>Proper Motion in RA*cos(DE)</DESCRIPTION>
+1 -     </FIELD>
+1 -     <FIELD name="Plx" ucd="pos.parallax.trig" datatype="float" width="7" precision="2" unit="mas"><!-- ucd="POS_PARLX_TRIG" -->
+1 -       <DESCRIPTION>? Trigonometric parallax</DESCRIPTION>
+1 -       <VALUES null=" " />
+1 -     </FIELD>
+1 -     <FIELD name="e_Plx" ucd="stat.error;pos.parallax" datatype="float" width="6" precision="2" unit="mas"><!-- ucd="ERROR" -->
+1 -       <DESCRIPTION>? Standard error in Plx</DESCRIPTION>
+1 -       <VALUES null=" " />
+1 -     </FIELD>
+1 -     <FIELD name="SpType" ucd="src.spType" datatype="char" arraysize="20*"><!-- ucd="SPECT_TYPE_MK" -->
+1 -       <DESCRIPTION>Spectral type in MK or HD system</DESCRIPTION>
+1 -     </FIELD>
+1 -     <FIELD name="Bmag" ucd="phot.mag;em.opt.B" datatype="float" width="6" precision="3" unit="mag"><!-- ucd="PHOT_JHN_B" -->
+1 -       <DESCRIPTION>? B magnitude in Johnson system</DESCRIPTION>
+1 -       <VALUES null=" " />
+1 -     </FIELD>
+1 -     <FIELD name="Vmag" ucd="phot.mag;em.opt.V" datatype="float" width="6" precision="3" unit="mag"><!-- ucd="PHOT_JHN_V" -->
+1 -       <DESCRIPTION>? V magnitude in Johnson system</DESCRIPTION>
+1 -       <VALUES null=" " />
+1 -     </FIELD>
+1 -     <FIELD name="v1" ucd="meta.code;src.var" datatype="char" arraysize="1"><!-- ucd="CODE_VARIAB" -->
+1 -       <DESCRIPTION>[GN ] Known variability from GCVS/NSV</DESCRIPTION>
+1 -     </FIELD>
+1 -     <FIELD name="v2" ucd="meta.code;src.var" datatype="char" arraysize="1"><!-- ucd="CODE_VARIAB" -->
+1 -       <DESCRIPTION>[UVW ] Variability from Tycho-1</DESCRIPTION>
+1 -     </FIELD>
+1 -     <FIELD name="v3" ucd="meta.code;src.var" datatype="char" arraysize="1"><!-- ucd="VAR_CLASS" -->
+1 -       <DESCRIPTION>[CDMPRU ] Variability type</DESCRIPTION>
+1 -     </FIELD>
+1 -     <FIELD name="d5" ucd="meta.code.multip" datatype="char" arraysize="1"><!-- ucd="CODE_MULT_FLAG" -->
+1 -       <DESCRIPTION>[CGOVX ] Double/Multiple Systems flag</DESCRIPTION>
+1 -     </FIELD>
+1 -     <FIELD name="HIP" ucd="meta.id" datatype="int" width="6"><!-- ucd="ID_ALTERNATIVE" -->
+1 -       <DESCRIPTION>? Hipparcos number</DESCRIPTION>
+1 -       <VALUES null=" " />
+1 -     </FIELD>
+1 -     <FIELD name="HD" ucd="meta.id" datatype="int" width="6"><!-- ucd="ID_ALTERNATIVE" -->
+1 -       <DESCRIPTION>? HD number</DESCRIPTION>
+1 -       <VALUES null=" " />
+1 -     </FIELD>
+1 -     <FIELD name="DM" ucd="meta.id" datatype="int" width="8"><!-- ucd="ID_ALTERNATIVE" -->
+1 -       <DESCRIPTION>? DM number</DESCRIPTION>
+1 -       <VALUES null=" " />
+1 -     </FIELD>
+1 -     <FIELD name="TYC1" ucd="meta.id" datatype="short" width="4"><!-- ucd="ID_ALTERNATIVE" -->
+1 -       <DESCRIPTION>? TYC1 number from Tycho-2</DESCRIPTION>
+1 -       <VALUES null=" " />
+1 -     </FIELD>
+1 - <DATA><CSV headlines="3"><![CDATA[
+1 - _RAJ2000	_DEJ2000	pmDE	pmRA	Plx	e_Plx	SpType	Bmag	Vmag	v1	v2	v3	d5	HIP	HD	DM	TYC1
+1 - "h:m:s"	"d:m:s"	mas/yr	mas/yr	mas	mas	 	mag	mag	 	 	 	 	 	 	 	
+1 - ------------	------------	--------	--------	-------	------	--------------------	------	------	-	-	-	-	------	------	--------	----
+1 - 22 57 39.049	-29 37 20.05	 -164.19	  332.39	 129.49	  0.92	A3V                 	 1.383	 1.212	N	V	 	G	113368	216956	-3019370	6977
+1 - 23 09 26.797	-21 10 20.67	   31.61	   55.91	  13.47	  0.93	K1III               	 4.919	 3.678	 	W	 	 	114341	218594	-2106368	6401
+1 - 23 22 58.227	-20 06 02.08	  -96.00	 -120.31	  20.21	  0.72	K0III               	 5.051	 3.954	 	 	 	 	115438	220321	-2006587	6402
+1 - 21 53 55.728	-37 21 53.50	  -15.80	  100.48	  16.37	  0.75	B8III               	 2.921	 3.003	 	 	 	G	108085	207971	-3714536	7494
+1 - 21 26 40.027	-22 24 40.80	   18.80	   -0.51	   8.36	  0.88	G4Ibp...            	 4.745	 3.742	 	W	C	 	105881	204075	-2300442	6372
+1 - 00 43 35.372	-17 59 11.78	   32.75	  233.55	  34.11	  0.81	K0III               	 3.069	 2.036	N	W	U	 	  3419	  4128	-1800115	5847
+1 - ]]></CSV></DATA>
+1 - </TABLE>
+1 - </RESOURCE>
+1 - </VOTABLE>
+1 - ".
+1 - 
+1 - ---------------------------------------------------------------
+1 -                       THAT'S ALL FOLKS ;)                      
+1 - ---------------------------------------------------------------

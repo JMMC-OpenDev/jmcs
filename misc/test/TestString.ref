@@ -1,0 +1,104 @@
+1 - miscStripQuotes() Function Test :
+1 - 
+1 -    Original String  = |(null)|
+1 -    Resulting String = mcsFAILURE.
+1 -    Original String  = |   "   kjkdjd kjkjk   kjkj  "      |
+1 -    Resulting String = |kjkdjd kjkjk   kjkj|
+1 - 
+1 - 
+1 - miscTrimString() Function Test :
+1 - 
+1 -    Original String  = |   "   kjkdjd kjkjk   kjkj  "      |
+1 -    Resulting String = |"   kjkdjd kjkjk   kjkj  "|
+1 - 
+1 - 
+1 - miscStrToUpper() Function Test :
+1 - 
+1 -    Original String  = |(null)|
+1 -    Resulting String = mcsFAILURE.
+1 -    Original String  = |Abc deF GhI jKl 012 .;/|
+1 -    Resulting String = |ABC DEF GHI JKL 012 .;/|
+1 - 
+1 - 
+1 - miscIsSpaceStr() Function Test :
+1 - 
+1 -    miscIsSpaceStr(|*|  ) = FALSE.
+1 -    miscIsSpaceStr(| |  ) = TRUE.
+1 -    miscIsSpaceStr(|* | ) = FALSE.
+1 -    miscIsSpaceStr(| *| ) = FALSE.
+1 -    miscIsSpaceStr(|  | ) = TRUE.
+1 -    miscIsSpaceStr(|*  |) = FALSE.
+1 -    miscIsSpaceStr(| * |) = FALSE.
+1 -    miscIsSpaceStr(|  *|) = FALSE.
+1 -    miscIsSpaceStr(|   |) = TRUE.
+1 - 
+1 - 
+1 - miscIsCommentLine() Function Test :
+1 - 
+1 -    miscIsCommentLine(|    azerty
+1 -     qwerty|,|//|) = FALSE.
+1 -    miscIsCommentLine(|//    azerty
+1 -     qwerty|,|//|) = TRUE.
+1 -    miscIsCommentLine(| //   azerty
+1 -     qwerty|,|//|) = TRUE.
+1 -    miscIsCommentLine(| 	 //   azerty
+1 -     qwerty|,|//|) = TRUE.
+1 -    miscIsCommentLine(| 	    azerty//
+1 -     qwerty|,|//|) = FALSE.
+1 -    miscIsCommentLine(| 	    azerty
+1 - //    qwerty|,|//|) = FALSE.
+1 - 
+1 - 
+1 - miscReplaceChrByChr() Function Test :
+1 - 
+1 -    Original String  = |Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/|
+1 - 
+1 -    Replace 'A' by 'Z'
+1 -    New String       = |Zbc deF GhI jKl 012 .;/ Zbc deF GhI jKl 012 .;/|
+1 - 
+1 -    Replace 'Z' by 'A'
+1 -    New String       = |Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/|
+1 - 
+1 - 
+1 - 
+1 - miscDeleteChr() Function Test :
+1 - 
+1 -    Original String  = |Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/|
+1 -    Removed first '/'
+1 -    New String       = |Abc deF GhI jKl 012 .; Abc deF GhI jKl 012 .;/|
+1 - 
+1 -    Original String  = |Abc deF GhI jKl 012 .; Abc deF GhI jKl 012 .;/|
+1 -    Removed first '/'
+1 -    New String       = |Abc deF GhI jKl 012 .; Abc deF GhI jKl 012 .;|
+1 - 
+1 -    Original String  = |/Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/|
+1 -    Removed first '/'
+1 -    New String       = |Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/|
+1 - 
+1 -    Original String  = |Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/|
+1 -    Removed all ' '
+1 -    New String       = |AbcdeFGhIjKl012.;/AbcdeFGhIjKl012.;/|
+1 - 
+1 -    Original String  = | Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .; |
+1 -    Removed all ' '
+1 -    New String       = |AbcdeFGhIjKl012.;/AbcdeFGhIjKl012.;|
+1 - 
+1 - 
+1 - 
+1 - miscSplitString() Function Test :
+1 - 
+1 -    Original String  = |ABCD E FG HIJ KLMNOPQ R ST UVWXYZ |---10---||---20---||---30---||---40---||---50---||---60---||---70---||---80---||---90---||--100---||--110---||--120---||--130---||--140---||--150---||--160---||--170---||--180---||--190---||--200---||--210---||--220---||--230---||--240---||--250---||--260---||
+1 - mcsFAILURE.
+1 - mcsFAILURE.
+1 - mcsFAILURE.
+1 - mcsFAILURE.
+1 - mcsFAILURE.
+1 -    subString[ 0]    = |ABCD|
+1 -    subString[ 1]    = |E|
+1 -    subString[ 2]    = |FG|
+1 -    subString[ 3]    = |HIJ|
+1 -    subString[ 4]    = |KLMNOPQ|
+1 -    subString[ 5]    = |R|
+1 -    subString[ 6]    = |ST|
+1 -    subString[ 7]    = |UVWXYZ|
+1 -    subString[ 8]    = ||---10---||---20---||---30---||---40---||---50---||---60---||---70---||---80---||---90---||--100---||--110---||--120---||--130---||--140---||--150---||--160---||--170---||--180---||--190---||--200---||--210---||--220---||--230---||--240---||--250---||--26|

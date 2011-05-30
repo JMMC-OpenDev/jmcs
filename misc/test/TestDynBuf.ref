@@ -24,19 +24,19 @@
 1 - 
 1 - miscDynBufAppendBytes("hello dynBuf", 12) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '12'.
-1 - miscDynBufGetNbAllocatedBytes = '12'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "hello dynBuf".
 1 - 
 1 - miscDynBufAppendBytes(" ... :)", 7) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '19'.
-1 - miscDynBufGetNbAllocatedBytes = '19'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "hello dynBuf ... :)".
 1 - 
 1 - miscDynBufAppendBytes(" !!!", 4) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '23'.
-1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "hello dynBuf ... :) !!!".
 1 - 
@@ -93,25 +93,25 @@
 1 - 
 1 - miscDynBufReplaceByteAt(1) = "H" SUCCEED
 1 - miscDynBufGetNbStoredBytes = '23'.
-1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello dynBuf ... :) !!!".
 1 - 
 1 - miscDynBufReplaceByteAt(7) = "B" SUCCEED
 1 - miscDynBufGetNbStoredBytes = '23'.
-1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf ... :) !!!".
 1 - 
 1 - miscDynBufReplaceByteAt(13) = "'" SUCCEED
 1 - miscDynBufGetNbStoredBytes = '23'.
-1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf'... :) !!!".
 1 - 
 1 - miscDynBufReplaceByteAt(23) = "@" SUCCEED
 1 - miscDynBufGetNbStoredBytes = '23'.
-1 - miscDynBufGetNbAllocatedBytes = '23'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf'... :) !!@".
 1 - 
@@ -132,7 +132,7 @@
 1 - 
 1 - miscDynBufInsertBytesAt("Encore un '", 11, 1) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '34'.
-1 - miscDynBufGetNbAllocatedBytes = '34'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Encore un 'Hello BynBuf'... :) !!@".
 1 - 
@@ -140,19 +140,19 @@
 1 - 
 1 - miscDynBufInsertBytesAt("misc", 4, 18) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '38'.
-1 - miscDynBufGetNbAllocatedBytes = '38'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Encore un 'Hello miscBynBuf'... :) !!@".
 1 - 
 1 - miscDynBufInsertBytesAt("~~~", 0, 38) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '38'.
-1 - miscDynBufGetNbAllocatedBytes = '38'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Encore un 'Hello miscBynBuf'... :) !!@".
 1 - 
 1 - miscDynBufInsertBytesAt("~~~", 3, 38) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '41'.
-1 - miscDynBufGetNbAllocatedBytes = '41'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Encore un 'Hello miscBynBuf'... :) !!~~~@".
 1 - 
@@ -169,7 +169,7 @@
 1 - 
 1 - miscDynBufReplaceBytesFromTo("Toujours ce", 11, 1, 9) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '43'.
-1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf'... :) !!~~~@".
 1 - 
@@ -179,13 +179,13 @@
 1 - 
 1 - miscDynBufReplaceBytesFromTo("X", 1, 40, 40) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '43'.
-1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf'... :) !!X~~@".
 1 - 
 1 - miscDynBufReplaceBytesFromTo(" !", 3, 31, 43) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '33'.
-1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf' !".
 1 - 
@@ -202,7 +202,7 @@
 1 - 
 1 - miscDynBufDeleteBytesFromTo(1, 13) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '20'.
-1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello miscBynBuf' !".
 1 - 
@@ -210,19 +210,19 @@
 1 - 
 1 - miscDynBufDeleteBytesFromTo(7, 10) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '16'.
-1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf' !".
 1 - 
 1 - miscDynBufDeleteBytesFromTo(13, 13) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '15'.
-1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf !".
 1 - 
 1 - miscDynBufDeleteBytesFromTo(13, 14) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '13'.
-1 - miscDynBufGetNbAllocatedBytes = '43'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf".
 1 - 
@@ -271,13 +271,13 @@
 1 - 
 1 - miscDynBufAppendString(" ... :)") SUCCEED
 1 - miscDynBufGetNbStoredBytes = '20'.
-1 - miscDynBufGetNbAllocatedBytes = '20'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "hello dynStr ... :)".
 1 - 
 1 - miscDynBufAppendString(" !!!") SUCCEED
 1 - miscDynBufGetNbStoredBytes = '24'.
-1 - miscDynBufGetNbAllocatedBytes = '24'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "hello dynStr ... :) !!!".
 1 - 
@@ -294,19 +294,19 @@
 1 - 
 1 - miscDynBufInsertStringAt("Encore un '", 1) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '35'.
-1 - miscDynBufGetNbAllocatedBytes = '35'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Encore un 'hello dynStr ... :) !!!".
 1 - 
 1 - miscDynBufInsertStringAt("misc", 18) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '39'.
-1 - miscDynBufGetNbAllocatedBytes = '39'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Encore un 'hello miscdynStr ... :) !!!".
 1 - 
 1 - miscDynBufInsertStringAt("~~~", 39) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '42'.
-1 - miscDynBufGetNbAllocatedBytes = '42'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Encore un 'hello miscdynStr ... :) !!!~~~".
 1 - 
@@ -323,7 +323,7 @@
 1 - 
 1 - miscDynBufReplaceStringFromTo("Toujours ce", 1, 9) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '44'.
-1 - miscDynBufGetNbAllocatedBytes = '44'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr ... :) !!!~~~".
 1 - 
@@ -333,7 +333,7 @@
 1 - 
 1 - miscDynBufReplaceStringFromTo(" !", 31, 43) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '33'.
-1 - miscDynBufGetNbAllocatedBytes = '44'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr  !".
 1 - 
@@ -464,7 +464,7 @@
 1 - ---------------------------------------------------------------
 1 - miscDynBufSaveInFile(../tmp/) FAILED
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -488,7 +488,7 @@
 1 - ".
 1 - miscDynBufSaveInFile(../tmp/test.txt) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -514,7 +514,7 @@
 1 - ---------------------------------------------------------------
 1 - miscDynBufSaveInASCIIFile(../tmp/) FAILED
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -538,7 +538,7 @@
 1 - ".
 1 - miscDynBufSaveInASCIIFile(../tmp/testASCII.txt) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -663,7 +663,7 @@
 1 - line           = '(null)'
 1 - FAILED
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '842'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = "#".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -691,7 +691,7 @@
 1 - line           = 'Test de miscAppendLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '869'.
-1 - miscDynBufGetNbAllocatedBytes = '869'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = "#".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -721,7 +721,7 @@
 1 - line           = '(null)'
 1 - FAILED
 1 - miscDynBufGetNbStoredBytes = '869'.
-1 - miscDynBufGetNbAllocatedBytes = '869'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -750,7 +750,7 @@
 1 - line           = 'Test de miscAppendCommentLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '903'.
-1 - miscDynBufGetNbAllocatedBytes = '903'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -780,7 +780,7 @@
 1 - line           = 'Test de miscAppendCommentLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '938'.
-1 - miscDynBufGetNbAllocatedBytes = '938'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = "#".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -811,7 +811,7 @@
 1 - line           = 'Test de miscAppendCommentLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '975'.
-1 - miscDynBufGetNbAllocatedBytes = '975'.
+1 - miscDynBufGetNbAllocatedBytes = '1470'.
 1 - miscDynBufGetCommentPattern = " /*".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -843,7 +843,7 @@
 1 - Executing 'toto':
 1 - FAILED
 1 - miscDynBufGetNbStoredBytes = '1'.
-1 - miscDynBufGetNbAllocatedBytes = '1'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "".
 1 - 
@@ -851,7 +851,7 @@
 1 - Executing 'echo "toto"':
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '6'.
-1 - miscDynBufGetNbAllocatedBytes = '6'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "toto
 1 - ".
@@ -859,26 +859,26 @@
 1 - ------------------
 1 - Executing 'echo $PATH':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '487'.
-1 - miscDynBufGetNbAllocatedBytes = '487'.
+1 - miscDynBufGetNbStoredBytes = '535'.
+1 - miscDynBufGetNbAllocatedBytes = '934'.
 1 - miscDynBufGetCommentPattern = "".
-1 - miscDynBufGetBuffer= "/home/soft/shared/jdk1.5//bin:/usr/kerberos/bin:/home/soft/shared/jdk1.5//bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/libexec:/usr/local/bin:/bin:/usr/bin:/home/soft/shared/jalopy-console-0.1-1.5rc3:/home/soft/shared/stilts:/home/soft/shared/gasgano-2.2.7/bin:/home/soft/local/JmmcTools/:/home/soft/shared/bin/:/home/users/lafrasse/bin:../bin:/home/users/lafrasse/dev/INTROOT/bin:/home/MCS/DEVELOPMENT/bin
+1 - miscDynBufGetBuffer= "/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/usr/kerberos/bin:/home/soft/shared/jdk1.5//bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/libexec:/usr/local/bin:/bin:/usr/bin:/home/soft/shared/jalopy-console-0.1-1.5rc3:/home/soft/shared/stilts:/home/soft/shared/gasgano-2.2.7/bin:/home/soft/local/JmmcTools/:/home/soft/shared/bin/:../bin:/home/users/bourgesl/INTROOT/bin:/home/MCS/DEVELOPMENT/bin:/home/users/bourgesl/bin
 1 - ".
 1 - 
 1 - ------------------
 1 - Executing 'pwd':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '40'.
-1 - miscDynBufGetNbAllocatedBytes = '40'.
+1 - miscDynBufGetNbStoredBytes = '36'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
-1 - miscDynBufGetBuffer= "/home/users/lafrasse/dev/MCS/misc/test
+1 - miscDynBufGetBuffer= "/home/users/bourgesl/dev/misc/test
 1 - ".
 1 - 
 1 - ------------------
 1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://www.apple.com"':
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '8420'.
-1 - miscDynBufGetNbAllocatedBytes = '8420'.
+1 - miscDynBufGetNbAllocatedBytes = '10976'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "<!DOCTYPE html>
 1 - <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
@@ -1066,14 +1066,14 @@
 1 - ------------------
 1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*"':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '6075'.
-1 - miscDynBufGetNbAllocatedBytes = '6075'.
+1 - miscDynBufGetNbStoredBytes = '6074'.
+1 - miscDynBufGetNbAllocatedBytes = '6272'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "<?xml version="1.0" encoding="UTF-8"?>
 1 - <VOTABLE version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 1 -   xmlns="http://www.ivoa.net/xml/VOTable/v1.2" >
 1 -  <DESCRIPTION>
-1 -    VizieR Astronomical Server vizier.u-strasbg.fr 	2011-05-27T09:18:00 [V1.71]
+1 -    VizieR Astronomical Server vizier.u-strasbg.fr 	2011-05-30T13:58:16 [V1.71]
 1 -    (replaces the 'Astrores' format originally described at
 1 -     http://vizier.u-strasbg.fr/doc/astrores.htx)
 1 -    In case of problem, please report to:	question@simbad.u-strasbg.fr
@@ -1084,7 +1084,7 @@
 1 -   <COOSYS ID="J2000" system="eq_FK5" equinox="J2000"/>
 1 - </DEFINITIONS>
 1 - 
-1 - <INFO ID="Ref" name="-ref" value="VOTx14698"/>
+1 - <INFO ID="Ref" name="-ref" value="VOTx4078"/>
 1 - <INFO ID="MaxTuples" name="-out.max" value="100"/>
 1 - 
 1 - <!--

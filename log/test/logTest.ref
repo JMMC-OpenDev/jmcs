@@ -1,192 +1,194 @@
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - File logging switched OFF
-1 - Stdout logging switched OFF
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - ###############################################################
-1 - Testing File Logging
-1 - ###############################################################
-1 - *** File logging verbosity level is : 0
-1 - *** File logging verbosity level is : 1
-1 - *** File logging verbosity level is : 2
-1 - *** File logging verbosity level is : 3
-1 - *** File logging verbosity level is : 4
-1 - *** File logging verbosity level is : 5
-1 - ###############################################################
-1 - Testing Stdout Logging
-1 - ###############################################################
-1 - *** Stdout logging verbosity level is : 0
-1 - *** Stdout logging verbosity level is : 1
-1 - *** Stdout logging verbosity level is : 2
-1 - *** Stdout logging verbosity level is : 3
-1 - *** Stdout logging verbosity level is : 4
-1 - *** Stdout logging verbosity level is : 5
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - File logging switched ON
-1 - Stdout logging switched OFF
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - ###############################################################
-1 - Testing File Logging
-1 - ###############################################################
-1 - *** File logging verbosity level is : 0
-1 - *** File logging verbosity level is : 1
-1 - *** File logging verbosity level is : 2
-1 - *** File logging verbosity level is : 3
-1 - *** File logging verbosity level is : 4
-1 - *** File logging verbosity level is : 5
-1 - ###############################################################
-1 - Testing Stdout Logging
-1 - ###############################################################
-1 - *** Stdout logging verbosity level is : 0
-1 - *** Stdout logging verbosity level is : 1
-1 - *** Stdout logging verbosity level is : 2
-1 - *** Stdout logging verbosity level is : 3
-1 - *** Stdout logging verbosity level is : 4
-1 - *** Stdout logging verbosity level is : 5
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - File logging switched ON
-1 - Stdout logging switched ON
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - ###############################################################
-1 - Testing File Logging
-1 - ###############################################################
-1 - *** File logging verbosity level is : 0
-1 - *** File logging verbosity level is : 1
-1 - *** File logging verbosity level is : 2
-1 - *** File logging verbosity level is : 3
-1 - *** File logging verbosity level is : 4
-1 - *** File logging verbosity level is : 5
-1 - ###############################################################
-1 - Testing Stdout Logging
-1 - ###############################################################
-1 - *** Stdout logging verbosity level is : 0
-1 - *** Stdout logging verbosity level is : 1
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - *** Stdout logging verbosity level is : 2
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - *** Stdout logging verbosity level is : 3
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - logTest - log - - logTest.c:73 - logging test
-1 - *** Stdout logging verbosity level is : 4
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - logTest - log - - logTest.c:73 - logging test
-1 - logTest - log - - logTest.c:74 - logging debug
-1 - *** Stdout logging verbosity level is : 5
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - logTest - log - - logTest.c:73 - logging test
-1 - logTest - log - - logTest.c:74 - logging debug
-1 - logTest - log - - logTest.c:75 - logging trace
-1 - logTest - log - - logTest.c:155 - EXIT_FUNC test1
-1 - logTest - log - - logTest.c:124 - ENTER_FUNC test1
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - File logging switched OFF
-1 - Stdout logging switched ON
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - ###############################################################
-1 - Testing File Logging
-1 - ###############################################################
-1 - *** File logging verbosity level is : 0
-1 - *** File logging verbosity level is : 1
-1 - *** File logging verbosity level is : 2
-1 - *** File logging verbosity level is : 3
-1 - *** File logging verbosity level is : 4
-1 - *** File logging verbosity level is : 5
-1 - ###############################################################
-1 - Testing Stdout Logging
-1 - ###############################################################
-1 - *** Stdout logging verbosity level is : 0
-1 - *** Stdout logging verbosity level is : 1
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - *** Stdout logging verbosity level is : 2
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - *** Stdout logging verbosity level is : 3
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - logTest - log - - logTest.c:73 - logging test
-1 - *** Stdout logging verbosity level is : 4
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - logTest - log - - logTest.c:73 - logging test
-1 - logTest - log - - logTest.c:74 - logging debug
-1 - *** Stdout logging verbosity level is : 5
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - logTest - log - - logTest.c:73 - logging test
-1 - logTest - log - - logTest.c:74 - logging debug
-1 - logTest - log - - logTest.c:75 - logging trace
-1 - logTest - log - - logTest.c:155 - EXIT_FUNC test1
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - Accept log messages from 'mcs' module only 
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - File logging switched OFF
-1 - Stdout logging switched ON
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - ###############################################################
-1 - Testing File Logging
-1 - ###############################################################
-1 - *** File logging verbosity level is : 0
-1 - *** File logging verbosity level is : 1
-1 - *** File logging verbosity level is : 2
-1 - *** File logging verbosity level is : 3
-1 - *** File logging verbosity level is : 4
-1 - *** File logging verbosity level is : 5
-1 - ###############################################################
-1 - Testing Stdout Logging
-1 - ###############################################################
-1 - *** Stdout logging verbosity level is : 0
-1 - *** Stdout logging verbosity level is : 1
-1 - *** Stdout logging verbosity level is : 2
-1 - *** Stdout logging verbosity level is : 3
-1 - *** Stdout logging verbosity level is : 4
-1 - *** Stdout logging verbosity level is : 5
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - Clear list of allowed modules. All modules can log messages!!
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - logTest - log - - logTest.c:124 - ENTER_FUNC test1
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - File logging switched OFF
-1 - Stdout logging switched ON
-1 - ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-1 - ###############################################################
-1 - Testing File Logging
-1 - ###############################################################
-1 - *** File logging verbosity level is : 0
-1 - *** File logging verbosity level is : 1
-1 - *** File logging verbosity level is : 2
-1 - *** File logging verbosity level is : 3
-1 - *** File logging verbosity level is : 4
-1 - *** File logging verbosity level is : 5
-1 - ###############################################################
-1 - Testing Stdout Logging
-1 - ###############################################################
-1 - *** Stdout logging verbosity level is : 0
-1 - *** Stdout logging verbosity level is : 1
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - *** Stdout logging verbosity level is : 2
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - *** Stdout logging verbosity level is : 3
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - logTest - log - - logTest.c:73 - logging test
-1 - *** Stdout logging verbosity level is : 4
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - logTest - log - - logTest.c:73 - logging test
-1 - logTest - log - - logTest.c:74 - logging debug
-1 - *** Stdout logging verbosity level is : 5
-1 - logTest - log - - logTest.c:71 - logging warning
-1 - logTest - log - - logTest.c:72 - logging info
-1 - logTest - log - - logTest.c:73 - logging test
-1 - logTest - log - - logTest.c:74 - logging debug
-1 - logTest - log - - logTest.c:75 - logging trace
-1 - logTest - log - - logTest.c:155 - EXIT_FUNC test1
-1 - logTest - log - - logTest.c:161 - ENTER_FUNC testNoFileLine
-1 - logTest - log - - FileLine must not appear
-1 - logTest - log - - logTest.c:167 - FileLine must appear
-1 - logTest - log - - logTest.c:169 - EXIT_FUNC testNoFileLine
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched OFF
+Stdout logging switched OFF
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+*** Stdout logging verbosity level is : 2
+*** Stdout logging verbosity level is : 3
+*** Stdout logging verbosity level is : 4
+*** Stdout logging verbosity level is : 5
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched ON
+Stdout logging switched OFF
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+*** Stdout logging verbosity level is : 2
+*** Stdout logging verbosity level is : 3
+*** Stdout logging verbosity level is : 4
+*** Stdout logging verbosity level is : 5
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched ON
+Stdout logging switched ON
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+logTest - log - 2011-05-30T14:05:07.364936 - logTest.c:26 - logging warning
+*** Stdout logging verbosity level is : 2
+logTest - log - 2011-05-30T14:05:07.365019 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365036 - logTest.c:27 - logging info
+*** Stdout logging verbosity level is : 3
+logTest - log - 2011-05-30T14:05:07.365086 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365103 - logTest.c:27 - logging info
+logTest - log - 2011-05-30T14:05:07.365120 - logTest.c:28 - logging test
+*** Stdout logging verbosity level is : 4
+logTest - log - 2011-05-30T14:05:07.365160 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365176 - logTest.c:27 - logging info
+logTest - log - 2011-05-30T14:05:07.365194 - logTest.c:28 - logging test
+logTest - log - 2011-05-30T14:05:07.365212 - logTest.c:29 - logging debug
+*** Stdout logging verbosity level is : 5
+logTest - log - 2011-05-30T14:05:07.365242 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365259 - logTest.c:27 - logging info
+logTest - log - 2011-05-30T14:05:07.365276 - logTest.c:28 - logging test
+logTest - log - 2011-05-30T14:05:07.365294 - logTest.c:29 - logging debug
+logTest - log - 2011-05-30T14:05:07.365311 - logTest.c:30 - logging trace
+logTest - log - 2011-05-30T14:05:07.365329 - logTest.c:110 - EXIT_FUNC test1
+logTest - log - 2011-05-30T14:05:07.365352 - logTest.c:79 - ENTER_FUNC test1
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched OFF
+Stdout logging switched ON
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+logTest - log - 2011-05-30T14:05:07.365373 - logTest.c:26 - logging warning
+*** Stdout logging verbosity level is : 2
+logTest - log - 2011-05-30T14:05:07.365381 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365389 - logTest.c:27 - logging info
+*** Stdout logging verbosity level is : 3
+logTest - log - 2011-05-30T14:05:07.365396 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365403 - logTest.c:27 - logging info
+logTest - log - 2011-05-30T14:05:07.365410 - logTest.c:28 - logging test
+*** Stdout logging verbosity level is : 4
+logTest - log - 2011-05-30T14:05:07.365417 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365424 - logTest.c:27 - logging info
+logTest - log - 2011-05-30T14:05:07.365431 - logTest.c:28 - logging test
+logTest - log - 2011-05-30T14:05:07.365438 - logTest.c:29 - logging debug
+*** Stdout logging verbosity level is : 5
+logTest - log - 2011-05-30T14:05:07.365445 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365452 - logTest.c:27 - logging info
+logTest - log - 2011-05-30T14:05:07.365459 - logTest.c:28 - logging test
+logTest - log - 2011-05-30T14:05:07.365465 - logTest.c:29 - logging debug
+logTest - log - 2011-05-30T14:05:07.365472 - logTest.c:30 - logging trace
+logTest - log - 2011-05-30T14:05:07.365479 - logTest.c:110 - EXIT_FUNC test1
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+Accept log messages from 'mcs' module only 
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched OFF
+Stdout logging switched ON
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+*** Stdout logging verbosity level is : 2
+*** Stdout logging verbosity level is : 3
+*** Stdout logging verbosity level is : 4
+*** Stdout logging verbosity level is : 5
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+Clear list of allowed modules. All modules can log messages!!
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+logTest - log - 2011-05-30T14:05:07.365519 - logTest.c:79 - ENTER_FUNC test1
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched OFF
+Stdout logging switched ON
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+logTest - log - 2011-05-30T14:05:07.365528 - logTest.c:26 - logging warning
+*** Stdout logging verbosity level is : 2
+logTest - log - 2011-05-30T14:05:07.365540 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365548 - logTest.c:27 - logging info
+*** Stdout logging verbosity level is : 3
+logTest - log - 2011-05-30T14:05:07.365555 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365562 - logTest.c:27 - logging info
+logTest - log - 2011-05-30T14:05:07.365569 - logTest.c:28 - logging test
+*** Stdout logging verbosity level is : 4
+logTest - log - 2011-05-30T14:05:07.365576 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365583 - logTest.c:27 - logging info
+logTest - log - 2011-05-30T14:05:07.365590 - logTest.c:28 - logging test
+logTest - log - 2011-05-30T14:05:07.365597 - logTest.c:29 - logging debug
+*** Stdout logging verbosity level is : 5
+logTest - log - 2011-05-30T14:05:07.365604 - logTest.c:26 - logging warning
+logTest - log - 2011-05-30T14:05:07.365611 - logTest.c:27 - logging info
+logTest - log - 2011-05-30T14:05:07.365618 - logTest.c:28 - logging test
+logTest - log - 2011-05-30T14:05:07.365625 - logTest.c:29 - logging debug
+logTest - log - 2011-05-30T14:05:07.365632 - logTest.c:30 - logging trace
+logTest - log - 2011-05-30T14:05:07.365639 - logTest.c:110 - EXIT_FUNC test1
+logTest - log - 2011-05-30T14:05:07.365646 - logTest.c:116 - ENTER_FUNC testNoFileLineOrDate
+logTest - log - 2011-05-30T14:05:07.365653 - FileLine must not appear (FileLine mode is 'OFF')
+logTest - log - 2011-05-30T14:05:07.365659 - logTest.c:122 - FileLine must appear (FileLine mode is 'ON')
+logTest - log - logTest.c:125 - Date must not appear (Date mode is 'OFF')
+logTest - log - 2011-05-30T14:05:07.365673 - logTest.c:128 - Date must appear (Date mode is 'ON')
+logTest - log - 2011-05-30T14:05:07.365680 - logTest.c:130 - EXIT_FUNC testNoFileLineOrDate

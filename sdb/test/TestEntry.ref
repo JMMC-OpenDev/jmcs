@@ -1,0 +1,18 @@
+1 - Reading message right away :
+1 -  Reader got message = ''.
+1 -  Reader got message = ''.
+1 -  Reader got message = ''.
+1 -  Reader got message = ''.
+1 -  Reader got message = ''.
+1 - 
+1 - Reading message with a 1 second timeout :
+1 -  Redear got message = 'The writer is entering sleep for 1 seconds'.
+1 -  Redear got message = 'The writer is entering sleep for 2 seconds'.
+1 -  Redear got message = 'The writer is entering sleep for 3 seconds'.
+1 -  Redear got message = 'The writer is entering sleep for 4 seconds'.
+1 -  Redear got message = 'The writer is entering sleep for 5 seconds'.
+1 - 
+1 - Reading message without any timeout :
+1 -  Redear got message = 'The writer is entering sleep for 6 seconds'.
+1 -  Redear got message = 'The writer is entering sleep for 7 seconds'.
+1 -  Redear got message = 'The writer is entering sleep for 8 seconds'.

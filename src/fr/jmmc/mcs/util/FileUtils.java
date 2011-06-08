@@ -22,7 +22,6 @@ import java.net.URL;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -45,20 +44,63 @@ public final class FileUtils {
     }
 
     /**
-     * Get the extension of a file in lower case
-     * @param file file to use
-     * @return the extension of the file (without the dot char) or null
+     * Get the file name part without extension
+     * @param file file as File
+     * @return the file name part without extension or null
      */
-    public static String getExtension(final File file) {
-        final String fileName = file.getName();
-        final int i = fileName.lastIndexOf('.');
-
-        if (i > 0 && i < fileName.length() - 1) {
-            return fileName.substring(i + 1).toLowerCase();
+    public static String getFileNameWithoutExtension(final File file) {
+        if (file != null) {
+            return getFileNameWithoutExtension(file.getName());
         }
         return null;
     }
+    
+    /**
+     * Get the file name part without extension
+     * @param fileName file name as String
+     * @return the file name part without extension or null
+     */
+    public static String getFileNameWithoutExtension(final String fileName) {
+        if (fileName != null) {
+            final int pos = fileName.lastIndexOf('.');
+            if (pos == -1) {
+                return fileName;
+            }
+            if (pos > 0) {
+                return fileName.substring(0, pos);
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get the extension of a file in lower case
+     * @param file file as File
+     * @return the extension of the file (without the dot char) or null
+     */
+    public static String getExtension(final File file) {
+        if (file != null) {
+            return getExtension(file.getName());
+        }
+        return null;
+    }
+    
+    /**
+     * Get the extension of a file in lower case
+     * @param fileName file name as String
+     * @return the extension of the file (without the dot char) or null
+     */
+    public static String getExtension(final String fileName) {
+        if (fileName != null) {
+            final int i = fileName.lastIndexOf('.');
 
+            if (i > 0 && i < fileName.length() - 1) {
+                return fileName.substring(i + 1).toLowerCase();
+            }
+        }
+        return null;
+    }
+    
     /**
      * Find a file in the current classloader (application class Loader)
      *

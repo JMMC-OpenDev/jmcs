@@ -177,7 +177,7 @@ public final class MCSExceptionHandler {
     }
 
     // Adding my handler to this thread (may be unnecessary) :
-    thread.setUncaughtExceptionHandler(getExceptionHandler());
+    thread.setUncaughtExceptionHandler(handler);
 
     if (_logger.isLoggable(Level.FINE)) {
       _logger.fine("Updated Thread UncaughtExceptionHandler = " + thread.getUncaughtExceptionHandler());
@@ -213,7 +213,7 @@ public final class MCSExceptionHandler {
    * @param t the thread
    * @param e the exception
    */
-  private final static void showException(final Thread t, final Throwable e) {
+  private static void showException(final Thread t, final Throwable e) {
 
     MessagePane.showErrorMessage("An unexpected exception occured", e);
 

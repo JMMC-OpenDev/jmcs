@@ -182,6 +182,10 @@ public final class MessagePane {
 
         // Ask the user if he wants to save modifications
         final Object[] options = {"Cancel", "Replace"};
+
+        // ensure window is visible (not iconified):
+        App.showFrameToFront();
+        
         final int result = JOptionPane.showOptionDialog(getApplicationFrame(), message, null, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
         // If the user clicked the "Replace" button
@@ -215,6 +219,9 @@ public final class MessagePane {
      * @param beforeMessage part of the message inserted after 'before ' ?
      */
     public static ConfirmSaveChanges showConfirmSaveChanges(final String beforeMessage) {
+
+        // ensure window is visible (not iconified):
+        App.showFrameToFront();
 
         // If the data are NOT saved, handle it before loosing any results !!!
         // Ask the user if he wants to save modifications
@@ -252,6 +259,10 @@ public final class MessagePane {
      * @return true if the user answers yes
      */
     public static boolean showConfirmMessage(final Component parentComponent, final String message) {
+
+        // ensure window is visible (not iconified):
+        App.showFrameToFront();
+
         final int answer = JOptionPane.showConfirmDialog(getParent(parentComponent), message);
 
         return answer == JOptionPane.YES_OPTION;

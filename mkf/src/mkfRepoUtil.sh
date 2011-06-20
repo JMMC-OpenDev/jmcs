@@ -29,15 +29,18 @@ SCRIPTNAME=$(basename $0)
 # Print usage 
 function printUsage ()
 {
-    echo -e "Usage: $SCRIPTNAME [-h] [-v version] [-d outputDir] <info|checkout|export> <PROJECT> [... <PROJECT_N>]"
+    echo -e "Usage: $SCRIPTNAME [-h] [-v version] [-d outputDir] <info<.versions>|checkout|export|update> <PROJECT> [... <PROJECT_N>]"
     echo -e "\t-h\tprint this help.";
     echo -e "\t-v <version>\tuse given version (default is development one) when retrieving sources.";
     echo -e "\t-d <directory>\tset working area for modules (default is current dir).";
-    echo -e "\tACTIONS:";
-    echo -e "\t   info : list modules of given projects.";
-    echo -e "\t   checkout : retrieve the modules of given projects.";
-    echo -e "\t   export : retrieve the modules of given projects without versionning files (packaging cases).";
-    echo -e "\t   update : update the modules of given projects.";
+    echo -e "\tACTIONS  :";
+    echo -e "\t   info          : list modules of given projects.";
+    echo -e "\t   info.versions : list versions present handled by the source code management.";
+    echo -e "\t   checkout      : retrieve the modules of given projects.";
+    echo -e "\t   export        : retrieve the modules of given projects without versionning files (packaging cases).";
+    echo -e "\t   update        : update the modules of given projects.";
+    echo -e "\tPROJECTS :";
+    echo -e "\t   ${supportedModules}";
     exit 1
 }
 
@@ -57,9 +60,15 @@ function getModules ()
     esac
 
     echo "Retrieving following modules for '${project}' project :"
-    # Checkout modules ( if they do not already exists)
+    # Checkout module(s) in current dir( if they do not already exists )
+    OUTDIR="."
     for module in $modules ; do
         moduleName=${module##*/}
+        if [ "$module" == "$modules" ]
+        then
+                # getmodulesName as output dir because svn cannot export or checkout one module in current dir...
+                OUTDIR="$moduleName"
+        fi
         if test -d $moduleName -a $svnOptions == "export";
         then
             echo "ERROR: directory '$moduleName' already exists."
@@ -78,7 +87,7 @@ function getModules ()
     case "${svnOptions}" in 
             update) ;;
             *)
-            CMD="$CMD ." ;;
+            CMD="$CMD $OUTDIR" ;;
     esac
  
     # executing previously built command:
@@ -93,6 +102,14 @@ function getModules ()
     
 }
 
+function displayProjectVersions()
+{
+    prjSvnroot="$1"
+    project="$2"
+    svnTags=$(svn list $prjSvnroot/$project/tags)
+    echo $svnTags | sed "s@/@@g"
+}
+
 function displayModules()
 {
     prjSvnroot="$1"
@@ -104,6 +121,8 @@ function displayModules()
         moduleName=${module##*/}
         echo " - ${moduleName} ( ${prjSvnroot}/${module} )"
     done
+    supportedTags=$(displayProjectVersions $prjSvnroot $project)
+    echo "  ( Supported versions: $supportedTags )" | sed "s@/@@g"
     echo
 }
 
@@ -207,6 +226,8 @@ update )
     getModules "${prjSvnroot}" update "${project}" "${modules}" ;;
 info )
     displayModules "${prjSvnroot}" "${project}" "${modules}" ;;
+info.versions )
+    displayProjectVersions "${prjSvnroot}" "${project}" ;;
 *)
     echo "ERROR: Action '$userAction' not supported"
     printUsage ;;

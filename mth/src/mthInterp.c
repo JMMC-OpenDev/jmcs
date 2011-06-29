@@ -10,7 +10,6 @@
  *  - linear interpolation
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthInterp.c,v 1.6 2007-07-12 15:14:05 gluck Exp $"; 
 
 
 /* 

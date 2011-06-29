@@ -7,7 +7,6 @@
  * Definition of gwtTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtTABLE.cpp,v 1.8 2007-02-22 12:47:22 gzins Exp $";
 
 /* 
  * System Headers 

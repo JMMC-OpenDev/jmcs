@@ -11,7 +11,6 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: mthTestBesselK.c,v 1.4 2006-06-09 12:18:35 gzins Exp $";
 
 /* 
  * System Headers 

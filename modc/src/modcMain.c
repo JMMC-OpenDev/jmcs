@@ -57,7 +57,6 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: modcMain.c,v 1.14 2006-01-10 14:40:39 mella Exp $"; 
 
 
 

@@ -7,7 +7,6 @@
  * Definition of gwtWMODEL class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtWMODEL.cpp,v 1.2 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

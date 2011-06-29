@@ -7,7 +7,6 @@
  * Definition of gwtCELL class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtCELL.cpp,v 1.4 2006-05-11 13:04:55 mella Exp $";
 /* 
  * System Headers 
  */

@@ -7,7 +7,6 @@
  * Definition of gwtWINDOW class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtWINDOW.cpp,v 1.7 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

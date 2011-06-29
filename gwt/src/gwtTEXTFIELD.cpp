@@ -7,7 +7,6 @@
  * Definition of gwtTEXTFIELD class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtTEXTFIELD.cpp,v 1.3 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

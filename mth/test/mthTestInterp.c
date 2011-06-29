@@ -7,7 +7,6 @@
  * Interpolation function tests.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mthTestInterp.c,v 1.5 2007-07-12 15:16:38 gluck Exp $"; 
 
 
 /* 

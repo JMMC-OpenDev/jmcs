@@ -7,7 +7,6 @@
  * Definition of gwtGUI class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtGUI.cpp,v 1.11 2007-02-22 12:49:10 gzins Exp $";
 
 /* 
  * System Headers 

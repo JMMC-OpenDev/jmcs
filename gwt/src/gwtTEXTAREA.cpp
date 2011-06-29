@@ -7,7 +7,6 @@
  * Definition of gwtTEXTAREA class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtTEXTAREA.cpp,v 1.3 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

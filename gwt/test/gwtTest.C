@@ -7,7 +7,6 @@
  * description and send its description to the gwt.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtTest.C,v 1.16 2006-05-11 13:04:55 mella Exp $";
 /* 
  * System Headers 
  */

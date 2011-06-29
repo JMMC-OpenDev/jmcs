@@ -8,7 +8,6 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtCONTAINER.cpp,v 1.6 2006-05-16 08:49:44 mella Exp $";
 
 /* 
  * System Headers 

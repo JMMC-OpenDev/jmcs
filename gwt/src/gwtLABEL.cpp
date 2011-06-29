@@ -7,7 +7,6 @@
  * Definition of gwtLABEL class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: gwtLABEL.cpp,v 1.2 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

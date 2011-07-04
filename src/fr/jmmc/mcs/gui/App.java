@@ -71,10 +71,8 @@ public abstract class App {
 
         // We add the memory handler create to the logger
         _mainLogger.addHandler(_streamHandler);
-        _mainLogger.setLevel(Level.FINE);
 
-        _mainLogger.finer("Main Logger properties set");
-        _mainLogger.fine("Memory handler created and fixed to feedback logger.");
+        _mainLogger.info("Memory handler created and attached to feedback logger.");
 
         // Define default network settings:
         // note: settings must be set before using any URLConnection (loadApplicationData)

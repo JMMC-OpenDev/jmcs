@@ -31,8 +31,8 @@ public final class MCSExceptionHandler {
 
   /** Logger */
   private static final Logger _logger = Logger.getLogger(MCSExceptionHandler.class.getName());
-  /** flag indicating to use the default UncaughtExceptionHandler (false because of JNLP) */
-  private static final boolean USE_DEFAULT_UNCAUGHT_EXCEPTION_HANDLER = false;
+  /** flag indicating to use the default UncaughtExceptionHandler (true for jdk 1.7.0) */
+  private static final boolean USE_DEFAULT_UNCAUGHT_EXCEPTION_HANDLER = true;
   /** flag indicating to set the UncaughtExceptionHandler to the current thread (main) (false because of JNLP) */
   private static final boolean SET_HANDLER_TO_CURRENT_THREAD = false;
   /** uncaughtException handler singleton */

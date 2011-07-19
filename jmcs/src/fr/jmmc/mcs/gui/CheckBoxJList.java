@@ -103,6 +103,12 @@ public class CheckBoxJList extends JList implements ListSelectionListener
                 }
             }
 
+            // GM Clear all because the cache contains more elements than its model
+            if(selectionCache.size()>size){                
+                selectionCache.clear();
+                getSelectionModel().clearSelection();
+            }
+            
             // turn on everything that was previously selected
             Iterator it = selectionCache.iterator();
 

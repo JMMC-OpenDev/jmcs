@@ -23,6 +23,7 @@ public enum SampCapability {
     GET_ENV_VAR("client.env.get"),
     SEARCHCAL_START_QUERY("fr.jmmc.searchcal.start.query"),
     LITPRO_START_SETTING("fr.jmmc.litpro.start.setting"),
+    LOAD_STAR_LIST("starlist.load"),
     UNKNOWN("UNKNOWN");
 
     /** Store the SAMP 'cryptic' mType */

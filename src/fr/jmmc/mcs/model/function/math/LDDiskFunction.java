@@ -5,8 +5,8 @@ package fr.jmmc.mcs.model.function.math;
 
 /**
  * This class computes the Fourier transform at frequencies (UFREQ,VFREQ) of a limb darkened disk object.
- *
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public class LDDiskFunction extends CircleFunction {
 

@@ -10,7 +10,8 @@ import java.awt.image.IndexColorModel;
 
 /**
  * This class contains the results of the ModelUVMap service
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public final class UVMapData {
 

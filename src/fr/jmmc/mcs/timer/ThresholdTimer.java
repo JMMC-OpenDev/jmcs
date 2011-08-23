@@ -3,7 +3,7 @@ package fr.jmmc.mcs.timer;
 /**
  * Special Timer with a threshold to separate low & high values
  *
- * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
+ * @author Laurent BOURGES (voparis), Gerard LEMSON (mpe).
  */
 public final class ThresholdTimer extends AbstractTimer
 {

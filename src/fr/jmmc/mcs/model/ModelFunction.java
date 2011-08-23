@@ -8,7 +8,8 @@ import org.apache.commons.math.complex.Complex;
 
 /**
  * This interface represents a taregt Model to compute the complex visibility for a given UV coordinates
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public interface ModelFunction extends ModelDefinition {
 

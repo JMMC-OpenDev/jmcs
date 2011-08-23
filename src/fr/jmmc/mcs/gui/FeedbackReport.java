@@ -33,6 +33,8 @@ import org.apache.commons.httpclient.methods.PostMethod;
  * called <b>FeedbackReportModel</b> to take the user informations,
  * the user system informations and the application logs and send all
  * using a HTTP POST request.
+ * 
+ * @author Brice COLUCCI, Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class FeedbackReport extends javax.swing.JDialog implements KeyListener
 {

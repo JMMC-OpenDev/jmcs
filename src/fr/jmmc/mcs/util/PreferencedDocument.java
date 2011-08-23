@@ -21,6 +21,8 @@ import javax.swing.text.BadLocationException;
  * automatically changed according user events and UI will be automatically
  * updated according preference change. Moreover actions should be associated to
  * implement application behaviour associated to user events.
+ * 
+ * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class PreferencedDocument extends javax.swing.text.PlainDocument
         implements Observer, DocumentListener {

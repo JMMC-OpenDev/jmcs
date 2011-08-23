@@ -6,7 +6,7 @@ package fr.jmmc.mcs.timer;
  *
  * WARNING : Synchronization for coherence must be done OUTSIDE in the calling class !
  *
- * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
+ * @author Laurent BOURGES (voparis), Gerard LEMSON (mpe).
  */
 public final class StatLong
 {

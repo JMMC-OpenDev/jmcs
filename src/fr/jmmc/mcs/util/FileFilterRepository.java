@@ -13,6 +13,8 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * FileFilterRepository singleton class.
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES, Guillaume MELLA.
  */
 public class FileFilterRepository {
 

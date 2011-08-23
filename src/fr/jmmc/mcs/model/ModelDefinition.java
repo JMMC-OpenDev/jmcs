@@ -5,7 +5,8 @@ package fr.jmmc.mcs.model;
 
 /**
  * This interface gathers all model and parameter types
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public interface ModelDefinition {
 

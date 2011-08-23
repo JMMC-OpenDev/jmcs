@@ -7,8 +7,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- *
- * @author  mella
+ * @author Laurent BOURGES.
  */
 public class ImageViewer extends javax.swing.JFrame implements Observer {
 

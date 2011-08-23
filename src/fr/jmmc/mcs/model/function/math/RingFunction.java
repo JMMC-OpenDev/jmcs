@@ -5,7 +5,8 @@ package fr.jmmc.mcs.model.function.math;
 
 /**
  * This class computes the Fourier transform at frequencies (UFREQ,VFREQ) of a ring object.
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public class RingFunction extends DiskFunction {
 

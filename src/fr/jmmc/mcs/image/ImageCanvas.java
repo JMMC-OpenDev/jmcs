@@ -29,7 +29,8 @@ import java.util.logging.Level;
 
 /**
  * Image Canvas
- * @author mella
+ * 
+ * @author Laurent BOURGES.
  */
 public class ImageCanvas extends Canvas implements MouseMotionListener {
 

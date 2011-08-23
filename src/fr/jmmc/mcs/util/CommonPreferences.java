@@ -7,6 +7,8 @@ import java.util.logging.Level;
 
 /**
  * Singleton object which handles common preferences.
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class CommonPreferences extends Preferences
 {

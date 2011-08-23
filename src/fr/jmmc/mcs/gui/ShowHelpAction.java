@@ -12,9 +12,8 @@ import javax.swing.ImageIcon;
 
 /**
  * DOCUMENT ME!
- *
- * @author $author$
- * @version $Revision: 1.9 $
+ * 
+ * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class ShowHelpAction extends AbstractAction {
 

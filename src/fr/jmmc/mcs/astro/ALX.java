@@ -19,6 +19,8 @@ import java.util.logging.Logger;
  *
  * Class regrouping usefull statics method to convert star coordinates between
  * different formats and units.
+ * 
+ * @author Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
 public class ALX
 {

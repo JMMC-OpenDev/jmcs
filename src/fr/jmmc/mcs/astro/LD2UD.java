@@ -30,6 +30,7 @@ import java.util.logging.Logger;
  *
  * Ref-doc : http://www.jmmc.fr/doc/index.php?search=MEM-2610-0001
  *
+ * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class LD2UD
 {

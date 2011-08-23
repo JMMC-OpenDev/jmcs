@@ -33,8 +33,8 @@ import org.astrogrid.samp.hub.HubServiceMode;
 
 /**
  * SampManager singleton class.
- *
- * @author lafrasse
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES, Guillaume MELLA.
  */
 public final class SampManager
 {

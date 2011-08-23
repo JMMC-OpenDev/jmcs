@@ -5,7 +5,8 @@ package fr.jmmc.mcs.gui.task;
 
 /**
  * This class describes the Jmcs tasks associated with SwingWorker(s)
- * @author bourgesl
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class JmcsTaskRegistry extends TaskRegistry
 {

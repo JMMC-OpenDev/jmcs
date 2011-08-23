@@ -9,7 +9,8 @@ import fr.jmmc.mcs.model.targetmodel.Parameter;
 
 /**
  * This class represents a parameter in the model parameters table to act as an editor of the parameter
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public final class EditableParameter implements Editable {
 

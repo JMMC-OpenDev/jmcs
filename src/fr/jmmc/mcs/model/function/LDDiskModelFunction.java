@@ -11,7 +11,7 @@ import fr.jmmc.mcs.model.targetmodel.Parameter;
 /**
  * This ModelFunction implements the limb darkened disk model (quadratic)
  * 
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public final class LDDiskModelFunction extends AbstractModelFunction<LDDiskFunction> {
 

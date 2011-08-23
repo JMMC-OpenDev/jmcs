@@ -13,6 +13,8 @@ import javax.swing.*;
 
 /**
  * RegisteredAction class customized to be bound to a preferenced boolean.
+ * 
+ * @author Sylvain LAFRASSE.
  */
 public class RegisteredPreferencedBooleanAction extends RegisteredAction
     implements Observer, ItemListener

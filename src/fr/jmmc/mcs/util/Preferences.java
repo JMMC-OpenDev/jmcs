@@ -43,6 +43,8 @@ import javax.swing.SwingUtilities;
  *  &lt;menu label="Save to file" classpath="fr.jmmc.mcs.util.Preferences" action="savePreferences"/&gt;
  *  &lt;menu label="Set default values" classpath="fr.jmmc.mcs.util.Preferences" action="restorePreferences"/&gt;
  * &lt;/menu&gt;
+ * 
+ * @author Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
 public abstract class Preferences extends Observable {
 

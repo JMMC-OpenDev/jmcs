@@ -23,6 +23,8 @@ import org.astrogrid.samp.gui.SubscribedClientListModel;
  * Generic action dedicated to SAMP capability handling.
  *
  * Your action should extends SampCapabilityAction, implementing composeMessage() to forge the message to be sent by SAMP.
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES, Guillaume MELLA.
  */
 public abstract class SampCapabilityAction extends RegisteredAction
 {

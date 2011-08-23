@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 
 /**
  * This class contains URL related utility methods.
+ * 
+ * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class Urls
 {

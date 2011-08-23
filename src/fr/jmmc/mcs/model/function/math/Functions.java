@@ -7,8 +7,7 @@ import cern.jet.math.Bessel;
 import org.apache.commons.math.complex.Complex;
 
 /**
- *
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public class Functions {
 

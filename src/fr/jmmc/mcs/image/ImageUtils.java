@@ -14,7 +14,8 @@ import java.util.logging.Level;
 
 /**
  * This class contains several utility methods to produce Image objects from raw data
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public final class ImageUtils
 {

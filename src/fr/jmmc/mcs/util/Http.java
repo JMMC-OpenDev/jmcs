@@ -22,7 +22,8 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
  *
  *  It actually :
  * - returns a well configured apache commons HttpClient (legacy project)
- * @author mella
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class Http
 {

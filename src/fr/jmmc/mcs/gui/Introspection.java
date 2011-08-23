@@ -16,6 +16,8 @@ import java.util.logging.Logger;
  * For example, you can easily execute a method of a class given the path to the
  * seeked class. and the method name. Or you can also discover at runtime if a
  * field exists, retireve a method execution result, etc ...
+ * 
+ * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class Introspection
 {

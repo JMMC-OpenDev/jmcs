@@ -13,6 +13,8 @@ import javax.swing.SwingUtilities;
 /**
  * Store data relative to a star.
  * If the star has a name, it is stored into one string property.
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES, Guillaume MELLA.
  */
 public class Star extends Observable {
 

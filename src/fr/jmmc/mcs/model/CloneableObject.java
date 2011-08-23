@@ -8,7 +8,8 @@ import java.util.List;
 
 /**
  * This class supports the Cloneable interface and declare the clone() method (no deep copy)
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public class CloneableObject implements Cloneable {
 

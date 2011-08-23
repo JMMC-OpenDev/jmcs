@@ -5,7 +5,8 @@ package fr.jmmc.mcs.gui.task;
 
 /**
  * This class represents a task with identifier, name and child tasks
- * @author bourgesl
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class Task
 {

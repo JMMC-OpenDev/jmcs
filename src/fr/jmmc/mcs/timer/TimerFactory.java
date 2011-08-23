@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * The Timer factory contains a map[key - Timer] to associate time metrics statistics to several
  * categories of operations
  *
- * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
+ * @author Laurent BOURGES (voparis), Gerard LEMSON (mpe).
  */
 public final class TimerFactory
 {

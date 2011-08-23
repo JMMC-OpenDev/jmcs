@@ -5,7 +5,8 @@ package fr.jmmc.mcs.model.function.math;
 
 /**
  * This class is the base class of all functions computing the Fourier transform at frequencies (UFREQ,VFREQ) of an object.
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public class PunctFunction {
 

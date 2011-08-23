@@ -14,7 +14,8 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * This class is a specific table model (JTable) to display and edit the model parameters
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES, Guillaume MELLA.
  */
 public final class ModelParameterTableModel extends AbstractTableModel {
 

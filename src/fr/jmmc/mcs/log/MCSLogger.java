@@ -9,6 +9,8 @@ import java.util.logging.*;
 
 /**
  * MCSLogger is the main object to use for logging facilities.
+ * 
+ * @author Sylvain LAFRASSE.
  */
 public class MCSLogger
 {

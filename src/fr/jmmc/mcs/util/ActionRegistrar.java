@@ -12,6 +12,8 @@ import javax.swing.AbstractAction;
 
 /**
  * ActionRegistrar singleton class.
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES, Guillaume MELLA.
  */
 public class ActionRegistrar {
     

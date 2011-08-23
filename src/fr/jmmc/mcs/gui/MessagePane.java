@@ -15,8 +15,8 @@ import javax.swing.SwingUtilities;
 
 /**
  * This class provides utility methods to create message panes (message, error) with/without exceptions
- *
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES, Sylvain LAFRASSE, Guillaume MELLA.
  */
 public final class MessagePane {
 

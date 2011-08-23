@@ -19,6 +19,8 @@ import javax.swing.SwingUtilities;
 
 /**
  * A status bar that can be shared all along an application.
+ * 
+ * @author Sylvain LAFRASSE, Samuel PRETTE, Guillaume MELLA, Laurent BOURGES.
  */
 public class StatusBar extends JPanel {
 

@@ -11,7 +11,8 @@ import java.util.Observable;
  * To delegate feature, the class just has to forward addObserver(Observer o) to this class and call
  * notifyObservers methods. The Observer can get the original modified object using getSource method
  * on the casted observable field.
- *
+ * 
+ * @author Guillaume MELLA.
  */
 public class ObservableDelegate extends Observable
 {

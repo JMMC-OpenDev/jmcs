@@ -23,6 +23,8 @@ import java.util.logging.Level;
 
 /**
  * Give access to several color models.
+ * 
+ * @author Laurent BOURGES.
  */
 public class ColorModels
 {

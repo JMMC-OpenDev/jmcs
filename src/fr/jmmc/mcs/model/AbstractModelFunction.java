@@ -12,8 +12,8 @@ import org.apache.commons.math.complex.Complex;
 /**
  *
  * @param <T> type of the function class
- *
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public abstract class AbstractModelFunction<T extends PunctFunction> implements ModelFunction {
 

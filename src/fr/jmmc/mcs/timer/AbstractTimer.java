@@ -3,7 +3,7 @@ package fr.jmmc.mcs.timer;
 /**
  * This class defines an Abstract Timer Object to have statistics on time metrics
  * 
- * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
+ * @author Laurent BOURGES (voparis), Gerard LEMSON (mpe).
  */
 public abstract class AbstractTimer
 {

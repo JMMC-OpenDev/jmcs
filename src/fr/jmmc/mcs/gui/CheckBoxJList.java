@@ -18,9 +18,8 @@ import javax.swing.event.*;
 
 /**
  * DOCUMENT ME!
- *
- * @author $author$
- * @version $Revision: 1.5 $
+ * 
+ * @author Guillaume MELLA.
  */
 public class CheckBoxJList extends JList implements ListSelectionListener
 {

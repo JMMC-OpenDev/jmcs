@@ -7,7 +7,8 @@ package fr.jmmc.mcs.util;
 /**
  * PreferencesException can be thrown if some code try to instanciate Prefrences
  * twice.
- *
+ * 
+ * @author Sylvain LAFRASSE.
  */
 public class PreferencesException extends Exception
 {

@@ -55,9 +55,8 @@ import javax.swing.JFrame;
 
 /**
  * DOCUMENT ME!
- *
- * @author $author$
- * @version $Revision: 1.7 $
+ * 
+ * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class OSXAdapter extends ApplicationAdapter
 {

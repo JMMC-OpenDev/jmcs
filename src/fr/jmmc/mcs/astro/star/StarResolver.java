@@ -25,6 +25,8 @@ import javax.swing.SwingUtilities;
 
 /**
  * Store informations relative to a star.
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class StarResolver {
 

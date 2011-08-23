@@ -8,7 +8,8 @@ import java.util.Map;
 
 /**
  * This class defines a simple task registry (add / get tasks and define child tasks for a particular task)
- * @author bourgesl
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public class TaskRegistry
 {

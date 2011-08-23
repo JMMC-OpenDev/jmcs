@@ -10,7 +10,7 @@ import fr.jmmc.mcs.model.targetmodel.Model;
 /**
  * This ModelFunction implements the ring model
  * 
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public final class RingModelFunction extends AbstractModelFunction<RingFunction> {
 

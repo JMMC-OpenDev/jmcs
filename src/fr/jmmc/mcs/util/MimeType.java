@@ -12,6 +12,8 @@ import javax.swing.filechooser.FileFilter;
  * List the mime types that are used by multiples applications using jmcs.
  * It is also acceptable to define here the mimetypes specific to one
  * application.
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public enum MimeType {
     

@@ -7,7 +7,8 @@ import java.util.logging.Level;
 
 /**
  * Photometry band related information
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES, Sylvain LAFRASSE.
  */
 public enum Band {
 

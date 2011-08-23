@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Enumeration of all different SAMP capabilities, aka mTypes.
+ * Enumeration of all different SAMP capabilities, a.k.a mTypes.
+ * 
+ * @author Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
 public enum SampCapability {
 

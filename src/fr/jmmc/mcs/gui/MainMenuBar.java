@@ -52,6 +52,8 @@ import javax.swing.text.DefaultEditorKit;
  * To access to the XML informations, this class uses <b>ApplicationDataModel</b>
  * class. It's a class which has got getters in order to do that and which has
  * been written to abstract the way to access to these informations.
+ * 
+ * @author Brice COLUCCI, Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
 public class MainMenuBar extends JMenuBar
 {

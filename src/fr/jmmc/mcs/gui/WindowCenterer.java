@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 /**
  * Facility static class to properly center a window
  * on the main screen (handle multiple screen setups).
+ * 
+ * @author Brice COLUCCI, Guillaume MELLA, Laurent BOURGES.
  */
 public class WindowCenterer
 {

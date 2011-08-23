@@ -36,10 +36,12 @@ import javax.swing.event.HyperlinkListener;
  * class. There is a default XML file which having the same name and which is
  * saved into the <b>App</b> module in order to avoid important bugs.
  *
- * To acces to the XML informations, this class uses
+ * To access to the XML informations, this class uses
  * <b>ApplicationDataModel</b> class. It's a class which has got getters
  * in order to do that and which has been written to abstract the way
- * to acces to these informations.
+ * to access to these informations.
+ * 
+ * @author Brice COLUCCI, Sylvain LAFRASSE, Guillaume MELLA.
  */
 public class AboutBox extends JDialog implements HyperlinkListener
 {

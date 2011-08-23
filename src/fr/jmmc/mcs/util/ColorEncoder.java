@@ -8,6 +8,8 @@ import java.awt.Color;
 
 /**
  * DOCUMENT ME!
+ * 
+ * @author Guillaume MELLA.
  */
 public class ColorEncoder
 {

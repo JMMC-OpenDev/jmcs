@@ -36,6 +36,8 @@ import org.exolab.castor.xml.ValidationException;
  *
  * This class uses <b>Castor</b> classes to acces to these informations
  * and provides the good getters for each field of the XML file.
+ * 
+ * @author Guillaume MELLA, Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class ApplicationDataModel
 {

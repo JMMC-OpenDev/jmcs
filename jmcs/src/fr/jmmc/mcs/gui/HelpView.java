@@ -24,6 +24,8 @@ import javax.help.Map;
  * a bash script called <b>jmcsHTML2HelpSet.sh</b>.
  * The programs can ask to show one page.
  * @See ShowHelpAction
+ * 
+ * @author Sylvain LAFRASSE, Brice COLUCCI, Guillaume MELLA, Laurent BOURGES.
  */
 public class HelpView
 {

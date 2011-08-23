@@ -14,7 +14,8 @@ import javax.swing.text.JTextComponent;
  * Extends the swing jtable and fixes the default behaviour
  * to provide ergonomic scientific softwares.
  * Most tables should use this class as custom creation code.
- *
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public class NumericJTable extends javax.swing.JTable {
 

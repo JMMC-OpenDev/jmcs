@@ -13,6 +13,8 @@ import javax.swing.KeyStroke;
 
 /**
  * Use this class  to define new Actions.
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public abstract class MCSAction extends AbstractAction
 {

@@ -18,6 +18,8 @@ import org.apache.commons.lang.SystemUtils;
  * Class used to get resources informations from one central point (xml file).
  * Applications must start to set the resource file name before
  * any gui construction.
+ * 
+ * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public abstract class Resources
 {

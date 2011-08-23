@@ -15,7 +15,8 @@ import org.apache.commons.math.complex.Complex;
 
 /**
  * This class generates an UV Map Image for given target Models and UV area
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public final class ModelUVMapService
 {

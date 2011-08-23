@@ -26,8 +26,8 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * Several File utility methods
- *
- * @author bourgesl, mella
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class FileUtils {
 

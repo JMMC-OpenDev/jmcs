@@ -17,7 +17,7 @@ import org.apache.commons.httpclient.HostConfiguration;
  *
  * It uses Java System properties and also JMCS Preferences to get the proxy settings
  * 
- * @author bourgesl
+ * @author Laurent BOURGES, Guillaume MELLA.
  */
 public final class NetworkSettings
 {

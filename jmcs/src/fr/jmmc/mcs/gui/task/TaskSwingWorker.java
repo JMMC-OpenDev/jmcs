@@ -13,9 +13,9 @@ import java.util.concurrent.ExecutionException;
  * Requires library :
  * swing-worker-1.2.jar (org.jdesktop.swingworker.SwingWorker)
  *
- * @author bourgesl
- *
  * @param <T> the result type returned by this {@code TaskSwingWorker}
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingWorker<T, Void>
 {

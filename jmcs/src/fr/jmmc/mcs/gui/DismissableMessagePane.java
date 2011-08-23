@@ -10,6 +10,8 @@ import javax.swing.JOptionPane;
 
 /**
  * Provides a custom message pane with a check box to hide that kind of message definitely.
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class DismissableMessagePane {
 

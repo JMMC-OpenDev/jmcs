@@ -9,8 +9,8 @@ package fr.jmmc.mcs.model.function.math;
  * Note on the diameter for the disk model.
  * For the elongated model, the minor axis diameter.
  * For the flattened model, the major axis diameter.
- *
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public class DiskFunction extends CircleFunction {
 

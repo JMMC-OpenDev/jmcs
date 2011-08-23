@@ -11,7 +11,8 @@ import java.util.logging.Level;
 
 /**
  * This class overrides the EditableParameter class to define a rho or theta position parameter where only the value is editable
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public final class EditableRhoThetaParameter implements Editable {
 

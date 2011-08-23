@@ -22,6 +22,8 @@ import javax.swing.SwingUtilities;
 
 /**
  * This extended StarResolverWidget allows the user to enter an RA/DEC couple as a Star without any CDS resolution (manually defined star)
+ * 
+ * @author Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
 public final class EditableStarResolverWidget extends StarResolverWidget {
 

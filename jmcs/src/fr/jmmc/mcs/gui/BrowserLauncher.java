@@ -13,6 +13,8 @@ import java.util.logging.Logger;
  * with the default web browser of the user system.
  *
  * It uses <b>BrowserLauncher</b>.
+ * 
+ * @author Brice COLUCCI, Laurent BOURGES.
  */
 public class BrowserLauncher
 {

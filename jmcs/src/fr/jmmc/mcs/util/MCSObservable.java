@@ -13,8 +13,8 @@ import java.util.logging.Logger;
  * to trace interactions with Observers.
  *
  * TODO : implement totally Observable class to have better event handling (logs ...)
- *
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public class MCSObservable extends Observable {
 

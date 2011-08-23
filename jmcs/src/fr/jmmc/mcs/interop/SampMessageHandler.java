@@ -13,8 +13,8 @@ import org.astrogrid.samp.client.SampException;
  * SampMessageHandler class.
  *
  * Conveniently provides automatic registration of your message handler.
- *
- * @author lafrasse
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public abstract class SampMessageHandler extends AbstractMessageHandler
 {

@@ -24,8 +24,8 @@ import javax.swing.SwingUtilities;
  * - main thread (starting the application) use a general try/catch (throwable) and opens a JNLP error dialog
  * => do not set the UncaughtExceptionHandler to this thread
  * => Be sure to catch all exceptions in main() and use the feeback report manually
- *
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public final class MCSExceptionHandler {
 

@@ -18,7 +18,8 @@ import java.util.logging.Level;
 /**
  * This class is a customization of the standard SwingWorker to have a single thread only
  * processing workers because our computations require serialization and cancellation
- * @author bourgesl
+ * 
+ * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class TaskSwingWorkerExecutor
 {

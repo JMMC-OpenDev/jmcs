@@ -7,10 +7,10 @@ import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-
-
 /**
  * Action class customized to auto-register in ActionRegistrar when created.
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public abstract class RegisteredAction extends MCSAction
 {

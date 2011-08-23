@@ -38,20 +38,22 @@ import org.apache.commons.lang.SystemUtils;
 
 /**
  * This class represents an application. In order to use
- * fonctionnalities that are implemented here, you have to
+ * functionalities that are implemented here, you have to
  * extend your application from this class.
  *
  * This class is a singleton with abstract methods. If you extend
- * a class from this one, you can have a splashscreen, an about
- * window, the menubar generation, the possibility to have a help
+ * a class from this one, you can have a splash-screen, an about
+ * window, the menu bar generation, the possibility to have a help
  * window using <b>jmcsGenerateHelpSetFromHtml</b> from the bash
  * script called <b>jmcsHTML2HelpSet.sh</b> located into the src
- * folder of jmcs, the feedback report etc...
+ * folder of jMCS, the feedback report etc...
  *
- * To acces to the XML informations, this class uses
+ * To access to the XML informations, this class uses
  * <b>ApplicationDataModel</b> class. It's a class which has got getters
  * in order to do that and which has been written to abstract the way
- * to acces to these informations.
+ * to access to these informations.
+ * 
+ * @author Brice COLUCCI, Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public abstract class App {
 

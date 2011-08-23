@@ -23,7 +23,7 @@ import org.apache.commons.lang.SystemUtils;
  *
  * Copied and adapted from voparis code.
  * 
- * @author bourges
+ * @author Laurent BOURGES, Guillaume MELLA.
  */
 public class SwingSettings {
 

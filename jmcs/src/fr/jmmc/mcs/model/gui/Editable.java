@@ -6,8 +6,7 @@ package fr.jmmc.mcs.model.gui;
 import fr.jmmc.mcs.model.targetmodel.Model;
 
 /**
- *
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public interface Editable {
 

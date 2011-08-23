@@ -9,6 +9,8 @@ import java.util.Hashtable;
 /**
  * Enumeration of all different catalogs and their properties.
  * If catalog list get updated, please deploy new jmcs_webapp.
+ * 
+ * @author Sylvain LAFRASSE, Guillaume MELLA.
  */
 public enum Catalog {
 

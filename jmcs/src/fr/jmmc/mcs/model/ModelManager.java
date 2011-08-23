@@ -22,7 +22,8 @@ import org.apache.commons.math.complex.Complex;
 
 /**
  * This class constitutes the main interface to target models (supported models, new model, computeModels)
- * @author bourgesl
+ * 
+ * @author Laurent BOURGES.
  */
 public final class ModelManager {
 

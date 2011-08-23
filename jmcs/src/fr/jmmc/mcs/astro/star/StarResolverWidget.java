@@ -19,6 +19,8 @@ import javax.swing.JPanel;
 
 /**
  * Store informations relative to a star.
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class StarResolverWidget extends SearchField implements Observer {
 

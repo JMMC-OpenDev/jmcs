@@ -67,9 +67,9 @@ public class SplashScreen extends JFrame
     public void display()
     {
         if (_applicationDataModel != null) {
+
             // Draw window
             setAllProperties();
-
             pack();
             WindowCenterer.centerOnMainScreen(this);
 
@@ -84,6 +84,7 @@ public class SplashScreen extends JFrame
                  * Handle the timer call
                  * @param ae action event
                  */
+                @Override
                 public void actionPerformed(final ActionEvent ae)
                 {
                     // Just call close to hide and dispose this frame :
@@ -139,6 +140,8 @@ public class SplashScreen extends JFrame
 
         _logoLabel.setIcon(
                 new ImageIcon(getClass().getResource(_applicationDataModel.getLogoURL())));
+        _logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        
 
         _logger.fine("Every logo label properties have been initialized");
     }
@@ -146,7 +149,7 @@ public class SplashScreen extends JFrame
     /** Sets program name label properties */
     private void setProgramNameLabelProperties()
     {
-        _programNameLabel.setFont(new Font(null, 1, 30));
+        _programNameLabel.setFont(new Font(null, 1, 28));
         _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         _programNameLabel.setText(_applicationDataModel.getProgramName());
@@ -164,6 +167,7 @@ public class SplashScreen extends JFrame
         _programVersionLabel.setText("Version "
                 + _applicationDataModel.getProgramVersion()
                 + " - " + _applicationDataModel.getCopyrightValue());
+        _programVersionLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         _logger.fine(
                 "Every program version label properties have been initialized");

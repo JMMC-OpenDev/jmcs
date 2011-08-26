@@ -3,7 +3,6 @@
  ******************************************************************************/
 package fr.jmmc.mcs.util;
 
-import fr.jmmc.mcs.gui.Introspection;
 import java.lang.reflect.Method;
 import java.util.Properties;
 import java.util.logging.Level;

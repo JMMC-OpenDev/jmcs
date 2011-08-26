@@ -138,6 +138,31 @@ public class SplashScreen extends JFrame
     {
         _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
+        /*
+        Package pkgs[] = Package.getPackages();
+        for(int i=0; i < pkgs.length; i++)
+        {
+            System.out.println(
+                    pkgs[i].getName() + " : '" +
+                    pkgs[i].getImplementationTitle() + "' by " +
+                    pkgs[i].getImplementationVendor() + " (version " +
+                    pkgs[i].getImplementationVersion() + ").");
+        }
+
+        // @TODO : get this from AppData.xml or pkgName/resources/AppIcon.png convention
+        URL url = getClass().getResource("/fr/jmmc/scalib/resources/AppIcon.png");
+        if (url == null)
+        {
+            url = getClass().getResource(_applicationDataModel.getLogoURL());
+        }
+        System.out.println("url = " + url);
+
+        ImageIcon icon = new ImageIcon(url);
+        Dimension fixedDimension = new Dimension(64, 64);
+        _logoLabel.setIcon(new ImageIcon(icon.getImage().getScaledInstance(fixedDimension.height, fixedDimension.width, Image.SCALE_SMOOTH)));
+        _logoLabel.setMinimumSize(fixedDimension);
+        _logoLabel.setMaximumSize(fixedDimension);
+        */
         _logoLabel.setIcon(
                 new ImageIcon(getClass().getResource(_applicationDataModel.getLogoURL())));
         _logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));

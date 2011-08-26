@@ -41,7 +41,7 @@ public final class StarResolver {
     public static final String SEPARATOR_SEMI_COLON = ";";
 
     /* members */
-    /** The seeked star name */
+    /** The sought star name */
     private final String _starName;
     /** The star data container */
     private final Star _starModel;

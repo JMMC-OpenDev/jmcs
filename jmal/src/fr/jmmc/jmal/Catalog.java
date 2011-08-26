@@ -97,7 +97,7 @@ public enum Catalog {
      * Catalog.titleFromReference("toto") == "toto";
      * Catalog.titleFromReference(null) == Catalog.UNKNOWN;
      *
-     * @param reference reference of the seeked catalog.
+     * @param reference reference of the sought catalog.
      *
      * @return a String containing the given catalog title, the reference if not found, Catalog.UNKNOWN otherwise.
      */
@@ -122,7 +122,7 @@ public enum Catalog {
      * Catalog.descriptionFromReference("toto") == "toto";
      * Catalog.descriptionFromReference(null) == Catalog.UNKNOWN;
      *
-     * @param reference reference of the seeked catalog.
+     * @param reference reference of the sought catalog.
      *
      * @return a String containing the given catalog description, the reference if not found, Catalog.UNKNOWN otherwise.
      */
@@ -142,9 +142,9 @@ public enum Catalog {
     /**
      * Give back the catalog of the corresponding reference.
      *
-     * @param reference reference of the seeked catalog.
+     * @param reference reference of the sought catalog.
      *
-     * @return the seeked catalog, null otherwise.
+     * @return the sought catalog, null otherwise.
      */
     public static Catalog catalogFromReference(String reference) {
         return (reference == null ? null : NastyTrick._catalogs.get(reference));

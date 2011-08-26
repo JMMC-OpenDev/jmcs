@@ -266,7 +266,7 @@ public class Star extends Observable {
          * Property.fromString("RA_d") == Property.RA_d;
          * Property.fromString("toto") == Property.NOPROPERTY;
          *
-         * @param propertyName name of the seeked enum value.
+         * @param propertyName name of the sought enum value.
          *
          * @return the enum value from the corresponding string.
          */

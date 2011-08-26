@@ -14,8 +14,8 @@ import java.util.logging.Logger;
  * This class provides helper functions related to object introspection.
  *
  * For example, you can easily execute a method of a class given the path to the
- * seeked class. and the method name. Or you can also discover at runtime if a
- * field exists, retireve a method execution result, etc ...
+ * sought class. and the method name. Or you can also discover at runtime if a
+ * field exists, retrieve a method execution result, etc ...
  * 
  * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
@@ -32,7 +32,7 @@ public final class Introspection
     /**
      * Returns a class object according to a given class path.
      *
-     * @param classPath path to the seeked class.
+     * @param classPath path to the sought class.
      *
      * @return found class, null otherwise.
      */
@@ -52,7 +52,7 @@ public final class Introspection
     /**
      * Test whether a class exists, from a given class path.
      *
-     * @param classPath path to the seeked class.
+     * @param classPath path to the sought class.
      *
      * @return true if the class exists, false otherwise.
      */
@@ -73,7 +73,7 @@ public final class Introspection
      * Returns the package containing the class identified by the given class
      * path.
      *
-     * @param classPath path to the seeked class.
+     * @param classPath path to the sought class.
      *
      * @return found class package, null otherwise.
      */
@@ -99,7 +99,7 @@ public final class Introspection
      * Returns the name of the package containing the class identified by the
      * given class path.
      *
-     * @param classPath path to the seeked class.
+     * @param classPath path to the sought class.
      *
      * @return found class package name, null otherwise.
      */
@@ -124,7 +124,7 @@ public final class Introspection
     /**
      * Returns a new instance of the class identified by the gien class path.
      *
-     * @param classPath path to the seeked class.
+     * @param classPath path to the sought class.
      *
      * @return new instance of the class, null otherwise.
      */
@@ -147,7 +147,7 @@ public final class Introspection
      * Returns the list of methods of the class identified by the given class
      * path.
      *
-     * @param classPath path to the seeked class.
+     * @param classPath path to the sought class.
      *
      * @return Array of found methods, null otherwise.
      */
@@ -158,13 +158,13 @@ public final class Introspection
     }
 
     /**
-     * Returns the seeked method with EMPTY argument list in the class
+     * Returns the sought method with EMPTY argument list in the class
      * identified by the given class path.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
      *
-     * @return seeked method in class, null otherwise.
+     * @return sought method in class, null otherwise.
      */
     public static Method getMethod(final String classPath, final String methodName)
     {
@@ -172,14 +172,14 @@ public final class Introspection
     }
 
     /**
-     * Returns the seeked method with given argument list in the class
+     * Returns the sought method with given argument list in the class
      * identified by the given class path.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
-     * @param parameters seeked method parameter Class array.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
+     * @param parameters sought method parameter Class array.
      *
-     * @return seeked method with parameters in class, null otherwise.
+     * @return sought method with parameters in class, null otherwise.
      */
     public static Method getMethod(final String classPath, final String methodName,
             final Class<?>[] parameters)
@@ -193,13 +193,13 @@ public final class Introspection
     }
 
     /**
-     * Returns the seeked method with given argument list in the given class.
+     * Returns the sought method with given argument list in the given class.
      *
      * @param clazz class.
-     * @param methodName seeked method name.
-     * @param parameters seeked method parameter Class array.
+     * @param methodName sought method name.
+     * @param parameters sought method parameter Class array.
      *
-     * @return seeked method with parameters in class, null otherwise.
+     * @return sought method with parameters in class, null otherwise.
      */
     public static Method getMethod(final Class<?> clazz, final String methodName,
             final Class<?>[] parameters)
@@ -218,8 +218,8 @@ public final class Introspection
     /**
      * Test whether a method exists, from a given class path.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
      *
      * @return true if the method exists, false otherwise.
      */
@@ -232,9 +232,9 @@ public final class Introspection
      * Test whether a method with guven parameters list exists, from a given
      * class path.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
-     * @param parameters seeked parameters array.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
+     * @param parameters sought parameters array.
      *
      * @return true if the method exists, false otherwise.
      */
@@ -257,8 +257,8 @@ public final class Introspection
      * Returns the execution result of the method in the class identified by
      * their own names.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
      *
      * @return result of the method execution, null otherwise.
      */
@@ -271,8 +271,8 @@ public final class Introspection
      * Returns the execution result of the method with given parameters in the
      * class identified by their own names.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
      * @param parameters parameters array.
      *
      * @return result of the method execution, null otherwise.
@@ -287,8 +287,8 @@ public final class Introspection
      * Returns the execution result of the method with given parameters and
      * argument values in the class identified by their own names.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
      * @param parameters parameters array.
      * @param arguments arguments array.
      *
@@ -357,8 +357,8 @@ public final class Introspection
      * Execute a method in the class identified by their own names, without
      * returning the result.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
      *
      * @return true if invocation succeeded, false otherwise.
      */
@@ -371,8 +371,8 @@ public final class Introspection
      * Execute a method with given parameters in the class identified by their
      * own names, without returning the result.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
      * @param parameters parameters array.
      *
      * @return true if invocation succeeded, false otherwise.
@@ -387,8 +387,8 @@ public final class Introspection
      * Execute a method with given parameters and argument values in the class
      * identified by their own names, without returning the result.
      *
-     * @param classPath path to the seeked class.
-     * @param methodName seeked method name.
+     * @param classPath path to the sought class.
+     * @param methodName sought method name.
      * @param parameters parameters array.
      * @param arguments arguments array.
      *
@@ -448,7 +448,7 @@ public final class Introspection
      * Returns the list of fields of the class identified by the given class
      * path.
      *
-     * @param classPath path to the seeked class.
+     * @param classPath path to the sought class.
      *
      * @return Array of found fields, null otherwise.
      */
@@ -459,12 +459,12 @@ public final class Introspection
     }
 
     /**
-     * Returns the seeked field in the class identified by the given class path.
+     * Returns the sought field in the class identified by the given class path.
      *
-     * @param classPath path to the seeked class.
-     * @param fieldName seeked field name.
+     * @param classPath path to the sought class.
+     * @param fieldName sought field name.
      *
-     * @return seeked field in class, null otherwise.
+     * @return sought field in class, null otherwise.
      */
     public static Field getField(final String classPath, final String fieldName)
     {
@@ -482,8 +482,8 @@ public final class Introspection
     /**
      * Test whether a field exists, from a given class path.
      *
-     * @param classPath path to the seeked class.
-     * @param fieldName seeked field name.
+     * @param classPath path to the sought class.
+     * @param fieldName sought field name.
      *
      * @return true if the field exists, false otherwise.
      */
@@ -505,10 +505,10 @@ public final class Introspection
      * Returns the value of the field in the class identified by the given class
      * path.
      *
-     * @param classPath seeked class name.
-     * @param fieldName seeked field name.
+     * @param classPath sought class name.
+     * @param fieldName sought field name.
      *
-     * @return value of the seeked field, null otherwise.
+     * @return value of the sought field, null otherwise.
      */
     public static Object getFieldValue(final String classPath, final String fieldName)
     {

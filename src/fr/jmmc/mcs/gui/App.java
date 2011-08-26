@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.mcs.gui;
 
+import fr.jmmc.mcs.util.Introspection;
 import fr.jmmc.mcs.interop.SampManager;
 import fr.jmmc.mcs.util.ActionRegistrar;
 import fr.jmmc.mcs.util.CommonPreferences;

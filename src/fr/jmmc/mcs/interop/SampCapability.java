@@ -59,7 +59,7 @@ public enum SampCapability {
      * SampCapability.fromMType("toto") == SampCapability.UNKNOWN;
      * SampCapability.fromMType(null) == SampCapability.UNKNOWN;
      *
-     * @param mType mType of the seeked SampCapability.
+     * @param mType mType of the sought SampCapability.
      *
      * @return a String containing the given catalog title, the reference if not found, SampCapability.UNKNOWN otherwise.
      */

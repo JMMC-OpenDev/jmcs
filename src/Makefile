@@ -101,8 +101,7 @@ JARFILES        = jmcs
 # <brief description of jmcs jar files>
 jmcs_DIRS     = fr
 jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png \
-                fr/jmmc/mcs/gui/ApplicationData.xml \
-                fr/jmmc/mcs/image/lut/*.lut
+                fr/jmmc/mcs/gui/ApplicationData.xml
 
 #
 # Java programs
@@ -178,7 +177,7 @@ clean : clean_castor clean_all
 	@echo " . . . clean done"
 
 clean_castor:
-	rm -rf fr/jmmc/mcs/gui/castor
+	rm -rf fr/jmmc/jmcs/data/castor
 
 man   : do_man 
 	@echo " . . . man page(s) done"

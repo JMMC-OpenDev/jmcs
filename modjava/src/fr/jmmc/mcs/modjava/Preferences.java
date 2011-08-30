@@ -3,13 +3,13 @@
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
 
-import fr.jmmc.mcs.util.*;
+import fr.jmmc.jmcs.data.preference.PreferencesException;
 
 import java.util.logging.*;
 
 
 /** Test application default preferences */
-public class Preferences extends fr.jmmc.mcs.util.Preferences
+public class Preferences extends fr.jmmc.jmcs.data.preference.Preferences
 {
     /** Logger */
     private static final Logger _logger = Logger.getLogger(

@@ -3,9 +3,9 @@
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
 
-import fr.jmmc.mcs.util.*;
+import fr.jmmc.jmcs.gui.action.ActionRegistrar;
+import fr.jmmc.jmcs.gui.action.RegisteredAction;
 
-import javax.swing.*;
 
 
 /**

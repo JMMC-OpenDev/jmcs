@@ -3,10 +3,10 @@
  ******************************************************************************/
 package fr.jmmc.mcs.modjava;
 
-import fr.jmmc.mcs.gui.App;
-import fr.jmmc.mcs.gui.DismissableMessagePane;
-import fr.jmmc.mcs.interop.SampCapability;
-import fr.jmmc.mcs.interop.SampMessageHandler;
+import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.gui.DismissableMessagePane;
+import fr.jmmc.jmcs.network.interop.SampCapability;
+import fr.jmmc.jmcs.network.interop.SampMessageHandler;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;

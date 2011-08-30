@@ -5,7 +5,7 @@ package fest.common;
 
 import static org.fest.swing.timing.Pause.*;
 import static org.fest.swing.launcher.ApplicationLauncher.*;
-import fr.jmmc.mcs.gui.App;
+import fr.jmmc.jmcs.App;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.logging.Level;

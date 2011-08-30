@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fest.common;
 
-import fr.jmmc.mcs.gui.App;
+import fr.jmmc.jmcs.App;
 
 /**
  * This utility class is useful to define the main class to launch the Swing application

@@ -3,8 +3,8 @@
  ******************************************************************************/
 package fr.jmmc.jmal.model;
 
-import fr.jmmc.mcs.image.ColorModels;
-import fr.jmmc.mcs.image.ImageUtils;
+import fr.jmmc.jmal.image.ColorModels;
+import fr.jmmc.jmal.image.ImageUtils;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;

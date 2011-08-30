@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.mcs.gui;
+package fr.jmmc.mcs.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

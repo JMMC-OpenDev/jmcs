@@ -93,21 +93,29 @@ PY_SCRIPTS_L   =
 #
 # Jarfiles and their directories
 # ---------------------------------
-JARFILES        =
+JARFILES        = jmal
 
 #
 # <brief description of jjjfff jar files>
-jjjfff_DIRS     =
-jjjfff_EXTRAS   = 
+jmal_DIRS     = fr
+jmal_EXTRAS   = fr/jmmc/jmal/image/lut/*.lut
 
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES=
+JAVA_EXECUTABLES= jmalStarResolver \
+                  jmalStarResolverWidget \
+		  jmalCatalogs \
+		  jmalALX \
+		  jmalLD2UD
 
 #
 # <brief description of jjjjjj java program>
-jjjjjj_CLASS    =
+jmalStarResolver_CLASS        = fr.jmmc.jmal.star.StarResolver
+jmalStarResolverWidget_CLASS  = fr.jmmc.jmal.star.StarResolverWidget
+jmalCatalogs_CLASS            = fr.jmmc.jmal.Catalog
+jmalALX_CLASS                 = fr.jmmc.jmal.ALX
+jmalLD2UD_CLASS               = fr.jmmc.jmal.LD2UD
 
 #
 # Command Definition Files (CDF)
@@ -127,7 +135,7 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES =
+INSTALL_FILES = ../lib/*.jar
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
@@ -145,6 +153,8 @@ CSOURCENAMES = \
 MAKEDIR = $(MCSROOT)/include
 include $(MAKEDIR)/mkfMakefile
 
+JNLP=JmalLibs
+
 #
 # TARGETS
 # -------
@@ -158,6 +168,12 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
+	@echo "Deploy $(JNLP).jnlp"
+	jmcsDeployJnlp $(JNLP).jnlp
+        
+	@echo "Install $(JNLP).jar"
+	# JmalLibs contains only shared libraries used to package application single jar file
+	@cp $$HOME/public_html/$(JNLP)/$(JNLP).jar $(INSTALL_ROOT)/lib
 	@echo " . . . installation done"
 
 #___oOo___

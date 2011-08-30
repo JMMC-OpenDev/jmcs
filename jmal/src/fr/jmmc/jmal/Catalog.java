@@ -168,7 +168,7 @@ public enum Catalog {
         for (Catalog catalog : Catalog.values()) {
             String ref = catalog.reference();
             sb.append("<tr style='background-color:");
-            sb.append(fr.jmmc.mcs.util.ColorEncoder.encode(getDefaultColor(catalog)) );
+            sb.append(fr.jmmc.jmcs.util.ColorEncoder.encode(getDefaultColor(catalog)) );
             sb.append("'><td>" );
             sb.append( catalog.title() );
             sb.append( "</td><td><a href='http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=");
@@ -237,7 +237,7 @@ public enum Catalog {
             String description = catalog.description();
             System.out.println("<catalog ref='" + reference
                     + "' title='" + title
-                    + "' color='" + fr.jmmc.mcs.util.ColorEncoder.encode(getDefaultColor(catalog))
+                    + "' color='" + fr.jmmc.jmcs.util.ColorEncoder.encode(getDefaultColor(catalog))
                     + "' description='" + description + "'/>");
         }
 

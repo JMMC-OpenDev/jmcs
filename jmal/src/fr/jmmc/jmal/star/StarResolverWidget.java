@@ -3,10 +3,10 @@
  ******************************************************************************/
 package fr.jmmc.jmal.star;
 
-import fr.jmmc.mcs.gui.App;
-import fr.jmmc.mcs.gui.MessagePane;
-import fr.jmmc.mcs.gui.SearchField;
-import fr.jmmc.mcs.gui.StatusBar;
+import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.gui.MessagePane;
+import fr.jmmc.jmcs.gui.SearchField;
+import fr.jmmc.jmcs.gui.StatusBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

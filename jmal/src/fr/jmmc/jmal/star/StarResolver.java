@@ -3,9 +3,9 @@
  ******************************************************************************/
 package fr.jmmc.jmal.star;
 
-import fr.jmmc.mcs.util.FileUtils;
-import fr.jmmc.mcs.util.MCSExceptionHandler;
-import fr.jmmc.mcs.util.Urls;
+import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.MCSExceptionHandler;
+import fr.jmmc.jmcs.util.Urls;
 import java.io.BufferedReader;
 import java.io.IOException;
 

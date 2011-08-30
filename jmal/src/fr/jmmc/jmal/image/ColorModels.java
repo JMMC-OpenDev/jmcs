@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmal.image;
 
-import fr.jmmc.mcs.util.FileUtils;
+import fr.jmmc.jmcs.util.FileUtils;
 import java.awt.image.IndexColorModel;
 import java.io.BufferedReader;
 import java.io.File;

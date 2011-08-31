@@ -3,11 +3,11 @@
 1 -    Environment Variable name      | Env. Var. value
 1 -    -------------------------------+-------------------------
 1 -    toto                           | mcsFAILURE
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.416483 - miscFile.c:142 - ERROR: 1 W 'toto' environment variable is not defined.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.680439 - miscFile.c:142 - ERROR: 1 W 'toto' environment variable is not defined.
 1 -    ~                              | mcsFAILURE
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.417607 - miscFile.c:142 - ERROR: 1 W '~' environment variable is not defined.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.681455 - miscFile.c:142 - ERROR: 1 W '~' environment variable is not defined.
 1 -    ~lafrasse                      | mcsFAILURE
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.418663 - miscFile.c:142 - ERROR: 1 W '~lafrasse' environment variable is not defined.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.682438 - miscFile.c:142 - ERROR: 1 W '~lafrasse' environment variable is not defined.
 1 -    $HOME                          | /home/users/bourgesl
 1 -    MCSENV                         | default
 1 -    $INTROOT                       | /home/users/bourgesl/INTROOT
@@ -21,9 +21,9 @@
 1 -    Environment Variable name      | Env. Var. value
 1 -    -------------------------------+-------------------------
 1 -    toto                           | mcsFAILURE
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.419769 - miscFile.c:142 - ERROR: 1 W 'toto' environment variable is not defined.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.683421 - miscFile.c:142 - ERROR: 1 W 'toto' environment variable is not defined.
 1 -    $HOME                          | mcsFAILURE
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.420864 - miscFile.c:189 - ERROR: 1 S '$HOME' environment variable content '/home/users/bourgesl' is not of integer type.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.684412 - miscFile.c:189 - ERROR: 1 S '$HOME' environment variable content '/home/users/bourgesl' is not of integer type.
 1 -    MCS_ENV_TEST_NUMBER            | 110278
 1 - 
 1 - 
@@ -210,9 +210,9 @@
 1 - 
 1 -    ---------------------------------------------------------
 1 - Tested File = "NULL"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.422213 - miscFile.c:658 - ERROR: 1 S Received a NULL value for parameter 'fullPath'.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.685702 - miscFile.c:658 - ERROR: 1 S Received a NULL value for parameter 'fullPath'.
 1 - Tested File = "../miscErrors.xml"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.423252 - miscFile.c:706 - ERROR: 1 S File '../miscErrors.xml' cannot be accessed : Doesn't Exist.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.686703 - miscFile.c:706 - ERROR: 1 S File '../miscErrors.xml' cannot be accessed : Doesn't Exist.
 1 - Tested File = "../errors/miscErrors.xml"  -> EXIST
 1 - Tested File = "$INTROOT/errors/miscErrors.xml"  -> EXIST
 1 - Tested File = "$MCSROOT/errors/miscErrors.xml"  -> EXIST
@@ -223,63 +223,63 @@
 1 -    ---------------------------------------------------------
 1 - Tested Path = 'NULL' - 'miscErrors.xml'
 1 - Valid Path = 'NONE'
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.424338 - miscFile.c:822 - ERROR: 1 S File 'miscErrors.xml' cannot be found in '(null)' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.687734 - miscFile.c:822 - ERROR: 1 S File 'miscErrors.xml' cannot be found in '(null)' path.
 1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'NULL'
 1 - Valid Path = 'NONE'
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.425400 - miscFile.c:751 - ERROR: 1 S Received a NULL value for parameter 'fileName'.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.688673 - miscFile.c:751 - ERROR: 1 S Received a NULL value for parameter 'fileName'.
 1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'err'
 1 - Valid Path = 'NONE'
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.426468 - miscFile.c:822 - ERROR: 1 S File 'err' cannot be found in '../:$INTROOT/:$MCSROOT/' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.689740 - miscFile.c:822 - ERROR: 1 S File 'err' cannot be found in '../:$INTROOT/:$MCSROOT/' path.
 1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'errors'
 1 - Valid Path = '..//errors'
 1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'errors/'
 1 - Valid Path = '..//errors'
 1 - Tested Path = '../:$INTROOT/:$MCSROOT/' - 'miscErrors.xml'
 1 - Valid Path = 'NONE'
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.427535 - miscFile.c:822 - ERROR: 1 S File 'miscErrors.xml' cannot be found in '../:$INTROOT/:$MCSROOT/' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.690762 - miscFile.c:822 - ERROR: 1 S File 'miscErrors.xml' cannot be found in '../:$INTROOT/:$MCSROOT/' path.
 1 - Tested Path = '../:$INTROOT/errors/:$MCSROOT/errors/' - 'miscErrors.xml'
 1 - Valid Path = '/home/users/bourgesl/INTROOT/errors//miscErrors.xml'
 1 - Tested Path = '../:$MCSROOT/errors/:$INTROOT/errors/' - 'miscErrors.xml'
 1 - Valid Path = '/home/MCS/DEVELOPMENT/errors//miscErrors.xml'
 1 - Tested Path = '../:/home/$INTROOT/errors/:/home/$MCSROOT/errors/' - 'miscErrors.xml'
 1 - Valid Path = 'NONE'
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.428637 - miscFile.c:822 - ERROR: 1 S File 'miscErrors.xml' cannot be found in '../:/home/$INTROOT/errors/:/home/$MCSROOT/errors/' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.691830 - miscFile.c:822 - ERROR: 1 S File 'miscErrors.xml' cannot be found in '../:/home/$INTROOT/errors/:/home/$MCSROOT/errors/' path.
 1 - 
 1 - 
 1 - miscLocateFile() Function Test :
 1 - 
 1 -    ---------------------------------------------------------
 1 - Tested File = "NULL"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.429704 - miscFile.c:862 - ERROR: 1 S Received a NULL value for parameter 'fileName'.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.692778 - miscFile.c:862 - ERROR: 1 S Received a NULL value for parameter 'fileName'.
 1 - Tested File = "miscErrors"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.430744 - miscFile.c:879 - ERROR: 1 S File name 'miscErrors' has no extension.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.693788 - miscFile.c:879 - ERROR: 1 S File name 'miscErrors' has no extension.
 1 - Tested File = "miscErrors.xml"  -> EXIST at : ../errors/miscErrors.xml
 1 - Tested File = "miscConfig.cfg"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.431833 - miscFile.c:822 - ERROR: 1 S File 'miscConfig.cfg' cannot be found in '../config:$INTROOT/config:$MCSROOT/config' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.694837 - miscFile.c:822 - ERROR: 1 S File 'miscConfig.cfg' cannot be found in '../config:$INTROOT/config:$MCSROOT/config' path.
 1 - 
 1 - 
 1 - miscLocateDir() Function Test :
 1 - 
 1 -    ---------------------------------------------------------
 1 - Tested Dir = "NULL"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.432893 - miscFile.c:751 - ERROR: 1 S Received a NULL value for parameter 'fileName'.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.695776 - miscFile.c:751 - ERROR: 1 S Received a NULL value for parameter 'fileName'.
 1 - Tested Dir = "miscErrors"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.433951 - miscFile.c:822 - ERROR: 1 S File 'miscErrors' cannot be found in '(null)' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.696774 - miscFile.c:822 - ERROR: 1 S File 'miscErrors' cannot be found in '(null)' path.
 1 - Tested Dir = "err"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.434995 - miscFile.c:822 - ERROR: 1 S File 'err' cannot be found in '(null)' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.697832 - miscFile.c:822 - ERROR: 1 S File 'err' cannot be found in '(null)' path.
 1 - Tested Dir = "errors"  -> EXIST at : ..//errors
 1 - Tested Dir = "templates"  -> EXIST at : /home/users/bourgesl/INTROOT//templates
 1 - Tested Dir = "etc"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.436071 - miscFile.c:822 - ERROR: 1 S File 'etc' cannot be found in '(null)' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.698873 - miscFile.c:822 - ERROR: 1 S File 'etc' cannot be found in '(null)' path.
 1 - miscLocateExe() Function Test :
 1 - 
 1 -    ---------------------------------------------------------
 1 - Tested Exe = "NULL"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.437174 - miscFile.c:751 - ERROR: 1 S Received a NULL value for parameter 'fileName'.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.699807 - miscFile.c:751 - ERROR: 1 S Received a NULL value for parameter 'fileName'.
 1 - Tested Exe = "miscLocateDir"  -> EXIST at : ../bin//miscLocateDir
 1 - Tested Exe = "sclsvrServer"  -> EXIST at : /home/users/bourgesl/INTROOT/bin//sclsvrServer
 1 - Tested Exe = "logManager"  -> EXIST at : /home/users/bourgesl/INTROOT/bin//logManager
 1 - Tested Exe = "cvs"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.438282 - miscFile.c:822 - ERROR: 1 S File 'cvs' cannot be found in '../bin/:$INTROOT/bin/:$MCSROOT/bin/' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.700898 - miscFile.c:822 - ERROR: 1 S File 'cvs' cannot be found in '../bin/:$INTROOT/bin/:$MCSROOT/bin/' path.
 1 - Tested Exe = "error"  -> DOESN'T EXIST
-1 - miscTestFile -   misc - Error - 2011-07-19T14:54:35.439345 - miscFile.c:822 - ERROR: 1 S File 'error' cannot be found in '../bin/:$INTROOT/bin/:$MCSROOT/bin/' path.
+1 - miscTestFile -   misc - Error - 2011-08-31T20:50:20.701897 - miscFile.c:822 - ERROR: 1 S File 'error' cannot be found in '../bin/:$INTROOT/bin/:$MCSROOT/bin/' path.

@@ -44,16 +44,16 @@
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufGetByteAt(NULL, 0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.350400 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.350478 - miscDynBuf.c:165 - ERROR:  2 S Dynamic Buffer not initialized.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.647031 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.647088 - miscDynBuf.c:165 - ERROR:  2 S Dynamic Buffer not initialized.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
 1 - miscDynBufGetByteAt(NULL, 0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.351520 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.648048 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - miscDynBufGetByteAt(0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.352640 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.649043 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - miscDynBufGetByteAt(1) = "h" SUCCEED
 1 - 
@@ -62,22 +62,22 @@
 1 - miscDynBufGetByteAt(23) = "!" SUCCEED
 1 - 
 1 - miscDynBufGetByteAt(24) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.353701 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.649989 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufGetBytesFromTo(0, 4) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.355758 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.355805 - miscDynBuf.c:202 - ERROR:  2 S Dynamic Buffer not initialized.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.651861 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.651885 - miscDynBuf.c:202 - ERROR:  2 S Dynamic Buffer not initialized.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
 1 - miscDynBufGetBytesFromTo(0, 4) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.356884 - miscDynBuf.c:209 - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.652851 - miscDynBuf.c:209 - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - miscDynBufGetBytesFromTo(NULL, 1, 12) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.357955 - miscDynBuf.c:647 - ERROR: 1 S Received a NULL value for parameter 'bytes'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.653786 - miscDynBuf.c:647 - ERROR: 1 S Received a NULL value for parameter 'bytes'.
 1 - 
 1 - miscDynBufGetBytesFromTo(1, 12) = "hello dynBuf" SUCCEED
 1 - 
@@ -86,24 +86,24 @@
 1 - miscDynBufGetBytesFromTo(6, 6) = " " SUCCEED
 1 - 
 1 - miscDynBufGetBytesFromTo(23, 18) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.359016 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.654753 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
 1 - 
 1 - miscDynBufGetBytesFromTo(18, 23) = ":) !!!" SUCCEED
 1 - 
 1 - miscDynBufGetBytesFromTo(18, 24) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.360116 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.655693 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufReplaceByteAt(0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.362140 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.362185 - miscDynBuf.c:165 - ERROR:  2 S Dynamic Buffer not initialized.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.657630 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.657646 - miscDynBuf.c:165 - ERROR:  2 S Dynamic Buffer not initialized.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
 1 - miscDynBufReplaceByteAt(0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.363209 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.658586 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - miscDynBufReplaceByteAt(1) = "H" SUCCEED
 1 - miscDynBufGetNbStoredBytes = '23'.
@@ -130,7 +130,7 @@
 1 - miscDynBufGetBuffer= "Hello BynBuf'... :) !!@".
 1 - 
 1 - miscDynBufReplaceByteAt(24) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.364337 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.659555 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
@@ -172,7 +172,7 @@
 1 - miscDynBufGetBuffer= "Encore un 'Hello miscBynBuf'... :) !!~~~@".
 1 - 
 1 - miscDynBufInsertBytesAt("~~~", 3, 42) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.365414 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.660529 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
@@ -206,19 +206,19 @@
 1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf' !".
 1 - 
 1 - miscDynBufReplaceBytesFromTo(" !", 3, 31, 34) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.366491 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.661545 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufDeleteBytesFromTo(0, 13) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.368591 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.368637 - miscDynBuf.c:202 - ERROR:  2 S Dynamic Buffer not initialized.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.663418 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.663442 - miscDynBuf.c:202 - ERROR:  2 S Dynamic Buffer not initialized.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
 1 - miscDynBufDeleteBytesFromTo(0, 13) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.369663 - miscDynBuf.c:209 - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.664380 - miscDynBuf.c:209 - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - miscDynBufDeleteBytesFromTo(1, 13) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '20'.
@@ -227,7 +227,7 @@
 1 - miscDynBufGetBuffer= "Hello miscBynBuf' !".
 1 - 
 1 - miscDynBufDeleteBytesFromTo(10, 7) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.370738 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.665385 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
 1 - 
 1 - miscDynBufDeleteBytesFromTo(7, 10) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '16'.
@@ -248,14 +248,14 @@
 1 - miscDynBufGetBuffer= "Hello BynBuf".
 1 - 
 1 - miscDynBufDeleteBytesFromTo(12, 14) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.371804 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.666335 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufStrip() FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.373905 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.373952 - miscDynBuf.c:273 - ERROR:  2 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.668183 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.668229 - miscDynBuf.c:273 - ERROR:  2 S Received a NULL value for parameter 'dynBuf'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
@@ -269,8 +269,8 @@
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufReset() FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.376016 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.376069 - miscDynBuf.c:273 - ERROR:  2 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.670104 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.670137 - miscDynBuf.c:273 - ERROR:  2 S Received a NULL value for parameter 'dynBuf'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
@@ -284,12 +284,12 @@
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufAppendString(&dynBuf = NULL) : FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.377095 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.671075 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
 1 - miscDynBufAppendString(NULL) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.378143 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.672005 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - miscDynBufAppendString("hello dynStr") SUCCEED
 1 - miscDynBufGetNbStoredBytes = '13'.
@@ -313,15 +313,15 @@
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufInsertStringAt(NULL, 0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.379232 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.673046 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
 1 - miscDynBufInsertStringAt(NULL, 0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.380346 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.674026 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - miscDynBufInsertStringAt(NULL, 1) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.381381 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.674955 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - miscDynBufInsertStringAt("Encore un '", 1) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '35'.
@@ -342,18 +342,18 @@
 1 - miscDynBufGetBuffer= "Encore un 'hello miscdynStr ... :) !!!~~~".
 1 - 
 1 - miscDynBufInsertStringAt("~~~", 43) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.382448 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.675927 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufReplaceStringFromTo("(null)", 0, 9) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.383505 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.676919 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
 1 - miscDynBufReplaceStringFromTo("(null)", 0, 9) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.384615 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.677852 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - miscDynBufReplaceStringFromTo("Toujours ce", 1, 9) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '44'.
@@ -362,7 +362,7 @@
 1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr ... :) !!!~~~".
 1 - 
 1 - miscDynBufReplaceStringFromTo(" !", 42, 40) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.385688 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.678823 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
 1 - 
 1 - miscDynBufReplaceStringFromTo(" !", 40, 42) SUCCEED
 1 - 
@@ -373,14 +373,14 @@
 1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr  !".
 1 - 
 1 - miscDynBufReplaceStringFromTo(" !", 31, 34) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.386761 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.679769 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
 1 - miscDynBufDestroy() FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.388902 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.388954 - miscDynBuf.c:273 - ERROR:  2 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.681661 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.681677 - miscDynBuf.c:273 - ERROR:  2 S Received a NULL value for parameter 'dynBuf'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
@@ -423,14 +423,14 @@
 1 - 
 1 - ---------------------------------------------------------------
 1 - miscDynBufLoadFile(../config/) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.394039 - miscDynBuf.c:1112 - ERROR: 1 S Could not read '../config/' file : 'Is a directory'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.686429 - miscDynBuf.c:1112 - ERROR: 1 S Could not read '../config/' file : 'Is a directory'.
 1 - miscDynBufGetNbStoredBytes = '0'.
 1 - miscDynBufGetNbAllocatedBytes = '4096'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "".
 1 - miscDynBufLoadFile(../config/doxyfile) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '840'.
-1 - miscDynBufGetNbAllocatedBytes = '840'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -450,12 +450,12 @@
 1 - # Module configuration options customization
 1 - #---------------------------------------------------------------------------
 1 - OPTIMIZE_OUTPUT_FOR_C  = YES
-1 - Á".
+1 - ".
 1 - 
 1 - ---------------------------------------------------------------
 1 - miscDynBufSavePartInFile(0, ../tmp/0.txt) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '840'.
-1 - miscDynBufGetNbAllocatedBytes = '840'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -475,10 +475,10 @@
 1 - # Module configuration options customization
 1 - #---------------------------------------------------------------------------
 1 - OPTIMIZE_OUTPUT_FOR_C  = YES
-1 - Á".
+1 - ".
 1 - miscDynBufSavePartInFile(10, ../tmp/10.txt) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '840'.
-1 - miscDynBufGetNbAllocatedBytes = '840'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -498,13 +498,13 @@
 1 - # Module configuration options customization
 1 - #---------------------------------------------------------------------------
 1 - OPTIMIZE_OUTPUT_FOR_C  = YES
-1 - Á".
+1 - ".
 1 - 
 1 - ---------------------------------------------------------------
 1 - miscDynBufSaveInFile(../tmp/) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.395234 - miscDynBuf.c:1168 - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.687544 - miscDynBuf.c:1168 - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -528,7 +528,7 @@
 1 - ".
 1 - miscDynBufSaveInFile(../tmp/test.txt) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -553,9 +553,9 @@
 1 - 
 1 - ---------------------------------------------------------------
 1 - miscDynBufSaveInASCIIFile(../tmp/) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.396425 - miscDynBuf.c:1168 - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.688587 - miscDynBuf.c:1168 - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -579,7 +579,7 @@
 1 - ".
 1 - miscDynBufSaveInASCIIFile(../tmp/testASCII.txt) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -703,9 +703,9 @@
 1 - commentPattern = '#'
 1 - line           = '(null)'
 1 - FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.397628 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.689777 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "#".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -733,7 +733,7 @@
 1 - line           = 'Test de miscAppendLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '869'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "#".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -762,9 +762,9 @@
 1 - commentPattern = ''
 1 - line           = '(null)'
 1 - FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.398702 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.690746 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - miscDynBufGetNbStoredBytes = '869'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -793,7 +793,7 @@
 1 - line           = 'Test de miscAppendCommentLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '903'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -823,7 +823,7 @@
 1 - line           = 'Test de miscAppendCommentLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '938'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "#".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -854,7 +854,7 @@
 1 - line           = 'Test de miscAppendCommentLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '975'.
-1 - miscDynBufGetNbAllocatedBytes = '1470'.
+1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = " /*".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -885,7 +885,7 @@
 1 - ------------------
 1 - Executing 'toto':
 1 - FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-07-19T14:54:33.402934 - miscDynBuf.c:1039 - ERROR: 1 S 'toto' command exited with status '127' : please use command's manpage for detailed information.
+1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.694729 - miscDynBuf.c:1039 - ERROR: 1 S 'toto' command exited with status '127' : please use command's manpage for detailed information.
 1 - miscDynBufGetNbStoredBytes = '1'.
 1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
@@ -903,17 +903,17 @@
 1 - ------------------
 1 - Executing 'echo $PATH':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '763'.
-1 - miscDynBufGetNbAllocatedBytes = '1333'.
+1 - miscDynBufGetNbStoredBytes = '535'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
-1 - miscDynBufGetBuffer= "/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/usr/kerberos/bin:/home/soft/shared/jdk1.5//bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/libexec:/usr/local/bin:/bin:/usr/bin:/home/soft/shared/jalopy-console-0.1-1.5rc3:/home/soft/shared/stilts:/home/soft/shared/gasgano-2.2.7/bin:/home/soft/local/JmmcTools/:/home/soft/shared/bin/:../bin:/home/users/bourgesl/INTROOT/bin:/home/MCS/DEVELOPMENT/bin:/home/users/bourgesl/bin:../bin:/home/users/bourgesl/bin:../bin:/home/users/bourgesl/bin
+1 - miscDynBufGetBuffer= "/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/usr/kerberos/bin:/home/soft/shared/jdk1.5//bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/libexec:/usr/local/bin:/bin:/usr/bin:/home/soft/shared/jalopy-console-0.1-1.5rc3:/home/soft/shared/stilts:/home/soft/shared/gasgano-2.2.7/bin:/home/soft/local/JmmcTools/:/home/soft/shared/bin/:../bin:/home/users/bourgesl/INTROOT/bin:/home/MCS/DEVELOPMENT/bin:/home/users/bourgesl/bin
 1 - ".
 1 - 
 1 - ------------------
 1 - Executing 'pwd':
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '40'.
-1 - miscDynBufGetNbAllocatedBytes = '512'.
+1 - miscDynBufGetNbAllocatedBytes = '896'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "/home/users/bourgesl/dev/MCS/misc/test
 1 - ".
@@ -921,8 +921,8 @@
 1 - ------------------
 1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://www.apple.com"':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '9197'.
-1 - miscDynBufGetNbAllocatedBytes = '10976'.
+1 - miscDynBufGetNbStoredBytes = '9617'.
+1 - miscDynBufGetNbAllocatedBytes = '14705'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "<!DOCTYPE html>
 1 - <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
@@ -934,7 +934,7 @@
 1 - 	<link id="globalheader-stylesheet" rel="stylesheet" href="http://images.apple.com/global/nav/styles/navigation.css" type="text/css" />
 1 - 
 1 - 	<title>Apple</title>
-1 - 	<meta name="omni_page" content="Apple - Index" />
+1 - 	<meta name="omni_page" content="Apple - Index/Tab" />
 1 - 	<meta name="Keywords" content="Apple" />
 1 - 	<meta name="Description" content="Apple designs and creates iPod and iTunes, Mac laptop and desktop computers, the OS X operating system, and the revolutionary iPhone and iPad." />
 1 - 	<script type="text/javascript">
@@ -949,11 +949,13 @@
 1 - 	<script src="http://images.apple.com/global/scripts/apple_core.js" type="text/javascript" charset="utf-8"></script>
 1 - 	<script src="http://images.apple.com/global/scripts/search_decorator.js" type="text/javascript" charset="utf-8"></script>
 1 - 
-1 - 	<script src="http://images.apple.com/v/home/b/scripts/ticker.js" type="text/javascript" charset="utf-8"></script>
-1 - 	<script src="http://images.apple.com/v/home/b/scripts/promotracker.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script type="text/javascript" src="http://images.apple.com/global/scripts/promomanager.js"></script>
+1 - 	<script src="http://images.apple.com/v/home/c/scripts/ticker.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/v/home/c/scripts/promotracker.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/v/home/c/scripts/promos.js" type="text/javascript" charset="utf-8"></script>
 1 - 	<link rel="stylesheet" href="http://images.apple.com/global/styles/base.css" type="text/css" />
-1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/b/styles/home.css" type="text/css" />
-1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/b/styles/c.css" type="text/css" />
+1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/c/styles/home.css" type="text/css" />
+1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/c/styles/c.css" type="text/css" />
 1 - </head>
 1 - <body id="home" class="keynote">
 1 - 	<script type="text/javascript">
@@ -1051,16 +1053,16 @@
 1 - 	<div id="main">
 1 - 		<div id="content">
 1 - 			<div id="billboard">
-1 - 				<article id="icloud" class="billboard content fancy">
-1 - 					<a href="/icloud/" class="block hero trackH">
-1 - 						<img src="http://images.apple.com/home/images/icloud_hero.png" alt="" width="363" height="393" class="hero right" />
-1 - 						<h1><img src="http://images.apple.com/home/images/icloud_title.png" alt="iCloud. iCloud stores your content and wirelessly pushes it to all your devices. And because it seamlessly integrates with your apps, everything happens automatically." width="388" height="239" /></h1>
+1 - 				<article id="macbookair" class="billboard content fancy promoset-1">
+1 - 					<a href="/macbookair/" class="block hero trackH">
+1 - 						<h1><img src="http://images.apple.com/home/images/hero_macbookair.png" alt="The new faster, MacBook Air. The ultimate everyday notebook. Now up to 2.5x faster, featuring highspeed Thunderbolt I/O and OS X Lion." width="902" height="586" /></h1>
 1 - 					</a>
-1 - 					<a href="/apple-events/wwdc-2011/" class="block callout keynote">
-1 - 						<span class="thumb"><img src="http://images.apple.com/home/images/video_keynote.jpg" alt="" width="106" height="64" /></span>
-1 - 						<span class="learn">Watch the</span><br /><span class="more">keynote</span>
+1 - 				</article><!--/macbookair-->
+1 - 				<article id="lion" class="billboard content fancy promoset-1">
+1 - 					<a href="/macosx/" class="block hero trackH">
+1 - 						<h1><img src="http://images.apple.com/home/images/hero_lion.png" alt="OS X Lion. The new king of the desktop. Available now from the Mac App Store for just $29.99" width="933" height="570" /></h1>
 1 - 					</a>
-1 - 				</article><!--/icloud-->
+1 - 				</article><!--/lion-->
 1 - 			</div><!--/billboard-->
 1 - 
 1 - 			<aside id="headlines">
@@ -1069,19 +1071,20 @@
 1 - 			</aside>
 1 - 
 1 - 			<aside class="promos">
-1 - 				<ul class="promos">										
-1 - 				 <li>
-1 - 				   <a class="trackP" href="/ios/ios5/"><img src="http://images.apple.com/home/images/promo_ios_5.png" alt="iOS 5. Coming this fall. With over 200 new features, iOS 5 is our most extensive software update ever." width="231" height="149" /></a>
-1 - 				</li>
-1 - 				<li>
-1 - 						<a class="trackP" href="/macosx/"><img src="http://images.apple.com/home/images/promo_osxlion.png" alt="OS X Lion. Coming this July. The world's most advanced desktop operating system advances even further." width="231" height="149" /></a>
-1 - 				</li>
-1 - 				<li>
-1 - 				 <a class="trackP" href="/iphone/gallery/ads.html"><img src="http://images.apple.com/home/images/iphonetvad_20110708.png" alt="Watch the new iPhone TV ad." width="231" height="149" /></a>
-1 - 				</li>
-1 - 										
+1 - 				<ul class="promos">
+1 - 					<li class="promoset-2-container">
+1 - 						<a class="trackP promoset-2 promoset-2-lion" href="/macosx/"><img src="http://images.apple.com/home/images/promo_lion.png" alt="OS X Lion. Available Now. Download it today from the Mac App Store." width="231" height="149" /></a>
+1 - 						<a class="trackP promoset-2 promoset-2-macbookair" href="/macbookair/"><img src="http://images.apple.com/home/images/promo_macbookair.png" alt="The new, faster MacBook Air. Now up to 2.5x faster and featuring high-speed Thunderbolt I/O." width="231" height="149" /></a>
+1 - 					</li>
+1 - 					
+1 - 					<li>
+1 - 						<a class="trackP" href="/ipad/#we-will-always"><img src="http://images.apple.com/home/images/promo_ipadtvad.png" alt="Watch the new iPad TV ad." width="231" height="149" /></a>
+1 - 					</li>
+1 - 					<li>
+1 - 						<a class="trackP" href="/icloud/"><img src="http://images.apple.com/home/images/promo_icloud.png" alt="iCloud. Coming this fall. iCloud stores your content and wirelessly pushes it to all your devices." width="231" height="149" /></a>
+1 - 					</li>
 1 - 					<li class="bts2011">
-1 - 						<a class="trackP" href="http://store.apple.com/us/browse/campaigns/back_to_school?aid=www-naus-bts2011-0526-14"><img src="http://images.apple.com/home/images/promo_bts2011.png" width="237" height="155" alt="Buy a Mac for college and get $100 to spend on the Mac App Store. Buy>Terms apply." /></a>
+1 - 						<a class="trackP" href="http://store.apple.com/us/browse/campaigns/back_to_school?aid=www-naus-bts2011-0526-14"><img src="http://images.apple.com/home/images/promo_bts2011.png" width="237" height="155" alt="Buy a Mac for college and get $100 to spend on the Mac App Store. Terms apply." /></a>
 1 - 					</li>
 1 - 				</ul><!--/promos-->
 1 - 			</aside><!--/promos-->
@@ -1135,14 +1138,14 @@
 1 - ------------------
 1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*"':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '6074'.
-1 - miscDynBufGetNbAllocatedBytes = '6272'.
+1 - miscDynBufGetNbStoredBytes = '6075'.
+1 - miscDynBufGetNbAllocatedBytes = '14705'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "<?xml version="1.0" encoding="UTF-8"?>
 1 - <VOTABLE version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 1 -   xmlns="http://www.ivoa.net/xml/VOTable/v1.2" >
 1 -  <DESCRIPTION>
-1 -    VizieR Astronomical Server vizier.u-strasbg.fr 	2011-07-19T14:54:35 [V1.80]
+1 -    VizieR Astronomical Server vizier.u-strasbg.fr 	2011-08-31T20:50:22 [V1.80]
 1 -    (replaces the 'Astrores' format originally described at
 1 -     http://vizier.u-strasbg.fr/doc/astrores.htx)
 1 -    In case of problem, please report to:	question@simbad.u-strasbg.fr
@@ -1153,7 +1156,7 @@
 1 -   <COOSYS ID="J2000" system="eq_FK5" equinox="J2000"/>
 1 - </DEFINITIONS>
 1 - 
-1 - <INFO ID="Ref" name="-ref" value="VOTx3106"/>
+1 - <INFO ID="Ref" name="-ref" value="VOTx23039"/>
 1 - <INFO ID="MaxTuples" name="-out.max" value="100"/>
 1 - 
 1 - <!--

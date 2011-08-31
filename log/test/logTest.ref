@@ -1,3 +1,4 @@
+ERROR: 2011-08-31T20:24:24.655027 - default - logTest - - log - socket initialized to 'jmmc.obs.ujf-grenoble.fr'
 ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 File logging switched OFF
 Stdout logging switched OFF
@@ -60,27 +61,27 @@ Testing Stdout Logging
 ###############################################################
 *** Stdout logging verbosity level is : 0
 *** Stdout logging verbosity level is : 1
-logTest - log - 2011-05-30T14:05:07.364936 - logTest.c:26 - logging warning
+logTest -    log - Warn  - 2011-08-31T20:24:24.656465 - logTest.c:26 - logging warning
 *** Stdout logging verbosity level is : 2
-logTest - log - 2011-05-30T14:05:07.365019 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365036 - logTest.c:27 - logging info
+logTest -    log - Warn  - 2011-08-31T20:24:24.656583 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.656611 - logTest.c:27 - logging info
 *** Stdout logging verbosity level is : 3
-logTest - log - 2011-05-30T14:05:07.365086 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365103 - logTest.c:27 - logging info
-logTest - log - 2011-05-30T14:05:07.365120 - logTest.c:28 - logging test
+logTest -    log - Warn  - 2011-08-31T20:24:24.656718 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.656747 - logTest.c:27 - logging info
+logTest -    log - Test  - 2011-08-31T20:24:24.656778 - logTest.c:28 - logging test
 *** Stdout logging verbosity level is : 4
-logTest - log - 2011-05-30T14:05:07.365160 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365176 - logTest.c:27 - logging info
-logTest - log - 2011-05-30T14:05:07.365194 - logTest.c:28 - logging test
-logTest - log - 2011-05-30T14:05:07.365212 - logTest.c:29 - logging debug
+logTest -    log - Warn  - 2011-08-31T20:24:24.656852 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.656880 - logTest.c:27 - logging info
+logTest -    log - Test  - 2011-08-31T20:24:24.656910 - logTest.c:28 - logging test
+logTest -    log - Debug - 2011-08-31T20:24:24.656941 - logTest.c:29 - logging debug
 *** Stdout logging verbosity level is : 5
-logTest - log - 2011-05-30T14:05:07.365242 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365259 - logTest.c:27 - logging info
-logTest - log - 2011-05-30T14:05:07.365276 - logTest.c:28 - logging test
-logTest - log - 2011-05-30T14:05:07.365294 - logTest.c:29 - logging debug
-logTest - log - 2011-05-30T14:05:07.365311 - logTest.c:30 - logging trace
-logTest - log - 2011-05-30T14:05:07.365329 - logTest.c:110 - EXIT_FUNC test1
-logTest - log - 2011-05-30T14:05:07.365352 - logTest.c:79 - ENTER_FUNC test1
+logTest -    log - Warn  - 2011-08-31T20:24:24.656995 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.657022 - logTest.c:27 - logging info
+logTest -    log - Test  - 2011-08-31T20:24:24.657053 - logTest.c:28 - logging test
+logTest -    log - Debug - 2011-08-31T20:24:24.657094 - logTest.c:29 - logging debug
+logTest -    log - Trace - 2011-08-31T20:24:24.657128 - logTest.c:30 - logging trace
+logTest -    log - Trace - 2011-08-31T20:24:24.657159 - logTest.c:110 - EXIT_FUNC test1
+logTest -    log - Trace - 2011-08-31T20:24:24.657189 - logTest.c:79 - ENTER_FUNC test1
 ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 File logging switched OFF
 Stdout logging switched ON
@@ -99,26 +100,26 @@ Testing Stdout Logging
 ###############################################################
 *** Stdout logging verbosity level is : 0
 *** Stdout logging verbosity level is : 1
-logTest - log - 2011-05-30T14:05:07.365373 - logTest.c:26 - logging warning
+logTest -    log - Warn  - 2011-08-31T20:24:24.657225 - logTest.c:26 - logging warning
 *** Stdout logging verbosity level is : 2
-logTest - log - 2011-05-30T14:05:07.365381 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365389 - logTest.c:27 - logging info
+logTest -    log - Warn  - 2011-08-31T20:24:24.657239 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.657249 - logTest.c:27 - logging info
 *** Stdout logging verbosity level is : 3
-logTest - log - 2011-05-30T14:05:07.365396 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365403 - logTest.c:27 - logging info
-logTest - log - 2011-05-30T14:05:07.365410 - logTest.c:28 - logging test
+logTest -    log - Warn  - 2011-08-31T20:24:24.657261 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.657271 - logTest.c:27 - logging info
+logTest -    log - Test  - 2011-08-31T20:24:24.657281 - logTest.c:28 - logging test
 *** Stdout logging verbosity level is : 4
-logTest - log - 2011-05-30T14:05:07.365417 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365424 - logTest.c:27 - logging info
-logTest - log - 2011-05-30T14:05:07.365431 - logTest.c:28 - logging test
-logTest - log - 2011-05-30T14:05:07.365438 - logTest.c:29 - logging debug
+logTest -    log - Warn  - 2011-08-31T20:24:24.657292 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.657302 - logTest.c:27 - logging info
+logTest -    log - Test  - 2011-08-31T20:24:24.657312 - logTest.c:28 - logging test
+logTest -    log - Debug - 2011-08-31T20:24:24.657322 - logTest.c:29 - logging debug
 *** Stdout logging verbosity level is : 5
-logTest - log - 2011-05-30T14:05:07.365445 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365452 - logTest.c:27 - logging info
-logTest - log - 2011-05-30T14:05:07.365459 - logTest.c:28 - logging test
-logTest - log - 2011-05-30T14:05:07.365465 - logTest.c:29 - logging debug
-logTest - log - 2011-05-30T14:05:07.365472 - logTest.c:30 - logging trace
-logTest - log - 2011-05-30T14:05:07.365479 - logTest.c:110 - EXIT_FUNC test1
+logTest -    log - Warn  - 2011-08-31T20:24:24.657334 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.657344 - logTest.c:27 - logging info
+logTest -    log - Test  - 2011-08-31T20:24:24.657354 - logTest.c:28 - logging test
+logTest -    log - Debug - 2011-08-31T20:24:24.657364 - logTest.c:29 - logging debug
+logTest -    log - Trace - 2011-08-31T20:24:24.657374 - logTest.c:30 - logging trace
+logTest -    log - Trace - 2011-08-31T20:24:24.657384 - logTest.c:110 - EXIT_FUNC test1
 ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 Accept log messages from 'mcs' module only 
 ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
@@ -147,7 +148,7 @@ Testing Stdout Logging
 ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 Clear list of allowed modules. All modules can log messages!!
 ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-logTest - log - 2011-05-30T14:05:07.365519 - logTest.c:79 - ENTER_FUNC test1
+logTest -    log - Trace - 2011-08-31T20:24:24.657468 - logTest.c:79 - ENTER_FUNC test1
 ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 File logging switched OFF
 Stdout logging switched ON
@@ -166,29 +167,29 @@ Testing Stdout Logging
 ###############################################################
 *** Stdout logging verbosity level is : 0
 *** Stdout logging verbosity level is : 1
-logTest - log - 2011-05-30T14:05:07.365528 - logTest.c:26 - logging warning
+logTest -    log - Warn  - 2011-08-31T20:24:24.657494 - logTest.c:26 - logging warning
 *** Stdout logging verbosity level is : 2
-logTest - log - 2011-05-30T14:05:07.365540 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365548 - logTest.c:27 - logging info
+logTest -    log - Warn  - 2011-08-31T20:24:24.657506 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.657517 - logTest.c:27 - logging info
 *** Stdout logging verbosity level is : 3
-logTest - log - 2011-05-30T14:05:07.365555 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365562 - logTest.c:27 - logging info
-logTest - log - 2011-05-30T14:05:07.365569 - logTest.c:28 - logging test
+logTest -    log - Warn  - 2011-08-31T20:24:24.657528 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.657538 - logTest.c:27 - logging info
+logTest -    log - Test  - 2011-08-31T20:24:24.657548 - logTest.c:28 - logging test
 *** Stdout logging verbosity level is : 4
-logTest - log - 2011-05-30T14:05:07.365576 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365583 - logTest.c:27 - logging info
-logTest - log - 2011-05-30T14:05:07.365590 - logTest.c:28 - logging test
-logTest - log - 2011-05-30T14:05:07.365597 - logTest.c:29 - logging debug
+logTest -    log - Warn  - 2011-08-31T20:24:24.657559 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.657569 - logTest.c:27 - logging info
+logTest -    log - Test  - 2011-08-31T20:24:24.657579 - logTest.c:28 - logging test
+logTest -    log - Debug - 2011-08-31T20:24:24.657589 - logTest.c:29 - logging debug
 *** Stdout logging verbosity level is : 5
-logTest - log - 2011-05-30T14:05:07.365604 - logTest.c:26 - logging warning
-logTest - log - 2011-05-30T14:05:07.365611 - logTest.c:27 - logging info
-logTest - log - 2011-05-30T14:05:07.365618 - logTest.c:28 - logging test
-logTest - log - 2011-05-30T14:05:07.365625 - logTest.c:29 - logging debug
-logTest - log - 2011-05-30T14:05:07.365632 - logTest.c:30 - logging trace
-logTest - log - 2011-05-30T14:05:07.365639 - logTest.c:110 - EXIT_FUNC test1
-logTest - log - 2011-05-30T14:05:07.365646 - logTest.c:116 - ENTER_FUNC testNoFileLineOrDate
-logTest - log - 2011-05-30T14:05:07.365653 - FileLine must not appear (FileLine mode is 'OFF')
-logTest - log - 2011-05-30T14:05:07.365659 - logTest.c:122 - FileLine must appear (FileLine mode is 'ON')
-logTest - log - logTest.c:125 - Date must not appear (Date mode is 'OFF')
-logTest - log - 2011-05-30T14:05:07.365673 - logTest.c:128 - Date must appear (Date mode is 'ON')
-logTest - log - 2011-05-30T14:05:07.365680 - logTest.c:130 - EXIT_FUNC testNoFileLineOrDate
+logTest -    log - Warn  - 2011-08-31T20:24:24.657600 - logTest.c:26 - logging warning
+logTest -    log - Info  - 2011-08-31T20:24:24.657610 - logTest.c:27 - logging info
+logTest -    log - Test  - 2011-08-31T20:24:24.657621 - logTest.c:28 - logging test
+logTest -    log - Debug - 2011-08-31T20:24:24.657631 - logTest.c:29 - logging debug
+logTest -    log - Trace - 2011-08-31T20:24:24.657641 - logTest.c:30 - logging trace
+logTest -    log - Trace - 2011-08-31T20:24:24.657651 - logTest.c:110 - EXIT_FUNC test1
+logTest -    log - Test  - 2011-08-31T20:24:24.657662 - logTest.c:116 - ENTER_FUNC testNoFileLineOrDate
+logTest -    log - Test  - 2011-08-31T20:24:24.657674 - FileLine must not appear (FileLine mode is 'OFF')
+logTest -    log - Test  - 2011-08-31T20:24:24.657686 - logTest.c:122 - FileLine must appear (FileLine mode is 'ON')
+logTest -    log - Test  - logTest.c:125 - Date must not appear (Date mode is 'OFF')
+logTest -    log - Test  - 2011-08-31T20:24:24.657709 - logTest.c:128 - Date must appear (Date mode is 'ON')
+logTest -    log - Test  - 2011-08-31T20:24:24.657719 - logTest.c:130 - EXIT_FUNC testNoFileLineOrDate

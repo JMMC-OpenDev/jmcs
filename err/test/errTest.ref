@@ -1,0 +1,22 @@
+ERROR: 2011-08-31T20:29:10.367169 - err unknown  errTest.c:30 1 S Error number 1234 (for test purpose only)
+ERROR: 2011-08-31T20:29:10.367550 - err unknown   errTest.c:31 3 S Error message intended to end-user (for test purpose only)
+ERROR: 2011-08-31T20:29:10.367852 - err unknown    errTest.c:32 2 S Error number 9876 (for test purpose only)
+Adding errors in stack...
+Error 1 in stack ? : Oui
+Error 24 in stack ? : Non
+
+Getting user message ...
+User message = Error message intended to end-user (for test purpose only)
+
+Displaying error stack...
+
+Saving/restoring error stack...
+unknown -    err - Error - 2011-08-31T20:29:10.367945 - errTest.c:30 - ERROR: 1 S Error number 1234 (for test purpose only)
+unknown -    err - Error - 2011-08-31T20:29:10.367969 - errTest.c:31 - ERROR:  2 S Error message intended to end-user (for test purpose only)
+unknown -    err - Error - 2011-08-31T20:29:10.367982 - errTest.c:32 - ERROR:   3 S Error number 9876 (for test purpose only)
+ERROR: 2011-08-31T20:29:10.367169 - err unknown  errTest.c:30 1 S Error number 1234 (for test purpose only)
+ERROR: 2011-08-31T20:29:10.367550 - err unknown   errTest.c:31 3 S Error message intended to end-user (for test purpose only)
+ERROR: 2011-08-31T20:29:10.367852 - err unknown    errTest.c:32 2 S Error number 9876 (for test purpose only)
+ERROR: 2011-08-31T20:29:10.367169 - err unknown  errTest.c:30 1 S Error number 1234 (for test purpose only)
+ERROR: 2011-08-31T20:29:10.367550 - err unknown   errTest.c:31 3 S Error message intended to end-user (for test purpose only)
+ERROR: 2011-08-31T20:29:10.367852 - err unknown    errTest.c:32 2 S Error number 9876 (for test purpose only)

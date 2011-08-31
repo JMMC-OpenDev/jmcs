@@ -867,7 +867,7 @@ public abstract class App {
         // Replace '.' by '/' of package name
         final String packagePath = packageName.replace(".", "/");
 
-        final String filePath = packagePath + "/" + fileName;
+        final String filePath = packagePath + "/resource/" + fileName;
         if (_logger.isLoggable(Level.FINE)) {
             _logger.fine("filePath = '" + filePath + "'.");
         }

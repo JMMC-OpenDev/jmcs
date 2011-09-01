@@ -24,11 +24,11 @@ import org.apache.commons.lang.SystemUtils;
 public abstract class Resources {
 
     /** the logger facility */
-    protected static final Logger logger_ = Logger.getLogger("fr.jmmc.mcs.util.Resources");
+    protected static final Logger logger_ = Logger.getLogger(Resources.class.getName());
     /** Contains the class nale for logging */
     private static String _loggerClassName = "Resources";
     /** resource filename  that must be overloaded by subclasses */
-    protected static String _resourceName = "fr/jmmc/mcs/util/Resources";
+    protected static String _resourceName = "fr/jmmc/jmcs/resource/Resources";
     /** cached resource bundle */
     private static ResourceBundle _resources = null;
     /** flag to indicate that the resource bundle is resolved */
@@ -37,7 +37,7 @@ public abstract class Resources {
     private static boolean MAC_OS_X = SystemUtils.IS_OS_MAC_OSX;
 
     /**
-     * Indicates the property file where informations will be exctracted.
+     * Indicates the property file where informations will be extracted.
      * The property file must end with .properties filename extension. But the
      * given name should omit the extension.
      *

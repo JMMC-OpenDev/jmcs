@@ -1,5 +1,13 @@
 This folder contains all java libraries used by the JMCS module.
 
+All of them should be listed in the modules's ApplicationData.xml
+
+
+You should be able to use the following xmlstarlet tips to generate your jnlp
+xml sel -t -m "//package" -c "./preceding-sibling::comment()[1]"  -e jar -a href -o "@SHARED@/" -v "./@jars" -b -b -n -n fr/jmmc/jmcs/resource/ApplicationData.xml
+by this way they will be properly be handled by the jmcsDeployJnlp script.
+
+
 Runtime Libraries (JNLP) are described in the following files :
 ../src/fr/jmmc/mcs/gui/ApplicationData.xml 
 ../src/Jmcs.jnlp

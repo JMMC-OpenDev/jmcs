@@ -164,11 +164,8 @@ all:	do_castor do_all
 do_castor:
 	./jmcsGenerateJavaFromXsd.sh
 	
-clean : clean_castor clean_all 
+clean : clean_all 
 	@echo " . . . clean done"
-
-clean_castor:
-	rm -rf fr/jmmc/jmcs/data/castor
 
 man   : do_man 
 	@echo " . . . man page(s) done"
@@ -178,7 +175,7 @@ install : install_all
 	jmcsDeployJnlp $(JNLP).jnlp
         
 	@echo "Install $(JNLP).jar"
-# JmcsLibs contains only shared libraries used to package application single jar file
+    # JmcsLibs contains only shared libraries used to package application single jar file
 	@cp $$HOME/public_html/$(JNLP)/$(JNLP).jar $(INSTALL_ROOT)/lib
         
 	@echo " . . . installation done"

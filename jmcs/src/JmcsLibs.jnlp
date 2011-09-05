@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <jnlp spec="1.0+" codebase="@GENERATED@" href="@GENERATED@">
   <information>
-    <title>Jmcs libraries</title>
+    <title>jMCS Framwork</title>
     <vendor>JMMC</vendor>
-    <homepage href="http://www.jmmc.fr"/>
-    <description>Jmcs libraries - JMMC shared libraries.</description>
+    <homepage href="http://www.jmmc.fr/dev/jmcs"/>
+    <description>JMMC GUI Homogeneity Framework</description>
     <offline-allowed/>
   </information>
   <security>
@@ -12,38 +12,52 @@
   </security>
   <resources>
     <j2se version="1.5+"/>
-       
-    <!-- Generated -->
+
+    <!-- Generated with 'xml sel -t -m "//package" -c "./preceding-sibling::comment()[1]" -e jar -a href -o "@SHARED@/" -v "./@jars" -b -b -n -n fr/jmmc/jmcs/resource/ApplicationData.xml'-->
+
     <!-- VO interoperability -->
     <jar href="@SHARED@/jsamp-1.2.jar"/>
+    
     <!-- Launch one desktop browser -->
     <jar href="@SHARED@/BrowserLauncher2-1_3.jar"/>
+    
     <!-- Documentation reader -->
     <jar href="@SHARED@/jhall.jar "/>
+    
     <!-- Swing Task management -->
     <jar href="@SHARED@/swing-worker-1.2.jar"/>
+    
     <!-- Mac OS X Desktop integration -->
     <jar href="@SHARED@/AppleJavaExtensions.jar"/>
+    
     <!-- Xml binding (target models and aspro2) -->
     <jar href="@SHARED@/activation.jar"/>
     <jar href="@SHARED@/jaxb-api.jar"/>
     <jar href="@SHARED@/jaxb-impl.jar"/>
     <jar href="@SHARED@/jsr173_1.0_api.jar"/>
+    
     <!--  Xml binding (ApplicationData and LITpro) -->
     <jar href="@SHARED@/castor.jar"/>
+    
     <!-- castor dependency -->
     <jar href="@SHARED@/xercesImpl.jar"/>
     <jar href="@SHARED@/xmlParserAPIs.jar"/>
+    
     <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
     <jar href="@SHARED@/commons-httpclient-3.1.jar "/>
+    
     <!-- HttpClient dependency -->
     <jar href="@SHARED@/commons-codec-1.3.jar"/>
+    
     <!-- Logging common interface (HttpClient, Axis dependencies at least) -->
     <jar href="@SHARED@/commons-logging-1.1.1.jar"/>
+    
     <!-- Graphical logging utility (-loggui option) -->
     <jar href="@SHARED@/loggui.jar"/>
+    
     <!-- Parse command line arguments -->
     <jar href="@SHARED@/java-getopt-1.0.13.jar"/>
+    
     <!-- Only used to detect the platform -->
     <jar href="@SHARED@/commons-lang-2.6.jar"/>
   </resources>

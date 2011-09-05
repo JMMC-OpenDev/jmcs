@@ -6,14 +6,6 @@
     <dependences>
         <!-- See/complete lib/README.txt -->
 
-        <!-- Science stuff -->
-
-        <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
-        <package name="CDS_SpType"
-        description="Get information from spectral type of stellar objects. Provided by CDS"
-        link="nc"
-        jars="sptype.jar"/>
-
         <!-- VO interoperability -->
         <package name="JSAMP"
         description="JSAMP is a Java toolkit for use with the Simple Applications Messaging Protocol. Made by Mark Taylor, working in the Astrophysics Group at Bristol University."
@@ -21,29 +13,7 @@
         jars="jsamp-1.2.jar"
         license="(at least) the Academic Free Licence and the BSD License."/>
 
-
-        <!-- Model computations -->
-        <package name="commons-math"
-        description="Commons Math is a library of lightweight, self-contained mathematics and statistics components addressing the most common problems not available in the Java programming language or Commons Lang."
-        link="http://commons.apache.org/math/"
-        jars="commons-math-2.0.jar"
-        license="APACHE_V2"/>
-
-        <!-- Model computations (bessel functions) -->
-        <package name="CERN colt"
-        description="provides a set of Open Source Libraries for High Performance Scientific and Technical Computing in Java"
-        link="http://acs.lbl.gov/software/colt/"
-        jars="colt.jar"
-        license="Copyright (c) 1999 CERN - European Organization for Nuclear Research"/>
-        <!--
-          Copyright (c) 1999 CERN - European Organization for Nuclear Research.
-          Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose is
-          hereby granted without fee, provided that the above copyright notice appear in all copies and that both that
-          copyright notice and this permission notice appear in supporting documentation. CERN makes no representations
-          about the suitability of this software for any purpose. It is provided "as is" without expressed or implied warranty.
-        -->
-
-       <!-- Swing -->
+        <!-- Swing -->
 
         <!-- Launch one desktop browser -->
         <package name="BrowserLauncher2"
@@ -53,12 +23,13 @@
 
         <!-- Documentation reader -->
         <package name="jhall"
-        description=" Show a help window from JavaHelp Jar file "
+        description="Show a help window from JavaHelp Jar file "
         link="http://java.sun.com/javase/technologies/desktop/javahelp/"
         jars="jhall.jar "/>
         
         <!-- Swing Task management -->
-        <package name="SwingWorker" description="backport of SwingWorker included into Java 1.6"
+        <package name="SwingWorker"
+        description="backport of SwingWorker included into Java 1.6"
         link="https://swingworker.dev.java.net/"
         jars="swing-worker-1.2.jar"
         license="LGPL"/>     
@@ -123,7 +94,7 @@
         <package name="commons-lang"
         description="Provide much needed additions to the standard JDK's java.lang package"
         link="http://commons.apache.org/lang/"
-        jars="commons-lang-2.4.jar"
+        jars="commons-lang-2.6.jar"
         license="APACHE_V2"/>
        
     </dependences>

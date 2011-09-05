@@ -100,25 +100,16 @@ JARFILES        = jmcs
 #
 # <brief description of jmcs jar files>
 jmcs_DIRS     = fr
-jmcs_EXTRAS   = fr/jmmc/mcs/gui/*.png \
-                fr/jmmc/mcs/gui/ApplicationData.xml
+jmcs_EXTRAS   = fr/jmmc/jmcs/resource/*.png \
+                fr/jmmc/jmcs/resource/ApplicationData.xml
 
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES = jmcsStarResolver \
-                   jmcsStarResolverWidget \
-				   jmcsCatalogs \
-				   jmcsALX \
-				   jmcsLD2UD
+JAVA_EXECUTABLES = 
 
 #
 # <brief description of jmcsGenerateHelpsetFromHtml java program>
-jmcsStarResolver_CLASS        = fr.jmmc.mcs.astro.star.StarResolver
-jmcsStarResolverWidget_CLASS  = fr.jmmc.mcs.astro.star.StarResolverWidget
-jmcsCatalogs_CLASS            = fr.jmmc.mcs.astro.Catalog
-jmcsALX_CLASS                 = fr.jmmc.mcs.astro.ALX
-jmcsLD2UD_CLASS               = fr.jmmc.mcs.astro.LD2UD
 
 #
 # Command Definition Files (CDF)

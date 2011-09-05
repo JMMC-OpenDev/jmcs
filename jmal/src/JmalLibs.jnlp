@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<jnlp spec="1.0+" codebase="@GENERATED@" href="@GENERATED@">
+  <information>
+    <title>jMAL Framwork</title>
+    <vendor>JMMC</vendor>
+    <homepage href="http://www.jmmc.fr/dev/jmal"/>
+    <description>JMMC Astronomical library</description>
+    <offline-allowed/>
+  </information>
+  <security>
+    <all-permissions/>
+  </security>
+  <resources>
+    <j2se version="1.5+"/>
+
+    <!-- Generated with 'xml sel -t -m "//package" -c "./preceding-sibling::comment()[1]" -e jar -a href -o "@SHARED@/" -v "./@jars" -b -b -n -n fr/jmmc/jmal/resource/ApplicationData.xml'-->
+    <!-- Java Mariotti Common Software -->
+    <jar href="@SHARED@/jmcs.jar"/>
+
+    <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
+    <jar href="@SHARED@/sptype.jar"/>
+
+    <!-- Model computations -->
+    <jar href="@SHARED@/commons-math-2.0.jar"/>
+
+    <!-- Model computations (bessel functions) -->
+    <jar href="@SHARED@/colt.jar"/>
+  </resources>
+  <component-desc/>
+</jnlp>

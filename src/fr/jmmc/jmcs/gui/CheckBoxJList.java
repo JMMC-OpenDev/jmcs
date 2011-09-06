@@ -8,12 +8,26 @@
  */
 package fr.jmmc.jmcs.gui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import java.util.*;
-
-import javax.swing.*;
-import javax.swing.event.*;
 
 /**
  * DOCUMENT ME!

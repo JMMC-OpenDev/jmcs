@@ -3,7 +3,6 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
-import fr.jmmc.mcs.util.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;

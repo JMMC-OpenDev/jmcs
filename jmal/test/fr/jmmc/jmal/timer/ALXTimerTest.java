@@ -1,12 +1,13 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.mcs.timer;
+package fr.jmmc.jmal.timer;
 
 import fr.jmmc.jmal.ALX;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.ivoa.util.timer.TimerFactory;
 import org.ivoa.util.timer.TimerFactory.UNIT;
 
 /**

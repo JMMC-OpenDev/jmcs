@@ -3,10 +3,10 @@
  ******************************************************************************/
 package fr.jmmc.mcs.model.test;
 
-import fr.jmmc.mcs.image.ImageViewer;
-import fr.jmmc.mcs.model.ModelDefinition;
-import fr.jmmc.mcs.model.ModelManager;
-import fr.jmmc.mcs.model.targetmodel.Model;
+import fr.jmmc.jmal.image.ImageViewer;
+import fr.jmmc.jmal.model.ModelDefinition;
+import fr.jmmc.jmal.model.ModelManager;
+import fr.jmmc.jmal.model.targetmodel.Model;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;

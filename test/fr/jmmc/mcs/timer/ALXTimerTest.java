@@ -3,11 +3,11 @@
  ******************************************************************************/
 package fr.jmmc.mcs.timer;
 
-import fr.jmmc.mcs.astro.ALX;
+import fr.jmmc.jmal.ALX;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import fr.jmmc.mcs.timer.TimerFactory.UNIT;
+import org.ivoa.util.timer.TimerFactory.UNIT;
 
 /**
  * Simple timer tests of ALX class

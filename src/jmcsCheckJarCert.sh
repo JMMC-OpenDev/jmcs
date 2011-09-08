@@ -78,7 +78,7 @@ checkJar()
     then
         jarsigner -verify $jarFile
         return 1
-    elif [ $(echo $RES | wc -l ) -gt 1 ]
+    elif [ $(echo "$RES" | wc -l ) -gt 1 ]
     then
         echo -n "WARNING: Your jarfile contains multiples signatures which can"
         echo "causes troubles on some clients"

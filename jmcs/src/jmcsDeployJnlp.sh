@@ -414,6 +414,9 @@ copyJnlpAndRelated()
             shllibEchoError "Can't find '$jar'"
             exit 1
         fi
+    
+    jmcsCheckJarCert "$destjar"
+        
     done
 
     # copy each jnlp files and check that subfolder does exist

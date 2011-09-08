@@ -11,9 +11,8 @@
     <all-permissions/>
   </security>
   <resources>
-    <j2se version="1.5+"/>
-
     <!-- Generated with 'xml sel -t -m "//package" -c "./preceding-sibling::comment()[1]" -e jar -a href -o "@SHARED@/" -v "./@jars" -b -b -n -n fr/jmmc/jmal/resource/ApplicationData.xml'-->
+
     <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
     <jar href="@SHARED@/sptype.jar"/>
 
@@ -23,5 +22,4 @@
     <!-- Model computations (bessel functions) -->
     <jar href="@SHARED@/colt.jar"/>
   </resources>
-  <component-desc/>
 </jnlp>

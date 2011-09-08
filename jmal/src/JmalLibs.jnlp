@@ -14,9 +14,6 @@
     <j2se version="1.5+"/>
 
     <!-- Generated with 'xml sel -t -m "//package" -c "./preceding-sibling::comment()[1]" -e jar -a href -o "@SHARED@/" -v "./@jars" -b -b -n -n fr/jmmc/jmal/resource/ApplicationData.xml'-->
-    <!-- Java Mariotti Common Software -->
-    <jar href="@SHARED@/jmcs.jar"/>
-
     <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
     <jar href="@SHARED@/sptype.jar"/>
 

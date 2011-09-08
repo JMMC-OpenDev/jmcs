@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <jnlp spec="1.0+" codebase="@GENERATED@" href="@GENERATED@">
   <information>
-    <title>jMCS Framwork</title>
+    <title>jMCS Framework</title>
     <vendor>JMMC</vendor>
     <homepage href="http://www.jmmc.fr/dev/jmcs"/>
     <description>JMMC GUI Homogeneity Framework</description>
@@ -11,8 +11,6 @@
     <all-permissions/>
   </security>
   <resources>
-    <j2se version="1.5+"/>
-
     <!-- Generated with 'xml sel -t -m "//package" -c "./preceding-sibling::comment()[1]" -e jar -a href -o "@SHARED@/" -v "./@jars" -b -b -n -n fr/jmmc/jmcs/resource/ApplicationData.xml'-->
 
     <!-- VO interoperability -->
@@ -61,5 +59,4 @@
     <!-- Only used to detect the platform -->
     <jar href="@SHARED@/commons-lang-2.6.jar"/>
   </resources>
-  <component-desc/>
 </jnlp>

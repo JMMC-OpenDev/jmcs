@@ -837,6 +837,18 @@ public abstract class App {
     }
 
     /**
+     * Get URL from resource filename located in the following path:
+     * $package(this App class)$/resource/fileName
+     *
+     * @param fileName name of searched file.
+     *
+     * @return resource file URL
+     */
+    public URL getURLFromResourceFilename(final String fileName) {
+        return getURLFromResourceFilename(getClass(), fileName);
+    }    
+
+    /**
      * Get URL from resource filename located in the classloader using the following path:
      * $package(appClass)$/resource/fileName
      * 
@@ -868,7 +880,7 @@ public abstract class App {
      *
      * @return resource file URL
      */
-    public static URL getURLFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
+    private static URL getURLFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
         if (appClass == null)
         {
             return null;

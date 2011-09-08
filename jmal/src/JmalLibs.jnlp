@@ -22,4 +22,5 @@
     <!-- Model computations (bessel functions) -->
     <jar href="@SHARED@/colt.jar"/>
   </resources>
+  <component-desc/>
 </jnlp>

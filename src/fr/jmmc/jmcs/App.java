@@ -95,8 +95,10 @@ public abstract class App {
         SwingSettings.setup();
 
     }
+    /** application data file i.e. "ApplicationData.xml" */
+    public static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
     /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.gui.App");
+    private static final Logger _logger = Logger.getLogger(App.class.getName());
     /** flag to avoid calls to System.exit() (JUnit) */
     private static boolean _avoidSystemExit = false;
     /** Singleton reference */
@@ -231,7 +233,7 @@ public abstract class App {
      * Otherwise, uses the default ApplicationData.xml.
      */
     private void loadApplicationData() {
-        final URL fileURL = getURLFromResourceFilename("ApplicationData.xml");
+        final URL fileURL = getURLFromResourceFilename(this, APPLICATION_DATA_FILE);
 
         if (fileURL == null) {
             // Take the defaultData XML in order to take the default menus
@@ -254,27 +256,14 @@ public abstract class App {
      * @throws IllegalStateException if the default ApplicationData.xml can not be loaded
      */
     private void loadDefaultApplicationData() throws IllegalStateException {
-        String defaultXmlLocation = "";
 
-        // The App class
-        final Class<?> appClass = App.class;
-
-        // The App package
-        final Package defaultPackage = appClass.getPackage();
-
-        // Replace '.' by '/' of package name
-        final String defaultPackageName = defaultPackage.getName().replace(".", "/");
-
-        // Default XML location
-        defaultXmlLocation = defaultPackageName + "/ApplicationData.xml";
-
-        final URL defaultXmlURL = appClass.getClassLoader().getResource(defaultXmlLocation);
+        final URL defaultXmlURL = getURLFromResourceFilename(App.class, APPLICATION_DATA_FILE);
 
         if (defaultXmlURL == null) {
             throw new IllegalStateException("Cannot load default application data.");
         }
 
-        _logger.log(Level.SEVERE, "Loading application data from '" + defaultXmlURL + "' file.");
+        _logger.severe("Loading default application data from '" + defaultXmlURL + "' file.");
 
         // We reinstantiate the application data model
         _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
@@ -583,7 +572,7 @@ public abstract class App {
      * - System.exit(statusCode)
      * @param statusCode status code to return
      */
-    public final static void exit(final int statusCode) {
+    public static void exit(final int statusCode) {
         _logger.info("Killing the application.");
 
         try {
@@ -607,7 +596,7 @@ public abstract class App {
      * Define the  flag to avoid calls to System.exit() (JUnit)
      * @param flag true to avoid calls to System.exit()
      */
-    public final static void setAvoidSystemExit(final boolean flag) {
+    public static void setAvoidSystemExit(final boolean flag) {
         _avoidSystemExit = flag;
     }
 
@@ -843,23 +832,50 @@ public abstract class App {
      *
      * @return true if the Application is ready
      */
-    public final static boolean isReady() {
+    public static boolean isReady() {
         return _applicationReady;
     }
 
     /**
-     * Get URL from resource filename.
+     * Get URL from resource filename located in the classloader using the following path:
+     * $package(appClass)$/resource/fileName
+     * 
+     * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
+     * fr/jmmc/jmcs/resource/$fileName$
      *
+     * @param app any App instance
      * @param fileName name of searched file.
      *
      * @return resource file URL
      */
-    public URL getURLFromResourceFilename(final String fileName) {
-        // The class which is extended from App
-        final Class<?> actualClass = getClass();
-
+    public static URL getURLFromResourceFilename(final App app, final String fileName) {
+        if (app == null)
+        {
+            return null;
+        }
+        return getURLFromResourceFilename(app.getClass(), fileName);
+    }    
+    
+    /**
+     * Get URL from resource filename located in the classloader using the following path:
+     * $package(appClass)$/resource/fileName
+     * 
+     * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
+     * fr/jmmc/jmcs/resource/$fileName$
+     *
+     * @param appClass any App class or subclass
+     * @param fileName name of searched file.
+     *
+     * @return resource file URL
+     */
+    public static URL getURLFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
+        if (appClass == null)
+        {
+            return null;
+        }
+        
         // Its package
-        final Package p = actualClass.getPackage();
+        final Package p = appClass.getPackage();
 
         // the package name
         final String packageName = p.getName();
@@ -873,8 +889,13 @@ public abstract class App {
         }
 
         // resolve file path:
-        final URL fileURL = actualClass.getClassLoader().getResource(filePath);
+        final URL fileURL = appClass.getClassLoader().getResource(filePath);
 
+        if (fileURL == null)
+        {
+            _logger.warning("Cannot find resource from '" + filePath + "' file.");
+            return null;
+        }
         if (_logger.isLoggable(Level.FINE)) {
             _logger.fine("fileURL = '" + fileURL + "'.");
         }

@@ -80,8 +80,18 @@ checkJar()
         return 1
     elif [ $(echo "$RES" | wc -l ) -gt 1 ]
     then
-        echo -n "WARNING: Your jarfile contains multiples signatures which can"
-        echo "causes troubles on some clients"
+        echo 
+        echo -n "WARNING: Your jarfile contains multiple signatures which can"
+        echo "cause troubles on some clients"
+        echo 
+        echo "Commands for one strong cleanning:"
+        echo "mkdir newjar; cd newjar"
+        echo "jar xvf $jarFile"
+        echo "rm -rf META-INF"
+        echo "cd .."
+        echo "touch MANIFEST.MF"
+        echo "jar cfm newjar.jar MANIFEST.MF -C newjar/ ."
+        echo 
         return 1
     fi
     echo "  OK"

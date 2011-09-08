@@ -23,7 +23,7 @@ public final class ImageUtils
     /** Class Name */
     private static final String className_ = "fr.jmmc.mcs.image.ImageUtils";
     /** Class logger */
-    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
             className_);
     /** alpha integer mask */
     private final static int ALPHA_MASK = 0xff << 24;
@@ -119,7 +119,7 @@ public final class ImageUtils
 
             // init raster pixels
             for (int i = 0, size = array.length; i < size; i++) {
-                dataBuffer.setElem(i, getRGB(colorModel, iMaxColor, (array[i] - min) * c));
+                dataBuffer.setElem(i, getRGB(colorModel, iMaxColor, (array[i] - min) * c, ALPHA_MASK));
             }
             return new BufferedImage(rgbColorModel, imageRaster, false, null);
 
@@ -144,15 +144,16 @@ public final class ImageUtils
             return new BufferedImage(colorModel, imageRaster, false, null);
         }
     }
-
+    
     /**
      * Return an RGB color (32bits) using the given color model for the given value (linear scale)
      * @param colorModel color model
      * @param iMaxColor index of the highest color
      * @param value data value to convert
+     * @param alphaMask alpha mask (0 - 255) << 24
      * @return RGB color
      */
-    private static final int getRGB(final IndexColorModel colorModel, final int iMaxColor, final float value)
+    public static int getRGB(final IndexColorModel colorModel, final int iMaxColor, final float value, final int alphaMask)
     {
 
         int minColorIdx = (int) Math.floor(value);
@@ -188,6 +189,6 @@ public final class ImageUtils
         final int g = Math.round(ga + (gb - ga) * ratio);
         final int b = Math.round(ba + (bb - ba) * ratio);
 
-        return ALPHA_MASK | (r << 16) | (g << 8) | b;
+        return alphaMask | (r << 16) | (g << 8) | b;
     }
 }

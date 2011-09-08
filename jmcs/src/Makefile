@@ -61,7 +61,8 @@ lllll_OBJECTS   =
 # --------------------------
 SCRIPTS         = jmcsGenerateJavaFromXsd \
 				  jmcsHTML2HelpSet \
-				  jmcsDeployJnlp
+				  jmcsDeployJnlp \
+                  jmcsCheckJarCert
 SCRIPTS_L       =
 
 #

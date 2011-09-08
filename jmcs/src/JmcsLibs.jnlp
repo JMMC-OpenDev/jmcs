@@ -59,4 +59,5 @@
     <!-- Only used to detect the platform -->
     <jar href="@SHARED@/commons-lang-2.6.jar"/>
   </resources>
+  <component-desc/>
 </jnlp>

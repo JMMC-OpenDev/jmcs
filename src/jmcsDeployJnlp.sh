@@ -415,7 +415,10 @@ copyJnlpAndRelated()
             exit 1
         fi
     
-    jmcsCheckJarCert "$destjar"
+    if ! jmcsCheckJarCert "$destjar"
+    then
+        exit 1
+    fi
         
     done
 

@@ -157,6 +157,96 @@ createXsltFiles()
     </xsl:stylesheet>
 EOF
 
+    cat > applicationReleaseToHtml.xsl <<EOF
+<?xml version="1.0"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+  <xsl:output omit-xml-declaration="yes" indent="yes"/>
+  <xsl:template match="/">
+    <xsl:element name="html">
+      <xsl:element name="head">
+        <xsl:element name="title">
+          <xsl:value-of select="//program/@name"/>
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="//program/@version"/>
+          <xsl:text>releases</xsl:text>
+        </xsl:element>
+        <xsl:element name="link">
+          <xsl:attribute name="rel">
+            <xsl:text>alternate</xsl:text>
+          </xsl:attribute>
+          <xsl:attribute name="type">
+            <xsl:text>application/rss+xml</xsl:text>
+          </xsl:attribute>
+          <xsl:attribute name="title">
+            <xsl:text>RSS</xsl:text>
+          </xsl:attribute>
+          <xsl:attribute name="href">
+            <xsl:text>./releasenotes.rss</xsl:text>
+          </xsl:attribute>
+        </xsl:element>
+        <xsl:element name="link">
+          <xsl:attribute name="rel">
+            <xsl:text>stylesheet</xsl:text>
+          </xsl:attribute>
+          <xsl:attribute name="type">
+            <xsl:text>text/css</xsl:text>
+          </xsl:attribute>
+          <xsl:attribute name="href">
+            <xsl:text>http://www.jmmc.fr/css/2col_leftNav.css</xsl:text>
+          </xsl:attribute>
+        </xsl:element>
+      </xsl:element>
+      <xsl:element name="body">
+        <xsl:element name="h1">
+          <xsl:element name="a">
+            <xsl:attribute name="href">
+              <xsl:value-of select="'..'"/>
+            </xsl:attribute>
+            <xsl:value-of select="//program/@name"/>
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="//program/@version"/>
+          </xsl:element>
+          <xsl:text> release notes</xsl:text>
+        </xsl:element>
+        <xsl:for-each select="//release">
+          <xsl:element name="a">
+            <xsl:attribute name="name">
+              <xsl:value-of select="@version"/>
+            </xsl:attribute>
+          </xsl:element>
+          <xsl:element name="h2">
+            <xsl:text>Version </xsl:text>
+            <xsl:value-of select="@version"/>
+          </xsl:element>
+          <xsl:element name="p">
+            <xsl:value-of select="pubDate"/>
+            <xsl:element name="ul">
+            <xsl:apply-templates select=".//change[not(@type) or starts-with(@type,'FEATURE')]"/>
+            <xsl:apply-templates select=".//change[starts-with(@type,'CHANGE')] "/>
+            <xsl:apply-templates select=".//change[starts-with(@type,'BUG')] "/>
+            </xsl:element>
+          </xsl:element>
+        </xsl:for-each>
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
+  <xsl:template match="change">
+  <xsl:element name="li">
+  <xsl:choose>
+  <xsl:when test="./@type">
+  <xsl:value-of select="./@type"/>
+  </xsl:when>
+  <xsl:otherwise>
+  <xsl:text>FEATURE</xsl:text>
+  </xsl:otherwise>
+  </xsl:choose>
+  <xsl:text>: </xsl:text>
+  <xsl:value-of select="."/>
+  </xsl:element>
+  </xsl:template>
+ 
+</xsl:stylesheet>
+EOF
     cat > applicationReleaseToRss.xsl <<EOF
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:exslt="http://exslt.org/common"
@@ -215,12 +305,9 @@ EOF
             <!--<![CDATA[<![CDATA[]]>-->
             <xsl:value-of select="'&lt;![CDATA['" disable-output-escaping="yes"/>
             <ul>
-                <xsl:for-each select=".//change">
-                <xsl:sort select="./@type"/>
-                    <li>
-                        <xsl:if test="./@type"><xsl:value-of select="./@type"/>: </xsl:if><xsl:value-of select="."/>
-                    </li>
-                </xsl:for-each>
+            <xsl:apply-templates select=".//change[not(@type) or starts-with(@type,'FEATURE')]"/>
+            <xsl:apply-templates select=".//change[starts-with(@type,'CHANGE')] "/>
+            <xsl:apply-templates select=".//change[starts-with(@type,'BUG')] "/>
             </ul>
             <xsl:value-of select="']]>'" disable-output-escaping="yes"/>
           </xsl:element>
@@ -229,6 +316,21 @@ EOF
     </xsl:element>
   </xsl:element>
 </xsl:template>
+  <xsl:template match="change">
+  <xsl:element name="li">
+  <xsl:choose>
+  <xsl:when test="./@type">
+  <xsl:value-of select="./@type"/>
+  </xsl:when>
+  <xsl:otherwise>
+  <xsl:text>FEATURE</xsl:text>
+  </xsl:otherwise>
+  </xsl:choose>
+  <xsl:text>: </xsl:text>
+  <xsl:value-of select="."/>
+  </xsl:element>
+  </xsl:template>
+ 
 </xsl:stylesheet>
 EOF
 }
@@ -588,25 +690,10 @@ createReleaseFiles()
         setDateOfReleases.xsl $APPLICATION_DATA_XML 
 
         # transform into html and rss format
-        HTML_RELEASE_NOTES=releasenotes.htm
-        echo "Creating '$HTML_RELEASE_NOTES'"
-        xml sel -I -t -e "html" \
-        -e "head" \
-        -e "title" -v "//program/@name" -o " " -v "//program/@version" -o "releases"  -b \
-        -e "link" -a "rel" -o "alternate" -b -a "type" -o "application/rss+xml" -b  -a "title" -o "RSS" -b -a "href" -o "./releasenotes.rss" -b -b \
-        -e "link" -a "rel" -o "stylesheet" -b -a "type" -o "text/css" -b -a "href" -o "http://www.jmmc.fr/css/2col_leftNav.css" -b -b \
-        -b \
-        -e "body" \
-        -e "h1" -e "a" -a "href" -v "//ApplicationData/@link" -b  -v "//program/@name" -o " " -v "//program/@version" -b -o " release notes" -b \
-        -m "//release" \
-        -e "a" -a "name" -v "@version" -b -b \
-        -e "h2" -o "Version " -v "@version" -b \
-        -e "p" -v "pubDate" \
-        -e "ul" \
-        -m ".//change" -s A:T:U "./@type" -e "li" -i "./@type" -v "./@type" -o ": " -b -v "." -b\
-        -b -b -b -b \
-        $XML_RELEASE_FILE > $HTML_RELEASE_NOTES 
-
+        OUTPUTFILE=releasenotes.htm
+        echo "Creating '$OUTPUTFILE'"
+        xsltproc --output $OUTPUTFILE applicationReleaseToHtml.xsl $XML_RELEASE_FILE
+        
         OUTPUTFILE=releasenotes.rss
         echo "Creating '$OUTPUTFILE'"
         xsltproc --output $OUTPUTFILE applicationReleaseToRss.xsl $XML_RELEASE_FILE

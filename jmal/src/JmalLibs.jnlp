@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <jnlp spec="1.0+" codebase="@GENERATED@" href="@GENERATED@">
   <information>
-    <title>jMAL Framwork</title>
+    <title>jMAL Framework</title>
     <vendor>JMMC</vendor>
     <homepage href="http://www.jmmc.fr/dev/jmal"/>
     <description>JMMC Astronomical library</description>

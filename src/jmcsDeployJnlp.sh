@@ -200,7 +200,7 @@ EOF
         <xsl:element name="h1">
           <xsl:element name="a">
             <xsl:attribute name="href">
-              <xsl:value-of select="'..'"/>
+              <xsl:value-of select="'.'"/>
             </xsl:attribute>
             <xsl:value-of select="//program/@name"/>
             <xsl:text> </xsl:text>

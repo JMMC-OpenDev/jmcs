@@ -221,28 +221,32 @@ EOF
           <xsl:element name="p">
             <xsl:value-of select="pubDate"/>
             <xsl:element name="ul">
-            <xsl:apply-templates select=".//change[not(@type) or starts-with(@type,'FEATURE')]"/>
-            <xsl:apply-templates select=".//change[starts-with(@type,'CHANGE')] "/>
-            <xsl:apply-templates select=".//change[starts-with(@type,'BUG')] "/>
+            <xsl:variable name="featureSet" select=".//change[starts-with(@type,'FEATURE')]"/>
+            <xsl:variable name="changeSet" select=".//change[not(@type) or starts-with(@type,'CHANGE')] "/>
+            <xsl:variable name="bugfixSet" select=".//change[starts-with(@type,'BUG')]"/>
+            <xsl:if test="\$featureSet">
+              <li>Features:</li>
+              <ul><xsl:apply-templates select="\$featureSet"/></ul>
+            </xsl:if>
+            <xsl:if test="\$changeSet">
+              <li>Changes:</li>
+              <ul><xsl:apply-templates select="\$changeSet"/></ul>
+            </xsl:if>
+            <xsl:if test="\$bugfixSet">
+              <li>Bug fixes:</li>
+              <ul><xsl:apply-templates select="\$bugfixSet"/></ul>
+            </xsl:if>
             </xsl:element>
           </xsl:element>
         </xsl:for-each>
       </xsl:element>
     </xsl:element>
   </xsl:template>
+
   <xsl:template match="change">
-  <xsl:element name="li">
-  <xsl:choose>
-  <xsl:when test="./@type">
-  <xsl:value-of select="./@type"/>
-  </xsl:when>
-  <xsl:otherwise>
-  <xsl:text>FEATURE</xsl:text>
-  </xsl:otherwise>
-  </xsl:choose>
-  <xsl:text>: </xsl:text>
-  <xsl:value-of select="."/>
-  </xsl:element>
+      <xsl:element name="li">
+          <xsl:value-of select="."/>
+      </xsl:element>
   </xsl:template>
  
 </xsl:stylesheet>
@@ -305,9 +309,21 @@ EOF
             <!--<![CDATA[<![CDATA[]]>-->
             <xsl:value-of select="'&lt;![CDATA['" disable-output-escaping="yes"/>
             <ul>
-            <xsl:apply-templates select=".//change[not(@type) or starts-with(@type,'FEATURE')]"/>
-            <xsl:apply-templates select=".//change[starts-with(@type,'CHANGE')] "/>
-            <xsl:apply-templates select=".//change[starts-with(@type,'BUG')] "/>
+            <xsl:variable name="featureSet" select=".//change[starts-with(@type,'FEATURE')]"/>
+            <xsl:variable name="changeSet" select=".//change[not(@type) or starts-with(@type,'CHANGE')] "/>
+            <xsl:variable name="bugfixSet" select=".//change[starts-with(@type,'BUG')]"/>
+            <xsl:if test="\$featureSet">
+              <li>Features:</li>
+              <ul><xsl:apply-templates select="\$featureSet"/></ul>
+            </xsl:if>
+            <xsl:if test="\$changeSet">
+              <li>Changes:</li>
+              <ul><xsl:apply-templates select="\$changeSet"/></ul>
+            </xsl:if>
+            <xsl:if test="\$bugfixSet">
+              <li>Bug fixes:</li>
+              <ul><xsl:apply-templates select="\$bugfixSet"/></ul>
+            </xsl:if>
             </ul>
             <xsl:value-of select="']]>'" disable-output-escaping="yes"/>
           </xsl:element>
@@ -316,20 +332,12 @@ EOF
     </xsl:element>
   </xsl:element>
 </xsl:template>
-  <xsl:template match="change">
+  
+<xsl:template match="change">
   <xsl:element name="li">
-  <xsl:choose>
-  <xsl:when test="./@type">
-  <xsl:value-of select="./@type"/>
-  </xsl:when>
-  <xsl:otherwise>
-  <xsl:text>FEATURE</xsl:text>
-  </xsl:otherwise>
-  </xsl:choose>
-  <xsl:text>: </xsl:text>
-  <xsl:value-of select="."/>
+      <xsl:value-of select="."/>
   </xsl:element>
-  </xsl:template>
+</xsl:template>
  
 </xsl:stylesheet>
 EOF
@@ -474,6 +482,12 @@ copyJnlpAndRelated()
                         shllibEchoError "Can't sign '$destjar'"
                         exit 1
                     fi
+
+                    if ! jmcsCheckJarCert "$destjar"
+                    then
+                        exit 1
+                    fi
+                        
                 fi
 
                 #replace @SHARED@ token by correct URL:
@@ -511,17 +525,18 @@ copyJnlpAndRelated()
                     shllibEchoError "Can't sign '$destjar'"
                     exit 1
                 fi
+
+                if ! jmcsCheckJarCert "$destjar"
+                then
+                    exit 1
+                fi
+
             fi
         else
             shllibEchoError "Can't find '$jar'"
             exit 1
         fi
     
-    if ! jmcsCheckJarCert "$destjar"
-    then
-        exit 1
-    fi
-        
     done
 
     # copy each jnlp files and check that subfolder does exist

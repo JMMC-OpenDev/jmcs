@@ -20,8 +20,7 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
         implements Observer, ItemListener {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.util.RegisteredPreferencedBooleanAction");
+    private static final Logger _logger = Logger.getLogger(RegisteredPreferencedBooleanAction.class.getName());
     private static final long serialVersionUID = 1L;
     /** Monitored Preference object */
     private Preferences _preferences;

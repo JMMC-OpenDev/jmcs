@@ -20,8 +20,7 @@ import java.util.concurrent.ExecutionException;
 public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingWorker<T, Void> {
 
     /** Class logger */
-    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-            TaskSwingWorker.class.getName());
+    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TaskSwingWorker.class.getName());
     /** flag to log debugging information */
     protected final static boolean DEBUG_FLAG = false;
 

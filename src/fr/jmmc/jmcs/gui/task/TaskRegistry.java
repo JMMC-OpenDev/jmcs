@@ -14,8 +14,7 @@ import java.util.Map;
 public class TaskRegistry {
 
     /** Class logger */
-    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-            TaskRegistry.class.getName());
+    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TaskRegistry.class.getName());
     /* members */
     /**registered tasks keyed by task name */
     private final Map<String, Task> registeredTasks = new HashMap<String, Task>();

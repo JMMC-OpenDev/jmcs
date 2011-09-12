@@ -39,7 +39,7 @@ import org.astrogrid.samp.hub.HubServiceMode;
 public final class SampManager {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.interop.SampManager");
+    private static final Logger _logger = Logger.getLogger(SampManager.class.getName());
     /** Singleton instance */
     private static volatile SampManager _instance = null;
     /** Hook to the "Interop" menu */

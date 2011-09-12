@@ -173,7 +173,7 @@ man   : do_man
 
 install : install_all
 	@echo "Deploy $(JNLP).jnlp"
-#	jmcsDeployJnlp $(JNLP).jnlp
+	jmcsDeployJnlp $(JNLP).jnlp
         
 	@echo "Install $(JNLP).jar"
     # JmcsLibs contains only shared libraries used to package application single jar file

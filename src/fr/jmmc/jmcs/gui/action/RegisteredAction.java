@@ -17,8 +17,7 @@ public abstract class RegisteredAction extends MCSAction {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.util.RegisteredAction");
+    private static final Logger _logger = Logger.getLogger(RegisteredAction.class.getName());
     /** Action Registrar */
     private static final ActionRegistrar _registrar = ActionRegistrar.getInstance();
 

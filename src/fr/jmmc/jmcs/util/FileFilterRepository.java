@@ -19,7 +19,7 @@ import javax.swing.filechooser.FileFilter;
 public class FileFilterRepository {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.util.FileFilterRepository");
+    private static final Logger _logger = Logger.getLogger(FileFilterRepository.class.getName());
     /** Singleton instance */
     private static FileFilterRepository _instance = null;
     /**
@@ -184,7 +184,7 @@ public class FileFilterRepository {
 final class GenericFileFilter extends FileFilter {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger("fr.jmmc.mcs.util.GenericFileFilter");
+    private static final Logger _logger = Logger.getLogger(GenericFileFilter.class.getName());
     /** Hold each file extensions */
     private final HashMap<String, String> _fileExtensions = new HashMap<String, String>(4);
     /** Filter description */

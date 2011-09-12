@@ -29,8 +29,7 @@ import org.astrogrid.samp.gui.SubscribedClientListModel;
 public abstract class SampCapabilityAction extends RegisteredAction {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.interop.SampCapabilityAction");
+    private static final Logger _logger = Logger.getLogger(SampCapabilityAction.class.getName());
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** label for broadcast to all */

@@ -15,11 +15,8 @@ public final class CommonPreferences extends Preferences
 
     /** Singleton instance */
     private static CommonPreferences _singleton = null;
-    /** Class Name */
-    private final static String className_ = "fr.jmmc.mcs.util.CommonPreferences";
     /** Logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-            className_);
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CommonPreferences.class.getName());
     /* Preferences */
     /** Store the filename of the common preference file */
     public static final String PREFERENCES_FILENAME = "fr.jmmc.jmcs.properties";

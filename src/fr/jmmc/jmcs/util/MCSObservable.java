@@ -18,10 +18,8 @@ import java.util.logging.Logger;
  */
 public class MCSObservable extends Observable {
 
-    /** Class name */
-    private static final String _className = "fr.jmmc.mcs.util.MCSObservable";
     /** Logger - get from given class name */
-    private static final Logger _logger = Logger.getLogger(_className);
+    private static final Logger _logger = Logger.getLogger(MCSObservable.class.getName());
 
     /**
      * Adds an observer to the set of observers for this object, provided

@@ -51,7 +51,7 @@ import javax.swing.SwingUtilities;
 public abstract class Preferences extends Observable {
 
     /** Class name */
-    private static final String _className = "fr.jmmc.mcs.util.Preferences";
+    private static final String _className = Preferences.class.getName();
     /** Logger - get from given class name */
     private static final Logger _logger = Logger.getLogger(_className);
     /** Store hidden preference version number name. */

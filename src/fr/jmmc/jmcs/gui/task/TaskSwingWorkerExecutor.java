@@ -24,8 +24,7 @@ import java.util.logging.Level;
 public final class TaskSwingWorkerExecutor {
 
     /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-            TaskSwingWorkerExecutor.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TaskSwingWorkerExecutor.class.getName());
     /** flag to log debugging information */
     protected final static boolean DEBUG_FLAG = false;
     /** singleton instance */

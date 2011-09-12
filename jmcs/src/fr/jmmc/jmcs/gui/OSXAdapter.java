@@ -50,6 +50,7 @@ import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
 
 import javax.swing.JFrame;
 
@@ -59,7 +60,9 @@ import javax.swing.JFrame;
  * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class OSXAdapter extends ApplicationAdapter {
-
+    /** Class logger */
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(OSXAdapter.class.getName());
+    
     /**
      * DOCUMENT ME!
      */
@@ -75,11 +78,11 @@ public class OSXAdapter extends ApplicationAdapter {
     private static com.apple.eawt.Application theApplication;
     /** Store a proxy to the shared ActionRegistrar facility */
     private ActionRegistrar _registrar = null;
-    // reference to the app where the existing quit, about, prefs code is
+    
     /**
-     * DOCUMENT ME!
+     * reference to the app frame where the existing quit, about, prefs code is
      */
-    private JFrame mainApp;
+    private JFrame mainAppFrame;
 
     /**
      * Creates a new OSXAdapter object.
@@ -87,7 +90,7 @@ public class OSXAdapter extends ApplicationAdapter {
      * @param inApp DOCUMENT ME!
      */
     private OSXAdapter(JFrame inApp) {
-        mainApp = inApp;
+        mainAppFrame = inApp;
 
         _registrar = ActionRegistrar.getInstance();
     }
@@ -99,7 +102,7 @@ public class OSXAdapter extends ApplicationAdapter {
      * @param ae DOCUMENT ME!
      */
     public void handleAbout(ApplicationEvent ae) {
-        if (mainApp != null) {
+        if (mainAppFrame != null) {
             ae.setHandled(true);
             App.aboutBoxAction().actionPerformed(null);
         } else {
@@ -114,7 +117,7 @@ public class OSXAdapter extends ApplicationAdapter {
      * @param ae DOCUMENT ME!
      */
     public void handlePreferences(ApplicationEvent ae) {
-        if (mainApp != null) {
+        if (mainAppFrame != null) {
             ae.setHandled(true);
             _registrar.getPreferenceAction().actionPerformed(null);
         } else {
@@ -129,7 +132,7 @@ public class OSXAdapter extends ApplicationAdapter {
      * @param ae DOCUMENT ME!
      */
     public void handleQuit(ApplicationEvent ae) {
-        if (mainApp != null) {
+        if (mainAppFrame != null) {
             /* You MUST setHandled(false) if you want to delay or cancel the quit.
              * This is important for cross-platform development -- have a universal quit
              * routine that chooses whether or not to quit, so the functionality is identical
@@ -155,8 +158,13 @@ public class OSXAdapter extends ApplicationAdapter {
      * @param ae DOCUMENT ME!
      */
     public void handleOpenFile(ApplicationEvent ae) {
-        if (mainApp != null) {
+        if (mainAppFrame != null) {
             ae.setHandled(true);
+            
+            if (logger.isLoggable(Level.INFO)) {
+                logger.info("Should open '" + ae.getFilename() + "'.");
+            }
+            
             _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0,
                     ae.getFilename()));
         } else {
@@ -171,13 +179,13 @@ public class OSXAdapter extends ApplicationAdapter {
      *
      * @param inApp DOCUMENT ME!
      */
-    public static void registerMacOSXApplication(JFrame inApp) {
+    public static void registerMacOSXApplication(JFrame inAppFrame) {
         if (theApplication == null) {
             theApplication = new com.apple.eawt.Application();
         }
 
         if (theAdapter == null) {
-            theAdapter = new OSXAdapter(inApp);
+            theAdapter = new OSXAdapter(inAppFrame);
         }
 
         theApplication.addApplicationListener(theAdapter);

@@ -18,8 +18,7 @@ import javax.swing.AbstractAction;
 public class ActionRegistrar {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.util.ActionRegistrar");
+    private static final Logger _logger = Logger.getLogger(ActionRegistrar.class.getName());
     /** Singleton instance */
     private static ActionRegistrar _instance = null;
     /** Preference Action unic identifying key */

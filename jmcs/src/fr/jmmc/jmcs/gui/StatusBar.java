@@ -30,8 +30,7 @@ public class StatusBar extends JPanel {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.gui.StatusBar");
+    private static final Logger _logger = Logger.getLogger(StatusBar.class.getName());
     /** Status label */
     private static final JLabel _statusLabel = new JLabel();
 

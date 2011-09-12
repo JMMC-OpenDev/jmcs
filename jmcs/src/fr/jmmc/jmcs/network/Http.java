@@ -27,10 +27,8 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
  */
 public final class Http {
 
-    /** class name */
-    public final static String className_ = Http.class.getName();
     /** logger */
-    private final static Logger logger_ = Logger.getLogger(className_);
+    private final static Logger logger_ = Logger.getLogger(Http.class.getName());
     /** Jmmc web to detect proxies */
     private final static String JMMC_WEB = "http://www.jmmc.fr";
     /** Jmmc socks to detect proxies */

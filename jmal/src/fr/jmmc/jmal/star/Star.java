@@ -19,8 +19,7 @@ import javax.swing.SwingUtilities;
 public class Star extends Observable {
 
     /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.astro.star.Star");
+    private static final Logger _logger = Logger.getLogger(Star.class.getName());
     /** Star property-value backing store for String data */
     final Map<Property, String> _stringContent;
     /** Star property-value backing store for Double data */

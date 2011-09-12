@@ -19,12 +19,8 @@ import java.util.logging.Level;
  */
 public final class ImageUtils
 {
-
-    /** Class Name */
-    private static final String className_ = "fr.jmmc.mcs.image.ImageUtils";
     /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-            className_);
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ImageUtils.class.getName());
     /** alpha integer mask */
     private final static int ALPHA_MASK = 0xff << 24;
     /** flag to use RGB color interpolation */

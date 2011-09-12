@@ -31,8 +31,7 @@ import javax.swing.SwingUtilities;
 public final class StarResolver {
 
     /** Logger - register on the current class to collect local logs */
-    private static final Logger _logger = Logger.getLogger(
-            "fr.jmmc.mcs.astro.star.StarResolver");
+    private static final Logger _logger = Logger.getLogger(StarResolver.class.getName());
     /** Simbad main URL */
     public static final String _simbadBaseURL = "http://simbad.u-strasbg.fr/simbad/sim-script?script=";
     /** comma separator */

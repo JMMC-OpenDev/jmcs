@@ -37,7 +37,7 @@ public enum Band {
     /** Q (Mid Infrared) */
     Q("Q", 16.575d, 4.05, -7.17d, 0.999d);
     /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("fr.jmmc.mcs.astro.Band");
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Band.class.getName());
 
     /**
      * Find the band corresponding to the given wavelength

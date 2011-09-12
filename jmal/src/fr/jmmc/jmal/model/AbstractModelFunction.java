@@ -17,11 +17,8 @@ import org.apache.commons.math.complex.Complex;
  */
 public abstract class AbstractModelFunction<T extends PunctFunction> implements ModelFunction {
 
-  /** Class Name */
-  private final static String className_ = "fr.jmmc.mcs.model.ModelFunction";
   /** Class logger */
-  protected final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-          className_);
+  protected final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AbstractModelFunction.class.getName());
 
   /** variant enumeration (standard, elongated and flattened models) */
   public enum ModelVariant {

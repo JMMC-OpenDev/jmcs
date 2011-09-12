@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 public final class LD2UD
 {
 
-    static final String className_;
+    /** Class logger */
     static final Logger logger_;
     /** Store tables extracted from three publications for given bands */
     static final Map<ALX.STARTYPE, double[][]> loggAndTeffTables;
@@ -46,8 +46,7 @@ public final class LD2UD
      * Static initializer to define tasks and their child tasks
      */
     static {
-        className_ = LD2UD.class.getName();
-        logger_ = Logger.getLogger(className_);
+        logger_ = Logger.getLogger(LD2UD.class.getName());
 
         loggAndTeffTables = new HashMap<ALX.STARTYPE, double[][]>();
         loggAndTeffTables.put(ALX.STARTYPE.DWARF, dwarfsSpToTeffAndLogg());

@@ -28,12 +28,8 @@ import java.util.logging.Level;
  */
 public class ColorModels
 {
-
-    /** Class Name */
-    private static final String className_ = "fr.jmmc.mcs.image.ColorModels";
     /** Class logger */
-    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-            className_);
+    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ColorModels.class.getName());
     /**
      * Maximum number of colors in a 8 byte palette
      */

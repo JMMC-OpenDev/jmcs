@@ -16,11 +16,8 @@ import java.util.logging.Level;
  */
 public final class EditableRhoThetaParameter implements Editable {
 
-  /** Class Name */
-  private static final String className_ = "fr.jmmc.mcs.model.gui.EditableRhoThetaParameter";
   /** Class logger */
-  private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-          className_);
+  private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditableRhoThetaParameter.class.getName());
   /** double precision for conversion = 10^-9 */
   public final static double ZERO_THRESHOLD = 1e-9d;
 

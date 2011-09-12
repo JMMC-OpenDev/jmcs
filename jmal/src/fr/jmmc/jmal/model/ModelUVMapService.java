@@ -20,12 +20,8 @@ import org.apache.commons.math.complex.Complex;
  */
 public final class ModelUVMapService
 {
-
-    /** Class Name */
-    private static final String className_ = "fr.jmmc.mcs.model.ModelUVMapService";
     /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-            className_);
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ModelUVMapService.class.getName());
     /** default image width / height */
     private final static int DEFAULT_IMAGE_SIZE = 512;
     /** default color model (aspro - Rainbow) */

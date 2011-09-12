@@ -39,8 +39,7 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
   /**
    * DOCUMENT ME!
    */
-  private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(
-          "fr.jmmc.mcs.ImageCanvas");
+  private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ImageCanvas.class.getName());
   /** float value formatter used by wedge rendering */
   public static final NumberFormat floatFormatter = new DecimalFormat("0.00E0");
   // Define constant to place differnet members of plot

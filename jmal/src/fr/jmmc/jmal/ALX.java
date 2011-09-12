@@ -25,10 +25,8 @@ import java.util.logging.Logger;
 public class ALX
 {
 
-    /** Class name */
-    private static final String className_ = LD2UD.class.getName();
     /** Logger */
-    private static final Logger logger_ = Logger.getLogger(className_);
+    private static final Logger logger_ = Logger.getLogger(ALX.class.getName());
     /** Describe the micrometer (micron, or um) unit */
     public static final double MICRON = 1.0d;
     /** Describe the meter unit */

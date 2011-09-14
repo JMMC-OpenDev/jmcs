@@ -66,6 +66,8 @@ public abstract class SampMessageHandler extends AbstractMessageHandler {
     @Override
     public final Map<?, ?> processCall(final HubConnection connection, final String senderId, final Message message) throws SampException {
 
+        // TODO: handle SampException to display any error message or at least in status bar ...
+        
         this.processMessage(senderId, message);
 
         return null;

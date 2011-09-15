@@ -26,7 +26,7 @@ Runtime Libraries (JNLP) are described in the following files :
 -rw-r--r--. 1 mella mella 102K 29 janv.  2010 jaxb-api.jar
 -rw-r--r--. 1 mella mella 848K 29 janv.  2010 jaxb-impl.jar
 -rw-r--r--. 1 mella mella 575K 16 mai    2008 jhall.jar
--rw-rw-r--. 1 mella mella 616K 21 févr. 17:03 jsamp-1.2.jar
+-rw-r--r--. 1 mella mella 671K 15 sept. 09:15 jsamp-1.3.jar
 -rw-r--r--. 1 mella mella  45K 29 janv.  2010 jsr173_1.0_api.jar
 -rw-r--r--. 1 mella mella 122K 26 févr.  2007 loggui.jar
 -rw-r--r--. 1 mella mella  34K  8 janv.  2010 sptype.jar

@@ -14,7 +14,7 @@
     <!-- Generated with 'xml sel -t -m "//package" -c "./preceding-sibling::comment()[1]" -e jar -a href -o "@SHARED@/" -v "./@jars" -b -b -n -n fr/jmmc/jmcs/resource/ApplicationData.xml'-->
 
     <!-- VO interoperability -->
-    <jar href="@SHARED@/jsamp-1.2.jar"/>
+    <jar href="@SHARED@/jsamp-1.3.jar"/>
     
     <!-- Launch one desktop browser -->
     <jar href="@SHARED@/BrowserLauncher2-1_3.jar"/>

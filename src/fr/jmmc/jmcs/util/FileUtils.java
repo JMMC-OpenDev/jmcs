@@ -289,6 +289,18 @@ public final class FileUtils {
      */
     public static void copy(final File src, final File dst) throws IOException, FileNotFoundException {
         final InputStream in = new BufferedInputStream(new FileInputStream(src));
+
+        saveStream(in, dst);
+    }
+
+    /**
+     * Save the given input stream as file
+     * @param in input stream to save as file
+     * @param dst destination file
+     * @throws IOException if io problem occurs
+     * @throws FileNotFoundException if input file is not found
+     */
+    public static void saveStream(final InputStream in, final File dst) throws IOException, FileNotFoundException {
         final OutputStream out = new BufferedOutputStream(new FileOutputStream(dst));
 
         // Transfer bytes from in to out

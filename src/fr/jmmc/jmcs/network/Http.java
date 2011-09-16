@@ -3,6 +3,11 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.network;
 
+import fr.jmmc.jmcs.util.FileUtils;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -14,6 +19,7 @@ import java.util.logging.Logger;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 
@@ -28,7 +34,7 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 public final class Http {
 
     /** logger */
-    private final static Logger logger_ = Logger.getLogger(Http.class.getName());
+    private final static Logger logger = Logger.getLogger(Http.class.getName());
     /** Jmmc web to detect proxies */
     private final static String JMMC_WEB = "http://www.jmmc.fr";
     /** Jmmc socks to detect proxies */
@@ -134,7 +140,7 @@ public final class Http {
             try {
                 JMMC_WEB_URI = new URI(JMMC_WEB);
             } catch (URISyntaxException use) {
-                logger_.log(Level.SEVERE, "invalid URL", use);
+                logger.log(Level.SEVERE, "invalid URL", use);
             }
         }
         return JMMC_WEB_URI;
@@ -149,7 +155,7 @@ public final class Http {
             try {
                 JMMC_SOCKS_URI = new URI(JMMC_SOCKS);
             } catch (URISyntaxException use) {
-                logger_.log(Level.SEVERE, "invalid URL", use);
+                logger.log(Level.SEVERE, "invalid URL", use);
             }
         }
         return JMMC_SOCKS_URI;
@@ -184,8 +190,8 @@ public final class Http {
             final List<Proxy> proxyList = proxySelector.select(uri);
             final Proxy proxy = proxyList.get(0);
 
-            if (logger_.isLoggable(Level.FINE)) {
-                logger_.log(Level.FINE, "using " + proxy + "in proxyList = " + proxyList);
+            if (logger.isLoggable(Level.FINE)) {
+                logger.log(Level.FINE, "using " + proxy + "in proxyList = " + proxyList);
             }
             if (proxy.type() != Proxy.Type.DIRECT) {
                 final String host;
@@ -201,5 +207,50 @@ public final class Http {
             }
         }
         return hostConfiguration;
+    }
+
+    /**
+     * Save the document located at the given URI in the given file
+     * @param uri uri to download
+     * @param outputFile file to save into
+     * @return true if successfull
+     * @throws IOException if any I/O operation fails (http or file) 
+     */
+    public static boolean download(final URI uri, final File outputFile) throws IOException {
+
+        // Create an HTTP client for the given URI to detect proxies for this host:
+        final HttpClient client = Http.getHttpClient(uri, false);
+
+        final GetMethod method = new GetMethod(uri.toString());
+
+        try {
+            logger.fine("Http client and get method have been created");
+
+            // Send HTTP GET query:
+            int resultCode = client.executeMethod(method);
+
+            if (logger.isLoggable(Level.FINE)) {
+                logger.fine("The query has been sent. Status code: " + resultCode);
+            }
+
+            if (resultCode == 200) {
+
+                // Get response
+                final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
+
+                FileUtils.saveStream(in, outputFile);
+
+                if (logger.isLoggable(Level.FINE)) {
+                    logger.fine("Saved file : " + outputFile + " - " + outputFile.length() + " bytes.");
+                }
+
+                return true;
+            }
+
+        } finally {
+            // Release the connection.
+            method.releaseConnection();
+        }
+        return false;
     }
 }

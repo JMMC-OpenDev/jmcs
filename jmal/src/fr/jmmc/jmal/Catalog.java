@@ -29,13 +29,18 @@ public enum Catalog {
     MIDI("MIDI", "MIDI", "Photometric observations and angular size estimates of mid infrared interferometric calibration sources"),
     SBSC("V/36B/bsc4s", "SBSC", "The Supplement to the Bright Star Catalogue"),
     SB9("B/sb9/main", "SB9", "SB9: 9th Catalogue of Spectroscopic Binary Orbits"),
-    WDS("B/wds/wds", "WDS", "The Washington Visual Double Star Catalog");
+    WDS("B/wds/wds", "WDS", "The Washington Visual Double Star Catalog"),
+    AKARI("II/297/irc", "AKARI", "AKARI/IRC mid-IR all-sky Survey (ISAS/JAXA, 2010)");
+    
     /** Store the catalog CDS 'cryptic' reference */
     private final String _reference;
+    
     /** Store the catalog CDS 'human-readable' name */
     private final String _title;
+    
     /** Store the catalog CDS 'abbreviated' description */
     private final String _description;
+    
     /** Blanking value for undefined Strings (null, ...) */
     public static final String UNKNOWN = "Unknown";
 
@@ -257,4 +262,5 @@ class NastyTrick {
     public static final Hashtable<String, String> _titles = new Hashtable();
     public static final Hashtable<String, String> _descriptions = new Hashtable();
     public static final Hashtable<String, Catalog> _catalogs = new Hashtable();
+    
 }

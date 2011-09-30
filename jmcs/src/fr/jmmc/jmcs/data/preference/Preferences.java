@@ -59,10 +59,21 @@ public abstract class Preferences extends Observable {
     private static final String _className = Preferences.class.getName();
     /** Logger - get from given class name */
     private static final Logger _logger = Logger.getLogger(_className);
+
+    /* jMCS private stuff */
+    /** Hidden internal preferences prefix managed by jMCS. */
+    private static final String JMCS_PRIVATE_PREFIX = "JMCS_PRIVATE";
+    /** Store hidden preference structure version number name. */
+    private static final String JMCS_STRUCTURE_VERSION_NUMBER_ID = JMCS_PRIVATE_PREFIX + ".structure.version";
+
+    /* jMCS public stuff */
+    /** Public handled preferences prefix managed by jMCS. */
+    private static final String JMCS_PUBLIC_PREFIX = "JMCS_PUBLIC";
     /** Store hidden preference version number name. */
     private static final String PREFERENCES_VERSION_NUMBER_ID = "preferences.version";
     /** Store hidden properties index prefix. */
     private static final String PREFERENCES_ORDER_INDEX_PREFIX = "MCSPropertyIndexes.";
+
     /* members */
     /** Store preference filename. */
     private String _fullFilepath = null;
@@ -142,8 +153,8 @@ public abstract class Preferences extends Observable {
      * update it when you fix bug or simply change your mind on something stored.
      * You shall use this method to return your most up-to-date version number.
      *
-     * The version number (a positive integer greater than 0) returned must
-     * be incremented BY YOU each time your preference structure changes.
+     * The version number (a POSITIVE INTEGER GREATER THAN ZERO) returned must
+     * be incremented BY YOU each time you change your preference structure.
      *
      * updatePreferencesVersion() execution will then be automatically triggered
      * in case an out-of-date preference file is loaded. You can then perform
@@ -186,6 +197,140 @@ public abstract class Preferences extends Observable {
     }
 
     /**
+     * @sa getPreferencesVersionNumber() - same mechanism for INTERNAL preference structure updates.
+     * 
+     * @return the most up-to-date INTERNAL preference file version number.
+     */
+    private final int getJmcsStructureVersionNumber() {
+        return 1;
+    }
+
+    /**
+     * @sa updatePreferencesVersion() - same mechanism for INTERNAL preference structure updates.
+     * 
+     * @param loadedVersionNumber the out-of-date INTERNAL version of the loaded preference file.
+     *
+     * @return should return true if the update went fine and new values should
+     * be saved, false otherwise to automatically trigger default values load.
+     */
+    private final boolean updateJmcsPreferencesVersion(int loadedVersionNumber) {
+        _logger.entering(_className, "updateJmcsPreferencesVersion");
+
+        switch (loadedVersionNumber) {
+
+            // Add missing jMCS preference version number
+            case 0:
+                return updateJmcsVersionFrom0To1();
+
+            default:
+                _logger.warning("Could not update JMCS preferences from version '" + loadedVersionNumber + "'.");
+                break;
+        }
+
+        // By default, triggers default values load.
+        return false;
+    }
+
+    /**
+     * INTERNAL Correction : Add missing jMCS preference version number.
+     *
+     * @return true if all went fine and should write to file, false otherwise.
+     */
+    private boolean updateJmcsVersionFrom0To1() {
+        _logger.entering(_className, "updateJmcsVersionFromNoneTo1");
+
+        // Add missing jMCS preference version number
+        try {
+            setPreference(JMCS_STRUCTURE_VERSION_NUMBER_ID, 1);
+        } catch (Exception ex) {
+            _logger.log(Level.WARNING, "Could not store preference '" + JMCS_STRUCTURE_VERSION_NUMBER_ID + "' : ", ex);
+            return false;
+        }
+
+        // Commit change to file
+        return true;
+    }
+
+    /**
+     * Loop over any required step to become up-to-date.
+     */
+    private void handlePreferenceUpdates() {
+        _logger.entering(_className, "handlePreferenceUpdates");
+
+        String[] versionNumberKeys = {JMCS_STRUCTURE_VERSION_NUMBER_ID, PREFERENCES_VERSION_NUMBER_ID};
+        for (String key : versionNumberKeys) {
+
+            // Store whether we are in the process of updating internal preference file structure or not
+            boolean structuralUpdate = key.equals(JMCS_STRUCTURE_VERSION_NUMBER_ID);
+
+            String logToken = " ";
+            if (structuralUpdate) {
+                logToken = " JMCS ";
+            }
+
+            // Get current preference file version number
+            int runtimeVersionNumber = -1;
+            if (structuralUpdate) {
+                runtimeVersionNumber = getJmcsStructureVersionNumber();
+            } else {
+                runtimeVersionNumber = getPreferencesVersionNumber();
+            }
+            _logger.finer("Internal" + logToken + "preference version number = '" + runtimeVersionNumber + "'.");
+
+            // Getting loaded preference file version number
+            int fileVersionNumber = 0; // To be sure to be below most preferencesVersionNumber, as Java does not provide unsigned types to garanty positive values from getPreferencesVersionNumber() !!!
+            try {
+                fileVersionNumber = getPreferenceAsInt(key);
+                _logger.finer("Loaded" + logToken + "preference version number = '" + fileVersionNumber + "'.");
+            } catch (NumberFormatException nfe) {
+                _logger.log(Level.WARNING, "Cannot get" + logToken + "loaded preference version number.", nfe);
+            }
+
+            // If the preference file version is older than the current default version
+            if (fileVersionNumber < runtimeVersionNumber) {
+                _logger.warning("Loaded an 'out-of-date'" + logToken + "preference version, will try to update preference file.");
+
+                // Handle version differences
+                int currentPreferenceVersion = fileVersionNumber;
+                boolean shouldWeContinue = true;
+                while (shouldWeContinue && (currentPreferenceVersion < runtimeVersionNumber)) {
+
+                    _logger.fine("Trying to update" + logToken + "loaded preferences from revision '" + currentPreferenceVersion + "'.");
+
+                    if (structuralUpdate) {
+                        shouldWeContinue = updateJmcsPreferencesVersion(currentPreferenceVersion);
+                    } else {
+                        shouldWeContinue = updatePreferencesVersion(currentPreferenceVersion);
+                    }
+
+                    currentPreferenceVersion++;
+                }
+
+                // If all updates went fine
+                if (shouldWeContinue) {
+                    try {
+                        // Save updated values to file
+                        saveToFile();
+                    } catch (PreferencesException pe) {
+                        _logger.log(Level.WARNING, "Cannot save preference to disk: ", pe);
+                    }
+                } else { // If any update went wrong (or was not handled)
+                    // Use default values instead
+                    resetToDefaultPreferences();
+                }
+            } // If the preference file version is newer than the current default version
+            else if (fileVersionNumber > runtimeVersionNumber) {
+                _logger.warning("Loaded a 'POSTERIOR to current version'" + logToken + "preference version, falling back to default values instead.");
+
+                // Use current default values instead
+                resetToDefaultPreferences();
+            } else {
+                _logger.info("Preference file is up-to-date.");
+            }
+        }
+    }
+
+    /**
      * Load preferences from file if any, or reset to default values and
      * notify listeners.
      *
@@ -198,16 +343,12 @@ public abstract class Preferences extends Observable {
 
         try {
             // Loading preference file
+            _logger.info("Loading '" + _fullFilepath + "' preference file.");
             FileInputStream inputFile = null;
             try {
                 inputFile = new FileInputStream(_fullFilepath);
             } catch (FileNotFoundException fnfe) {
-                if (_logger.isLoggable(Level.WARNING)) {
-                    _logger.warning("Cannot load '" + _fullFilepath + "' : " + fnfe);
-                }
-            }
-            if (_logger.isLoggable(Level.INFO)) {
-                _logger.info("Loading '" + _fullFilepath + "' preference file.");
+                _logger.warning("Cannot load '" + _fullFilepath + "' : " + fnfe);
             }
 
             try {
@@ -218,61 +359,7 @@ public abstract class Preferences extends Observable {
                 _logger.log(Level.WARNING, "Cannot input/ouput to'" + _fullFilepath + "' : ", ioe);
             }
 
-            // Getting loaded preference file version number
-            int preferencesVersionNumber = getPreferencesVersionNumber();
-            int loadedPreferenceVersion = Integer.MIN_VALUE; // To be sure to be below most preferencesVersionNumber, as Java does not provide unsigned types to garanty positive values from getPreferencesVersionNumber() !!!
-
-            try {
-                loadedPreferenceVersion = getPreferenceAsInt(PREFERENCES_VERSION_NUMBER_ID);
-            } catch (NumberFormatException nfe) {
-                _logger.log(Level.WARNING, "Cannot get loaded preference version number.", nfe);
-            }
-
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Loaded preference version is '" + loadedPreferenceVersion
-                        + "', current preferences version number is '" + preferencesVersionNumber + "'.");
-            }
-
-            // If the preference file version is older than the current default version
-            if (loadedPreferenceVersion < preferencesVersionNumber) {
-                _logger.warning("Loaded an 'anterior to current version' preference file, will try to update preference file.");
-
-                // Handle version differences
-                int currentPreferenceVersion = loadedPreferenceVersion;
-                boolean shouldWeContinue = true;
-
-                while (shouldWeContinue && (currentPreferenceVersion < preferencesVersionNumber)) {
-                    if (_logger.isLoggable(Level.FINE)) {
-                        _logger.fine("Trying to update loaded preferences from revision '"
-                                + currentPreferenceVersion + "'.");
-                    }
-
-                    shouldWeContinue = updatePreferencesVersion(currentPreferenceVersion);
-
-                    currentPreferenceVersion++;
-                }
-
-                // If update went wrong (or was not handled)
-                if (!shouldWeContinue) {
-                    // Use default values instead
-                    resetToDefaultPreferences();
-                } else {
-                    try {
-                        // Otherwise save updated values to file
-                        saveToFile();
-                    } catch (PreferencesException pe) {
-                        _logger.log(Level.WARNING, "Cannot save preference to disk: ", pe);
-                    }
-                }
-            }
-
-            // If the preference file version is newer the the current default version
-            if (loadedPreferenceVersion > preferencesVersionNumber) {
-                _logger.warning("Loaded a 'posterior to current version' preference file, so fall back to default values instead.");
-
-                // Use current default values instead
-                resetToDefaultPreferences();
-            }
+            handlePreferenceUpdates();
         } catch (Exception e) {
             // Do nothing just default values will be into the preferences.
             _logger.log(Level.FINE, "Failed loading preference file, so fall back to default values instead : ", e);
@@ -304,8 +391,8 @@ public abstract class Preferences extends Observable {
         _logger.entering(_className, "saveToFile");
 
         // Store current Preference object revision number
-        int preferencesVersionNumber = getPreferencesVersionNumber();
-        setPreference(PREFERENCES_VERSION_NUMBER_ID, preferencesVersionNumber);
+        setPreference(JMCS_STRUCTURE_VERSION_NUMBER_ID, getJmcsStructureVersionNumber());
+        setPreference(PREFERENCES_VERSION_NUMBER_ID, getPreferencesVersionNumber());
 
         FileOutputStream outputFile = null;
         try {
@@ -780,9 +867,9 @@ public abstract class Preferences extends Observable {
             _fullFilepath += ".";
         }
 
+        // Mac OS X : [USER_HOME]/Library/Preferences/fr.jmmc...properties
         // Windows : [USER_HOME]/Local Settings/Application Data/fr.jmmc...properties
-        // UNIX : [USER_HOME]/.fr.jmmc...properties
-        // MAC OS X : [USER_HOME]/Library/Preferences/fr.jmmc..._rev4.properties
+        // Linux (and anything else) : [USER_HOME]/.fr.jmmc...properties
         _fullFilepath += getPreferenceFilename();
 
         if (_logger.isLoggable(Level.FINE)) {

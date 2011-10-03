@@ -62,17 +62,17 @@ public abstract class Preferences extends Observable {
 
     /* jMCS private stuff */
     /** Hidden internal preferences prefix managed by jMCS. */
-    private static final String JMCS_PRIVATE_PREFIX = "JMCS_PRIVATE";
+    private static final String JMCS_PRIVATE_PREFIX = "JMCS_PRIVATE.";
     /** Store hidden preference structure version number name. */
-    private static final String JMCS_STRUCTURE_VERSION_NUMBER_ID = JMCS_PRIVATE_PREFIX + ".structure.version";
+    private static final String JMCS_STRUCTURE_VERSION_NUMBER_ID = JMCS_PRIVATE_PREFIX + "structure.version";
 
     /* jMCS public stuff */
     /** Public handled preferences prefix managed by jMCS. */
-    private static final String JMCS_PUBLIC_PREFIX = "JMCS_PUBLIC";
+    private static final String JMCS_PUBLIC_PREFIX = "JMCS_PUBLIC.";
     /** Store hidden preference version number name. */
-    private static final String PREFERENCES_VERSION_NUMBER_ID = "preferences.version";
+    private static final String PREFERENCES_VERSION_NUMBER_ID = JMCS_PUBLIC_PREFIX + "preference.version";
     /** Store hidden properties index prefix. */
-    private static final String PREFERENCES_ORDER_INDEX_PREFIX = "MCSPropertyIndexes.";
+    private static final String PREFERENCES_ORDER_INDEX_PREFIX = JMCS_PUBLIC_PREFIX + "order.index.";
 
     /* members */
     /** Store preference filename. */
@@ -126,7 +126,7 @@ public abstract class Preferences extends Observable {
 
     /**
      * Use this method to define all your default values for each of your preferences,
-     * by calling all the 'setDefaultPreference()' method family.
+     * by calling any method of the 'setDefaultPreference()' family.
      *
      * @warning Classes that inherits from Preferences MUST overload this method
      * to set default preferences.
@@ -202,7 +202,7 @@ public abstract class Preferences extends Observable {
      * @return the most up-to-date INTERNAL preference file version number.
      */
     private final int getJmcsStructureVersionNumber() {
-        return 1;
+        return 3;
     }
 
     /**
@@ -222,6 +222,14 @@ public abstract class Preferences extends Observable {
             case 0:
                 return updateJmcsVersionFrom0To1();
 
+            // Add 'JMCS_PUBLIC' prefix to 'preference.version' key
+            case 1:
+                return updateJmcsVersionFrom1To2();
+
+            // Remove all deprecated order indexes starting with 'MCSPropertyIndexes'
+            case 2:
+                return updateJmcsVersionFrom2To3();
+
             default:
                 _logger.warning("Could not update JMCS preferences from version '" + loadedVersionNumber + "'.");
                 break;
@@ -239,12 +247,45 @@ public abstract class Preferences extends Observable {
     private boolean updateJmcsVersionFrom0To1() {
         _logger.entering(_className, "updateJmcsVersionFromNoneTo1");
 
-        // Add missing jMCS preference version number
+        // Add missing jMCS structure version number
         try {
             setPreference(JMCS_STRUCTURE_VERSION_NUMBER_ID, 1);
         } catch (Exception ex) {
             _logger.log(Level.WARNING, "Could not store preference '" + JMCS_STRUCTURE_VERSION_NUMBER_ID + "' : ", ex);
             return false;
+        }
+
+        // Commit change to file
+        return true;
+    }
+
+    /**
+     * INTERNAL Correction : Add 'JMCS_PUBLIC' prefix to 'preference.version' key.
+     *
+     * @return true if all went fine and should write to file, false otherwise.
+     */
+    private boolean updateJmcsVersionFrom1To2() {
+
+        // Rename preference version name
+        final String PREVIOUS_PREFERENCES_VERSION_NUMBER_ID = "preferences.version";
+        return renamePreference(PREVIOUS_PREFERENCES_VERSION_NUMBER_ID, PREFERENCES_VERSION_NUMBER_ID);
+    }
+
+    /**
+     * INTERNAL Correction : Remove all deprecated order indexes starting with 'MCSPropertyIndexes'.
+     *
+     * @return true if all went fine and should write to file, false otherwise.
+     */
+    private boolean updateJmcsVersionFrom2To3() {
+
+        // For each ordered preference indices
+        final String PREVIOUS_PREFERENCES_ORDER_INDEX_PREFIX = "MCSPropertyIndexes.";
+        Enumeration indexes = getPreferences(PREVIOUS_PREFERENCES_ORDER_INDEX_PREFIX);
+        while (indexes.hasMoreElements()) {
+            // Get previous index value
+            String oldPreferenceName = (String) indexes.nextElement();
+            // Delete previous preference
+            removePreference(oldPreferenceName);
         }
 
         // Commit change to file
@@ -258,6 +299,7 @@ public abstract class Preferences extends Observable {
         _logger.entering(_className, "handlePreferenceUpdates");
 
         String[] versionNumberKeys = {JMCS_STRUCTURE_VERSION_NUMBER_ID, PREFERENCES_VERSION_NUMBER_ID};
+        boolean everythingWentFine = true;
         for (String key : versionNumberKeys) {
 
             // Store whether we are in the process of updating internal preference file structure or not
@@ -292,41 +334,42 @@ public abstract class Preferences extends Observable {
 
                 // Handle version differences
                 int currentPreferenceVersion = fileVersionNumber;
-                boolean shouldWeContinue = true;
-                while (shouldWeContinue && (currentPreferenceVersion < runtimeVersionNumber)) {
+                while (everythingWentFine && (currentPreferenceVersion < runtimeVersionNumber)) {
 
                     _logger.fine("Trying to update" + logToken + "loaded preferences from revision '" + currentPreferenceVersion + "'.");
 
                     if (structuralUpdate) {
-                        shouldWeContinue = updateJmcsPreferencesVersion(currentPreferenceVersion);
+                        everythingWentFine = updateJmcsPreferencesVersion(currentPreferenceVersion);
                     } else {
-                        shouldWeContinue = updatePreferencesVersion(currentPreferenceVersion);
+                        everythingWentFine = updatePreferencesVersion(currentPreferenceVersion);
                     }
 
                     currentPreferenceVersion++;
                 }
 
-                // If all updates went fine
-                if (shouldWeContinue) {
-                    try {
-                        // Save updated values to file
-                        saveToFile();
-                    } catch (PreferencesException pe) {
-                        _logger.log(Level.WARNING, "Cannot save preference to disk: ", pe);
-                    }
-                } else { // If any update went wrong (or was not handled)
-                    // Use default values instead
-                    resetToDefaultPreferences();
-                }
             } // If the preference file version is newer than the current default version
             else if (fileVersionNumber > runtimeVersionNumber) {
                 _logger.warning("Loaded a 'POSTERIOR to current version'" + logToken + "preference version, falling back to default values instead.");
 
                 // Use current default values instead
                 resetToDefaultPreferences();
+                return;
             } else {
                 _logger.info("Preference file is up-to-date.");
             }
+        }
+
+        // If all updates went fine
+        if (everythingWentFine) {
+            try {
+                // Save updated values to file
+                saveToFile();
+            } catch (PreferencesException pe) {
+                _logger.log(Level.WARNING, "Cannot save preference to disk: ", pe);
+            }
+        } else { // If any update went wrong (or was not handled)
+            // Use default values instead
+            resetToDefaultPreferences();
         }
     }
 
@@ -402,7 +445,6 @@ public abstract class Preferences extends Observable {
             if (_logger.isLoggable(Level.INFO)) {
                 _logger.info("Saving '" + _fullFilepath + "' preference file.");
             }
-
         } catch (Exception e) {
             throw new PreferencesException("Cannot store preferences to file", e);
         } finally {
@@ -555,7 +597,7 @@ public abstract class Preferences extends Observable {
      *
      * @throws PreferencesException if any preference value has a unsupported class type
      */
-    final public void setPreference(String preferenceName, int preferenceIndex,
+    final public void setPreference(Object preferenceName, int preferenceIndex,
             Object preferenceValue) throws PreferencesException {
         setPreferenceToProperties(_currentProperties, preferenceName,
                 preferenceIndex, preferenceValue);
@@ -583,10 +625,10 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      * @param preferenceIndex the order number for the property (-1 for no order).
      */
-    final public void setPreferenceOrder(String preferenceName,
-            int preferenceIndex) {
-        setPreferenceOrderToProperties(_currentProperties, preferenceName,
-                preferenceIndex);
+    final public void setPreferenceOrder(String preferenceName, int preferenceIndex) {
+
+        setPreferenceOrderToProperties(_currentProperties, preferenceName, preferenceIndex);
+
         // Notify all preferences listener.
         triggerObserversNotification();
     }
@@ -725,10 +767,42 @@ public abstract class Preferences extends Observable {
     }
 
     /**
+     * Rename the given preference, keeping order if any.
+     *
+     * Copy old preference value and order to the new one, then delete the old.
+     * 
+     * @param previousName the current preference name.
+     * @param newName the new desired name.
+     * @return true is everything went fine, false otherwise.
+     */
+    public boolean renamePreference(final String previousName, final String newName) {
+
+        // Get previous preference value and order
+        String value = getPreference(previousName);
+        int order = getPreferenceOrder(previousName);
+        String orderToken = (order == -1 ? "" : "' , '" + order);
+
+        // Store in new preference key-value
+        try {
+            setPreference(newName, order, value);
+            _logger.fine("Renaming ['" + previousName + "' , '" + value + orderToken + "'] to ['" + newName + " , '" + value + orderToken + "'].");
+        } catch (PreferencesException ex) {
+            _logger.log(Level.WARNING, "Could not store preference '" + newName + "' : ", ex);
+            return false;
+        }
+
+        // Delete previous preference
+        removePreference(previousName);
+
+        // Commit change to file
+        return true;
+    }
+
+    /**
      * Remove the given preference.
      *
      * If the given preference belongs to an ordered preferences group,
-     * preferences left will be re-ordered down to fullfil the place left empty,
+     * preferences left will be re-ordered down to fulfill the place left empty,
      * as expected. For example, {'LOW', 'MEDIUM', 'HIGH'} - MEDIUM will become
      * {'LOW', 'HIGH'}, not {'LOW, '', 'HIGH'}.
      *

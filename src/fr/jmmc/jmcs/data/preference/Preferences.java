@@ -691,10 +691,10 @@ public abstract class Preferences extends Observable {
      *
      * @return the preference value.
      */
-    final public String getPreference(String preferenceName) {
+    final public String getPreference(Object preferenceName) {
         _logger.entering(_className, "getPreference");
 
-        return _currentProperties.getProperty(preferenceName);
+        return _currentProperties.getProperty(preferenceName.toString());
     }
 
     /**

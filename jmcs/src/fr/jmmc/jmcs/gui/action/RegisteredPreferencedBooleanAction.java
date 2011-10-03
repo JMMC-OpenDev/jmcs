@@ -41,12 +41,12 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
      */
     public RegisteredPreferencedBooleanAction(String classPath,
             String fieldName, String actionName, Preferences preferences,
-            String preferenceName) {
+            Object preferenceName) {
         super(classPath, fieldName, actionName);
 
         _boundButtons = new Vector<AbstractButton>();
 
-        _preferenceName = preferenceName;
+        _preferenceName = preferenceName.toString();
 
         // Store the application preferences and register against it
         _preferences = preferences;

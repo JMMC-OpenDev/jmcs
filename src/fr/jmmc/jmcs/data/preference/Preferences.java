@@ -317,15 +317,21 @@ public abstract class Preferences extends Observable {
             } else {
                 runtimeVersionNumber = getPreferencesVersionNumber();
             }
-            _logger.finer("Internal" + logToken + "preference version number = '" + runtimeVersionNumber + "'.");
+            
+            if (_logger.isLoggable(Level.FINER)) {
+                _logger.finer("Internal" + logToken + "preference version number = '" + runtimeVersionNumber + "'.");
+            }
 
             // Getting loaded preference file version number
             int fileVersionNumber = 0; // To be sure to be below most preferencesVersionNumber, as Java does not provide unsigned types to garanty positive values from getPreferencesVersionNumber() !!!
             try {
                 fileVersionNumber = getPreferenceAsInt(key);
-                _logger.finer("Loaded" + logToken + "preference version number = '" + fileVersionNumber + "'.");
+                
+                if (_logger.isLoggable(Level.FINER)) {
+                    _logger.finer("Loaded" + logToken + "preference version number = '" + fileVersionNumber + "'.");
+                }
             } catch (NumberFormatException nfe) {
-                _logger.log(Level.WARNING, "Cannot get" + logToken + "loaded preference version number.", nfe);
+                _logger.warning("Cannot get" + logToken + "loaded preference version number.");
             }
 
             // If the preference file version is older than the current default version
@@ -336,7 +342,9 @@ public abstract class Preferences extends Observable {
                 int currentPreferenceVersion = fileVersionNumber;
                 while (everythingWentFine && (currentPreferenceVersion < runtimeVersionNumber)) {
 
-                    _logger.fine("Trying to update" + logToken + "loaded preferences from revision '" + currentPreferenceVersion + "'.");
+                    if (_logger.isLoggable(Level.FINE)) {
+                        _logger.fine("Trying to update" + logToken + "loaded preferences from revision '" + currentPreferenceVersion + "'.");
+                    }
 
                     if (structuralUpdate) {
                         everythingWentFine = updateJmcsPreferencesVersion(currentPreferenceVersion);
@@ -707,7 +715,8 @@ public abstract class Preferences extends Observable {
     final public boolean getPreferenceAsBoolean(Object preferenceName) {
         _logger.entering(_className, "getPreferenceAsBoolean");
 
-        String value = _currentProperties.getProperty(preferenceName.toString());
+        // TODO: handle value is null
+        final String value = getPreference(preferenceName);
 
         return Boolean.valueOf(value).booleanValue();
     }
@@ -722,7 +731,8 @@ public abstract class Preferences extends Observable {
     final public double getPreferenceAsDouble(Object preferenceName) {
         _logger.entering(_className, "getPreferenceAsDouble");
 
-        String value = _currentProperties.getProperty(preferenceName.toString());
+        // TODO: handle value is null
+        final String value = getPreference(preferenceName);
 
         return Double.valueOf(value).doubleValue();
     }
@@ -737,7 +747,8 @@ public abstract class Preferences extends Observable {
     final public int getPreferenceAsInt(Object preferenceName) {
         _logger.entering(_className, "getPreferenceAsInt");
 
-        String value = _currentProperties.getProperty(preferenceName.toString());
+        // TODO: handle value is null
+        final String value = getPreference(preferenceName);
 
         return Integer.valueOf(value).intValue();
     }
@@ -753,14 +764,15 @@ public abstract class Preferences extends Observable {
             throws PreferencesException {
         _logger.entering(_className, "getPreferenceAsColor");
 
-        String stringValue = _currentProperties.getProperty(preferenceName.toString());
+        // TODO: handle value is null
+        final String value = getPreference(preferenceName);
         Color colorValue;
 
         try {
-            colorValue = Color.decode(stringValue);
+            colorValue = Color.decode(value);
         } catch (Exception e) {
             throw new PreferencesException("Cannot convert preference '"
-                    + preferenceName + "'value '" + stringValue + "' to a Color.", e);
+                    + preferenceName + "'value '" + value + "' to a Color.", e);
         }
 
         return colorValue;
@@ -785,9 +797,12 @@ public abstract class Preferences extends Observable {
         // Store in new preference key-value
         try {
             setPreference(newName, order, value);
-            _logger.fine("Renaming ['" + previousName + "' , '" + value + orderToken + "'] to ['" + newName + " , '" + value + orderToken + "'].");
-        } catch (PreferencesException ex) {
-            _logger.log(Level.WARNING, "Could not store preference '" + newName + "' : ", ex);
+            
+            if (_logger.isLoggable(Level.FINE)) {
+                _logger.fine("Renaming ['" + previousName + "' , '" + value + orderToken + "'] to ['" + newName + " , '" + value + orderToken + "'].");
+            }
+        } catch (PreferencesException pe) {
+            _logger.log(Level.WARNING, "Could not store preference '" + newName + "' : ", pe);
             return false;
         }
 
@@ -970,7 +985,7 @@ public abstract class Preferences extends Observable {
                     notifyObservers();
                 }
             });
-        } else if (_logger.isLoggable(Level.FINE)) {
+        } else {
             _logger.fine("triggerObserversNotification disabled.");
         }
     }

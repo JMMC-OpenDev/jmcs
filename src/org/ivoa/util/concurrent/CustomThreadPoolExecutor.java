@@ -71,7 +71,9 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      */
     @Override
     protected void beforeExecute(final Thread t, final Runnable r) {
-        logB.error(this.name + ".beforeExecute : runnable : " + r);
+        if (logB.isDebugEnabled()) {
+            logB.debug(this.name + ".beforeExecute : runnable : " + r);
+        }
     }
 
     /**
@@ -85,7 +87,9 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
         if (th != null) {
             logB.error(this.name + ".afterExecute : uncaught exception : ", th);
         }
-        logB.error(this.name + ".afterExecute : runnable : " + r);
+        if (logB.isDebugEnabled()) {
+            logB.debug(this.name + ".afterExecute : runnable : " + r);
+        }
     }
 
     /**
@@ -96,6 +100,8 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      */
     @Override
     protected void terminated() {
-        logB.error(this.name + ".terminated.");
+        if (logB.isDebugEnabled()) {
+            logB.debug(this.name + ".terminated.");
+        }
     }
 }

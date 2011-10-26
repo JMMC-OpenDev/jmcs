@@ -39,8 +39,8 @@ public final class PoolThread extends Thread {
      */
     @Override
     public void interrupt() {
-        if (logB.isInfoEnabled()) {
-            logB.info(getName() + " : interrupt");
+        if (logB.isDebugEnabled()) {
+            logB.debug(getName() + " : interrupt");
         }
         super.interrupt();
     }
@@ -50,8 +50,8 @@ public final class PoolThread extends Thread {
      */
     @Override
     public synchronized void start() {
-        if (logB.isInfoEnabled()) {
-            logB.info(getName() + " : start");
+        if (logB.isDebugEnabled()) {
+            logB.debug(getName() + " : start");
         }
         super.start();
     }
@@ -61,16 +61,14 @@ public final class PoolThread extends Thread {
      */
     @Override
     public void run() {
-        if (logB.isInfoEnabled()) {
-            logB.info(getName() + " : before run() : ");
+        if (logB.isDebugEnabled()) {
+            logB.debug(getName() + " : before run() : ");
         }
         try {
             super.run();
         } finally {
-            logB.error("THREAD STOPPPING !!");
-
-            if (logB.isInfoEnabled()) {
-                logB.info(getName() + " : after run() : ");
+            if (logB.isDebugEnabled()) {
+                logB.debug(getName() + " : after run() : ");
             }
         }
 

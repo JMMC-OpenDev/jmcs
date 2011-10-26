@@ -64,7 +64,9 @@ public final class StreamRedirector extends GenericRunnable {
             log.debug("StreamRedirector - thread.run : enter");
         }
 
-        if (this.is != null) {
+        if (this.is == null) {
+            log.error("StreamRedirector.run : undefined input stream !");
+        } else {
             try {
                 // 8K buffer :
                 final BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -90,8 +92,6 @@ public final class StreamRedirector extends GenericRunnable {
                     log.debug("StreamRedirector.run : io failure : ", ioe);
                 }
             }
-        } else {
-            log.error("StreamRedirector.run : undefined input stream !");
         }
         if (log.isDebugEnabled()) {
             log.debug("StreamRedirector - thread.run : exit");

@@ -69,6 +69,42 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             + "<em>(*) Summary and description must be filled to enable the 'Submit' button.</em>"
             + "</body></html>";
 
+    /**
+     * Show a new FeedbackReport object (not modal).
+     * Do not exit on close.
+     */
+    public static void openDialog() {
+        openDialog(false, null);
+    }
+    
+    /**
+     * Show a new FeedbackReport object (not modal).
+     * Do not exit on close.
+     * @param exception exception
+     */
+    public static void openDialog(final Throwable exception) {
+        openDialog(false, exception);
+    }
+    
+    /**
+     * Creates a new FeedbackReport object.
+     * Do not exit on close.
+     *
+     * @param modal if true, this dialog is modal
+     * @param exception exception
+     */
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    public static void openDialog(final boolean modal, final Throwable exception) {
+        // Create Gui using EDT:
+        SwingUtils.invokeEDT(new Runnable() {
+            
+            @Override
+            public void run() {
+                new FeedbackReport(modal, exception);
+            }
+        });
+    }
+    
     /* members */
     /** Any Throwable (Exception, RuntimeException and Error) */
     private final Throwable _exception;
@@ -78,30 +114,13 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     private final DefaultComboBoxModel _feedbackTypeDataModel;
 
     /**
-     * Creates a new FeedbackReport object (not modal).
-     * Do not exit on close.
-     */
-    public FeedbackReport() {
-        this(false, null);
-    }
-
-    /**
-     * Creates a new FeedbackReport object (not modal).
-     * Do not exit on close.
-     * @param exception exception
-     */
-    public FeedbackReport(final Throwable exception) {
-        this(false, exception);
-    }
-
-    /**
      * Creates a new FeedbackReport object.
      * Do not exit on close.
      *
      * @param modal if true, this dialog is modal
      * @param exception exception
      */
-    public FeedbackReport(final boolean modal, final Throwable exception) {
+    private FeedbackReport(final boolean modal, final Throwable exception) {
 
         super(App.getFrame(), modal);
 
@@ -561,22 +580,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                FeedbackReport dialog = new FeedbackReport();
-                dialog.setVisible(true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+        openDialog();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;

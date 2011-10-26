@@ -47,7 +47,7 @@ public class ShowHelpAction extends AbstractAction {
             if (_helpID == null && (!_alreadyShown || App.isBetaVersion())) {
                 if (App.isBetaVersion()) {
                     // Show the feedback report :
-                    new FeedbackReport(new Exception(
+                    FeedbackReport.openDialog(new Exception(
                             "Documentation problem:\nNo helpID found for label '"
                             + label
                             + "'\nWe are working on this problem to solve it."));

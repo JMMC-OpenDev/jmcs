@@ -78,15 +78,15 @@ public final class LogUtil {
             l.init();
             if (isShutdown) {
                 // should not be possible :
-                if (l.log.isErrorEnabled()) {
-                    l.log.error("LogUtil.getInstance : shutdown detected : ", new Throwable());
+                if (l.log.isWarnEnabled()) {
+                    l.log.warn("LogUtil.getInstance : shutdown detected : ", new Throwable());
                 }
                 return l;
             }
             instance = l;
 
-            if (instance.logBase.isInfoEnabled()) {
-                instance.logBase.info("LogUtil.getInstance : new singleton : " + instance);
+            if (instance.logBase.isDebugEnabled()) {
+                instance.logBase.debug("LogUtil.getInstance : new singleton : " + instance);
             }
         }
 
@@ -237,8 +237,8 @@ public final class LogUtil {
     private void init() {
         this.log = this.getLog(LOGGER_MAIN);
 
-        if (this.log.isWarnEnabled()) {
-            this.log.warn("LogUtil : logging enabled now.");
+        if (this.log.isDebugEnabled()) {
+            this.log.debug("LogUtil : logging enabled now.");
         }
 
         this.logBase = this.getLog(LOGGER_BASE);

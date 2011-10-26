@@ -2,6 +2,7 @@ package org.ivoa.util.runner;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import org.ivoa.util.runner.process.RingBuffer;
 
 /**
@@ -37,6 +38,22 @@ public class RunContext implements Serializable, Cloneable {
      */
     private String description;
     /**
+     * Job creation date
+     */
+    private Date creationDate;
+    /**
+     * Job queue date
+     */
+    private Date queueDate = null;
+    /**
+     * Job run date
+     */
+    private Date runDate = null;
+    /**
+     * Job end date
+     */
+    private Date endDate = null;
+    /**
      * Job duration
      */
     private long duration = 0L;
@@ -68,6 +85,7 @@ public class RunContext implements Serializable, Cloneable {
         this.name = applicationName;
         // init :
         this.state = RunState.STATE_UNKNOWN;
+        this.creationDate = new Date();
 
         if (parent != null) {
             parent.addChild(this);
@@ -131,6 +149,10 @@ public class RunContext implements Serializable, Cloneable {
         return getClass().getSimpleName() + "[" + getId() + "][" + getState() + "]";
     }
 
+    /**
+     * Return the Root Context reference
+     * @return Root Context reference
+     */
     public final RootContext getParent() {
         return parent;
     }
@@ -162,10 +184,18 @@ public class RunContext implements Serializable, Cloneable {
         return state;
     }
 
+    /**
+     * Return true if the current state is STATE_RUNNING
+     * @return true if the current state is STATE_RUNNING 
+     */
     public final boolean isRunning() {
         return getState() == RunState.STATE_RUNNING;
     }
 
+    /**
+     * Return true if the current state is STATE_PENDING
+     * @return true if the current state is STATE_PENDING 
+     */
     public final boolean isPending() {
         return getState() == RunState.STATE_PENDING;
     }
@@ -177,6 +207,90 @@ public class RunContext implements Serializable, Cloneable {
      */
     protected final void setState(final RunState state) {
         this.state = state;
+        switch (state) {
+            case STATE_PENDING:
+                setQueueDate(new Date());
+
+                break;
+
+            case STATE_RUNNING:
+                setRunDate(new Date());
+
+                break;
+
+            case STATE_CANCELLED:
+            case STATE_INTERRUPTED:
+            case STATE_KILLED:
+            case STATE_FINISHED_ERROR:
+            case STATE_FINISHED_OK:
+                setEndDate(new Date());
+
+                break;
+
+            default:
+        }
+    }
+
+    /**
+     * Return the job creation date
+     * @return job creation date
+     */
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * Returns the job queue date
+     *
+     * @return job queue date
+     */
+    public final Date getQueueDate() {
+        return queueDate;
+    }
+
+    /**
+     * Defines the job queue date
+     *
+     * @param queueDate date to set
+     */
+    private final void setQueueDate(final Date queueDate) {
+        this.queueDate = queueDate;
+    }
+
+    /**
+     * Returns the job run date
+     *
+     * @return job run date
+     */
+    public final Date getRunDate() {
+        return runDate;
+    }
+
+    /**
+     * Defines the job run date
+     *
+     * @param runDate run date to set
+     */
+    private final void setRunDate(final Date runDate) {
+        this.runDate = runDate;
+    }
+
+    /**
+     * Returns the job end date
+     *
+     * @return job end date
+     */
+    public final Date getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Defines the job end date
+     *
+     * @param endDate date to set
+     */
+    private final void setEndDate(final Date endDate) {
+        this.endDate = endDate;
     }
 
     /**

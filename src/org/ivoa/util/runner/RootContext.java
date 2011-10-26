@@ -37,9 +37,9 @@ public final class RootContext extends RunContext implements Iterator<RunContext
      */
     private String relativePath;
     /**
-     * Child contexts (No cascade at all to have unary operation) TODO ??
+     * Child contexts (No cascade at all to have unary operation)
      */
-    private final List<RunContext> childContexts = new ArrayList<RunContext>();
+    private final List<RunContext> childContexts = new ArrayList<RunContext>(2);
     /**
      * Current executed task position in the Child contexts
      */
@@ -88,7 +88,7 @@ public final class RootContext extends RunContext implements Iterator<RunContext
      * Return the future associated with this root context
      * @return future associated with this root context
      */
-    protected Future<?> getFuture() {
+    public Future<?> getFuture() {
         return future;
     }
 
@@ -96,7 +96,7 @@ public final class RootContext extends RunContext implements Iterator<RunContext
      * Define the future associated to the execution of this root context
      * @param pFuture future instance
      */
-    protected void setFuture(final Future<?> pFuture) {
+    public void setFuture(final Future<?> pFuture) {
         this.future = pFuture;
     }
 

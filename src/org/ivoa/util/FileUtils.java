@@ -20,6 +20,8 @@ import java.util.zip.ZipOutputStream;
 /**
  * File utility methods : Several utility methods : finds a file in the class path (jar), open files
  * for read or write operation and close file
+ * 
+ * TODO: merge this class with Jmcs FileUtils
  *
  * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
  */
@@ -58,8 +60,8 @@ public final class FileUtils extends LogSupport {
             throw new RuntimeException("Unable to find the file in classpath : " + fileName);
         }
 
-        if (logB.isInfoEnabled()) {
-            logB.info("FileUtils.getSystemFileInputStream : URL : " + url);
+        if (logB.isDebugEnabled()) {
+            logB.debug("FileUtils.getSystemFileInputStream : URL : " + url);
         }
 
         return url;

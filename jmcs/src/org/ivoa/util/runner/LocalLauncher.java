@@ -273,8 +273,8 @@ public final class LocalLauncher {
      * @param rootCtx root context to execute
      */
     public static void startJob(final RootContext rootCtx) {
-        if (log.isInfoEnabled()) {
-            log.info("LocalLauncher.startJob : starting job : " + rootCtx.shortString());
+        if (log.isDebugEnabled()) {
+            log.debug("LocalLauncher.startJob : starting job : " + rootCtx.shortString());
         }
 
         // set pending state :
@@ -305,8 +305,8 @@ public final class LocalLauncher {
      * @param listener job listener to use
      */
     public static void startJob(final RootContext rootCtx, final JobListener listener) {
-        if (log.isInfoEnabled()) {
-            log.info("LocalLauncher.startJob : starting job : " + rootCtx.shortString());
+        if (log.isDebugEnabled()) {
+            log.debug("LocalLauncher.startJob : starting job : " + rootCtx.shortString());
         }
 
         // set pending state :

@@ -167,6 +167,6 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
      */
     public void handleException(final ExecutionException ee) {
         // Show feedback report (modal and do not exit on close) :
-        new FeedbackReport(true, ee.getCause());
+        FeedbackReport.openDialog(true, ee.getCause());
     }
 }

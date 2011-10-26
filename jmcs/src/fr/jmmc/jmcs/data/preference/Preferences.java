@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
+import fr.jmmc.jmcs.gui.SwingUtils;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.util.FileUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -29,7 +30,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
-import javax.swing.SwingUtilities;
 
 /**
  * This is the mother class to manage preferences (aka user defaults).
@@ -976,7 +976,7 @@ public abstract class Preferences extends Observable {
 
         if (isNotify()) {
             // Use EDT to ensure that Swing component(s) is updated by EDT :
-            SwingUtilities.invokeLater(new Runnable() {
+            SwingUtils.invokeEDT(new Runnable() {
 
                 @Override
                 public void run() {

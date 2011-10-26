@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.network.interop;
 
 import fr.jmmc.jmcs.gui.StatusBar;
+import fr.jmmc.jmcs.gui.SwingUtils;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import java.awt.event.ActionEvent;
 import java.util.Map;
@@ -12,7 +13,6 @@ import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import org.astrogrid.samp.Client;
@@ -118,7 +118,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     private void updateMenuAndActionAfterSubscribedClientChange() {
 
         // TODO : remove when code is clean !
-        if (!SwingUtilities.isEventDispatchThread()) {
+        if (!SwingUtils.isEDT()) {
             _logger.log(Level.SEVERE, "invalid thread : use EDT", new Throwable());
         }
 

@@ -18,6 +18,7 @@ import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.MessagePane;
 import fr.jmmc.jmcs.gui.SplashScreen;
 import fr.jmmc.jmcs.gui.SwingSettings;
+import fr.jmmc.jmcs.gui.SwingUtils;
 import fr.jmmc.jmcs.util.Urls;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
@@ -29,7 +30,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import java.net.URL;
@@ -42,7 +42,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
 
@@ -224,7 +223,7 @@ public abstract class App {
             MessagePane.showErrorMessage("An error occured while initializing the application");
 
             // Show the feedback report (modal) :
-            new FeedbackReport(true, th);
+            FeedbackReport.openDialog(true, th);
         }
     }
 
@@ -335,7 +334,7 @@ public abstract class App {
             public void actionPerformed(ActionEvent evt) {
                 if (_applicationDataModel != null) {
                     // Show the feedback report :
-                    new FeedbackReport(ex);
+                    FeedbackReport.openDialog(ex);
                 }
             }
         };
@@ -606,69 +605,52 @@ public abstract class App {
     protected final void run() {
         // Show splash screen if we have to
         if (_showSplashScreen) {
-            try {
-                // Using invokeAndWait to be in sync with the main thread :
-                SwingUtilities.invokeAndWait(new Runnable() {
+            // Using invokeAndWait to be in sync with this thread :
+            // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
+            SwingUtils.invokeAndWaitEDT(new Runnable() {
 
-                    /**
-                     * Initializes Splash Screen in EDT
-                     */
-                    @Override
-                    public void run() {
-                        showSplashScreen();
-                    }
-                });
-
-            } catch (InterruptedException ie) {
-                // propagate the exception :
-                throw new IllegalStateException("App.run : interrupted", ie);
-            } catch (InvocationTargetException ite) {
-                // propagate the internal exception :
-                throw new IllegalStateException("App.run : exception", ite.getCause());
-            }
+                /**
+                 * Initializes Splash Screen in EDT
+                 */
+                @Override
+                public void run() {
+                    showSplashScreen();
+                }
+            });
         }
 
         // Delegate initialization to daughter class through abstract init() call
         init(_args);
 
-        try {
+        // Using invokeAndWait to be in sync with this thread :
+        // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
+        SwingUtils.invokeAndWaitEDT(new Runnable() {
 
-            // Using invokeAndWait to be in sync with the main thread :
-            SwingUtilities.invokeAndWait(new Runnable() {
-
-                /**
-                 * Initializes swing components in EDT
-                 */
-                @Override
-                public void run() {
-                    // If running under Mac OS X
-                    if (SystemUtils.IS_OS_MAC_OSX) {
-                        // Set application name :
-                        // system properties must be set before using any Swing component:
-                        // Hope nothing as already been done...
-                        System.setProperty("com.apple.mrj.application.apple.menu.about.name", _applicationDataModel.getProgramName());
-                    }
-
-                    // Define the jframe associated to the application which will get the JmenuBar
-                    final JFrame frame = getFrame();
-
-                    // Use OSXAdapter on the frame
-                    macOSXRegistration(frame);
-
-                    frame.setJMenuBar(new MainMenuBar(frame));
-
-                    // Set application frame common properties
-                    frame.pack();
+            /**
+             * Initializes swing components in EDT
+             */
+            @Override
+            public void run() {
+                // If running under Mac OS X
+                if (SystemUtils.IS_OS_MAC_OSX) {
+                    // Set application name :
+                    // system properties must be set before using any Swing component:
+                    // Hope nothing as already been done...
+                    System.setProperty("com.apple.mrj.application.apple.menu.about.name", _applicationDataModel.getProgramName());
                 }
-            });
 
-        } catch (InterruptedException ie) {
-            // propagate the exception :
-            throw new IllegalStateException("App.run : interrupted", ie);
-        } catch (InvocationTargetException ite) {
-            // propagate the internal exception :
-            throw new IllegalStateException("App.run : exception", ite.getCause());
-        }
+                // Define the jframe associated to the application which will get the JmenuBar
+                final JFrame frame = getFrame();
+
+                // Use OSXAdapter on the frame
+                macOSXRegistration(frame);
+
+                frame.setJMenuBar(new MainMenuBar(frame));
+
+                // Set application frame common properties
+                frame.pack();
+            }
+        });
 
         // Delegate execution to daughter class through abstract execute() call
         execute();
@@ -678,7 +660,7 @@ public abstract class App {
 
         // If any file argument exists, open that file using the registered open action :
         if (_fileArgument != null) {
-            SwingUtilities.invokeLater(new Runnable() {
+            SwingUtils.invokeLaterEDT(new Runnable() {
 
                 /**
                  * Open the file using EDT :

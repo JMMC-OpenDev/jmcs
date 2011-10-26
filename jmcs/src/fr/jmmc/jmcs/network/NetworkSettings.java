@@ -38,11 +38,15 @@ public final class NetworkSettings {
     public static final String PROPERTY_HTTP_PROXY_HOST = "http.proxyHost";
     /** HTTP proxy port */
     public static final String PROPERTY_HTTP_PROXY_PORT = "http.proxyPort";
+    /** HTTP non proxy hosts */
+    public static final String PROPERTY_HTTP_NO_PROXY_HOSTS = "http.nonProxyHosts";
     /** SOCKS proxy host */
     public static final String PROPERTY_SOCKS_PROXY_HOST = "socksProxyHost";
     /** SOCKS proxy port */
     public static final String PROPERTY_SOCKS_PROXY_PORT = "socksProxyPort";
     /* JMMC standard values */
+    /** Use system proxies (false by default) */
+    public static final String USE_SYSTEM_PROXIES = "false";
     /** default value for the connection timeout in milliseconds (15 s) */
     public static final int DEFAULT_CONNECT_TIMEOUT = 15 * 1000;
     /** default value for the read timeout in milliseconds (10 minutes) */
@@ -100,7 +104,7 @@ public final class NetworkSettings {
 
         // NOTE: USE of SYSTEM_PROXIES can cause problems with SOCKS / HTTPS / Other protocols ?
         // unset env var all_proxy=socks://w and ALL_PROXY
-        System.setProperty(PROPERTY_USE_SYSTEM_PROXIES, "true");
+        System.setProperty(PROPERTY_USE_SYSTEM_PROXIES, USE_SYSTEM_PROXIES);
 
         // first, dump all known network properties:
         final Method netPropertiesGetMethod = getNetPropertiesGetMethod();
@@ -210,6 +214,9 @@ public final class NetworkSettings {
 
         // # http.proxyPort
         System.setProperty(PROPERTY_HTTP_PROXY_PORT, Integer.toString(proxyPort));
+
+        // # http.nonProxyHosts
+//        System.setProperty(PROPERTY_HTTP_NO_PROXY_HOSTS, "localhost|127.0.0.1");
 
         // TODO : support also advanced proxy settings (user, password ...)
         // # http.proxyUser

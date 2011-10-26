@@ -18,7 +18,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 /**
  * A status bar that can be shared all along an application.
@@ -95,17 +94,15 @@ public class StatusBar extends JPanel {
     public static void show(final String message) {
         _logger.entering("StatusBar", "show");
 
-        // update the status bar within EDT :
-        if (SwingUtilities.isEventDispatchThread()) {
-            setStatusLabel(message);
-        } else {
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-                    setStatusLabel(message);
-                }
-            });
-        }
+        SwingUtils.invokeEDT(new Runnable() {
+            /**
+             * Update the status bar using EDT
+             */
+            @Override
+            public void run() {
+                setStatusLabel(message);
+            }
+        });
     }
 
     /**

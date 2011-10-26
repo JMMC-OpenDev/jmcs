@@ -5,10 +5,9 @@ package fr.jmmc.jmcs.util;
 
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.MessagePane;
-import java.lang.reflect.InvocationTargetException;
+import fr.jmmc.jmcs.gui.SwingUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 
 /**
  * This class provides Java 5 Thread uncaught exception handlers
@@ -144,18 +143,18 @@ public final class MCSExceptionHandler {
 
         if (handler instanceof SwingExceptionHandler) {
             try {
-                // Adding my handler to the Event-Driven Thread.
-                SwingUtilities.invokeAndWait(new Runnable() {
+                // Using invokeAndWait to be in sync with this thread :
+                // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
+                SwingUtils.invokeAndWaitEDT(new Runnable() {
 
                     @Override
                     public void run() {
+                        // Adding my handler to the Event-Driven Thread.
                         applyUncaughtExceptionHandler(Thread.currentThread(), handler);
                     }
                 });
-            } catch (InterruptedException ie) {
-                _logger.log(Level.SEVERE, "interrupted", ie);
-            } catch (InvocationTargetException ite) {
-                _logger.log(Level.SEVERE, "exception", ite.getCause());
+            } catch (IllegalStateException ise) {
+                _logger.log(Level.SEVERE, "exception occured: ", ise);
             }
         }
     }
@@ -219,7 +218,7 @@ public final class MCSExceptionHandler {
         MessagePane.showErrorMessage("An unexpected exception occured", e);
 
         // Show the feedback report (modal) :
-        new FeedbackReport(true, e);
+        FeedbackReport.openDialog(true, e);
     }
 
     /**
@@ -276,17 +275,13 @@ public final class MCSExceptionHandler {
         @Override
         public void uncaughtException(final Thread thread, final Throwable e) {
             if (!isFilteredException(e)) {
-                if (SwingUtilities.isEventDispatchThread()) {
-                    showException(thread, e);
-                } else {
-                    SwingUtilities.invokeLater(new Runnable() {
+                SwingUtils.invokeEDT(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            showException(thread, e);
-                        }
-                    });
-                }
+                    @Override
+                    public void run() {
+                        showException(thread, e);
+                    }
+                });
             }
         }
     }

@@ -6,7 +6,6 @@ package fr.jmmc.jmcs.gui;
 import java.awt.Component;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.JTextComponent;
 
@@ -44,7 +43,7 @@ public class NumericJTable extends javax.swing.JTable {
 
         if (c instanceof JTextComponent) {
             /* use invokeLater because of mouse events default behavior (caret ...) */
-            SwingUtilities.invokeLater(new Runnable() {
+            SwingUtils.invokeLaterEDT(new Runnable() {
 
                 @Override
                 public void run() {

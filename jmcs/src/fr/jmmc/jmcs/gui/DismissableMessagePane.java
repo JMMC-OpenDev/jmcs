@@ -53,7 +53,7 @@ public final class DismissableMessagePane {
             }
         } catch (PreferencesException pe) {
             // Show the feedback report :
-            new FeedbackReport(pe);
+            FeedbackReport.openDialog(pe);
         }
     }
 }

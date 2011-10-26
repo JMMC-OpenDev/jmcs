@@ -1,10 +1,18 @@
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
-1 - miscDynBufGetNbStoredBytes = mcsFAILURE.
-1 - miscDynBufGetNbAllocatedBytes = mcsFAILURE.
-1 - miscDynBufGetCommentPattern = mcsFAILURE.
-1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - miscDynBufGetNbStoredBytes = miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
+1 - mcsFAILURE.
+1 - miscDynBufGetNbAllocatedBytes = miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
+1 - mcsFAILURE.
+1 - miscDynBufGetCommentPattern = miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
+1 - mcsFAILURE.
+1 - miscDynBufGetBuffer= miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
+1 - mcsFAILURE.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
@@ -43,17 +51,21 @@
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
 1 - miscDynBufGetByteAt(NULL, 0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.647031 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.647088 - miscDynBuf.c:165 - ERROR:  2 S Dynamic Buffer not initialized.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error -  ERROR: 2 S Dynamic Buffer not initialized.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
 1 - miscDynBufGetByteAt(NULL, 0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.648048 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
 1 - miscDynBufGetByteAt(0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.649043 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - miscDynBufGetByteAt(1) = "h" SUCCEED
 1 - 
@@ -61,23 +73,28 @@
 1 - 
 1 - miscDynBufGetByteAt(23) = "!" SUCCEED
 1 - 
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
 1 - miscDynBufGetByteAt(24) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.649989 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
 1 - miscDynBufGetBytesFromTo(0, 4) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.651861 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.651885 - miscDynBuf.c:202 - ERROR:  2 S Dynamic Buffer not initialized.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error -  ERROR: 2 S Dynamic Buffer not initialized.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
 1 - miscDynBufGetBytesFromTo(0, 4) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.652851 - miscDynBuf.c:209 - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
 1 - 
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
 1 - miscDynBufGetBytesFromTo(NULL, 1, 12) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.653786 - miscDynBuf.c:647 - ERROR: 1 S Received a NULL value for parameter 'bytes'.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'bytes'.
 1 - 
 1 - miscDynBufGetBytesFromTo(1, 12) = "hello dynBuf" SUCCEED
 1 - 
@@ -85,25 +102,30 @@
 1 - 
 1 - miscDynBufGetBytesFromTo(6, 6) = " " SUCCEED
 1 - 
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 5)
 1 - miscDynBufGetBytesFromTo(23, 18) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.654753 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
 1 - 
 1 - miscDynBufGetBytesFromTo(18, 23) = ":) !!!" SUCCEED
 1 - 
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
 1 - miscDynBufGetBytesFromTo(18, 24) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.655693 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
 1 - miscDynBufReplaceByteAt(0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.657630 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.657646 - miscDynBuf.c:165 - ERROR:  2 S Dynamic Buffer not initialized.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error -  ERROR: 2 S Dynamic Buffer not initialized.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
 1 - miscDynBufReplaceByteAt(0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.658586 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - miscDynBufReplaceByteAt(1) = "H" SUCCEED
 1 - miscDynBufGetNbStoredBytes = '23'.
@@ -129,8 +151,9 @@
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf'... :) !!@".
 1 - 
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
 1 - miscDynBufReplaceByteAt(24) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.659555 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
@@ -171,8 +194,9 @@
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Encore un 'Hello miscBynBuf'... :) !!~~~@".
 1 - 
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
 1 - miscDynBufInsertBytesAt("~~~", 3, 42) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.660529 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
@@ -205,20 +229,24 @@
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf' !".
 1 - 
-1 - miscDynBufReplaceBytesFromTo(" !", 3, 31, 34) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.661545 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+1 - miscDynBufReplaceBytesFromTo(" !", 3, 31, 34) miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
-1 - miscDynBufDeleteBytesFromTo(0, 13) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.663418 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.663442 - miscDynBuf.c:202 - ERROR:  2 S Dynamic Buffer not initialized.
+1 - miscDynBufDeleteBytesFromTo(0, 13) miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error -  ERROR: 2 S Dynamic Buffer not initialized.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
-1 - miscDynBufDeleteBytesFromTo(0, 13) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.664380 - miscDynBuf.c:209 - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
+1 - miscDynBufDeleteBytesFromTo(0, 13) miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - miscDynBufDeleteBytesFromTo(1, 13) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '20'.
@@ -226,8 +254,9 @@
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello miscBynBuf' !".
 1 - 
-1 - miscDynBufDeleteBytesFromTo(10, 7) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.665385 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+1 - miscDynBufDeleteBytesFromTo(10, 7) miscTestDynBuf -    err - Test  - errAddInStack(misc, 5)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
 1 - 
 1 - miscDynBufDeleteBytesFromTo(7, 10) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '16'.
@@ -247,15 +276,18 @@
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf".
 1 - 
-1 - miscDynBufDeleteBytesFromTo(12, 14) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.666335 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+1 - miscDynBufDeleteBytesFromTo(12, 14) miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
-1 - miscDynBufStrip() FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.668183 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.668229 - miscDynBuf.c:273 - ERROR:  2 S Received a NULL value for parameter 'dynBuf'.
+1 - miscDynBufStrip() miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error -  ERROR: 2 S Received a NULL value for parameter 'dynBuf'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
@@ -268,9 +300,11 @@
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
-1 - miscDynBufReset() FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.670104 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.670137 - miscDynBuf.c:273 - ERROR:  2 S Received a NULL value for parameter 'dynBuf'.
+1 - miscDynBufReset() miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error -  ERROR: 2 S Received a NULL value for parameter 'dynBuf'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
@@ -283,13 +317,15 @@
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
-1 - miscDynBufAppendString(&dynBuf = NULL) : FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.671075 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscDynBufAppendString(&dynBuf = NULL) : miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
-1 - miscDynBufAppendString(NULL) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.672005 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscDynBufAppendString(NULL) miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - miscDynBufAppendString("hello dynStr") SUCCEED
 1 - miscDynBufGetNbStoredBytes = '13'.
@@ -312,16 +348,19 @@
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
 1 - miscDynBufInsertStringAt(NULL, 0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.673046 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
 1 - miscDynBufInsertStringAt(NULL, 0) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.674026 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
 1 - miscDynBufInsertStringAt(NULL, 1) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.674955 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - miscDynBufInsertStringAt("Encore un '", 1) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '35'.
@@ -341,19 +380,22 @@
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Encore un 'hello miscdynStr ... :) !!!~~~".
 1 - 
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
 1 - miscDynBufInsertStringAt("~~~", 43) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.675927 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
-1 - miscDynBufReplaceStringFromTo("(null)", 0, 9) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.676919 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscDynBufReplaceStringFromTo("(null)", 0, 9) miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
-1 - miscDynBufReplaceStringFromTo("(null)", 0, 9) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.677852 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscDynBufReplaceStringFromTo("(null)", 0, 9) miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - 
 1 - miscDynBufReplaceStringFromTo("Toujours ce", 1, 9) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '44'.
@@ -361,8 +403,9 @@
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr ... :) !!!~~~".
 1 - 
-1 - miscDynBufReplaceStringFromTo(" !", 42, 40) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.678823 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+1 - miscDynBufReplaceStringFromTo(" !", 42, 40) miscTestDynBuf -    err - Test  - errAddInStack(misc, 5)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
 1 - 
 1 - miscDynBufReplaceStringFromTo(" !", 40, 42) SUCCEED
 1 - 
@@ -372,23 +415,30 @@
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr  !".
 1 - 
-1 - miscDynBufReplaceStringFromTo(" !", 31, 34) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.679769 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+1 - miscDynBufReplaceStringFromTo(" !", 31, 34) miscTestDynBuf -    err - Test  - errAddInStack(misc, 4)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
 1 - ----------------
-1 - miscDynBufDestroy() FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.681661 - miscDynBuf.c:129 - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.681677 - miscDynBuf.c:273 - ERROR:  2 S Received a NULL value for parameter 'dynBuf'.
+1 - miscDynBufDestroy() miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'dynBuf'.
+1 - miscTestDynBuf -   misc - Error -  ERROR: 2 S Received a NULL value for parameter 'dynBuf'.
 1 - 
 1 - dynBuf Allocated :
 1 - ------------------
 1 - miscDynBufDestroy() SUCCEED
-1 - miscDynBufGetNbStoredBytes = mcsFAILURE.
-1 - miscDynBufGetNbAllocatedBytes = mcsFAILURE.
-1 - miscDynBufGetCommentPattern = mcsFAILURE.
-1 - miscDynBufGetBuffer= mcsFAILURE.
+1 - miscDynBufGetNbStoredBytes = miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
+1 - mcsFAILURE.
+1 - miscDynBufGetNbAllocatedBytes = miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
+1 - mcsFAILURE.
+1 - miscDynBufGetCommentPattern = miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
+1 - mcsFAILURE.
+1 - miscDynBufGetBuffer= miscTestDynBuf -    err - Test  - errAddInStack(misc, 23)
+1 - mcsFAILURE.
 1 - 
 1 - ---------------------------------------------------------------
 1 - miscDynBufSetCommentPattern(#) SUCCEED
@@ -422,8 +472,9 @@
 1 - miscDynBufGetBuffer= mcsFAILURE.
 1 - 
 1 - ---------------------------------------------------------------
-1 - miscDynBufLoadFile(../config/) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.686429 - miscDynBuf.c:1112 - ERROR: 1 S Could not read '../config/' file : 'Is a directory'.
+1 - miscDynBufLoadFile(../config/) miscTestDynBuf -    err - Test  - errAddInStack(misc, 15)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Could not read '../config/' file : 'Is a directory'.
 1 - miscDynBufGetNbStoredBytes = '0'.
 1 - miscDynBufGetNbAllocatedBytes = '4096'.
 1 - miscDynBufGetCommentPattern = "".
@@ -501,8 +552,9 @@
 1 - ".
 1 - 
 1 - ---------------------------------------------------------------
-1 - miscDynBufSaveInFile(../tmp/) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.687544 - miscDynBuf.c:1168 - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
+1 - miscDynBufSaveInFile(../tmp/) miscTestDynBuf -    err - Test  - errAddInStack(misc, 21)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
 1 - miscDynBufGetNbStoredBytes = '842'.
 1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
@@ -552,8 +604,9 @@
 1 - ".
 1 - 
 1 - ---------------------------------------------------------------
-1 - miscDynBufSaveInASCIIFile(../tmp/) FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.688587 - miscDynBuf.c:1168 - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
+1 - miscDynBufSaveInASCIIFile(../tmp/) miscTestDynBuf -    err - Test  - errAddInStack(misc, 21)
+1 - FAILED
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
 1 - miscDynBufGetNbStoredBytes = '842'.
 1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
@@ -702,8 +755,9 @@
 1 - ------------------
 1 - commentPattern = '#'
 1 - line           = '(null)'
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
 1 - FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.689777 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - miscDynBufGetNbStoredBytes = '842'.
 1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "#".
@@ -761,8 +815,9 @@
 1 - ------------------
 1 - commentPattern = ''
 1 - line           = '(null)'
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 1)
 1 - FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.690746 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - miscDynBufGetNbStoredBytes = '869'.
 1 - miscDynBufGetNbAllocatedBytes = '7168'.
 1 - miscDynBufGetCommentPattern = "".
@@ -884,8 +939,9 @@
 1 - ---------------------------------------------------------------
 1 - ------------------
 1 - Executing 'toto':
+1 - miscTestDynBuf -    err - Test  - errAddInStack(misc, 33)
 1 - FAILED
-1 - miscTestDynBuf -   misc - Error - 2011-08-31T20:50:18.694729 - miscDynBuf.c:1039 - ERROR: 1 S 'toto' command exited with status '127' : please use command's manpage for detailed information.
+1 - miscTestDynBuf -   misc - Error - ERROR: 1 S 'toto' command exited with status '127' : please use command's manpage for detailed information.
 1 - miscDynBufGetNbStoredBytes = '1'.
 1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
@@ -903,17 +959,17 @@
 1 - ------------------
 1 - Executing 'echo $PATH':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '535'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbStoredBytes = '505'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
-1 - miscDynBufGetBuffer= "/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/usr/kerberos/bin:/home/soft/shared/jdk1.5//bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/libexec:/usr/local/bin:/bin:/usr/bin:/home/soft/shared/jalopy-console-0.1-1.5rc3:/home/soft/shared/stilts:/home/soft/shared/gasgano-2.2.7/bin:/home/soft/local/JmmcTools/:/home/soft/shared/bin/:../bin:/home/users/bourgesl/INTROOT/bin:/home/MCS/DEVELOPMENT/bin:/home/users/bourgesl/bin
+1 - miscDynBufGetBuffer= "/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/usr/kerberos/bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/libexec:/usr/local/bin:/bin:/usr/bin:/home/soft/shared/jalopy-console-0.1-1.5rc3:/home/soft/shared/stilts:/home/soft/shared/gasgano-2.2.7/bin:/home/soft/local/JmmcTools/:/home/soft/shared/bin/:../bin:/home/users/bourgesl/INTROOT/bin:/home/MCS/DEVELOPMENT/bin:/home/users/bourgesl/bin
 1 - ".
 1 - 
 1 - ------------------
 1 - Executing 'pwd':
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '40'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '512'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "/home/users/bourgesl/dev/MCS/misc/test
 1 - ".
@@ -921,8 +977,8 @@
 1 - ------------------
 1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://www.apple.com"':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '9617'.
-1 - miscDynBufGetNbAllocatedBytes = '14705'.
+1 - miscDynBufGetNbStoredBytes = '9403'.
+1 - miscDynBufGetNbAllocatedBytes = '10976'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "<!DOCTYPE html>
 1 - <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
@@ -937,9 +993,6 @@
 1 - 	<meta name="omni_page" content="Apple - Index/Tab" />
 1 - 	<meta name="Keywords" content="Apple" />
 1 - 	<meta name="Description" content="Apple designs and creates iPod and iTunes, Mac laptop and desktop computers, the OS X operating system, and the revolutionary iPhone and iPad." />
-1 - 	<script type="text/javascript">
-1 - 		var gomez = { gs:new Date().getTime(), acctId:'C2C738', pgId:'Home Page', grpId:'' };
-1 - 	</script>
 1 - 	<link rel="home" href="http://www.apple.com/" />
 1 - 	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://images.apple.com/main/rss/hotnews/hotnews.rss" />
 1 - 	<link rel="index" href="http://www.apple.com/sitemap/" />
@@ -949,15 +1002,11 @@
 1 - 	<script src="http://images.apple.com/global/scripts/apple_core.js" type="text/javascript" charset="utf-8"></script>
 1 - 	<script src="http://images.apple.com/global/scripts/search_decorator.js" type="text/javascript" charset="utf-8"></script>
 1 - 
-1 - 	<script type="text/javascript" src="http://images.apple.com/global/scripts/promomanager.js"></script>
-1 - 	<script src="http://images.apple.com/v/home/c/scripts/ticker.js" type="text/javascript" charset="utf-8"></script>
-1 - 	<script src="http://images.apple.com/v/home/c/scripts/promotracker.js" type="text/javascript" charset="utf-8"></script>
-1 - 	<script src="http://images.apple.com/v/home/c/scripts/promos.js" type="text/javascript" charset="utf-8"></script>
 1 - 	<link rel="stylesheet" href="http://images.apple.com/global/styles/base.css" type="text/css" />
-1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/c/styles/home.css" type="text/css" />
-1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/c/styles/c.css" type="text/css" />
+1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/g/styles/home.css" type="text/css" />
+1 - 	<link rel="stylesheet" href="http://images.apple.com/home/styles/home.css" type="text/css" />
 1 - </head>
-1 - <body id="home" class="keynote">
+1 - <body id="home" class="home">
 1 - 	<script type="text/javascript">
 1 - 	var searchSection = 'global';
 1 - 	var searchCountry = 'us';
@@ -1019,10 +1068,6 @@
 1 - s.channel="www.us.homepage"
 1 - 
 1 - 
-1 - if(AC&&AC.Storage){
-1 - 	s.prop25=AC.Storage.getItem('s_nav');
-1 - 	AC.Storage.removeItem('s_nav')
-1 - }
 1 - Event.onDOMReady(function() {
 1 - 	function trackNav(link,loc) {
 1 - 		link.observe('mousedown',function(){
@@ -1031,12 +1076,6 @@
 1 - 			}
 1 - 		});
 1 - 	}
-1 - 	$$('#globalheader a').each(function(link){
-1 - 		trackNav(link,'global nav');
-1 - 	});
-1 - 	$$('#productheader a').each(function(link){
-1 - 		trackNav(link,'product nav');
-1 - 	});
 1 - 	$$('#billboard a').each(function(link){
 1 - 		trackNav(link,'hero');
 1 - 	});
@@ -1052,72 +1091,92 @@
 1 - </div>
 1 - 	<div id="main">
 1 - 		<div id="content">
-1 - 			<div id="billboard">
-1 - 				<article id="macbookair" class="billboard content fancy promoset-1">
-1 - 					<a href="/macbookair/" class="block hero trackH">
-1 - 						<h1><img src="http://images.apple.com/home/images/hero_macbookair.png" alt="The new faster, MacBook Air. The ultimate everyday notebook. Now up to 2.5x faster, featuring highspeed Thunderbolt I/O and OS X Lion." width="902" height="586" /></h1>
-1 - 					</a>
-1 - 				</article><!--/macbookair-->
-1 - 				<article id="lion" class="billboard content fancy promoset-1">
-1 - 					<a href="/macosx/" class="block hero trackH">
-1 - 						<h1><img src="http://images.apple.com/home/images/hero_lion.png" alt="OS X Lion. The new king of the desktop. Available now from the Mac App Store for just $29.99" width="933" height="570" /></h1>
-1 - 					</a>
-1 - 				</article><!--/lion-->
-1 - 			</div><!--/billboard-->
+1 - 			<article id="billboard" class="grid2col">
+1 - 				<a href="/iphone/"><img class="hero left" src="http://images.apple.com/home/images/hero.jpg" alt="iPhone 4S" width="579" height="595" /></a>
+1 - 				<div class="column last">
+1 - 					<h1 class="selfclear">
+1 - 						<a href="/iphone/">
+1 - 							<img class="left" src="http://images.apple.com/home/images/title.png" alt="iPhone 4S. Dual-core A5 chip. All-new 8MP camera and optics. iOS 5 and iCloud. And introducing Siri. It’s the most amazing iPhone yet." width="313" height="219" />
+1 - 						</a>
+1 - 					</h1>
+1 - 					<ul class="videos">						
+1 - 						<li>
+1 - 							<a class="block video-thumb" href="/iphone/#video-4s">
+1 - 								<span class="image">
+1 - 									<span class="play"></span>
+1 - 									<img src="http://images.apple.com/home/images/video_iphone4s.jpg" alt="" width="90" height="57" />
+1 - 								</span>
+1 - 								<span class="link">
+1 - 									<span class="nowrap">Watch the</span> <span class="more">iPhone 4S video</span>
+1 - 								</span>
+1 - 							</a>
+1 - 						</li>
+1 - 						<li>
+1 - 							<a class="block video-thumb" href="/iphone/#video-4s-ad">
+1 - 								<span class="image">
+1 - 									<span class="play"></span>
+1 - 									<img src="http://images.apple.com/home/images/video_iphone4s_ad.jpg" alt="" width="90" height="57" />
+1 - 								</span>
+1 - 								<span class="link">
+1 - 									<span class="nowrap">Watch the</span> <span class="more">iPhone 4S TV ad</span>
+1 - 								</span>
+1 - 							</a>
+1 - 						</li>
+1 - 					</ul>
+1 - 				</div>
+1 - 			</article><!--/billboard-->
 1 - 
-1 - 			<aside id="headlines">
-1 - 				<div id="ticker"><p><a href="/hotnews/" id="ticker-headline">Hot News Headlines</a> <a href="/hotnews/" id="news-link">Mac App Store Downloads Top One Million in First Day.</a></p></div>
-1 - 				<a href="/hotnews/feeds/ticker.rss" id="ticker-rss-link"></a>
+1 - 			<aside class="promos"><ul><li>
+1 - 				<a href="/ios/"><img src="http://images.apple.com/home/images/promo_ios5.png" alt="iOS 5 Software Update. Get over 200 new features - free for iPhone, iPad, and iPod touch." width="231" height="149" /></a></li><li>
+1 - 				<a href="icloud"><img src="http://images.apple.com/home/images/promo_icloud.png" alt="iCloud is here. iCloud stores your content and wirelessly pushes it to your devices." width="231" height="149" /></a></li><li>
+1 - 				<a href="/ipodtouch/"><img src="http://images.apple.com/home/images/promo_ipodtouch.png" alt="iPod touch. It has fun written all over it. Now starting at $199." width="231" height="149" /></a></li><li>
+1 - 				<a href="/ipad/"><img src="http://images.apple.com/home/images/promo_ipad2.png" alt="iPad 2. Now with iOS 5 and iCloud, it just got even harder to put down." width="231" height="149" /></a>
+1 - 			</li></ul></aside>
+1 - 
+1 - 			<aside class="rememberingsteve rounded grid2col">
+1 - 				<ul>
+1 - 					<li class="column first">
+1 - 						<a class="block roundedleft" href="/stevejobs/">
+1 - 							<img class="title" src="http://images.apple.com/home/images/rememberingsteve_title.png" alt="Steve Jobs, 1955-2011. Share your condolences and read others from around the world." width="399" height="34" />
+1 - 						</a>
+1 - 					</li><li class="column last">
+1 - 						<a class="block roundedright" href="/celebrating-steve/">
+1 - 							<img class="video block" src="http://images.apple.com/home/images/celebratingsteve_video.png" alt="" width="82" height="56" />
+1 - 							<img class="title" src="http://images.apple.com/home/images/celebratingsteve_title.png" alt="Celebrating Steve. Watch the October 19 special event." width="224" height="34" />
+1 - 						</a>
+1 - 					</li>
+1 - 				</ul>
 1 - 			</aside>
 1 - 
-1 - 			<aside class="promos">
-1 - 				<ul class="promos">
-1 - 					<li class="promoset-2-container">
-1 - 						<a class="trackP promoset-2 promoset-2-lion" href="/macosx/"><img src="http://images.apple.com/home/images/promo_lion.png" alt="OS X Lion. Available Now. Download it today from the Mac App Store." width="231" height="149" /></a>
-1 - 						<a class="trackP promoset-2 promoset-2-macbookair" href="/macbookair/"><img src="http://images.apple.com/home/images/promo_macbookair.png" alt="The new, faster MacBook Air. Now up to 2.5x faster and featuring high-speed Thunderbolt I/O." width="231" height="149" /></a>
-1 - 					</li>
-1 - 					
-1 - 					<li>
-1 - 						<a class="trackP" href="/ipad/#we-will-always"><img src="http://images.apple.com/home/images/promo_ipadtvad.png" alt="Watch the new iPad TV ad." width="231" height="149" /></a>
-1 - 					</li>
-1 - 					<li>
-1 - 						<a class="trackP" href="/icloud/"><img src="http://images.apple.com/home/images/promo_icloud.png" alt="iCloud. Coming this fall. iCloud stores your content and wirelessly pushes it to all your devices." width="231" height="149" /></a>
-1 - 					</li>
-1 - 					<li class="bts2011">
-1 - 						<a class="trackP" href="http://store.apple.com/us/browse/campaigns/back_to_school?aid=www-naus-bts2011-0526-14"><img src="http://images.apple.com/home/images/promo_bts2011.png" width="237" height="155" alt="Buy a Mac for college and get $100 to spend on the Mac App Store. Terms apply." /></a>
-1 - 					</li>
-1 - 				</ul><!--/promos-->
-1 - 			</aside><!--/promos-->
+1 - 			<footer id="homefooter">
+1 - 				<div id="links">
+1 - 					<p class="left">Shop the <a href="/store/">Apple Online Store</a> (1-800-MY-APPLE), visit an <a href="/retail/">Apple Retail Store</a>, or find a <a href="/buy/">reseller</a>.</p>
+1 - 					<ul class="piped right">
+1 - 						<li><a href="/sitemap/" class="first">Site Map</a></li>
+1 - 						<li><a href="/hotnews/">Hot News</a></li>
+1 - 						<li><a href="/rss/">RSS Feeds</a></li>
+1 - 						<li><a href="/pr/">Media Info</a></li>
+1 - 						<li><a href="/environment/">Environment</a></li>
+1 - 						<li><a href="/jobs/">Job Opportunities</a></li>
+1 - 						<li><a href="/contact/">Contact Us</a></li>
+1 - 					</ul>
+1 - 				</div><!--/links-->
+1 - 
+1 - 				<div class="sosumi">
+1 - 	                <p class="copyright">Copyright © 2011 Apple Inc. All rights reserved.</p>
+1 - 					<ul class="piped">
+1 - 						<li><a href="/legal/" class="first">Terms of Use</a></li>
+1 - 						<li><a href="/legal/privacy/">Privacy Policy</a></li>
+1 - 					</ul>
+1 - 					<div id="worldwide">
+1 - 						<a href="/choose-your-country/">
+1 - 							<img src="http://images.apple.com/global/elements/flags/22x22/usa.png" alt="United States of America" height="22" width="22" />
+1 - 							<span class="more">Choose your country or region</span>
+1 - 						</a>
+1 - 					</div>
+1 - 				</div><!--/sosumi-->
+1 - 			</footer><!--/homefooter-->
 1 - 		</div><!--/content-->
-1 - 
-1 - 		<footer id="homefooter">
-1 - 			<div id="links">
-1 - 				<p class="left">Shop the <a href="/store/">Apple Online Store</a> (1-800-MY-APPLE), visit an <a href="/retail/">Apple Retail Store</a>, or find a <a href="/buy/">reseller</a>.</p>
-1 - 				<ul class="piped right">
-1 - 					<li><a href="/sitemap/" class="first">Site Map</a></li>
-1 - 					<li><a href="/hotnews/">Hot News</a></li>
-1 - 					<li><a href="/rss/">RSS Feeds</a></li>
-1 - 					<li><a href="/pr/">Media Info</a></li>
-1 - 					<li><a href="/environment/">Environment</a></li>
-1 - 					<li><a href="/jobs/">Job Opportunities</a></li>
-1 - 					<li><a href="/contact/">Contact Us</a></li>
-1 - 				</ul>
-1 - 			</div><!--/links-->
-1 - 
-1 - 			<div class="sosumi">
-1 -                 <p class="copyright">Copyright © 2011 Apple Inc. All rights reserved.</p>
-1 - 				<ul class="piped">
-1 - 					<li><a href="/legal/" class="first">Terms of Use</a></li>
-1 - 					<li><a href="/legal/privacy/">Privacy Policy</a></li>
-1 - 				</ul>
-1 - 				<div id="worldwide">
-1 - 					<a href="/choose-your-country/">
-1 - 						<img src="http://images.apple.com/home/elements/worldwide_us.png" alt="United States of America" height="22" width="22" />
-1 - 						<span class="more">Choose your country or region</span>
-1 - 					</a>
-1 - 				</div>
-1 - 			</div><!--/sosumi-->
-1 - 		</footer><!--/homefooter-->
 1 - 	</div><!--/main-->
 1 - 
 1 - 	<!-- Start of DoubleClick Spotlight Tag: Please do not remove-->
@@ -1132,20 +1191,19 @@
 1 - 	</noscript>
 1 - 	<!-- End of DoubleClick Spotlight Tag: Please do not remove-->
 1 - </body>
-1 - </html>
-1 - ".
+1 - </html>".
 1 - 
 1 - ------------------
 1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*"':
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '6075'.
-1 - miscDynBufGetNbAllocatedBytes = '14705'.
+1 - miscDynBufGetNbAllocatedBytes = '10976'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "<?xml version="1.0" encoding="UTF-8"?>
 1 - <VOTABLE version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 1 -   xmlns="http://www.ivoa.net/xml/VOTable/v1.2" >
 1 -  <DESCRIPTION>
-1 -    VizieR Astronomical Server vizier.u-strasbg.fr 	2011-08-31T20:50:22 [V1.80]
+1 -    VizieR Astronomical Server vizier.u-strasbg.fr 	2011-10-26T07:52:38 [V1.80]
 1 -    (replaces the 'Astrores' format originally described at
 1 -     http://vizier.u-strasbg.fr/doc/astrores.htx)
 1 -    In case of problem, please report to:	question@simbad.u-strasbg.fr
@@ -1156,7 +1214,7 @@
 1 -   <COOSYS ID="J2000" system="eq_FK5" equinox="J2000"/>
 1 - </DEFINITIONS>
 1 - 
-1 - <INFO ID="Ref" name="-ref" value="VOTx23039"/>
+1 - <INFO ID="Ref" name="-ref" value="VOTx14761"/>
 1 - <INFO ID="MaxTuples" name="-out.max" value="100"/>
 1 - 
 1 - <!--

@@ -1,8 +1,9 @@
 1 - miscStripQuotes() Function Test :
 1 - 
 1 -    Original String  = |(null)|
-1 -    Resulting String = mcsFAILURE.
-1 - unknown -   misc - Error - 2011-08-31T20:50:23.310397 - miscString.c:55 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 -    Resulting String = unknown -    err - Test  - errAddInStack(misc, 1)
+1 - mcsFAILURE.
+1 - unknown -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 -    Original String  = |   "   kjkdjd kjkjk   kjkj  "      |
 1 -    Resulting String = |kjkdjd kjkjk   kjkj|
 1 - 
@@ -16,8 +17,9 @@
 1 - miscStrToUpper() Function Test :
 1 - 
 1 -    Original String  = |(null)|
-1 -    Resulting String = mcsFAILURE.
-1 - unknown -   misc - Error - 2011-08-31T20:50:23.311376 - miscString.c:168 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 -    Resulting String = unknown -    err - Test  - errAddInStack(misc, 1)
+1 - mcsFAILURE.
+1 - unknown -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 -    Original String  = |Abc deF GhI jKl 012 .;/|
 1 -    Resulting String = |ABC DEF GHI JKL 012 .;/|
 1 - 
@@ -90,16 +92,21 @@
 1 - miscSplitString() Function Test :
 1 - 
 1 -    Original String  = |ABCD E FG HIJ KLMNOPQ R ST UVWXYZ |---10---||---20---||---30---||---40---||---50---||---60---||---70---||---80---||---90---||--100---||--110---||--120---||--130---||--140---||--150---||--160---||--170---||--180---||--190---||--200---||--210---||--220---||--230---||--240---||--250---||--260---||
+1 - unknown -    err - Test  - errAddInStack(misc, 1)
 1 - mcsFAILURE.
-1 - unknown -   misc - Error - 2011-08-31T20:50:23.312335 - miscString.c:421 - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - unknown -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
+1 - unknown -    err - Test  - errAddInStack(misc, 1)
 1 - mcsFAILURE.
-1 - unknown -   misc - Error - 2011-08-31T20:50:23.313307 - miscString.c:426 - ERROR: 1 S Received a NULL value for parameter 'subStrArray'.
+1 - unknown -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'subStrArray'.
+1 - unknown -    err - Test  - errAddInStack(misc, 1)
 1 - mcsFAILURE.
-1 - unknown -   misc - Error - 2011-08-31T20:50:23.314229 - miscString.c:431 - ERROR: 1 S Received a NULL value for parameter 'maxSubStrNb'.
+1 - unknown -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'maxSubStrNb'.
+1 - unknown -    err - Test  - errAddInStack(misc, 1)
 1 - mcsFAILURE.
-1 - unknown -   misc - Error - 2011-08-31T20:50:23.315165 - miscString.c:436 - ERROR: 1 S Received a NULL value for parameter 'subStrNb'.
+1 - unknown -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'subStrNb'.
+1 - unknown -    err - Test  - errAddInStack(misc, 17)
 1 - mcsFAILURE.
-1 - unknown -   misc - Error - 2011-08-31T20:50:23.316154 - miscString.c:476 - ERROR: 1 W Too many sub-strings found (more than '5').
+1 - unknown -   misc - Error - ERROR: 1 W Too many sub-strings found (more than '5').
 1 -    subString[ 0]    = |ABCD|
 1 -    subString[ 1]    = |E|
 1 -    subString[ 2]    = |FG|

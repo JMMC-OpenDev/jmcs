@@ -1,22 +1,22 @@
 1 - miscGetUtcTimeStr() Function Test :
 1 - 
-1 -    UTC Time    (precision s=0)  =  '2011-08-31T20:50:18'
-1 -    UTC Time    (precision s=1)  =  '2011-08-31T20:50:18.6'
-1 -    UTC Time    (precision s=2)  =  '2011-08-31T20:50:18.62'
-1 -    UTC Time    (precision s=3)  =  '2011-08-31T20:50:18.624'
-1 -    UTC Time    (precision s=4)  =  '2011-08-31T20:50:18.6243'
-1 -    UTC Time    (precision s=5)  =  '2011-08-31T20:50:18.62432'
-1 -    UTC Time    (precision s=6)  =  '2011-08-31T20:50:18.624326'
+1 -    UTC Time    (precision s=0)  =  '2011-10-26T07:52:35'
+1 -    UTC Time    (precision s=1)  =  '2011-10-26T07:52:35.0'
+1 -    UTC Time    (precision s=2)  =  '2011-10-26T07:52:35.04'
+1 -    UTC Time    (precision s=3)  =  '2011-10-26T07:52:35.040'
+1 -    UTC Time    (precision s=4)  =  '2011-10-26T07:52:35.0404'
+1 -    UTC Time    (precision s=5)  =  '2011-10-26T07:52:35.04038'
+1 -    UTC Time    (precision s=6)  =  '2011-10-26T07:52:35.040383'
 1 - 
 1 - 
 1 - miscGetLocalTimeStr() Function Test :
 1 - 
-1 -    Local Time  (precision s=0)  =  '2011-08-31T22:50:18'
-1 -    Local Time  (precision s=1)  =  '2011-08-31T22:50:18.6'
-1 -    Local Time  (precision s=2)  =  '2011-08-31T22:50:18.62'
-1 -    Local Time  (precision s=3)  =  '2011-08-31T22:50:18.624'
-1 -    Local Time  (precision s=4)  =  '2011-08-31T22:50:18.6244'
-1 -    Local Time  (precision s=5)  =  '2011-08-31T22:50:18.62436'
-1 -    Local Time  (precision s=6)  =  '2011-08-31T22:50:18.624363'
+1 -    Local Time  (precision s=0)  =  '2011-10-26T09:52:35'
+1 -    Local Time  (precision s=1)  =  '2011-10-26T09:52:35.0'
+1 -    Local Time  (precision s=2)  =  '2011-10-26T09:52:35.04'
+1 -    Local Time  (precision s=3)  =  '2011-10-26T09:52:35.040'
+1 -    Local Time  (precision s=4)  =  '2011-10-26T09:52:35.0404'
+1 -    Local Time  (precision s=5)  =  '2011-10-26T09:52:35.04041'
+1 -    Local Time  (precision s=6)  =  '2011-10-26T09:52:35.040417'
 1 - 
 1 - 

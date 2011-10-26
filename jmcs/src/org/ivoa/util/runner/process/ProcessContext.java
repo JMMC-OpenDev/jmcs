@@ -62,7 +62,7 @@ public final class ProcessContext extends RunContext {
     @Override
     public void kill() {
         // java process is killed => unix process is killed :
-        ProcessRunner.stop(this);
+        ProcessRunner.kill(this);
     }
 
     /**

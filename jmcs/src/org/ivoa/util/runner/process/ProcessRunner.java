@@ -74,31 +74,32 @@ public final class ProcessRunner {
                 // capture stderr :
                 errorRedirect.setInputStream(process.getErrorStream());
 
-                Future outputFuture = null;
-                Future errorFuture = null;
+                Future<?> outputFuture = null;
+                Future<?> errorFuture = null;
 
                 // start StreamRedirectors and place in runnable state :
-                if (log.isInfoEnabled()) {
-                    log.info("ProcessRunner.execute : starting outputRedirect task ...");
+                if (log.isDebugEnabled()) {
+                    log.debug("ProcessRunner.execute : starting outputRedirect task ...");
                 }
                 outputFuture = ThreadExecutors.getGenericExecutor().submit(outputRedirect);
-                if (log.isInfoEnabled()) {
-                    log.info("ProcessRunner.execute : starting errorRedirect task ...");
+                if (log.isDebugEnabled()) {
+                    log.debug("ProcessRunner.execute : starting errorRedirect task ...");
                 }
                 errorFuture = ThreadExecutors.getGenericExecutor().submit(errorRedirect);
 
-                if (log.isInfoEnabled()) {
-                    log.info("ProcessRunner.execute : waitFor process to end ...");
+                if (log.isDebugEnabled()) {
+                    log.debug("ProcessRunner.execute : waitFor process to end ...");
                 }
+                // todo use timeout to stop waiting ...
                 status = process.waitFor();
 
                 // calls thread.join to be sure that other threads finish before leaving from here :
-                if (log.isInfoEnabled()) {
-                    log.info("ProcessRunner.execute : join output Redirect ...");
+                if (log.isDebugEnabled()) {
+                    log.debug("ProcessRunner.execute : join output Redirect ...");
                 }
                 outputFuture.get();
-                if (log.isInfoEnabled()) {
-                    log.info("ProcessRunner.execute : join error Redirect ...");
+                if (log.isDebugEnabled()) {
+                    log.debug("ProcessRunner.execute : join error Redirect ...");
                 }
                 errorFuture.get();
 
@@ -126,15 +127,13 @@ public final class ProcessRunner {
                 runCtx.setExitCode(status);
 
                 // cleanup : free process in whatever state :
-                stop(runCtx);
+                stop(runCtx, false);
 
                 if (log.isInfoEnabled()) {
                     log.info("ProcessRunner.execute : process status : " + runCtx.getExitCode());
                 }
             }
         }
-
-        log.error(runCtx.getRing().getContent("Ring buffer:\n"));
 
         return status;
     }
@@ -143,16 +142,38 @@ public final class ProcessRunner {
      * Kill a running UNIX Process from the given job context
      * @param runCtx job context
      */
-    public static void stop(final ProcessContext runCtx) {
+    public static void kill(final ProcessContext runCtx) {
+        stop(runCtx, true);
+    }
+    
+    /**
+     * Kill a running UNIX Process from the given job context
+     * @param runCtx job context
+     * @param kill true to indicate a kill operation
+     */
+    private static void stop(final ProcessContext runCtx, final boolean kill) {
         final Process process = runCtx.getProcess();
         if (process != null) {
-            if (log.isInfoEnabled()) {
-                log.info("ProcessRunner.stop : stop process ... " + process);
+            if (kill) {
+                if (log.isInfoEnabled()) {
+                    log.info("ProcessRunner.stop : stop process ... " + process);
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("ProcessRunner.stop : stop process ... " + process);
+                }
             }
             // kills unix process & close all streams (stdin, stdout, stderr) :
             process.destroy();
-            if (log.isInfoEnabled()) {
-                log.info("ProcessRunner.stop : process stoppped.");
+            
+            if (kill) {
+                if (log.isInfoEnabled()) {
+                    log.info("ProcessRunner.stop : process stopped.");
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("ProcessRunner.stop : process stopped.");
+                }
             }
             // free killed process :
             runCtx.setProcess(null);

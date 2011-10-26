@@ -3,12 +3,12 @@
  ******************************************************************************/
 package fr.jmmc.jmal.star;
 
+import fr.jmmc.jmcs.gui.SwingUtils;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 
 /**
  * Store data relative to a star.
@@ -162,11 +162,12 @@ public class Star extends Observable {
      */
     public final void raiseCDSimbadErrorMessage(final String message) {
         // Use EDT to ensure only 1 thread (EDT) set and consume the error message :
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtils.invokeEDT(new Runnable() {
 
             /**
              * The state is left unchanged (no clear), only the error message is notified
              */
+            @Override
             public void run() {
                 _cdsSimbadErrorMessage = message;
 
@@ -219,7 +220,7 @@ public class Star extends Observable {
      */
     public final void fireNotification(final Notification notification) {
         // notify observers (swing components) within EDT :
-        if (!SwingUtilities.isEventDispatchThread()) {
+        if (!SwingUtils.isEDT()) {
             _logger.log(Level.SEVERE, "invalid thread : use EDT", new Throwable());
         }
 

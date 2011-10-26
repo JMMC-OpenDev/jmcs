@@ -6,6 +6,7 @@ package fr.jmmc.jmal.star;
 import fr.jmmc.jmal.ALX;
 import fr.jmmc.jmcs.gui.MessagePane;
 import fr.jmmc.jmcs.gui.StatusBar;
+import fr.jmmc.jmcs.gui.SwingUtils;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +19,6 @@ import java.util.logging.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 /**
  * This extended StarResolverWidget allows the user to enter an RA/DEC couple as a Star without any CDS resolution (manually defined star)
@@ -376,8 +376,9 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
         });
 
         // GUI initialization (EDT)
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtils.invokeLaterEDT(new Runnable() {
 
+            @Override
             public void run() {
                 JFrame frame = new JFrame("EditableStarResolverWidget Demo");
 
@@ -486,8 +487,9 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
      * @param text input string
      */
     private static void test(final EditableStarResolverWidget searchField, final String text) {
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtils.invokeLaterEDT(new Runnable() {
 
+            @Override
             public void run() {
                 searchField.setText(text);
                 searchField.fireActionPerformed();

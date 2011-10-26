@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmal.star;
 
+import fr.jmmc.jmcs.gui.SwingUtils;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import fr.jmmc.jmcs.util.Urls;
@@ -21,7 +22,6 @@ import java.util.StringTokenizer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 
 /**
  * Store informations relative to a star.
@@ -336,8 +336,9 @@ public final class StarResolver {
                  */
 
                 // Use EDT to ensure only 1 thread (EDT) updates the model and handles the notification :
-                SwingUtilities.invokeLater(new Runnable() {
+                SwingUtils.invokeEDT(new Runnable() {
 
+                    @Override
                     public void run() {
                         _starModel.copy(_newStarModel);
 

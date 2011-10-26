@@ -202,8 +202,10 @@ public final class Http {
                     host = epoint.getAddress().getHostName();
                 }
                 final int port = epoint.getPort();
-
-                hostConfiguration.setProxy(host, port);
+                
+                if (!host.trim().isEmpty() && port > 0) {
+                    hostConfiguration.setProxy(host, port);
+                }
             }
         }
         return hostConfiguration;

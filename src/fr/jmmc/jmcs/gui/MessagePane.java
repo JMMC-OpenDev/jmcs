@@ -12,7 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 /**
  * This class provides utility methods to create message panes (message, error) with/without exceptions
@@ -109,17 +108,13 @@ public final class MessagePane {
         }
 
         // display the message within EDT :
-        if (SwingUtilities.isEventDispatchThread()) {
-            showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
-        } else {
-            SwingUtilities.invokeLater(new Runnable() {
+        SwingUtils.invokeEDT(new Runnable() {
 
-                @Override
-                public void run() {
-                    showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
-                }
-            });
-        }
+            @Override
+            public void run() {
+                showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     /**

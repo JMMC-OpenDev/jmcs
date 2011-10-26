@@ -408,7 +408,7 @@ public final class FileUtils {
      * 
      * @return the tmp directory name
      */
-    private static String getTempDir() {
+    public static String getTempDir() {
         return System.getProperty("java.io.tmpdir");
     }
 }

@@ -66,8 +66,8 @@ import org.apache.commons.lang.SystemUtils;
  */
 public abstract class App {
 
-    /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _mainLogger = Logger.getLogger("fr.jmmc");
+    /** Logger - register on JUL root logger to collect all logs */
+    private static final Logger _mainLogger = Logger.getLogger("");
     /** Stream handler which permit us to keep logs report in strings */
     private static final StreamHandler _streamHandler;
     /** ByteArrayOutputStream which keeps logs report */

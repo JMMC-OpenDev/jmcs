@@ -13,32 +13,48 @@ import java.util.Map;
  */
 public enum SampCapability {
 
-    // Private jmmc samp capability are prefixed with application name
+    /** Load votable MType */
     LOAD_VO_TABLE("table.load.votable"),
+    /** Load fits table MType */
     LOAD_FITS_TABLE("table.load.fits"),
+    /** Load fits image MType */
     LOAD_FITS_IMAGE("image.load.fits"),
+    /** Load spectrum MType */
     LOAD_SPECTRUM("spectrum.load.ssa-generic"),
+    /** Load bibcode MType */
     LOAD_BIBCODE("bibcode.load"),
+    /** Highlight row MType */
     HIGHLIGHT_ROW("table.highlight.row"),
+    /** Select rows MType */
     SELECT_LIST("table.select.rowList"),
+    /** Point at given coordinates MType */
     POINT_COORDINATES("coord.pointAt.sky"),
+    /** Get environment variable MType */
     GET_ENV_VAR("client.env.get"),
+    // Private jmmc samp capability are prefixed with application name:
+    /** JMMC SearchCal Start Query MType */
     SEARCHCAL_START_QUERY("fr.jmmc.searchcal.start.query"),
+    /** JMMC LITpro open settings file MType */
     LITPRO_START_SETTING("fr.jmmc.litpro.start.setting"),
+    /** OCA Pivot load star list MType */
     LOAD_STAR_LIST("starlist.load"),
+    /** Undefined MType */
     UNKNOWN("UNKNOWN");
-    /** Store the SAMP 'cryptic' mType */
-    private final String _mType;
+
     /** Blanking value for undefined Strings (null, ...) */
     public static final String UNKNOWN_MTYPE = "UNKNOWN";
+    
+    /* members */
+    /** Store the SAMP 'cryptic' mType */
+    private final String _mType;
 
     /**
      * Constructor
      * @param mType samp message type (MTYPE)
      */
     SampCapability(final String mType) {
-        _mType = (mType == null ? UNKNOWN_MTYPE : mType);
-        SampCapabilityNastyTrick.TYPES.put(mType, this);
+        this._mType = (mType == null) ? UNKNOWN_MTYPE : mType;
+        SampCapabilityNastyTrick.TYPES.put(this._mType, this);
     }
 
     /**
@@ -105,7 +121,7 @@ public enum SampCapability {
     private final static class SampCapabilityNastyTrick {
 
         /** cached map of SampCapability keyed by mType */
-        protected static final Map<String, SampCapability> TYPES = new HashMap<String, SampCapability>();
+        static final Map<String, SampCapability> TYPES = new HashMap<String, SampCapability>(16);
 
         /**
          * Forbidden constructor : utility class

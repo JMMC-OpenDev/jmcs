@@ -45,7 +45,7 @@ public final class SampManager {
     /** Hook to the "Interop" menu */
     private static volatile JMenu _menu = null;
     /** JMenu to Action relations */
-    private static final Map<SampCapabilityAction, JMenu> _map = Collections.synchronizedMap(new HashMap<SampCapabilityAction, JMenu>());
+    private static final Map<SampCapabilityAction, JMenu> _map = Collections.synchronizedMap(new HashMap<SampCapabilityAction, JMenu>(8));
 
     /* members */
     /** Gui hub connector */
@@ -171,7 +171,7 @@ public final class SampManager {
      * Return the JSamp Gui hub connector providing swing actions
      * @return JSamp Gui hub connector providing swing actions
      */
-    protected GuiHubConnector getHubConnector() {
+    private GuiHubConnector getHubConnector() {
         return _connector;
     }
 
@@ -200,8 +200,17 @@ public final class SampManager {
      * @param mType samp message type
      * @return list model for the registered clients
      */
-    protected static SubscribedClientListModel createSubscribedClientListModel(final String mType) {
+    public static SubscribedClientListModel createSubscribedClientListModel(final String mType) {
         return new SubscribedClientListModel(SampManager.getGuiHubConnector(), mType);
+    }
+
+    /**
+     * Create a list model for the registered clients of given message types
+     * @param mTypes samp message types
+     * @return list model for the registered clients
+     */
+    public static SubscribedClientListModel createSubscribedClientListModel(final String[] mTypes) {
+        return new SubscribedClientListModel(SampManager.getGuiHubConnector(), mTypes);
     }
 
     /**

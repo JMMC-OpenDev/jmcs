@@ -354,6 +354,41 @@ public final class LocalLauncher {
     }
 
     /**
+     * Cancel the job given its identifier if pending
+     * or stop the job given its identifier and may kill it if running
+     * @param id job id
+     */
+    public static void cancelOrKillJob(final Long id) {
+        final RunContext runCtx = LocalLauncher.getJob(id);
+        if (runCtx != null) {
+            try {
+                if (runCtx instanceof RootContext) {
+                    // kill the root context :
+                    final RootContext ctx = ((RootContext) runCtx);
+                    if (ctx.getState() == RunState.STATE_PENDING) {
+                        ctx.setState(RunState.STATE_CANCELLED);
+                        if (ctx.getFuture() != null) {
+                            // cancel a pending task :
+                            ctx.getFuture().cancel(true);
+                        }
+                    } else if (ctx.getState() == RunState.STATE_RUNNING) {
+                        final RunContext child = ctx.getCurrentChildContext();
+
+                        if (child != null) {
+                            ctx.setState(RunState.STATE_KILLED);
+                            child.kill();
+                        }
+                    }
+                }
+
+            } finally {
+                // clear ring buffer :
+                runCtx.close();
+            }
+        }
+    }
+
+    /**
      * Stop the job given its identifier and may kill it if running
      * @param id job id
      */
@@ -362,7 +397,7 @@ public final class LocalLauncher {
         if (runCtx != null) {
             try {
                 if (runCtx instanceof RootContext) {
-                    // cancel the root context :
+                    // kill the root context :
                     final RootContext ctx = ((RootContext) runCtx);
                     if (ctx.getState() == RunState.STATE_RUNNING) {
                         final RunContext child = ctx.getCurrentChildContext();

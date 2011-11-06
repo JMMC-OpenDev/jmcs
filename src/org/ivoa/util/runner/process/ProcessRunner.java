@@ -94,6 +94,8 @@ public final class ProcessRunner {
                 status = process.waitFor();
 
                 // calls thread.join to be sure that other threads finish before leaving from here :
+                // note: this thread is waiting FOR EVER until stdout/stderr streams are closed 
+                // by the child process itself
                 if (log.isDebugEnabled()) {
                     log.debug("ProcessRunner.execute : join output Redirect ...");
                 }
@@ -126,7 +128,7 @@ public final class ProcessRunner {
                 runCtx.setDuration((long) duration);
                 runCtx.setExitCode(status);
 
-                // cleanup : free process in whatever state :
+                // cleanup : free process in whatever state and close streams:
                 stop(runCtx, false);
 
                 if (log.isInfoEnabled()) {
@@ -163,6 +165,12 @@ public final class ProcessRunner {
                     log.debug("ProcessRunner.stop : stop process ... " + process);
                 }
             }
+
+            // workaround to closing bugs:
+            FileUtils.closeStream(process.getOutputStream());
+            FileUtils.closeStream(process.getErrorStream());
+            FileUtils.closeStream(process.getInputStream());
+
             // kills unix process & close all streams (stdin, stdout, stderr) :
             process.destroy();
             

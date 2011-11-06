@@ -107,7 +107,7 @@ public final class ProcessContext extends RunContext {
      *
      * @param code exit code
      */
-    protected void setExitCode(final int code) {
+    void setExitCode(final int code) {
         this.exitCode = code;
     }
 
@@ -116,7 +116,7 @@ public final class ProcessContext extends RunContext {
      *
      * @return UNIX Process
      */
-    protected Process getProcess() {
+    Process getProcess() {
         return process;
     }
 
@@ -125,7 +125,7 @@ public final class ProcessContext extends RunContext {
      *
      * @param process UNIX Process
      */
-    protected void setProcess(final Process process) {
+    void setProcess(final Process process) {
         this.process = process;
     }
 }

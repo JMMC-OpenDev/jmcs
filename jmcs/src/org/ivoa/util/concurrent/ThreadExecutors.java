@@ -40,8 +40,8 @@ public final class ThreadExecutors extends LogSupport {
     public static final String PROCESS_THREAD_POOL = "ProcessPool";
     /** Generic thread Pool : idle thread keep alive before kill : 120s */
     public static final long GENERIC_THREAD_KEEP_ALIVE = 120L;
-    /** Process thread pool : maximum threads : 3 */
-    public static final int PROCESS_THREAD_MAX = 3;
+    /** Process thread pool : maximum threads : 5 */
+    public static final int PROCESS_THREAD_MAX = 5;
     /** Generic thread pool : minimum threads : 7 */
     public static final int GENERIC_THREAD_MIN = 2;
     /** Generic thread pool : maximum threads : 11 */
@@ -111,6 +111,8 @@ public final class ThreadExecutors extends LogSupport {
      */
     public static void startExecutors() {
         getSingleExecutor(DEFAULT_SINGLE_THREAD_POOL);
+        getRunnerExecutor();
+        getGenericExecutor();
     }
 
     /**

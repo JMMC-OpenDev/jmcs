@@ -194,6 +194,16 @@ public final class SampManager {
     private static GuiHubConnector getGuiHubConnector() {
         return SampManager.getInstance().getHubConnector();
     }
+    
+    /**
+     * Indicates whether this connector is currently registered with a
+     * running hub.
+     *
+     * @return true if currently connected to a hub
+     */
+    public static boolean isConnected() {
+        return SampManager.getInstance().getHubConnector().isConnected();
+    }
 
     /**
      * Create a list model for the registered clients of the given message type

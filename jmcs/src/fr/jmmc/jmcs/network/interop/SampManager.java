@@ -144,12 +144,12 @@ public final class SampManager {
             _connector.setActive(true);
         }
 
-        // Keep a look out for hubs if initial one shuts down
-        _connector.setAutoconnect(5);
-
         if (!_connector.isConnected()) {
             StatusBar.show("Could not connect to an existing hub or start an internal SAMP hub.");
         }
+
+        // Keep a look out for hubs if initial one shuts down
+        _connector.setAutoconnect(5);
 
         // This step required even if no message handlers added.
         _connector.declareSubscriptions(_connector.computeSubscriptions());

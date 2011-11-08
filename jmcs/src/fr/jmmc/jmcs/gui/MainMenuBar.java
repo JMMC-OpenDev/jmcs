@@ -33,7 +33,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -75,19 +74,12 @@ public class MainMenuBar extends JMenuBar {
     private final Hashtable<String, JMenu> _menusTable;
     /** Store a proxy to the shared ActionRegistrar facility */
     private final ActionRegistrar _registrar;
-    /** Store a proxy to the parent frame */
-    private final JFrame _frame;
 
     /**
      * Instantiate all defaults menus, plus application-specific ones.
-     *
-     * @param frame the JFrame against which the menubar is linked.
      */
-    public MainMenuBar(final JFrame frame) {
-        // Get the parent frame
-        _frame = frame;
-
-        // Member initilization
+    public MainMenuBar() {
+        // Member initialization
         _menusTable = new Hashtable<String, JMenu>();
         _registrar = ActionRegistrar.getInstance();
 
@@ -270,7 +262,7 @@ public class MainMenuBar extends JMenuBar {
     /** Create the 'Interop' menu. */
     private void createInteropMenu() {
         // Create menu
-        JMenu interopMenu = new JMenu("Interop");
+        final JMenu interopMenu = new JMenu("Interop");
 
         // Add auto-toggling menu entry to regiter/unregister to/from hub
         interopMenu.add(SampManager.createToggleRegisterAction());
@@ -288,20 +280,26 @@ public class MainMenuBar extends JMenuBar {
             if (components.length > 0) {
                 interopMenu.add(new JSeparator());
 
+                Action action;
                 // Add each component
                 for (Component currentComponent : components) {
                     // Get menuitem initialised from ApplicationData
                     JMenuItem menuItem = (JMenuItem) currentComponent;
-                    // @TODO : cast SAMP-flagged menus only !
-                    SampCapabilityAction action = (SampCapabilityAction) (menuItem.getAction());
-                    // get previously created menu by samp action
-                    JMenu menu = SampManager.getMenu(action);
+                    
+                    action = menuItem.getAction();
+                    
+                    if (action instanceof SampCapabilityAction) {
+                        // @TODO : cast SAMP-flagged menus only !
+                        SampCapabilityAction sampAction = (SampCapabilityAction)action;
+                        // get previously created menu by samp action
+                        JMenu menu = SampManager.getMenu(sampAction);
 
-                    if (menu != null) {
-                        // set text coming from applicationData.xml
-                        menu.setText(menuItem.getText());
+                        if (menu != null) {
+                            // set text coming from applicationData.xml
+                            menu.setText(menuItem.getText());
 
-                        interopMenu.add(menu);
+                            interopMenu.add(menu);
+                        }
                     }
                 }
             }

@@ -29,9 +29,36 @@ public abstract class RegisteredAction extends MCSAction {
      * the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
      */
-    public RegisteredAction(String classPath, String fieldName) {
+    public RegisteredAction(final String classPath, final String fieldName) {
         super(fieldName);
+
         _registrar.put(classPath, fieldName, this);
+    }
+
+    /**
+     * Constructor, that automatically register the action in RegisteredAction.
+     * Action name, icon, accelerator and description is first inited using
+     * fieldName to build a MCSAction.
+     * @param classPath the path of the class containing the field pointing to
+     * the action, in the form returned by 'getClass().getName();'.
+     * @param fieldName the name of the field pointing to the action.
+     * @param deferedInitialization true indicates to perform defered initialization i.e. after application startup
+     */
+    public RegisteredAction(final String classPath, final String fieldName, final boolean deferedInitialization) {
+        super(fieldName);
+
+        _registrar.put(classPath, fieldName, this);
+
+        _registrar.flagAsDeferedInitAction(classPath, fieldName);
+    }
+
+    /**
+     * Perform defered initialization i.e. executed after the application startup.
+     * This method must be overriden in sub classes
+     */
+    protected void performDeferedInitialization() {
+        _logger.entering("RegisteredAction", "performDeferedInitialization");
+        // not implemented
     }
 
     /**
@@ -44,8 +71,7 @@ public abstract class RegisteredAction extends MCSAction {
      * @param fieldName the name of the field pointing to the action.
      * @param actionName the name of the action.
      */
-    public RegisteredAction(String classPath, String fieldName,
-            String actionName) {
+    public RegisteredAction(final String classPath, final String fieldName, final String actionName) {
         this(classPath, fieldName);
 
         // Define action name and accelerator
@@ -64,13 +90,12 @@ public abstract class RegisteredAction extends MCSAction {
      * @param actionName the name of the action.
      * @param actionAccelerator the accelerator of the action, like "ctrl Q".
      */
-    public RegisteredAction(String classPath, String fieldName,
-            String actionName, String actionAccelerator) {
+    public RegisteredAction(final String classPath, final String fieldName,
+            final String actionName, final String actionAccelerator) {
         this(classPath, fieldName, actionName);
 
         // Define action name and accelerator
-        putValue(Action.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(actionAccelerator));
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(actionAccelerator));
     }
 
     /**

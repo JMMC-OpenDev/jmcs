@@ -4,8 +4,12 @@
 package fr.jmmc.jmcs.gui.action;
 
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -27,19 +31,22 @@ public class ActionRegistrar {
     private static final String _openActionKey = "openActionKey";
     /** Quit Action unic identifying key */
     private static final String _quitActionKey = "quitActionKey";
+    /* members */
     /**
      * Hastable to associate string keys like
      * "fr.jmmc.classpath.classname:fiedname" to AbstractAction instances.
      */
-    private Hashtable<String, AbstractAction> _register = null;
+    private final Map<String, AbstractAction> _register = Collections.synchronizedMap(new HashMap<String, AbstractAction>());
+    /** unique action keys requiring defered initialization (after application startup) */
+    private final Set<String> _deferedInitActions = new HashSet<String>();
 
     /** Hidden constructor */
-    protected ActionRegistrar() {
-        _register = new Hashtable<String, AbstractAction>();
+    private ActionRegistrar() {
+        super();
     }
 
     /** @return the singleton instance */
-    public static final synchronized ActionRegistrar getInstance() {
+    public static synchronized ActionRegistrar getInstance() {
         // DO NOT MODIFY !!!
         if (_instance == null) {
             _instance = new ActionRegistrar();
@@ -60,28 +67,23 @@ public class ActionRegistrar {
      *
      * @return the previous registered action, null otherwise.
      */
-    public AbstractAction put(String classPath, String fieldName,
-            AbstractAction action) {
+    public AbstractAction put(final String classPath, final String fieldName, final AbstractAction action) {
         _logger.entering("ActionRegistrar", "put");
 
-        String internalActionKey = classPath + ":" + fieldName;
-        AbstractAction previousAction = _register.put(internalActionKey,
-                action);
+        final String internalActionKey = classPath + ":" + fieldName;
+        final AbstractAction previousAction = _register.put(internalActionKey, action);
 
         if (previousAction == null) {
             if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("Registered '" + internalActionKey
-                        + "' action for the first time.");
+                _logger.finest("Registered '" + internalActionKey + "' action for the first time.");
             }
         } else if (previousAction != action) {
             if (_logger.isLoggable(Level.WARNING)) {
-                _logger.warning("Overwritten the previously registered '"
-                        + internalActionKey + "' action.");
+                _logger.warning("Overwritten the previously registered '" + internalActionKey + "' action.");
             }
         } else {
             if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Registered '" + internalActionKey
-                        + "' action succesfully.");
+                _logger.fine("Registered '" + internalActionKey + "' action succesfully.");
             }
         }
 
@@ -98,15 +100,15 @@ public class ActionRegistrar {
      *
      * @return the retrieved registered action, null otherwise.
      */
-    public AbstractAction get(String classPath, String fieldName) {
+    public AbstractAction get(final String classPath, final String fieldName) {
         _logger.entering("ActionRegistrar", "get");
 
         if (classPath == null && fieldName == null) {
             return null;
         }
 
-        String internalActionKey = classPath + ":" + fieldName;
-        AbstractAction retrievedAction = _register.get(internalActionKey);
+        final String internalActionKey = classPath + ":" + fieldName;
+        final AbstractAction retrievedAction = getAction(internalActionKey);
 
         if (retrievedAction == null) {
             if (_logger.isLoggable(Level.SEVERE)) {
@@ -115,12 +117,23 @@ public class ActionRegistrar {
             }
         } else {
             if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Retrieved '" + internalActionKey
-                        + "' action succesfully.");
+                _logger.fine("Retrieved '" + internalActionKey + "' action succesfully.");
             }
         }
 
         return retrievedAction;
+    }
+
+    /**
+     * Return the previously registered action for the given key.
+     *
+     * @param actionKey action key
+     * @return the retrieved registered action, null otherwise.
+     */
+    private AbstractAction getAction(final String actionKey) {
+        _logger.entering("ActionRegistrar", "getAction");
+
+        return _register.get(actionKey);
     }
 
     /**
@@ -130,7 +143,7 @@ public class ActionRegistrar {
      *
      * @return the previous registered action, null otherwise.
      */
-    public AbstractAction putPreferenceAction(AbstractAction action) {
+    public AbstractAction putPreferenceAction(final AbstractAction action) {
         _logger.entering("ActionRegistrar", "putPreferenceAction");
 
         return _register.put(_preferenceActionKey, action);
@@ -145,7 +158,7 @@ public class ActionRegistrar {
     public AbstractAction getPreferenceAction() {
         _logger.entering("ActionRegistrar", "getPreferenceAction");
 
-        return _register.get(_preferenceActionKey);
+        return getAction(_preferenceActionKey);
     }
 
     /**
@@ -155,7 +168,7 @@ public class ActionRegistrar {
      *
      * @return the previous registered action, null otherwise.
      */
-    public AbstractAction putOpenAction(AbstractAction action) {
+    public AbstractAction putOpenAction(final AbstractAction action) {
         _logger.entering("ActionRegistrar", "putOpenAction");
 
         return _register.put(_openActionKey, action);
@@ -170,7 +183,7 @@ public class ActionRegistrar {
     public AbstractAction getOpenAction() {
         _logger.entering("ActionRegistrar", "getOpenAction");
 
-        return _register.get(_openActionKey);
+        return getAction(_openActionKey);
     }
 
     /**
@@ -180,7 +193,7 @@ public class ActionRegistrar {
      *
      * @return the previous registered action, null otherwise.
      */
-    public AbstractAction putQuitAction(AbstractAction action) {
+    public AbstractAction putQuitAction(final AbstractAction action) {
         _logger.entering("ActionRegistrar", "putQuitAction");
 
         return _register.put(_quitActionKey, action);
@@ -195,7 +208,44 @@ public class ActionRegistrar {
     public AbstractAction getQuitAction() {
         _logger.entering("ActionRegistrar", "getQuitAction");
 
-        return _register.get(_quitActionKey);
+        return getAction(_quitActionKey);
+    }
+
+    /**
+     * Indicate that the given action (previoulsy registered) must be initialized after the application startup
+     *
+     * @param classPath the path of the class containing the field pointing to
+     * the action, in the form returned by 'getClass().getName();'.
+     * @param fieldName the name of the field pointing to the action.
+     */
+    protected void flagAsDeferedInitAction(final String classPath, final String fieldName) {
+        _logger.entering("ActionRegistrar", "flagAsDeferedInitAction");
+
+        final String internalActionKey = classPath + ":" + fieldName;
+
+        if (getAction(internalActionKey) instanceof RegisteredAction) {
+            if (_logger.isLoggable(Level.FINE)) {
+                _logger.fine("Action '" + internalActionKey + "' will be initialized later.");
+            }
+
+            _deferedInitActions.add(internalActionKey);
+        }
+    }
+    
+    /**
+     * Perform defered initialization of such actions
+     */
+    public void performDeferedInitialization() {
+        _logger.entering("ActionRegistrar", "performDeferedInitialization");
+        
+        RegisteredAction action;
+        for (String actionKey : _deferedInitActions) {
+            action = (RegisteredAction)getAction(actionKey);
+            
+            if (action != null) {
+                action.performDeferedInitialization();
+            }
+        }
     }
 
     /**
@@ -215,9 +265,6 @@ public class ActionRegistrar {
      * @return string one line per name of registered action
      */
     public String dumpRegisteredActions() {
-        if (_register == null) {
-            return "";
-        }
         // sort properties :
         final String[] keys = new String[_register.size()];
         _register.keySet().toArray(keys);

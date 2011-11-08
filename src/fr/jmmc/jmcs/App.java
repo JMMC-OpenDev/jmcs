@@ -528,7 +528,16 @@ public abstract class App {
      */
     protected abstract void init(String[] args);
 
-    /** Execute application body */
+    /** 
+     * Prepare interoperability (Samp message handlers) 
+     */
+    protected void declareInteroperability() {
+        _logger.fine("Default App.declareInteroperability() handler called.");
+    }
+
+    /** 
+     * Execute application body 
+     */
     protected abstract void execute();
 
     /**
@@ -631,6 +640,15 @@ public abstract class App {
              */
             @Override
             public void run() {
+                // Initialize SampManager as needed by MainMenuBar:
+                SampManager.getInstance();
+                
+                // Perform defered action initialization (Samp related)
+                _registrar.performDeferedInitialization();
+                
+                // declare Samp message handlers now as the application is almost ready:
+                declareInteroperability();
+
                 // If running under Mac OS X
                 if (SystemUtils.IS_OS_MAC_OSX) {
                     // Set application name :
@@ -644,8 +662,9 @@ public abstract class App {
 
                 // Use OSXAdapter on the frame
                 macOSXRegistration(frame);
-
-                frame.setJMenuBar(new MainMenuBar(frame));
+                
+                // create menus including the Interop menu (Samp required)
+                frame.setJMenuBar(new MainMenuBar());
 
                 // Set application frame common properties
                 frame.pack();

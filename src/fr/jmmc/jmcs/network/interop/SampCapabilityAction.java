@@ -41,7 +41,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     /** mType of SAMP capability to send */
     private final String _mType;
     /** Capable clients for the registered capability */
-    private final SubscribedClientListModel _capableClients;
+    private SubscribedClientListModel _capableClients = null;
     /** Store whether the action should be enabled once SAMP clients are registered for the given capability */
     private boolean _couldBeEnabled = true;
 
@@ -54,10 +54,23 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * @param capability the SAMP mType to be sent.
      */
     public SampCapabilityAction(final String classPath, final String fieldName, final SampCapability capability) {
-        super(classPath, fieldName);
+        // use defered initialization:
+        super(classPath, fieldName, true);
 
         _capability = capability;
         _mType = _capability.mType();
+
+        // always prepare menu entries anyway
+        updateMenuAndActionAfterSubscribedClientChange();
+    }
+
+    /**
+     * Perform defered initialization i.e. executed after the application startup.
+     * This method must be overriden in sub classes
+     */
+    @Override
+    protected void performDeferedInitialization() {
+        _logger.entering("SampCapabilityAction", "performDeferedInitialization");
 
         // Get a dynamic list of SAMP clients able to respond to the specified capability.
         _capableClients = SampManager.createSubscribedClientListModel(_mType);
@@ -127,7 +140,6 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
         // Retrieve the JMenu entry for the current capablity
         // or build a new one if it does not already exists
-
         JMenu menu = SampManager.getMenu(this);
         if (menu == null) {
             if (_logger.isLoggable(Level.FINE)) {
@@ -141,7 +153,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         menu.removeAll();
 
         // If no client is able to handle specified capability
-        final int nbOfClients = _capableClients.getSize();
+        final int nbOfClients = (_capableClients != null) ? _capableClients.getSize() : 0;
         if (nbOfClients <= 0) {
             if (_logger.isLoggable(Level.FINE)) {
                 _logger.fine("No SAMP client available for capability '" + _mType + "'.");
@@ -163,7 +175,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
         menu.addSeparator();
 
-        // Add each individal client
+        // Add each individual client
         for (int i = 0; i < nbOfClients; i++) {
             final Client client = (Client) _capableClients.getElementAt(i);
             final String clientName = client.toString();

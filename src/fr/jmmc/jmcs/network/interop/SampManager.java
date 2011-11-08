@@ -58,6 +58,7 @@ public final class SampManager {
     public static synchronized SampManager getInstance() {
         // DO NOT MODIFY !!!
         if (_instance == null) {
+            // _logger.log(Level.SEVERE, "SampManager getInstance()", new Throwable());
             _instance = new SampManager();
         }
 
@@ -144,7 +145,9 @@ public final class SampManager {
             _connector.setActive(true);
         }
 
-        if (!_connector.isConnected()) {
+        if (_connector.isConnected()) {
+            _logger.info("Application ['" + applicationName + "'] connected to the SAMP Hub.");
+        } else {
             StatusBar.show("Could not connect to an existing hub or start an internal SAMP hub.");
         }
 
@@ -194,7 +197,7 @@ public final class SampManager {
     private static GuiHubConnector getGuiHubConnector() {
         return SampManager.getInstance().getHubConnector();
     }
-    
+
     /**
      * Indicates whether this connector is currently registered with a
      * running hub.
@@ -256,12 +259,10 @@ public final class SampManager {
 
         connector.addMessageHandler(handler);
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Registered SAMP capability for mType '" + handler.handledMType() + "'.");
-        }
-
         // This step required even if no custom message handlers added.
         connector.declareSubscriptions(connector.computeSubscriptions());
+        
+        _logger.info("Registered SAMP capability for mType '" + handler.handledMType() + "'.");
     }
 
     /**

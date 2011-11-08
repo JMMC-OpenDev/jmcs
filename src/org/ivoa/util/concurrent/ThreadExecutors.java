@@ -110,7 +110,7 @@ public final class ThreadExecutors extends LogSupport {
      * @see #getGenericExecutor()
      */
     public static void startExecutors() {
-        getSingleExecutor(DEFAULT_SINGLE_THREAD_POOL);
+        getDefaultSingleExecutor();
         getRunnerExecutor();
         getGenericExecutor();
     }
@@ -204,7 +204,17 @@ public final class ThreadExecutors extends LogSupport {
 
         return runnerExecutor;
     }
-
+    /**
+     * Return the single-thread pool or create it (lazy) for the given name
+     * 
+     * @param name key or name of the single-thread pool
+     * @see #newFixedThreadPool(String, int, ThreadFactory)
+     * @return process thread pool
+     */
+    public static ThreadExecutors getDefaultSingleExecutor() {
+        return getSingleExecutor(DEFAULT_SINGLE_THREAD_POOL);
+    }
+    
     /**
      * Return the single-thread pool or create it (lazy) for the given name
      * 

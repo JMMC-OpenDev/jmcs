@@ -19,7 +19,9 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      * Logger for the base framework
      * @see org.ivoa.bean.LogSupport
      */
-    protected static Log logB = LogUtil.getLoggerBase();
+    private static Log logB = LogUtil.getLoggerBase();
+    /** debug flag to log thread activity */
+    public static final boolean DO_DEBUG = false;
     //~ Members ----------------------------------------------------------------------------------------------------------
     /** thread pool name */
     private final String name;
@@ -60,7 +62,7 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      * Return the thread pool name
      * @return thread pool name
      */
-    public final String getPoolName() {
+    public String getPoolName() {
         return this.name;
     }
 
@@ -74,6 +76,9 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
         if (logB.isDebugEnabled()) {
             logB.debug(this.name + ".beforeExecute : runnable : " + r);
         }
+        if (DO_DEBUG) {
+            logB.warn(this.name + ".beforeExecute : runnable : " + r);
+        }
     }
 
     /**
@@ -84,11 +89,15 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      */
     @Override
     protected void afterExecute(final Runnable r, final Throwable th) {
-        if (th != null) {
+        if (th == null) {
+            if (logB.isDebugEnabled()) {
+                logB.debug(this.name + ".afterExecute : runnable : " + r);
+            }
+            if (DO_DEBUG) {
+                logB.warn(this.name + ".afterExecute : runnable : " + r);
+            }
+        } else {
             logB.error(this.name + ".afterExecute : uncaught exception : ", th);
-        }
-        if (logB.isDebugEnabled()) {
-            logB.debug(this.name + ".afterExecute : runnable : " + r);
         }
     }
 

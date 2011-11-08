@@ -33,11 +33,11 @@ public final class ThreadExecutors extends LogSupport {
     /** running flag (volatile) */
     private static volatile boolean RUNNING = true;
     /** default single thread pool name */
-    public static final String DEFAULT_SINGLE_THREAD_POOL = "DefaultSinglePool";
+    public static final String DEFAULT_SINGLE_THREAD_POOL = "DefaultSingleThreadPool";
     /** generic thread pool name */
-    public static final String GENERIC_THREAD_POOL = "GenericPool";
+    public static final String GENERIC_THREAD_POOL = "GenericThreadPool";
     /** process thread pool name */
-    public static final String PROCESS_THREAD_POOL = "ProcessPool";
+    public static final String PROCESS_THREAD_POOL = "ProcessThreadPool";
     /** Generic thread Pool : idle thread keep alive before kill : 120s */
     public static final long GENERIC_THREAD_KEEP_ALIVE = 120L;
     /** Process thread pool : maximum threads : 5 */

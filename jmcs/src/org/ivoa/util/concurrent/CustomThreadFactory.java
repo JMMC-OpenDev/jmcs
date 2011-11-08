@@ -53,6 +53,7 @@ public final class CustomThreadFactory extends LogSupport implements ThreadFacto
      * @param r Runnable task
      * @return new thread created
      */
+    @Override
     public Thread newThread(final Runnable r) {
         if (logB.isDebugEnabled()) {
             logB.debug("CustomThreadFactory.newThread : enter with task : " + r);

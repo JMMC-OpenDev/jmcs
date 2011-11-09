@@ -5,6 +5,7 @@ package fr.jmmc.jmcs.network.interop;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.gui.MessagePane;
 import fr.jmmc.jmcs.gui.StatusBar;
 import java.io.IOException;
 import java.util.Collections;
@@ -50,6 +51,8 @@ public final class SampManager {
     /* members */
     /** Gui hub connector */
     private final GuiHubConnector _connector;
+    /** Store whether we started our own hub instance or used an external on already running */
+    private static boolean _hubResponsible = false;
 
     /**
      * Return the singleton instance
@@ -65,6 +68,27 @@ public final class SampManager {
         return _instance;
 
         // DO NOT MODIFY !!!
+    }
+
+    /**
+     * @return true if SAMP hub cannot prevent quitting, false otherwise.
+     */
+    public static synchronized boolean allowHubKilling() {
+        if (!_hubResponsible) {
+            _logger.info("Application has not launched the SAMP hub internally, letting appication quits.");
+            return true;
+        } else {
+            _logger.info("Application has launched the SAMP hub internally, asking user if it should be killed or not.");
+        }
+
+        boolean shouldWeQuit = MessagePane.showConfirmKillHub();
+        if (!shouldWeQuit) {
+            _logger.info("User dissmissed SAMP hub termination, preventing application from quitting.");
+            return false;
+        }
+
+        _logger.info("User allowed SAMP hub termination, proceeding with application quitting.");
+        return true;
     }
 
     /**
@@ -131,17 +155,17 @@ public final class SampManager {
         _connector.setActive(true);
 
         if (!_connector.isConnected()) {
-
             // Try to start an internal SAMP hub if none available (JNLP do not support external hub) :
             try {
                 Hub.runHub(getInternalHubMode());
+                _hubResponsible = true;
             } catch (IOException ioe) {
                 if (_logger.isLoggable(Level.FINE)) {
                     _logger.log(Level.FINE, "unable to start internal hub (probably another hub is already running)", ioe);
                 }
             }
 
-            // retry to connect :
+            // Retry connection
             _connector.setActive(true);
         }
 
@@ -261,7 +285,7 @@ public final class SampManager {
 
         // This step required even if no custom message handlers added.
         connector.declareSubscriptions(connector.computeSubscriptions());
-        
+
         _logger.info("Registered SAMP capability for mType '" + handler.handledMType() + "'.");
     }
 

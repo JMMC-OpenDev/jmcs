@@ -28,6 +28,8 @@ public final class MessagePane {
     private final static String TITLE_INFO = "Information";
     /** save changes dialog options */
     private final static Object[] SAVE_CHANGES_OPTIONS = {"Save", "Cancel", "Don't Save"};
+    /** save changes dialog options */
+    private final static Object[] KILL_HUB_OPTIONS = {"Cancel", "Quit"};
 
     /** Save changes before closing results */
     public enum ConfirmSaveChanges {
@@ -211,9 +213,10 @@ public final class MessagePane {
     }
 
     /**
-     * Show a confirmation dialog to ask if the user wants to save changes before closing the application
-     * @return true if the user wants the file replaced, false otherwise.
+     * Show a confirmation dialog to ask if the user wants to save changes before closing the application.
+     * 
      * @param beforeMessage part of the message inserted after 'before ' ?
+     * @return true if the user wants the file replaced, false otherwise.
      */
     public static ConfirmSaveChanges showConfirmSaveChanges(final String beforeMessage) {
 
@@ -246,6 +249,40 @@ public final class MessagePane {
             default: // Any other case
                 // Cancel the exit
                 return ConfirmSaveChanges.Cancel;
+        }
+    }
+
+    /**
+     * Show a confirmation dialog to ask if the user wants to kill SAMP hub while quitting.
+     * 
+     * @return true if the user wants the quit nevertheless, false otherwise.
+     */
+    public static boolean showConfirmKillHub() {
+
+        // ensure window is visible (not iconified):
+        App.showFrameToFront();
+
+        final String applicationName = App.getSharedApplicationDataModel().getProgramName();
+
+        // Ask the user if he wants to kill hub
+        final int result = JOptionPane.showOptionDialog(getApplicationFrame(),
+                "Quitting '" + applicationName + "' will also terminate the shared SAMP hub,\npotentially preventing other applications interoperability until\nanother hub is started elsewhere.\n\n Proceed with quitting nevertheless ?",
+                null, JOptionPane.DEFAULT_OPTION,
+                JOptionPane.WARNING_MESSAGE, null, KILL_HUB_OPTIONS, KILL_HUB_OPTIONS[0]);
+
+        // Handle user choice
+        switch (result) {
+            // If the user clicked the "Quit" button
+            case 1: // options[0] = "Quit" button
+                // Proceed whith quit
+                return true;
+
+            // If the user clicked the "Cancel" button or pressed 'esc' key
+            case 0: // options[0] = "Cancel" button
+            case JOptionPane.CLOSED_OPTION: // 'esc' key
+            default: // Any other case
+                // Cancel quitting
+                return false;
         }
     }
 

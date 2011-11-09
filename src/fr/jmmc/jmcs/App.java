@@ -116,8 +116,8 @@ public abstract class App {
     private static boolean _exitApplicationWhenClosed = true;
     /** Quit handling action */
     private static QuitAction _quitAction = null;
-    /** Acknowledgement handling action */
-    private static AcknowledgementAction _acknowledgementAction = null;
+    /** Acknowledgment handling action */
+    private static AcknowledgmentAction _acknowledgmentAction = null;
     /** Show help handling action */
     private static ShowHelpAction _showHelpAction = null;
     /** Show hto news handling action */
@@ -194,8 +194,8 @@ public abstract class App {
 
             // Build Acknowledgment, ShowRelease and ShowHelp Actions
             // (the creation must be done after applicationModel instanciation)
-            _acknowledgementAction = new AcknowledgementAction("fr.jmmc.mcs.gui.App",
-                    "_acknowledgementAction");
+            _acknowledgmentAction = new AcknowledgmentAction("fr.jmmc.mcs.gui.App",
+                    "_acknowledgmentAction");
             _showHotNewsAction = new ShowHotNewsAction("fr.jmmc.mcs.gui.App",
                     "_showHotNewsAction");
             _showReleaseAction = new ShowReleaseAction("fr.jmmc.mcs.gui.App",
@@ -269,11 +269,11 @@ public abstract class App {
     }
 
     /**
-     * Return the action which displays and copy acknowledgement to clipboard
-     * @return action which displays and copy acknowledgement to clipboard
+     * Return the action which displays and copy acknowledgment to clipboard
+     * @return action which displays and copy acknowledgment to clipboard
      */
-    public static Action acknowledgementAction() {
-        return _acknowledgementAction;
+    public static Action acknowledgmentAction() {
+        return _acknowledgmentAction;
     }
 
     /**
@@ -582,7 +582,7 @@ public abstract class App {
      */
     public static void exit(final int statusCode) {
         _logger.info("Killing the application.");
-        
+
         try {
             final App application = App.getSharedInstance();
 
@@ -642,10 +642,10 @@ public abstract class App {
             public void run() {
                 // Initialize SampManager as needed by MainMenuBar:
                 SampManager.getInstance();
-                
+
                 // Perform defered action initialization (Samp related)
                 _registrar.performDeferedInitialization();
-                
+
                 // declare Samp message handlers now as the application is almost ready:
                 declareInteroperability();
 
@@ -662,7 +662,7 @@ public abstract class App {
 
                 // Use OSXAdapter on the frame
                 macOSXRegistration(frame);
-                
+
                 // create menus including the Interop menu (Samp required)
                 frame.setJMenuBar(new MainMenuBar());
 
@@ -847,7 +847,7 @@ public abstract class App {
      */
     public URL getURLFromResourceFilename(final String fileName) {
         return getURLFromResourceFilename(getClass(), fileName);
-    }    
+    }
 
     /**
      * Get URL from resource filename located in the classloader using the following path:
@@ -862,13 +862,12 @@ public abstract class App {
      * @return resource file URL
      */
     public static URL getURLFromResourceFilename(final App app, final String fileName) {
-        if (app == null)
-        {
+        if (app == null) {
             return null;
         }
         return getURLFromResourceFilename(app.getClass(), fileName);
-    }    
-    
+    }
+
     /**
      * Get URL from resource filename located in the classloader using the following path:
      * $package(appClass)$/resource/fileName
@@ -882,11 +881,10 @@ public abstract class App {
      * @return resource file URL
      */
     private static URL getURLFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
-        if (appClass == null)
-        {
+        if (appClass == null) {
             return null;
         }
-        
+
         // Its package
         final Package p = appClass.getPackage();
 
@@ -904,8 +902,7 @@ public abstract class App {
         // resolve file path:
         final URL fileURL = appClass.getClassLoader().getResource(filePath);
 
-        if (fileURL == null)
-        {
+        if (fileURL == null) {
             _logger.warning("Cannot find resource from '" + filePath + "' file.");
             return null;
         }
@@ -977,6 +974,11 @@ public abstract class App {
 
             _logger.fine("Should we kill the application ?");
 
+            // Check if user is OK to kill SAMP hub (if any)
+            if (!SampManager.allowHubKilling()) {
+                return;
+            }
+
             // If we are ready to finish application execution
             if (finish()) {
                 _logger.fine("Application should be killed.");
@@ -997,7 +999,7 @@ public abstract class App {
     }
 
     /** Action to copy acknowledgment text to the clipboard. */
-    protected class AcknowledgementAction extends RegisteredAction {
+    protected class AcknowledgmentAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1010,7 +1012,7 @@ public abstract class App {
          * the action, in the form returned by 'getClass().getName();'.
          * @param fieldName the name of the field pointing to the action.
          */
-        AcknowledgementAction(String classPath, String fieldName) {
+        AcknowledgmentAction(String classPath, String fieldName) {
             super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
             _acknowledgement = _applicationDataModel.getAcknowledgment();
 
@@ -1034,7 +1036,7 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.entering("AcknowledgementAction", "actionPerformed");
+            _logger.entering("AcknowledgmentAction", "actionPerformed");
 
             StringSelection ss = new StringSelection(_acknowledgement);
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);

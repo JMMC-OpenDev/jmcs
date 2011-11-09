@@ -285,12 +285,12 @@ public class MainMenuBar extends JMenuBar {
                 for (Component currentComponent : components) {
                     // Get menuitem initialised from ApplicationData
                     JMenuItem menuItem = (JMenuItem) currentComponent;
-                    
+
                     action = menuItem.getAction();
-                    
+
                     if (action instanceof SampCapabilityAction) {
                         // @TODO : cast SAMP-flagged menus only !
-                        SampCapabilityAction sampAction = (SampCapabilityAction)action;
+                        SampCapabilityAction sampAction = (SampCapabilityAction) action;
                         // get previously created menu by samp action
                         JMenu menu = SampManager.getMenu(sampAction);
 
@@ -396,7 +396,7 @@ public class MainMenuBar extends JMenuBar {
         helpMenu.add(new JSeparator());
 
         // Add acknowledgement action
-        helpMenu.add(App.acknowledgementAction());
+        helpMenu.add(App.acknowledgmentAction());
 
         helpMenu.add(new JSeparator());
 

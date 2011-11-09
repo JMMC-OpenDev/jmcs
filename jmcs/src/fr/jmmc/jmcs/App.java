@@ -582,7 +582,7 @@ public abstract class App {
      */
     public static void exit(final int statusCode) {
         _logger.info("Killing the application.");
-
+        
         try {
             final App application = App.getSharedInstance();
 
@@ -996,12 +996,12 @@ public abstract class App {
         }
     }
 
-    /** Action to copy acknowledgement text to the clipboard. */
+    /** Action to copy acknowledgment text to the clipboard. */
     protected class AcknowledgementAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
-        /** acknowlegment content */
+        /** acknowledgment content */
         private String _acknowledgement = null;
 
         /**

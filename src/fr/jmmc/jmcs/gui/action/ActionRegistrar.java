@@ -25,19 +25,19 @@ public class ActionRegistrar {
     private static final Logger _logger = Logger.getLogger(ActionRegistrar.class.getName());
     /** Singleton instance */
     private static ActionRegistrar _instance = null;
-    /** Preference Action unic identifying key */
+    /** Preference Action unique identifying key */
     private static final String _preferenceActionKey = "preferenceActionKey";
-    /** File opening action unic identifying key */
+    /** File opening action unique identifying key */
     private static final String _openActionKey = "openActionKey";
-    /** Quit Action unic identifying key */
+    /** Quit Action unique identifying key */
     private static final String _quitActionKey = "quitActionKey";
     /* members */
     /**
-     * Hastable to associate string keys like
-     * "fr.jmmc.classpath.classname:fiedname" to AbstractAction instances.
+     * Hashtable to associate string keys like
+     * "fr.jmmc.classpath.classname:fieldname" to AbstractAction instances.
      */
     private final Map<String, AbstractAction> _register = Collections.synchronizedMap(new HashMap<String, AbstractAction>());
-    /** unique action keys requiring defered initialization (after application startup) */
+    /** unique action keys requiring differed initialization (after application startup) */
     private final Set<String> _deferedInitActions = new HashSet<String>();
 
     /** Hidden constructor */

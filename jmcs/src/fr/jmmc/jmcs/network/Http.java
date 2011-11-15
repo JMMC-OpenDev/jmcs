@@ -24,7 +24,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 
 /**
- *  This util class is dedicated to gather code associated to http domain.
+ *  This utility class is dedicated to gather code associated to HTTP domain.
  *
  *  It actually :
  * - returns a well configured apache commons HttpClient (legacy project)
@@ -35,13 +35,13 @@ public final class Http {
 
     /** logger */
     private final static Logger logger = Logger.getLogger(Http.class.getName());
-    /** Jmmc web to detect proxies */
+    /** JMMC web to detect proxies */
     private final static String JMMC_WEB = "http://www.jmmc.fr";
-    /** Jmmc socks to detect proxies */
+    /** JMMC socks to detect proxies */
     private final static String JMMC_SOCKS = "socket://jmmc.fr";
-    /** cached Jmmc web URL */
+    /** cached JMMC web URL */
     private static URI JMMC_WEB_URI = null;
-    /** cached Jmmc socks URL */
+    /** cached JMMC socks URL */
     private static URI JMMC_SOCKS_URI = null;
 
     /**
@@ -52,7 +52,7 @@ public final class Http {
     }
 
     /**
-     * This class returns a multi threaded http client.
+     * This class returns a multi threaded HTTP client.
      * This client:
      *  * uses the default proxy configuration (based on http://www.jmmc.fr).
      *  * is thread safe.
@@ -64,11 +64,11 @@ public final class Http {
     }
 
     /**
-     * This class returns an http client.
+     * This class returns an HTTP client.
      * This client:
      *  * uses the default proxy configuration (based on http://www.jmmc.fr).
      *
-     * @param multiThreaded true indicates to create a multi threaded http client
+     * @param multiThreaded true indicates to create a multi threaded HTTP client
      *
      * @return httpClient instance
      */
@@ -132,8 +132,8 @@ public final class Http {
     }
 
     /**
-     * Get JMMC Http URI
-     * @return JMMC Http URI
+     * Get JMMC HTTP URI
+     * @return JMMC HTTP URI
      */
     private static URI getJmmcHttpURI() {
         if (JMMC_WEB_URI == null) {
@@ -162,7 +162,7 @@ public final class Http {
     }
 
     /**
-     * This class returns the http proxy configuration (based on http://www.jmmc.fr).
+     * This class returns the HTTP proxy configuration (based on http://www.jmmc.fr).
      * @return HostConfiguration instance (proxy host and port only are defined)
      */
     public static HostConfiguration getHttpProxyConfiguration() {
@@ -179,7 +179,7 @@ public final class Http {
 
     /**
      * This class returns the proxy configuration for the associated URI.
-     * @param uri reference uri used to get the proper proxy
+     * @param uri reference URI used to get the proper proxy
      * @return HostConfiguration instance (proxy host and port only are defined)
      */
     public static HostConfiguration getProxyConfiguration(final URI uri) {
@@ -213,10 +213,10 @@ public final class Http {
 
     /**
      * Save the document located at the given URI in the given file
-     * @param uri uri to download
+     * @param uri URI to download
      * @param outputFile file to save into
-     * @return true if successfull
-     * @throws IOException if any I/O operation fails (http or file) 
+     * @return true if successful
+     * @throws IOException if any I/O operation fails (HTTP or file) 
      */
     public static boolean download(final URI uri, final File outputFile) throws IOException {
 

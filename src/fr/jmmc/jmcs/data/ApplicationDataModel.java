@@ -45,9 +45,26 @@ public class ApplicationDataModel {
     /** The JAVA class which castor has generated with the XSD file */
     private ApplicationData _applicationDataCastorModel = null;
     /** Logo file name */
-    private String _logoFileName = "/fr/jmmc/jmcs/resource/logo.png";
+    private final String _logoFileName = "/fr/jmmc/jmcs/resource/logo.png";
     /** Main web page URL */
-    private String _mainWebPageURL = "http://www.jmmc.fr/";
+    private final String _mainWebPageURL = "http://www.jmmc.fr/";
+    /** URL of the PHP script that handles Feedback reports */
+    private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
+    /** header message in HTML format */
+    private static final String _feedbackReportHeaderMessage = "<html><body>"
+            + "<center>"
+            + "<big>Welcome to the JMMC Feedback Report</big><br/>"
+            + "We are eager to get your feedback, questions or comments !<br/>"
+            + "So please do not hesitate to use this form.<br/>"
+            + "</center>"
+            + "<br/><br/>"
+            + "Moreover, we encourage you to provide us with your e-mail address, so we can :"
+            + "<ul>"
+            + "<li>keep you up to date on the status of your request;</li>"
+            + "<li>ask you more information if needed.</li>"
+            + "</ul>"
+            + "<em>(*) Summary and description must be filled to enable the 'Submit' button.</em>"
+            + "</body></html>";
 
     /** 
      * Public constructor
@@ -115,12 +132,30 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the main web page url
+     * Return the main web page URL
      *
-     * @return the main web page url
+     * @return the main web page URL
      */
     public String getMainWebPageURL() {
         return _mainWebPageURL;
+    }
+
+    /**
+     * Return the feedback report form URL
+     *
+     * @return the feedback report form URL
+     */
+    public String getFeedabackReportFormURL() {
+        return _phpScriptURL;
+    }
+
+    /**
+     * Return the feedback report header message
+     *
+     * @return the feedback report header message
+     */
+    public String getFeedabackReportHeaderMessage() {
+        return _feedbackReportHeaderMessage;
     }
 
     /**

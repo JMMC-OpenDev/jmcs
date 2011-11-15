@@ -44,30 +44,11 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     private static final long serialVersionUID = 1;
     /** Logger */
     private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
-    /** URL of the PHP script that handles form parameters */
-    private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
-    // developpers can use the fake script that do not send incomming reports
-//    private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedbackFake.php";
     /** Feedback report type definition array */
     private static final String[] _feedbackTypes = new String[]{
         "Bug Report", "Documentation Typo", "Evolution Request",
         "Support Request"
     };
-    /** header message in html format */
-    private static final String headerMessage = "<html><body>"
-            + "<center>"
-            + "<big>Welcome to the JMMC Feedback Report</big><br/>"
-            + "We are eager to get your feedback, questions or comments !<br/>"
-            + "So please do not hesitate to use this form.<br/>"
-            + "</center>"
-            + "<br/><br/>"
-            + "Moreover, we encourage you to provide us with your e-mail address, so we can :"
-            + "<ul>"
-            + "<li>keep you up to date on the status of your request;</li>"
-            + "<li>ask you more information if needed.</li>"
-            + "</ul>"
-            + "<em>(*) Summary and description must be filled to enable the 'Submit' button.</em>"
-            + "</body></html>";
 
     /**
      * Show a new FeedbackReport object (not modal).
@@ -183,6 +164,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         // and update ui
         keyReleased(null);
 
+        final String headerMessage = App.getSharedApplicationDataModel().getFeedabackReportHeaderMessage();
         headerLabel.setText(headerMessage);
 
         typeComboBox.setModel(_feedbackTypeDataModel);
@@ -239,8 +221,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     }
 
     /**
-     * Free any ressource or reference to this instance :
-     * remove this instance form Preference Observers
+     * Free any resource or reference to this instance :
+     * remove this instance from Preference Observers
      */
     @Override
     public final void dispose() {
@@ -670,7 +652,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             // Create an HTTP client to send report information to our PHP script
             final HttpClient client = Http.getHttpClient(false);
 
-            final PostMethod method = new PostMethod(_phpScriptURL);
+            final String feedbackReportUrl = App.getSharedApplicationDataModel().getFeedabackReportFormURL();
+            final PostMethod method = new PostMethod(feedbackReportUrl);
 
             try {
                 _logger.fine("Http client and post method have been created");

@@ -23,7 +23,7 @@ public class FileFilterRepository {
     /** Singleton instance */
     private static FileFilterRepository _instance = null;
     /**
-     * Hastable to associate string keys like
+     * Hashtable to associate string keys like
      * "application-x/scvot-file" to FileFilterRepository instances.
      */
     private static final HashMap<String, FileFilter> _repository = new HashMap<String, FileFilter>(16);

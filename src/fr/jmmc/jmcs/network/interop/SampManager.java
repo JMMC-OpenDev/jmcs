@@ -253,7 +253,7 @@ public final class SampManager {
     /**
      * Returns an action which toggles hub registration.
      *
-     * @return   registration toggler action
+     * @return registration toggle action
      */
     public static Action createToggleRegisterAction() {
         final GuiHubConnector connector = getGuiHubConnector();
@@ -268,7 +268,7 @@ public final class SampManager {
     /**
      * Returns an action which will display a SAMP hub monitor window.
      *
-     * @return   monitor window action
+     * @return monitor window action
      */
     public static Action createShowMonitorAction() {
         return getGuiHubConnector().createShowMonitorAction();
@@ -327,7 +327,7 @@ public final class SampManager {
     }
 
     /**
-     * Return the meta data correponding to the given client Id known by the hub
+     * Return the meta data corresponding to the given client Id known by the hub
      * @param clientId client id
      * @return meta data or null
      */

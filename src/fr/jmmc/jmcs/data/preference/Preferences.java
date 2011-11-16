@@ -317,7 +317,7 @@ public abstract class Preferences extends Observable {
             } else {
                 runtimeVersionNumber = getPreferencesVersionNumber();
             }
-            
+
             if (_logger.isLoggable(Level.FINER)) {
                 _logger.finer("Internal" + logToken + "preference version number = '" + runtimeVersionNumber + "'.");
             }
@@ -326,7 +326,7 @@ public abstract class Preferences extends Observable {
             int fileVersionNumber = 0; // To be sure to be below most preferencesVersionNumber, as Java does not provide unsigned types to garanty positive values from getPreferencesVersionNumber() !!!
             try {
                 fileVersionNumber = getPreferenceAsInt(key);
-                
+
                 if (_logger.isLoggable(Level.FINER)) {
                     _logger.finer("Loaded" + logToken + "preference version number = '" + fileVersionNumber + "'.");
                 }
@@ -702,7 +702,12 @@ public abstract class Preferences extends Observable {
     final public String getPreference(Object preferenceName) {
         _logger.entering(_className, "getPreference");
 
-        return _currentProperties.getProperty(preferenceName.toString());
+        final String value = _currentProperties.getProperty(preferenceName.toString());
+        if (value == null) {
+            throw new RuntimeException("Could not find '" + preferenceName + "' preference value.");
+        }
+
+        return value;
     }
 
     /**
@@ -715,9 +720,7 @@ public abstract class Preferences extends Observable {
     final public boolean getPreferenceAsBoolean(Object preferenceName) {
         _logger.entering(_className, "getPreferenceAsBoolean");
 
-        // TODO: handle value is null
         final String value = getPreference(preferenceName);
-
         return Boolean.valueOf(value).booleanValue();
     }
 
@@ -731,9 +734,7 @@ public abstract class Preferences extends Observable {
     final public double getPreferenceAsDouble(Object preferenceName) {
         _logger.entering(_className, "getPreferenceAsDouble");
 
-        // TODO: handle value is null
         final String value = getPreference(preferenceName);
-
         return Double.valueOf(value).doubleValue();
     }
 
@@ -747,9 +748,7 @@ public abstract class Preferences extends Observable {
     final public int getPreferenceAsInt(Object preferenceName) {
         _logger.entering(_className, "getPreferenceAsInt");
 
-        // TODO: handle value is null
         final String value = getPreference(preferenceName);
-
         return Integer.valueOf(value).intValue();
     }
 
@@ -760,19 +759,16 @@ public abstract class Preferences extends Observable {
      *
      * @return one Color object representing the preference value.
      */
-    final public Color getPreferenceAsColor(Object preferenceName)
-            throws PreferencesException {
+    final public Color getPreferenceAsColor(Object preferenceName) throws PreferencesException {
         _logger.entering(_className, "getPreferenceAsColor");
 
-        // TODO: handle value is null
         final String value = getPreference(preferenceName);
-        Color colorValue;
 
+        Color colorValue = null;
         try {
             colorValue = Color.decode(value);
         } catch (Exception e) {
-            throw new PreferencesException("Cannot convert preference '"
-                    + preferenceName + "'value '" + value + "' to a Color.", e);
+            throw new PreferencesException("Cannot decode preference '" + preferenceName + "' value '" + value + "' as a Color.", e);
         }
 
         return colorValue;
@@ -797,7 +793,7 @@ public abstract class Preferences extends Observable {
         // Store in new preference key-value
         try {
             setPreference(newName, order, value);
-            
+
             if (_logger.isLoggable(Level.FINE)) {
                 _logger.fine("Renaming ['" + previousName + "' , '" + value + orderToken + "'] to ['" + newName + " , '" + value + orderToken + "'].");
             }
@@ -1083,7 +1079,6 @@ public abstract class Preferences extends Observable {
         return _restoreDefaultPreferences;
     }
 
-    // @todo try to move it into the mcs preferences area
     protected class SavePrefAction extends RegisteredAction {
 
         private static final long serialVersionUID = 1L;
@@ -1097,8 +1092,8 @@ public abstract class Preferences extends Observable {
             try {
                 saveToFile();
             } catch (PreferencesException pe) {
-                // @todo handle this error at user level
                 _logger.log(Level.WARNING, "saveToFile failure : ", pe);
+                throw new RuntimeException(pe);
             }
         }
     }
@@ -1114,8 +1109,8 @@ public abstract class Preferences extends Observable {
             try {
                 resetToDefaultPreferences();
             } catch (Exception e) {
-                // @todo handle this error at user level
                 _logger.log(Level.WARNING, "resetToDefaultPreferences failure : ", e);
+                throw new RuntimeException(e);
             }
         }
     }

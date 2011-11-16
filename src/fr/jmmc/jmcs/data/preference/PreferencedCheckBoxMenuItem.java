@@ -10,13 +10,11 @@ import java.util.*;
 import javax.swing.JCheckBoxMenuItem;
 
 /**
- * Menu item with a check box representing a MCS preference boolean property
- * state.
+ * Menu item with a check box representing a MCS preference boolean property state.
  * 
  * @author Sylvain LAFRASSE, Guillaume MELLA.
  */
-public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem
-        implements Observer, ActionListener {
+public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem implements Observer, ActionListener {
 
     private static final long serialVersionUID = 1L;
     /** Menu item corresponding preference property */
@@ -27,14 +25,11 @@ public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem
     /**
      * PreferencedCheckBoxMenuItem constructor
      *
-     * title a string containing the label to be displayed in the menu
-     * preferenceProperty a string containing the reference to the boolean property to handle
-     * @param title
-     * @param preferences
-     * @param preferenceProperty  
+     * @param title a string containing the label to be displayed in the menu
+     * @param preferences the Preferences shared instance
+     * @param preferenceProperty a string containing the reference to the boolean property to handle
      */
-    public PreferencedCheckBoxMenuItem(String title, Preferences preferences,
-            String preferenceProperty) {
+    public PreferencedCheckBoxMenuItem(String title, Preferences preferences, String preferenceProperty) {
         // Set the label of the Menu Item widget
         super(title);
 
@@ -43,6 +38,7 @@ public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem
 
         // Store the property name for later use
         _preferenceProperty = preferenceProperty;
+
         // Retrieve the property boolean value and set the widget accordinaly
         setSelected(_preferences.getPreferenceAsBoolean(_preferenceProperty));
 
@@ -53,8 +49,8 @@ public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem
     }
 
     /**
-     * Triggerd if the menu item has been clicked.
-     * @param evt 
+     * Triggered if the menu item has been clicked.
+     * @param evt
      */
     @Override
     public void actionPerformed(ActionEvent evt) {
@@ -62,12 +58,12 @@ public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem
         try {
             _preferences.setPreference(_preferenceProperty, isSelected());
         } catch (Exception e) {
-            // @TODO
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * Triggerd if the preference shared instance has been modified.
+     * Triggered if the preference shared instance has been modified.
      * @param o
      * @param arg  
      */

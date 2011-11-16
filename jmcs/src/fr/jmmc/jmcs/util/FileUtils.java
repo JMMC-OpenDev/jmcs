@@ -137,7 +137,7 @@ public final class FileUtils {
         final URL url = getResource(classpathLocation);
 
         try {
-            return readFile(url.openStream(), 2048);
+            return readStream(url.openStream(), 2048);
         } catch (IOException ioe) {
             // Unexpected exception :
             throw new IllegalStateException("unable to read file : " + classpathLocation, ioe);
@@ -153,7 +153,7 @@ public final class FileUtils {
      * @throws IOException if an I/O exception occurred
      */
     public static String readFile(final File file) throws IOException {
-        return readFile(new FileInputStream(file), (int) file.length());
+        return readStream(new FileInputStream(file), (int) file.length());
     }
 
     /**
@@ -165,7 +165,7 @@ public final class FileUtils {
      *
      * @throws IOException if an I/O exception occurred
      */
-    private static String readFile(final InputStream inputStream, final int bufferCapacity) throws IOException {
+    public static String readStream(final InputStream inputStream, final int bufferCapacity) throws IOException {
 
         String result = null;
         BufferedReader bufferedReader = null;

@@ -126,12 +126,12 @@ public final class FileUtils {
     }
 
     /**
-     * Read a text file from the current classloader into a string
+     * Read a text file from the current class loader into a string
      *
      * @param classpathLocation file name like fr/jmmc/aspro/fileName.ext
      * @return text file content
      *
-     * @throws IllegalStateException if the file is not found or an I/O exception occured
+     * @throws IllegalStateException if the file is not found or an I/O exception occurred
      */
     public static String readFile(final String classpathLocation) throws IllegalStateException {
         final URL url = getResource(classpathLocation);
@@ -150,7 +150,7 @@ public final class FileUtils {
      * @param file local file
      * @return text file content
      *
-     * @throws IOException if an I/O exception occured
+     * @throws IOException if an I/O exception occurred
      */
     public static String readFile(final File file) throws IOException {
         return readFile(new FileInputStream(file), (int) file.length());
@@ -163,7 +163,7 @@ public final class FileUtils {
      * @param bufferCapacity initial buffer capacity (chars)
      * @return text file content
      *
-     * @throws IOException if an I/O exception occured
+     * @throws IOException if an I/O exception occurred
      */
     private static String readFile(final InputStream inputStream, final int bufferCapacity) throws IOException {
 
@@ -197,7 +197,7 @@ public final class FileUtils {
      * @param file file to write
      * @param content content to write
      *
-     * @throws IOException if an I/O exception occured
+     * @throws IOException if an I/O exception occurred
      */
     public static void writeFile(final File file, final String content) throws IOException {
         final Writer w = openFile(file);
@@ -214,7 +214,7 @@ public final class FileUtils {
      * @param file file to write
      * @return Writer (buffered)
      *
-     * @throws IOException if an I/O exception occured
+     * @throws IOException if an I/O exception occurred
      */
     public static Writer openFile(final File file) throws IOException {
         return new BufferedWriter(new FileWriter(file));
@@ -284,7 +284,7 @@ public final class FileUtils {
      * Copy file
      * @param src source file
      * @param dst destination file
-     * @throws IOException if io problem occurs
+     * @throws IOException if any Input/Output problem occurs
      * @throws FileNotFoundException if input file is not found
      */
     public static void copy(final File src, final File dst) throws IOException, FileNotFoundException {
@@ -297,7 +297,7 @@ public final class FileUtils {
      * Save the given input stream as file
      * @param in input stream to save as file
      * @param dst destination file
-     * @throws IOException if io problem occurs
+     * @throws IOException if any Input/Output problem occurs
      * @throws FileNotFoundException if input file is not found
      */
     public static void saveStream(final InputStream in, final File dst) throws IOException, FileNotFoundException {
@@ -321,7 +321,7 @@ public final class FileUtils {
      * Zip source file into destination one.
      * @param src source file to be zipped
      * @param dst destination file corresponding to the zipped source file
-     * @throws IOException if io problem occurs
+     * @throws IOException if any Input/Output problem occurs
      * @throws FileNotFoundException if input file is not found
      */
     public static void zip(final File src, final File dst) throws IOException, FileNotFoundException {
@@ -357,7 +357,7 @@ public final class FileUtils {
      * @return  An abstract pathname denoting a newly-created empty file
      *
      * @throws  IllegalStateException
-     *         If a file could not be created
+     *          If a file could not be created
      *
      * @throws  SecurityException
      *          If a security manager exists and its <code>{@link
@@ -391,7 +391,7 @@ public final class FileUtils {
     }
 
     /**
-     * Return an tmp filename using temp directory and given filename.
+     * Return an temporary filename using temp directory and given filename.
      * The caller must consider that this file may already be present.
      * The file will be deleted on program exit.
      * @param filename the short name to use in the computation of the temporary filename
@@ -404,11 +404,45 @@ public final class FileUtils {
     }
 
     /**
-     * Return the tmp dir where temporary file can be saved into.
+     * Return the temporary directory where temporary file can be saved into.
      * 
-     * @return the tmp directory name
+     * @return the temporary directory name
      */
     public static String getTempDir() {
         return System.getProperty("java.io.tmpdir");
+    }
+
+    /**
+     * Return the filename from a resource path (assumed delimiter is '/').
+     * @param path a '/' delimited path, such as Java resource path.
+     * @return the last element of a '/' delimited path, or null otherwise.
+     */
+    public static String filenameFromResourcePath(final String resourcePath) {
+        String[] pathTokens = resourcePath.split("/");
+        if (pathTokens.length > 0) {
+            return pathTokens[pathTokens.length - 1];
+        }
+        return null;
+    }
+
+    /**
+     * Extract the given resource given its file name in the JAR archive and save it as one temporary file
+     * @param resourceFile complete path to the resource name to extract.
+     * @return file URL
+     * @throws IllegalStateException if the given resource does not exist
+     */
+    public static String extractResource(final String fullResourceFilePath) throws IllegalStateException {
+
+        // Use the class loader resource resolver
+        final URL url = FileUtils.getResource(fullResourceFilePath);
+
+        final File tmpFile = getTempFile(filenameFromResourcePath(fullResourceFilePath));
+
+        try {
+            saveStream(url.openStream(), tmpFile);
+            return tmpFile.toURI().toString();
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Unable to save file '" + tmpFile + "' for URL '" + url + "'.", ioe);
+        }
     }
 }

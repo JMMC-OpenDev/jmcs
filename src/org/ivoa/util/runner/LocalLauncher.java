@@ -366,7 +366,7 @@ public final class LocalLauncher {
                     // kill the root context :
                     final RootContext ctx = ((RootContext) runCtx);
                     if (ctx.getState() == RunState.STATE_PENDING) {
-                        ctx.setState(RunState.STATE_CANCELLED);
+                        ctx.setState(RunState.STATE_CANCELED);
                         if (ctx.getFuture() != null) {
                             // cancel a pending task :
                             ctx.getFuture().cancel(true);
@@ -429,7 +429,7 @@ public final class LocalLauncher {
                     // cancel the root context :
                     final RootContext ctx = ((RootContext) runCtx);
                     if (ctx.getState() == RunState.STATE_PENDING) {
-                        ctx.setState(RunState.STATE_CANCELLED);
+                        ctx.setState(RunState.STATE_CANCELED);
                         if (ctx.getFuture() != null) {
                             // cancel a pending task :
                             ctx.getFuture().cancel(true);
@@ -644,7 +644,7 @@ public final class LocalLauncher {
                 log.debug("JobRunner.run : enter");
             }
 
-            if (rootCtx.getState() != RunState.STATE_CANCELLED) {
+            if (rootCtx.getState() != RunState.STATE_CANCELED) {
                 // increment live counter :
                 JOBS_LIVE.incrementAndGet();
 
@@ -699,7 +699,7 @@ public final class LocalLauncher {
                         // interrupted due to thread pool shutdown :
                         rootCtx.setState(RunState.STATE_INTERRUPTED);
                     } else {
-                        if (rootCtx.getState() != RunState.STATE_CANCELLED && rootCtx.getState() != RunState.STATE_KILLED) {
+                        if (rootCtx.getState() != RunState.STATE_CANCELED && rootCtx.getState() != RunState.STATE_KILLED) {
                             // set finished state :
                             rootCtx.setState(ok ? RunState.STATE_FINISHED_OK : RunState.STATE_FINISHED_ERROR);
                         }

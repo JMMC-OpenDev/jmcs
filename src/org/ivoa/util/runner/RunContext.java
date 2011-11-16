@@ -218,7 +218,7 @@ public class RunContext implements Serializable, Cloneable {
 
                 break;
 
-            case STATE_CANCELLED:
+            case STATE_CANCELED:
             case STATE_INTERRUPTED:
             case STATE_KILLED:
             case STATE_FINISHED_ERROR:

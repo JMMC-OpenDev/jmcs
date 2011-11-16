@@ -19,8 +19,8 @@ public enum RunState {
     STATE_FINISHED_OK("OK"),
     /** interrupted state (shutdown) */
     STATE_INTERRUPTED("INTERRUPTED"),
-    /** cancelled state (user) */
-    STATE_CANCELLED("CANCELLED"),
+    /** canceled state (user) */
+    STATE_CANCELED("CANCELED"),
     /** killed state (user) */
     STATE_KILLED("KILLED");
     /** string representation */

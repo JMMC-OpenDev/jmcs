@@ -878,6 +878,64 @@ public abstract class Preferences extends Observable {
     }
 
     /**
+     * Replace a given string token in a preference by another string (and trim the result).
+     *
+     * @param preferenceName the path of the preference value to update.
+     * @param searchedToken the string token to be replaced in the preference value (you can add a trailing space to decipher between similarly names tokens - last occurrence will also be detected flawlessly in this case).
+     * @param replacingToken the new string to put in the preference value.
+     *
+     * @return true if everything went fine, false otherwise.
+     */
+    public boolean replaceTokenInPreference(Object preferenceName, String searchedToken, String replacingToken) {
+        _logger.entering(_className, "replaceTokenInPreference");
+
+        final String preferencePath = preferenceName.toString();
+
+        // Get the preference current value
+        final String originalPreferenceValue = getPreference(preferencePath) + " "; // Add a space to also match last token if it contains an ending space
+
+        if (_logger.isLoggable(Level.FINEST)) {
+            _logger.finest("Preference '" + preferencePath + "' contains : '" + originalPreferenceValue + "'.");
+        }
+
+        // Search for the token and replace it
+        if (_logger.isLoggable(Level.FINER)) {
+            _logger.finer("Replacing '" + searchedToken + "' with '" + replacingToken + "' in '" + preferencePath + "'.");
+        }
+
+        final String newPreferenceValue = originalPreferenceValue.replaceAll(searchedToken, replacingToken).trim(); // Trim any spare spaces
+
+        // Store updated preference value
+        try {
+            setPreference(preferencePath, newPreferenceValue);
+
+            if (_logger.isLoggable(Level.FINEST)) {
+                _logger.finest("Preference '" + preferencePath + "' contains : '" + getPreference(preferencePath) + "'.");
+            }
+        } catch (Exception ex) {
+            _logger.log(Level.WARNING, "Could not store '" + preferencePath + "' preference:", ex);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Remove a given string token in a preference (and trim the result).
+     *
+     * @param preferenceName the path of the preference value to update.
+     * @param searchedToken the string token to be removed (you can add a trailing space to decipher between similarly named tokens - last occurrence will also be detected flawlessly in this case).
+     *
+     * @return true if everything went fine, false otherwise.
+     */
+    public boolean removeTokenInPreference(Object preferenceName, String searchedToken) {
+        _logger.entering(_className, "removeTokenInPreference");
+
+        return replaceTokenInPreference(preferenceName, searchedToken, "");
+    }
+
+    /**
      * Returns an Enumeration (ordered if possible) of preference names which
      * start with given string. One given empty string make all preference
      * entries returned.

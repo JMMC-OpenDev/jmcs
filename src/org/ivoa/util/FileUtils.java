@@ -22,7 +22,7 @@ import java.util.zip.ZipOutputStream;
  * File utility methods : Several utility methods : finds a file in the class path (jar), open files
  * for read or write operation and close file
  * 
- * TODO: merge this class with Jmcs FileUtils
+ * TODO: merge this class with jMCS FileUtils
  *
  * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
  */
@@ -116,7 +116,7 @@ public final class FileUtils extends LogSupport {
     }
 
     /**
-     * Returns an exisiting File for the given path
+     * Returns an existing File for the given path
      *
      * @param path file path
      * @return File or null
@@ -150,7 +150,7 @@ public final class FileUtils extends LogSupport {
     }
 
     /**
-     * Returns an exisiting File for the given path
+     * Returns an existing File for the given path
      *
      * @param path file path
      * @return File or null
@@ -165,7 +165,6 @@ public final class FileUtils extends LogSupport {
         return null;
     }
 
-    // writers :  
     /**
      * Returns a Writer for the given file path and use the default writer buffer capacity
      *
@@ -236,7 +235,6 @@ public final class FileUtils extends LogSupport {
         return null;
     }
 
-    // readers :  
     /**
      * Returns a reader for the given file path and use the default read buffer capacity
      *
@@ -352,7 +350,6 @@ public final class FileUtils extends LogSupport {
             out.close();
         } catch (IOException e) {
         }
-
     }
 }
 //~ End of file --------------------------------------------------------------------------------------------------------

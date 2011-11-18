@@ -202,7 +202,7 @@ public final class Http {
                     host = epoint.getAddress().getHostName();
                 }
                 final int port = epoint.getPort();
-                
+
                 if (!host.trim().isEmpty() && port > 0) {
                     hostConfiguration.setProxy(host, port);
                 }
@@ -212,16 +212,19 @@ public final class Http {
     }
 
     /**
-     * Save the document located at the given URI in the given file
+     * Save the document located at the given URI in the given file. 
+     * Requests with dedicatedClient will instance one new client with proxies compatible with given uri. 
+     * Other requests will use the common multithreaded httpclient.
+     * 
      * @param uri URI to download
      * @param outputFile file to save into
+     * @param useDedicatedClient use one dedicated httpclient if true or the common multithreaded one else
      * @return true if successful
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
-    public static boolean download(final URI uri, final File outputFile) throws IOException {
-
-        // Create an HTTP client for the given URI to detect proxies for this host:
-        final HttpClient client = Http.getHttpClient(uri, false);
+    public static boolean download(final URI uri, final File outputFile, boolean useDedicatedClient) throws IOException {
+        // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
+        final HttpClient client = useDedicatedClient ? Http.getHttpClient(uri, false) : Http.getHttpClient();
 
         final GetMethod method = new GetMethod(uri.toString());
 
@@ -236,7 +239,6 @@ public final class Http {
             }
 
             if (resultCode == 200) {
-
                 // Get response
                 final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
 
@@ -254,5 +256,46 @@ public final class Http {
             method.releaseConnection();
         }
         return false;
+    }
+
+    /**
+     * Read a text file from the given uri into a string
+     *
+     * @param uri uri to load
+     * @param bufferCapacity initial buffer capacity (chars)
+     * @param useDedicatedClient use one dedicated httpclient if true or the common multithreaded one else
+     * @return text file content
+     *
+     * @throws IOException if an I/O exception occurred
+     */
+    public static String readUrl(final URI uri, final int bufferCapacity, boolean useDedicatedClient) throws IOException {
+        // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
+        final HttpClient client = useDedicatedClient ? Http.getHttpClient(uri, false) : Http.getHttpClient();
+
+        final GetMethod method = new GetMethod(uri.toString());
+
+        logger.fine("Http client and get method have been created");
+
+        // Send HTTP GET query:
+        int resultCode = client.executeMethod(method);
+
+        if (logger.isLoggable(Level.FINE)) {
+            logger.fine("The query has been sent. Status code: " + resultCode);
+        }
+
+        if (resultCode == 200) {
+            // Get response
+            final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
+
+            final String res = FileUtils.readStream(in, bufferCapacity);
+
+            if (logger.isLoggable(Level.FINE)) {
+                logger.fine("String stored in memory : " + res.length() + " chars.");
+            }
+
+            return res;
+        }
+
+        return null;
     }
 }

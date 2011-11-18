@@ -34,7 +34,7 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 public final class Http {
 
     /** logger */
-    private final static Logger logger = Logger.getLogger(Http.class.getName());
+    protected final static Logger logger = Logger.getLogger(Http.class.getName());
     /** JMMC web to detect proxies */
     private final static String JMMC_WEB = "http://www.jmmc.fr";
     /** JMMC socks to detect proxies */
@@ -222,9 +222,60 @@ public final class Http {
      * @return true if successful
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
-    public static boolean download(final URI uri, final File outputFile, boolean useDedicatedClient) throws IOException {
+    public static boolean download(final URI uri, final File outputFile, final boolean useDedicatedClient) throws IOException {
+        
+        return download(uri, useDedicatedClient, new StreamProcessor() {
+            /**
+             * Process the given input stream and CLOSE it anyway (try/finally)
+             * @param in input stream to process
+             * @throws IOException if any IO error occurs
+             */
+            public void process(final InputStream in) throws IOException {
+                
+                FileUtils.saveStream(in, outputFile);
+
+                if (logger.isLoggable(Level.FINE)) {
+                    logger.fine("Saved file : " + outputFile + " - " + outputFile.length() + " bytes.");
+                }
+            }
+        });
+    }
+
+    /**
+     * Read a text file from the given uri into a string
+     *
+     * @param uri uri to load
+     * @param useDedicatedClient use one dedicated httpclient if true or the common multithreaded one else
+     * @return text file content
+     *
+     * @throws IOException if an I/O exception occurred
+     */
+    public static String download(final URI uri, final boolean useDedicatedClient) throws IOException {
+        
+        final StringStreamProcessor stringProcessor = new StringStreamProcessor();
+        
+        if (download(uri, useDedicatedClient, stringProcessor)) {
+            return stringProcessor.getResult();
+        }
+
+        return null;
+    }
+    
+
+    /**
+     * Save the document located at the given URI in the given file. 
+     * Requests with dedicatedClient will instance one new client with proxies compatible with given uri. 
+     * Other requests will use the common multithreaded httpclient.
+     * 
+     * @param uri URI to download
+     * @param outputFile file to save into
+     * @param useDedicatedClient use one dedicated httpclient if true or the common multithreaded one else
+     * @return true if successful
+     * @throws IOException if any I/O operation fails (HTTP or file) 
+     */
+    private static boolean download(final URI uri, final boolean useDedicatedClient, final StreamProcessor processor) throws IOException {
         // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
-        final HttpClient client = useDedicatedClient ? Http.getHttpClient(uri, false) : Http.getHttpClient();
+        final HttpClient client = (useDedicatedClient) ? Http.getHttpClient(uri, false) : Http.getHttpClient();
 
         final GetMethod method = new GetMethod(uri.toString());
 
@@ -241,12 +292,8 @@ public final class Http {
             if (resultCode == 200) {
                 // Get response
                 final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
-
-                FileUtils.saveStream(in, outputFile);
-
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Saved file : " + outputFile + " - " + outputFile.length() + " bytes.");
-                }
+                
+                processor.process(in);
 
                 return true;
             }
@@ -257,45 +304,47 @@ public final class Http {
         }
         return false;
     }
+    
+    /**
+     * Generic Stream processors
+     */
+    private interface StreamProcessor {
+        /**
+         * Process the given input stream and CLOSE it anyway (try/finally)
+         * @param in input stream to process
+         * @throws IOException if any IO error occurs
+         */
+        public void process(final InputStream in) throws IOException;
+    }
 
     /**
-     * Read a text file from the given uri into a string
-     *
-     * @param uri uri to load
-     * @param bufferCapacity initial buffer capacity (chars)
-     * @param useDedicatedClient use one dedicated httpclient if true or the common multithreaded one else
-     * @return text file content
-     *
-     * @throws IOException if an I/O exception occurred
+     * Custom StreamProcessor that copy the input stream to one String
      */
-    public static String readUrl(final URI uri, final int bufferCapacity, boolean useDedicatedClient) throws IOException {
-        // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
-        final HttpClient client = useDedicatedClient ? Http.getHttpClient(uri, false) : Http.getHttpClient();
+    private static final class StringStreamProcessor implements StreamProcessor {
+        /** result as String */
+        protected String result = null;
+        /**
+         * Process the given input stream and CLOSE it anyway (try/finally)
+         * @param in input stream to process
+         * @throws IOException if any IO error occurs
+         */
+        public void process(final InputStream in) throws IOException {
 
-        final GetMethod method = new GetMethod(uri.toString());
-
-        logger.fine("Http client and get method have been created");
-
-        // Send HTTP GET query:
-        int resultCode = client.executeMethod(method);
-
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("The query has been sent. Status code: " + resultCode);
-        }
-
-        if (resultCode == 200) {
-            // Get response
-            final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
-
-            final String res = FileUtils.readStream(in, bufferCapacity);
+            // TODO check if we can get response size from http headers
+            result = FileUtils.readStream(in);
 
             if (logger.isLoggable(Level.FINE)) {
-                logger.fine("String stored in memory : " + res.length() + " chars.");
+                logger.fine("String stored in memory : " + result.length() + " chars.");
             }
 
-            return res;
         }
 
-        return null;
+        /**
+         * Return the result as String
+         * @return result as String or null
+         */
+        protected String getResult() {
+            return result;
+        }
     }
 }

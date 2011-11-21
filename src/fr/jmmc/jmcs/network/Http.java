@@ -223,15 +223,16 @@ public final class Http {
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
     public static boolean download(final URI uri, final File outputFile, final boolean useDedicatedClient) throws IOException {
-        
+
         return download(uri, useDedicatedClient, new StreamProcessor() {
+
             /**
              * Process the given input stream and CLOSE it anyway (try/finally)
              * @param in input stream to process
              * @throws IOException if any IO error occurs
              */
             public void process(final InputStream in) throws IOException {
-                
+
                 FileUtils.saveStream(in, outputFile);
 
                 if (logger.isLoggable(Level.FINE)) {
@@ -251,16 +252,15 @@ public final class Http {
      * @throws IOException if an I/O exception occurred
      */
     public static String download(final URI uri, final boolean useDedicatedClient) throws IOException {
-        
+
         final StringStreamProcessor stringProcessor = new StringStreamProcessor();
-        
+
         if (download(uri, useDedicatedClient, stringProcessor)) {
             return stringProcessor.getResult();
         }
 
         return null;
     }
-    
 
     /**
      * Save the document located at the given URI in the given file. 
@@ -292,7 +292,7 @@ public final class Http {
             if (resultCode == 200) {
                 // Get response
                 final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
-                
+
                 processor.process(in);
 
                 return true;
@@ -304,11 +304,12 @@ public final class Http {
         }
         return false;
     }
-    
+
     /**
      * Generic Stream processors
      */
     private interface StreamProcessor {
+
         /**
          * Process the given input stream and CLOSE it anyway (try/finally)
          * @param in input stream to process
@@ -321,8 +322,10 @@ public final class Http {
      * Custom StreamProcessor that copy the input stream to one String
      */
     private static final class StringStreamProcessor implements StreamProcessor {
+
         /** result as String */
         protected String result = null;
+
         /**
          * Process the given input stream and CLOSE it anyway (try/finally)
          * @param in input stream to process

@@ -35,6 +35,8 @@ public final class FileUtils {
     private static final Logger logger = Logger.getLogger(FileUtils.class.getName());
     /** platform dependent line separator */
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    /** default read buffer capacity: 8K */
+    public static final int DEFAULT_BUFFER_CAPACITY = 8192;
 
     /**
      * Forbidden constructor
@@ -137,7 +139,7 @@ public final class FileUtils {
         final URL url = getResource(classpathLocation);
 
         try {
-            return readStream(url.openStream(), 2048);
+            return readStream(url.openStream(), DEFAULT_BUFFER_CAPACITY);
         } catch (IOException ioe) {
             // Unexpected exception :
             throw new IllegalStateException("unable to read file : " + classpathLocation, ioe);
@@ -156,6 +158,19 @@ public final class FileUtils {
         return readStream(new FileInputStream(file), (int) file.length());
     }
 
+    /**
+     * Read a text file from the given input stream into a string
+     *
+     * @param inputStream stream to load
+     * @param bufferCapacity initial buffer capacity (chars)
+     * @return text file content
+     *
+     * @throws IOException if an I/O exception occurred
+     */
+    public static String readStream(final InputStream inputStream) throws IOException {
+        return readStream(inputStream, DEFAULT_BUFFER_CAPACITY);
+    }
+    
     /**
      * Read a text file from the given input stream into a string
      *

@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
+import fr.jmmc.jmcs.gui.SwingUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -222,12 +223,17 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
             _logger.fine("Setting " + _preferenceProperty + " from " + getMyText() + " to " + nextValue);
         }
 
-        // Modify changes but do not notify change back
-        _notify = false;
-        try {
-            setMyText(nextValue);
-        } finally {
-            _notify = true;
+        // Do modify the widget content only if we are not in the EDT
+        // because it is probably already beeing edited if we are in the EDT
+        // This helps to prevent "Attempt to mutate in notification" IllegalStateException from AbstractDocument.
+        if (!SwingUtils.isEDT()) {
+            // Modify changes but do not notify changes
+            _notify = false;
+            try {
+                setMyText(nextValue);
+            } finally {
+                _notify = true;
+            }
         }
     }
 }

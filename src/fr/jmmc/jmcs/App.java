@@ -529,7 +529,7 @@ public abstract class App {
     protected abstract void init(String[] args);
 
     /** 
-     * Prepare interoperability (Samp message handlers) 
+     * Prepare interoperability (SAMP message handlers) 
      */
     protected void declareInteroperability() {
         _logger.fine("Default App.declareInteroperability() handler called.");
@@ -567,10 +567,10 @@ public abstract class App {
      * @see App#exit(int)
      */
     public void onFinish() {
-        // Disconnect from SAMP Hub :
+        // Disconnect from SAMP Hub
         SampManager.shutdown();
 
-        // Close all HTTP connections (http client) :
+        // Close all HTTP connections (http client)
         MultiThreadedHttpConnectionManager.shutdownAll();
     }
 
@@ -643,10 +643,10 @@ public abstract class App {
                 // Initialize SampManager as needed by MainMenuBar:
                 SampManager.getInstance();
 
-                // Perform defered action initialization (Samp related)
+                // Perform defered action initialization (SAMP-related)
                 _registrar.performDeferedInitialization();
 
-                // declare Samp message handlers now as the application is almost ready:
+                // declare SAMP message handlers now as the application is almost ready:
                 declareInteroperability();
 
                 // If running under Mac OS X
@@ -663,7 +663,7 @@ public abstract class App {
                 // Use OSXAdapter on the frame
                 macOSXRegistration(frame);
 
-                // create menus including the Interop menu (Samp required)
+                // create menus including the Interop menu (SAMP required)
                 frame.setJMenuBar(new MainMenuBar());
 
                 // Set application frame common properties
@@ -975,7 +975,7 @@ public abstract class App {
             _logger.fine("Should we kill the application ?");
 
             // Check if user is OK to kill SAMP hub (if any)
-            if (!SampManager.allowHubKilling()) {
+            if (!SampManager.getInstance().allowHubKilling()) {
                 return;
             }
 

@@ -990,7 +990,7 @@ public abstract class Preferences extends Observable {
      * @return a string containing the full file path to the preference file,
      * according to execution platform.
      */
-    final private String computePreferenceFilepath() {
+    final public String computePreferenceFilepath() {
         _logger.entering(_className, "computePreferenceFilepath");
 
         // [USER_HOME]/

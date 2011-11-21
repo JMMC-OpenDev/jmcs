@@ -49,7 +49,7 @@ public final class SampManager {
     private static final Map<SampCapabilityAction, JMenu> _map = Collections.synchronizedMap(new HashMap<SampCapabilityAction, JMenu>(8));
 
     /* members */
-    /** Gui hub connector */
+    /** GUI hub connector */
     private final GuiHubConnector _connector;
     /** Store whether we started our own hub instance or used an external on already running */
     private static boolean _hubResponsible = false;
@@ -73,21 +73,35 @@ public final class SampManager {
     /**
      * @return true if SAMP hub cannot prevent quitting, false otherwise.
      */
-    public static synchronized boolean allowHubKilling() {
-        if (!_hubResponsible) {
-            _logger.info("Application has not launched the SAMP hub internally, letting appication quits.");
+    public synchronized boolean allowHubKilling() {
+
+        // If no one else is registered to the hub
+        int nbOfConnectedClient = _connector.getClientListModel().getSize();
+        if (nbOfConnectedClient < 3) { // 1 for the hub, 1 for us
+            _logger.info("No one else but us is registered to SAMP hub, letting appication quits.");
+            // Let the hub die without prompting confirmation
             return true;
-        } else {
-            _logger.info("Application has launched the SAMP hub internally, asking user if it should be killed or not.");
         }
 
+        // If we did not launch the hub ourself
+        if (!_hubResponsible) {
+            _logger.info("Application has not launched the SAMP hub internally, letting appication quits.");
+            // Let the hub die without prompting confirmation
+            return true;
+        }
+
+        _logger.info("Application has launched the SAMP hub internally, asking user if it should be killed or not.");
+
+        // Ask the user to confirm hub killing
         boolean shouldWeQuit = MessagePane.showConfirmKillHub();
         if (!shouldWeQuit) {
             _logger.info("User dissmissed SAMP hub termination, preventing application from quitting.");
+            // Prevent hub dying
             return false;
         }
 
         _logger.info("User allowed SAMP hub termination, proceeding with application quitting.");
+            // Let the hub die
         return true;
     }
 

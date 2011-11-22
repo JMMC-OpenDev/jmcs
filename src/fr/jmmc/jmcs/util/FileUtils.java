@@ -162,7 +162,6 @@ public final class FileUtils {
      * Read a text file from the given input stream into a string
      *
      * @param inputStream stream to load
-     * @param bufferCapacity initial buffer capacity (chars)
      * @return text file content
      *
      * @throws IOException if an I/O exception occurred
@@ -170,7 +169,7 @@ public final class FileUtils {
     public static String readStream(final InputStream inputStream) throws IOException {
         return readStream(inputStream, DEFAULT_BUFFER_CAPACITY);
     }
-    
+
     /**
      * Read a text file from the given input stream into a string
      *
@@ -183,26 +182,25 @@ public final class FileUtils {
     public static String readStream(final InputStream inputStream, final int bufferCapacity) throws IOException {
 
         String result = null;
-        BufferedReader bufferedReader = null;
+        BufferedReader reader = null;
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 
+            // Use one string buffer with the best guessed initial capacity:
             final StringBuilder sb = new StringBuilder(bufferCapacity);
 
-            // Read incoming data line by line
-            String currentLine = null;
+            // Use an 8K char buffer to consume reader:
+            final char[] cbuf = new char[8192];
 
-            while ((currentLine = bufferedReader.readLine()) != null) {
-                if (sb.length() > 0) {
-                    sb.append(LINE_SEPARATOR);
-                }
-                sb.append(currentLine);
+            int len;
+            while ((len = reader.read(cbuf)) > 0) {
+                sb.append(cbuf, 0, len);
             }
 
             result = sb.toString();
-
+            
         } finally {
-            closeFile(bufferedReader);
+            closeFile(reader);
         }
         return result;
     }
@@ -429,7 +427,7 @@ public final class FileUtils {
 
     /**
      * Return the filename from a resource path (assumed delimiter is '/').
-     * @param path a '/' delimited path, such as Java resource path.
+     * @param resourcePath a '/' delimited path, such as Java resource path.
      * @return the last element of a '/' delimited path, or null otherwise.
      */
     public static String filenameFromResourcePath(final String resourcePath) {
@@ -442,7 +440,7 @@ public final class FileUtils {
 
     /**
      * Extract the given resource given its file name in the JAR archive and save it as one temporary file
-     * @param resourceFile complete path to the resource name to extract.
+     * @param fullResourceFilePath complete path to the resource name to extract.
      * @return file URL
      * @throws IllegalStateException if the given resource does not exist
      */

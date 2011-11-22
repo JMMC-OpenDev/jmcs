@@ -21,7 +21,6 @@ public enum Catalog {
     _2MASS("II/246/out", "2MASS", "2MASS All-Sky Catalog of Point Sources"),
     BSC("V/50/catalog", "BSC", "Bright Star Catalogue, 5th Revised Ed."),
     Merand("J/A+A/433/1155", "Merand", "Calibrator stars for 200m baseline interferometry"),
-    CHARM2("J/A+A/431/773/charm2", "CHARM2", "CHARM2, an updated of CHARM catalog"),
     DENIS("B/denis", "DENIS", "The DENIS database"),
     J_K_DENIS("J/A+A/413/1037", "J-K DENIS", "J-K DENIS photometry of bright southern stars"),
     HIC("I/196/main", "HIC", "Hipparcos Input Catalogue, Version 2"),
@@ -31,16 +30,12 @@ public enum Catalog {
     SB9("B/sb9/main", "SB9", "SB9: 9th Catalogue of Spectroscopic Binary Orbits"),
     WDS("B/wds/wds", "WDS", "The Washington Visual Double Star Catalog"),
     AKARI("II/297/irc", "AKARI", "AKARI/IRC mid-IR all-sky Survey (ISAS/JAXA, 2010)");
-    
     /** Store the catalog CDS 'cryptic' reference */
     private final String _reference;
-    
     /** Store the catalog CDS 'human-readable' name */
     private final String _title;
-    
     /** Store the catalog CDS 'abbreviated' description */
     private final String _description;
-    
     /** Blanking value for undefined Strings (null, ...) */
     public static final String UNKNOWN = "Unknown";
 
@@ -173,17 +168,17 @@ public enum Catalog {
         for (Catalog catalog : Catalog.values()) {
             String ref = catalog.reference();
             sb.append("<tr style='background-color:");
-            sb.append(fr.jmmc.jmcs.util.ColorEncoder.encode(getDefaultColor(catalog)) );
-            sb.append("'><td>" );
-            sb.append( catalog.title() );
-            sb.append( "</td><td><a href='http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=");
-            sb.append( ref );
-            sb.append( "'>" );
-            sb.append( ref );
-            sb.append( "</a></td>");
-            sb.append("<td>" );
-            sb.append( catalog.description() );
-            sb.append( "</td>\n");
+            sb.append(fr.jmmc.jmcs.util.ColorEncoder.encode(getDefaultColor(catalog)));
+            sb.append("'><td>");
+            sb.append(catalog.title());
+            sb.append("</td><td><a href='http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=");
+            sb.append(ref);
+            sb.append("'>");
+            sb.append(ref);
+            sb.append("</a></td>");
+            sb.append("<td>");
+            sb.append(catalog.description());
+            sb.append("</td>\n");
             sb.append("</tr>");
         }
         sb.append("\n</table>\n");
@@ -262,5 +257,4 @@ class NastyTrick {
     public static final Hashtable<String, String> _titles = new Hashtable();
     public static final Hashtable<String, String> _descriptions = new Hashtable();
     public static final Hashtable<String, Catalog> _catalogs = new Hashtable();
-    
 }

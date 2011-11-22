@@ -189,8 +189,8 @@ public final class FileUtils {
             // Use one string buffer with the best guessed initial capacity:
             final StringBuilder sb = new StringBuilder(bufferCapacity);
 
-            // Use an 8K char buffer to consume reader:
-            final char[] cbuf = new char[8192];
+            // Use a char buffer to consume reader using DEFAULT_BUFFER_CAPACITY:
+            final char[] cbuf = new char[DEFAULT_BUFFER_CAPACITY];
 
             int len;
             while ((len = reader.read(cbuf)) > 0) {

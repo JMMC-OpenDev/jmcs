@@ -5,6 +5,8 @@ package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.data.model.Menu;
+import fr.jmmc.jmcs.data.model.Menubar;
 import fr.jmmc.jmcs.util.Introspection;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
@@ -23,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -92,16 +95,16 @@ public class MainMenuBar extends JMenuBar {
         // If it's null, we exit
         if (applicationDataModel != null) {
             // Get the menubar element from XML
-            fr.jmmc.jmcs.data.castor.Menubar menuBar = applicationDataModel.getMenubar();
+            Menubar menuBar = applicationDataModel.getMenubar();
 
             // If it's null, we exit
             if (menuBar != null) {
                 // Get the menu elements from menubar
-                fr.jmmc.jmcs.data.castor.Menu[] menus = menuBar.getMenu();
+                final List<Menu> menus = menuBar.getMenus();
 
                 // If it's null, we exit
                 if (menus != null) {
-                    for (fr.jmmc.jmcs.data.castor.Menu menu : menus) {
+                    for (Menu menu : menus) {
                         // Get menu label
                         String currentMenuLabel = menu.getLabel();
 
@@ -114,24 +117,22 @@ public class MainMenuBar extends JMenuBar {
                                 && !currentMenuLabel.equals("Edit")
                                 && !currentMenuLabel.equals("Interop")
                                 && !currentMenuLabel.equals("Help")) {
+                            
                             otherMenus.add(currentMenuLabel);
 
                             if (_logger.isLoggable(Level.FINE)) {
-                                _logger.fine("Add '" + currentMenuLabel
-                                        + "' to other menus vector.");
+                                _logger.fine("Add '" + currentMenuLabel + "' to other menus vector.");
                             }
                         }
 
                         // Get the component according to the castor menu object
-                        JMenu completeMenu = (JMenu) recursiveParser(menu,
-                                null, true, null); // It is a JMenu, has no button group
+                        JMenu completeMenu = (JMenu) recursiveParser(menu, null, true, null); // It is a JMenu, has no button group
 
                         // Put it in the menu table
                         _menusTable.put(currentMenuLabel, completeMenu);
 
                         if (_logger.isLoggable(Level.FINE)) {
-                            _logger.fine("Put '" + completeMenu.getName()
-                                    + "' into the menus table.");
+                            _logger.fine("Put '" + completeMenu.getName() + "' into the menus table.");
                         }
                     }
                 }
@@ -432,7 +433,7 @@ public class MainMenuBar extends JMenuBar {
      *
      * @return the instantiated JComponent according to the XML menu hierarchy.
      */
-    private JComponent recursiveParser(fr.jmmc.jmcs.data.castor.Menu menu,
+    private JComponent recursiveParser(Menu menu,
             JComponent parent, boolean createMenu, ButtonGroup buttonGroup) {
         // Create the current component
         JComponent component = createComponent(menu, createMenu, buttonGroup);
@@ -448,7 +449,7 @@ public class MainMenuBar extends JMenuBar {
         }
 
         // Get submenus
-        fr.jmmc.jmcs.data.castor.Menu[] submenus = menu.getMenu();
+        final List<Menu>  submenus = menu.getMenus();
         ButtonGroup group = null;
 
         if (submenus != null) {
@@ -456,9 +457,9 @@ public class MainMenuBar extends JMenuBar {
                 group = new ButtonGroup();
             }
 
-            for (fr.jmmc.jmcs.data.castor.Menu submenu : submenus) {
+            for (Menu submenu : submenus) {
                 // The submenu will be a jmenu?
-                boolean isMenu = ((submenu.getMenu()).length > 0);
+                boolean isMenu = !submenu.getMenus().isEmpty();
 
                 // Recursive call on submenu
                 recursiveParser(submenu, component, isMenu, group);
@@ -479,7 +480,7 @@ public class MainMenuBar extends JMenuBar {
      *
      * @return the instantiated JComponent according to the XML description.
      */
-    private JComponent createComponent(fr.jmmc.jmcs.data.castor.Menu menu,
+    private JComponent createComponent(Menu menu,
             boolean isMenu, ButtonGroup buttonGroup) {
         // Component to create
         JMenuItem item = null;
@@ -503,8 +504,7 @@ public class MainMenuBar extends JMenuBar {
         AbstractAction action = null;
 
         if (hasClasspath && hasAction) {
-            action = _registrar.get(menu.getClasspath(),
-                    menu.getAction());
+            action = _registrar.get(menu.getClasspath(), menu.getAction());
 
             if (action == null) {
                 // Open a feeback report if an action is not found:
@@ -521,14 +521,13 @@ public class MainMenuBar extends JMenuBar {
             item = new JCheckBoxMenuItem(action);
 
             if (action instanceof RegisteredPreferencedBooleanAction) {
-                _logger.fine(
-                        "Component is bound to a RegisteredPreferencedBooleanAction.");
+                _logger.fine("Component is bound to a RegisteredPreferencedBooleanAction.");
+                
                 ((RegisteredPreferencedBooleanAction) action).addBoundButton((JCheckBoxMenuItem) item);
             }
 
             if (isMenu) {
-                _logger.warning(
-                        "The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
+                _logger.warning("The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
 
                 return null;
             }
@@ -541,14 +540,12 @@ public class MainMenuBar extends JMenuBar {
             buttonGroup.add((JRadioButtonMenuItem) item);
 
             if (action instanceof RegisteredPreferencedBooleanAction) {
-                _logger.fine(
-                        "Component is bound to a RegisteredPreferencedBooleanAction.");
+                _logger.fine("Component is bound to a RegisteredPreferencedBooleanAction.");
                 ((RegisteredPreferencedBooleanAction) action).addBoundButton((JRadioButtonMenuItem) item);
             }
 
             if (isMenu) {
-                _logger.warning(
-                        "The current menuitem is a radiobutton AND a sub-menu, which is impossible !!!");
+                _logger.warning("The current menuitem is a radiobutton AND a sub-menu, which is impossible !!!");
 
                 return null;
             }
@@ -577,7 +574,7 @@ public class MainMenuBar extends JMenuBar {
      * @param menu castor Menu object to get data from.
      * @param action Action instance to modify.
      */
-    private void setAttributes(fr.jmmc.jmcs.data.castor.Menu menu, Action action) {
+    private void setAttributes(Menu menu, Action action) {
         if ((menu == null) || (action == null)) {
             return;
         }
@@ -587,8 +584,7 @@ public class MainMenuBar extends JMenuBar {
 
         if (accelerator != null) {
             String keyStrokeString = getPrefixKey() + accelerator;
-            action.putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(keyStrokeString));
+            action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(keyStrokeString));
         }
 
         // Set action tooltip
@@ -607,8 +603,7 @@ public class MainMenuBar extends JMenuBar {
             URL iconURL = getClass().getResource(icon);
 
             if (iconURL != null) {
-                action.putValue(Action.SMALL_ICON,
-                        new ImageIcon(Urls.fixJarURL(iconURL)));
+                action.putValue(Action.SMALL_ICON, new ImageIcon(Urls.fixJarURL(iconURL)));
             } else {
                 if (_logger.isLoggable(Level.WARNING)) {
                     _logger.warning("Can't find iconUrl : " + icon);

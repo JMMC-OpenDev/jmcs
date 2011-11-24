@@ -8,7 +8,10 @@
 
   <property name="root" location=".."/>
 
-  <property name="libs" location="${root}/lib"/>
+  <!-- NOTE: jmcs is supposed to be in the parent folder -->
+  <property name="jmcs" location="${root}/../jmcs"/>
+
+  <property name="libs" location="${jmcs}/lib"/>
   <property name="sources" location="${root}/src"/>
 
 
@@ -18,7 +21,7 @@
     <attribute name="schema"/>
 
     <sequential>
-      <java jar="${libs}/jaxb-xjc.jar">
+      <java jar="${libs}/jaxb-xjc.jar" fork="true" failonerror="true">
         <arg value="-classpath"/>
         <arg value="${libs}/simple-regenerator-1.0.jar"/>
 
@@ -33,9 +36,12 @@
 
         <arg value="@{schema}"/>
       </java>
+
       <!-- remove backup files -->
-      <delete dir="@{destdir}">
-        <include name="**/*.java.backup"/>
+      <delete includeemptydirs="false">
+        <fileset dir="@{destdir}">
+          <include name="**/*.java.backup"/>
+        </fileset>
       </delete>
       </sequential>
   </macrodef>
@@ -54,18 +60,29 @@
 
 
 
-  <target name="genXsdCode">
-    <echo>generating java code for targetModel.xsd</echo>
-<!--    
-    <mkdir dir="${sources}/fr/jmmc/mcs/model/targetmodel" />
+  <!-- target about : -->
+  <target name="checkJMCS">
+    <echo>-------------------------------------------------------------------------------</echo>
+    <echo>JMCS Path: ${jmcs}</echo>
+    <echo>-------------------------------------------------------------------------------</echo>
+ 
+    <!-- check jmcs path -->
+    <available property="jmcs.check" file="${jmcs}/src/jmcs.doc" />
+    <fail unless="jmcs.check" message="jmcs project does not exist in ${jmcs} !" />
 
-    <xjc destdir="${sources}"
-         schema="${sources}/fr/jmmc/mcs/model/targetModel.xsd" />
+  </target>
 
--->
+
+
+
+  <target name="genXsdCode" depends="checkJMCS" description="generates the java code from xml schemas (xsd)">
+    
     <echo>generating java code for ApplicationDataModel.xsd</echo>
+
     <mkdir dir="${sources}/fr/jmmc/jmcs/data/model" />
+
     <xjc destdir="${sources}" schema="${sources}/fr/jmmc/jmcs/data/ApplicationDataModel.xsd" />
+
   </target>
 
 </project>

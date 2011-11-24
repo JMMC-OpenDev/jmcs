@@ -55,23 +55,17 @@
 
 
   <target name="genXsdCode">
-
     <echo>generating java code for targetModel.xsd</echo>
-    
+<!--    
     <mkdir dir="${sources}/fr/jmmc/mcs/model/targetmodel" />
 
     <xjc destdir="${sources}"
          schema="${sources}/fr/jmmc/mcs/model/targetModel.xsd" />
 
-<!--
+-->
     <echo>generating java code for ApplicationDataModel.xsd</echo>
-
-    <mkdir dir="${sources}/fr/jmmc/mcs/gui/appmodel" />
-
-    <xjc destdir="${sources}"
-         schema="${sources}/fr/jmmc/mcs/gui/ApplicationDataModel.xsd" />
-  -->
+    <mkdir dir="${sources}/fr/jmmc/jmcs/data/model" />
+    <xjc destdir="${sources}" schema="${sources}/fr/jmmc/jmcs/data/ApplicationDataModel.xsd" />
   </target>
-
 
 </project>

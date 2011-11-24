@@ -30,10 +30,10 @@ import org.exolab.castor.xml.ValidationException;
  * XML file which stocked the application informations like
  * it's name, version, compiler etc... called <b>ApplicationData.xml</b>,
  * which is saved into the application module, and the others classes
- * which use it to acces to the informations like <b>AboutBox</b>,
+ * which use it to access to the informations like <b>AboutBox</b>,
  * <b>SplashScreen</b> etc...
  *
- * This class uses <b>Castor</b> classes to acces to these informations
+ * This class uses <b>Castor</b> classes to access to these informations
  * and provides the good getters for each field of the XML file.
  * 
  * @author Guillaume MELLA, Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.

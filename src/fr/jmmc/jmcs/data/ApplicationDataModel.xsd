@@ -13,11 +13,13 @@ Author     : Laurent BOURGES, Sylvain LAFRASSE, Guillaume MELLA
 Description: TBD
 -->
 
+<!--
+            xmlns="http://www.jmmc.fr/jmcs/app/1.0"
+            targetNamespace="http://www.jmmc.fr/jmcs/app/1.0"
+-->
 
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns="http://www.jmmc.fr/jmcs/app/1.0"
-            targetNamespace="http://www.jmmc.fr/jmcs/app/1.0"
             xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
             xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
             jaxb:version="2.1" jaxb:extensionBindingPrefixes="xjc">

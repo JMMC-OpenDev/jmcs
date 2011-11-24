@@ -59,9 +59,8 @@ lllll_OBJECTS   =
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = jmcsGenerateJavaFromXsd \
-				  jmcsHTML2HelpSet \
-				  jmcsDeployJnlp \
+SCRIPTS         = jmcsHTML2HelpSet \
+		  jmcsDeployJnlp \
                   jmcsCheckJarCert
 SCRIPTS_L       =
 
@@ -160,12 +159,9 @@ JNLP=JmcsLibs
 #
 # TARGETS
 # -------
-all:	do_castor do_all
+all:	do_all
 	@echo " . . . 'all' done" 
 
-do_castor:
-	./jmcsGenerateJavaFromXsd.sh
-	
 clean : clean_all 
 	@echo " . . . clean done"
 
@@ -177,7 +173,7 @@ install : install_all
 	jmcsDeployJnlp $(JNLP).jnlp
         
 	@echo "Install $(JNLP).jar"
-    # JmcsLibs contains only shared libraries used to package application single jar file
+# JmcsLibs contains only shared libraries used to package application single jar file
 	@cp $$HOME/public_html/$(JNLP)/$(JNLP).jar $(INSTALL_ROOT)/lib
         
 	@echo " . . . installation done"

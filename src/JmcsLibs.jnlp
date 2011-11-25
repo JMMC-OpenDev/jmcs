@@ -3,7 +3,7 @@
   <information>
     <title>jMCS Framework</title>
     <vendor>JMMC</vendor>
-    <homepage href="http://www.jmmc.fr/dev/jmcs"/>
+    <homepage href="http://www.jmmc.fr/dev/jmcs/"/>
     <description>JMMC GUI Homogeneity Framework</description>
     <offline-allowed/>
   </information>

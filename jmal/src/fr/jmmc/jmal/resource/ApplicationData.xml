@@ -1,51 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ApplicationData link="http://www.jmmc.fr/">
-    <program name="UNKNOWN Application Name" version="UNKNOWN Release Version"/>
+    <program name="jMAL framework" version="UNKNOWN Release Version"/>
     <compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
     <text></text>
+    
     <dependences>
-        <!-- See/complete lib/README.txt -->
 
-        <!-- Swing -->
+        <!-- JMMC -->
 
         <!-- Java Mariotti Common Software -->
         <package name="jMCS"
-        description="JMMC GUI Homogeneity Framework"
-        link="https://www.jmmc.fr/dev/jmcs/"
-        jars="jmcs.jar"
-        license="CECILL-B ???"/>     
+            description="jMCS (JMMC GUI Homogeneity Framework) is the JMMC toolkit to provide better user interface and platform integration across Mac, Linux and Windows"
+            link="https://www.jmmc.fr/dev/jmcs/"
+            jars="jmcs.jar"
+            license="CECILL-B ???"/>     
 
 
-        <!-- Science stuff -->
+        <!-- jMAL dependencies -->
+
+        <!-- Science / VO libraries (always on top for better visibility) -->
 
         <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
         <package name="CDS_SpType"
-        description="Get information from spectral type of stellar objects. Provided by CDS"
-        link="nc"
-        jars="sptype.jar"/>
+            description="Get information from spectral type of stellar objects. Provided by CDS"
+            link="nc"
+            jars="sptype.jar"/>
 
         <!-- Model computations -->
         <package name="commons-math"
-        description="Commons Math is a library of lightweight, self-contained mathematics and statistics components addressing the most common problems not available in the Java programming language or Commons Lang."
-        link="http://commons.apache.org/math/"
-        jars="commons-math-2.0.jar"
-        license="APACHE_V2"/>
+            description="Commons Math is a library of lightweight, self-contained mathematics and statistics components addressing the most common problems not available in the Java programming language or Commons Lang."
+            link="http://commons.apache.org/math/"
+            jars="commons-math-2.0.jar"
+            license="APACHE_V2"/>
 
         <!-- Model computations (bessel functions) -->
         <package name="CERN colt"
-        description="provides a set of Open Source Libraries for High Performance Scientific and Technical Computing in Java"
-        link="http://acs.lbl.gov/software/colt/"
-        jars="colt.jar"
-        license="Copyright (c) 1999 CERN - European Organization for Nuclear Research"/>
-        <!--
-          Copyright (c) 1999 CERN - European Organization for Nuclear Research.
-          Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose is
-          hereby granted without fee, provided that the above copyright notice appear in all copies and that both that
-          copyright notice and this permission notice appear in supporting documentation. CERN makes no representations
-          about the suitability of this software for any purpose. It is provided "as is" without expressed or implied warranty.
-        -->
+            description="provides a set of Open Source Libraries for High Performance Scientific and Technical Computing in Java"
+            link="http://acs.lbl.gov/software/colt/"
+            jars="colt.jar"
+            license="Copyright (c) 1999 CERN - European Organization for Nuclear Research"/>
+            <!--
+              Copyright (c) 1999 CERN - European Organization for Nuclear Research.
+              Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose is
+              hereby granted without fee, provided that the above copyright notice appear in all copies and that both that
+              copyright notice and this permission notice appear in supporting documentation. CERN makes no representations
+              about the suitability of this software for any purpose. It is provided "as is" without expressed or implied warranty.
+            -->
 
     </dependences>
+    
     <releasenotes>
         <release version="0.0">
             <prerelease version="0.0b0" tag="V0_0b0">
@@ -53,6 +56,7 @@
             </prerelease>
         </release>
     </releasenotes>
+    
     <acknowledgment><![CDATA[This research has made use of one of the services of the Jean-Marie Mariotti Center
 \footnote{Available at http://www.jmmc.fr}
 ]]>

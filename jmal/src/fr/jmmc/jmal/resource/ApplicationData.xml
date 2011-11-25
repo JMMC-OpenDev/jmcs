@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ApplicationData link="http://www.jmmc.fr/">
+
+<ApplicationData link="http://www.jmmc.fr/jmal/">
+    
     <program name="jMAL framework" version="UNKNOWN Release Version"/>
     <compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
-    <text></text>
+    
+    <text>jMAL (JMMC Astronomical library) is the JMMC library to provide common astronomical computations (coordinate conversion, simbad star resolver and analytical object models in interferometry)</text>
     
     <dependences>
 
@@ -15,10 +18,26 @@
             jars="jmcs.jar"
             license="CECILL-B ???"/>     
 
+        <!-- Java Mariotti Astronomical library -->
+        <package name="jMAL"
+            description="jMAL (JMMC Astronomical library) is the JMMC library to provide common astronomical computations (coordinate conversion, simbad star resolver and analytical object models in interferometry)"
+            link="https://www.jmmc.fr/dev/jmal/"
+            jars="jmal.jar"
+            license="CECILL-B ???"/>     
+
+
+        <!-- 1. Science / VO libraries (always on top for better visibility) -->
+
+        <!-- jMCS dependencies -->
+
+        <!-- VO interoperability -->
+        <package name="JSAMP"
+          description="JSAMP is a Java toolkit for use with the Simple Applications Messaging Protocol. Made by Mark Taylor, working in the Astrophysics Group at Bristol University."
+          link="http://software.astrogrid.org/doc/jsamp/"
+          jars="jsamp-1.3.jar"
+          license="(at least) the Academic Free Licence and the BSD License."/>
 
         <!-- jMAL dependencies -->
-
-        <!-- Science / VO libraries (always on top for better visibility) -->
 
         <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
         <package name="CDS_SpType"
@@ -46,6 +65,85 @@
               copyright notice and this permission notice appear in supporting documentation. CERN makes no representations
               about the suitability of this software for any purpose. It is provided "as is" without expressed or implied warranty.
             -->
+
+
+        <!-- 2. Swing -->
+
+        <!-- jMCS dependencies -->
+
+        <!-- Mac OS X Desktop integration -->
+        <package name="AppleJavaExtensions"
+          description="Adapt menus for Mac OS X"
+          link="http://developer.apple.com/samplecode/AppleJavaExtensions/index.html"
+          jars="AppleJavaExtensions.jar"/>
+
+        <!-- Launch one desktop browser -->
+        <package name="BrowserLauncher2"
+          description="Permit to use the default web browser"
+          link="http://browserlaunch2.sourceforge.net/"
+          jars="BrowserLauncher2-1_3.jar"/>
+
+        <!-- Documentation reader -->
+        <package name="jhall"
+          description="Show a help window from JavaHelp Jar file "
+          link="http://java.sun.com/javase/technologies/desktop/javahelp/"
+          jars="jhall.jar "/>
+        
+        <!-- Swing Task management -->
+        <package name="SwingWorker"
+          description="backport of SwingWorker included into Java 1.6"
+          link="https://swingworker.dev.java.net/"
+          jars="swing-worker-1.2.jar"
+          license="LGPL"/>     
+
+
+        <!-- 3. Tools -->
+
+        <!-- jMCS dependencies -->
+
+        <!-- Xml binding (ApplicationData, targetModel and aspro2) -->
+        <package name="JAXB"
+          description="Java Architecture for XML Binding (JAXB) allows Java developers to map Java classes to XML representations"
+          link="https://jaxb.dev.java.net/"
+          jars="activation.jar jaxb-api.jar jaxb-impl.jar jsr173_1.0_api.jar"
+          license="CDDL/GPL" />
+
+        <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
+        <package name="commons-httpclient"
+          description="HTTP Client (used to send HTTP POST requests)"
+          link="http://hc.apache.org/httpclient-3.x/"
+          jars="commons-httpclient-3.1.jar "/>
+
+        <!-- HttpClient dependency -->
+        <package name="commons-codec"
+          description="Commons Codec provides implementations of common encoders and decoders such as Base64, Hex, Phonetic and URLs. "
+          link="http://commons.apache.org/codec/"
+          jars="commons-codec-1.3.jar"/>
+
+        <!-- Logging common interface (HttpClient, Axis dependencies at least) -->
+        <package name="commons-logging"
+          description="Ultra-thin bridge between different logging implementations"
+          link="http://commons.apache.org/logging/"
+          jars="commons-logging-1.1.1.jar"/>
+
+        <!-- Graphical logging utility (-loggui option) -->
+        <package name="loggui"
+          description="Adjust logging facilities"
+          link="http://www.informatrix.ch/loggui/index.html"
+          jars="loggui.jar"/>
+        
+        <!-- Parse command line arguments -->
+        <package name="java-getopt"
+          description="Interpret command line arguments"
+          link="http://www.urbanophile.com/arenn/hacking/download.html"
+          jars="java-getopt-1.0.13.jar"/>
+
+        <!-- Only used to detect the platform -->
+        <package name="commons-lang"
+          description="Provide much needed additions to the standard JDK's java.lang package"
+          link="http://commons.apache.org/lang/"
+          jars="commons-lang-2.6.jar"
+          license="APACHE_V2"/>
 
     </dependences>
     

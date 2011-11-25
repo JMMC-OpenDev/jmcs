@@ -3,7 +3,7 @@
   <information>
     <title>jMAL Framework</title>
     <vendor>JMMC</vendor>
-    <homepage href="http://www.jmmc.fr/dev/jmal"/>
+    <homepage href="http://www.jmmc.fr/dev/jmal/"/>
     <description>JMMC Astronomical library</description>
     <offline-allowed/>
   </information>

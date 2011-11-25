@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ApplicationData link="http://www.jmmc.fr/">
+
+<ApplicationData link="http://www.jmmc.fr/jmcs/">
+  
     <program name="jMCS framework" version="UNKNOWN Release Version"/>
     <compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
-    <text></text>
+    
+    <text>jMCS (JMMC GUI Homogeneity Framework) is the JMMC toolkit to provide better user interface and platform integration across Mac, Linux and Windows</text>
     
     <dependences>
-        <!-- See/complete lib/README.txt -->
+        <!-- SEE / UPDATE jmcs/lib/README.txt -->
+
+        <!-- JMMC -->
+
+        <!-- Java Mariotti Common Software -->
+        <package name="jMCS"
+            description="jMCS (JMMC GUI Homogeneity Framework) is the JMMC toolkit to provide better user interface and platform integration across Mac, Linux and Windows"
+            link="https://www.jmmc.fr/dev/jmcs/"
+            jars="jmcs.jar"
+            license="CECILL-B ???"/>     
+
+
+        <!-- 1. Science / VO libraries (always on top for better visibility) -->
 
         <!-- jMCS dependencies -->
-
-        <!-- Science / VO libraries (always on top for better visibility) -->
 
         <!-- VO interoperability -->
         <package name="JSAMP"
@@ -19,7 +32,15 @@
           license="(at least) the Academic Free Licence and the BSD License."/>
 
 
-        <!-- Swing -->
+        <!-- 2. Swing -->
+
+        <!-- jMCS dependencies -->
+
+        <!-- Mac OS X Desktop integration -->
+        <package name="AppleJavaExtensions"
+          description="Adapt menus for Mac OS X"
+          link="http://developer.apple.com/samplecode/AppleJavaExtensions/index.html"
+          jars="AppleJavaExtensions.jar"/>
 
         <!-- Launch one desktop browser -->
         <package name="BrowserLauncher2"
@@ -40,14 +61,10 @@
           jars="swing-worker-1.2.jar"
           license="LGPL"/>     
 
-        <!-- Mac OS X Desktop integration -->
-        <package name="AppleJavaExtensions"
-          description="Adapt menus for Mac OS X"
-          link="http://developer.apple.com/samplecode/AppleJavaExtensions/index.html"
-          jars="AppleJavaExtensions.jar"/>
 
+        <!-- 3. Tools -->
 
-        <!-- Tools -->
+        <!-- jMCS dependencies -->
 
         <!-- Xml binding (ApplicationData, targetModel and aspro2) -->
         <package name="JAXB"
@@ -102,6 +119,7 @@
             </prerelease>
         </release>
     </releasenotes>
+    
     <acknowledgment><![CDATA[This research has made use of one of the services of the Jean-Marie Mariotti Center
 \footnote{Available at http://www.jmmc.fr}
 ]]>

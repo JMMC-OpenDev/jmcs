@@ -888,7 +888,7 @@ public abstract class Preferences extends Observable {
         final String preferencePath = preferenceName.toString();
 
         // Get the preference current value
-        final String originalPreferenceValue = getPreference(preferencePath) + " "; // Add a space to also match last token if it contains an ending space
+        final String originalPreferenceValue = " " + getPreference(preferencePath) + " "; // Add a leading an a trailing space to also match first and last token if needed
 
         if (_logger.isLoggable(Level.FINEST)) {
             _logger.finest("Preference '" + preferencePath + "' contains : '" + originalPreferenceValue + "'.");
@@ -928,7 +928,12 @@ public abstract class Preferences extends Observable {
     public boolean removeTokenInPreference(Object preferenceName, String searchedToken) {
         _logger.entering(_className, "removeTokenInPreference");
 
-        return replaceTokenInPreference(preferenceName, searchedToken, "");
+        String cleaningToken = "";
+        if (searchedToken.startsWith(" ") && searchedToken.endsWith(" ")) {
+            cleaningToken = " ";
+        }
+
+        return replaceTokenInPreference(preferenceName, searchedToken, cleaningToken);
     }
 
     /**

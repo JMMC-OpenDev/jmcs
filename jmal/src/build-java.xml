@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="JMCS" default="about" basedir=".">
+<project name="JMAL" default="about" basedir=".">
 
   <description>
-  	JMCS ant build file
+  	JMAL ant build file
   </description>
 
   <property name="root" location=".."/>
@@ -40,10 +40,10 @@
       <!-- remove backup files -->
       <delete includeemptydirs="false">
         <fileset dir="@{destdir}">
-          <include name="**/*.java.backup"/>
+          <include name="**/*.java.backup" />
         </fileset>
       </delete>
-      </sequential>
+    </sequential>
   </macrodef>
 
 
@@ -77,11 +77,11 @@
 
   <target name="genXsdCode" depends="checkJMCS" description="generates the java code from xml schemas (xsd)">
     
-    <echo>generating java code for ApplicationDataModel.xsd</echo>
+    <echo>generating java code for targetModel.xsd</echo>
 
-    <mkdir dir="${sources}/fr/jmmc/jmcs/data/model" />
+    <mkdir dir="${sources}/fr/jmmc/jmal/model/targetmodel" />
 
-    <xjc destdir="${sources}" schema="${sources}/fr/jmmc/jmcs/data/ApplicationDataModel.xsd" />
+    <xjc destdir="${sources}" schema="${sources}/fr/jmmc/jmal/model/targetModel.xsd" />
 
   </target>
 

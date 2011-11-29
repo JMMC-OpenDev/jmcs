@@ -3,7 +3,7 @@
   <information>
     <title>jMCS Framework</title>
     <vendor>JMMC</vendor>
-    <homepage href="http://www.jmmc.fr/dev/jmcs"/>
+    <homepage href="http://www.jmmc.fr/dev/jmcs/"/>
     <description>JMMC GUI Homogeneity Framework</description>
     <offline-allowed/>
   </information>
@@ -29,17 +29,10 @@
     <jar href="@SHARED@/AppleJavaExtensions.jar"/>
     
     <!-- Xml binding (target models and aspro2) -->
-    <jar href="@SHARED@/activation.jar"/>
     <jar href="@SHARED@/jaxb-api.jar"/>
     <jar href="@SHARED@/jaxb-impl.jar"/>
+    <jar href="@SHARED@/activation.jar"/>
     <jar href="@SHARED@/jsr173_1.0_api.jar"/>
-    
-    <!--  Xml binding (ApplicationData and LITpro) -->
-    <jar href="@SHARED@/castor.jar"/>
-    
-    <!-- castor dependency -->
-    <jar href="@SHARED@/xercesImpl.jar"/>
-    <jar href="@SHARED@/xmlParserAPIs.jar"/>
     
     <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
     <jar href="@SHARED@/commons-httpclient-3.1.jar "/>

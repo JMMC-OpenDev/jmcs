@@ -1,110 +1,250 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" >
+<!--
+ *******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ *******************************************************************************
+ -->
 
-    <xsd:element name="ApplicationData">
-        <xsd:complexType>
-            <xsd:sequence>
 
-                <!-- Element program -->
-                <xsd:element name="program">
-                    <xsd:complexType>
-                        <xsd:attribute name="name" type="xsd:string"/>
-                        <xsd:attribute name="version" type="xsd:string"/>
-                    </xsd:complexType>
-                </xsd:element>
 
-                <!-- Element compilation -->
-                <xsd:element name="compilation">
-                    <xsd:complexType>
-                        <xsd:attribute name="date" type="xsd:string"/>
-                        <xsd:attribute name="compiler" type="xsd:string"/>
-                    </xsd:complexType>
-                </xsd:element>
+<!--
+Document   : ApplicationDataModel.xsd
+Author     : Laurent BOURGES, Sylvain LAFRASSE, Guillaume MELLA
+Description: TBD
+-->
 
-                <!-- Element text -->
-                <xsd:element name="text" type="xsd:string"/>
+<!--
+            xmlns="http://www.jmmc.fr/jmcs/app/1.0"
+            targetNamespace="http://www.jmmc.fr/jmcs/app/1.0"
+-->
 
-                <!-- Element dependences -->
-                <xsd:element name="dependences">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element name="package" minOccurs="0" maxOccurs="unbounded">
-                                <xsd:complexType>
-                                    <xsd:attribute name="name" type="xsd:string"/>
-                                    <xsd:attribute name="description" type="xsd:string"/>
-                                    <xsd:attribute name="link" type="xsd:string"/>
-                                    <xsd:attribute name="jars" type="xsd:string"/>
-                                    <xsd:attribute name="license" type="xsd:string"/>
-                                </xsd:complexType>
-                            </xsd:element>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+            jaxb:version="2.1" jaxb:extensionBindingPrefixes="xjc">
 
-                <!-- Element menubar -->
-                <xsd:element name="menubar" minOccurs="0" maxOccurs="1">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
+    <xsd:annotation>           
+        <xsd:documentation>
+            jMCS Application Data Model
+        </xsd:documentation>
+        <xsd:appinfo>
 
-                <!-- Element releasenotes -->
-                <xsd:element name="releasenotes">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element name="release" minOccurs="1" maxOccurs="unbounded">
-                                <xsd:complexType>
-                                    <xsd:sequence>
-                                        <xsd:element name="prerelease" minOccurs="1" maxOccurs="unbounded">
-                                            <xsd:complexType>
-                                                <xsd:sequence>
-                                                    <xsd:element name="change" minOccurs="1" maxOccurs="unbounded">
-                                                        <xsd:complexType mixed="true">
-                                                            <xsd:sequence>
-                                                                <xsd:any processContents="lax" minOccurs="0"/>
-                                                            </xsd:sequence>
-                                                            <xsd:attribute name="type" type="xsd:string"/>
-                                                            <xsd:attribute name="id" type="xsd:string"/>
-                                                            <xsd:attribute name="url" type="xsd:string"/>
-                                                        </xsd:complexType>
-                                                    </xsd:element>
-                                                </xsd:sequence>
-                                                <xsd:attribute name="version" type="xsd:string" use="required"/>
-                                                <xsd:attribute name="tag" type="xsd:string"/>
-                                            </xsd:complexType>
-                                        </xsd:element>
-                                    </xsd:sequence>
-                                    <xsd:attribute name="version" type="xsd:string" use="required"/>
-                                    <xsd:attribute name="tag" type="xsd:string"/>
-                                </xsd:complexType>
-                            </xsd:element>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-                <xsd:element name="acknowledgment" minOccurs="0" maxOccurs="1" type="xsd:string">
-                </xsd:element>
-            </xsd:sequence>
-            <xsd:attribute name="link" type="xsd:string"/>
-            <xsd:attribute name="iconlink" type="xsd:string"/>
-        </xsd:complexType>
+            <!-- Comment the jaxb:globalBindings element in embedded xml schema used with XJC -->
+            <jaxb:globalBindings>
+                <xjc:simple />
+            </jaxb:globalBindings>
+
+            <jaxb:schemaBindings>
+                <jaxb:package name="fr.jmmc.jmcs.data.model"/>
+            </jaxb:schemaBindings>
+
+        </xsd:appinfo>
+    </xsd:annotation>
+
+
+<!-- Elements -->
+
+    <xsd:element name="ApplicationData" type="ApplicationData">
+        <xsd:annotation>
+            <xsd:documentation>
+                jMCS application meta data
+            </xsd:documentation>
+        </xsd:annotation>
     </xsd:element>
 
-    <!-- Element menu -->
-    <xsd:element name="menu">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
-            </xsd:sequence>
-            <xsd:attribute name="label" type="xsd:string"/>
-            <xsd:attribute name="classpath" type="xsd:string"/>
-            <xsd:attribute name="action" type="xsd:string"/>
-            <xsd:attribute name="checkbox" type="xsd:string"/>
-            <xsd:attribute name="radiogroup" type="xsd:string"/>
-            <xsd:attribute name="accelerator" type="xsd:string"/>
-            <xsd:attribute name="description" type="xsd:string"/>
-            <xsd:attribute name="icon" type="xsd:string"/>
-        </xsd:complexType>
-    </xsd:element>
+
+<!-- Class Types -->
+
+    <xsd:complexType name="ApplicationData">
+        <xsd:annotation>
+            <xsd:documentation>
+                jMCS application meta data
+            </xsd:documentation>
+        </xsd:annotation>
+            
+        <xsd:sequence>
+
+            <!-- Element program -->
+            <xsd:element name="program" type="Program">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Application Name and Version
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <!-- Element compilation -->
+            <xsd:element name="compilation" type="Compilation">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Build Date and Compilator
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <!-- Element text -->
+            <xsd:element name="text" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        About Box text (credits, description)
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <!-- Element dependences -->
+            <xsd:element name="dependences" type="Dependences" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Application External Dependencies
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <!-- Element menubar -->
+            <xsd:element name="menubar" type ="Menubar" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Application Menu Bar
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+
+            <!-- Element releasenotes -->
+            <xsd:element name="releasenotes" type="ReleaseNotes">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Application Release Notes
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            
+            <xsd:element name="acknowledgment" minOccurs="0" maxOccurs="1" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Application Acknowledgments
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+        </xsd:sequence>
+        
+            
+        <!-- TODO : Use URL type -->
+        <xsd:attribute name="link" type="xsd:string" use="required">
+            <xsd:annotation>               
+                <xsd:documentation>
+                    Application Homepage URL
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+
+        <!-- TODO : Use URL type -->
+        <xsd:attribute name="iconlink" type="xsd:string" use="required">
+            <xsd:annotation>           
+                <xsd:documentation>
+                    Application Icon URL
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+
+    </xsd:complexType>
+    
+    
+    <!-- Store program name and version number -->
+    <xsd:complexType name="Program">
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="version" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    
+    
+    <!-- Stroe build date and used compilator -->
+    <xsd:complexType name="Compilation">
+        <xsd:attribute name="date" type="xsd:string" use="required"/>
+        <xsd:attribute name="compiler" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+
+    <!-- Store application external dependences -->
+    <xsd:complexType name="Dependences">
+        <xsd:sequence>
+            <xsd:element name="package" type="Package" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <!-- Store dependency package name, description and so on -->
+    <xsd:complexType name="Package">
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="description" type="xsd:string" use="required"/>
+        <xsd:attribute name="link" type="xsd:string" use="required"/>
+        <xsd:attribute name="jars" type="xsd:string" use="required"/>
+        <xsd:attribute name="license" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    
+    
+    <!-- Store application menu bar tree -->
+    <xsd:complexType name="Menubar">
+        <xsd:sequence>
+            <xsd:element name="menu" type="Menu" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    
+    <!-- Store menu bar entry (menu) -->
+    <xsd:complexType name="Menu">
+        <xsd:sequence>
+            <xsd:element name="menu" type="Menu" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="label" type="xsd:string" use="optional"/>
+        <xsd:attribute name="classpath" type="xsd:string" use="required"/>
+        <xsd:attribute name="action" type="xsd:string" use="required"/>
+        <xsd:attribute name="checkbox" type="xsd:string" use="optional"/>
+        <xsd:attribute name="radiogroup" type="xsd:string" use="optional"/>
+        <xsd:attribute name="accelerator" type="xsd:string" use="optional"/>
+        <xsd:attribute name="description" type="xsd:string" use="optional"/>
+        <xsd:attribute name="icon" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+
+    <!-- Store application release notes -->
+    <xsd:complexType name="ReleaseNotes">
+        <xsd:sequence>
+            <xsd:element name="release" type="Release" minOccurs="1" maxOccurs="unbounded">
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Store application release data, such a version number and repository tag, with its prereleases list -->
+    <xsd:complexType name="Release">
+        <xsd:sequence>
+            <xsd:element name="prerelease" type="Prerelease" minOccurs="1" maxOccurs="unbounded">
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="version" type="xsd:string" use="required"/>
+        <xsd:attribute name="tag" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+    <!-- Store application prerelease data, such change list, a version number and repository tag -->
+    <xsd:complexType name="Prerelease">
+        <xsd:sequence>
+            <xsd:element name="change" type="Change" minOccurs="1" maxOccurs="unbounded">
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="version" type="xsd:string" use="required"/>
+        <xsd:attribute name="tag" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+    <!-- Store application changes description, among CHANGE (the default), FEATURE or BUGFIX -->
+    <xsd:complexType name="Change">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="type" type="xsd:string" use="optional"/>
+                <xsd:attribute name="id" type="xsd:string" use="optional"/>
+                <xsd:attribute name="url" type="xsd:string" use="optional"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
 </xsd:schema>

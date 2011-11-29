@@ -3,13 +3,16 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data;
 
-import fr.jmmc.jmcs.data.castor.ApplicationData;
-import fr.jmmc.jmcs.data.castor.Compilation;
-import fr.jmmc.jmcs.data.castor.Program;
-import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.data.model.ApplicationData;
+import fr.jmmc.jmcs.data.model.Compilation;
+import fr.jmmc.jmcs.data.model.Dependences;
+import fr.jmmc.jmcs.data.model.Menubar;
+import fr.jmmc.jmcs.data.model.Program;
+import fr.jmmc.jmcs.jaxb.JAXBFactory;
+import fr.jmmc.jmcs.jaxb.XmlBindException;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 
-import java.io.InputStreamReader;
 
 import java.net.URL;
 import java.text.ParseException;
@@ -22,18 +25,18 @@ import java.util.GregorianCalendar;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 /**
  * This class is the link between the application
  * XML file which stocked the application informations like
  * it's name, version, compiler etc... called <b>ApplicationData.xml</b>,
  * which is saved into the application module, and the others classes
- * which use it to acces to the informations like <b>AboutBox</b>,
+ * which use it to access to the informations like <b>AboutBox</b>,
  * <b>SplashScreen</b> etc...
  *
- * This class uses <b>Castor</b> classes to acces to these informations
+ * This class uses <b>Castor</b> classes to access to these informations
  * and provides the good getters for each field of the XML file.
  * 
  * @author Guillaume MELLA, Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
@@ -42,8 +45,16 @@ public class ApplicationDataModel {
 
     /** Logger */
     private static final Logger _logger = Logger.getLogger(ApplicationDataModel.class.getName());
+    /** package name for JAXB generated code */
+    private final static String APP_DATA_MODEL_JAXB_PATH = "fr.jmmc.jmcs.data.model";
+    /** default namespace for ApplicationDataModel.xsd */
+    private final static String APP_DATA_MODEL_NAMESPACE = "http://www.jmmc.fr/jmcs/app/1.0";
+
+    /* members */
+    /** internal JAXB Factory */
+    private final JAXBFactory jf;
     /** The JAVA class which castor has generated with the XSD file */
-    private ApplicationData _applicationDataCastorModel = null;
+    private ApplicationData _applicationDataModel = null;
     /** Logo file name */
     private final String _logoFileName = "/fr/jmmc/jmcs/resource/logo.png";
     /** Main web page URL */
@@ -76,23 +87,42 @@ public class ApplicationDataModel {
             _logger.fine("Loading Application data model from " + dataModelURL);
         }
 
-        // Read the XML file
-        InputStreamReader inputStreamReader = null;
+        // Start JAXB
+        jf = JAXBFactory.getInstance(APP_DATA_MODEL_JAXB_PATH);
+        if (_logger.isLoggable(Level.FINE)) {
+            _logger.fine("JAXBFactory: " + jf);
+        }
+
+        _applicationDataModel = loadData(dataModelURL);
+        _logger.fine("Application data model loaded.");
+    }
+
+    private ApplicationData loadData(final URL dataModelURL) throws XmlBindException, IllegalArgumentException, IllegalStateException {
+
+        // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
         try {
-            inputStreamReader = new InputStreamReader(dataModelURL.openStream());
-
-            _applicationDataCastorModel = ApplicationData.unmarshal(inputStreamReader);
-
-            _logger.fine("Application data model loaded.");
-
-        } catch (MarshalException me) {
-            throw new IllegalStateException("Can't read application data : " + dataModelURL, me);
-        } catch (ValidationException ve) {
-            throw new IllegalStateException("Can't read application data : " + dataModelURL, ve);
+            final Unmarshaller u = jf.createUnMarshaller();
+            /*
+            // Create the XMLReader
+            final XMLReader reader = XMLReaderFactory.createXMLReader();
+            
+            // The filter class to set the correct namespace
+            final XMLFilterImpl xmlFilter = new XmlNamespaceFilter(APP_DATA_MODEL_NAMESPACE, true);
+            xmlFilter.setParent(reader);
+            
+            final SAXSource source = new SAXSource(xmlFilter, new InputSource(new BufferedInputStream(dataModelURL.openStream())));
+            
+            fr.jmmc.jmcs.data.model.ApplicationData appData = (fr.jmmc.jmcs.data.model.ApplicationData)u.unmarshal(source);
+             */
+            return (ApplicationData) u.unmarshal(new BufferedInputStream(dataModelURL.openStream()));
+            /*
+            } catch (SAXException se) {
+            throw new IllegalStateException("Load failure on " + dataModelURL, se);
+             */        
         } catch (IOException ioe) {
-            throw new IllegalStateException("Can't read application data : " + dataModelURL, ioe);
-        } finally {
-            FileUtils.closeFile(inputStreamReader);
+            throw new IllegalStateException("Load failure on " + dataModelURL, ioe);
+        } catch (JAXBException je) {
+            throw new IllegalArgumentException("Load failure on " + dataModelURL, je);
         }
     }
 
@@ -102,20 +132,13 @@ public class ApplicationDataModel {
      * @return the value of the field copyright from the XML file or null
      */
     public String getAcknowledgment() {
-        if (_applicationDataCastorModel == null) {
-            _logger.fine("_applicationDataCastorModel is null");
+        if (_applicationDataModel.getAcknowledgment() == null) {
+            _logger.fine("_applicationDataCastorModel.getAcknowledgment() is null");
 
             return null;
         }
 
-        if (_applicationDataCastorModel.getAcknowledgment() == null) {
-            _logger.fine(
-                    "_applicationDataCastorModel.getAcknowledgment() is null");
-
-            return null;
-        }
-
-        return _applicationDataCastorModel.getAcknowledgment();
+        return _applicationDataModel.getAcknowledgment();
     }
 
     /**
@@ -168,7 +191,7 @@ public class ApplicationDataModel {
         String programName = "Unknown";
 
         // Get program
-        program = _applicationDataCastorModel.getProgram();
+        program = _applicationDataModel.getProgram();
 
         if (program != null) {
             programName = program.getName();
@@ -188,7 +211,7 @@ public class ApplicationDataModel {
         String programVersion = "?.?";
 
         // Get program
-        program = _applicationDataCastorModel.getProgram();
+        program = _applicationDataModel.getProgram();
 
         if (program != null) {
             programVersion = program.getVersion();
@@ -206,7 +229,7 @@ public class ApplicationDataModel {
     public String getLinkValue() {
         String mainWebPageURL = _mainWebPageURL;
 
-        mainWebPageURL = _applicationDataCastorModel.getLink();
+        mainWebPageURL = _applicationDataModel.getLink();
         _logger.fine("MainWebPageURL value has been taken on model:"
                 + mainWebPageURL);
 
@@ -270,7 +293,7 @@ public class ApplicationDataModel {
         String compilationDate = "Unknown";
 
         // Get compilation
-        compilation = _applicationDataCastorModel.getCompilation();
+        compilation = _applicationDataModel.getCompilation();
 
         if (compilation != null) {
             compilationDate = compilation.getDate();
@@ -290,7 +313,7 @@ public class ApplicationDataModel {
         String compilationCompilator = "Unknown";
 
         // Get compilation
-        compilation = _applicationDataCastorModel.getCompilation();
+        compilation = _applicationDataModel.getCompilation();
 
         if (compilation != null) {
             compilationCompilator = compilation.getCompiler();
@@ -308,7 +331,7 @@ public class ApplicationDataModel {
     public String getTextValue() {
         String text = "";
 
-        text = _applicationDataCastorModel.getText();
+        text = _applicationDataModel.getText();
         _logger.fine("Text value has been taken on model");
 
         return text;
@@ -322,14 +345,14 @@ public class ApplicationDataModel {
     public Vector<String> getPackagesInfo() {
         Vector<String> packagesInfo = new Vector<String>();
 
-        fr.jmmc.jmcs.data.castor.Dependences dependences = _applicationDataCastorModel.getDependences();
-        fr.jmmc.jmcs.data.castor.Package[] packages = dependences.get_package();
+        // TODO: API: use objects not Vector<string>
+        Dependences dependences = _applicationDataModel.getDependences();
 
         // For each package
-        for (int i = 0; i < packages.length; i++) {
-            packagesInfo.add(packages[i].getName());
-            packagesInfo.add(packages[i].getLink());
-            packagesInfo.add(packages[i].getDescription());
+        for (fr.jmmc.jmcs.data.model.Package p : dependences.getPackages()) {
+            packagesInfo.add(p.getName());
+            packagesInfo.add(p.getLink());
+            packagesInfo.add(p.getDescription());
         }
 
         _logger.fine("Packages informations have been taken and formated");
@@ -370,8 +393,8 @@ public class ApplicationDataModel {
      *
      * @return menubar
      */
-    public fr.jmmc.jmcs.data.castor.Menubar getMenubar() {
-        return _applicationDataCastorModel.getMenubar();
+    public Menubar getMenubar() {
+        return _applicationDataModel.getMenubar();
     }
 }
 /*___oOo___*/

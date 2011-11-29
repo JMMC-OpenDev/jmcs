@@ -175,7 +175,7 @@ install : install_all
 	jmcsDeployJnlp $(JNLP).jnlp
         
 	@echo "Install $(JNLP).jar"
-	# JmalLibs contains only shared libraries used to package application single jar file
+# JmalLibs contains only shared libraries used to package application single jar file
 	@cp $$HOME/public_html/$(JNLP)/$(JNLP).jar $(INSTALL_ROOT)/lib
 	
 	@echo " . . . installation done"

@@ -119,7 +119,7 @@ touch documentation.xml
 echo $header$(pwd)$footer > documentation.xml 
 
 # Launch jhelpdev
-java -classpath $(mkfMakeJavaClasspath) fr.jmmc.mcs.gui.jmcsGenerateHelpsetFromHtml documentation.xml
+java -classpath $(mkfMakeJavaClasspath) fr.jmmc.jmcs.resource.jmcsGenerateHelpsetFromHtml documentation.xml
 
 # try to get one better TOC if only one latex module is given
 HTMLINDEXFILE="$(basename $@)/index.html"

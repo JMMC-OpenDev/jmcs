@@ -57,7 +57,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     public static void openDialog() {
         openDialog(false, null);
     }
-    
+
     /**
      * Show a new FeedbackReport object (not modal).
      * Do not exit on close.
@@ -66,7 +66,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     public static void openDialog(final Throwable exception) {
         openDialog(false, exception);
     }
-    
+
     /**
      * Creates a new FeedbackReport object.
      * Do not exit on close.
@@ -76,16 +76,21 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void openDialog(final boolean modal, final Throwable exception) {
-        // Create Gui using EDT:
-        SwingUtils.invokeEDT(new Runnable() {
-            
-            @Override
-            public void run() {
-                new FeedbackReport(modal, exception);
-            }
-        });
+        if (App.getSharedApplicationDataModel().getFeedbackReportFormURL() != null) {
+            // Create Gui using EDT:
+            SwingUtils.invokeEDT(new Runnable() {
+
+                @Override
+                public void run() {
+                    new FeedbackReport(modal, exception);
+                }
+            });
+        } else {
+            // If no feedback report form is available, show a standard error dialog instead...
+            MessagePane.showErrorMessage("An unexpeted error occured !", exception);
+        }
     }
-    
+
     /* members */
     /** Any Throwable (Exception, RuntimeException and Error) */
     private final Throwable _exception;
@@ -370,7 +375,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         systemTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("JMMC Feedback Report ");
+        setTitle("Feedback Report ");
 
         sendReportPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -652,7 +657,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             // Create an HTTP client to send report information to our PHP script
             final HttpClient client = Http.getHttpClient(false);
 
-            final String feedbackReportUrl = App.getSharedApplicationDataModel().getFeedabackReportFormURL();
+            final String feedbackReportUrl = App.getSharedApplicationDataModel().getFeedbackReportFormURL();
             final PostMethod method = new PostMethod(feedbackReportUrl);
 
             try {

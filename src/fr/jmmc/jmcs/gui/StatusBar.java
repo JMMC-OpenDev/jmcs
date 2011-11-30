@@ -10,6 +10,7 @@ import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Font;
 
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.logging.Logger;
@@ -46,7 +47,19 @@ public class StatusBar extends JPanel {
 
         // Create logo
         JLabel jmmcLogo = new JLabel();
-        jmmcLogo.setIcon(new ImageIcon(getClass().getResource("/fr/jmmc/jmcs/resource/logo_small.png")));
+
+        // TODO : Use resized-in-height company logo
+        //jmmcLogo.setIcon(new ImageIcon(getClass().getResource("/fr/jmmc/jmcs/resource/logo_small.png")));
+        String logoURL = App.getSharedApplicationDataModel().getLogoURL();
+        //final ImageIcon imageIcon = new ImageIcon(getClass().getResource(logoURL));
+        final ImageIcon imageIcon = new ImageIcon(getClass().getResource("/fr/jmmc/jmcs/resource/logo.png"));
+        final Image image = imageIcon.getImage();
+        final int iconHeight = imageIcon.getIconHeight();
+        final int newHeight = Math.min(iconHeight, 17);
+        final int iconWidth = imageIcon.getIconWidth();
+        final int newWidth = (int) Math.floor((double)iconWidth * ((double)newHeight / (double)iconHeight));
+        final Image scaledImage = image.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
+        jmmcLogo.setIcon(new ImageIcon(scaledImage));
         jmmcLogo.setVisible(true);
 
         // Create text logo

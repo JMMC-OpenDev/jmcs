@@ -58,6 +58,10 @@ public class Program {
         this.name = value;
     }
 
+    public boolean isSetName() {
+        return (this.name!= null);
+    }
+
     /**
      * Gets the value of the version property.
      * 
@@ -80,6 +84,10 @@ public class Program {
      */
     public void setVersion(String value) {
         this.version = value;
+    }
+
+    public boolean isSetVersion() {
+        return (this.version!= null);
     }
 
 }

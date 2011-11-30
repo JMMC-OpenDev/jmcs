@@ -77,6 +77,8 @@ public class MainMenuBar extends JMenuBar {
     private final Hashtable<String, JMenu> _menusTable;
     /** Store a proxy to the shared ActionRegistrar facility */
     private final ActionRegistrar _registrar;
+    /** Proxy to the application data model */
+    private ApplicationDataModel _applicationDataModel = null;
 
     /**
      * Instantiate all defaults menus, plus application-specific ones.
@@ -87,15 +89,15 @@ public class MainMenuBar extends JMenuBar {
         _registrar = ActionRegistrar.getInstance();
 
         // Get the application data model
-        ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        _applicationDataModel = App.getSharedApplicationDataModel();
 
         // Contains the name of the others menus
         Vector<String> otherMenus = new Vector<String>();
 
         // If it's null, we exit
-        if (applicationDataModel != null) {
+        if (_applicationDataModel != null) {
             // Get the menubar element from XML
-            Menubar menuBar = applicationDataModel.getMenubar();
+            Menubar menuBar = _applicationDataModel.getMenubar();
 
             // If it's null, we exit
             if (menuBar != null) {
@@ -117,7 +119,7 @@ public class MainMenuBar extends JMenuBar {
                                 && !currentMenuLabel.equals("Edit")
                                 && !currentMenuLabel.equals("Interop")
                                 && !currentMenuLabel.equals("Help")) {
-                            
+
                             otherMenus.add(currentMenuLabel);
 
                             if (_logger.isLoggable(Level.FINE)) {
@@ -373,11 +375,11 @@ public class MainMenuBar extends JMenuBar {
         // Add helpview action
         helpMenu.add(App.showHelpAction());
 
-        helpMenu.add(new JSeparator());
-
-        // Add feedback action
-        helpMenu.add(App.feedbackReportAction());
-
+        // Add feedback action (if supported)
+        if (_applicationDataModel.getFeedbackReportFormURL() != null) {
+            helpMenu.add(new JSeparator());
+            helpMenu.add(App.feedbackReportAction());
+        }
         // Get help menu from table
         JMenu help = _menusTable.get("Help");
 
@@ -401,18 +403,31 @@ public class MainMenuBar extends JMenuBar {
 
         helpMenu.add(new JSeparator());
 
+        boolean shouldAddSeparator = false;
+
         // Add hot news action
-        helpMenu.add(App.showHotNewsAction());
+        if (_applicationDataModel.getHotNewsRSSFeedLinkValue() != null) {
+            helpMenu.add(App.showHotNewsAction());
+            shouldAddSeparator = true;
+        }
 
         // Add release action
-        helpMenu.add(App.showReleaseAction());
+        if (_applicationDataModel.getReleaseNotesLinkValue() != null) {
+            helpMenu.add(App.showReleaseAction());
+            shouldAddSeparator = true;
+        }
 
-        // Add Faq action
-        helpMenu.add(App.showFaqAction());
+        // Add FAQ action
+        if (_applicationDataModel.getFaqLinkValue() != null) {
+            helpMenu.add(App.showFaqAction());
+            shouldAddSeparator = true;
+        }
+
+        if (shouldAddSeparator) {
+            helpMenu.add(new JSeparator());
+        }
 
         if (!_isRunningUnderMacOSX) {
-            helpMenu.add(new JSeparator());
-
             // Add aboutbox action
             helpMenu.add(App.aboutBoxAction());
         }
@@ -449,7 +464,7 @@ public class MainMenuBar extends JMenuBar {
         }
 
         // Get submenus
-        final List<Menu>  submenus = menu.getMenus();
+        final List<Menu> submenus = menu.getMenus();
         ButtonGroup group = null;
 
         if (submenus != null) {
@@ -522,7 +537,7 @@ public class MainMenuBar extends JMenuBar {
 
             if (action instanceof RegisteredPreferencedBooleanAction) {
                 _logger.fine("Component is bound to a RegisteredPreferencedBooleanAction.");
-                
+
                 ((RegisteredPreferencedBooleanAction) action).addBoundButton((JCheckBoxMenuItem) item);
             }
 

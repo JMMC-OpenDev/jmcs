@@ -73,6 +73,14 @@ public class Prerelease {
         return this.changes;
     }
 
+    public boolean isSetChanges() {
+        return ((this.changes!= null)&&(!this.changes.isEmpty()));
+    }
+
+    public void unsetChanges() {
+        this.changes = null;
+    }
+
     /**
      * Gets the value of the version property.
      * 
@@ -97,6 +105,10 @@ public class Prerelease {
         this.version = value;
     }
 
+    public boolean isSetVersion() {
+        return (this.version!= null);
+    }
+
     /**
      * Gets the value of the tag property.
      * 
@@ -119,6 +131,10 @@ public class Prerelease {
      */
     public void setTag(String value) {
         this.tag = value;
+    }
+
+    public boolean isSetTag() {
+        return (this.tag!= null);
     }
 
 }

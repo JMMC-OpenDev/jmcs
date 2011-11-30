@@ -146,7 +146,7 @@ public class SplashScreen extends JFrame {
         _logoLabel.setMinimumSize(fixedDimension);
         _logoLabel.setMaximumSize(fixedDimension);
          */
-        _logoLabel.setIcon(new ImageIcon(getClass().getResource(_applicationDataModel.getLogoURL())));
+        _logoLabel.setIcon(new ImageIcon(getClass().getResource(_applicationDataModel.getCompanyLogoResourcePath())));
         _logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         _logger.fine("Every logo label properties have been initialized");

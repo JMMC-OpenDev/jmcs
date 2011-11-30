@@ -59,7 +59,7 @@ public class ApplicationDataModel {
     /** The JAVA class which JAXB has generated with the XSD file */
     private Company _company = null;
     /** Logo file name */
-    private String _logoFileName = null;
+    private String _companyLogoFileName = null;
     /** Main web page URL */
     private String _mainWebPageURL = null;
     /** URL of the PHP script that handles Feedback reports */
@@ -124,7 +124,7 @@ public class ApplicationDataModel {
             // Mandatory data
             _shortCompanyName = _company.getShortName();
             _legalCompanyName = _shortCompanyName;
-            _logoFileName = _company.getLogoResource();
+            _companyLogoFileName = _company.getLogoResource();
             _mainWebPageURL = _company.getHomepageUrl();
 
             // Optionnal data
@@ -150,7 +150,7 @@ public class ApplicationDataModel {
                 _releaseNotesLink = _applicationDataModel.getReleaselink();
             }
         } else { // If no 'company' data, assume we are in the JMMC context
-            _logoFileName = "/fr/jmmc/jmcs/resource/logo.png";
+            _companyLogoFileName = "/fr/jmmc/jmcs/resource/logo.png";
             _mainWebPageURL = "http://www.jmmc.fr/";
             _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
             _userSupportUrl = "http://www.jmmc.fr/support.htm";
@@ -195,12 +195,12 @@ public class ApplicationDataModel {
     /**
      * @return the company logo resource path
      */
-    public String getLogoURL() {
+    public String getCompanyLogoResourcePath() {
         if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("logoUrl=" + _logoFileName);
+            _logger.fine("logoUrl=" + _companyLogoFileName);
         }
 
-        return _logoFileName;
+        return _companyLogoFileName;
     }
 
     /**

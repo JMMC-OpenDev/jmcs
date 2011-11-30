@@ -66,6 +66,10 @@ public class Change {
         this.value = value;
     }
 
+    public boolean isSetValue() {
+        return (this.value!= null);
+    }
+
     /**
      * Gets the value of the type property.
      * 
@@ -88,6 +92,10 @@ public class Change {
      */
     public void setType(String value) {
         this.type = value;
+    }
+
+    public boolean isSetType() {
+        return (this.type!= null);
     }
 
     /**
@@ -114,6 +122,10 @@ public class Change {
         this.id = value;
     }
 
+    public boolean isSetId() {
+        return (this.id!= null);
+    }
+
     /**
      * Gets the value of the url property.
      * 
@@ -136,6 +148,10 @@ public class Change {
      */
     public void setUrl(String value) {
         this.url = value;
+    }
+
+    public boolean isSetUrl() {
+        return (this.url!= null);
     }
 
 }

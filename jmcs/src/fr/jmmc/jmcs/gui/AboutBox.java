@@ -193,6 +193,8 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _logoLabel.setOpaque(false);
 
+        // @TODO : get this from AppData.xml or pkgName/resources/AppIcon.png convention, resize
+
         // Create the Icon with the image which should be named logo.jpg in src folder       
         String logoURL = _applicationDataModel.getLogoURL();
 
@@ -238,7 +240,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _logger.fine("All the copyright label properties have been initialized");
     }
 
-    /** Sets textarea (SWING html) properties */
+    /** Sets text area (SWING HTML) properties */
     private void setupDescriptionTextarea() {
         // Set properties
         _descriptionEditorPane.setEditable(false);
@@ -253,7 +255,10 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
         // HTML generation
         String generatedHtml = "<html><head></head><body>";
-        generatedHtml += "Brought to you by The JMMC Team.<BR><BR>";
+        String authors = _applicationDataModel.getAuthors();
+        if (authors.length() > 0) {
+            generatedHtml += "Brought to you by " + authors + ".<BR><BR>";
+        }
         generatedHtml += "<I>If this software was helpful for your study or research work, please include the mandatory acknowledgment (available from the Help menu) in your publications.</I><BR><BR>";
 
         // Get the Text value

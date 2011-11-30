@@ -23,9 +23,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="company" type="{}Company" minOccurs="0"/>
  *         &lt;element name="program" type="{}Program"/>
  *         &lt;element name="compilation" type="{}Compilation"/>
  *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="sampdescription" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="authors" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="dependences" type="{}Dependences" minOccurs="0"/>
  *         &lt;element name="menubar" type="{}Menubar" minOccurs="0"/>
  *         &lt;element name="releasenotes" type="{}ReleaseNotes"/>
@@ -33,6 +36,10 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;/sequence>
  *       &lt;attribute name="link" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="iconlink" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="faqlink" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="rsslink" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="releaselink" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="documentationlink" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -42,9 +49,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ApplicationData", propOrder = {
+    "company",
     "program",
     "compilation",
     "text",
+    "sampdescription",
+    "authors",
     "dependences",
     "menubar",
     "releasenotes",
@@ -53,11 +63,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "ApplicationData")
 public class ApplicationData {
 
+    protected Company company;
     @XmlElement(required = true)
     protected Program program;
     @XmlElement(required = true)
     protected Compilation compilation;
     protected String text;
+    protected String sampdescription;
+    protected String authors;
     protected Dependences dependences;
     protected Menubar menubar;
     @XmlElement(required = true)
@@ -67,6 +80,42 @@ public class ApplicationData {
     protected String link;
     @XmlAttribute(name = "iconlink", required = true)
     protected String iconlink;
+    @XmlAttribute(name = "faqlink")
+    protected String faqlink;
+    @XmlAttribute(name = "rsslink")
+    protected String rsslink;
+    @XmlAttribute(name = "releaselink")
+    protected String releaselink;
+    @XmlAttribute(name = "documentationlink")
+    protected String documentationlink;
+
+    /**
+     * Gets the value of the company property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Company }
+     *     
+     */
+    public Company getCompany() {
+        return company;
+    }
+
+    /**
+     * Sets the value of the company property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Company }
+     *     
+     */
+    public void setCompany(Company value) {
+        this.company = value;
+    }
+
+    public boolean isSetCompany() {
+        return (this.company!= null);
+    }
 
     /**
      * Gets the value of the program property.
@@ -90,6 +139,10 @@ public class ApplicationData {
      */
     public void setProgram(Program value) {
         this.program = value;
+    }
+
+    public boolean isSetProgram() {
+        return (this.program!= null);
     }
 
     /**
@@ -116,6 +169,10 @@ public class ApplicationData {
         this.compilation = value;
     }
 
+    public boolean isSetCompilation() {
+        return (this.compilation!= null);
+    }
+
     /**
      * Gets the value of the text property.
      * 
@@ -138,6 +195,66 @@ public class ApplicationData {
      */
     public void setText(String value) {
         this.text = value;
+    }
+
+    public boolean isSetText() {
+        return (this.text!= null);
+    }
+
+    /**
+     * Gets the value of the sampdescription property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSampdescription() {
+        return sampdescription;
+    }
+
+    /**
+     * Sets the value of the sampdescription property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSampdescription(String value) {
+        this.sampdescription = value;
+    }
+
+    public boolean isSetSampdescription() {
+        return (this.sampdescription!= null);
+    }
+
+    /**
+     * Gets the value of the authors property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAuthors() {
+        return authors;
+    }
+
+    /**
+     * Sets the value of the authors property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAuthors(String value) {
+        this.authors = value;
+    }
+
+    public boolean isSetAuthors() {
+        return (this.authors!= null);
     }
 
     /**
@@ -164,6 +281,10 @@ public class ApplicationData {
         this.dependences = value;
     }
 
+    public boolean isSetDependences() {
+        return (this.dependences!= null);
+    }
+
     /**
      * Gets the value of the menubar property.
      * 
@@ -186,6 +307,10 @@ public class ApplicationData {
      */
     public void setMenubar(Menubar value) {
         this.menubar = value;
+    }
+
+    public boolean isSetMenubar() {
+        return (this.menubar!= null);
     }
 
     /**
@@ -212,6 +337,10 @@ public class ApplicationData {
         this.releasenotes = value;
     }
 
+    public boolean isSetReleasenotes() {
+        return (this.releasenotes!= null);
+    }
+
     /**
      * Gets the value of the acknowledgment property.
      * 
@@ -234,6 +363,10 @@ public class ApplicationData {
      */
     public void setAcknowledgment(String value) {
         this.acknowledgment = value;
+    }
+
+    public boolean isSetAcknowledgment() {
+        return (this.acknowledgment!= null);
     }
 
     /**
@@ -260,6 +393,10 @@ public class ApplicationData {
         this.link = value;
     }
 
+    public boolean isSetLink() {
+        return (this.link!= null);
+    }
+
     /**
      * Gets the value of the iconlink property.
      * 
@@ -282,6 +419,122 @@ public class ApplicationData {
      */
     public void setIconlink(String value) {
         this.iconlink = value;
+    }
+
+    public boolean isSetIconlink() {
+        return (this.iconlink!= null);
+    }
+
+    /**
+     * Gets the value of the faqlink property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getFaqlink() {
+        return faqlink;
+    }
+
+    /**
+     * Sets the value of the faqlink property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFaqlink(String value) {
+        this.faqlink = value;
+    }
+
+    public boolean isSetFaqlink() {
+        return (this.faqlink!= null);
+    }
+
+    /**
+     * Gets the value of the rsslink property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRsslink() {
+        return rsslink;
+    }
+
+    /**
+     * Sets the value of the rsslink property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRsslink(String value) {
+        this.rsslink = value;
+    }
+
+    public boolean isSetRsslink() {
+        return (this.rsslink!= null);
+    }
+
+    /**
+     * Gets the value of the releaselink property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getReleaselink() {
+        return releaselink;
+    }
+
+    /**
+     * Sets the value of the releaselink property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setReleaselink(String value) {
+        this.releaselink = value;
+    }
+
+    public boolean isSetReleaselink() {
+        return (this.releaselink!= null);
+    }
+
+    /**
+     * Gets the value of the documentationlink property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDocumentationlink() {
+        return documentationlink;
+    }
+
+    /**
+     * Sets the value of the documentationlink property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDocumentationlink(String value) {
+        this.documentationlink = value;
+    }
+
+    public boolean isSetDocumentationlink() {
+        return (this.documentationlink!= null);
     }
 
 }

@@ -67,6 +67,10 @@ public class Package {
         this.name = value;
     }
 
+    public boolean isSetName() {
+        return (this.name!= null);
+    }
+
     /**
      * Gets the value of the description property.
      * 
@@ -89,6 +93,10 @@ public class Package {
      */
     public void setDescription(String value) {
         this.description = value;
+    }
+
+    public boolean isSetDescription() {
+        return (this.description!= null);
     }
 
     /**
@@ -115,6 +123,10 @@ public class Package {
         this.link = value;
     }
 
+    public boolean isSetLink() {
+        return (this.link!= null);
+    }
+
     /**
      * Gets the value of the jars property.
      * 
@@ -139,6 +151,10 @@ public class Package {
         this.jars = value;
     }
 
+    public boolean isSetJars() {
+        return (this.jars!= null);
+    }
+
     /**
      * Gets the value of the license property.
      * 
@@ -161,6 +177,10 @@ public class Package {
      */
     public void setLicense(String value) {
         this.license = value;
+    }
+
+    public boolean isSetLicense() {
+        return (this.license!= null);
     }
 
 }

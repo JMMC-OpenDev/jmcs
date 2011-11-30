@@ -134,7 +134,7 @@ public abstract class App {
     private boolean _showSplashScreen = true;
     /** Splash screen */
     private SplashScreen _splashScreen = null;
-    /** temporarly store the file name argument for the open action */
+    /** temporary store the file name argument for the open action */
     private String _fileArgument = null;
 
     /**
@@ -194,16 +194,11 @@ public abstract class App {
 
             // Build Acknowledgment, ShowRelease and ShowHelp Actions
             // (the creation must be done after applicationModel instanciation)
-            _acknowledgmentAction = new AcknowledgmentAction("fr.jmmc.mcs.gui.App",
-                    "_acknowledgmentAction");
-            _showHotNewsAction = new ShowHotNewsAction("fr.jmmc.mcs.gui.App",
-                    "_showHotNewsAction");
-            _showReleaseAction = new ShowReleaseAction("fr.jmmc.mcs.gui.App",
-                    "_showReleaseAction");
-            _showFaqAction = new ShowFaqAction("fr.jmmc.mcs.gui.App",
-                    "_showFaqAction");
-            _showHelpAction = new ShowHelpAction("fr.jmmc.mcs.gui.App",
-                    "_showHelpAction");
+            _acknowledgmentAction = new AcknowledgmentAction("fr.jmmc.mcs.gui.App", "_acknowledgmentAction");
+            _showHotNewsAction = new ShowHotNewsAction("fr.jmmc.mcs.gui.App", "_showHotNewsAction");
+            _showReleaseAction = new ShowReleaseAction("fr.jmmc.mcs.gui.App", "_showReleaseAction");
+            _showFaqAction = new ShowFaqAction("fr.jmmc.mcs.gui.App", "_showFaqAction");
+            _showHelpAction = new ShowHelpAction("fr.jmmc.mcs.gui.App", "_showHelpAction");
 
             // If execution should not be delayed
             if (!waitBeforeExecution) {
@@ -228,7 +223,7 @@ public abstract class App {
     }
 
     /**
-     * Load application data if Applicationdata.xml exists into the module.
+     * Load application data if ApplicationData.xml exists into the module.
      * Otherwise, uses the default ApplicationData.xml.
      */
     private void loadApplicationData() {
@@ -317,11 +312,11 @@ public abstract class App {
 
     /**
      * Creates the feedback action which open the feedback window
-     * @param ex exception that occured
+     * @param ex exception that occurred
      * @return feedback action which open the feedback window
      */
     public static Action feedbackReportAction(final Exception ex) {
-        return new AbstractAction("Report Feedback to JMMC...") {
+        return new AbstractAction("Report Feedback to " + App.getSharedApplicationDataModel().getShortCompanyName() + "...") {
 
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
@@ -549,8 +544,8 @@ public abstract class App {
      *
      * The default implementation lets the application quitting gently.
      *
-     * @warning This method should be overriden to handle quit as you intend to.
-     * In its default behavior, all changes that occured during application life
+     * @warning This method should be overridden to handle quit as you intend to.
+     * In its default behavior, all changes that occurred during application life
      * will be lost.
      *
      * @return should return true if the application can exit, false otherwise
@@ -703,8 +698,6 @@ public abstract class App {
     }
 
     /**
-     * Returns logs report into a unique string
-     *
      * @return logs report into a unique string
      */
     public static String getLogOutput() {
@@ -737,8 +730,6 @@ public abstract class App {
     }
 
     /**
-     * Return ApplicationDataModel instance.
-     *
      * @return ApplicationDataModel instance.
      */
     public static ApplicationDataModel getSharedApplicationDataModel() {
@@ -850,7 +841,7 @@ public abstract class App {
     }
 
     /**
-     * Get URL from resource filename located in the classloader using the following path:
+     * Get URL from resource filename located in the class loader using the following path:
      * $package(appClass)$/resource/fileName
      * 
      * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
@@ -869,7 +860,7 @@ public abstract class App {
     }
 
     /**
-     * Get URL from resource filename located in the classloader using the following path:
+     * Get URL from resource filename located in the class loader using the following path:
      * $package(appClass)$/resource/fileName
      * 
      * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
@@ -1027,7 +1018,9 @@ public abstract class App {
             }
 
             // If the application does not provide an ApplicationData.xml file,
-            // the generic acknowledgement found in JMCS will be used instead.
+            // the generic acknowledgement found in jMCS will be used instead.
+            
+            // TODO : remove JMMC references
         }
 
         /**

@@ -91,6 +91,14 @@ public class Menu {
         return this.menus;
     }
 
+    public boolean isSetMenus() {
+        return ((this.menus!= null)&&(!this.menus.isEmpty()));
+    }
+
+    public void unsetMenus() {
+        this.menus = null;
+    }
+
     /**
      * Gets the value of the label property.
      * 
@@ -113,6 +121,10 @@ public class Menu {
      */
     public void setLabel(String value) {
         this.label = value;
+    }
+
+    public boolean isSetLabel() {
+        return (this.label!= null);
     }
 
     /**
@@ -139,6 +151,10 @@ public class Menu {
         this.classpath = value;
     }
 
+    public boolean isSetClasspath() {
+        return (this.classpath!= null);
+    }
+
     /**
      * Gets the value of the action property.
      * 
@@ -161,6 +177,10 @@ public class Menu {
      */
     public void setAction(String value) {
         this.action = value;
+    }
+
+    public boolean isSetAction() {
+        return (this.action!= null);
     }
 
     /**
@@ -187,6 +207,10 @@ public class Menu {
         this.checkbox = value;
     }
 
+    public boolean isSetCheckbox() {
+        return (this.checkbox!= null);
+    }
+
     /**
      * Gets the value of the radiogroup property.
      * 
@@ -209,6 +233,10 @@ public class Menu {
      */
     public void setRadiogroup(String value) {
         this.radiogroup = value;
+    }
+
+    public boolean isSetRadiogroup() {
+        return (this.radiogroup!= null);
     }
 
     /**
@@ -235,6 +263,10 @@ public class Menu {
         this.accelerator = value;
     }
 
+    public boolean isSetAccelerator() {
+        return (this.accelerator!= null);
+    }
+
     /**
      * Gets the value of the description property.
      * 
@@ -259,6 +291,10 @@ public class Menu {
         this.description = value;
     }
 
+    public boolean isSetDescription() {
+        return (this.description!= null);
+    }
+
     /**
      * Gets the value of the icon property.
      * 
@@ -281,6 +317,10 @@ public class Menu {
      */
     public void setIcon(String value) {
         this.icon = value;
+    }
+
+    public boolean isSetIcon() {
+        return (this.icon!= null);
     }
 
 }

@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.data;
 
 import fr.jmmc.jmcs.data.model.ApplicationData;
+import fr.jmmc.jmcs.data.model.Company;
 import fr.jmmc.jmcs.data.model.Compilation;
 import fr.jmmc.jmcs.data.model.Dependences;
 import fr.jmmc.jmcs.data.model.Menubar;
@@ -53,29 +54,32 @@ public class ApplicationDataModel {
     /* members */
     /** internal JAXB Factory */
     private final JAXBFactory jf;
-    /** The JAVA class which castor has generated with the XSD file */
+    /** The JAVA class which JAXB has generated with the XSD file */
     private ApplicationData _applicationDataModel = null;
+    /** The JAVA class which JAXB has generated with the XSD file */
+    private Company _company = null;
     /** Logo file name */
-    private final String _logoFileName = "/fr/jmmc/jmcs/resource/logo.png";
+    private String _logoFileName = null;
     /** Main web page URL */
-    private final String _mainWebPageURL = "http://www.jmmc.fr/";
+    private String _mainWebPageURL = null;
     /** URL of the PHP script that handles Feedback reports */
-    private static final String _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
-    /** header message in HTML format */
-    private static final String _feedbackReportHeaderMessage = "<html><body>"
-            + "<center>"
-            + "<big>Welcome to the JMMC Feedback Report</big><br/>"
-            + "We are eager to get your feedback, questions or comments !<br/>"
-            + "So please do not hesitate to use this form.<br/>"
-            + "</center>"
-            + "<br/><br/>"
-            + "Moreover, we encourage you to provide us with your e-mail address, so we can :"
-            + "<ul>"
-            + "<li>keep you up to date on the status of your request;</li>"
-            + "<li>ask you more information if needed.</li>"
-            + "</ul>"
-            + "<em>(*) Summary and description must be filled to enable the 'Submit' button.</em>"
-            + "</body></html>";
+    private String _phpScriptURL = null;
+    /** feedback report window header message in HTML format */
+    private String _feedbackReportHeaderMessage = null;
+    /** authors list */
+    private String _authors = null;
+    /** Used throughout all jMCS GUI */
+    private String _shortCompanyName = null;
+    /** Used by SAMP */
+    private String _legalCompanyName = null;
+    /** User Support URL */
+    private String _userSupportUrl = null;
+    /** RSS URL */
+    private String _hotNewsRSSFeedLink = null;
+    /** FAQ URL */
+    private String _faqLink = null;
+    /** Release Notes URL */
+    private String _releaseNotesLink = null;
 
     /** 
      * Public constructor
@@ -93,32 +97,81 @@ public class ApplicationDataModel {
             _logger.fine("JAXBFactory: " + jf);
         }
 
+        // Load application data
         _applicationDataModel = loadData(dataModelURL);
+        String programName = getProgramName();
+
+        _feedbackReportHeaderMessage = "<html><body>"
+                + "<center>"
+                + "<big>Welcome to '" + programName + "' Feedback Report</big><br/>"
+                + "We are eager to get your feedback, questions or comments !<br/>"
+                + "So please do not hesitate to use this form.<br/>"
+                + "</center>"
+                + "<br/><br/>"
+                + "Moreover, we encourage you to provide us with your e-mail address, so we can :"
+                + "<ul>"
+                + "<li>keep you up to date on the status of your request;</li>"
+                + "<li>ask you more information if needed.</li>"
+                + "</ul>"
+                + "<em>(*) Summary and description must be filled to enable the 'Submit' button.</em>"
+                + "</body></html>";
+
+
+        // Use company meta data (if any)
+        if (_applicationDataModel.isSetCompany()) {
+            _company = _applicationDataModel.getCompany();
+
+            // Mandatory data
+            _shortCompanyName = _company.getShortName();
+            _legalCompanyName = _shortCompanyName;
+            _logoFileName = _company.getLogoResource();
+            _mainWebPageURL = _company.getHomepageUrl();
+
+            // Optionnal data
+            if (_company.isSetLegalName()) {
+                _legalCompanyName = _company.getLegalName();
+            }
+            if (_applicationDataModel.isSetAuthors()) {
+                _authors = _applicationDataModel.getAuthors();
+            }
+            if (_company.isSetFeedbackFormUrl()) {
+                _phpScriptURL = _company.getFeedbackFormUrl();
+            }
+            if (_company.isSetUserSupportUrl()) {
+                _userSupportUrl = _company.getUserSupportUrl();
+            }
+            if (_applicationDataModel.isSetFaqlink()) {
+                _faqLink = _applicationDataModel.getFaqlink();
+            }
+            if (_applicationDataModel.isSetRsslink()) {
+                _hotNewsRSSFeedLink = _applicationDataModel.getRsslink();
+            }
+            if (_applicationDataModel.isSetReleasenotes()) {
+                _releaseNotesLink = _applicationDataModel.getReleaselink();
+            }
+        } else { // If no 'company' data, assume we are in the JMMC context
+            _logoFileName = "/fr/jmmc/jmcs/resource/logo.png";
+            _mainWebPageURL = "http://www.jmmc.fr/";
+            _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
+            _userSupportUrl = "http://www.jmmc.fr/support.htm";
+            _authors = "The JMMC Team";
+            _shortCompanyName = "JMMC";
+            _legalCompanyName = "Jean-Marie Mariotti Center";
+            _hotNewsRSSFeedLink = getLinkValue() + "/" + programName.toLowerCase() + ".rss";
+            _faqLink = getLinkValue() + "/faq/";
+            _releaseNotesLink = getLinkValue() + "/releasenotes.htm";
+        }
+
         _logger.fine("Application data model loaded.");
     }
 
+    /** Invoke JAXB to load ApplicationData.xml file */
     private ApplicationData loadData(final URL dataModelURL) throws XmlBindException, IllegalArgumentException, IllegalStateException {
 
         // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
         try {
             final Unmarshaller u = jf.createUnMarshaller();
-            /*
-            // Create the XMLReader
-            final XMLReader reader = XMLReaderFactory.createXMLReader();
-            
-            // The filter class to set the correct namespace
-            final XMLFilterImpl xmlFilter = new XmlNamespaceFilter(APP_DATA_MODEL_NAMESPACE, true);
-            xmlFilter.setParent(reader);
-            
-            final SAXSource source = new SAXSource(xmlFilter, new InputSource(new BufferedInputStream(dataModelURL.openStream())));
-            
-            fr.jmmc.jmcs.data.model.ApplicationData appData = (fr.jmmc.jmcs.data.model.ApplicationData)u.unmarshal(source);
-             */
             return (ApplicationData) u.unmarshal(new BufferedInputStream(dataModelURL.openStream()));
-            /*
-            } catch (SAXException se) {
-            throw new IllegalStateException("Load failure on " + dataModelURL, se);
-             */        
         } catch (IOException ioe) {
             throw new IllegalStateException("Load failure on " + dataModelURL, ioe);
         } catch (JAXBException je) {
@@ -127,9 +180,7 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the value of the field "copyright" from the XML file
-     *
-     * @return the value of the field copyright from the XML file or null
+     * @return the value of the "Acknowledgment" field from the XML file  if any, null otherwise.
      */
     public String getAcknowledgment() {
         if (_applicationDataModel.getAcknowledgment() == null) {
@@ -142,9 +193,7 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the file name of JMMC logo
-     *
-     * @return the file name of JMMC logo
+     * @return the company logo resource path
      */
     public String getLogoURL() {
         if (_logger.isLoggable(Level.FINE)) {
@@ -155,36 +204,28 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the main web page URL
-     *
-     * @return the main web page URL
+     * @return the application main web page URL
      */
     public String getMainWebPageURL() {
         return _mainWebPageURL;
     }
 
     /**
-     * Return the feedback report form URL
-     *
-     * @return the feedback report form URL
+     * @return the feedback report form URL if any, null otherwise.
      */
-    public String getFeedabackReportFormURL() {
+    public String getFeedbackReportFormURL() {
         return _phpScriptURL;
     }
 
     /**
-     * Return the feedback report header message
-     *
-     * @return the feedback report header message
+     * @return the feedback report window header message
      */
     public String getFeedabackReportHeaderMessage() {
         return _feedbackReportHeaderMessage;
     }
 
     /**
-     * Return the value of the "program name" from the XML file
-     *
-     * @return the value of the element program name from the XML file
+     * @return the value of the "program" element name from the XML file
      */
     public String getProgramName() {
         Program program = null;
@@ -202,9 +243,7 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the value of the element "program version" from the XML file
-     *
-     * @return the value of the element program version from the XML file
+     * @return the value of the "program version" element from the XML file
      */
     public String getProgramVersion() {
         Program program = null;
@@ -222,9 +261,8 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the value of the field "link" from the XML file
-     *
-     * @return the value of the field link from the XML file
+
+     * @return the application main web page URL from the "link" field in the XML file
      */
     public String getLinkValue() {
         String mainWebPageURL = _mainWebPageURL;
@@ -237,55 +275,39 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the value of the release notes "link" based onto the XML link
-     * element.
-     *
-     * @return the release notes link
+
+    * @return the application release notes URL if any, null otherwise.
      */
     public String getReleaseNotesLinkValue() {
-        String releaseNotesLink = getLinkValue() + "/releasenotes.htm";
         if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("ReleaseNotesLink value is :" + releaseNotesLink);
+            _logger.fine("ReleaseNotesLink value is :" + _releaseNotesLink);
         }
 
-        return releaseNotesLink;
+        return _releaseNotesLink;
     }
 
     /**
-     * Return the value of the FAQ "link" based onto the XML link element.
-     *
-     * @return the FAQ link
+     * @return the application FAQ URL if any, null otherwise.
      */
     public String getFaqLinkValue() {
-        String faqLink = getLinkValue() + "/faq/";
         if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("FaqLink value is :" + faqLink);
+            _logger.fine("FaqLink value is :" + _faqLink);
         }
 
-        return faqLink;
+        return _faqLink;
     }
 
     /**
-     * Return the value of the Hot News RSS feed "link" based onto the XML link element.
-     *
-     * @return the Hot News RSS feed link
+     * @return the application Hot News RSS feed URL if any, null otherwise.
      */
     public String getHotNewsRSSFeedLinkValue() {
-        String programName = getProgramName();
-        programName = programName.toLowerCase();
-
-        String hotNewsRSSFeedLink = getLinkValue() + "/" + programName
-                + ".rss";
         if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("HotNewsRSSFeedLink value is :" + hotNewsRSSFeedLink);
+            _logger.fine("HotNewsRSSFeedLink value is :" + _hotNewsRSSFeedLink);
         }
-
-        return hotNewsRSSFeedLink;
+        return _hotNewsRSSFeedLink;
     }
 
     /**
-     * Return the value of the element "compilation date" from the XML file
-     *
      * @return the value of the element compilation date from the XML file
      */
     public String getCompilationDate() {
@@ -304,9 +326,7 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the value of the element "compilator version" from the XML file
-     *
-     * @return the value of the element compilator version from the XML file
+     * @return the value of the element compiler version from the XML file
      */
     public String getCompilatorVersion() {
         Compilation compilation = null;
@@ -324,9 +344,7 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the value of the field "text" from the XML file
-     *
-     * @return the value of the field text from the XML file
+     * @return the application description used in the AboutBox
      */
     public String getTextValue() {
         String text = "";
@@ -338,8 +356,14 @@ public class ApplicationDataModel {
     }
 
     /**
+     * @return the value of the "authors" field from the XML file if any, null otherwise.
+     */
+    public String getAuthors() {
+        return _authors;
+    }
+
+    /**
      * Return the informations about "packages" taken from the XML file
-     *
      * @return vector template [name, link, description], [name, link, description]...
      */
     public Vector<String> getPackagesInfo() {
@@ -361,9 +385,7 @@ public class ApplicationDataModel {
     }
 
     /**
-     * Return the value of the field "copyright" from the XML file
-     *
-     * @return the value of the field copyright from the XML file
+     * @return Forge the "copyright" text used in the AboutBox
      */
     public String getCopyrightValue() {
         int year = 0;
@@ -385,16 +407,50 @@ public class ApplicationDataModel {
             year = cal.get(Calendar.YEAR);
         }
 
-        return "Copyright \u00A9 1999 - " + year + ", JMMC.";
+        // \u00A9 means (c)
+        return "Copyright \u00A9 " + year + ", " + _shortCompanyName + ".";
     }
 
     /**
-     * Return menubar from XML
-     *
-     * @return menubar
+     * @return menu bar from XML description
      */
     public Menubar getMenubar() {
         return _applicationDataModel.getMenubar();
+    }
+
+    /**
+     * @return company short name
+     */
+    public String getShortCompanyName() {
+        return _shortCompanyName;
+    }
+
+    /**
+     * @return company legal name if any, short name otherwise.
+     */
+    public String getLegalCompanyName() {
+        return _legalCompanyName;
+    }
+
+    /**
+     * @return User Support URL if any, null otherwise.
+     */
+    public String getUserSupportURL() {
+        return _userSupportUrl;
+    }
+
+    /**
+     * @return SAMP description if any, null otherwise.
+     */
+    public String getSampDescription() {
+        return _applicationDataModel.getSampdescription();
+    }
+
+    /**
+     * @return Application documentation URL if any, null otherwise.
+     */
+    public String getDocumetationUrl() {
+        return _applicationDataModel.getDocumentationlink();
     }
 }
 /*___oOo___*/

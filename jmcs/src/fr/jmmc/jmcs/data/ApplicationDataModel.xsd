@@ -10,7 +10,7 @@
 <!--
 Document   : ApplicationDataModel.xsd
 Author     : Laurent BOURGES, Sylvain LAFRASSE, Guillaume MELLA
-Description: TBD
+Description: Store jMCS Application meta data.
 -->
 
 <!--
@@ -31,7 +31,7 @@ Description: TBD
         <xsd:appinfo>
 
             <!-- Comment the jaxb:globalBindings element in embedded xml schema used with XJC -->
-            <jaxb:globalBindings>
+            <jaxb:globalBindings generateIsSetMethod="true">
                 <xjc:simple />
             </jaxb:globalBindings>
 
@@ -65,6 +65,15 @@ Description: TBD
             
         <xsd:sequence>
 
+            <!-- Company element -->
+            <xsd:element name="company" type="Company" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Company data
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
             <!-- Element program -->
             <xsd:element name="program" type="Program">
                 <xsd:annotation>
@@ -88,6 +97,24 @@ Description: TBD
                 <xsd:annotation>
                     <xsd:documentation>
                         About Box text (credits, description)
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <!-- Element sampdescription -->
+            <xsd:element name="sampdescription" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        SAMP Application description
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <!-- Element authors -->
+            <xsd:element name="authors" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Application authors
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
@@ -120,6 +147,7 @@ Description: TBD
                 </xsd:annotation>
             </xsd:element>
             
+            <!-- Element acknowledgment -->
             <xsd:element name="acknowledgment" minOccurs="0" maxOccurs="1" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>
@@ -149,9 +177,58 @@ Description: TBD
             </xsd:annotation>
         </xsd:attribute>
 
+        <!-- TODO : Use URL type -->
+        <xsd:attribute name="faqlink" type="xsd:string" use="optional">
+            <xsd:annotation>           
+                <xsd:documentation>
+                    Application FAQ URL
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+
+        <!-- TODO : Use URL type -->
+        <xsd:attribute name="rsslink" type="xsd:string" use="optional">
+            <xsd:annotation>           
+                <xsd:documentation>
+                    Application RSS URL
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+
+        <!-- TODO : Use URL type -->
+        <xsd:attribute name="releaselink" type="xsd:string" use="optional">
+            <xsd:annotation>           
+                <xsd:documentation>
+                    Application Release Note URL
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+
+        <!-- TODO : Use URL type -->
+        <xsd:attribute name="documentationlink" type="xsd:string" use="optional">
+            <xsd:annotation>           
+                <xsd:documentation>
+                    Application Documentation URL
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+
     </xsd:complexType>
     
     
+    <!-- Store application company details -->
+    <xsd:complexType name="Company">
+        <xsd:sequence>
+            <xsd:element name="short_name" type="xsd:string"/>
+            <xsd:element name="logo_resource" type="xsd:string"/>
+            <xsd:element name="homepage_url" type="xsd:string"/>
+            <xsd:element name="legal_name" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="user_support_url" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="feedback_form_url" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
     <!-- Store program name and version number -->
     <xsd:complexType name="Program">
         <xsd:attribute name="name" type="xsd:string" use="required"/>

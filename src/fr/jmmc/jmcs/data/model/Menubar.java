@@ -66,4 +66,12 @@ public class Menubar {
         return this.menus;
     }
 
+    public boolean isSetMenus() {
+        return ((this.menus!= null)&&(!this.menus.isEmpty()));
+    }
+
+    public void unsetMenus() {
+        this.menus = null;
+    }
+
 }

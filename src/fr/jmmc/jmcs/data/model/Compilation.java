@@ -58,6 +58,10 @@ public class Compilation {
         this.date = value;
     }
 
+    public boolean isSetDate() {
+        return (this.date!= null);
+    }
+
     /**
      * Gets the value of the compiler property.
      * 
@@ -80,6 +84,10 @@ public class Compilation {
      */
     public void setCompiler(String value) {
         this.compiler = value;
+    }
+
+    public boolean isSetCompiler() {
+        return (this.compiler!= null);
     }
 
 }

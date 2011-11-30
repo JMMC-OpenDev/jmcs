@@ -66,4 +66,12 @@ public class Dependences {
         return this.packages;
     }
 
+    public boolean isSetPackages() {
+        return ((this.packages!= null)&&(!this.packages.isEmpty()));
+    }
+
+    public void unsetPackages() {
+        this.packages = null;
+    }
+
 }

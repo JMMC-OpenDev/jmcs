@@ -101,7 +101,7 @@ public final class SampManager {
         }
 
         _logger.info("User allowed SAMP hub termination, proceeding with application quitting.");
-            // Let the hub die
+        // Let the hub die
         return true;
     }
 
@@ -136,30 +136,52 @@ public final class SampManager {
         final String applicationName = applicationDataModel.getProgramName();
         meta.setName(applicationName);
 
-        // @TODO : embbed in ApplicationData.xml
-        // meta.setDescriptionText("Find Interferometric Calibrators for Optical Observations");
+        final String sampDescription = applicationDataModel.getSampDescription();
+        if (sampDescription != null) {
+            meta.setDescriptionText(sampDescription);
+        }
 
-        // @TODO : embbed the real HTML doc URL in ApplicationData.xml
-        // meta.setDocumentationUrl(applicationURL);
+        final String documentationUrl = applicationDataModel.getDocumetationUrl();
+        if (documentationUrl != null) {
+            meta.setDocumentationUrl(documentationUrl);
+        }
 
         // @TODO : embbed the icon in each application JAR file
         // meta.setIconUrl("http://apps.jmmc.fr/~sclws/SearchCal/AppIcon.png");
 
         // Non-standard meatadata
-        meta.put("affiliation.name", "JMMC (Jean-Marie MARIOTTI Center)");
+        meta.put("affiliation.name", applicationDataModel.getShortCompanyName() + " (" + applicationDataModel.getLegalCompanyName() + ")");
         meta.put("affiliation.url", applicationDataModel.getMainWebPageURL());
-        meta.put("affiliation.feedback", "http://jmmc.fr/feedback/");
-        meta.put("affiliation.support", "http://www.jmmc.fr/support.htm");
+        final String feedbackReportUrl = applicationDataModel.getFeedbackReportFormURL();
+        if (feedbackReportUrl != null) {
+            meta.put("affiliation.feedback", "feedbackReportUrl");
+        }
+        final String userSupportUrl = applicationDataModel.getUserSupportURL();
+        if (userSupportUrl != null) {
+            meta.put("affiliation.support", userSupportUrl);
+        }
 
         final String lowerCaseApplicationName = applicationName.toLowerCase();
-        meta.put(lowerCaseApplicationName + ".authors", "Brought to you by the JMMC Team");
+        String authors = applicationDataModel.getAuthors();
+        if (authors != null) {
+            meta.put(lowerCaseApplicationName + ".authors", "Brought to you by " + authors);
+        }
         meta.put(lowerCaseApplicationName + ".homepage", applicationDataModel.getLinkValue());
         meta.put(lowerCaseApplicationName + ".version", applicationDataModel.getProgramVersion());
-        meta.put(lowerCaseApplicationName + ".news", applicationDataModel.getHotNewsRSSFeedLinkValue());
         meta.put(lowerCaseApplicationName + ".compilationdate", applicationDataModel.getCompilationDate());
         meta.put(lowerCaseApplicationName + ".compilatorversion", applicationDataModel.getCompilatorVersion());
-        meta.put(lowerCaseApplicationName + ".releasenotes", applicationDataModel.getReleaseNotesLinkValue());
-        meta.put(lowerCaseApplicationName + ".faq", applicationDataModel.getFaqLinkValue());
+        final String newsUrl = applicationDataModel.getHotNewsRSSFeedLinkValue();
+        if (newsUrl != null) {
+            meta.put(lowerCaseApplicationName + ".news", newsUrl);
+        }
+        final String releaseNoteUrl = applicationDataModel.getReleaseNotesLinkValue();
+        if (releaseNoteUrl != null) {
+            meta.put(lowerCaseApplicationName + ".releasenotes", releaseNoteUrl);
+        }
+        final String faq = applicationDataModel.getFaqLinkValue();
+        if (faq != null) {
+            meta.put(lowerCaseApplicationName + ".faq", faq);
+        }
 
         _connector.declareMetadata(meta);
 

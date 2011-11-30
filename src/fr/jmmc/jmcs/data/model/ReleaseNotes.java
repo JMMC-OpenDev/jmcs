@@ -66,4 +66,12 @@ public class ReleaseNotes {
         return this.releases;
     }
 
+    public boolean isSetReleases() {
+        return ((this.releases!= null)&&(!this.releases.isEmpty()));
+    }
+
+    public void unsetReleases() {
+        this.releases = null;
+    }
+
 }

@@ -196,7 +196,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         // @TODO : get this from AppData.xml or pkgName/resources/AppIcon.png convention, resize
 
         // Create the Icon with the image which should be named logo.jpg in src folder       
-        String logoURL = _applicationDataModel.getLogoURL();
+        String logoURL = _applicationDataModel.getCompanyLogoResourcePath();
 
         if (logoURL != null) {
             ImageIcon logo = new ImageIcon(getClass().getResource(logoURL));

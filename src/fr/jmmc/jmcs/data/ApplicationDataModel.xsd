@@ -296,6 +296,7 @@ Description: Store jMCS Application meta data.
     <!-- Store application release data, such a version number and repository tag, with its prereleases list -->
     <xsd:complexType name="Release">
         <xsd:sequence>
+            <xsd:element name="pubDate" type="xsd:string" minOccurs="0"/>
             <xsd:element name="prerelease" type="Prerelease" minOccurs="1" maxOccurs="unbounded">
             </xsd:element>
         </xsd:sequence>

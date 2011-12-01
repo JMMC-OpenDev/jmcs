@@ -6,6 +6,7 @@ package fr.jmmc.jmcs.gui;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.util.ImageUtils;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -20,6 +21,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -55,11 +57,11 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     private JLabel _logoLabel = new JLabel();
     /** Copyright label */
     private JLabel _copyrightLabel = new JLabel();
-    /** Container of the textarea */
+    /** Container of the text area */
     private JScrollPane _descriptionScrollPane = new JScrollPane();
-    /** Textarea (html) */
+    /** Text area (HTML) */
     private JEditorPane _descriptionEditorPane = new JEditorPane();
-    /** Label of compilation info (date and compilator) */
+    /** Label of compilation info (date and compiler) */
     private JLabel _compilationInfoLabel = new JLabel();
     /** Link label */
     private JEditorPane _linkLabel = new JEditorPane();
@@ -112,7 +114,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /** Split with (((link and program split) and compilation) and space) and space */
     private JSplitPane _upSpaceSplit = new JSplitPane();
     /** Split with ((((link and program split) and compilation)
-     * and space) and space) and textarea container
+     * and space) and space) and text area container
      */
     private JSplitPane _descriptionSplit = new JSplitPane();
 
@@ -189,47 +191,49 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
     /** Sets logo label properties */
     private void setupLogo() {
-        // Center label content
-        _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        _logoLabel.setOpaque(false);
-
-        // @TODO : get this from AppData.xml or pkgName/resources/AppIcon.png convention, resize
-
-        // Create the Icon with the image which should be named logo.jpg in src folder       
+        // Create the Icon with the company image from ApplicationData.xml
         String logoURL = _applicationDataModel.getCompanyLogoResourcePath();
-
         if (logoURL != null) {
+            // Get and scale image
             ImageIcon logo = new ImageIcon(getClass().getResource(logoURL));
+            logo = ImageUtils.getScaledImageIcon(logo, 81, 300);
             _logoLabel.setIcon(logo);
+            _logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+
+            // Center label content
+            _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            _logoLabel.setOpaque(false);
+
+            _logger.fine("All the logo label properties have been initialized");
+
+            // Launch the default browser with the given link
+            _logoLabel.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mouseClicked(MouseEvent evt) {
+                    String mainWebPageURL = _applicationDataModel.getMainWebPageURL();
+
+                    // Open the url in web browser
+                    BrowserLauncher.openURL(mainWebPageURL);
+                }
+            });
+
+            _logger.fine("Mouse click event placed on logo label");
+
+            // Show hand cursor when mouse is moving on logo
+            _logoLabel.addMouseMotionListener(new MouseMotionAdapter() {
+
+                @Override
+                public void mouseMoved(MouseEvent evt) {
+                    _logoLabel.setCursor(Cursor.getPredefinedCursor(
+                            Cursor.HAND_CURSOR));
+                }
+            });
+
+            _logger.fine("Mouse move event placed on logo label");
+        } else {
+            _logger.warning("No company logo found");
         }
-
-        _logger.fine("All the logo label properties have been initialized");
-
-        // Launch the default browser with the given link
-        _logoLabel.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent evt) {
-                String mainWebPageURL = _applicationDataModel.getMainWebPageURL();
-
-                // Open the url in web browser
-                BrowserLauncher.openURL(mainWebPageURL);
-            }
-        });
-
-        _logger.fine("Mouse click event placed on logo label");
-
-        // Show hand cursor when mouse is moving on logo
-        _logoLabel.addMouseMotionListener(new MouseMotionAdapter() {
-
-            @Override
-            public void mouseMoved(MouseEvent evt) {
-                _logoLabel.setCursor(Cursor.getPredefinedCursor(
-                        Cursor.HAND_CURSOR));
-            }
-        });
-
-        _logger.fine("Mouse move event placed on logo label");
     }
 
     /** Sets copyright label properties */
@@ -249,22 +253,21 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _descriptionEditorPane.addHyperlinkListener(this);
 
         // The textarea should have the same width than the logo
-        Dimension textareaDimension = new Dimension(_logoLabel.getWidth(), 170);
+        Dimension textareaDimension = new Dimension(300, 170);
         _descriptionEditorPane.setPreferredSize(textareaDimension);
         _logger.fine("All the textarea properties have been initialized");
 
         // HTML generation
         String generatedHtml = "<html><head></head><body>";
         String authors = _applicationDataModel.getAuthors();
-        if (authors.length() > 0) {
+        if ((authors != null) && (authors.length() > 0)) {
             generatedHtml += "Brought to you by " + authors + ".<BR><BR>";
         }
         generatedHtml += "<I>If this software was helpful for your study or research work, please include the mandatory acknowledgment (available from the Help menu) in your publications.</I><BR><BR>";
 
         // Get the Text value
         String textValue = _applicationDataModel.getTextValue();
-
-        if (textValue.length() > 0) {
+        if ((textValue != null) && (textValue.length() > 0)) {
             generatedHtml += textValue;
             generatedHtml += "<br><br>";
         }
@@ -275,7 +278,6 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
         // For each package
         int nbElems = packagesInfo.size();
-
         if (nbElems > 0) {
             packageHtml += "<i>Dependencies</i>:<br>";
         }
@@ -450,7 +452,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _logger.fine("All the up space split properties have been initialized");
     }
 
-    /** Set textarea split properties */
+    /** Set text area split properties */
     private void setTextareaSplitProperties() {
         // Set properties
         _descriptionSplit.setBorder(null);

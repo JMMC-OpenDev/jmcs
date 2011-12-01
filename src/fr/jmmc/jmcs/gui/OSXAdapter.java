@@ -51,6 +51,7 @@ import com.apple.eawt.ApplicationEvent;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
+import javax.swing.AbstractAction;
 
 import javax.swing.JFrame;
 
@@ -60,9 +61,9 @@ import javax.swing.JFrame;
  * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class OSXAdapter extends ApplicationAdapter {
+
     /** Class logger */
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(OSXAdapter.class.getName());
-    
     /**
      * DOCUMENT ME!
      */
@@ -78,7 +79,6 @@ public class OSXAdapter extends ApplicationAdapter {
     private static com.apple.eawt.Application theApplication;
     /** Store a proxy to the shared ActionRegistrar facility */
     private ActionRegistrar _registrar = null;
-    
     /**
      * reference to the app frame where the existing quit, about, prefs code is
      */
@@ -119,7 +119,10 @@ public class OSXAdapter extends ApplicationAdapter {
     public void handlePreferences(ApplicationEvent ae) {
         if (mainAppFrame != null) {
             ae.setHandled(true);
-            _registrar.getPreferenceAction().actionPerformed(null);
+            AbstractAction preferenceAction = _registrar.getPreferenceAction();
+            if (preferenceAction != null) {
+                preferenceAction.actionPerformed(null);
+            }
         } else {
             throw new IllegalStateException(
                     "handlePreferences: MyApp instance detached from listener");
@@ -160,11 +163,11 @@ public class OSXAdapter extends ApplicationAdapter {
     public void handleOpenFile(ApplicationEvent ae) {
         if (mainAppFrame != null) {
             ae.setHandled(true);
-            
+
             if (logger.isLoggable(Level.INFO)) {
                 logger.info("Should open '" + ae.getFilename() + "'.");
             }
-            
+
             _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0,
                     ae.getFilename()));
         } else {
@@ -202,6 +205,11 @@ public class OSXAdapter extends ApplicationAdapter {
             theApplication = new com.apple.eawt.Application();
         }
 
-        theApplication.setEnabledPreferencesMenu(enabled);
+        AbstractAction preferenceAction = ActionRegistrar.getInstance().getPreferenceAction();
+        if (preferenceAction != null) {
+            theApplication.setEnabledPreferencesMenu(enabled);
+        } else {
+            theApplication.setEnabledPreferencesMenu(!enabled);
+        }
     }
 }

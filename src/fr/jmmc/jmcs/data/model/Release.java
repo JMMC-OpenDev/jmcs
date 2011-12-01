@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="pubDate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="prerelease" type="{}Prerelease" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *       &lt;attribute name="version" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -33,16 +34,46 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Release", propOrder = {
+    "pubDate",
     "prereleases"
 })
 public class Release {
 
+    protected String pubDate;
     @XmlElement(name = "prerelease", required = true)
     protected List<Prerelease> prereleases;
     @XmlAttribute(name = "version", required = true)
     protected String version;
     @XmlAttribute(name = "tag")
     protected String tag;
+
+    /**
+     * Gets the value of the pubDate property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPubDate() {
+        return pubDate;
+    }
+
+    /**
+     * Sets the value of the pubDate property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPubDate(String value) {
+        this.pubDate = value;
+    }
+
+    public boolean isSetPubDate() {
+        return (this.pubDate!= null);
+    }
 
     /**
      * Gets the value of the prereleases property.

@@ -22,8 +22,9 @@
   
   <!-- JMMC -->
   <logger name="fr.jmmc" level="INFO"/>
-  
-  <logger name="fr.jmmc.jmcs.App" level="DEBUG"/>
+
+  <logger name="fr.jmmc.data" level="INFO"/>
+  <logger name="fr.jmmc.gui" level="INFO"/>
   
   
   <!-- include application specific configuration -->
@@ -64,7 +65,7 @@
 
 
   <!-- Root Logger -->
-  <root level="TRACE">
+  <root level="DEBUG">
     <appender-ref ref="STDOUT" />
   </root>
   

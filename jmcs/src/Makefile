@@ -101,7 +101,9 @@ JARFILES        = jmcs
 # <brief description of jmcs jar files>
 jmcs_DIRS     = fr \
                 org
-jmcs_EXTRAS   = fr/jmmc/jmcs/resource/*.png \
+
+jmcs_EXTRAS   = jmmc-logback.xml \
+                fr/jmmc/jmcs/resource/*.png \
                 fr/jmmc/jmcs/resource/ApplicationData.xml
 
 #

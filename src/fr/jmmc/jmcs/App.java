@@ -34,16 +34,26 @@ import java.lang.reflect.Method;
 
 import java.net.URL;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.StreamHandler;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.OutputStreamAppender;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+import fr.jmmc.jmcs.util.FileUtils;
+import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * This class represents an application. In order to use
@@ -67,23 +77,72 @@ import org.apache.commons.lang.SystemUtils;
 public abstract class App {
 
     /** Logger - register on JUL root logger to collect all logs */
-    private static final Logger _mainLogger = Logger.getLogger("");
-    /** Stream handler which permit us to keep logs report in strings */
-    private static final StreamHandler _streamHandler;
+    private static final ch.qos.logback.classic.Logger _rootLogger;
     /** ByteArrayOutputStream which keeps logs report */
-    private static final ByteArrayOutputStream _byteArrayOutputStream = new ByteArrayOutputStream(32768);
+    private static final ByteArrayOutputStream _byteArrayOutputStream;
 
     /**
      * Static Logger initialization and Network settings
      */
     static {
+        // assume SLF4J is bound to logback in the current environment
+        final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        // Get our logback configuration file:
+        final URL logConf = FileUtils.getResource("jmmc-logback.xml");
+
+        if (logConf != null) {
+            try {
+                final JoranConfigurator configurator = new JoranConfigurator();
+                // create one dummy context to let configurator execute correctly:
+                configurator.setContext(loggerContext);
+
+                // Call context.reset() to clear any previous configuration, e.g. default 
+                // configuration. For multi-step configuration, omit calling context.reset().
+                loggerContext.reset();
+
+                configurator.doConfigure(logConf.openStream());
+
+            } catch (IOException ioe) {
+                throw new IllegalStateException("IO Exception occured", ioe);
+            } catch (JoranException je) {
+                // StatusPrinter will handle this
+                StatusPrinter.printInCaseOfErrorsOrWarnings((LoggerContext) LoggerFactory.getILoggerFactory());
+            }
+        }
+
+        // Get the root logger to collect all logs
+        _rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+
+        // ByteArrayOutputStream which keeps logs report (32K by default):
+        _byteArrayOutputStream = new ByteArrayOutputStream(32 * 1024);
+
+        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setContext(loggerContext);
+        encoder.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
+        encoder.start();
+
         // Logger's stream handler creation
-        _streamHandler = new StreamHandler(_byteArrayOutputStream, new SimpleFormatter());
+        final OutputStreamAppender<ILoggingEvent> streamAppender = new OutputStreamAppender<ILoggingEvent>();
+        streamAppender.setContext(loggerContext);
+        streamAppender.setEncoder(encoder);
+        streamAppender.setOutputStream(_byteArrayOutputStream);
+        streamAppender.start();
 
         // We add the memory handler create to the logger
-        _mainLogger.addHandler(_streamHandler);
+        _rootLogger.addAppender(streamAppender);
 
-        _mainLogger.info("Memory handler created and attached to feedback logger.");
+        _rootLogger.info("Memory handler created used by the feedback report. (current level is {})", _rootLogger.getEffectiveLevel());
+
+        // Remote existing handlers from java.util.logging (JUL) root logger (useful in netbeans)
+        final java.util.logging.Logger rootLogger = java.util.logging.LogManager.getLogManager().getLogger("");
+        final java.util.logging.Handler[] handlers = rootLogger.getHandlers();
+        for (int i = 0, len = handlers.length; i < len; i++) {
+            rootLogger.removeHandler(handlers[i]);
+        }
+
+        // call only once during initialization time of your application
+        SLF4JBridgeHandler.install();
 
         // Define default network settings:
         // note: settings must be set before using any URLConnection (loadApplicationData)
@@ -97,7 +156,7 @@ public abstract class App {
     /** application data file i.e. "ApplicationData.xml" */
     public static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
     /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = Logger.getLogger(App.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(App.class.getName());
     /** flag to avoid calls to System.exit() (JUnit) */
     private static boolean _avoidSystemExit = false;
     /** Singleton reference */
@@ -180,11 +239,12 @@ public abstract class App {
             // Check in common preferences whether startup splashscreen should be shown or not
             _showSplashScreen = CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN);
 
-            _logger.fine("App object instantiated and logger created.");
+            _logger.debug("App object instantiated and logger created.");
 
             // Set the application data attribute
             loadApplicationData();
-            _logger.fine("Application data loaded.");
+
+            _logger.debug("Application data loaded.");
 
             // Interpret arguments
             interpretArguments(args);
@@ -237,7 +297,7 @@ public abstract class App {
                 // We reinstantiate the application data model
                 _applicationDataModel = new ApplicationDataModel(fileURL);
             } catch (IllegalStateException iae) {
-                _logger.log(Level.SEVERE, "Could not load application data from '" + fileURL + "' file.", iae);
+                _logger.error("Could not load application data from '{}' file.", fileURL, iae);
 
                 // Take the defaultData XML in order to take the default menus:
                 loadDefaultApplicationData();
@@ -257,7 +317,7 @@ public abstract class App {
             throw new IllegalStateException("Cannot load default application data.");
         }
 
-        _logger.severe("Loading default application data from '" + defaultXmlURL + "' file.");
+        _logger.warn("Loading default application data from '{}' file.", defaultXmlURL);
 
         // We reinstantiate the application data model
         _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
@@ -382,9 +442,9 @@ public abstract class App {
      */
     private final void interpretArguments(String[] args) {
         // List received arguments
-        if (_logger.isLoggable(Level.FINEST)) {
+        if (_logger.isDebugEnabled()) {
             for (int i = 0; i < args.length; i++) {
-                _logger.finest("args[" + i + "] = '" + args[i] + "'.");
+                _logger.debug("args[{}] = '{}'.", i, args[i]);
             }
         }
 
@@ -402,17 +462,14 @@ public abstract class App {
         };
 
         // Instantiate the getopt object
-        final Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(),
-                args, "hv:", longopts, true);
+        final Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(), args, "hv:", longopts, true);
 
         int c; // argument key
         String arg = null; // argument value
 
         // While there is a argument key
         while ((c = getOpt.getopt()) != -1) {
-            if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("opt = " + c);
-            }
+            _logger.debug("opt = {}", c);
 
             switch (c) {
                 // Show the arguments help
@@ -438,9 +495,8 @@ public abstract class App {
                 case 3:
                     // get the file path argument and store it temporarly :
                     this._fileArgument = getOpt.getOptarg();
-                    if (_logger.isLoggable(Level.INFO)) {
-                        _logger.info("Should open '" + this._fileArgument + "'.");
-                    }
+
+                    _logger.info("Should open '{}'.", this._fileArgument);
                     break;
 
                 // Set the logger level
@@ -448,22 +504,20 @@ public abstract class App {
                     arg = getOpt.getOptarg();
 
                     if (arg != null) {
-                        if (_logger.isLoggable(Level.INFO)) {
-                            _logger.info("Set logger level to '" + arg + "'.");
-                        }
+                        _logger.info("Set logger level to '{}'.", arg);
 
                         if (arg.equals("0")) {
-                            _mainLogger.setLevel(Level.OFF);
+                            _rootLogger.setLevel(Level.OFF);
                         } else if (arg.equals("1")) {
-                            _mainLogger.setLevel(Level.SEVERE);
+                            _rootLogger.setLevel(Level.ERROR);
                         } else if (arg.equals("2")) {
-                            _mainLogger.setLevel(Level.WARNING);
+                            _rootLogger.setLevel(Level.WARN);
                         } else if (arg.equals("3")) {
-                            _mainLogger.setLevel(Level.INFO);
+                            _rootLogger.setLevel(Level.INFO);
                         } else if (arg.equals("4")) {
-                            _mainLogger.setLevel(Level.FINE);
+                            _rootLogger.setLevel(Level.DEBUG);
                         } else if (arg.equals("5")) {
-                            _mainLogger.setLevel(Level.ALL);
+                            _rootLogger.setLevel(Level.ALL);
                         } else {
                             showArgumentsHelp();
                         }
@@ -484,7 +538,7 @@ public abstract class App {
             }
         }
 
-        _logger.fine("Application arguments interpreted");
+        _logger.debug("Application arguments interpreted");
     }
 
     /** Show command arguments help */
@@ -527,7 +581,7 @@ public abstract class App {
      * Prepare interoperability (SAMP message handlers) 
      */
     protected void declareInteroperability() {
-        _logger.fine("Default App.declareInteroperability() handler called.");
+        _logger.debug("Default App.declareInteroperability() handler called.");
     }
 
     /** 
@@ -702,10 +756,13 @@ public abstract class App {
      */
     public static String getLogOutput() {
         // Needed in order to write all logs in the ouput stream buffer
-        if (_streamHandler != null) {
-            _streamHandler.flush();
-        }
 
+        // TODO: lock the current stream now ??
+/*        
+        if (_streamHandler != null) {
+        _streamHandler.flush();
+        }
+         */
         return _byteArrayOutputStream.toString();
     }
 
@@ -719,7 +776,7 @@ public abstract class App {
     /** Show the splash screen */
     private void showSplashScreen() {
         if (_applicationDataModel != null) {
-            _logger.fine("Show splash screen");
+            _logger.debug("Show splash screen");
 
             // Instantiate the splash screen :
             _splashScreen = new SplashScreen();
@@ -886,19 +943,18 @@ public abstract class App {
         final String packagePath = packageName.replace(".", "/");
 
         final String filePath = packagePath + "/resource/" + fileName;
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("filePath = '" + filePath + "'.");
-        }
+
+        _logger.debug("filePath = '{}'.", filePath);
 
         // resolve file path:
         final URL fileURL = appClass.getClassLoader().getResource(filePath);
 
         if (fileURL == null) {
-            _logger.warning("Cannot find resource from '" + filePath + "' file.");
+            _logger.warn("Cannot find resource from '{}' file.", filePath);
             return null;
         }
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("fileURL = '" + fileURL + "'.");
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("fileURL = '{}'.", fileURL);
         }
 
         return Urls.fixJarURL(fileURL);
@@ -931,9 +987,9 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.entering("OpenAction", "actionPerformed");
+            _logger.trace("OpenAction.actionPerformed");
 
-            _logger.warning("No handler for default file opening.");
+            _logger.warn("No handler for default file opening.");
         }
     }
 
@@ -961,9 +1017,9 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.entering("QuitAction", "actionPerformed");
+            _logger.trace("QuitAction.actionPerformed");
 
-            _logger.fine("Should we kill the application ?");
+            _logger.debug("Should we kill the application ?");
 
             // Check if user is OK to kill SAMP hub (if any)
             if (!SampManager.getInstance().allowHubKilling()) {
@@ -972,7 +1028,7 @@ public abstract class App {
 
             // If we are ready to finish application execution
             if (finish()) {
-                _logger.fine("Application should be killed.");
+                _logger.debug("Application should be killed.");
 
                 // Verify if we are authorized to kill the application or not
                 if (_exitApplicationWhenClosed) {
@@ -981,10 +1037,10 @@ public abstract class App {
                     App.exit(0);
 
                 } else {
-                    _logger.fine("Application left opened as required.");
+                    _logger.debug("Application left opened as required.");
                 }
             } else {
-                _logger.fine("Application killing cancelled.");
+                _logger.debug("Application killing cancelled.");
             }
         }
     }
@@ -1019,7 +1075,7 @@ public abstract class App {
 
             // If the application does not provide an ApplicationData.xml file,
             // the generic acknowledgement found in jMCS will be used instead.
-            
+
             // TODO : remove JMMC references
         }
 
@@ -1029,7 +1085,7 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.entering("AcknowledgmentAction", "actionPerformed");
+            _logger.trace("AcknowledgmentAction.actionPerformed");
 
             StringSelection ss = new StringSelection(_acknowledgement);
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
@@ -1068,7 +1124,8 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.entering("ShowReleaseAction", "actionPerformed");
+            _logger.trace("ShowReleaseAction.actionPerformed");
+
             BrowserLauncher.openURL(_applicationDataModel.getHotNewsRSSFeedLinkValue());
         }
     }
@@ -1095,7 +1152,8 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.entering("ShowReleaseAction", "actionPerformed");
+            _logger.trace("ShowReleaseAction.actionPerformed");
+
             BrowserLauncher.openURL(_applicationDataModel.getReleaseNotesLinkValue());
         }
     }
@@ -1122,7 +1180,8 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.entering("ShowFaqAction", "actionPerformed");
+            _logger.trace("ShowFaqAction.actionPerformed");
+
             BrowserLauncher.openURL(_applicationDataModel.getFaqLinkValue());
         }
     }
@@ -1155,7 +1214,8 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.entering("ShowHelpAction", "actionPerformed");
+            _logger.trace("ShowHelpAction.actionPerformed");
+
             HelpView.setVisible(true);
         }
     }
@@ -1184,8 +1244,7 @@ public abstract class App {
             if (osxAdapter == null) {
                 // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
                 // because OSXAdapter extends ApplicationAdapter in its def
-                _logger.severe(
-                        "This version of Mac OS X does not support the Apple EAWT. Application Menu handling has been disabled.");
+                _logger.error("This version of Mac OS X does not support the Apple EAWT. Application Menu handling has been disabled.");
             } else {
                 final Method registerMethod = Introspection.getMethod(osxAdapter, "registerMacOSXApplication", new Class<?>[]{JFrame.class});
 

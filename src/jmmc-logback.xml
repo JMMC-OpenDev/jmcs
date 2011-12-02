@@ -65,7 +65,11 @@
 
 
   <!-- Root Logger -->
+  <!--
   <root level="DEBUG">
+    -->
+  <!-- Note: level must be INFO in production to avoid performance issues with JUL -->
+  <root level="INFO">
     <appender-ref ref="STDOUT" />
   </root>
   

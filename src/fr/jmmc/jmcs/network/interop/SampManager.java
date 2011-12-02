@@ -120,9 +120,6 @@ public final class SampManager {
      */
     protected SampManager() {
 
-        // define JSamp log verbosity to warning level (avoid debug messages) :
-        Logger.getLogger("org.astrogrid.samp").setLevel(Level.WARNING);
-
         // @TODO : init JSamp env.
         final ClientProfile profile = DefaultClientProfile.getProfile();
 

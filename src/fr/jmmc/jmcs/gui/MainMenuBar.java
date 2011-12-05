@@ -214,21 +214,21 @@ public class MainMenuBar extends JMenuBar {
         Action cutAction = new DefaultEditorKit.CutAction();
         cutAction.putValue(Action.NAME, "Cut");
         cutAction.putValue(Action.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(getPrefixKey() + "X"));
+                KeyStroke.getKeyStroke(getSystemCommandKey() + "X"));
         editMenu.add(cutAction);
 
         // Add copy action
         Action copyAction = new DefaultEditorKit.CopyAction();
         copyAction.putValue(Action.NAME, "Copy");
         copyAction.putValue(Action.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(getPrefixKey() + "C"));
+                KeyStroke.getKeyStroke(getSystemCommandKey() + "C"));
         editMenu.add(copyAction);
 
         // Add paste action
         Action pasteAction = new DefaultEditorKit.PasteAction();
         pasteAction.putValue(Action.NAME, "Paste");
         pasteAction.putValue(Action.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(getPrefixKey() + "V"));
+                KeyStroke.getKeyStroke(getSystemCommandKey() + "V"));
         editMenu.add(pasteAction);
 
         // Get edit menu from table
@@ -598,7 +598,7 @@ public class MainMenuBar extends JMenuBar {
         String accelerator = menu.getAccelerator();
 
         if (accelerator != null) {
-            String keyStrokeString = getPrefixKey() + accelerator;
+            String keyStrokeString = getSystemCommandKey() + accelerator;
             action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(keyStrokeString));
         }
 
@@ -636,8 +636,8 @@ public class MainMenuBar extends JMenuBar {
      *
      * @return prefix key
      */
-    private String getPrefixKey() {
-        return (_isRunningUnderMacOSX) ? "meta " : "ctrl ";
+    public static String getSystemCommandKey() {
+        return (SystemUtils.IS_OS_MAC_OSX) ? "meta " : "ctrl ";
     }
 }
 /*___oOo___*/

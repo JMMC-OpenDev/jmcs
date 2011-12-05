@@ -14,6 +14,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -23,11 +26,14 @@ import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -43,7 +49,7 @@ import javax.swing.event.HyperlinkListener;
  * <b>ApplicationDataModel</b> class. It's a class which has got getters
  * in order to do that and which has been written to abstract the way
  * to access to these informations.
- * 
+ *
  * @author Brice COLUCCI, Sylvain LAFRASSE, Guillaume MELLA.
  */
 public class AboutBox extends JDialog implements HyperlinkListener {
@@ -160,6 +166,31 @@ public class AboutBox extends JDialog implements HyperlinkListener {
             // Show window
             setVisible(true);
         }
+    }
+
+    /**
+     * Handle window closing when using either Escape or ctrl-W keys.
+     */
+    protected JRootPane createRootPane() {
+
+        JRootPane rootPane = new JRootPane();
+
+        // Trap Escape key
+        KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        // Trap command-W key
+        KeyStroke metaWStroke = KeyStroke.getKeyStroke(MainMenuBar.getSystemCommandKey() + "W");
+
+        // Close window on either strike
+        ActionListener actionListener = new ActionListener() {
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                _logger.finer("Hiding about box on keyboard shortcut.");
+                setVisible(false);
+            }
+        };
+        rootPane.registerKeyboardAction(actionListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        rootPane.registerKeyboardAction(actionListener, metaWStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        return rootPane;
     }
 
     /**

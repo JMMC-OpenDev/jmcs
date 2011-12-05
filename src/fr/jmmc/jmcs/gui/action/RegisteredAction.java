@@ -23,7 +23,7 @@ public abstract class RegisteredAction extends MCSAction {
 
     /**
      * Constructor, that automatically register the action in RegisteredAction.
-     * Action name, icon, accelerator and description is first inited using
+     * Action name, icon, accelerator and description is first initiated using
      * fieldName to build a MCSAction.
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.
@@ -37,12 +37,12 @@ public abstract class RegisteredAction extends MCSAction {
 
     /**
      * Constructor, that automatically register the action in RegisteredAction.
-     * Action name, icon, accelerator and description is first inited using
+     * Action name, icon, accelerator and description is first initiated using
      * fieldName to build a MCSAction.
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
-     * @param deferedInitialization true indicates to perform defered initialization i.e. after application startup
+     * @param deferedInitialization true indicates to perform deferred initialization i.e. after application startup
      */
     public RegisteredAction(final String classPath, final String fieldName, final boolean deferedInitialization) {
         super(fieldName);
@@ -53,8 +53,8 @@ public abstract class RegisteredAction extends MCSAction {
     }
 
     /**
-     * Perform defered initialization i.e. executed after the application startup.
-     * This method must be overriden in sub classes
+     * Perform deferred initialization i.e. executed after the application startup.
+     * This method must be overridden in sub classes
      */
     protected void performDeferedInitialization() {
         _logger.entering("RegisteredAction", "performDeferedInitialization");
@@ -64,8 +64,8 @@ public abstract class RegisteredAction extends MCSAction {
     /**
      * Constructor, that automatically register the action in RegisteredAction,
      * and assign it a name.
-     * Action name, icon, accelerator and description is first inited following MCSAction.
-     * Then actionName set or overwritte action name.
+     * Action name, icon, accelerator and description is first initiated following MCSAction.
+     * Then actionName set or overwrite action name.
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
@@ -81,8 +81,8 @@ public abstract class RegisteredAction extends MCSAction {
     /**
      * Constructor, that automatically register the action in RegisteredAction,
      * and assign it a name and an accelerator.
-     * Action name, icon, accelerator and description is first inited following MCSAction.
-     * Then actionName and actionAccelerator set or overwritte action name and action accelerator.
+     * Action name, icon, accelerator and description is first initiated following MCSAction.
+     * Then actionName and actionAccelerator set or overwrite action name and action accelerator.
      *
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.

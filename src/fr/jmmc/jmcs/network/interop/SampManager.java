@@ -78,14 +78,14 @@ public final class SampManager {
         // If no one else is registered to the hub
         int nbOfConnectedClient = _connector.getClientListModel().getSize();
         if (nbOfConnectedClient < 3) { // 1 for the hub, 1 for us
-            _logger.info("No one else but us is registered to SAMP hub, letting appication quits.");
+            _logger.info("No one else but us is registered to SAMP hub, letting application quits.");
             // Let the hub die without prompting confirmation
             return true;
         }
 
         // If we did not launch the hub ourself
         if (!_hubResponsible) {
-            _logger.info("Application has not launched the SAMP hub internally, letting appication quits.");
+            _logger.info("Application has not launched the SAMP hub internally, letting application quits.");
             // Let the hub die without prompting confirmation
             return true;
         }

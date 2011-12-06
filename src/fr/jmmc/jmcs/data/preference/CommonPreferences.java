@@ -22,7 +22,7 @@ public final class CommonPreferences extends Preferences
     public static final String PREFERENCES_FILENAME = "fr.jmmc.jmcs.properties";
     /**  Name of the preference which stores the user email in the feedback report */
     public static final String FEEDBACK_REPORT_USER_EMAIL = "feedback_report.user_email";
-    /** Name of the preference which stores the flag to display or not the splashscreen */
+    /** Name of the preference which stores the flag to display or not the splash screen */
     public static final String SHOW_STARTUP_SPLASHSCREEN = "startup.splashscreen.show";
 
     /* Proxy settings */
@@ -69,6 +69,7 @@ public final class CommonPreferences extends Preferences
         setDefaultPreference(SHOW_STARTUP_SPLASHSCREEN, true);
         setDefaultPreference(HTTP_PROXY_HOST, "");
         setDefaultPreference(HTTP_PROXY_PORT, "");
+        setDefaultPreference(FEEDBACK_REPORT_USER_EMAIL, "");
     }
 
     /**

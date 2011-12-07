@@ -13,6 +13,7 @@
   <resources>
     <!-- Generated with 'xml sel -t -m "//package" -c "./preceding-sibling::comment()[1]" -e jar -a href -o "@SHARED@/" -v "./@jars" -b -b -n -n fr/jmmc/jmcs/resource/ApplicationData.xml'-->
 
+
     <!-- VO interoperability -->
     <jar href="@SHARED@/jsamp-1.3.jar"/>
     
@@ -34,6 +35,13 @@
     <jar href="@SHARED@/activation.jar"/>
     <jar href="@SHARED@/jsr173_1.0_api.jar"/>
     
+    <!--  CASTOR Xml binding (DEPRECATED but left until Aspro2/SearchCal/LITpro production releases are up to date) -->
+        <jar href="@SHARED@/castor.jar"/>
+        <!-- castor dependency -->
+        <jar href="@SHARED@/xercesImpl.jar"/>
+        <jar href="@SHARED@/xmlParserAPIs.jar"/>
+    <!--  End CASTOR Xml binding -->
+        
     <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
     <jar href="@SHARED@/commons-httpclient-3.1.jar "/>
     

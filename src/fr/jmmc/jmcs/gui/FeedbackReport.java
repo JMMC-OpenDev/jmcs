@@ -553,7 +553,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      * @return application log
      */
     private String getApplicationLog() {
-        final String logOutput = App.getLogOutput();
+        final String logOutput = App.getLogOutput().getContent();
 
         if (_logger.isLoggable(Level.FINE)) {
             _logger.fine("logOutput length = " + logOutput.length());

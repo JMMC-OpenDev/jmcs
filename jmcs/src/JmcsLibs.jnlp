@@ -60,7 +60,8 @@
          (DEPRECATED but left until Aspro2/SearchCal/LITpro production releases are up to date) -->
     <jar href="@SHARED@/commons-logging-1.1.1.jar"/>
     
-    <!-- Graphical logging utility (-loggui option) -->
+    <!-- Graphical logging utility (-loggui option) 
+         (DEPRECATED but left until Aspro2/SearchCal/LITpro production releases are up to date) -->
     <jar href="@SHARED@/loggui.jar"/>
     
     <!-- Parse command line arguments -->

@@ -29,7 +29,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 
-import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;
 
 import java.net.URL;
@@ -43,13 +42,13 @@ import org.apache.commons.lang.SystemUtils;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import fr.jmmc.jmcs.util.logging.LogbackGui;
 import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
+import fr.jmmc.jmcs.util.logging.LogOutput;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,10 +75,12 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
  */
 public abstract class App {
 
-    /** Logger - register on JUL root logger to collect all logs */
-    private static final ch.qos.logback.classic.Logger _rootLogger;
-    /** ByteArrayOutputStream which keeps logs report */
-    private static final ByteArrayOutputStream _byteArrayOutputStream;
+    /** jmmc logback configuration file as one resource file (in classpath) */
+    public final static String JMMC_LOGBACK_CONFIG_RESOURCE = "jmmc-logback.xml";
+    /** jmmc main logger */
+    public final static String JMMC_LOGGER = "fr.jmmc";
+    /** Jmmc Logger to be able to set its level in interpretArguments() */
+    private static final ch.qos.logback.classic.Logger JmmcLogger;
 
     /**
      * Static Logger initialization and Network settings
@@ -89,50 +90,26 @@ public abstract class App {
         final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         // Get our logback configuration file:
-        final URL logConf = FileUtils.getResource("jmmc-logback.xml");
+        // throws an IllegalStateException if the file is not found
+        final URL logConf = FileUtils.getResource(JMMC_LOGBACK_CONFIG_RESOURCE);
 
-        if (logConf != null) {
-            try {
-                final JoranConfigurator configurator = new JoranConfigurator();
-                // create one dummy context to let configurator execute correctly:
-                configurator.setContext(loggerContext);
+        try {
+            final JoranConfigurator configurator = new JoranConfigurator();
+            // create one dummy context to let configurator execute correctly:
+            configurator.setContext(loggerContext);
 
-                // Call context.reset() to clear any previous configuration, e.g. default 
-                // configuration. For multi-step configuration, omit calling context.reset().
-                loggerContext.reset();
+            // Call context.reset() to clear any previous configuration, e.g. default 
+            // configuration. For multi-step configuration, omit calling context.reset().
+            loggerContext.reset();
 
-                configurator.doConfigure(logConf.openStream());
+            configurator.doConfigure(logConf.openStream());
 
-            } catch (IOException ioe) {
-                throw new IllegalStateException("IO Exception occured", ioe);
-            } catch (JoranException je) {
-                // StatusPrinter will handle this
-                StatusPrinter.printInCaseOfErrorsOrWarnings((LoggerContext) LoggerFactory.getILoggerFactory());
-            }
+        } catch (IOException ioe) {
+            throw new IllegalStateException("IO Exception occured", ioe);
+        } catch (JoranException je) {
+            // StatusPrinter will handle this
+            StatusPrinter.printInCaseOfErrorsOrWarnings((LoggerContext) LoggerFactory.getILoggerFactory());
         }
-
-        // Get the root logger to collect all logs
-        _rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-
-        // ByteArrayOutputStream which keeps logs report (32K by default):
-        _byteArrayOutputStream = new ByteArrayOutputStream(32 * 1024);
-
-        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
-        encoder.setContext(loggerContext);
-        encoder.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
-        encoder.start();
-
-        // Logger's stream handler creation
-        final OutputStreamAppender<ILoggingEvent> streamAppender = new OutputStreamAppender<ILoggingEvent>();
-        streamAppender.setContext(loggerContext);
-        streamAppender.setEncoder(encoder);
-        streamAppender.setOutputStream(_byteArrayOutputStream);
-        streamAppender.start();
-
-        // We add the memory handler create to the logger
-        _rootLogger.addAppender(streamAppender);
-
-        _rootLogger.info("Memory handler created used by the feedback report. (current level is {})", _rootLogger.getEffectiveLevel());
 
         // Remote existing handlers from java.util.logging (JUL) root logger (useful in netbeans)
         final java.util.logging.Logger rootLogger = java.util.logging.LogManager.getLogManager().getLogger("");
@@ -141,8 +118,17 @@ public abstract class App {
             rootLogger.removeHandler(handlers[i]);
         }
 
-        // call only once during initialization time of your application
+        // call only once during initialization time of your application to configure JUL bridge
         SLF4JBridgeHandler.install();
+
+        // slf4j / logback initialization done
+
+        // Start the application log singleton:
+        ApplicationLogSingleton.getInstance();
+
+        // Get the jmmc logger to be able to set its level in interpretArguments()
+        JmmcLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("fr.jmmc");
+        JmmcLogger.info("Application log created and used by the feedback report. Current level is {}.", JmmcLogger.getEffectiveLevel());
 
         // Define default network settings:
         // note: settings must be set before using any URLConnection (loadApplicationData)
@@ -151,7 +137,6 @@ public abstract class App {
         // Try to define swing settings (laf, locale...) again if
         // next line was not present at the first line of the main method.
         SwingSettings.setup();
-
     }
     /** application data file i.e. "ApplicationData.xml" */
     public static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
@@ -507,17 +492,17 @@ public abstract class App {
                         _logger.info("Set logger level to '{}'.", arg);
 
                         if (arg.equals("0")) {
-                            _rootLogger.setLevel(Level.OFF);
+                            JmmcLogger.setLevel(Level.OFF);
                         } else if (arg.equals("1")) {
-                            _rootLogger.setLevel(Level.ERROR);
+                            JmmcLogger.setLevel(Level.ERROR);
                         } else if (arg.equals("2")) {
-                            _rootLogger.setLevel(Level.WARN);
+                            JmmcLogger.setLevel(Level.WARN);
                         } else if (arg.equals("3")) {
-                            _rootLogger.setLevel(Level.INFO);
+                            JmmcLogger.setLevel(Level.INFO);
                         } else if (arg.equals("4")) {
-                            _rootLogger.setLevel(Level.DEBUG);
+                            JmmcLogger.setLevel(Level.DEBUG);
                         } else if (arg.equals("5")) {
-                            _rootLogger.setLevel(Level.ALL);
+                            JmmcLogger.setLevel(Level.ALL);
                         } else {
                             showArgumentsHelp();
                         }
@@ -752,25 +737,40 @@ public abstract class App {
     }
 
     /**
-     * @return logs report into a unique string
+     * Return the complete application log as string (THREAD SAFE)
+     * @return complete application log as string
      */
-    public static String getLogOutput() {
-        // Needed in order to write all logs in the ouput stream buffer
-
-        // TODO: lock the current stream now ??
-/*        
-        if (_streamHandler != null) {
-        _streamHandler.flush();
-        }
-         */
-        return _byteArrayOutputStream.toString();
+    public static LogOutput getLogOutput() {
+        return ApplicationLogSingleton.getInstance().getLogOutput();
     }
 
     /**
      * Show third party logging utility.
      */
     public static void showLogGui() {
-        imx.loggui.LogMaster.startLogGui();
+        LogbackGui.showEditor(App.getFrame(), _applicationDataModel.getProgramName() + " Log GUI");
+    }
+
+    /**
+     * Creates the logGui action which open the LogbackGui window
+     * @return logGui action which open the LogbackGui window
+     */
+    public static Action logGuiAction() {
+        return new AbstractAction("Show Log") {
+
+            /** default serial UID for Serializable interface */
+            private static final long serialVersionUID = 1;
+
+            /**
+             * Handle the action event
+             * @param evt action event
+             */
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                // Show the LogbackGui:
+                showLogGui();
+            }
+        };
     }
 
     /** Show the splash screen */

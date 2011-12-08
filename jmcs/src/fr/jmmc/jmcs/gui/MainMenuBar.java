@@ -375,11 +375,16 @@ public class MainMenuBar extends JMenuBar {
         // Add helpview action
         helpMenu.add(App.showHelpAction());
 
+        helpMenu.add(new JSeparator());
+
         // Add feedback action (if supported)
         if (_applicationDataModel.getFeedbackReportFormURL() != null) {
-            helpMenu.add(new JSeparator());
             helpMenu.add(App.feedbackReportAction());
         }
+
+        // Add log Gui anyway:
+        helpMenu.add(App.logGuiAction());
+
         // Get help menu from table
         JMenu help = _menusTable.get("Help");
 

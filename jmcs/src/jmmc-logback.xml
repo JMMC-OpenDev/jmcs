@@ -28,10 +28,10 @@
   
     <!-- JMMC -->
     <logger name="fr.jmmc" level="INFO"/>
-
+<!--    
     <logger name="fr.jmmc.data" level="INFO"/>
     <logger name="fr.jmmc.gui" level="INFO"/>
-  
+  -->
   
     <!-- include application specific configuration -->
     <include resource="jmmc-app-logback.xml"/>

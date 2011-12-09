@@ -6,8 +6,8 @@ package fr.jmmc.jmcs.gui;
 import fr.jmmc.jmcs.App;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -21,7 +21,7 @@ import javax.swing.JTextArea;
 public final class MessagePane {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(MessagePane.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(MessagePane.class.getName());
     /** default title for error messages */
     private final static String TITLE_ERROR = "Error";
     /** default title for information messages */
@@ -86,12 +86,10 @@ public final class MessagePane {
      */
     public static void showErrorMessage(final String message, final String title, final Throwable th) {
 
-        if (_logger.isLoggable(Level.SEVERE)) {
-            if (th != null) {
-                _logger.log(Level.SEVERE, "An exception occured: " + message, th);
-            } else {
-                _logger.severe("A problem occured: " + message);
-            }
+        if (th != null) {
+            _logger.error("An exception occured: {}", message, th);
+        } else {
+            _logger.error("A problem occured: {}", message);
         }
 
         // try to get cause if possible
@@ -312,9 +310,7 @@ public final class MessagePane {
         if (owner == null) {
             owner = getApplicationFrame();
         }
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("dialog owner = " + owner);
-        }
+        _logger.debug("dialog owner = {}", owner);
         return owner;
     }
 

@@ -14,8 +14,8 @@ import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -34,7 +34,7 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 public final class Http {
 
     /** logger */
-    protected final static Logger logger = Logger.getLogger(Http.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(Http.class.getName());
     /** JMMC web to detect proxies */
     private final static String JMMC_WEB = "http://www.jmmc.fr";
     /** JMMC socks to detect proxies */
@@ -140,7 +140,7 @@ public final class Http {
             try {
                 JMMC_WEB_URI = new URI(JMMC_WEB);
             } catch (URISyntaxException use) {
-                logger.log(Level.SEVERE, "invalid URL", use);
+                logger.error("invalid URL", use);
             }
         }
         return JMMC_WEB_URI;
@@ -155,7 +155,7 @@ public final class Http {
             try {
                 JMMC_SOCKS_URI = new URI(JMMC_SOCKS);
             } catch (URISyntaxException use) {
-                logger.log(Level.SEVERE, "invalid URL", use);
+                logger.error("invalid URL", use);
             }
         }
         return JMMC_SOCKS_URI;
@@ -190,9 +190,8 @@ public final class Http {
             final List<Proxy> proxyList = proxySelector.select(uri);
             final Proxy proxy = proxyList.get(0);
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.log(Level.FINE, "using " + proxy + "in proxyList = " + proxyList);
-            }
+            logger.debug("using {} in proxyList = {}", proxy, proxyList);
+
             if (proxy.type() != Proxy.Type.DIRECT) {
                 final String host;
                 final InetSocketAddress epoint = (InetSocketAddress) proxy.address();
@@ -231,13 +230,10 @@ public final class Http {
              * @param in input stream to process
              * @throws IOException if any IO error occurs
              */
+            @Override
             public void process(final InputStream in) throws IOException {
-
                 FileUtils.saveStream(in, outputFile);
-
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Saved file : " + outputFile + " - " + outputFile.length() + " bytes.");
-                }
+                logger.debug("File '{}' saved ({} bytes).", outputFile, outputFile.length());
             }
         });
     }
@@ -268,7 +264,7 @@ public final class Http {
      * Other requests will use the common multithreaded httpclient.
      * 
      * @param uri URI to download
-     * @param outputFile file to save into
+     * @param processor stream processor to use to consume http response
      * @param useDedicatedClient use one dedicated httpclient if true or the common multithreaded one else
      * @return true if successful
      * @throws IOException if any I/O operation fails (HTTP or file) 
@@ -280,14 +276,12 @@ public final class Http {
         final GetMethod method = new GetMethod(uri.toString());
 
         try {
-            logger.fine("Http client and get method have been created");
+            logger.debug("Http client and get method have been created");
 
             // Send HTTP GET query:
             int resultCode = client.executeMethod(method);
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("The query has been sent. Status code: " + resultCode);
-            }
+            logger.debug("The query has been sent. Status code: {}", resultCode);
 
             if (resultCode == 200) {
                 // Get response
@@ -324,29 +318,26 @@ public final class Http {
     private static final class StringStreamProcessor implements StreamProcessor {
 
         /** result as String */
-        protected String result = null;
+        private String result = null;
 
         /**
          * Process the given input stream and CLOSE it anyway (try/finally)
          * @param in input stream to process
          * @throws IOException if any IO error occurs
          */
+        @Override
         public void process(final InputStream in) throws IOException {
 
             // TODO check if we can get response size from http headers
             result = FileUtils.readStream(in);
-
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("String stored in memory : " + result.length() + " chars.");
-            }
-
+            logger.debug("String stored in memory ({} chars).", result.length());
         }
 
         /**
          * Return the result as String
          * @return result as String or null
          */
-        protected String getResult() {
+        String getResult() {
             return result;
         }
     }

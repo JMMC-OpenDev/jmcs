@@ -60,9 +60,7 @@ public final class StreamRedirector extends GenericRunnable {
      */
     @Override
     public void run() {
-        if (log.isDebugEnabled()) {
-            log.debug("StreamRedirector - thread.run : enter");
-        }
+        log.debug("StreamRedirector - thread.run : enter");
 
         if (this.is == null) {
             log.error("StreamRedirector.run : undefined input stream !");
@@ -88,13 +86,9 @@ public final class StreamRedirector extends GenericRunnable {
                 }
             } catch (IOException ioe) {
                 // occurs when process is killed (buffer.readLine() says 'Stream closed') :
-                if (log.isDebugEnabled()) {
-                    log.debug("StreamRedirector.run : io failure : ", ioe);
-                }
+                log.debug("StreamRedirector.run : io failure : ", ioe);
             }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("StreamRedirector - thread.run : exit");
-        }
+        log.debug("StreamRedirector - thread.run : exit");
     }
 }

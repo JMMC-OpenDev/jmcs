@@ -7,8 +7,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides helper functions related to object introspection.
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public final class Introspection {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(Introspection.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(Introspection.class.getName());
     /** empty class array */
     private final static Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[]{};
     /** empty object array */
@@ -41,7 +41,7 @@ public final class Introspection {
         try {
             searchedClass = Class.forName(classPath);
         } catch (ClassNotFoundException cnfe) {
-            _logger.log(Level.WARNING, "Cannot find class '" + classPath + "'", cnfe);
+            _logger.warn( "Cannot find class '" + classPath + "'", cnfe);
         }
 
         return searchedClass;
@@ -56,8 +56,8 @@ public final class Introspection {
      */
     public static boolean hasClass(final String classPath) {
         if (getClass(classPath) != null) {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Found class '" + classPath + "'.");
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Found class '" + classPath + "'.");
             }
 
             return true;
@@ -127,9 +127,9 @@ public final class Introspection {
             try {
                 return clazz.newInstance();
             } catch (InstantiationException ie) {
-                _logger.log(Level.WARNING, "Cannot get instance of class '" + classPath + "'", ie);
+                _logger.warn( "Cannot get instance of class '" + classPath + "'", ie);
             } catch (IllegalAccessException iae) {
-                _logger.log(Level.WARNING, "Cannot get instance of class '" + classPath + "'", iae);
+                _logger.warn( "Cannot get instance of class '" + classPath + "'", iae);
             }
         }
         return null;
@@ -196,7 +196,7 @@ public final class Introspection {
             try {
                 return clazz.getMethod(methodName, parameters);
             } catch (NoSuchMethodException nsme) {
-                _logger.log(Level.WARNING, "Cannot find method '" + methodName + " of class '" + clazz + "'", nsme);
+                _logger.warn( "Cannot find method '" + methodName + " of class '" + clazz + "'", nsme);
             }
         }
 
@@ -228,8 +228,8 @@ public final class Introspection {
     public static boolean hasMethod(final String classPath, final String methodName,
             final Class<?>[] parameters) {
         if (getMethod(classPath, methodName, parameters) != null) {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Found method '" + methodName + "' in class '"
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Found method '" + methodName + "' in class '"
                         + classPath + "'.");
             }
 
@@ -323,11 +323,11 @@ public final class Introspection {
             try {
                 return method.invoke(instance, arguments);
             } catch (IllegalAccessException iae) {
-                _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", iae);
+                _logger.warn( "Cannot get result of method '" + method.getName() + "'", iae);
             } catch (IllegalArgumentException iae) {
-                _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", iae);
+                _logger.warn( "Cannot get result of method '" + method.getName() + "'", iae);
             } catch (InvocationTargetException ite) {
-                _logger.log(Level.WARNING, "Cannot get result of method '" + method.getName() + "'", ite);
+                _logger.warn( "Cannot get result of method '" + method.getName() + "'", ite);
             }
         }
         return null;
@@ -409,11 +409,11 @@ public final class Introspection {
                 ok = true;
 
             } catch (IllegalAccessException iae) {
-                _logger.log(Level.WARNING, "Cannot invoke method '" + method.getName() + "'", iae);
+                _logger.warn( "Cannot invoke method '" + method.getName() + "'", iae);
             } catch (IllegalArgumentException iae) {
-                _logger.log(Level.WARNING, "Cannot invoke method '" + method.getName() + "'", iae);
+                _logger.warn( "Cannot invoke method '" + method.getName() + "'", iae);
             } catch (InvocationTargetException ite) {
-                _logger.log(Level.WARNING, "Cannot invoke method '" + method.getName() + "'", ite);
+                _logger.warn( "Cannot invoke method '" + method.getName() + "'", ite);
             }
         }
         return ok;
@@ -446,7 +446,7 @@ public final class Introspection {
             try {
                 return clazz.getField(fieldName);
             } catch (NoSuchFieldException nsfe) {
-                _logger.log(Level.WARNING, "Cannot get field '" + fieldName + "'", nsfe);
+                _logger.warn( "Cannot get field '" + fieldName + "'", nsfe);
             }
         }
         return null;
@@ -462,8 +462,8 @@ public final class Introspection {
      */
     public static boolean hasField(final String classPath, final String fieldName) {
         if (getField(classPath, fieldName) != null) {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Found field '" + fieldName + "' in class '"
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Found field '" + fieldName + "' in class '"
                         + classPath + "'.");
             }
 
@@ -489,9 +489,9 @@ public final class Introspection {
         try {
             value = field.get(getInstance(classPath));
         } catch (IllegalArgumentException iae) {
-            _logger.log(Level.WARNING, "Cannot get value of field '" + fieldName + "'", iae);
+            _logger.warn( "Cannot get value of field '" + fieldName + "'", iae);
         } catch (IllegalAccessException iae) {
-            _logger.log(Level.WARNING, "Cannot get value of field '" + fieldName + "'", iae);
+            _logger.warn( "Cannot get value of field '" + fieldName + "'", iae);
         }
 
         return value;

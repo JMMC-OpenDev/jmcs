@@ -2,9 +2,8 @@ package org.ivoa.util;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Commons-logging & Log4J Utility class.<br/>
@@ -19,8 +18,6 @@ public final class LogUtil {
 
     /** internal diagnostic FLAG : use System out */
     public static final boolean LOGGING_DIAGNOSTICS = false;
-    /** internal apache commons Logging diagnostic FLAG : use System out */
-    public static final boolean FORCE_APACHE_COMMONS_LOGGING_DIAGNOSTICS = false;
     /** Main logger = org.ivoa */
     public static final String LOGGER_MAIN = "org.ivoa";
     /** Base framework logger = org.ivoa.base */
@@ -31,30 +28,25 @@ public final class LogUtil {
     private static volatile LogUtil instance = null;
     /** shutdown flag to avoid singleton to be defined (java 5 memory model) */
     private static volatile boolean isShutdown = false;
-
-    static {
-        /* static Initializer to call onInit method */
-        onInit();
-    }
     // ~ Members
     // ----------------------------------------------------------------------------------------------------------
     /**
      * Main logger
      * @see #LOGGER_MAIN
      */
-    private Log log;
+    private Logger log;
     /**
      * Development logger
      * @see #LOGGER_BASE
      */
-    private Log logBase;
+    private Logger logBase;
     /**
      * Development logger
      * @see #LOGGER_DEV
      */
-    private Log logDev;
+    private Logger logDev;
     /** all loggers */
-    private final Map<String, Log> logs = new HashMap<String, Log>();
+    private final Map<String, Logger> logs = new HashMap<String, Logger>();
 
     // ~ Constructors
     // -----------------------------------------------------------------------------------------------------
@@ -94,30 +86,8 @@ public final class LogUtil {
     }
 
     /**
-     * PUBLIC: OnInit method : define system properties for org.apache.commons.logging
-     */
-    public static final void onInit() {
-        if (FORCE_APACHE_COMMONS_LOGGING_DIAGNOSTICS) {
-            /**
-             * The name (<code>org.apache.commons.logging.diagnostics.dest</code>) of the property used to
-             * enable internal commons-logging diagnostic output, in order to get information on what
-             * logging implementations are being discovered, what classloaders they are loaded through,
-             * etc.
-             * <p>
-             * If a system property of this name is set then the value is assumed to be the name of a
-             * file. The special strings STDOUT or STDERR (case-sensitive) indicate output to System out
-             * and System err respectively.
-             * <p>
-             * Diagnostic logging should be used only to debug problematic configurations and should not
-             * be set in normal production use.
-             */
-            System.setProperty("org.apache.commons.logging.diagnostics.dest", "STDOUT");
-        }
-    }
-
-    /**
-     * PUBLIC: onExit method : release all ClassLoader references due to apache commons logging
-     * LogFactory NOTE : <b>This method must be called in the context of a web application via
+     * PUBLIC: onExit method : TODO release all ClassLoader references due to SLF4J
+     * NOTE : <b>This method must be called in the context of a web application via
      * ServletContextListener.contextDestroyed(ServletContextEvent)</b>
      * 
      * @see org.apache.commons.logging.LogFactory#release(ClassLoader)
@@ -125,8 +95,7 @@ public final class LogUtil {
     public static final void onExit() {
         isShutdown = true;
         if (instance != null) {
-            // Classloader unload problem with commons-logging :
-            LogFactory.release(Thread.currentThread().getContextClassLoader());
+            // TODO: Classloader unload problem with SLF4J ??
             // force GC :
             instance.log = null;
             instance.logBase = null;
@@ -157,10 +126,10 @@ public final class LogUtil {
      * Return the Main logger :
      * @see #LOGGER_MAIN
      * 
-     * @return Log instance or null if shutdown flag is set
+     * @return Logger instance or null if shutdown flag is set
      */
-    public static Log getLogger() {
-        Log l = null;
+    public static Logger getLogger() {
+        Logger l = null;
         if (isRunning()) {
             l = getInstance().getLog();
         }
@@ -171,10 +140,10 @@ public final class LogUtil {
      * Return the Base logger :
      * @see #LOGGER_BASE
      *
-     * @return Log instance or null if shutdown flag is set
+     * @return Logger instance or null if shutdown flag is set
      */
-    public static Log getLoggerBase() {
-        Log l = null;
+    public static Logger getLoggerBase() {
+        Logger l = null;
         if (isRunning()) {
             l = getInstance().getLogBase();
         }
@@ -185,10 +154,10 @@ public final class LogUtil {
      * Return the Development logger :
      * @see #LOGGER_DEV
      * 
-     * @return Log instance or null if shutdown flag is set
+     * @return Logger instance or null if shutdown flag is set
      */
-    public static Log getLoggerDev() {
-        Log l = null;
+    public static Logger getLoggerDev() {
+        Logger l = null;
         if (isRunning()) {
             l = getInstance().getLogDev();
         }
@@ -204,10 +173,10 @@ public final class LogUtil {
      * @see #getLoggerBase()
      * @see #getLoggerDev()
      * @param key logger name defined in the log4j configuration file
-     * @return Log instance or null if shutdown flag is set
+     * @return Logger instance or null if shutdown flag is set
      */
-    public static Log getLogger(final String key) {
-        Log l = null;
+    public static Logger getLogger(final String key) {
+        Logger l = null;
         if (isRunning()) {
             l = getInstance().getLog(key);
         }
@@ -219,10 +188,10 @@ public final class LogUtil {
      * Warning : it creates a category per class.
      * 
      * @param clazz class instance
-     * @return Log instance dedicated to the given class or null if shutdown flag is set
+     * @return Logger instance dedicated to the given class or null if shutdown flag is set
      */
-    public static Log getLogger(final Class<?> clazz) {
-        Log l = null;
+    public static Logger getLogger(final Class<?> clazz) {
+        Logger l = null;
         if (isRunning()) {
             l = getInstance().getLog(clazz.getName());
         }
@@ -252,11 +221,11 @@ public final class LogUtil {
      * @return Log
      * @throws IllegalStateException if the LogFactory returns no logger for the given key
      */
-    private Log getLog(final String key) {
-        Log l = this.logs.get(key);
+    private Logger getLog(final String key) {
+        Logger l = this.logs.get(key);
 
         if (l == null) {
-            l = LogFactory.getLog(key);
+            l = LoggerFactory.getLogger(key);
 
             if (l != null) {
                 this.addLog(key, l);
@@ -269,12 +238,12 @@ public final class LogUtil {
     }
 
     /**
-     * Add a Log into the logs map
+     * Add a Logger into the logs map
      * 
      * @param key alias
-     * @param logger Log to add
+     * @param logger Logger to add
      */
-    private void addLog(final String key, final Log logger) {
+    private void addLog(final String key, final Logger logger) {
         this.logs.put(key, logger);
     }
 
@@ -283,7 +252,7 @@ public final class LogUtil {
      * 
      * @return Main Log
      */
-    private final Log getLog() {
+    private final Logger getLog() {
         return this.log;
     }
 
@@ -292,7 +261,7 @@ public final class LogUtil {
      *
      * @return Base Log
      */
-    private final Log getLogBase() {
+    private final Logger getLogBase() {
         return this.logBase;
     }
 
@@ -301,7 +270,7 @@ public final class LogUtil {
      *
      * @return Development Log
      */
-    private final Log getLogDev() {
+    private final Logger getLogDev() {
         return this.logDev;
     }
 }

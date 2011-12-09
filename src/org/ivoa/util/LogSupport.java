@@ -1,6 +1,6 @@
 package org.ivoa.util;
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * Log Support class to manage LogUtil references and classLoader issues
@@ -17,16 +17,16 @@ public class LogSupport {
      * Main Logger for the application
      * @see org.ivoa.bean.LogSupport
      */
-    protected static Log log = LogUtil.getLogger();
+    protected static Logger log = LogUtil.getLogger();
     /** 
      * Logger for the base framework
      * @see org.ivoa.bean.LogSupport
      */
-    protected static Log logB = LogUtil.getLoggerBase();
+    protected static Logger logB = LogUtil.getLoggerBase();
     /** 
      * Logger for development purposes
      * @see org.ivoa.bean.LogSupport
      */
-    protected static Log logD = LogUtil.getLoggerDev();
+    protected static Logger logD = LogUtil.getLoggerDev();
 //~ End of file --------------------------------------------------------------------------------------------------------
 }

@@ -3,21 +3,14 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.jaxb;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.concurrent.ConcurrentHashMap;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.sax.SAXSource;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLFilterImpl;
 
 /**
  * JAXBFactory is an utility class to configure JAXB context & properties
@@ -28,7 +21,7 @@ public final class JAXBFactory {
     //~ Constants --------------------------------------------------------------------------------------------------------
 
     /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JAXBFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(JAXBFactory.class.getName());
     /**
      * JAXB 2 Context Factory (System property) "javax.xml.bind.JAXBContext" instead of "javax.xml.bind.context.factory"
      * bug reported : http://java.net/jira/browse/JAXB-816
@@ -87,11 +80,11 @@ public final class JAXBFactory {
      *
      * @throws XmlBindException if a JAXBException was caught
      */
-    protected void initialize() throws XmlBindException {
+    private void initialize() throws XmlBindException {
         try {
             this.jc = getContext(jaxbPath);
         } catch (XmlBindException xbe) {
-            logger.log(Level.SEVERE, "JAXBFactory.initialize : JAXB failure : ", xbe);
+            logger.error("JAXBFactory.initialize : JAXB failure : ", xbe);
             throw xbe;
         }
     }
@@ -109,9 +102,7 @@ public final class JAXBFactory {
         // Define the system property to define which JAXB implementation to use :
         System.setProperty(JAXB_CONTEXT_FACTORY, JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
 
-        if (logger.isLoggable(Level.INFO)) {
-            logger.info("JAXB implementation = " + System.getProperty(JAXB_CONTEXT_FACTORY));
-        }
+        logger.info("JAXB implementation: {}", System.getProperty(JAXB_CONTEXT_FACTORY));
 
         try {
             // create a JAXBContext capable of handling classes generated into

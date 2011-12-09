@@ -39,8 +39,6 @@
     <!-- org.ivoa Local job runner -->
     <logger name="org.ivoa" level="INFO"/>
   
-  
-  
 
     <!-- JSamp -->
     <logger name="org.astrogrid.samp" level="WARN"/>
@@ -71,10 +69,8 @@
 
 
     <!-- Root Logger -->
-    <!--
-    <root level="DEBUG">
-    -->
     <!-- Note: level must be INFO in production to avoid performance issues with JUL -->
+    <!-- <root level="DEBUG"> -->
     <root level="INFO">
         <appender-ref ref="APPLOG" />
         <appender-ref ref="STDOUT" />

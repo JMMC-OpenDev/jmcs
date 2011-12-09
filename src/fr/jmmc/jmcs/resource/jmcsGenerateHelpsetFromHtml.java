@@ -12,7 +12,8 @@ import net.sourceforge.jhelpdev.settings.FileName;
 
 import java.io.File;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -28,7 +29,7 @@ import java.util.logging.Logger;
 public class jmcsGenerateHelpsetFromHtml
 {
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(jmcsGenerateHelpsetFromHtml.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(jmcsGenerateHelpsetFromHtml.class.getName());
 
     /**
      * Calls jhelpdev software on a HTML folder
@@ -40,7 +41,7 @@ public class jmcsGenerateHelpsetFromHtml
         // Check if there is only one argument (the jhelpdev project main file)
         if (args.length != 1)
         {
-            _logger.severe("No jhelpdev project main file specified ...");
+            _logger.error("No jhelpdev project main file specified ...");
             System.exit(1);
         }
 
@@ -51,14 +52,12 @@ public class jmcsGenerateHelpsetFromHtml
         // Does it exists?
         if (! documentation.exists())
         {
-            _logger.severe(
-                "The jhelpdev project main file specified doesn't exists ...");
+            _logger.error("The jhelpdev project main file specified doesn't exists ...");
             System.exit(1);
         } // Is it a file?
         else if (! documentation.isFile())
         {
-            _logger.severe(
-                "The jhelpdev project main file specified is not a file ...");
+            _logger.error("The jhelpdev project main file specified is not a file ...");
             System.exit(1);
         }
 

@@ -4,7 +4,8 @@
 package fr.jmmc.jmcs.gui;
 
 import java.util.Enumeration;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -24,7 +25,7 @@ public abstract class GenericJTree<E> extends JTree {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Class logger */
-    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GenericJTree.class.getName());
+    protected static final Logger logger = LoggerFactory.getLogger(GenericJTree.class.getName());
     /* members */
     /** class corresponding to <E> generic type */
     private final Class<E> classType;
@@ -287,9 +288,7 @@ public abstract class GenericJTree<E> extends JTree {
                 }
 
             } else {
-                if (logger.isLoggable(Level.SEVERE)) {
-                    logger.severe("unsupported class type = " + value.getClass());
-                }
+                logger.error("unsupported class type = {}", value.getClass());
 
                 sValue = value.toString();
             }
@@ -327,7 +326,7 @@ public abstract class GenericJTree<E> extends JTree {
      */
     protected final String toString(final Object userObject) {
         if (!(userObject instanceof String)) {
-            logger.warning("Unsupported class type = " + userObject.getClass());
+            logger.warn("Unsupported class type = {}", userObject.getClass());
         }
         // String representation :
         return userObject.toString();

@@ -27,8 +27,8 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -70,7 +70,7 @@ public class MainMenuBar extends JMenuBar {
      */
     public final static String SYSTEM_PROPERTY_LAF_MENU = "jmcs.laf.menu";
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(MainMenuBar.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(MainMenuBar.class.getName());
     /** Store whether we are running under Mac OS X or not */
     private final boolean _isRunningUnderMacOSX = SystemUtils.IS_OS_MAC_OSX;
     /** Table where are stocked the menus */
@@ -110,8 +110,8 @@ public class MainMenuBar extends JMenuBar {
                         // Get menu label
                         String currentMenuLabel = menu.getLabel();
 
-                        if (_logger.isLoggable(Level.FINE)) {
-                            _logger.fine("Make '" + currentMenuLabel + "' menu.");
+                        if (_logger.isDebugEnabled()) {
+                            _logger.debug("Make '" + currentMenuLabel + "' menu.");
                         }
 
                         // Keep it if it's an other menu
@@ -122,8 +122,8 @@ public class MainMenuBar extends JMenuBar {
 
                             otherMenus.add(currentMenuLabel);
 
-                            if (_logger.isLoggable(Level.FINE)) {
-                                _logger.fine("Add '" + currentMenuLabel + "' to other menus vector.");
+                            if (_logger.isDebugEnabled()) {
+                                _logger.debug("Add '" + currentMenuLabel + "' to other menus vector.");
                             }
                         }
 
@@ -133,8 +133,8 @@ public class MainMenuBar extends JMenuBar {
                         // Put it in the menu table
                         _menusTable.put(currentMenuLabel, completeMenu);
 
-                        if (_logger.isLoggable(Level.FINE)) {
-                            _logger.fine("Put '" + completeMenu.getName() + "' into the menus table.");
+                        if (_logger.isDebugEnabled()) {
+                            _logger.debug("Put '" + completeMenu.getName() + "' into the menus table.");
                         }
                     }
                 }
@@ -149,8 +149,8 @@ public class MainMenuBar extends JMenuBar {
         for (String menuLabel : otherMenus) {
             add(_menusTable.get(menuLabel));
 
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Add '" + menuLabel + "' menu into the menubar.");
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Add '" + menuLabel + "' menu into the menubar.");
             }
         }
 
@@ -201,7 +201,7 @@ public class MainMenuBar extends JMenuBar {
         // Add menu to menubar if there is a menuitem at least
         if (haveMenu) {
             add(fileMenu);
-            _logger.fine("Add 'File' menu into the menubar.");
+            _logger.debug("Add 'File' menu into the menubar.");
         }
     }
 
@@ -259,7 +259,7 @@ public class MainMenuBar extends JMenuBar {
 
         // Add menu to menubar
         add(editMenu);
-        _logger.fine("Add 'Edit' menu into the menubar.");
+        _logger.debug("Add 'Edit' menu into the menubar.");
     }
 
     /** Create the 'Interop' menu. */
@@ -313,7 +313,7 @@ public class MainMenuBar extends JMenuBar {
 
         // Keep this menu invisible until (at least) one capability is registered
         SampManager.hookMenu(interopMenu);
-        _logger.fine("Add 'Interop' into the menubar.");
+        _logger.debug("Add 'Interop' into the menubar.");
     }
 
     /** Create the 'Look & Feel' menu. */
@@ -333,7 +333,7 @@ public class MainMenuBar extends JMenuBar {
 
                 if (!className.equals(currentClassName)) {
                     try {
-                        if (_logger.isLoggable(Level.INFO)) {
+                        if (_logger.isInfoEnabled()) {
                             _logger.info("use Look and Feel : " + className);
                         }
 
@@ -439,7 +439,7 @@ public class MainMenuBar extends JMenuBar {
 
         // Add menu to menubar
         add(helpMenu);
-        _logger.fine("Add 'Help' into the menubar.");
+        _logger.debug("Add 'Help' into the menubar.");
     }
 
     /**
@@ -462,9 +462,8 @@ public class MainMenuBar extends JMenuBar {
         if (parent != null) {
             parent.add(component);
 
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("'" + component.getName() + "' linked to '"
-                        + parent.getName() + "'.");
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("'" + component.getName() + "' linked to '" + parent.getName() + "'.");
             }
         }
 
@@ -515,7 +514,7 @@ public class MainMenuBar extends JMenuBar {
 
         // Is it a separator?
         if (isSeparator) {
-            _logger.fine("Component is a separator.");
+            _logger.debug("Component is a separator.");
 
             return new JSeparator();
         }
@@ -537,45 +536,45 @@ public class MainMenuBar extends JMenuBar {
 
         // Is it a checkbox ?
         if (isCheckbox) {
-            _logger.fine("Component is a JCheckBoxMenuItem.");
+            _logger.debug("Component is a JCheckBoxMenuItem.");
             item = new JCheckBoxMenuItem(action);
 
             if (action instanceof RegisteredPreferencedBooleanAction) {
-                _logger.fine("Component is bound to a RegisteredPreferencedBooleanAction.");
+                _logger.debug("Component is bound to a RegisteredPreferencedBooleanAction.");
 
                 ((RegisteredPreferencedBooleanAction) action).addBoundButton((JCheckBoxMenuItem) item);
             }
 
             if (isMenu) {
-                _logger.warning("The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
+                _logger.warn("The current menuitem is a checkbox AND a sub-menu, which is impossible !!!");
 
                 return null;
             }
         } else if (buttonGroup != null) // Is it a radio-button ?
         {
-            _logger.fine("Component is a JRadioButtonMenuItem.");
+            _logger.debug("Component is a JRadioButtonMenuItem.");
             item = new JRadioButtonMenuItem(action);
 
             // Put the radiobutton menu item in a the ButtonGroup to only have a single one selected at any time.
             buttonGroup.add((JRadioButtonMenuItem) item);
 
             if (action instanceof RegisteredPreferencedBooleanAction) {
-                _logger.fine("Component is bound to a RegisteredPreferencedBooleanAction.");
+                _logger.debug("Component is bound to a RegisteredPreferencedBooleanAction.");
                 ((RegisteredPreferencedBooleanAction) action).addBoundButton((JRadioButtonMenuItem) item);
             }
 
             if (isMenu) {
-                _logger.warning("The current menuitem is a radiobutton AND a sub-menu, which is impossible !!!");
+                _logger.warn("The current menuitem is a radiobutton AND a sub-menu, which is impossible !!!");
 
                 return null;
             }
         } else if (isMenu) // is it a menu containig other menu item ?
         {
-            _logger.fine("Component is a JMenu.");
+            _logger.debug("Component is a JMenu.");
             item = new JMenu(action);
         } else // It is a menu item.
         {
-            _logger.fine("Component is a JMenuItem.");
+            _logger.debug("Component is a JMenuItem.");
             item = new JMenuItem(action);
         }
 
@@ -625,14 +624,14 @@ public class MainMenuBar extends JMenuBar {
             if (iconURL != null) {
                 action.putValue(Action.SMALL_ICON, new ImageIcon(Urls.fixJarURL(iconURL)));
             } else {
-                if (_logger.isLoggable(Level.WARNING)) {
-                    _logger.warning("Can't find iconUrl : " + icon);
+                if (_logger.isWarnEnabled()) {
+                    _logger.warn("Can't find iconUrl : " + icon);
                 }
             }
         }
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Attributes set on '" + menu.getLabel() + "'.");
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Attributes set on '" + menu.getLabel() + "'.");
         }
     }
 

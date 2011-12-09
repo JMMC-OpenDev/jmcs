@@ -5,6 +5,8 @@ package fr.jmmc.jmcs.gui.task;
 
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import java.util.concurrent.ExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class extends SwingWorker backport for Java 5 to :
@@ -20,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingWorker<T, Void> {
 
     /** Class logger */
-    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TaskSwingWorker.class.getName());
+    protected static final Logger logger = LoggerFactory.getLogger(TaskSwingWorker.class.getName());
     /** flag to log debugging information */
     protected final static boolean DEBUG_FLAG = false;
 

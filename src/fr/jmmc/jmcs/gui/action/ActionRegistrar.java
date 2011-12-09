@@ -104,9 +104,7 @@ public class ActionRegistrar {
             _logger.error("Cannot find '{}' action :", internalActionKey, new Throwable());
             _logger.error("Current registered actions are: {}", dumpRegisteredActions());
         } else {
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("Retrieved '{}' action succesfully.", internalActionKey);
-            }
+            _logger.debug("Retrieved '{}' action succesfully.", internalActionKey);
         }
 
         return retrievedAction;
@@ -196,9 +194,7 @@ public class ActionRegistrar {
         final String internalActionKey = classPath + ":" + fieldName;
 
         if (getAction(internalActionKey) instanceof RegisteredAction) {
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("Action '{}' will be initialized later.", internalActionKey);
-            }
+            _logger.debug("Action '{}' will be initialized later.", internalActionKey);
 
             _deferedInitActions.add(internalActionKey);
         }

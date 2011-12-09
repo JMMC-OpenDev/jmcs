@@ -953,9 +953,7 @@ public abstract class App {
             _logger.warn("Cannot find resource from '{}' file.", filePath);
             return null;
         }
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("fileURL = '{}'.", fileURL);
-        }
+        _logger.debug("fileURL = '{}'.", fileURL);
 
         return Urls.fixJarURL(fileURL);
     }

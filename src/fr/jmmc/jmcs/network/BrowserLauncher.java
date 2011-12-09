@@ -5,8 +5,8 @@ package fr.jmmc.jmcs.network;
 
 import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
 import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides a function to open a web page
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class BrowserLauncher {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(BrowserLauncher.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(BrowserLauncher.class.getName());
     /** launcher instance */
     private static edu.stanford.ejalbert.BrowserLauncher _launcher = null;
 
@@ -33,9 +33,9 @@ public class BrowserLauncher {
                 _launcher = new edu.stanford.ejalbert.BrowserLauncher();
 
             } catch (UnsupportedOperatingSystemException uose) {
-                _logger.log(Level.WARNING, "Cannot initialize browser launcher : ", uose);
+                _logger.warn("Cannot initialize browser launcher : ", uose);
             } catch (BrowserLaunchingInitializingException bie) {
-                _logger.log(Level.WARNING, "Cannot initialize browser launcher : ", bie);
+                _logger.warn("Cannot initialize browser launcher : ", bie);
             }
         }
         return _launcher;
@@ -49,13 +49,11 @@ public class BrowserLauncher {
     public static void openURL(String url) {
         final edu.stanford.ejalbert.BrowserLauncher launcher = getLauncher();
         if (launcher == null) {
-            _logger.log(Level.WARNING, "Cannot open '" + url + "' in web browser");
+            _logger.warn("Cannot open '{}' in web browser", url);
         } else {
             launcher.openURLinBrowser(url);
 
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("URL '" + url + "' opened in web browser");
-            }
+            _logger.debug("URL '{}' opened in web browser", url);
         }
     }
 

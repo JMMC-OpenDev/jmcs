@@ -10,7 +10,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Facility static class to properly center a window
@@ -21,11 +22,11 @@ import java.util.logging.Logger;
 public class WindowCenterer {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(WindowCenterer.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(WindowCenterer.class.getName());
     /** Screen width */
-    public static int _screenWidth = 0;
+    private static int _screenWidth = 0;
     /** Screen height */
-    public static int _screenHeight = 0;
+    private static int _screenHeight = 0;
 
     /**
      * Get screen properties
@@ -61,10 +62,10 @@ public class WindowCenterer {
 
             frameToCenter.setLocation(point);
 
-            _logger.fine("The window has been centered");
+            _logger.debug("The window has been centered");
 
         } catch (NullPointerException npe) {
-            _logger.warning("Could not center window");
+            _logger.warn("Could not center window");
         }
     }
 

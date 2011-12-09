@@ -71,7 +71,7 @@ public class CleanManifest {
                     }
                 }
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, "io exception: ", ex);
             }            
         }
     }

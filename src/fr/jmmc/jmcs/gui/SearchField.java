@@ -16,7 +16,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -44,7 +45,7 @@ public class SearchField extends JTextField {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    protected static final Logger _logger = Logger.getLogger(SearchField.class.getName());
+    protected static final Logger _logger = LoggerFactory.getLogger(SearchField.class.getName());
     /** The border that draws the magnifying glass and the cancel cross */
     private static final Border CANCEL_BORDER = new CancelBorder();
     /** Store wether notifications should be sent every time a key is pressed */

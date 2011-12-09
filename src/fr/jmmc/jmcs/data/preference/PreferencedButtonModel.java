@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.DefaultButtonModel;
 
@@ -31,7 +32,7 @@ public final class PreferencedButtonModel extends DefaultButtonModel
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Class logger */
-    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(PreferencedButtonModel.class.getName());
+    private final static Logger _logger = LoggerFactory.getLogger(PreferencedButtonModel.class.getName());
     /** Store PreferencedButtonModel instances for a given preference name */
     private static Map<String, PreferencedButtonModel> _instanceMap = Collections.synchronizedMap(new HashMap<String, PreferencedButtonModel>(8));
     /* members */
@@ -98,17 +99,15 @@ public final class PreferencedButtonModel extends DefaultButtonModel
         // update the property value
         if (evt.getActionCommand() != null) {
             if (evt.getActionCommand().equals("internalUpdate")) {
-                _logger.fine("This event is due to a preference update and does nothing");
+                _logger.trace("This event is due to a preference update and does nothing");
 
                 return;
             }
         }
 
-        _logger.fine("This event is due to a user interaction");
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Setting preference '" + _preferenceProperty + "' to "
-                    + nextValue);
-        }
+        _logger.trace("This event is due to a user interaction");
+
+        _logger.debug("Setting preference '{}' to {}", _preferenceProperty, nextValue);
 
         try {
             _preferences.setPreference(_preferenceProperty, nextValue);
@@ -126,16 +125,14 @@ public final class PreferencedButtonModel extends DefaultButtonModel
     @Override
     public void update(final Observable o, final Object arg) {
         // Notify event Listener (telling this that it is an internal update)
-        _logger.fine("Fire action listeners ");
+        _logger.debug("Fire action listeners ");
 
         fireActionPerformed(new ActionEvent(this, SELECTED, "internalUpdate"));
 
         // Update the widget view according property value changed
         final boolean nextValue = _preferences.getPreferenceAsBoolean(_preferenceProperty);
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Setting selected to " + nextValue);
-        }
+        _logger.debug("Setting selected to {}", nextValue);
 
         setSelected(nextValue);
     }

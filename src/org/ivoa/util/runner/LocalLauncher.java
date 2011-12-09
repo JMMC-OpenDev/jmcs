@@ -1,7 +1,5 @@
 package org.ivoa.util.runner;
 
-import org.apache.commons.logging.Log;
-
 import org.ivoa.util.runner.process.ProcessContext;
 import org.ivoa.util.runner.process.ProcessRunner;
 import org.ivoa.util.runner.process.RingBuffer;
@@ -20,6 +18,7 @@ import org.ivoa.util.concurrent.CustomThreadPoolExecutor;
 import org.ivoa.util.concurrent.FastSemaphore;
 import org.ivoa.util.concurrent.GenericRunnable;
 import org.ivoa.util.concurrent.ThreadExecutors;
+import org.slf4j.Logger;
 
 /**
  * Job Management (queue & execution) on local machine
@@ -30,7 +29,7 @@ public final class LocalLauncher {
     //~ Constants --------------------------------------------------------------------------------------------------------
 
     /** logger */
-    private static Log log = LogUtil.getLogger();
+    private static Logger log = LogUtil.getLogger();
     /** initial capacity for queue */
     public static final int INITIAL_QUEUE_CAPACITY = 10;
     /** job ID generator (counter) */
@@ -72,15 +71,11 @@ public final class LocalLauncher {
      * @see ThreadExecutors#startExecutors()
      */
     public static void startUp() {
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.startUp : enter");
-        }
+        log.debug("LocalLauncher.startUp : enter");
 
         ThreadExecutors.startExecutors();
 
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.startUp : exit");
-        }
+        log.debug("LocalLauncher.startUp : exit");
     }
 
     /**
@@ -88,15 +83,11 @@ public final class LocalLauncher {
      * @see ThreadExecutors#stopExecutors()
      */
     public static void shutdown() {
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.shutdown : enter");
-        }
+        log.debug("LocalLauncher.shutdown : enter");
 
         ThreadExecutors.stopExecutors();
 
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.shutdown : exit");
-        }
+        log.debug("LocalLauncher.shutdown : exit");
     }
 
     /**
@@ -117,9 +108,7 @@ public final class LocalLauncher {
      * @param delay time in milliseconds to wait after the job has finished before removing it from the queue
      */
     public static void purgeTerminated(final long delay) {
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.purgeTerminated : enter");
-        }
+        log.debug("LocalLauncher.purgeTerminated : enter");
 
         int n = 0;
         final List<RootContext> list = getQueue();
@@ -212,9 +201,7 @@ public final class LocalLauncher {
      * @return created job context
      */
     public static RootContext prepareMainJob(final String appName, final String owner, final String workingDir, final String writeLogFile) {
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.prepareMainJob : enter");
-        }
+        log.debug("LocalLauncher.prepareMainJob : enter");
 
         final Long id = Long.valueOf(JOBS_ID.decrementAndGet());
 
@@ -222,9 +209,7 @@ public final class LocalLauncher {
         runCtx.setOwner(owner);
         runCtx.setRing(new RingBuffer(MAX_LINES, writeLogFile));
 
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.prepareMainJob : exit : " + runCtx);
-        }
+        log.debug("LocalLauncher.prepareMainJob : exit : " + runCtx);
 
         return runCtx;
     }
@@ -243,9 +228,7 @@ public final class LocalLauncher {
             throw new IllegalArgumentException("Invalid command parameter !");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.prepareJob : enter");
-        }
+        log.debug("LocalLauncher.prepareJob : enter");
 
         final Long id = Long.valueOf(JOBS_ID.decrementAndGet());
 
@@ -256,9 +239,7 @@ public final class LocalLauncher {
 
         runCtx.setRing(parent.getRing());
 
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.prepareJob : exit : " + runCtx);
-        }
+        log.debug("LocalLauncher.prepareJob : exit : " + runCtx);
 
         return runCtx;
     }
@@ -289,9 +270,7 @@ public final class LocalLauncher {
 
         queueJob(rootCtx, listener);
 
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.startJob : exit");
-        }
+        log.debug("LocalLauncher.startJob : exit");
     }
 
     /**
@@ -314,9 +293,7 @@ public final class LocalLauncher {
 
         queueJob(rootCtx, listener);
 
-        if (log.isDebugEnabled()) {
-            log.debug("LocalLauncher.startJob : exit");
-        }
+        log.debug("LocalLauncher.startJob : exit");
     }
 
     /**
@@ -640,9 +617,7 @@ public final class LocalLauncher {
          */
         @Override
         public void run() {
-            if (log.isDebugEnabled()) {
                 log.debug("JobRunner.run : enter");
-            }
 
             if (rootCtx.getState() != RunState.STATE_CANCELED) {
                 // increment live counter :
@@ -720,9 +695,7 @@ public final class LocalLauncher {
                 JOBS_LIVE.decrementAndGet();
             }
 
-            if (log.isDebugEnabled()) {
                 log.debug("JobRunner - thread.run : exit");
-            }
         }
 
         /**

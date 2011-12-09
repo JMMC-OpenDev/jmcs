@@ -50,7 +50,8 @@ import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import java.awt.event.ActionEvent;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.AbstractAction;
 
 import javax.swing.JFrame;
@@ -63,7 +64,7 @@ import javax.swing.JFrame;
 public class OSXAdapter extends ApplicationAdapter {
 
     /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(OSXAdapter.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(OSXAdapter.class.getName());
     /**
      * DOCUMENT ME!
      */
@@ -101,13 +102,13 @@ public class OSXAdapter extends ApplicationAdapter {
      *
      * @param ae DOCUMENT ME!
      */
+    @Override
     public void handleAbout(ApplicationEvent ae) {
         if (mainAppFrame != null) {
             ae.setHandled(true);
             App.aboutBoxAction().actionPerformed(null);
         } else {
-            throw new IllegalStateException(
-                    "handleAbout: MyApp instance detached from listener");
+            throw new IllegalStateException("handleAbout: MyApp instance detached from listener");
         }
     }
 
@@ -116,6 +117,7 @@ public class OSXAdapter extends ApplicationAdapter {
      *
      * @param ae DOCUMENT ME!
      */
+    @Override
     public void handlePreferences(ApplicationEvent ae) {
         if (mainAppFrame != null) {
             ae.setHandled(true);
@@ -124,8 +126,7 @@ public class OSXAdapter extends ApplicationAdapter {
                 preferenceAction.actionPerformed(null);
             }
         } else {
-            throw new IllegalStateException(
-                    "handlePreferences: MyApp instance detached from listener");
+            throw new IllegalStateException("handlePreferences: MyApp instance detached from listener");
         }
     }
 
@@ -134,6 +135,7 @@ public class OSXAdapter extends ApplicationAdapter {
      *
      * @param ae DOCUMENT ME!
      */
+    @Override
     public void handleQuit(ApplicationEvent ae) {
         if (mainAppFrame != null) {
             /* You MUST setHandled(false) if you want to delay or cancel the quit.
@@ -150,8 +152,7 @@ public class OSXAdapter extends ApplicationAdapter {
 
             ae.setHandled(false);
         } else {
-            throw new IllegalStateException(
-                    "handleQuit: MyApp instance detached from listener");
+            throw new IllegalStateException("handleQuit: MyApp instance detached from listener");
         }
     }
 
@@ -160,19 +161,18 @@ public class OSXAdapter extends ApplicationAdapter {
      *
      * @param ae DOCUMENT ME!
      */
+    @Override
     public void handleOpenFile(ApplicationEvent ae) {
         if (mainAppFrame != null) {
             ae.setHandled(true);
 
-            if (logger.isLoggable(Level.INFO)) {
-                logger.info("Should open '" + ae.getFilename() + "'.");
+            if (logger.isInfoEnabled()) {
+                logger.info("Should open '{}'.", ae.getFilename());
             }
 
-            _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0,
-                    ae.getFilename()));
+            _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, ae.getFilename()));
         } else {
-            throw new IllegalStateException(
-                    "handleOpenFile: MyApp instance detached from listener");
+            throw new IllegalStateException("handleOpenFile: MyApp instance detached from listener");
         }
     }
 
@@ -180,7 +180,7 @@ public class OSXAdapter extends ApplicationAdapter {
     /**
      * DOCUMENT ME!
      *
-     * @param inApp DOCUMENT ME!
+     * @param inAppFrame DOCUMENT ME!
      */
     public static void registerMacOSXApplication(JFrame inAppFrame) {
         if (theApplication == null) {

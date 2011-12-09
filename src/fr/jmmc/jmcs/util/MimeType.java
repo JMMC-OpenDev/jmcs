@@ -31,8 +31,6 @@ public enum MimeType {
     STAR_LIST("text/plain", "Star Lists", "txt"),
     /** MimeType associated to Text files */
     TEXT_PLAIN("text/plain", "Text files", "txt");
-    /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MimeType.class.getName());
 
     /**
      * Custom constructor
@@ -60,7 +58,6 @@ public enum MimeType {
      * @return short mime-type description
      */
     public String getDescription() {
-        logger.entering("MimeType", "getDescription");
         return description;
     }
 
@@ -69,7 +66,6 @@ public enum MimeType {
      * @return accepted extensions as list
      */
     public List<String> getExtensions() {
-        logger.entering("MimeType", "getExtensions");
         return extensions;
     }
 
@@ -89,7 +85,6 @@ public enum MimeType {
      * @return mime-type
      */
     public String getName() {
-        logger.entering("MimeType", "getName");
         return name;
     }
 

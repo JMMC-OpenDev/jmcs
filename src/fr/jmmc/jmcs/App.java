@@ -987,8 +987,6 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.trace("OpenAction.actionPerformed");
-
             _logger.warn("No handler for default file opening.");
         }
     }
@@ -1017,8 +1015,6 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.trace("QuitAction.actionPerformed");
-
             _logger.debug("Should we kill the application ?");
 
             // Check if user is OK to kill SAMP hub (if any)
@@ -1085,8 +1081,6 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.trace("AcknowledgmentAction.actionPerformed");
-
             StringSelection ss = new StringSelection(_acknowledgement);
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 
@@ -1124,8 +1118,6 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.trace("ShowReleaseAction.actionPerformed");
-
             BrowserLauncher.openURL(_applicationDataModel.getHotNewsRSSFeedLinkValue());
         }
     }
@@ -1152,8 +1144,6 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.trace("ShowReleaseAction.actionPerformed");
-
             BrowserLauncher.openURL(_applicationDataModel.getReleaseNotesLinkValue());
         }
     }
@@ -1180,8 +1170,6 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.trace("ShowFaqAction.actionPerformed");
-
             BrowserLauncher.openURL(_applicationDataModel.getFaqLinkValue());
         }
     }
@@ -1214,8 +1202,6 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.trace("ShowHelpAction.actionPerformed");
-
             HelpView.setVisible(true);
         }
     }

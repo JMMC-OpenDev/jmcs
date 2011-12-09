@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.DefaultComboBoxModel;
 
 import javax.swing.JFrame;
@@ -43,7 +43,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(FeedbackReport.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(FeedbackReport.class.getName());
     /** Feedback report type definition array */
     private static final String[] _feedbackTypes = new String[]{
         "Bug Report", "Documentation Typo", "Evolution Request",
@@ -120,7 +120,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         // Force to dispose when the dialog closes :
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        _logger.fine("All feedback report properties have been set");
+        _logger.debug("All feedback report properties have been set");
     }
 
     /**
@@ -153,9 +153,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             descriptionTextArea.append("Following exception occured:\n"
                     + msg + cause + "\n\n--\n");
 
-            if (_logger.isLoggable(Level.SEVERE)) {
-                _logger.log(Level.SEVERE, "An exception was given to the feedback report", _exception);
-            }
+            _logger.error("An exception was given to the feedback report: ", _exception);
         }
 
         // Listen to key event to ensure
@@ -231,9 +229,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      */
     @Override
     public final void dispose() {
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("dispose : " + this);
-        }
+        _logger.debug("dispose : {}", this);
 
         // do not kill the associated worker task to let the started job end properly
         // else we would have called:
@@ -306,9 +302,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         // If the application is not ready, exit now :
         final boolean ready = App.isReady();
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Application is ready : " + ready);
-        }
+        _logger.debug("Application is ready : {}", ready);
 
         final boolean exit = !ready || !App.getFrame().isVisible();
 
@@ -555,9 +549,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     private String getApplicationLog() {
         final String logOutput = App.getLogOutput().getContent();
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("logOutput length = " + logOutput.length());
-        }
+        _logger.debug("logOutput length = {}", logOutput.length());
 
         return (logOutput.length() > 0) ? logOutput : "None";
     }
@@ -661,7 +653,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             final PostMethod method = new PostMethod(feedbackReportUrl);
 
             try {
-                _logger.fine("Http client and post method have been created");
+                _logger.debug("Http client and post method have been created");
 
                 final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
 
@@ -690,34 +682,32 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
                 method.addParameter("comments", comments);
                 method.addParameter("summary", summary);
 
-                _logger.fine("All post parameters have been set");
+                _logger.debug("All post parameters have been set");
 
                 // Send feedback report to PHP script
                 client.executeMethod(method);
 
-                _logger.fine("The report mail has been send");
+                _logger.debug("The report mail has been send");
 
                 // Get PHP script result (either SUCCESS or FAILURE)
                 final String response = method.getResponseBodyAsString();
 
-                if (_logger.isLoggable(Level.FINE)) {
-                    _logger.fine("HTTP response : " + response);
-                }
+                _logger.debug("HTTP response : {}", response);
 
                 statusFlag = (!response.contains("FAILED")) && (method.isRequestSent());
 
-                if (_logger.isLoggable(Level.FINE)) {
-                    _logger.fine("Report sent : " + (statusFlag ? "YES" : "NO"));
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("Report sent : {}", (statusFlag) ? "YES" : "NO");
                 }
 
             } catch (IOException ioe) {
-                _logger.log(Level.SEVERE, "Cannot send feedback report", ioe);
+                _logger.error("Cannot send feedback report: ", ioe);
             } finally {
                 // Release the connection.
                 method.releaseConnection();
             }
 
-            _logger.fine("Set ready to send to false");
+            _logger.debug("Set ready to send to false");
 
             return (statusFlag) ? Boolean.TRUE : Boolean.FALSE;
         }

@@ -20,12 +20,13 @@ import java.text.ParseException;
 
 import java.text.SimpleDateFormat;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
@@ -45,11 +46,9 @@ import javax.xml.bind.Unmarshaller;
 public class ApplicationDataModel {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(ApplicationDataModel.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(ApplicationDataModel.class.getName());
     /** package name for JAXB generated code */
     private final static String APP_DATA_MODEL_JAXB_PATH = "fr.jmmc.jmcs.data.model";
-    /** default namespace for ApplicationDataModel.xsd */
-    private final static String APP_DATA_MODEL_NAMESPACE = "http://www.jmmc.fr/jmcs/app/1.0";
 
     /* members */
     /** internal JAXB Factory */
@@ -87,19 +86,17 @@ public class ApplicationDataModel {
      * @throws IllegalStateException if the given URL can not be loaded
      */
     public ApplicationDataModel(final URL dataModelURL) throws IllegalStateException {
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Loading Application data model from " + dataModelURL);
-        }
+        _logger.debug("Loading Application data model from {}", dataModelURL);
 
         // Start JAXB
         jf = JAXBFactory.getInstance(APP_DATA_MODEL_JAXB_PATH);
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("JAXBFactory: " + jf);
-        }
+
+        _logger.debug("JAXBFactory: {}", jf);
 
         // Load application data
         _applicationDataModel = loadData(dataModelURL);
-        String programName = getProgramName();
+
+        final String programName = getProgramName();
 
         _feedbackReportHeaderMessage = "<html><body>"
                 + "<center>"
@@ -162,7 +159,7 @@ public class ApplicationDataModel {
             _releaseNotesLink = getLinkValue() + "/releasenotes.htm";
         }
 
-        _logger.fine("Application data model loaded.");
+        _logger.debug("Application data model loaded.");
     }
 
     /** Invoke JAXB to load ApplicationData.xml file */
@@ -184,7 +181,7 @@ public class ApplicationDataModel {
      */
     public String getAcknowledgment() {
         if (_applicationDataModel.getAcknowledgment() == null) {
-            _logger.fine("_applicationDataCastorModel.getAcknowledgment() is null");
+            _logger.debug("_applicationDataCastorModel.getAcknowledgment() is null");
 
             return null;
         }
@@ -196,9 +193,7 @@ public class ApplicationDataModel {
      * @return the company logo resource path
      */
     public String getCompanyLogoResourcePath() {
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("logoUrl=" + _companyLogoFileName);
-        }
+        _logger.debug("logoUrl: {}", _companyLogoFileName);
 
         return _companyLogoFileName;
     }
@@ -236,8 +231,9 @@ public class ApplicationDataModel {
 
         if (program != null) {
             programName = program.getName();
-            _logger.fine("Program name has been taken on model");
         }
+
+        _logger.debug("Program name: {}", programName);
 
         return programName;
     }
@@ -254,34 +250,31 @@ public class ApplicationDataModel {
 
         if (program != null) {
             programVersion = program.getVersion();
-            _logger.fine("Program version has been taken on model");
         }
 
+        _logger.debug("Program version: {}", programVersion);
         return programVersion;
     }
 
     /**
-
+    
      * @return the application main web page URL from the "link" field in the XML file
      */
     public String getLinkValue() {
         String mainWebPageURL = _mainWebPageURL;
 
         mainWebPageURL = _applicationDataModel.getLink();
-        _logger.fine("MainWebPageURL value has been taken on model:"
-                + mainWebPageURL);
+        _logger.debug("MainWebPageURL: {}", mainWebPageURL);
 
         return mainWebPageURL;
     }
 
     /**
-
-    * @return the application release notes URL if any, null otherwise.
+    
+     * @return the application release notes URL if any, null otherwise.
      */
     public String getReleaseNotesLinkValue() {
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("ReleaseNotesLink value is :" + _releaseNotesLink);
-        }
+        _logger.debug("ReleaseNotesLink: {}", _releaseNotesLink);
 
         return _releaseNotesLink;
     }
@@ -290,9 +283,7 @@ public class ApplicationDataModel {
      * @return the application FAQ URL if any, null otherwise.
      */
     public String getFaqLinkValue() {
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("FaqLink value is :" + _faqLink);
-        }
+        _logger.debug("FaqLink value is: {}", _faqLink);
 
         return _faqLink;
     }
@@ -301,9 +292,8 @@ public class ApplicationDataModel {
      * @return the application Hot News RSS feed URL if any, null otherwise.
      */
     public String getHotNewsRSSFeedLinkValue() {
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("HotNewsRSSFeedLink value is :" + _hotNewsRSSFeedLink);
-        }
+        _logger.debug("HotNewsRSSFeedLink: {}", _hotNewsRSSFeedLink);
+
         return _hotNewsRSSFeedLink;
     }
 
@@ -319,9 +309,9 @@ public class ApplicationDataModel {
 
         if (compilation != null) {
             compilationDate = compilation.getDate();
-            _logger.fine("Compilation date has been taken on model");
         }
 
+        _logger.debug("Compilation date: {}", compilationDate);
         return compilationDate;
     }
 
@@ -337,8 +327,9 @@ public class ApplicationDataModel {
 
         if (compilation != null) {
             compilationCompilator = compilation.getCompiler();
-            _logger.fine("Compilation compilator has been taken on model");
         }
+
+        _logger.debug("Compilation compilator: {}", compilationCompilator);
 
         return compilationCompilator;
     }
@@ -347,10 +338,8 @@ public class ApplicationDataModel {
      * @return the application description used in the AboutBox
      */
     public String getTextValue() {
-        String text = "";
-
-        text = _applicationDataModel.getText();
-        _logger.fine("Text value has been taken on model");
+        String text = _applicationDataModel.getText();
+        _logger.debug("Text value: {}", text);
 
         return text;
     }
@@ -366,11 +355,12 @@ public class ApplicationDataModel {
      * Return the informations about "packages" taken from the XML file
      * @return vector template [name, link, description], [name, link, description]...
      */
-    public Vector<String> getPackagesInfo() {
-        Vector<String> packagesInfo = new Vector<String>();
+    public List<String> getPackagesInfo() {
 
         // TODO: API: use objects not Vector<string>
         Dependences dependences = _applicationDataModel.getDependences();
+
+        final List<String> packagesInfo = new ArrayList<String>();
 
         // For each package
         for (fr.jmmc.jmcs.data.model.Package p : dependences.getPackages()) {
@@ -379,7 +369,7 @@ public class ApplicationDataModel {
             packagesInfo.add(p.getDescription());
         }
 
-        _logger.fine("Packages informations have been taken and formated");
+        _logger.debug("Packages informations: ", packagesInfo);
 
         return packagesInfo;
     }
@@ -399,8 +389,7 @@ public class ApplicationDataModel {
             cal.setTime(date);
             year = cal.get(Calendar.YEAR);
         } catch (ParseException pe) {
-            _logger.log(Level.WARNING,
-                    "Cannot parse date '" + compilationDate + "' will use current year instead.", pe);
+            _logger.warn("Cannot parse date '{}' will use current year instead.", compilationDate, pe);
 
             // Otherwise use the current year
             Calendar cal = new GregorianCalendar();

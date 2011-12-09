@@ -7,7 +7,8 @@ import fr.jmmc.jmcs.data.preference.Preferences;
 import java.awt.event.*;
 
 import java.util.*;
-import java.util.logging.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 
@@ -20,7 +21,8 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
         implements Observer, ItemListener {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(RegisteredPreferencedBooleanAction.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(RegisteredPreferencedBooleanAction.class.getName());
+    /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1L;
     /** Monitored Preference object */
     private Preferences _preferences;
@@ -59,9 +61,6 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
      * @param button the button to register.
      */
     public void addBoundButton(AbstractButton button) {
-        _logger.entering("RegisteredPreferencedBooleanAction",
-                "rememberBoundButton");
-
         _boundButtons.add(button);
         button.addItemListener(this);
     }
@@ -73,12 +72,11 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
      */
     @Override
     public void update(Observable o, Object arg) {
-        _logger.entering("RegisteredPreferencedBooleanAction", "update");
-
         boolean state = _preferences.getPreferenceAsBoolean(_preferenceName);
 
-        _logger.finest(_preferenceName + " value changed to become '" + state
-                + "'.");
+        if (_logger.isTraceEnabled()) {
+            _logger.trace(_preferenceName + " value changed to become '" + state + "'.");
+        }
 
         for (AbstractButton button : _boundButtons) {
             button.setSelected(state);
@@ -91,22 +89,18 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
      */
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
-        _logger.entering("RegisteredPreferencedBooleanAction", "actionPerformed");
-
         if (e.getSource() instanceof AbstractButton) {
             AbstractButton button = (AbstractButton) e.getSource();
             boolean isSelected = button.isSelected();
 
+            if (_logger.isTraceEnabled()) {
+                _logger.trace(_preferenceName + " value was updated with new external state of '" + isSelected + "'.");
+            }
             try {
-                _logger.finest(_preferenceName
-                        + " value was updated with new external state of '"
-                        + isSelected + "'.");
 
                 _preferences.setPreference(_preferenceName, isSelected);
             } catch (Exception ex) {
-                _logger.log(Level.WARNING,
-                        "Cannot set preference '" + _preferenceName + "' to '"
-                        + isSelected + "'.", ex);
+                _logger.warn("Cannot set preference '" + _preferenceName + "' to '" + isSelected + "'.", ex);
             }
         }
     }
@@ -121,21 +115,16 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
      */
     @Override
     public void itemStateChanged(ItemEvent e) {
-        _logger.entering("RegisteredPreferencedBooleanAction",
-                "itemStateChanged");
-
         boolean isSelected = (e.getStateChange() == ItemEvent.SELECTED);
 
+        if (_logger.isTraceEnabled()) {
+            _logger.trace(_preferenceName + " value was updated with new internal state of '" + isSelected + "'.");
+        }
         try {
-            _logger.finest(_preferenceName
-                    + " value was updated with new internal state of '" + isSelected
-                    + "'.");
 
             _preferences.setPreference(_preferenceName, isSelected);
         } catch (Exception ex) {
-            _logger.log(Level.WARNING,
-                    "Cannot set preference '" + _preferenceName + "' to '"
-                    + isSelected + "'.", ex);
+            _logger.warn("Cannot set preference '" + _preferenceName + "' to '" + isSelected + "'.", ex);
         }
     }
 }

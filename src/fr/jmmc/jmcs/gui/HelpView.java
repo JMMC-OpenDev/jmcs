@@ -5,11 +5,10 @@ package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.util.Urls;
 
-import java.net.*;
-
+import java.net.URL;
 import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
@@ -29,13 +28,13 @@ import javax.help.Map;
 public class HelpView {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(HelpView.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(HelpView.class.getName());
     /** internal reference to the help broker */
     private static HelpBroker _helpBroker;
     /** instance of help view */
     private static HelpView _instance = null;
-    /** inited flag */
-    private static boolean _alreadyInited = false;
+    /** initialization flag */
+    private static boolean _alreadyInitialized = false;
 
     /** Show the help window */
     private HelpView() {
@@ -52,7 +51,7 @@ public class HelpView {
             _instance = new HelpView();
         }
 
-        if (_alreadyInited) {
+        if (_alreadyInitialized) {
             return true;
         }
 
@@ -62,19 +61,12 @@ public class HelpView {
             // Get the helpset file and create the centered help broker 
             url = HelpSet.findHelpSet(null, "documentation.hs");
 
-            if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("HelpSet.findHelpSet(null, 'documentation.hs') = '"
-                        + url + "'.");
-            }
+            _logger.trace("HelpSet.findHelpSet(null, 'documentation.hs') = '{}'.", url);
 
             if (url == null) {
                 url = HelpSet.findHelpSet(null, "/documentation.hs");
 
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest(
-                            "HelpSet.findHelpSet(null, '/documentation.hs') = '" + url
-                            + "'.");
-                }
+                _logger.trace("HelpSet.findHelpSet(null, '/documentation.hs') = '{}'.", url);
             }
 
             if (url == null) {
@@ -84,60 +76,40 @@ public class HelpView {
                 // Works on Linux with JVM 1.5.0_16
                 url = _instance.getClass().getClassLoader().getResource("documentation.hs");
 
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest(
-                            "_instance.getClass().getClassLoader().getResource('documentation.hs') = '"
-                            + url + "'.");
-                }
+                _logger.trace("_instance.getClass().getClassLoader().getResource('documentation.hs') = '{}'.", url);
             }
 
             if (url == null) {
                 url = _instance.getClass().getClassLoader().getResource("/documentation.hs");
 
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest(
-                            "_instance.getClass().getClassLoader().getResource('/documentation.hs') = '"
-                            + url + "'.");
-                }
+                _logger.trace("_instance.getClass().getClassLoader().getResource('/documentation.hs') = '{}'.", url);
             }
 
             // http://forums.sun.com/thread.jspa?messageID=10522645
             url = Urls.fixJarURL(url);
 
-            if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("fixJarURL(url) = '" + url + "'.");
-            }
-
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("using helpset url=" + url);
-            }
+            _logger.debug("using helpset url = '{}'.", url);
 
             // check if the url is valid :
             if (url == null) {
-                if (_logger.isLoggable(Level.INFO)) {
-                    _logger.info("No helpset document found.");
-                }
+                _logger.info("No helpset document found.");
 
                 return false;
             }
 
-            HelpSet helpSet = new HelpSet(_instance.getClass().getClassLoader(),
-                    url);
+            HelpSet helpSet = new HelpSet(_instance.getClass().getClassLoader(), url);
             _helpBroker = helpSet.createHelpBroker();
-            _helpBroker.setLocation(WindowCenterer.getCenteringPoint(
-                    _helpBroker.getSize()));
-        } catch (Exception ex) // skip complex case
-        {
-            if (_logger.isLoggable(Level.SEVERE)) {
-                _logger.log(Level.SEVERE,
-                        "Problem during helpset built (url=" + url + ", classloader="
-                        + _instance.getClass().getClassLoader() + ")", ex);
-            }
+            _helpBroker.setLocation(WindowCenterer.getCenteringPoint(_helpBroker.getSize()));
+
+        } catch (Exception ex) {
+            // skip complex case
+            _logger.error("Problem during helpset creation (url='{}', classloader={})",
+                    new Object[]{url, _instance.getClass().getClassLoader(), ex});
 
             return false;
         }
 
-        _alreadyInited = true;
+        _alreadyInitialized = true;
 
         return true;
     }

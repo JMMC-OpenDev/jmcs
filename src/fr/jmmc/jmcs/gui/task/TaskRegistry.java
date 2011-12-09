@@ -5,6 +5,8 @@ package fr.jmmc.jmcs.gui.task;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class defines a simple task registry (add / get tasks and define child tasks for a particular task)
@@ -14,7 +16,7 @@ import java.util.Map;
 public class TaskRegistry {
 
     /** Class logger */
-    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TaskRegistry.class.getName());
+    protected static final Logger logger = LoggerFactory.getLogger(TaskRegistry.class.getName());
     /* members */
     /**registered tasks keyed by task name */
     private final Map<String, Task> registeredTasks = new HashMap<String, Task>();
@@ -32,7 +34,7 @@ public class TaskRegistry {
      */
     public final void addTask(final Task task) {
         if (this.registeredTasks.containsKey(task.getName())) {
-            logger.warning("task already registered : " + task);
+            logger.warn("task already registered : {}", task);
         }
         this.registeredTasks.put(task.getName(), task);
     }

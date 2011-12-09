@@ -8,8 +8,8 @@ import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.util.Introspection;
 import java.lang.reflect.Method;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.httpclient.HostConfiguration;
 
 /**
@@ -24,7 +24,7 @@ import org.apache.commons.httpclient.HostConfiguration;
 public final class NetworkSettings {
 
     /** logger */
-    private final static Logger logger = Logger.getLogger(NetworkSettings.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(NetworkSettings.class.getName());
     /* system properties */
     /** Timeout to establish connection in millis (sun classes) */
     public static final String PROPERTY_DEFAULT_CONNECT_TIMEOUT = "sun.net.client.defaultConnectTimeout";
@@ -84,12 +84,12 @@ public final class NetworkSettings {
      * Define timeouts (http / socket)
      */
     public static void defineTimeouts() {
-        if (logger.isLoggable(Level.INFO)) {
+        if (logger.isInfoEnabled()) {
             logger.info("define default Connect timeout to " + DEFAULT_CONNECT_TIMEOUT + " ms.");
         }
         System.setProperty(PROPERTY_DEFAULT_CONNECT_TIMEOUT, Integer.toString(DEFAULT_CONNECT_TIMEOUT));
 
-        if (logger.isLoggable(Level.INFO)) {
+        if (logger.isInfoEnabled()) {
             logger.info("define default Read timeout to " + DEFAULT_SOCKET_READ_TIMEOUT + " ms.");
         }
         System.setProperty(PROPERTY_DEFAULT_READ_TIMEOUT, Integer.toString(DEFAULT_SOCKET_READ_TIMEOUT));
@@ -132,14 +132,14 @@ public final class NetworkSettings {
                 netProperties.put(PROPERTY_SOCKS_PROXY_PORT, value);
             }
 
-            if (!netProperties.isEmpty() && logger.isLoggable(Level.INFO)) {
+            if (!netProperties.isEmpty() && logger.isInfoEnabled()) {
                 logger.info("Java net properties:\n" + Preferences.dumpProperties(netProperties));
             }
         }
 
         final String proxyList = System.getProperty(PROPERTY_JAVA_PLUGIN_PROXY_LIST);
         if (proxyList != null) {
-            if (logger.isLoggable(Level.INFO)) {
+            if (logger.isInfoEnabled()) {
                 logger.info("Java plugin proxy list : " + proxyList);
             }
         }
@@ -148,7 +148,7 @@ public final class NetworkSettings {
         HostConfiguration hostConfiguration = Http.getHttpProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
-            if (logger.isLoggable(Level.INFO)) {
+            if (logger.isInfoEnabled()) {
                 logger.info("Found http proxy : " + hostConfiguration.getProxyHost() + ":" + hostConfiguration.getProxyPort());
             }
         }
@@ -157,7 +157,7 @@ public final class NetworkSettings {
         hostConfiguration = Http.getSocksProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
-            if (logger.isLoggable(Level.INFO)) {
+            if (logger.isInfoEnabled()) {
                 logger.info("Found socks proxy : " + hostConfiguration.getProxyHost() + ":" + hostConfiguration.getProxyPort());
             }
         }
@@ -166,13 +166,13 @@ public final class NetworkSettings {
         hostConfiguration = Http.getHttpProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
-            if (logger.isLoggable(Level.INFO)) {
+            if (logger.isInfoEnabled()) {
                 logger.info("Get proxy settings from Java ProxySelector.");
             }
 
             defineProxy(hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
         } else {
-            if (logger.isLoggable(Level.INFO)) {
+            if (logger.isInfoEnabled()) {
                 logger.info("Get proxy settings from CommonPreferences.");
             }
 
@@ -194,7 +194,7 @@ public final class NetworkSettings {
                     }
                 }
             }
-            if (logger.isLoggable(Level.INFO)) {
+            if (logger.isInfoEnabled()) {
                 logger.info("No http proxy defined.");
             }
         }
@@ -206,7 +206,7 @@ public final class NetworkSettings {
      * @param proxyPort port
      */
     private static void defineProxy(final String proxyHost, final int proxyPort) {
-        if (logger.isLoggable(Level.INFO)) {
+        if (logger.isInfoEnabled()) {
             logger.info("define http proxy to " + proxyHost + ":" + proxyPort);
         }
         // # http.proxyHost

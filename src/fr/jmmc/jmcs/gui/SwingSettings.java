@@ -6,8 +6,8 @@ package fr.jmmc.jmcs.gui;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.JComponent;
 import javax.swing.ToolTipManager;
 import org.apache.commons.lang.SystemUtils;
@@ -28,7 +28,7 @@ import org.apache.commons.lang.SystemUtils;
 public class SwingSettings {
 
     /** logger */
-    private final static Logger logger = Logger.getLogger(SwingSettings.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(SwingSettings.class.getName());
     /** flag to prevent multiple code execution */
     private static boolean alreadyDone = false;
 
@@ -62,16 +62,13 @@ public class SwingSettings {
     private static void setMandatory() {
         // Set the default locale to en-US locale (for Numerical Fields "." ",")
         Locale.setDefault(Locale.US);
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.FINE, "Set Locale.US as default Locale");
-        }
+
+        logger.debug("Set Locale.US as default Locale");
 
         // Set the default timezone to GMT to handle properly the date in UTC :
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.FINE, "Set GMT as default TimeZone");
-        }
 
+        logger.debug("Set GMT as default TimeZone");
     }
 
     /**
@@ -81,17 +78,14 @@ public class SwingSettings {
 
         // Force Locale for Swing Components :
         JComponent.setDefaultLocale(Locale.US);
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.FINE, "Set Locale.US for JComponents");
-        }
+
+        logger.debug("Set Locale.US for JComponents");
 
         // Let the tooltip stay longer (60s) :
         ToolTipManager.sharedInstance().setInitialDelay(100);
         ToolTipManager.sharedInstance().setDismissDelay(60000);
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.FINE, "Make tooltips appear more quickly and stay longer");
-        }
 
+        logger.debug("Make tooltips appear more quickly and stay longer");
     }
 
     /**
@@ -114,9 +108,8 @@ public class SwingSettings {
         if (SystemUtils.IS_OS_MAC_OSX) {
             // always use screen menuBar :
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            if (logger.isLoggable(Level.FINE)) {
-                logger.log(Level.FINE, "use screen menu bar in look and feel");
-            }
+
+            logger.debug("use screen menu bar in look and feel");
         }
 
     }

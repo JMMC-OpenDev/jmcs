@@ -12,8 +12,8 @@ import java.util.Collections;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.Action;
 
 import javax.swing.JMenu;
@@ -40,7 +40,7 @@ import org.astrogrid.samp.hub.HubServiceMode;
 public final class SampManager {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(SampManager.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(SampManager.class.getName());
     /** Singleton instance */
     private static volatile SampManager _instance = null;
     /** Hook to the "Interop" menu */
@@ -61,7 +61,7 @@ public final class SampManager {
     public static synchronized SampManager getInstance() {
         // DO NOT MODIFY !!!
         if (_instance == null) {
-            // _logger.log(Level.SEVERE, "SampManager getInstance()", new Throwable());
+            // _logger.error("SampManager getInstance()", new Throwable());
             _instance = new SampManager();
         }
 
@@ -193,8 +193,8 @@ public final class SampManager {
                 Hub.runHub(getInternalHubMode());
                 _hubResponsible = true;
             } catch (IOException ioe) {
-                if (_logger.isLoggable(Level.FINE)) {
-                    _logger.log(Level.FINE, "unable to start internal hub (probably another hub is already running)", ioe);
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("unable to start internal hub (probably another hub is already running)", ioe);
                 }
             }
 
@@ -203,7 +203,7 @@ public final class SampManager {
         }
 
         if (_connector.isConnected()) {
-            _logger.info("Application ['" + applicationName + "'] connected to the SAMP Hub.");
+            _logger.info("Application ['{}'] connected to the SAMP Hub.", applicationName);
         } else {
             StatusBar.show("Could not connect to an existing hub or start an internal SAMP hub.");
         }
@@ -319,7 +319,7 @@ public final class SampManager {
         // This step required even if no custom message handlers added.
         connector.declareSubscriptions(connector.computeSubscriptions());
 
-        _logger.info("Registered SAMP capability for mType '" + handler.handledMType() + "'.");
+        _logger.info("Registered SAMP capability for mType '{}'.", handler.handledMType());
     }
 
     /**
@@ -387,8 +387,9 @@ public final class SampManager {
 
         connector.getConnection().notify(recipient, new Message(mType, parameters));
 
-        if (_logger.isLoggable(Level.INFO)) {
-            _logger.info("Sent '" + mType + "' SAMP message to '" + recipient + "' client (" + 1e-6d * (System.nanoTime() - start) + " ms)");
+        if (_logger.isInfoEnabled()) {
+            _logger.info("Sent '{}' SAMP message to '{}' client ({} ms)",
+                    new Object[]{mType, recipient, 1e-6d * (System.nanoTime() - start)});
         }
     }
 
@@ -406,8 +407,9 @@ public final class SampManager {
 
         connector.getConnection().notifyAll(new Message(mType, parameters));
 
-        if (_logger.isLoggable(Level.INFO)) {
-            _logger.info("Broadcasted SAMP message to '" + mType + "' capable clients (" + 1e-6d * (System.nanoTime() - start) + " ms)");
+        if (_logger.isInfoEnabled()) {
+            _logger.info("Broadcasted SAMP message to '{}' capable clients ({} ms)",
+                    mType, 1e-6d * (System.nanoTime() - start));
         }
     }
 
@@ -426,9 +428,7 @@ public final class SampManager {
         public void stateChanged(final ChangeEvent e) {
             final GuiHubConnector connector = (GuiHubConnector) e.getSource();
 
-            if (_logger.isLoggable(Level.INFO)) {
-                _logger.info("SAMP Hub connection status : " + ((connector.isConnected()) ? "registered" : "unregistered"));
-            }
+            _logger.info("SAMP Hub connection status : {}", ((connector.isConnected()) ? "registered" : "unregistered"));
         }
     }
 }

@@ -12,7 +12,8 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 import java.security.Permission;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class contains URL related utility methods.
@@ -22,7 +23,7 @@ import java.util.logging.Logger;
 public class Urls {
 
     /** Class logger */
-    private static final Logger logger = Logger.getLogger(Urls.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(Urls.class.getName());
     /** URL encoding use UTF-8 */
     private static final String URL_ENCODING = "UTF-8";
 
@@ -48,27 +49,41 @@ public class Urls {
         // final String method = _module + ".fixJarURL";
         String originalURLProtocol = url.getProtocol();
 
-        // if (log.isDebugEnabled()) { log.debug(method + " examining '" + originalURLProtocol + "' protocol url: " + url); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("examining '" + originalURLProtocol + "' protocol url: " + url);
+        }
         if (!"jar".equalsIgnoreCase(originalURLProtocol)) {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: URL is not 'jar' protocol: " + url); }
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("skipping fix: URL is not 'jar' protocol: " + url);
+            }
             return url;
         }
 
-        // if (log.isDebugEnabled()) { log.debug(method + " URL is jar protocol, continuing"); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("URL is jar protocol, continuing");
+        }
         String originalURLString = url.toString();
 
-        // if (log.isDebugEnabled()) { log.debug(method + " using originalURLString: " + originalURLString); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("using originalURLString: " + originalURLString);
+        }
         int bangSlashIndex = originalURLString.indexOf("!/");
 
         if (bangSlashIndex > -1) {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: originalURLString already has bang-slash: " + originalURLString); }
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("skipping fix: originalURLString already has bang-slash: " + originalURLString);
+            }
             return url;
         }
 
-        // if (log.isDebugEnabled()) { log.debug(method + " originalURLString needs fixing (it has no bang-slash)"); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("originalURLString needs fixing (it has no bang-slash)");
+        }
         String originalURLPath = url.getPath();
 
-        // if (log.isDebugEnabled()) { log.debug(method + " using originalURLPath: " + originalURLPath); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("using originalURLPath: " + originalURLPath);
+        }
         URLConnection urlConnection;
 
         try {
@@ -79,11 +94,15 @@ public class Urls {
             }
         } catch (Exception e) // skip complex case
         {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: openConnection() exception", e); }
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("skipping fix: openConnection() exception", e);
+            }
             return url;
         }
 
-        // if (log.isDebugEnabled()) { log.debug(method + " using urlConnection: " + urlConnection); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("using urlConnection: " + urlConnection);
+        }
         Permission urlConnectionPermission;
 
         try {
@@ -94,42 +113,60 @@ public class Urls {
             }
         } catch (Exception e) // skip complex case
         {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: getPermission() exception", e); }
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("skipping fix: getPermission() exception", e);
+            }
             return url;
         }
 
-        // if (log.isDebugEnabled()) { log.debug(method + " using urlConnectionPermission: " + urlConnectionPermission); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("using urlConnectionPermission: " + urlConnectionPermission);
+        }
         String urlConnectionPermissionName = urlConnectionPermission.getName();
 
         if (urlConnectionPermissionName == null) {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: urlConnectionPermissionName is null"); }
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("skipping fix: urlConnectionPermissionName is null");
+            }
             return url;
         }
 
-        // if (log.isDebugEnabled()) { log.debug(method + " using urlConnectionPermissionName: " + urlConnectionPermissionName); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("using urlConnectionPermissionName: " + urlConnectionPermissionName);
+        }
         File file = new File(urlConnectionPermissionName);
 
         if (!file.exists()) {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: file does not exist: " + file); }
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("skipping fix: file does not exist: " + file);
+            }
             return url;
         }
 
-        // if (log.isDebugEnabled()) { log.debug(method + " using file: " + file); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("using file: " + file);
+        }
         String newURLStr;
 
         try {
             newURLStr = "jar:" + file.toURL().toExternalForm() + "!/"
                     + originalURLPath;
         } catch (MalformedURLException mue) {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: exception creating newURLStr", e); }
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("skipping fix: exception creating newURLStr", mue);
+            }
             return url;
         }
 
-        // if (log.isDebugEnabled()) { log.debug(method + " using newURLStr: " + newURLStr); }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("using newURLStr: " + newURLStr);
+        }
         try {
             url = new URL(newURLStr);
         } catch (MalformedURLException mue) {
-            // if (log.isDebugEnabled()) { log.debug(method + " skipping fix: exception creating new URL", e); }
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("skipping fix: exception creating new URL", mue);
+            }
             return url;
         }
 

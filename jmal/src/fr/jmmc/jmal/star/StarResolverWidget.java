@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,7 +27,6 @@ public class StarResolverWidget extends SearchField implements Observer {
     private static final long serialVersionUID = 1;
     /** Container to store retrieved star properties */
     private final Star _star;
-
 
     /**
      * Creates a new StarResolverWidget object.
@@ -50,13 +48,13 @@ public class StarResolverWidget extends SearchField implements Observer {
 
         addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(final ActionEvent e) {
                 final String starName = e.getActionCommand().trim();
 
                 if (starName.length() > 0) {
-                    if (_logger.isLoggable(Level.INFO)) {
-                        _logger.info("Searching CDS Simbad data for star '" + starName + "'.");
-                    }
+                    _logger.info("Searching CDS Simbad data for star '{}'.", starName);
+
                     StatusBar.show("searching CDS Simbad data for star '"
                             + starName + "'... (please wait, this may take a while)");
 
@@ -122,8 +120,9 @@ public class StarResolverWidget extends SearchField implements Observer {
         final Star star = new Star();
         star.addObserver(new Observer() {
 
+            @Override
             public void update(Observable o, Object arg) {
-                _logger.severe("Star changed:\n" + star);
+                _logger.info("Star changed:\n{}", star);
             }
         });
 

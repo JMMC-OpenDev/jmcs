@@ -15,7 +15,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -74,26 +73,23 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
              * Else resolve the given name (standard StarResolverWidget action)
              * @param ae action event
              */
+            @Override
             public void actionPerformed(final ActionEvent ae) {
 
                 final String textValue = ae.getActionCommand().trim();
 
                 if (textValue.length() > 0) {
 
-                    if (_logger.isLoggable(Level.FINE)) {
-                        _logger.fine("EditableStarResolverWidget : actionPerformed : " + textValue);
-                    }
+                    _logger.debug("EditableStarResolverWidget : actionPerformed : {}", textValue);
 
                     if (textValue.contains(DOUBLE_DOT)) {
                         try {
                             parseCoordinates(textValue);
                         } catch (IllegalArgumentException iae) {
 
-                            MessagePane.showErrorMessage(
-                                    "Invalid format for star coordinates :\n" + iae.getMessage());
+                            MessagePane.showErrorMessage("Invalid format for star coordinates :\n" + iae.getMessage());
 
                             StatusBar.show("Parsing star coordinates failed.");
-
                         }
                     } else {
                         // invoke standard StarResolverWidget action (simbad) :
@@ -110,7 +106,7 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
      *
      * @throws IllegalArgumentException if the RA/DEC format was wrong
      */
-    protected void parseCoordinates(final String input) throws IllegalArgumentException {
+    private void parseCoordinates(final String input) throws IllegalArgumentException {
         // first remove redundant white space :
         final String coords = input.replaceAll("\\s+", " ");
 
@@ -177,30 +173,20 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
         starModel.clear();
 
         // Name :
+        _logger.trace("NAME = {}", name);
         starModel.setName(name);
-        if (_logger.isLoggable(Level.FINEST)) {
-            _logger.finest("NAME = " + name);
-        }
 
         // Coordinates :
-        if (_logger.isLoggable(Level.FINEST)) {
-            _logger.finest("RA_d = '" + ra + "'.");
-        }
+        _logger.trace("RA_d = {}", ra);
         starModel.setPropertyAsDouble(Star.Property.RA_d, ra);
 
-        if (_logger.isLoggable(Level.FINEST)) {
-            _logger.finest("DEC_d = '" + dec + "'.");
-        }
+        _logger.trace("DEC_d = {}", dec);
         starModel.setPropertyAsDouble(Star.Property.DEC_d, dec);
 
-        if (_logger.isLoggable(Level.FINEST)) {
-            _logger.finest("RA = '" + hmsRa + "'.");
-        }
+        _logger.trace("RA = {}", hmsRa);
         starModel.setPropertyAsString(Star.Property.RA, hmsRa);
 
-        if (_logger.isLoggable(Level.FINEST)) {
-            _logger.finest("DEC = '" + dmsDec + "'.");
-        }
+        _logger.trace("DEC = {}", dmsDec);
         starModel.setPropertyAsString(Star.Property.DEC, dmsDec);
 
         // No object type :
@@ -229,7 +215,7 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
      *
      * @throws IllegalArgumentException if any value is invalid
      */
-    protected String parseHMS(final String raHms) throws IllegalArgumentException {
+    private String parseHMS(final String raHms) throws IllegalArgumentException {
 
         int hh;
         int hm;
@@ -243,33 +229,24 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
             hh = Integer.parseInt(tokens[0]);
 
             if (Math.abs(hh) >= 24) {
-                throw new IllegalArgumentException("invalid hour value : '"
-                        + raHms + "'");
+                throw new IllegalArgumentException("invalid hour value : '" + raHms + "'");
             }
 
             hm = Integer.parseInt(tokens[1]);
 
             if (hm >= 60) {
-                throw new IllegalArgumentException("invalid minute value: '"
-                        + raHms + "'");
+                throw new IllegalArgumentException("invalid minute value: '" + raHms + "'");
             }
 
             hs = Double.parseDouble(tokens[2]);
 
             if (hs >= 60d) {
-                throw new IllegalArgumentException("invalid second value: '"
-                        + raHms + "'");
-            }
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("hs = '" + hs + "'");
+                throw new IllegalArgumentException("invalid second value: '" + raHms + "'");
             }
 
         } catch (NumberFormatException nfe) {
-            if (_logger.isLoggable(Level.SEVERE)) {
-                _logger.log(Level.SEVERE, "format error", nfe);
-            }
-            throw new IllegalArgumentException("invalid value : '"
-                    + raHms + "'");
+            _logger.error("format error", nfe);
+            throw new IllegalArgumentException("invalid value : '" + raHms + "'");
         } catch (IllegalArgumentException iae) {
             throw iae;
         }
@@ -283,11 +260,10 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
         sb.append(DOUBLE_DOT);
         sb.append(DF_DBL.format(hs));
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("HMS = '" + sb.toString() + "'");
-        }
+        final String hms = sb.toString();
+        _logger.trace("HMS = {}", hms);
 
-        return sb.toString();
+        return hms;
     }
 
     /**
@@ -298,7 +274,7 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
      * @return formatted string
      * @throws IllegalArgumentException if any value is invalid
      */
-    protected String parseDMS(final String decDms) throws IllegalArgumentException {
+    private String parseDMS(final String decDms) throws IllegalArgumentException {
 
         int dd;
         int dm;
@@ -312,30 +288,24 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
             dd = Integer.parseInt(tokens[0]);
 
             if (Math.abs(dd) >= 90) {
-                throw new IllegalArgumentException("invalid degree value : '"
-                        + decDms + "'");
+                throw new IllegalArgumentException("invalid degree value : '" + decDms + "'");
             }
 
             dm = Integer.parseInt(tokens[1]);
 
             if (dm >= 60) {
-                throw new IllegalArgumentException("invalid minute value: '"
-                        + decDms + "'");
+                throw new IllegalArgumentException("invalid minute value: '" + decDms + "'");
             }
 
             ds = Double.parseDouble(tokens[2]);
 
             if (ds >= 60d) {
-                throw new IllegalArgumentException("invalid second value: '"
-                        + decDms + "'");
+                throw new IllegalArgumentException("invalid second value: '" + decDms + "'");
             }
 
         } catch (NumberFormatException nfe) {
-            if (_logger.isLoggable(Level.SEVERE)) {
-                _logger.log(Level.SEVERE, "format error", nfe);
-            }
-            throw new IllegalArgumentException("invalid value : '"
-                    + decDms + "'");
+            _logger.error("format error", nfe);
+            throw new IllegalArgumentException("invalid value : '" + decDms + "'");
         } catch (IllegalArgumentException iae) {
             throw iae;
         }
@@ -349,9 +319,8 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
         sb.append(DOUBLE_DOT);
         sb.append(DF_DBL.format(ds));
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("DMS = '" + sb.toString() + "'");
-        }
+        final String dms = sb.toString();
+        _logger.trace("DMS = {}", dms);
 
         return sb.toString();
     }
@@ -370,7 +339,7 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
                 final Star.Notification notification = (Star.Notification) arg;
 
                 if (notification == Star.Notification.QUERY_COMPLETE) {
-                    _logger.severe("Star changed:\n" + star);
+                    _logger.error("Star changed:\n{}", star);
                 }
             }
         });

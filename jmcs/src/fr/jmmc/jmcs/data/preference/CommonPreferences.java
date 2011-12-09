@@ -3,20 +3,20 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Singleton object which handles common preferences.
  * 
  * @author Guillaume MELLA, Laurent BOURGES.
  */
-public final class CommonPreferences extends Preferences
-{
+public final class CommonPreferences extends Preferences {
 
     /** Singleton instance */
     private static CommonPreferences _singleton = null;
     /** Logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CommonPreferences.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(CommonPreferences.class.getName());
     /* Preferences */
     /** Store the filename of the common preference file */
     public static final String PREFERENCES_FILENAME = "fr.jmmc.jmcs.properties";
@@ -34,8 +34,7 @@ public final class CommonPreferences extends Preferences
     /**
      * Private constructor that must be empty.
      */
-    private CommonPreferences()
-    {
+    private CommonPreferences() {
         super();
     }
 
@@ -44,12 +43,11 @@ public final class CommonPreferences extends Preferences
      *
      * @return the singleton preference instance
      */
-    public static CommonPreferences getInstance()
-    {
+    public static CommonPreferences getInstance() {
         // Build new reference if singleton does not already exist
         // or return previous reference
         if (_singleton == null) {
-            logger.fine("CommonPreferences.getInstance()");
+            _logger.debug("CommonPreferences.getInstance()");
 
             _singleton = new CommonPreferences();
         }
@@ -63,8 +61,7 @@ public final class CommonPreferences extends Preferences
      * @throws PreferencesException if any preference value has a unsupported class type
      */
     @Override
-    protected void setDefaultPreferences() throws PreferencesException
-    {
+    protected void setDefaultPreferences() throws PreferencesException {
         // Display the splash screen during app launch.
         setDefaultPreference(SHOW_STARTUP_SPLASHSCREEN, true);
         setDefaultPreference(HTTP_PROXY_HOST, "");
@@ -78,8 +75,7 @@ public final class CommonPreferences extends Preferences
      * @return preference filename.
      */
     @Override
-    protected String getPreferenceFilename()
-    {
+    protected String getPreferenceFilename() {
         return PREFERENCES_FILENAME;
     }
 
@@ -89,8 +85,7 @@ public final class CommonPreferences extends Preferences
      * @return preference version number.
      */
     @Override
-    protected int getPreferencesVersionNumber()
-    {
+    protected int getPreferencesVersionNumber() {
         return 1;
     }
 
@@ -98,12 +93,11 @@ public final class CommonPreferences extends Preferences
      * Run this program to generate the common preference file.
      * @param args NC
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         try {
             CommonPreferences.getInstance().saveToFile();
         } catch (PreferencesException pe) {
-            logger.log(Level.SEVERE, "property failure : ", pe);
+            _logger.error("Property failure: ", pe);
         }
     }
 }

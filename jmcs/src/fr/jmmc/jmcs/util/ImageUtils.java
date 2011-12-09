@@ -4,7 +4,8 @@
 package fr.jmmc.jmcs.util;
 
 import java.awt.Image;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.ImageIcon;
 
 /**
@@ -15,7 +16,7 @@ import javax.swing.ImageIcon;
 public final class ImageUtils {
 
     /** Class logger */
-    private static final Logger logger = Logger.getLogger(ImageUtils.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ImageUtils.class.getName());
 
     /**
      * Forbidden constructor

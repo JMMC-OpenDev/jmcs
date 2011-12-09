@@ -3,7 +3,8 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.action;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
@@ -17,7 +18,7 @@ public abstract class RegisteredAction extends MCSAction {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(RegisteredAction.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(RegisteredAction.class.getName());
     /** Action Registrar */
     private static final ActionRegistrar _registrar = ActionRegistrar.getInstance();
 
@@ -57,7 +58,6 @@ public abstract class RegisteredAction extends MCSAction {
      * This method must be overridden in sub classes
      */
     protected void performDeferedInitialization() {
-        _logger.entering("RegisteredAction", "performDeferedInitialization");
         // not implemented
     }
 
@@ -102,8 +102,6 @@ public abstract class RegisteredAction extends MCSAction {
      * Flag the action as the one dedicated to handle Preference panel display.
      */
     public void flagAsPreferenceAction() {
-        _logger.entering("RegisteredAction", "flagAsPreferenceAction");
-
         // Force the preference action name
         putValue(Action.NAME, "Preferences...");
 
@@ -114,8 +112,6 @@ public abstract class RegisteredAction extends MCSAction {
      * Flag the action as the one dedicated to file opening sequence.
      */
     public void flagAsOpenAction() {
-        _logger.entering("RegisteredAction", "flagAsOpenAction");
-
         // Force the 'open' action name
         putValue(Action.NAME, "Open");
 
@@ -129,8 +125,6 @@ public abstract class RegisteredAction extends MCSAction {
      * Flag the action as the one dedicated to handle Quit sequence.
      */
     public void flagAsQuitAction() {
-        _logger.entering("RegisteredAction", "flagAsQuitAction");
-
         // Force the 'quit' action name
         putValue(Action.NAME, "Quit");
 

@@ -5,9 +5,10 @@ package fr.jmmc.jmcs.util;
 
 import java.io.File;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.filechooser.FileFilter;
 
@@ -19,7 +20,7 @@ import javax.swing.filechooser.FileFilter;
 public class FileFilterRepository {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(FileFilterRepository.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(FileFilterRepository.class.getName());
     /** Singleton instance */
     private static FileFilterRepository _instance = null;
     /**
@@ -30,7 +31,7 @@ public class FileFilterRepository {
 
     /** Hidden constructor */
     protected FileFilterRepository() {
-        _logger.entering("FileFilterRepository", "FileFilterRepository");
+        super();
     }
 
     /** 
@@ -38,8 +39,6 @@ public class FileFilterRepository {
      * @return singleton instance 
      */
     public static synchronized FileFilterRepository getInstance() {
-        _logger.entering("FileFilterRepository", "getInstance");
-
         // DO NOT MODIFY !!!
         if (_instance == null) {
             _instance = new FileFilterRepository();
@@ -60,12 +59,9 @@ public class FileFilterRepository {
      * @return the previous registered file filter, null otherwise.
      */
     public FileFilter put(final String mimeType, final String fileExtension, final String description) {
-        _logger.entering("FileFilterRepository", "put");
-
-        if (_logger.isLoggable(Level.FINER)) {
-            _logger.finer("FileFilterRepository - put(mimeType = '" + mimeType
-                    + "', fileExtension = '" + fileExtension + "', description = '"
-                    + description + "')");
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("FileFilterRepository - put(mimeType = '{}', fileExtension = '{}', description = '{}')",
+                    new Object[]{mimeType, fileExtension, description});
         }
 
         return put(mimeType, new String[]{fileExtension}, description);
@@ -81,12 +77,9 @@ public class FileFilterRepository {
      * @return the previous registered file filter, null otherwise.
      */
     public FileFilter put(final String mimeType, final String[] fileExtensions, final String description) {
-        _logger.entering("FileFilterRepository", "put[]");
-
-        if (_logger.isLoggable(Level.FINER)) {
-            _logger.finer("FileFilterRepository - put(mimeType = '" + mimeType
-                    + "', fileExtensions[] = '" + fileExtensions + "', description = '"
-                    + description + "')");
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("FileFilterRepository - put(mimeType = '{}', fileExtensions[] = '{}', description = '{}')",
+                    new Object[]{mimeType, Arrays.toString(fileExtensions), description});
         }
 
         final FileFilter filter = new GenericFileFilter(fileExtensions, description);
@@ -94,18 +87,13 @@ public class FileFilterRepository {
         final FileFilter previousFilter = _repository.put(mimeType, filter);
 
         if (previousFilter == null) {
-            if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("Registered '" + mimeType + "' filter for the first time.");
-            }
+            _logger.trace("Registered '{}' filter for the first time.", mimeType);
         } else if (previousFilter != filter) {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Overwritten the previously registered '" + mimeType + "' file filter.");
-            }
+            _logger.debug("Overwritten the previously registered '{}' file filter.", mimeType);
         } else {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Registered '" + mimeType
-                        + "' mimeType associated with file extension '" + fileExtensions
-                        + "'  (" + description + ") succesfully.");
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Registered '{}' mimeType associated with file extensions '{}' ({}) succesfully.",
+                        new Object[]{mimeType, Arrays.toString(fileExtensions), description});
             }
         }
 
@@ -120,18 +108,12 @@ public class FileFilterRepository {
      * @return the retrieved registered file filter, null otherwise.
      */
     public static FileFilter get(final String mimeType) {
-        _logger.entering("FileFilterRepository", "get");
-
         final FileFilter retrievedFilter = _repository.get(mimeType);
 
         if (retrievedFilter == null) {
-            if (_logger.isLoggable(Level.SEVERE)) {
-                _logger.severe("Cannot find '" + mimeType + "' file filter.");
-            }
+            _logger.error("Cannot find '{}' file filter.", mimeType);
         } else {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Retrieved '" + mimeType + "' file filter succesfully.");
-            }
+            _logger.debug("Retrieved '{}' file filter succesfully.", mimeType);
         }
 
         return retrievedFilter;
@@ -145,8 +127,6 @@ public class FileFilterRepository {
      * @return the retrieved registered file filter, null otherwise.
      */
     public static FileFilter get(final MimeType mimeType) {
-        _logger.entering("FileFilterRepository", "get");
-
         return get(mimeType.getName());
     }
 
@@ -157,8 +137,6 @@ public class FileFilterRepository {
      */
     @Override
     public String toString() {
-        _logger.entering("FileFilterRepository", "toString");
-
         if (_repository == null) {
             return "No file filter registered yet.";
         }
@@ -184,7 +162,7 @@ public class FileFilterRepository {
 final class GenericFileFilter extends FileFilter {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(GenericFileFilter.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(GenericFileFilter.class.getName());
     /** Hold each file extensions */
     private final HashMap<String, String> _fileExtensions = new HashMap<String, String>(4);
     /** Filter description */
@@ -199,11 +177,9 @@ final class GenericFileFilter extends FileFilter {
     GenericFileFilter(final String[] fileExtensions, final String description) {
         super();
 
-        _logger.entering("GenericFileFilter", "GenericFileFilter");
-
-        if (_logger.isLoggable(Level.FINER)) {
-            _logger.finer("GenericFileFilter(fileExtensions = '" + fileExtensions
-                    + "', description = '" + description + "')");
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("GenericFileFilter(fileExtensions = '{}', description = '{}')",
+                    Arrays.toString(fileExtensions), description);
         }
 
         final int nbOfFileExtensions = fileExtensions.length;
@@ -214,10 +190,9 @@ final class GenericFileFilter extends FileFilter {
 
             _fileExtensions.put(fileExtension, description);
 
-            if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("GenericFileFilter(...) - Added fileExtensions["
-                        + (i + 1) + "/" + nbOfFileExtensions + "] = '" + fileExtension
-                        + "'.");
+            if (_logger.isTraceEnabled()) {
+                _logger.trace("GenericFileFilter(...) - Added fileExtensions[{}]/{}] = '{}'.",
+                        new Object[]{(i + 1), nbOfFileExtensions, fileExtension});
             }
         }
 
@@ -233,16 +208,12 @@ final class GenericFileFilter extends FileFilter {
      */
     @Override
     public boolean accept(final File currentFile) {
-        _logger.entering("GenericFileFilter", "accept");
-
         if (currentFile != null) {
             String fileName = currentFile.getName();
 
             // If current file is not regular (e.g directory, links, ...)
             if (!currentFile.isFile()) {
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("Accepting non-regular file '" + fileName + "'.");
-                }
+                _logger.trace("Accepting non-regular file '{}'.", fileName);
 
                 return true; // Accept it to ensure navigation through directory and so
             }
@@ -258,9 +229,7 @@ final class GenericFileFilter extends FileFilter {
             final String fileType = _fileExtensions.get(fileExtension);
 
             if (fileType != null) {
-                if (_logger.isLoggable(Level.FINER)) {
-                    _logger.finer("Accepting file '" + fileName + "' of type '" + fileType + "'.");
-                }
+                _logger.debug("Accepting file '{}' of type '{}'.", fileName, fileType);
 
                 return true; // Accept it
             }
@@ -276,8 +245,6 @@ final class GenericFileFilter extends FileFilter {
      */
     @Override
     public String getDescription() {
-        _logger.entering("GenericFileFilter", "getDescription");
-
         return _description;
     }
 
@@ -288,8 +255,6 @@ final class GenericFileFilter extends FileFilter {
      */
     @Override
     public String toString() {
-        _logger.entering("GenericFileFilter", "toString");
-
         final String fileExtensions;
 
         if (_fileExtensions != null) {

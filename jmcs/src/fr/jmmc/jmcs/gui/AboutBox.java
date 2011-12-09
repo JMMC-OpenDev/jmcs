@@ -21,8 +21,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-import java.util.Vector;
-import java.util.logging.Logger;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -55,7 +56,8 @@ import javax.swing.event.HyperlinkListener;
 public class AboutBox extends JDialog implements HyperlinkListener {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(AboutBox.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(AboutBox.class.getName());
+    /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1L;
     /** Model of the about box */
     private ApplicationDataModel _applicationDataModel = null;
@@ -183,8 +185,9 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         // Close window on either strike
         ActionListener actionListener = new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                _logger.finer("Hiding about box on keyboard shortcut.");
+                _logger.debug("Hiding about box on keyboard shortcut.");
                 setVisible(false);
             }
         };
@@ -217,7 +220,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         // Window setup
         setupWindow();
 
-        _logger.fine("All the properties of the frame have been initialized");
+        _logger.debug("All the properties of the frame have been initialized");
     }
 
     /** Sets logo label properties */
@@ -235,7 +238,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
             _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
             _logoLabel.setOpaque(false);
 
-            _logger.fine("All the logo label properties have been initialized");
+            _logger.debug("All the logo label properties have been initialized");
 
             // Launch the default browser with the given link
             _logoLabel.addMouseListener(new MouseAdapter() {
@@ -249,7 +252,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
                 }
             });
 
-            _logger.fine("Mouse click event placed on logo label");
+            _logger.debug("Mouse click event placed on logo label");
 
             // Show hand cursor when mouse is moving on logo
             _logoLabel.addMouseMotionListener(new MouseMotionAdapter() {
@@ -261,9 +264,9 @@ public class AboutBox extends JDialog implements HyperlinkListener {
                 }
             });
 
-            _logger.fine("Mouse move event placed on logo label");
+            _logger.debug("Mouse move event placed on logo label");
         } else {
-            _logger.warning("No company logo found");
+            _logger.warn("No company logo found");
         }
     }
 
@@ -272,7 +275,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _copyrightLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _copyrightLabel.setText(_applicationDataModel.getCopyrightValue());
 
-        _logger.fine("All the copyright label properties have been initialized");
+        _logger.debug("All the copyright label properties have been initialized");
     }
 
     /** Sets text area (SWING HTML) properties */
@@ -286,7 +289,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         // The textarea should have the same width than the logo
         Dimension textareaDimension = new Dimension(300, 170);
         _descriptionEditorPane.setPreferredSize(textareaDimension);
-        _logger.fine("All the textarea properties have been initialized");
+        _logger.debug("All the textarea properties have been initialized");
 
         // HTML generation
         String generatedHtml = "<html><head></head><body>";
@@ -304,7 +307,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         }
 
         // Generate a HTML string with each package informations
-        Vector<String> packagesInfo = _applicationDataModel.getPackagesInfo();
+        List<String> packagesInfo = _applicationDataModel.getPackagesInfo();
         String packageHtml = "";
 
         // For each package
@@ -335,7 +338,8 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _descriptionEditorPane.setText(generatedHtml);
         // Show first line of editor pane, and not its last line as by default !
         _descriptionEditorPane.setCaretPosition(0);
-        _logger.fine("The content of textarea has been inserted.");
+
+        _logger.debug("The content of textarea has been inserted.");
 
         // Link pane only if anything to display
         _descriptionScrollPane.setViewportView(_descriptionEditorPane);
@@ -372,7 +376,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _linkLabel.setText("<html><head></head><body><center>" + linkHTML
                 + "</center></body></html>");
 
-        _logger.fine("All the link label properties have been initialized");
+        _logger.debug("All the link label properties have been initialized");
     }
 
     /** Sets program name label properties */
@@ -384,21 +388,18 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _programNameLabel.setText(name);
         _programNameLabel.setFont(new Font("Dialog", 1, 23));
 
-        _logger.fine(
-                "All the program info label properties have been initialized");
+        _logger.debug("All the program info label properties have been initialized");
     }
 
     /** Sets program version label properties */
     private void setupProgramVersionLabel() {
         // Get program informations
-        String version = "Version "
-                + _applicationDataModel.getProgramVersion();
+        String version = "Version " + _applicationDataModel.getProgramVersion();
 
         _programVersionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programVersionLabel.setText(version);
 
-        _logger.fine(
-                "All the program info label properties have been initialized");
+        _logger.debug("All the program info label properties have been initialized");
     }
 
     /** Sets compilation info label properties */
@@ -412,8 +413,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _compilationInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _compilationInfoLabel.setText(compilationInfo);
 
-        _logger.fine(
-                "All the compilation info label properties have been initialized");
+        _logger.debug("All the compilation info label properties have been initialized");
     }
 
     /** Set program name and version split properties */
@@ -425,8 +425,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _programNameAndVersionSplit.setTopComponent(_programNameLabel);
         _programNameAndVersionSplit.setBottomComponent(_programVersionLabel);
 
-        _logger.fine(
-                "All the link and program split properties have been initialized");
+        _logger.debug("All the link and program split properties have been initialized");
     }
 
     /** Set link and program info split properties */
@@ -438,8 +437,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _linkAndProgramInfoSplit.setTopComponent(_programNameAndVersionSplit);
         _linkAndProgramInfoSplit.setBottomComponent(_linkLabel);
 
-        _logger.fine(
-                "All the link and program split properties have been initialized");
+        _logger.debug("All the link and program split properties have been initialized");
     }
 
     /** Set compilation info split properties */
@@ -452,8 +450,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _compilationInfoSplit.setTopComponent(_linkAndProgramInfoSplit);
         _compilationInfoSplit.setBottomComponent(_compilationInfoLabel);
 
-        _logger.fine(
-                "All the compilation info split properties have been initialized");
+        _logger.debug("All the compilation info split properties have been initialized");
     }
 
     /** Set down space split properties */
@@ -466,8 +463,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _downSpaceSplit.setTopComponent(_compilationInfoSplit);
         _downSpaceSplit.setBottomComponent(new JLabel(" "));
 
-        _logger.fine(
-                "All the down space split properties have been initialized");
+        _logger.debug("All the down space split properties have been initialized");
     }
 
     /** Set up space split properties */
@@ -480,7 +476,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _upSpaceSplit.setTopComponent(new JLabel(" "));
         _upSpaceSplit.setBottomComponent(_downSpaceSplit);
 
-        _logger.fine("All the up space split properties have been initialized");
+        _logger.debug("All the up space split properties have been initialized");
     }
 
     /** Set text area split properties */
@@ -493,7 +489,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _descriptionSplit.setTopComponent(_upSpaceSplit);
         _descriptionSplit.setBottomComponent(_descriptionScrollPane);
 
-        _logger.fine("All the textarea split properties have been initialized");
+        _logger.debug("All the textarea split properties have been initialized");
     }
 
     /** Sets frame properties and make the window visible */
@@ -516,7 +512,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         // Center window on main screen
         WindowCenterer.centerOnMainScreen(this);
 
-        _logger.fine("All the frame properties have been initialized");
+        _logger.debug("All the frame properties have been initialized");
     }
 }
 /*___oOo___*/

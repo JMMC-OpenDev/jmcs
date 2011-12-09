@@ -13,7 +13,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is a customization of the standard SwingWorker to have a single thread only
@@ -24,9 +25,9 @@ import java.util.logging.Level;
 public final class TaskSwingWorkerExecutor {
 
     /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TaskSwingWorkerExecutor.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(TaskSwingWorkerExecutor.class.getName());
     /** flag to log debugging information */
-    protected final static boolean DEBUG_FLAG = false;
+    private final static boolean DEBUG_FLAG = false;
     /** singleton instance */
     private static TaskSwingWorkerExecutor instance;
     /** running worker counter */
@@ -72,7 +73,7 @@ public final class TaskSwingWorkerExecutor {
      * Return true if there is at least one worker running
      * @return true if there is at least one worker running
      */
-    public final static boolean isTaskRunning() {
+    public static boolean isTaskRunning() {
         return runningWorkerCounter.get() > 0;
     }
 
@@ -82,7 +83,7 @@ public final class TaskSwingWorkerExecutor {
      * @see #execute(TaskSwingWorker)
      * @param worker TaskSwingWorker instance to execute
      */
-    final static void executeTask(final TaskSwingWorker<?> worker) {
+    static void executeTask(final TaskSwingWorker<?> worker) {
         getInstance().execute(worker);
     }
 
@@ -91,14 +92,14 @@ public final class TaskSwingWorkerExecutor {
      * NOTE : No synchronization HERE as it must be called from Swing EDT
      * @param task task to find the current worker
      */
-    public final static void cancelTask(final Task task) {
+    public static void cancelTask(final Task task) {
         getInstance().cancel(task);
     }
 
     /**
      * Increment the counter of running worker
      */
-    final static void incRunningWorkerCounter() {
+    static void incRunningWorkerCounter() {
         final int count = runningWorkerCounter.incrementAndGet();
 
         if (DEBUG_FLAG) {
@@ -109,7 +110,7 @@ public final class TaskSwingWorkerExecutor {
     /**
      * Decrement the counter of running worker
      */
-    final static void decRunningWorkerCounter() {
+    static void decRunningWorkerCounter() {
         final int count = runningWorkerCounter.decrementAndGet();
 
         if (DEBUG_FLAG) {
@@ -152,7 +153,7 @@ public final class TaskSwingWorkerExecutor {
      * NOTE : No synchronization HERE as it must be called from Swing EDT
      * @param worker TaskSwingWorker instance to execute
      */
-    private final void execute(final TaskSwingWorker<?> worker) {
+    private void execute(final TaskSwingWorker<?> worker) {
         // note : there is no synchronisation here because this method must be called from Swing EDT
         final Task task = worker.getTask();
 
@@ -179,7 +180,7 @@ public final class TaskSwingWorkerExecutor {
      * NOTE : No synchronization HERE as it must be called from Swing EDT
      * @param task to use
      */
-    private final void cancelRelatedTasks(final Task task) {
+    private void cancelRelatedTasks(final Task task) {
         if (DEBUG_FLAG) {
             logger.info("cancel related tasks for = " + task);
         }
@@ -197,7 +198,7 @@ public final class TaskSwingWorkerExecutor {
      * NOTE : No synchronization HERE as it must be called from Swing EDT
      * @param task task to find the current worker
      */
-    private final void cancel(final Task task) {
+    private void cancel(final Task task) {
         final AtomicReference<TaskSwingWorker<?>> workerRef = getReference(task);
         if (workerRef != null) {
             // get current worker and clear the reference :
@@ -224,7 +225,7 @@ public final class TaskSwingWorkerExecutor {
      *
      * @param worker worker to remove
      */
-    private final void clearWorker(final TaskSwingWorker<?> worker) {
+    private void clearWorker(final TaskSwingWorker<?> worker) {
         final AtomicReference<TaskSwingWorker<?>> workerRef = getReference(worker.getTask());
         if (workerRef != null) {
             // check if the reference points to the given worker and then clear the reference :
@@ -245,7 +246,7 @@ public final class TaskSwingWorkerExecutor {
      * @param task task to find
      * @param worker new worker
      */
-    private final void defineReference(final Task task, final TaskSwingWorker<?> worker) {
+    private void defineReference(final Task task, final TaskSwingWorker<?> worker) {
 
         final AtomicReference<TaskSwingWorker<?>> workerRef = getOrCreateReference(task);
         if (workerRef != null) {
@@ -267,7 +268,7 @@ public final class TaskSwingWorkerExecutor {
      * @param task task to find
      * @return atomic reference corresponding to the given task
      */
-    private final AtomicReference<TaskSwingWorker<?>> getReference(final Task task) {
+    private AtomicReference<TaskSwingWorker<?>> getReference(final Task task) {
         return this.currentTaskWorkers.get(task.getName());
     }
 
@@ -277,7 +278,7 @@ public final class TaskSwingWorkerExecutor {
      * @param task task to find
      * @return atomic reference corresponding to the given task
      */
-    private final AtomicReference<TaskSwingWorker<?>> getOrCreateReference(final Task task) {
+    private AtomicReference<TaskSwingWorker<?>> getOrCreateReference(final Task task) {
         AtomicReference<TaskSwingWorker<?>> workerRef = getReference(task);
         if (workerRef == null) {
             workerRef = new AtomicReference<TaskSwingWorker<?>>();
@@ -299,7 +300,7 @@ public final class TaskSwingWorkerExecutor {
          * Create a single threaded Swing Worker executor
          * @param executor TaskSwingWorkerExecutor reference for clearWorker callback
          */
-        public SwingWorkerSingleThreadExecutor(final TaskSwingWorkerExecutor executor) {
+        protected SwingWorkerSingleThreadExecutor(final TaskSwingWorkerExecutor executor) {
             super(1, 1,
                     0L, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>(),
@@ -357,9 +358,9 @@ public final class TaskSwingWorkerExecutor {
         protected void afterExecute(final Runnable r, final Throwable t) {
             if (DEBUG_FLAG) {
                 if (t != null) {
-                    logger.log(Level.INFO, "afterExecute : " + r, t);
+                    logger.info("afterExecute : {}", r, t);
                 } else {
-                    logger.info("afterExecute : " + r);
+                    logger.info("afterExecute : {}", r);
                 }
             }
             if (r instanceof TaskSwingWorker<?>) {

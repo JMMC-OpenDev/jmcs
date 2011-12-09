@@ -11,7 +11,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -40,7 +41,7 @@ public class SplashScreen extends JFrame {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(SplashScreen.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(SplashScreen.class.getName());
 
     /* members */
     /** Splash screen has got the same model than about box */
@@ -113,7 +114,7 @@ public class SplashScreen extends JFrame {
         setPanelProperties();
         setFrameProperties();
 
-        _logger.fine("Every JFrame properties have been initialized");
+        _logger.debug("Every JFrame properties have been initialized");
     }
 
     /** Sets panel properties */
@@ -124,7 +125,7 @@ public class SplashScreen extends JFrame {
         _panel.add(_programNameLabel, BorderLayout.CENTER);
         _panel.add(_programVersionLabel, BorderLayout.PAGE_END);
 
-        _logger.fine("Every panel properties have been initialized");
+        _logger.debug("Every panel properties have been initialized");
     }
 
     /** Sets logo properties */
@@ -149,7 +150,7 @@ public class SplashScreen extends JFrame {
         _logoLabel.setIcon(new ImageIcon(getClass().getResource(_applicationDataModel.getCompanyLogoResourcePath())));
         _logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
-        _logger.fine("Every logo label properties have been initialized");
+        _logger.debug("Every logo label properties have been initialized");
     }
 
     /** Sets program name label properties */
@@ -158,7 +159,7 @@ public class SplashScreen extends JFrame {
         _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programNameLabel.setText(_applicationDataModel.getProgramName());
 
-        _logger.fine("Every program name label properties have been initialized");
+        _logger.debug("Every program name label properties have been initialized");
     }
 
     /** Sets program version label properties */
@@ -171,7 +172,7 @@ public class SplashScreen extends JFrame {
                 + " - " + _applicationDataModel.getCopyrightValue());
         _programVersionLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        _logger.fine("Every program version label properties have been initialized");
+        _logger.debug("Every program version label properties have been initialized");
     }
 
     /** Sets frame properties */

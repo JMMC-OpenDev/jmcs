@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -31,7 +32,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Class logger */
-    private final static java.util.logging.Logger _logger = java.util.logging.Logger.getLogger(PreferencedDocument.class.getName());
+    private final static Logger _logger = LoggerFactory.getLogger(PreferencedDocument.class.getName());
     /** Store PreferencedDocument instances for a given preference name */
     private static Map<String, PreferencedDocument> _instanceMap = Collections.synchronizedMap(new HashMap<String, PreferencedDocument>(8));
     /* members */
@@ -136,9 +137,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      * @param newValue new value to be written into the widget.
      */
     public void setMyText(final String newValue) {
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("setting new content to " + newValue);
-        }
+        _logger.debug("setting new content to: {}", newValue);
         try {
             replace(0, getLength(), newValue, null);
         } catch (BadLocationException ex) {
@@ -173,9 +172,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     @Override
     public void changedUpdate(final DocumentEvent evt) {
         // this event is not used
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.finest("changeUpdate :\n event: " + evt + "\n text: " + getMyText());
-        }
+        _logger.trace("changeUpdate:\n event: {}\n text: {}", evt, getMyText());
     }
 
     /**
@@ -186,9 +183,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     @Override
     public void insertUpdate(final DocumentEvent evt) {
         // Gives notification that there was an insert into the document.        
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.finest("insertUpdate :\n event: " + evt + "\n text: " + getMyText());
-        }
+        _logger.trace("insertUpdate:\n event: {}\n text: {}", evt, getMyText());
         setPrefValue(getMyText());
     }
 
@@ -200,9 +195,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     @Override
     public void removeUpdate(final DocumentEvent evt) {
         // Gives notification that a portion of the document has been removed.        
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.finest("removeUpdate :\n event: " + evt + "\n text: " + getMyText());
-        }
+        _logger.trace("removeUpdate:\n event: {}\n text: {}", evt, getMyText());
         setPrefValue(getMyText());
     }
 
@@ -214,13 +207,13 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     @Override
     public void update(final Observable o, final Object arg) {
         // Notify event Listener (telling this that it is an internal update)
-        _logger.fine("Fire action listeners ");
+        _logger.debug("Fire action listeners ");
 
         // Update the widget view according property value changed
         final String nextValue = _preferences.getPreference(_preferenceProperty);
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Setting " + _preferenceProperty + " from " + getMyText() + " to " + nextValue);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Setting '{}' from {} to {}", new Object[]{_preferenceProperty, getMyText(), nextValue});
         }
 
         // Do modify the widget content only if we are not in the EDT

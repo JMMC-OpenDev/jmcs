@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.Action;
 
 /**
@@ -55,10 +55,8 @@ import javax.swing.Action;
  */
 public abstract class Preferences extends Observable {
 
-    /** Class name */
-    private static final String _className = Preferences.class.getName();
     /** Logger - get from given class name */
-    private static final Logger _logger = Logger.getLogger(_className);
+    private static final Logger _logger = LoggerFactory.getLogger(Preferences.class.getName());
 
     /* jMCS private stuff */
     /** Hidden internal preferences prefix managed by jMCS. */
@@ -116,7 +114,7 @@ public abstract class Preferences extends Observable {
 
             loadFromFile();
         } catch (Exception ex) {
-            _logger.log(Level.WARNING, "Preference initialization FAILED.", ex);
+            _logger.warn("Preference initialization FAILED.", ex);
         }
 
         // parent class name must be given to register one action per inherited Preference class
@@ -190,8 +188,6 @@ public abstract class Preferences extends Observable {
      * be saved, false otherwise to automatically trigger default values load.
      */
     protected boolean updatePreferencesVersion(int loadedVersionNumber) {
-        _logger.entering(_className, "updatePreferencesVersion");
-
         // By default, triggers default values load.
         return false;
     }
@@ -214,8 +210,6 @@ public abstract class Preferences extends Observable {
      * be saved, false otherwise to automatically trigger default values load.
      */
     private final boolean updateJmcsPreferencesVersion(int loadedVersionNumber) {
-        _logger.entering(_className, "updateJmcsPreferencesVersion");
-
         switch (loadedVersionNumber) {
 
             // Add missing jMCS preference version number
@@ -231,7 +225,7 @@ public abstract class Preferences extends Observable {
                 return updateJmcsVersionFrom2To3();
 
             default:
-                _logger.warning("Could not update JMCS preferences from version '" + loadedVersionNumber + "'.");
+                _logger.warn("Could not update JMCS preferences from version '{}'.", loadedVersionNumber);
                 break;
         }
 
@@ -245,13 +239,11 @@ public abstract class Preferences extends Observable {
      * @return true if all went fine and should write to file, false otherwise.
      */
     private boolean updateJmcsVersionFrom0To1() {
-        _logger.entering(_className, "updateJmcsVersionFromNoneTo1");
-
         // Add missing jMCS structure version number
         try {
             setPreference(JMCS_STRUCTURE_VERSION_NUMBER_ID, 1);
         } catch (Exception ex) {
-            _logger.log(Level.WARNING, "Could not store preference '" + JMCS_STRUCTURE_VERSION_NUMBER_ID + "' : ", ex);
+            _logger.warn("Could not store preference '{}': ", JMCS_STRUCTURE_VERSION_NUMBER_ID, ex);
             return false;
         }
 
@@ -280,10 +272,11 @@ public abstract class Preferences extends Observable {
 
         // For each ordered preference indices
         final String PREVIOUS_PREFERENCES_ORDER_INDEX_PREFIX = "MCSPropertyIndexes.";
-        Enumeration indexes = getPreferences(PREVIOUS_PREFERENCES_ORDER_INDEX_PREFIX);
+
+        final Enumeration<String> indexes = getPreferences(PREVIOUS_PREFERENCES_ORDER_INDEX_PREFIX);
         while (indexes.hasMoreElements()) {
             // Get previous index value
-            String oldPreferenceName = (String) indexes.nextElement();
+            String oldPreferenceName = indexes.nextElement();
             // Delete previous preference
             removePreference(oldPreferenceName);
         }
@@ -296,8 +289,6 @@ public abstract class Preferences extends Observable {
      * Loop over any required step to become up-to-date.
      */
     private void handlePreferenceUpdates() {
-        _logger.entering(_className, "handlePreferenceUpdates");
-
         String[] versionNumberKeys = {JMCS_STRUCTURE_VERSION_NUMBER_ID, PREFERENCES_VERSION_NUMBER_ID};
         boolean everythingWentFine = true;
         for (String key : versionNumberKeys) {
@@ -318,32 +309,29 @@ public abstract class Preferences extends Observable {
                 runtimeVersionNumber = getPreferencesVersionNumber();
             }
 
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Internal" + logToken + "preference version number = '" + runtimeVersionNumber + "'.");
-            }
+            _logger.trace("Internal{}preference version number = '{}'.", logToken, runtimeVersionNumber);
 
             // Getting loaded preference file version number
             int fileVersionNumber = 0; // To be sure to be below most preferencesVersionNumber, as Java does not provide unsigned types to garanty positive values from getPreferencesVersionNumber() !!!
             try {
                 fileVersionNumber = getPreferenceAsInt(key);
 
-                if (_logger.isLoggable(Level.FINER)) {
-                    _logger.finer("Loaded" + logToken + "preference version number = '" + fileVersionNumber + "'.");
-                }
+                _logger.trace("Loaded{}preference version number = '{}'.", logToken, fileVersionNumber);
+
             } catch (NumberFormatException nfe) {
-                _logger.warning("Cannot get" + logToken + "loaded preference version number.");
+                _logger.warn("Cannot get{}loaded preference version number.", logToken);
             }
 
             // If the preference file version is older than the current default version
             if (fileVersionNumber < runtimeVersionNumber) {
-                _logger.warning("Loaded an 'out-of-date'" + logToken + "preference version, will try to update preference file.");
+                _logger.warn("Loaded an 'out-of-date'{}preference version, will try to update preference file.", logToken);
 
                 // Handle version differences
                 int currentPreferenceVersion = fileVersionNumber;
                 while (everythingWentFine && (currentPreferenceVersion < runtimeVersionNumber)) {
 
-                    if (_logger.isLoggable(Level.FINE)) {
-                        _logger.fine("Trying to update" + logToken + "loaded preferences from revision '" + currentPreferenceVersion + "'.");
+                    if (_logger.isDebugEnabled()) {
+                        _logger.debug("Trying to update{}loaded preferences from revision '{}'.", logToken, currentPreferenceVersion);
                     }
 
                     if (structuralUpdate) {
@@ -357,7 +345,7 @@ public abstract class Preferences extends Observable {
 
             } // If the preference file version is newer than the current default version
             else if (fileVersionNumber > runtimeVersionNumber) {
-                _logger.warning("Loaded a 'POSTERIOR to current version'" + logToken + "preference version, falling back to default values instead.");
+                _logger.warn("Loaded a 'POSTERIOR to current version'{}preference version, falling back to default values instead.", logToken);
 
                 // Use current default values instead
                 resetToDefaultPreferences();
@@ -373,7 +361,7 @@ public abstract class Preferences extends Observable {
                 // Save updated values to file
                 saveToFile();
             } catch (PreferencesException pe) {
-                _logger.log(Level.WARNING, "Cannot save preference to disk: ", pe);
+                _logger.warn("Cannot save preference to disk: ", pe);
             }
         } else { // If any update went wrong (or was not handled)
             // Use default values instead
@@ -388,32 +376,32 @@ public abstract class Preferences extends Observable {
      * @warning Any preference value change not yet saved will be LOST.
      */
     final public void loadFromFile() {
-        _logger.entering(_className, "loadFromFile");
-
         resetToDefaultPreferences(true);
 
         try {
             // Loading preference file
-            _logger.info("Loading '" + _fullFilepath + "' preference file.");
+            _logger.info("Loading '{}' preference file.", _fullFilepath);
+
             FileInputStream inputFile = null;
             try {
                 inputFile = new FileInputStream(_fullFilepath);
             } catch (FileNotFoundException fnfe) {
-                _logger.warning("Cannot load '" + _fullFilepath + "' : " + fnfe);
+                _logger.warn("Cannot load '{}' preference file: ", _fullFilepath, fnfe);
             }
 
             try {
                 _currentProperties.loadFromXML(inputFile);
             } catch (InvalidPropertiesFormatException ipfe) {
-                _logger.log(Level.SEVERE, "Cannot parse '" + _fullFilepath + "' preference file : ", ipfe);
+                _logger.error("Cannot parse '{}' preference file: ", _fullFilepath, ipfe);
             } catch (IOException ioe) {
-                _logger.log(Level.WARNING, "Cannot input/ouput to'" + _fullFilepath + "' : ", ioe);
+                _logger.warn("Cannot load '{}' preference file: ", _fullFilepath, ioe);
             }
 
             handlePreferenceUpdates();
+
         } catch (Exception e) {
             // Do nothing just default values will be into the preferences.
-            _logger.log(Level.FINE, "Failed loading preference file, so fall back to default values instead : ", e);
+            _logger.info("Failed loading preference file, so fall back to default values instead : ", e);
 
             resetToDefaultPreferences();
         }
@@ -439,8 +427,6 @@ public abstract class Preferences extends Observable {
      * @throws PreferencesException if the preference file could not be written.
      */
     final public void saveToFile(String comment) throws PreferencesException {
-        _logger.entering(_className, "saveToFile");
-
         // Store current Preference object revision number
         setPreference(JMCS_STRUCTURE_VERSION_NUMBER_ID, getJmcsStructureVersionNumber());
         setPreference(PREFERENCES_VERSION_NUMBER_ID, getPreferencesVersionNumber());
@@ -448,13 +434,13 @@ public abstract class Preferences extends Observable {
         FileOutputStream outputFile = null;
         try {
             outputFile = new FileOutputStream(_fullFilepath);
+
+            _logger.info("Saving '{}' preference file.", _fullFilepath);
+
             _currentProperties.storeToXML(outputFile, comment);
 
-            if (_logger.isLoggable(Level.INFO)) {
-                _logger.info("Saving '" + _fullFilepath + "' preference file.");
-            }
         } catch (Exception e) {
-            throw new PreferencesException("Cannot store preferences to file", e);
+            throw new PreferencesException("Cannot store preferences to file " + _fullFilepath, e);
         } finally {
             FileUtils.closeStream(outputFile);
         }
@@ -472,8 +458,6 @@ public abstract class Preferences extends Observable {
      * @param quiet display one info message log if true (debugging purpose).
      */
     final public void resetToDefaultPreferences(final boolean quiet) {
-        _logger.entering(_className, "resetToDefaultPreferences");
-
         _currentProperties = (Properties) _defaultProperties.clone();
 
         if (!quiet) {
@@ -494,12 +478,8 @@ public abstract class Preferences extends Observable {
      *
      * @throws PreferencesException if any preference value has a unsupported class type
      */
-    final public void setPreference(Object preferenceName,
-            Object preferenceValue) throws PreferencesException {
-        _logger.entering(_className, "setPreference");
-
-        setPreferenceToProperties(_currentProperties, preferenceName,
-                preferenceValue);
+    final public void setPreference(Object preferenceName, Object preferenceValue) throws PreferencesException {
+        setPreferenceToProperties(_currentProperties, preferenceName, preferenceValue);
     }
 
     /**
@@ -512,12 +492,8 @@ public abstract class Preferences extends Observable {
      *
      * @throws PreferencesException if any preference value has a unsupported class type
      */
-    final public void setDefaultPreference(Object preferenceName,
-            Object preferenceValue) throws PreferencesException {
-        _logger.entering(_className, "setDefaultPreference");
-
-        setPreferenceToProperties(_defaultProperties, preferenceName,
-                preferenceValue);
+    final public void setDefaultPreference(Object preferenceName, Object preferenceValue) throws PreferencesException {
+        setPreferenceToProperties(_defaultProperties, preferenceName, preferenceValue);
     }
 
     /**
@@ -529,14 +505,13 @@ public abstract class Preferences extends Observable {
      *
      * @throws PreferencesException if any preference value has a unsupported class type
      */
-    final private void setPreferenceToProperties(Properties properties,
-            Object preferenceName, Object preferenceValue)
+    final private void setPreferenceToProperties(Properties properties, Object preferenceName, Object preferenceValue)
             throws PreferencesException {
+
         // Will automatically get -1 for a yet undefined preference
         int order = getPreferenceOrder(preferenceName);
 
-        setPreferenceToProperties(properties, preferenceName, order,
-                preferenceValue);
+        setPreferenceToProperties(properties, preferenceName, order, preferenceValue);
     }
 
     /**
@@ -549,17 +524,13 @@ public abstract class Preferences extends Observable {
      *
      * @throws PreferencesException if any preference value has a unsupported class type
      */
-    final private void setPreferenceToProperties(Properties properties,
-            Object preferenceName, int preferenceIndex, Object preferenceValue)
+    final private void setPreferenceToProperties(Properties properties, Object preferenceName, int preferenceIndex, Object preferenceValue)
             throws PreferencesException {
-        _logger.entering(_className, "setPreferenceToProperties");
 
         String currentValue = properties.getProperty(preferenceName.toString());
         if (currentValue != null && currentValue.equals(preferenceValue.toString())) {
             // nothing to do
-            if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("Preference '" + preferenceName + "' not changed");
-            }
+            _logger.debug("Preference '{}' not changed", preferenceName);
             return;
         }
 
@@ -568,29 +539,23 @@ public abstract class Preferences extends Observable {
             properties.setProperty(preferenceName.toString(), (String) preferenceValue);
         } // Else if the constraint is a Boolean object
         else if (preferenceValue.getClass() == java.lang.Boolean.class) {
-            properties.setProperty(preferenceName.toString(),
-                    ((Boolean) preferenceValue).toString());
+            properties.setProperty(preferenceName.toString(), ((Boolean) preferenceValue).toString());
         } // Else if the constraint is an Integer object
         else if (preferenceValue.getClass() == java.lang.Integer.class) {
-            properties.setProperty(preferenceName.toString(),
-                    ((Integer) preferenceValue).toString());
+            properties.setProperty(preferenceName.toString(), ((Integer) preferenceValue).toString());
         } // Else if the constraint is a Double object
         else if (preferenceValue.getClass() == java.lang.Double.class) {
-            properties.setProperty(preferenceName.toString(),
-                    ((Double) preferenceValue).toString());
+            properties.setProperty(preferenceName.toString(), ((Double) preferenceValue).toString());
         } // Else if the constraint is a Color object
         else if (preferenceValue.getClass() == java.awt.Color.class) {
-            properties.setProperty(preferenceName.toString(),
-                    fr.jmmc.jmcs.util.ColorEncoder.encode((Color) preferenceValue));
+            properties.setProperty(preferenceName.toString(), fr.jmmc.jmcs.util.ColorEncoder.encode((Color) preferenceValue));
         } // Otherwise we don't know how to handle the given object type
         else {
-            throw new PreferencesException(
-                    "Cannot handle the given preference value.");
+            throw new PreferencesException("Cannot handle the given preference value.");
         }
 
         // Add property index for order if needed
-        setPreferenceOrderToProperties(properties, preferenceName,
-                preferenceIndex);
+        setPreferenceOrderToProperties(properties, preferenceName, preferenceIndex);
 
         // Notify all preferences listener.
         triggerObserversNotification();
@@ -605,10 +570,8 @@ public abstract class Preferences extends Observable {
      *
      * @throws PreferencesException if any preference value has a unsupported class type
      */
-    final public void setPreference(Object preferenceName, int preferenceIndex,
-            Object preferenceValue) throws PreferencesException {
-        setPreferenceToProperties(_currentProperties, preferenceName,
-                preferenceIndex, preferenceValue);
+    final public void setPreference(Object preferenceName, int preferenceIndex, Object preferenceValue) throws PreferencesException {
+        setPreferenceToProperties(_currentProperties, preferenceName, preferenceIndex, preferenceValue);
     }
 
     /**
@@ -620,9 +583,7 @@ public abstract class Preferences extends Observable {
      *
      * @throws PreferencesException if any preference value has a unsupported class type
      */
-    final public void setDefaultPreference(String preferenceName,
-            int preferenceIndex, Object preferenceValue)
-            throws PreferencesException {
+    final public void setDefaultPreference(String preferenceName, int preferenceIndex, Object preferenceValue) throws PreferencesException {
         setPreferenceToProperties(_defaultProperties, preferenceName,
                 preferenceIndex, preferenceValue);
     }
@@ -648,15 +609,12 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      * @param preferenceIndex the order number for the property (-1 for no order).
      */
-    final private void setPreferenceOrderToProperties(Properties properties,
-            Object preferenceName, int preferenceIndex) {
+    final private void setPreferenceOrderToProperties(Properties properties, Object preferenceName, int preferenceIndex) {
         // Add property index for order if needed
         if (preferenceIndex > -1) {
-            properties.setProperty(PREFERENCES_ORDER_INDEX_PREFIX + preferenceName.toString(),
-                    Integer.toString(preferenceIndex));
+            properties.setProperty(PREFERENCES_ORDER_INDEX_PREFIX + preferenceName.toString(), Integer.toString(preferenceIndex));
         } else {
-            properties.setProperty(PREFERENCES_ORDER_INDEX_PREFIX + preferenceName.toString(),
-                    Integer.toString(-1));
+            properties.setProperty(PREFERENCES_ORDER_INDEX_PREFIX + preferenceName.toString(), Integer.toString(-1));
         }
     }
 
@@ -668,16 +626,13 @@ public abstract class Preferences extends Observable {
      * @return the order number for the property (-1 for no order).
      */
     final public int getPreferenceOrder(Object preferenceName) {
-        _logger.entering(_className, "getPreferenceOrder");
-
         // -1 is the flag value for no order found, so it is the default value.
         int result = -1;
 
         // If the asked order is NOT about an internal MCS index property
         if (!preferenceName.toString().startsWith(PREFERENCES_ORDER_INDEX_PREFIX)) {
             // Get the corresponding order as a String
-            String orderString = _currentProperties.getProperty(PREFERENCES_ORDER_INDEX_PREFIX
-                    + preferenceName);
+            String orderString = _currentProperties.getProperty(PREFERENCES_ORDER_INDEX_PREFIX + preferenceName);
 
             // If an order token was found
             if (orderString != null) {
@@ -700,8 +655,6 @@ public abstract class Preferences extends Observable {
      * @return the preference value.
      */
     final public String getPreference(Object preferenceName) {
-        _logger.entering(_className, "getPreference");
-
         final String value = _currentProperties.getProperty(preferenceName.toString());
         if (value == null) {
             throw new RuntimeException("Could not find '" + preferenceName + "' preference value.");
@@ -718,8 +671,6 @@ public abstract class Preferences extends Observable {
      * @return one boolean representing the preference value.
      */
     final public boolean getPreferenceAsBoolean(Object preferenceName) {
-        _logger.entering(_className, "getPreferenceAsBoolean");
-
         final String value = getPreference(preferenceName);
         return Boolean.valueOf(value).booleanValue();
     }
@@ -732,8 +683,6 @@ public abstract class Preferences extends Observable {
      * @return one double representing the preference value.
      */
     final public double getPreferenceAsDouble(Object preferenceName) {
-        _logger.entering(_className, "getPreferenceAsDouble");
-
         final String value = getPreference(preferenceName);
         return Double.valueOf(value).doubleValue();
     }
@@ -746,8 +695,6 @@ public abstract class Preferences extends Observable {
      * @return one integer representing the preference value.
      */
     final public int getPreferenceAsInt(Object preferenceName) {
-        _logger.entering(_className, "getPreferenceAsInt");
-
         final String value = getPreference(preferenceName);
         return Integer.valueOf(value).intValue();
     }
@@ -758,10 +705,10 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return one Color object representing the preference value.
+     *
+     * @throws PreferencesException if the preference value is not a Color
      */
     final public Color getPreferenceAsColor(Object preferenceName) throws PreferencesException {
-        _logger.entering(_className, "getPreferenceAsColor");
-
         final String value = getPreference(preferenceName);
 
         Color colorValue = null;
@@ -794,11 +741,12 @@ public abstract class Preferences extends Observable {
         try {
             setPreference(newName, order, value);
 
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Renaming ['" + previousName + "' , '" + value + orderToken + "'] to ['" + newName + " , '" + value + orderToken + "'].");
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Renaming ['{}' , '{}'] to ['{} , '{}'].",
+                        new Object[]{previousName, (value + orderToken), newName, (value + orderToken)});
             }
         } catch (PreferencesException pe) {
-            _logger.log(Level.WARNING, "Could not store preference '" + newName + "' : ", pe);
+            _logger.warn("Could not store preference '{}' : ", newName, pe);
             return false;
         }
 
@@ -817,16 +765,12 @@ public abstract class Preferences extends Observable {
      * as expected. For example, {'LOW', 'MEDIUM', 'HIGH'} - MEDIUM will become
      * {'LOW', 'HIGH'}, not {'LOW, '', 'HIGH'}.
      *
-     * @param preferenceName the preference name.
+     * @param preference the preference name.
      */
     final public void removePreference(Object preference) {
-        _logger.entering(_className, "removePreference");
-
         String preferenceName = preference.toString();
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Removing preference '" + preferenceName + "'.");
-        }
+        _logger.debug("Removing preference '{}'.", preferenceName);
 
         // Get the given preference order, if any
         int preferenceOrder = getPreferenceOrder(preferenceName);
@@ -836,31 +780,26 @@ public abstract class Preferences extends Observable {
             String preferencesPrefix = null;
             int indexOfLastDot = preferenceName.lastIndexOf('.');
 
-            if ((indexOfLastDot > 0)
-                    && (indexOfLastDot < (preferenceName.length() - 1))) {
+            if ((indexOfLastDot > 0) && (indexOfLastDot < (preferenceName.length() - 1))) {
                 preferencesPrefix = preferenceName.substring(0, indexOfLastDot);
             }
 
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Removing preference from ordered group '" + preferencesPrefix + "'.");
-            }
+            _logger.debug("Removing preference from ordered group '{}'.", preferencesPrefix);
 
             // For each group preferences
-            Enumeration orderedPreferences = getPreferences(preferencesPrefix);
+            Enumeration<String> orderedPreferences = getPreferences(preferencesPrefix);
 
             while (orderedPreferences.hasMoreElements()) {
-                String orderedPreferenceName = (String) orderedPreferences.nextElement();
+                String orderedPreferenceName = orderedPreferences.nextElement();
 
                 int preferenceIndex = getPreferenceOrder(orderedPreferenceName);
 
                 if (preferenceIndex > preferenceOrder) {
                     int destinationIndex = preferenceIndex - 1;
 
-                    if (_logger.isLoggable(Level.FINEST)) {
-                        _logger.finest("Re-ordering preference '"
-                                + orderedPreferenceName + "' from index '"
-                                + preferenceIndex + "' to index '" + destinationIndex
-                                + "'.");
+                    if (_logger.isDebugEnabled()) {
+                        _logger.debug("Re-ordering preference '{}' from index '{}' to index '{}'.",
+                                new Object[]{orderedPreferenceName, preferenceIndex, destinationIndex});
                     }
 
                     setPreferenceOrder(orderedPreferenceName, destinationIndex);
@@ -883,20 +822,16 @@ public abstract class Preferences extends Observable {
      * @return true if everything went fine, false otherwise.
      */
     public boolean replaceTokenInPreference(Object preferenceName, String searchedToken, String replacingToken) {
-        _logger.entering(_className, "replaceTokenInPreference");
-
         final String preferencePath = preferenceName.toString();
 
         // Get the preference current value
         final String originalPreferenceValue = " " + getPreference(preferencePath) + " "; // Add a leading an a trailing space to also match first and last token if needed
 
-        if (_logger.isLoggable(Level.FINEST)) {
-            _logger.finest("Preference '" + preferencePath + "' contains : '" + originalPreferenceValue + "'.");
-        }
+        _logger.trace("Preference '{}' contains : '{}'.", preferencePath, originalPreferenceValue);
 
         // Search for the token and replace it
-        if (_logger.isLoggable(Level.FINER)) {
-            _logger.finer("Replacing '" + searchedToken + "' with '" + replacingToken + "' in '" + preferencePath + "'.");
+        if (_logger.isTraceEnabled()) {
+            _logger.trace("Replacing '{}' with '{}' in '{}'.", new Object[]{searchedToken, replacingToken, preferencePath});
         }
 
         final String newPreferenceValue = originalPreferenceValue.replaceAll(searchedToken, replacingToken).trim(); // Trim any spare spaces
@@ -905,11 +840,11 @@ public abstract class Preferences extends Observable {
         try {
             setPreference(preferencePath, newPreferenceValue);
 
-            if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("Preference '" + preferencePath + "' contains : '" + getPreference(preferencePath) + "'.");
+            if (_logger.isTraceEnabled()) {
+                _logger.trace("Preference '{}' contains : '{}'.", preferencePath, getPreference(preferencePath));
             }
         } catch (Exception ex) {
-            _logger.log(Level.WARNING, "Could not store '" + preferencePath + "' preference:", ex);
+            _logger.warn("Could not store '{}' preference:", preferencePath, ex);
 
             return false;
         }
@@ -926,8 +861,6 @@ public abstract class Preferences extends Observable {
      * @return true if everything went fine, false otherwise.
      */
     public boolean removeTokenInPreference(Object preferenceName, String searchedToken) {
-        _logger.entering(_className, "removeTokenInPreference");
-
         String cleaningToken = "";
         if (searchedToken.startsWith(" ") && searchedToken.endsWith(" ")) {
             cleaningToken = " ";
@@ -944,12 +877,10 @@ public abstract class Preferences extends Observable {
      * @param prefix 
      * @return Enumeration a string enumeration of preference names
      */
-    final public Enumeration getPreferences(Object prefix) {
-        _logger.entering(_className, "getPreferences");
-
+    final public Enumeration<String> getPreferences(Object prefix) {
         int size = 0;
-        Enumeration e = _currentProperties.propertyNames();
-        List shuffledProperties = new ArrayList<String>();
+        Enumeration<?> e = _currentProperties.propertyNames();
+        final List<String> shuffledProperties = new ArrayList<String>();
 
         // Count the number of properties for the given index and store them
         while (e.hasMoreElements()) {
@@ -961,7 +892,7 @@ public abstract class Preferences extends Observable {
             }
         }
 
-        String[] orderedProperties = new String[size];
+        final String[] orderedProperties = new String[size];
         Iterator<String> shuffledPropertiesIterator = shuffledProperties.iterator();
 
         // Order the stored properties if needed
@@ -981,9 +912,8 @@ public abstract class Preferences extends Observable {
         }
 
         // Get an enumaration by converting the array -> List -> Vector -> Enumeration
-        List orderedList = Arrays.asList(orderedProperties);
-        Vector orderedVector = new Vector(orderedList);
-        Enumeration orderedEnumeration = orderedVector.elements();
+        final Vector<String> orderedVector = new Vector<String>(Arrays.asList(orderedProperties));
+        final Enumeration<String> orderedEnumeration = orderedVector.elements();
 
         return orderedEnumeration;
     }
@@ -996,8 +926,6 @@ public abstract class Preferences extends Observable {
      * according to execution platform.
      */
     final public String computePreferenceFilepath() {
-        _logger.entering(_className, "computePreferenceFilepath");
-
         // [USER_HOME]/
         _fullFilepath = SystemUtils.USER_HOME + File.separator;
 
@@ -1020,8 +948,8 @@ public abstract class Preferences extends Observable {
         // Linux (and anything else) : [USER_HOME]/.fr.jmmc...properties
         _fullFilepath += getPreferenceFilename();
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Computed preference file path = '" + _fullFilepath + "'.");
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Computed preference file path = '{}'.", _fullFilepath);
         }
 
         return _fullFilepath;
@@ -1031,9 +959,10 @@ public abstract class Preferences extends Observable {
      * Trigger a notification of change to all registered Observers.
      */
     final public void triggerObserversNotification() {
-        _logger.entering(_className, "triggerObserversNotification");
 
         if (isNotify()) {
+            _logger.debug("triggerObserversNotification ...");
+
             // Use EDT to ensure that Swing component(s) is updated by EDT :
             SwingUtils.invokeEDT(new Runnable() {
 
@@ -1045,7 +974,7 @@ public abstract class Preferences extends Observable {
                 }
             });
         } else {
-            _logger.fine("triggerObserversNotification disabled.");
+            _logger.debug("triggerObserversNotification disabled.");
         }
     }
 
@@ -1072,8 +1001,7 @@ public abstract class Preferences extends Observable {
      */
     @Override
     final public String toString() {
-        return "Preferences file '" + _fullFilepath + "' contains :\n"
-                + _currentProperties;
+        return "Preferences file '" + _fullFilepath + "' contains :\n" + _currentProperties;
     }
 
     public Action getSavePreferences() {
@@ -1097,7 +1025,7 @@ public abstract class Preferences extends Observable {
             try {
                 saveToFile();
             } catch (PreferencesException pe) {
-                _logger.log(Level.WARNING, "saveToFile failure : ", pe);
+                _logger.warn("saveToFile failure : ", pe);
                 throw new RuntimeException(pe);
             }
         }
@@ -1114,7 +1042,7 @@ public abstract class Preferences extends Observable {
             try {
                 resetToDefaultPreferences();
             } catch (Exception e) {
-                _logger.log(Level.WARNING, "resetToDefaultPreferences failure : ", e);
+                _logger.warn("resetToDefaultPreferences failure : ", e);
                 throw new RuntimeException(e);
             }
         }

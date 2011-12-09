@@ -11,10 +11,10 @@ import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Font;
 
-import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -31,7 +31,7 @@ public class StatusBar extends JPanel {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(StatusBar.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(StatusBar.class.getName());
     /** Status label */
     private static final JLabel _statusLabel = new JLabel();
 
@@ -100,9 +100,8 @@ public class StatusBar extends JPanel {
      * @param message the message to be displayed by the status bar.
      */
     public static void show(final String message) {
-        _logger.entering("StatusBar", "show");
-
         SwingUtils.invokeEDT(new Runnable() {
+
             /**
              * Update the status bar using EDT
              */

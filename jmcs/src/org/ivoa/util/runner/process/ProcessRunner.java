@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import org.apache.commons.logging.Log;
 import org.ivoa.util.FileUtils;
 import org.ivoa.util.LogUtil;
 import org.ivoa.util.concurrent.ThreadExecutors;
+import org.slf4j.Logger;
 
 /**
  * Process Runner : manages Unix process (start and kill)
@@ -19,7 +19,7 @@ import org.ivoa.util.concurrent.ThreadExecutors;
 public final class ProcessRunner {
 
     /** logger */
-    private static final Log log = LogUtil.getLoggerDev();
+    private static final Logger log = LogUtil.getLoggerDev();
     /** ERROR prefix */
     public final static String ERR_PREFIX = "ERROR";
     /** undefined process status */
@@ -78,31 +78,29 @@ public final class ProcessRunner {
                 Future<?> errorFuture = null;
 
                 // start StreamRedirectors and place in runnable state :
-                if (log.isDebugEnabled()) {
-                    log.debug("ProcessRunner.execute : starting outputRedirect task ...");
-                }
+                log.debug("ProcessRunner.execute : starting outputRedirect task ...");
+
                 outputFuture = ThreadExecutors.getGenericExecutor().submit(outputRedirect);
-                if (log.isDebugEnabled()) {
-                    log.debug("ProcessRunner.execute : starting errorRedirect task ...");
-                }
+
+                log.debug("ProcessRunner.execute : starting errorRedirect task ...");
+
                 errorFuture = ThreadExecutors.getGenericExecutor().submit(errorRedirect);
 
-                if (log.isDebugEnabled()) {
-                    log.debug("ProcessRunner.execute : waitFor process to end ...");
-                }
+                log.debug("ProcessRunner.execute : waitFor process to end ...");
+
                 // todo use timeout to stop waiting ...
                 status = process.waitFor();
 
                 // calls thread.join to be sure that other threads finish before leaving from here :
                 // note: this thread is waiting FOR EVER until stdout/stderr streams are closed 
                 // by the child process itself
-                if (log.isDebugEnabled()) {
-                    log.debug("ProcessRunner.execute : join output Redirect ...");
-                }
+
+                log.debug("ProcessRunner.execute : join output Redirect ...");
+
                 outputFuture.get();
-                if (log.isDebugEnabled()) {
-                    log.debug("ProcessRunner.execute : join error Redirect ...");
-                }
+
+                log.debug("ProcessRunner.execute : join error Redirect ...");
+
                 errorFuture.get();
 
             } catch (CancellationException ce) {
@@ -147,7 +145,7 @@ public final class ProcessRunner {
     public static void kill(final ProcessContext runCtx) {
         stop(runCtx, true);
     }
-    
+
     /**
      * Kill a running UNIX Process from the given job context
      * @param runCtx job context
@@ -161,9 +159,7 @@ public final class ProcessRunner {
                     log.info("ProcessRunner.stop : stop process ... " + process);
                 }
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("ProcessRunner.stop : stop process ... " + process);
-                }
+                log.debug("ProcessRunner.stop : stop process ... " + process);
             }
 
             // workaround to closing bugs:
@@ -173,15 +169,11 @@ public final class ProcessRunner {
 
             // kills unix process & close all streams (stdin, stdout, stderr) :
             process.destroy();
-            
+
             if (kill) {
-                if (log.isInfoEnabled()) {
-                    log.info("ProcessRunner.stop : process stopped.");
-                }
+                log.info("ProcessRunner.stop : process stopped.");
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("ProcessRunner.stop : process stopped.");
-                }
+                log.debug("ProcessRunner.stop : process stopped.");
             }
             // free killed process :
             runCtx.setProcess(null);

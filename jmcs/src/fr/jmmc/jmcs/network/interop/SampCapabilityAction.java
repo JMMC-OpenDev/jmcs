@@ -8,8 +8,8 @@ import fr.jmmc.jmcs.gui.SwingUtils;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import java.awt.event.ActionEvent;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -29,7 +29,7 @@ import org.astrogrid.samp.gui.SubscribedClientListModel;
 public abstract class SampCapabilityAction extends RegisteredAction {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(SampCapabilityAction.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(SampCapabilityAction.class.getName());
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** label for broadcast to all */
@@ -70,8 +70,6 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      */
     @Override
     protected void performDeferedInitialization() {
-        _logger.entering("SampCapabilityAction", "performDeferedInitialization");
-
         // Get a dynamic list of SAMP clients able to respond to the specified capability.
         _capableClients = SampManager.createSubscribedClientListModel(_mType);
 
@@ -80,19 +78,16 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
             @Override
             public void contentsChanged(final ListDataEvent e) {
-                _logger.entering("ListDataListener", "contentsChanged");
                 updateMenuAndActionAfterSubscribedClientChange();
             }
 
             @Override
             public void intervalAdded(final ListDataEvent e) {
-                _logger.entering("ListDataListener", "intervalAdded");
                 updateMenuAndActionAfterSubscribedClientChange();
             }
 
             @Override
             public void intervalRemoved(final ListDataEvent e) {
-                _logger.entering("ListDataListener", "intervalRemoved");
                 updateMenuAndActionAfterSubscribedClientChange();
             }
         });
@@ -106,8 +101,9 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      *
      * @param flag allow enabling if true, disabling otherwise.
      */
-    public void couldBeEnabled(boolean flag) {
-        _logger.entering("SampCapabilityAction", "couldBeEnabled(" + flag + ")");
+    public void couldBeEnabled(final boolean flag) {
+        _logger.trace("couldBeEnabled({})", flag);
+
         // Update menus only if needed
         if (flag != _couldBeEnabled) {
             _couldBeEnabled = flag;
@@ -120,7 +116,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * @param text
      */
     public void setText(String text) {
-        _logger.entering("SampCapabilityAction", "setText('" + text + "')");
+        _logger.trace("setText('{}')", text);
         putValue(Action.NAME, text);
         updateMenuAndActionAfterSubscribedClientChange();
     }
@@ -132,7 +128,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
         // TODO : remove when code is clean !
         if (!SwingUtils.isEDT()) {
-            _logger.log(Level.SEVERE, "invalid thread : use EDT", new Throwable());
+            _logger.error("invalid thread : use EDT", new Throwable());
         }
 
         // Disabled until a client for the given capabily registers to the hub
@@ -142,9 +138,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         // or build a new one if it does not already exists
         JMenu menu = SampManager.getMenu(this);
         if (menu == null) {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Could not get back menu entry for action '" + this + "'.");
-            }
+            _logger.debug("Could not get back menu entry for action '{}'.", this);
+
             menu = new JMenu(this);
             SampManager.addMenu(menu, this);
         }
@@ -155,9 +150,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         // If no client is able to handle specified capability
         final int nbOfClients = (_capableClients != null) ? _capableClients.getSize() : 0;
         if (nbOfClients <= 0) {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("No SAMP client available for capability '" + _mType + "'.");
-            }
+            _logger.debug("No SAMP client available for capability '{}'.", _mType);
+
             // Leave the menu disable with no sub-menus
             return;
         }
@@ -169,9 +163,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         final JMenuItem broadcastMenuItem = new JMenuItem(this);
         broadcastMenuItem.setText(BROADCAST_MENU_LABEL);
         menu.add(broadcastMenuItem);
-        if (_logger.isLoggable(Level.FINEST)) {
-            _logger.finest("Added '" + BROADCAST_MENU_LABEL + "' broadcast menu entry for capability '" + _mType + "'.");
-        }
+
+        _logger.trace("Added '{}' broadcast menu entry for capability '{}'.", BROADCAST_MENU_LABEL, _mType);
 
         menu.addSeparator();
 
@@ -187,8 +180,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
             menu.add(individualMenuItem);
 
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Added '" + clientName + "' (" + clientId + ") menu entry for capability '" + _mType + "'.");
+            if (_logger.isTraceEnabled()) {
+                _logger.trace("Added '{}' ({}) menu entry for capability '{}'.", new Object[]{clientName, clientId, _mType});
             }
         }
     }
@@ -209,8 +202,6 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      */
     @Override
     public final void actionPerformed(final ActionEvent e) {
-        _logger.entering("SampCapabilityAction", "actionPerformed");
-
         // Delegate message forging to app-specific code
         final Map<?, ?> parameters = composeMessage();
 
@@ -235,7 +226,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
                 ok = true;
 
             } catch (SampException se) {
-                _logger.log(Level.SEVERE, "Samp message send failure", se);
+                _logger.error("Samp message send failure", se);
             }
 
             StatusBar.show(

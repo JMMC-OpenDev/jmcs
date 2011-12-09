@@ -7,8 +7,8 @@ import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
@@ -24,7 +24,7 @@ import org.apache.commons.lang.SystemUtils;
 public abstract class Resources {
 
     /** the logger facility */
-    protected static final Logger logger_ = Logger.getLogger(Resources.class.getName());
+    protected static final Logger _logger = LoggerFactory.getLogger(Resources.class.getName());
     /** Contains the class nale for logging */
     private static String _loggerClassName = "Resources";
     /** resource filename  that must be overloaded by subclasses */
@@ -44,10 +44,8 @@ public abstract class Resources {
      * @param name Indicates property file to use.
      */
     public static void setResourceName(final String name) {
-        logger_.entering(_loggerClassName, "setResourceName");
-
-        if (logger_.isLoggable(Level.FINE)) {
-            logger_.fine("Application will grab resources from '" + name + "'");
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Application will grab resources from '" + name + "'");
         }
         _resourceName = name;
         _resolved = false;
@@ -61,33 +59,33 @@ public abstract class Resources {
      * @return the content of the resource or null indicating error
      */
     public static String getResource(final String resourceName) {
-        return getResource(resourceName, Level.WARNING);
+        return getResource(resourceName, false);
     }
 
     /**
      * Get content from resource file.
      *
      * @param resourceKey name of resource
-     * @param notFoundLogLevel level to use if resource is not found
+     * @param quietIfNotFound true to not log at warning level i.e. debug level
      *
      * @return the content of the resource or null indicating error
      */
-    public static String getResource(final String resourceKey, final Level notFoundLogLevel) {
-        logger_.entering(_loggerClassName, "getResource");
-
+    public static String getResource(final String resourceKey, final boolean quietIfNotFound) {
         if (_resources == null) {
 
             if (!_resolved) {
-                if (logger_.isLoggable(Level.FINE)) {
-                    logger_.fine("getResource for " + _resourceName);
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("getResource for " + _resourceName);
                 }
                 try {
                     // update the resolve flag to avoid redundant calls to getBundle when no bundle is available:
                     _resolved = true;
                     _resources = ResourceBundle.getBundle(_resourceName);
                 } catch (MissingResourceException mre) {
-                    if (logger_.isLoggable(notFoundLogLevel)) {
-                        logger_.log(notFoundLogLevel, "Resource bundle can't be found : " + mre.getMessage());
+                    if (quietIfNotFound) {
+                        _logger.debug("Resource bundle can't be found : {}", mre.getMessage());
+                    } else {
+                        _logger.warn("Resource bundle can't be found : {}", mre.getMessage());
                     }
                 }
             }
@@ -97,14 +95,18 @@ public abstract class Resources {
             }
         }
 
-        if (logger_.isLoggable(Level.FINE)) {
-            logger_.fine("getResource for " + resourceKey);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("getResource for " + resourceKey);
         }
 
         try {
             return _resources.getString(resourceKey);
         } catch (MissingResourceException mre) {
-            logger_.log(notFoundLogLevel, "Entry not found :" + mre.getMessage());
+            if (quietIfNotFound) {
+                _logger.debug("Entry can't be found : {}", mre.getMessage());
+            } else {
+                _logger.warn("Entry can't be found : {}", mre.getMessage());
+            }
         }
 
         return null;
@@ -118,9 +120,7 @@ public abstract class Resources {
      * @return the associated text
      */
     public static String getActionText(final String actionName) {
-        logger_.entering(_loggerClassName, "getActionText");
-
-        return getResource("actions.action." + actionName + ".text", Level.FINE);
+        return getResource("actions.action." + actionName + ".text", true);
     }
 
     /**
@@ -131,9 +131,7 @@ public abstract class Resources {
      * @return the associated description
      */
     public static String getActionDescription(final String actionName) {
-        logger_.entering(_loggerClassName, "getActionDescription");
-
-        return getResource("actions.action." + actionName + ".description", Level.FINE);
+        return getResource("actions.action." + actionName + ".description", true);
     }
 
     /**
@@ -144,9 +142,7 @@ public abstract class Resources {
      * @return the tooltip text
      */
     public static String getToolTipText(final String widgetName) {
-        logger_.entering(_loggerClassName, "getToolTipText");
-
-        return getResource("widgets.widget." + widgetName + ".tooltip", Level.FINE);
+        return getResource("widgets.widget." + widgetName + ".tooltip", true);
     }
 
     /**
@@ -157,10 +153,8 @@ public abstract class Resources {
      * @return the associated accelerator
      */
     public static KeyStroke getActionAccelerator(final String actionName) {
-        logger_.entering(_loggerClassName, "getActionAccelerator");
-
         // Get the accelerator string description from the Resource.properties file
-        String keyString = getResource("actions.action." + actionName + ".accelerator", Level.FINE);
+        String keyString = getResource("actions.action." + actionName + ".accelerator", true);
 
         if (keyString == null) {
             return null;
@@ -178,8 +172,8 @@ public abstract class Resources {
         // Get and return the KeyStroke from the accelerator string description
         KeyStroke accelerator = KeyStroke.getKeyStroke(keyString);
 
-        if (logger_.isLoggable(Level.FINE)) {
-            logger_.fine("keyString['" + actionName + "'] = '" + keyString
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("keyString['" + actionName + "'] = '" + keyString
                     + "' -> accelerator = '" + accelerator + "'.");
         }
 
@@ -194,14 +188,12 @@ public abstract class Resources {
      * @return the associated icon
      */
     public static ImageIcon getActionIcon(final String actionName) {
-        logger_.entering(_loggerClassName, "getActionIcon");
-
         // Get back the icon image path
-        String iconPath = getResource("actions.action." + actionName + ".icon", Level.FINE);
+        String iconPath = getResource("actions.action." + actionName + ".icon", true);
 
         if (iconPath == null) {
-            if (logger_.isLoggable(Level.FINE)) {
-                logger_.fine("No icon resource found for action name '" + actionName + "'.");
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("No icon resource found for action name '" + actionName + "'.");
             }
 
             return null;
@@ -211,15 +203,15 @@ public abstract class Resources {
         URL imgURL = Resources.class.getResource(iconPath);
 
         if (imgURL == null) {
-            if (logger_.isLoggable(Level.FINE)) {
-                logger_.fine("Could not load icon '" + iconPath + "'.");
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Could not load icon '" + iconPath + "'.");
             }
 
             return null;
         }
 
-        if (logger_.isLoggable(Level.FINE)) {
-            logger_.fine("Using imgUrl for icon resource  '" + imgURL);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Using imgUrl for icon resource  '" + imgURL);
         }
 
         return new ImageIcon(imgURL);

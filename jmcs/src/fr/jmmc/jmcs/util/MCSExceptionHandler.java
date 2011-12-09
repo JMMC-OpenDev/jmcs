@@ -6,8 +6,8 @@ package fr.jmmc.jmcs.util;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.MessagePane;
 import fr.jmmc.jmcs.gui.SwingUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides Java 5 Thread uncaught exception handlers
@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 public final class MCSExceptionHandler {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(MCSExceptionHandler.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(MCSExceptionHandler.class.getName());
     /** flag indicating to use the default UncaughtExceptionHandler (true for jdk 1.7.0) */
     private static final boolean USE_DEFAULT_UNCAUGHT_EXCEPTION_HANDLER = true;
     /** flag indicating to set the UncaughtExceptionHandler to the current thread (main) (false because of JNLP) */
@@ -47,7 +47,7 @@ public final class MCSExceptionHandler {
         } catch (SecurityException se) {
             // This case occurs with java netx and
             // OpenJDK Runtime Environment (IcedTea6 1.6) (rhel-1.13.b16.el5-x86_64)
-            _logger.log(Level.INFO, "Can't set security manager to null", se);
+            _logger.warn("Can't set security manager to null", se);
         }
     }
 
@@ -81,7 +81,7 @@ public final class MCSExceptionHandler {
         if (handler != null) {
             applyUncaughtExceptionHandler(thread, handler);
         } else {
-            _logger.fine("No UncaughtExceptionHandler defined !");
+            _logger.debug("No UncaughtExceptionHandler defined !");
         }
     }
 
@@ -121,19 +121,19 @@ public final class MCSExceptionHandler {
      */
     private static void applyUncaughtExceptionHandler(final Thread.UncaughtExceptionHandler handler) {
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("New UncaughtExceptionHandler = " + handler);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("New UncaughtExceptionHandler = " + handler);
         }
 
         if (USE_DEFAULT_UNCAUGHT_EXCEPTION_HANDLER) {
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Current Default UncaughtExceptionHandler = " + Thread.getDefaultUncaughtExceptionHandler());
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Current Default UncaughtExceptionHandler = " + Thread.getDefaultUncaughtExceptionHandler());
             }
 
             Thread.setDefaultUncaughtExceptionHandler(handler);
 
-            if (_logger.isLoggable(Level.FINE)) {
-                _logger.fine("Updated Default UncaughtExceptionHandler = " + Thread.getDefaultUncaughtExceptionHandler());
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Updated Default UncaughtExceptionHandler = " + Thread.getDefaultUncaughtExceptionHandler());
             }
         }
 
@@ -154,7 +154,7 @@ public final class MCSExceptionHandler {
                     }
                 });
             } catch (IllegalStateException ise) {
-                _logger.log(Level.SEVERE, "exception occured: ", ise);
+                _logger.error("exception occured: ", ise);
             }
         }
     }
@@ -166,21 +166,21 @@ public final class MCSExceptionHandler {
      */
     private static void applyUncaughtExceptionHandler(final Thread thread, final Thread.UncaughtExceptionHandler handler) {
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Current Thread = " + thread + " in group = " + thread.getThreadGroup());
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Current Thread = " + thread + " in group = " + thread.getThreadGroup());
         }
 
         final Thread.UncaughtExceptionHandler threadHandler = thread.getUncaughtExceptionHandler();
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Current Thread UncaughtExceptionHandler = " + threadHandler);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Current Thread UncaughtExceptionHandler = " + threadHandler);
         }
 
         // Adding my handler to this thread (may be unnecessary) :
         thread.setUncaughtExceptionHandler(handler);
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Updated Thread UncaughtExceptionHandler = " + thread.getUncaughtExceptionHandler());
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Updated Thread UncaughtExceptionHandler = " + thread.getUncaughtExceptionHandler());
         }
     }
 
@@ -203,7 +203,7 @@ public final class MCSExceptionHandler {
      * @param e the exception
      */
     private static void logException(final Thread t, final Throwable e) {
-        _logger.log(Level.SEVERE, "An unexpected exception occured in thread " + t.getName(), e);
+        _logger.error("An unexpected exception occured in thread " + t.getName(), e);
     }
 
     /**

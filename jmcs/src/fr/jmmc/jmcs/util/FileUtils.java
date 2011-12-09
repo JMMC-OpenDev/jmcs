@@ -20,8 +20,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -32,7 +32,7 @@ import java.util.zip.GZIPOutputStream;
 public final class FileUtils {
 
     /** Class logger */
-    private static final Logger logger = Logger.getLogger(FileUtils.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class.getName());
     /** platform dependent line separator */
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     /** default read buffer capacity: 8K */
@@ -114,9 +114,8 @@ public final class FileUtils {
      * @throws IllegalStateException if the file is not found
      */
     public static URL getResource(final String classpathLocation) throws IllegalStateException {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("getResource : " + classpathLocation);
-        }
+        logger.debug("getResource : {}", classpathLocation);
+
         // use the class loader resource resolver
         final URL url = FileUtils.class.getClassLoader().getResource(classpathLocation);
 
@@ -198,7 +197,7 @@ public final class FileUtils {
             }
 
             result = sb.toString();
-            
+
         } finally {
             closeFile(reader);
         }
@@ -243,7 +242,7 @@ public final class FileUtils {
             try {
                 r.close();
             } catch (IOException ioe) {
-                logger.log(Level.FINE, "IO close failure.", ioe);
+                logger.debug("IO close failure.", ioe);
             }
         }
     }
@@ -258,7 +257,7 @@ public final class FileUtils {
             try {
                 w.close();
             } catch (IOException ioe) {
-                logger.log(Level.FINE, "IO close failure.", ioe);
+                logger.debug("IO close failure.", ioe);
             }
         }
     }
@@ -273,7 +272,7 @@ public final class FileUtils {
             try {
                 in.close();
             } catch (IOException ioe) {
-                logger.log(Level.FINE, "IO close failure.", ioe);
+                logger.debug("IO close failure.", ioe);
             }
         }
     }
@@ -288,7 +287,7 @@ public final class FileUtils {
             try {
                 out.close();
             } catch (IOException ioe) {
-                logger.log(Level.FINE, "IO close failure.", ioe);
+                logger.debug("IO close failure.", ioe);
             }
         }
     }

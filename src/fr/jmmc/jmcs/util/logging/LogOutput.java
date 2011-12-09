@@ -5,7 +5,10 @@ package fr.jmmc.jmcs.util.logging;
 
 /**
  * This simple class is a container for both String and byte count
- * @author bourgesl
+ * 
+ * License: LGPL 2.1
+ * 
+ * @author Bourgès Laurent
  */
 public final class LogOutput {
 

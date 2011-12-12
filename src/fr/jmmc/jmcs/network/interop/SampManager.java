@@ -52,7 +52,7 @@ public final class SampManager {
     /** GUI hub connector */
     private final GuiHubConnector _connector;
     /** Store whether we started our own hub instance or used an external on already running */
-    private static boolean _hubResponsible = false;
+    private static Hub _internalHub = null;
 
     /**
      * Return the singleton instance
@@ -84,7 +84,7 @@ public final class SampManager {
         }
 
         // If we did not launch the hub ourself
-        if (!_hubResponsible) {
+        if ((_internalHub == null) || (!_internalHub.getHubService().isHubRunning())) {
             _logger.info("Application has not launched the SAMP hub internally, letting application quits.");
             // Let the hub die without prompting confirmation
             return true;
@@ -112,6 +112,7 @@ public final class SampManager {
         if (_instance != null) {
             _instance.shutdownNow();
             _instance = null;
+            _internalHub = null;
         }
     }
 
@@ -184,14 +185,13 @@ public final class SampManager {
 
         _connector.addConnectionListener(new SampConnectionChangeListener());
 
-        // try to connect :
+        // Try to connect
         _connector.setActive(true);
 
         if (!_connector.isConnected()) {
             // Try to start an internal SAMP hub if none available (JNLP do not support external hub) :
             try {
-                Hub.runHub(getInternalHubMode());
-                _hubResponsible = true;
+                _internalHub = Hub.runHub(getInternalHubMode());
             } catch (IOException ioe) {
                 if (_logger.isDebugEnabled()) {
                     _logger.debug("unable to start internal hub (probably another hub is already running)", ioe);
@@ -378,7 +378,7 @@ public final class SampManager {
      * @param recipient public-id of client to receive message
      * @param parameters message parameters
      *
-     * @throws SampException if any Samp exception occured
+     * @throws SampException if any Samp exception occurred
      */
     public static void sendMessageTo(final String mType, final String recipient, final Map<?, ?> parameters) throws SampException {
         final GuiHubConnector connector = getGuiHubConnector();
@@ -398,7 +398,7 @@ public final class SampManager {
      * @param mType samp message type
      * @param parameters message parameters
      *
-     * @throws SampException if any Samp exception occured
+     * @throws SampException if any Samp exception occurred
      */
     public static void broadcastMessage(final String mType, final Map<?, ?> parameters) throws SampException {
         final GuiHubConnector connector = getGuiHubConnector();

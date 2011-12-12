@@ -83,7 +83,7 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
     @Override
     public final T doInBackground() {
         if (DEBUG_FLAG) {
-            logger.info(logPrefix + ".doInBackground : START");
+            logger.info("{}.doInBackground : START", logPrefix);
         }
 
         T data = null;
@@ -93,13 +93,13 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
 
         if (isCancelled()) {
             if (DEBUG_FLAG) {
-                logger.info(logPrefix + ".doInBackground : CANCELLED");
+                logger.info("{}.doInBackground : CANCELLED", logPrefix);
             }
             // no result if task was cancelled :
             data = null;
         } else {
             if (DEBUG_FLAG) {
-                logger.info(logPrefix + ".doInBackground : DONE");
+                logger.info("{}.doInBackground : DONE", logPrefix);
             }
         }
         return data;
@@ -114,7 +114,7 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
         // check if the worker was cancelled :
         if (isCancelled()) {
             if (DEBUG_FLAG) {
-                logger.info(logPrefix + ".done : CANCELLED");
+                logger.info("{}.done : CANCELLED", logPrefix);
             }
         } else {
             try {
@@ -123,18 +123,18 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
 
                 if (data == null) {
                     if (DEBUG_FLAG) {
-                        logger.info(logPrefix + ".done : NO DATA");
+                        logger.info("{}.done : NO DATA", logPrefix);
                     }
                 } else {
                     if (DEBUG_FLAG) {
-                        logger.info(logPrefix + ".done : UI START");
+                        logger.info("{}.done : UI START", logPrefix);
                     }
 
                     // refresh UI with data :
                     this.refreshUI(data);
 
                     if (DEBUG_FLAG) {
-                        logger.info(logPrefix + ".done : UI DONE");
+                        logger.info("{}.done : UI DONE", logPrefix);
                     }
                 }
 

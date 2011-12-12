@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public final class TaskSwingWorkerExecutor {
 
     /** Class logger */
-    private static final Logger logger = LoggerFactory.getLogger(TaskSwingWorkerExecutor.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(TaskSwingWorkerExecutor.class.getName());
     /** flag to log debugging information */
     private final static boolean DEBUG_FLAG = false;
     /** singleton instance */
@@ -48,7 +48,7 @@ public final class TaskSwingWorkerExecutor {
             instance.shutdown();
 
             if (DEBUG_FLAG) {
-                logger.info("stopped SwingWorkerExecutor : " + instance);
+                _logger.info("stopped SwingWorkerExecutor: {}", instance);
             }
             instance = null;
         }
@@ -63,7 +63,7 @@ public final class TaskSwingWorkerExecutor {
             instance = new TaskSwingWorkerExecutor();
 
             if (DEBUG_FLAG) {
-                logger.info("created SwingWorkerExecutor : " + instance);
+                _logger.info("created SwingWorkerExecutor: {}", instance);
             }
         }
         return instance;
@@ -103,7 +103,7 @@ public final class TaskSwingWorkerExecutor {
         final int count = runningWorkerCounter.incrementAndGet();
 
         if (DEBUG_FLAG) {
-            logger.info("runningWorkerCounter : " + count);
+            _logger.info("runningWorkerCounter: {}", count);
         }
     }
 
@@ -114,7 +114,7 @@ public final class TaskSwingWorkerExecutor {
         final int count = runningWorkerCounter.decrementAndGet();
 
         if (DEBUG_FLAG) {
-            logger.info("runningWorkerCounter : " + count);
+            _logger.info("runningWorkerCounter: {}", count);
         }
     }
 
@@ -158,7 +158,7 @@ public final class TaskSwingWorkerExecutor {
         final Task task = worker.getTask();
 
         if (DEBUG_FLAG) {
-            logger.info("execute task : " + task + " with worker = " + worker);
+            _logger.info("execute task : {} with worker = {}", task, worker);
         }
 
         // cancel the running worker for the task and child tasks
@@ -168,7 +168,7 @@ public final class TaskSwingWorkerExecutor {
         defineReference(task, worker);
 
         if (DEBUG_FLAG) {
-            logger.info("execute worker = " + worker);
+            _logger.info("execute worker = {}", worker);
         }
 
         // finally, execute the new worker with the custom executor service :
@@ -182,7 +182,7 @@ public final class TaskSwingWorkerExecutor {
      */
     private void cancelRelatedTasks(final Task task) {
         if (DEBUG_FLAG) {
-            logger.info("cancel related tasks for = " + task);
+            _logger.info("cancel related tasks for = {}", task);
         }
         // cancel any busy worker related to the given task :
         cancel(task);
@@ -208,7 +208,7 @@ public final class TaskSwingWorkerExecutor {
             if (currentWorker != null) {
                 // worker is still running ...
                 if (DEBUG_FLAG) {
-                    logger.info("cancel worker = " + currentWorker);
+                    _logger.info("cancel worker = {}", currentWorker);
                 }
 
                 // note : if the worker was previously cancelled, it has no effect.
@@ -231,11 +231,11 @@ public final class TaskSwingWorkerExecutor {
             // check if the reference points to the given worker and then clear the reference :
             if (workerRef.compareAndSet(worker, null)) {
                 if (DEBUG_FLAG) {
-                    logger.info("cleared worker = " + worker);
+                    _logger.info("cleared worker = {}", worker);
                 }
             } else {
                 if (DEBUG_FLAG) {
-                    logger.info("NOT cleared worker = " + worker + " - value is = " + workerRef.get());
+                    _logger.info("NOT cleared worker = {} - value is = {}", worker, workerRef.get());
                 }
             }
         }
@@ -253,11 +253,11 @@ public final class TaskSwingWorkerExecutor {
             // check if the reference is undefined and then set the reference :
             if (workerRef.compareAndSet(null, worker)) {
                 if (DEBUG_FLAG) {
-                    logger.info("set worker = " + worker);
+                    _logger.info("set worker = {}", worker);
                 }
             } else {
                 if (DEBUG_FLAG) {
-                    logger.info("NOT set worker = " + worker + " - value is = " + workerRef.get());
+                    _logger.info("NOT set worker = {} - value is = {}", worker, workerRef.get());
                 }
             }
         }
@@ -328,7 +328,7 @@ public final class TaskSwingWorkerExecutor {
         @Override
         protected void beforeExecute(final Thread t, final Runnable r) {
             if (DEBUG_FLAG) {
-                logger.info("beforeExecute : " + r);
+                _logger.info("beforeExecute: {}", r);
             }
         }
 
@@ -358,9 +358,9 @@ public final class TaskSwingWorkerExecutor {
         protected void afterExecute(final Runnable r, final Throwable t) {
             if (DEBUG_FLAG) {
                 if (t != null) {
-                    logger.info("afterExecute : {}", r, t);
+                    _logger.info("afterExecute: {}", r, t);
                 } else {
-                    logger.info("afterExecute : {}", r);
+                    _logger.info("afterExecute: {}", r);
                 }
             }
             if (r instanceof TaskSwingWorker<?>) {
@@ -404,7 +404,7 @@ public final class TaskSwingWorkerExecutor {
             MCSExceptionHandler.installThreadHandler(thread);
 
             if (DEBUG_FLAG) {
-                logger.info("new thread : " + thread.getName());
+                _logger.info("new thread: {}", thread.getName());
             }
 
             return thread;

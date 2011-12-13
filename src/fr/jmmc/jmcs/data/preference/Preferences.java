@@ -386,18 +386,20 @@ public abstract class Preferences extends Observable {
             try {
                 inputFile = new FileInputStream(_fullFilepath);
             } catch (FileNotFoundException fnfe) {
-                _logger.warn("Cannot load '{}' preference file: ", _fullFilepath, fnfe);
+                _logger.warn("Cannot load '{}' preference file: ", _fullFilepath, fnfe.getMessage());
             }
 
-            try {
-                _currentProperties.loadFromXML(inputFile);
-            } catch (InvalidPropertiesFormatException ipfe) {
-                _logger.error("Cannot parse '{}' preference file: ", _fullFilepath, ipfe);
-            } catch (IOException ioe) {
-                _logger.warn("Cannot load '{}' preference file: ", _fullFilepath, ioe);
-            }
+            if (inputFile != null) {
+                try {
+                    _currentProperties.loadFromXML(inputFile);
+                } catch (InvalidPropertiesFormatException ipfe) {
+                    _logger.error("Cannot parse '{}' preference file: ", _fullFilepath, ipfe);
+                } catch (IOException ioe) {
+                    _logger.warn("Cannot load '{}' preference file: ", _fullFilepath, ioe);
+                }
 
-            handlePreferenceUpdates();
+                handlePreferenceUpdates();
+            }
 
         } catch (Exception e) {
             // Do nothing just default values will be into the preferences.

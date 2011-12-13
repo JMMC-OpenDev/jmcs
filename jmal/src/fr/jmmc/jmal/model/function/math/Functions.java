@@ -210,9 +210,11 @@ public class Functions {
     // norm of uv :
     final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
 
-    final double alpha = 1d + width * diameter / 2d;
+    final double radius = 0.5d * diameter;
+    
+    final double alpha = 1d + width / radius;
 
-    final double r = PI * MAS2RAD * diameter * normUV / 2d;
+    final double r = PI * MAS2RAD * radius * normUV;
 
     double g;
     if (r == 0D) {

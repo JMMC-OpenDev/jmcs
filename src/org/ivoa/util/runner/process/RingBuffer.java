@@ -104,7 +104,7 @@ public final class RingBuffer extends LogSupport {
 
                 // finished with lineBuffer
             } catch (final InterruptedException ie) {
-                log.error("RingBuffer : line semaphore interrupted : ", ie);
+                logger.error("RingBuffer : line semaphore interrupted : ", ie);
                 res = line;
             } finally {
                 this.semLine.release();
@@ -143,7 +143,7 @@ public final class RingBuffer extends LogSupport {
             count++;
             // finished with anchor & count
         } catch (final InterruptedException ie) {
-            log.error("RingBuffer : anchor semaphore interrupted : ", ie);
+            logger.error("RingBuffer : anchor semaphore interrupted : ", ie);
         } finally {
             this.semAnchor.release();
         }
@@ -206,14 +206,14 @@ public final class RingBuffer extends LogSupport {
 
                     // finished with anchor
                 } catch (final InterruptedException ie) {
-                    log.error("RingBuffer : anchor semaphore interrupted : ", ie);
+                    logger.error("RingBuffer : anchor semaphore interrupted : ", ie);
                 } finally {
                     this.semAnchor.release();
                 }
 
                 res = sb.toString();
             } catch (final InterruptedException ie) {
-                log.error("RingBuffer : buffer semaphore interrupted : ", ie);
+                logger.error("RingBuffer : buffer semaphore interrupted : ", ie);
             } finally {
                 buffer.setLength(0);
                 // finished with buffer
@@ -228,7 +228,7 @@ public final class RingBuffer extends LogSupport {
     }
 
     /**
-     * Adds line into log file
+     * Adds line into logger file
      *
      * @param line content to add
      */
@@ -238,7 +238,7 @@ public final class RingBuffer extends LogSupport {
                 fw.write(line);
                 fw.write("\n");
             } catch (final IOException ioe) {
-                log.error("RingBuffer : write line failure : ", ioe);
+                logger.error("RingBuffer : write line failure : ", ioe);
             }
         }
     }

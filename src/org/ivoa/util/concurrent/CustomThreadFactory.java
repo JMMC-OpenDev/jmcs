@@ -55,9 +55,8 @@ public final class CustomThreadFactory extends LogSupport implements ThreadFacto
      */
     @Override
     public Thread newThread(final Runnable r) {
-        if (logB.isDebugEnabled()) {
-            logB.debug("CustomThreadFactory.newThread : enter with task : " + r);
-        }
+        logger.debug("CustomThreadFactory.newThread : enter with task: {}", r);
+
         final Thread t = new PoolThread(r, namePrefix + threadNumber.getAndIncrement());
         if (t.isDaemon()) {
             t.setDaemon(false);
@@ -68,9 +67,7 @@ public final class CustomThreadFactory extends LogSupport implements ThreadFacto
             t.setPriority(Thread.NORM_PRIORITY);
         }
 
-        if (logB.isDebugEnabled()) {
-            logB.debug("CustomThreadFactory.newThread : exit with thread : " + t + " with priority[" + t.getPriority() + "] for task : " + r);
-        }
+        logger.debug("CustomThreadFactory.newThread : exit with thread {} for task: {}", t, r);
         return t;
     }
 

@@ -599,7 +599,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         /** system config */
         private final String config;
         /** application log */
-        private final String log;
+        private final String appLog;
         /** exception stack trace */
         private final String stackTrace;
         /** feedback report type */
@@ -629,7 +629,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             super(JmcsTaskRegistry.TASK_FEEDBACK_REPORT);
             this.feedbackReport = feedbackReport;
             this.config = config;
-            this.log = log;
+            this.appLog = log;
             this.stackTrace = stackTrace;
             this.type = type;
             this.mail = mail;
@@ -673,7 +673,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
                 method.addParameter("applicationName", applicationName);
                 method.addParameter("applicationVersion", applicationVersion);
                 method.addParameter("systemConfig", config);
-                method.addParameter("applicationLog", log);
+                method.addParameter("applicationLog", appLog);
                 method.addParameter("applicationSpecificInformation", stackTrace);
 
                 // Get information from swing elements

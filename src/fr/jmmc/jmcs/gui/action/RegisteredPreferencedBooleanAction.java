@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.gui.action;
 
 import fr.jmmc.jmcs.data.preference.Preferences;
+import fr.jmmc.jmcs.data.preference.PreferencesException;
 import java.awt.event.*;
 
 import java.util.*;
@@ -74,9 +75,7 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
     public void update(Observable o, Object arg) {
         boolean state = _preferences.getPreferenceAsBoolean(_preferenceName);
 
-        if (_logger.isTraceEnabled()) {
-            _logger.trace(_preferenceName + " value changed to become '" + state + "'.");
-        }
+        _logger.trace("{} value changed to become '{}'.", _preferenceName, state);
 
         for (AbstractButton button : _boundButtons) {
             button.setSelected(state);
@@ -93,14 +92,11 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
             AbstractButton button = (AbstractButton) e.getSource();
             boolean isSelected = button.isSelected();
 
-            if (_logger.isTraceEnabled()) {
-                _logger.trace(_preferenceName + " value was updated with new external state of '" + isSelected + "'.");
-            }
+            _logger.trace("{} value was updated with new external state of '{}'.", _preferenceName, isSelected);
             try {
-
                 _preferences.setPreference(_preferenceName, isSelected);
-            } catch (Exception ex) {
-                _logger.warn("Cannot set preference '" + _preferenceName + "' to '" + isSelected + "'.", ex);
+            } catch (PreferencesException pe) {
+                _logger.warn("Cannot set preference '{}' to '{}'.", new Object[]{_preferenceName, isSelected, pe});
             }
         }
     }
@@ -117,14 +113,12 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
     public void itemStateChanged(ItemEvent e) {
         boolean isSelected = (e.getStateChange() == ItemEvent.SELECTED);
 
-        if (_logger.isTraceEnabled()) {
-            _logger.trace(_preferenceName + " value was updated with new internal state of '" + isSelected + "'.");
-        }
+        _logger.trace("{} value was updated with new internal state of '{}'.", _preferenceName, isSelected);
         try {
 
             _preferences.setPreference(_preferenceName, isSelected);
-        } catch (Exception ex) {
-            _logger.warn("Cannot set preference '" + _preferenceName + "' to '" + isSelected + "'.", ex);
+        } catch (PreferencesException pe) {
+            _logger.warn("Cannot set preference '{}' to '{}'.", new Object[]{_preferenceName, isSelected, pe});
         }
     }
 }

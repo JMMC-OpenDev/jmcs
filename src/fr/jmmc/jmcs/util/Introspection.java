@@ -41,7 +41,7 @@ public final class Introspection {
         try {
             searchedClass = Class.forName(classPath);
         } catch (ClassNotFoundException cnfe) {
-            _logger.warn( "Cannot find class '" + classPath + "'", cnfe);
+            _logger.warn("Cannot find class '{}'", classPath, cnfe);
         }
 
         return searchedClass;
@@ -56,9 +56,7 @@ public final class Introspection {
      */
     public static boolean hasClass(final String classPath) {
         if (getClass(classPath) != null) {
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("Found class '" + classPath + "'.");
-            }
+            _logger.debug("Found class '{}'.", classPath);
 
             return true;
         }
@@ -127,9 +125,9 @@ public final class Introspection {
             try {
                 return clazz.newInstance();
             } catch (InstantiationException ie) {
-                _logger.warn( "Cannot get instance of class '" + classPath + "'", ie);
+                _logger.warn("Cannot get instance of class '{}'", classPath, ie);
             } catch (IllegalAccessException iae) {
-                _logger.warn( "Cannot get instance of class '" + classPath + "'", iae);
+                _logger.warn("Cannot get instance of class '{}'", classPath, iae);
             }
         }
         return null;
@@ -196,7 +194,7 @@ public final class Introspection {
             try {
                 return clazz.getMethod(methodName, parameters);
             } catch (NoSuchMethodException nsme) {
-                _logger.warn( "Cannot find method '" + methodName + " of class '" + clazz + "'", nsme);
+                _logger.warn("Cannot find method '{}' of class '{}'", new Object[]{methodName, clazz, nsme});
             }
         }
 
@@ -229,8 +227,7 @@ public final class Introspection {
             final Class<?>[] parameters) {
         if (getMethod(classPath, methodName, parameters) != null) {
             if (_logger.isDebugEnabled()) {
-                _logger.debug("Found method '" + methodName + "' in class '"
-                        + classPath + "'.");
+                _logger.debug("Found method '{}' in class '{}'.", methodName, classPath);
             }
 
             return true;
@@ -323,11 +320,11 @@ public final class Introspection {
             try {
                 return method.invoke(instance, arguments);
             } catch (IllegalAccessException iae) {
-                _logger.warn( "Cannot get result of method '" + method.getName() + "'", iae);
+                _logger.warn("Cannot get result of method '{}'", method.getName(), iae);
             } catch (IllegalArgumentException iae) {
-                _logger.warn( "Cannot get result of method '" + method.getName() + "'", iae);
+                _logger.warn("Cannot get result of method '{}'", method.getName(), iae);
             } catch (InvocationTargetException ite) {
-                _logger.warn( "Cannot get result of method '" + method.getName() + "'", ite);
+                _logger.warn("Cannot get result of method '{}'", method.getName(), ite);
             }
         }
         return null;
@@ -409,11 +406,11 @@ public final class Introspection {
                 ok = true;
 
             } catch (IllegalAccessException iae) {
-                _logger.warn( "Cannot invoke method '" + method.getName() + "'", iae);
+                _logger.warn("Cannot invoke method '{}'", method.getName(), iae);
             } catch (IllegalArgumentException iae) {
-                _logger.warn( "Cannot invoke method '" + method.getName() + "'", iae);
+                _logger.warn("Cannot invoke method '{}'", method.getName(), iae);
             } catch (InvocationTargetException ite) {
-                _logger.warn( "Cannot invoke method '" + method.getName() + "'", ite);
+                _logger.warn("Cannot invoke method '{}'", method.getName(), ite);
             }
         }
         return ok;
@@ -446,7 +443,7 @@ public final class Introspection {
             try {
                 return clazz.getField(fieldName);
             } catch (NoSuchFieldException nsfe) {
-                _logger.warn( "Cannot get field '" + fieldName + "'", nsfe);
+                _logger.warn("Cannot get field '{}'", fieldName, nsfe);
             }
         }
         return null;
@@ -463,8 +460,7 @@ public final class Introspection {
     public static boolean hasField(final String classPath, final String fieldName) {
         if (getField(classPath, fieldName) != null) {
             if (_logger.isDebugEnabled()) {
-                _logger.debug("Found field '" + fieldName + "' in class '"
-                        + classPath + "'.");
+                _logger.debug("Found field '{}' in class '{}'.", fieldName, classPath);
             }
 
             return true;
@@ -489,9 +485,9 @@ public final class Introspection {
         try {
             value = field.get(getInstance(classPath));
         } catch (IllegalArgumentException iae) {
-            _logger.warn( "Cannot get value of field '" + fieldName + "'", iae);
+            _logger.warn("Cannot get value of field '{}'", fieldName, iae);
         } catch (IllegalAccessException iae) {
-            _logger.warn( "Cannot get value of field '" + fieldName + "'", iae);
+            _logger.warn("Cannot get value of field '{}'", fieldName, iae);
         }
 
         return value;

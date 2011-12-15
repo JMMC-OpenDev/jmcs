@@ -120,20 +120,17 @@ public final class MCSExceptionHandler {
      * @param handler handler to set
      */
     private static void applyUncaughtExceptionHandler(final Thread.UncaughtExceptionHandler handler) {
-
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("New UncaughtExceptionHandler = " + handler);
-        }
+        _logger.debug("New UncaughtExceptionHandler: {}", handler);
 
         if (USE_DEFAULT_UNCAUGHT_EXCEPTION_HANDLER) {
             if (_logger.isDebugEnabled()) {
-                _logger.debug("Current Default UncaughtExceptionHandler = " + Thread.getDefaultUncaughtExceptionHandler());
+                _logger.debug("Current Default UncaughtExceptionHandler: {}", Thread.getDefaultUncaughtExceptionHandler());
             }
 
             Thread.setDefaultUncaughtExceptionHandler(handler);
 
             if (_logger.isDebugEnabled()) {
-                _logger.debug("Updated Default UncaughtExceptionHandler = " + Thread.getDefaultUncaughtExceptionHandler());
+                _logger.debug("Updated Default UncaughtExceptionHandler: {}", Thread.getDefaultUncaughtExceptionHandler());
             }
         }
 
@@ -165,22 +162,19 @@ public final class MCSExceptionHandler {
      * @param handler handler to set
      */
     private static void applyUncaughtExceptionHandler(final Thread thread, final Thread.UncaughtExceptionHandler handler) {
-
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Current Thread = " + thread + " in group = " + thread.getThreadGroup());
+            _logger.debug("Current Thread = {} in group = {}", thread, thread.getThreadGroup());
         }
 
-        final Thread.UncaughtExceptionHandler threadHandler = thread.getUncaughtExceptionHandler();
-
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Current Thread UncaughtExceptionHandler = " + threadHandler);
+            _logger.debug("Current Thread UncaughtExceptionHandler: {}", thread.getUncaughtExceptionHandler());
         }
 
         // Adding my handler to this thread (may be unnecessary) :
         thread.setUncaughtExceptionHandler(handler);
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Updated Thread UncaughtExceptionHandler = " + thread.getUncaughtExceptionHandler());
+            _logger.debug("Updated Thread UncaughtExceptionHandler: {}", thread.getUncaughtExceptionHandler());
         }
     }
 
@@ -203,7 +197,7 @@ public final class MCSExceptionHandler {
      * @param e the exception
      */
     private static void logException(final Thread t, final Throwable e) {
-        _logger.error("An unexpected exception occured in thread " + t.getName(), e);
+        _logger.error("An unexpected exception occured in thread {}", t.getName(), e);
     }
 
     /**
@@ -214,7 +208,6 @@ public final class MCSExceptionHandler {
      * @param e the exception
      */
     private static void showException(final Thread t, final Throwable e) {
-
         MessagePane.showErrorMessage("An unexpected exception occured", e);
 
         // Show the feedback report (modal) :

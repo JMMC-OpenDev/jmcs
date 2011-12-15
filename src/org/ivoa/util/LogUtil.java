@@ -1,7 +1,5 @@
 package org.ivoa.util;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +18,6 @@ public final class LogUtil {
     public static final boolean LOGGING_DIAGNOSTICS = false;
     /** Main logger = org.ivoa */
     public static final String LOGGER_MAIN = "org.ivoa";
-    /** Base framework logger = org.ivoa.base */
-    public static final String LOGGER_BASE = "org.ivoa.base";
-    /** Development logger = org.ivoa.dev */
-    public static final String LOGGER_DEV = "org.ivoa.dev";
     /** singleton instance (java 5 memory model) */
     private static volatile LogUtil instance = null;
     /** shutdown flag to avoid singleton to be defined (java 5 memory model) */
@@ -34,19 +28,7 @@ public final class LogUtil {
      * Main logger
      * @see #LOGGER_MAIN
      */
-    private Logger log;
-    /**
-     * Development logger
-     * @see #LOGGER_BASE
-     */
-    private Logger logBase;
-    /**
-     * Development logger
-     * @see #LOGGER_DEV
-     */
-    private Logger logDev;
-    /** all loggers */
-    private final Map<String, Logger> logs = new HashMap<String, Logger>();
+    Logger logger;
 
     // ~ Constructors
     // -----------------------------------------------------------------------------------------------------
@@ -70,16 +52,12 @@ public final class LogUtil {
             l.init();
             if (isShutdown) {
                 // should not be possible :
-                if (l.log.isWarnEnabled()) {
-                    l.log.warn("LogUtil.getInstance : shutdown detected : ", new Throwable());
-                }
+                l.logger.error("LogUtil.getInstance : shutdown detected : ", new Throwable());
                 return l;
             }
             instance = l;
 
-            if (instance.logBase.isDebugEnabled()) {
-                instance.logBase.debug("LogUtil.getInstance : new singleton : " + instance);
-            }
+            instance.logger.debug("LogUtil.getInstance : new singleton: {}", instance);
         }
 
         return instance;
@@ -92,15 +70,12 @@ public final class LogUtil {
      * 
      * @see org.apache.commons.logging.LogFactory#release(ClassLoader)
      */
-    public static final void onExit() {
+    public static void onExit() {
         isShutdown = true;
         if (instance != null) {
             // TODO: Classloader unload problem with SLF4J ??
             // force GC :
-            instance.log = null;
-            instance.logBase = null;
-            instance.logDev = null;
-            instance.logs.clear();
+            instance.logger = null;
 
             // free singleton :
             instance = null;
@@ -112,11 +87,9 @@ public final class LogUtil {
      * 
      * @return true if shutdown flag is not set
      */
-    private static final boolean isRunning() {
+    private static boolean isRunning() {
         if (LOGGING_DIAGNOSTICS && isShutdown) {
-            if (SystemLogUtil.isDebugEnabled()) {
-                SystemLogUtil.debug("LogUtil.isRunning : shutdown detected : ");
-            }
+            System.err.println("LogUtil.isRunning : shutdown detected");
         }
 
         return !isShutdown;
@@ -132,34 +105,6 @@ public final class LogUtil {
         Logger l = null;
         if (isRunning()) {
             l = getInstance().getLog();
-        }
-        return l;
-    }
-
-    /**
-     * Return the Base logger :
-     * @see #LOGGER_BASE
-     *
-     * @return Logger instance or null if shutdown flag is set
-     */
-    public static Logger getLoggerBase() {
-        Logger l = null;
-        if (isRunning()) {
-            l = getInstance().getLogBase();
-        }
-        return l;
-    }
-
-    /**
-     * Return the Development logger :
-     * @see #LOGGER_DEV
-     * 
-     * @return Logger instance or null if shutdown flag is set
-     */
-    public static Logger getLoggerDev() {
-        Logger l = null;
-        if (isRunning()) {
-            l = getInstance().getLogDev();
         }
         return l;
     }
@@ -204,14 +149,9 @@ public final class LogUtil {
      * @throws IllegalStateException if the logger is not a Log4JLogger
      */
     private void init() {
-        this.log = this.getLog(LOGGER_MAIN);
+        this.logger = this.getLog(LOGGER_MAIN);
 
-        if (this.log.isDebugEnabled()) {
-            this.log.debug("LogUtil : logging enabled now.");
-        }
-
-        this.logBase = this.getLog(LOGGER_BASE);
-        this.logDev = this.getLog(LOGGER_DEV);
+        this.logger.debug("LogUtil : logging enabled now.");
     }
 
     /**
@@ -222,29 +162,13 @@ public final class LogUtil {
      * @throws IllegalStateException if the LogFactory returns no logger for the given key
      */
     private Logger getLog(final String key) {
-        Logger l = this.logs.get(key);
+        Logger l = LoggerFactory.getLogger(key);
 
         if (l == null) {
-            l = LoggerFactory.getLogger(key);
-
-            if (l != null) {
-                this.addLog(key, l);
-            } else {
-                throw new IllegalStateException("LogUtil : Logs are not initialized correctly : missing logger [" + key + "] !");
-            }
+            throw new IllegalStateException("LogUtil : Logs are not initialized correctly : missing logger [" + key + "] !");
         }
 
         return l;
-    }
-
-    /**
-     * Add a Logger into the logs map
-     * 
-     * @param key alias
-     * @param logger Logger to add
-     */
-    private void addLog(final String key, final Logger logger) {
-        this.logs.put(key, logger);
     }
 
     /**
@@ -252,26 +176,8 @@ public final class LogUtil {
      * 
      * @return Main Log
      */
-    private final Logger getLog() {
-        return this.log;
-    }
-
-    /**
-     * Return the Base logger
-     *
-     * @return Base Log
-     */
-    private final Logger getLogBase() {
-        return this.logBase;
-    }
-
-    /**
-     * Return the Development logger
-     *
-     * @return Development Log
-     */
-    private final Logger getLogDev() {
-        return this.logDev;
+    private Logger getLog() {
+        return this.logger;
     }
 }
 // ~ End of file

@@ -110,9 +110,7 @@ public class MainMenuBar extends JMenuBar {
                         // Get menu label
                         String currentMenuLabel = menu.getLabel();
 
-                        if (_logger.isDebugEnabled()) {
-                            _logger.debug("Make '" + currentMenuLabel + "' menu.");
-                        }
+                        _logger.debug("Make '{}' menu.", currentMenuLabel);
 
                         // Keep it if it's an other menu
                         if (!currentMenuLabel.equals("File")
@@ -122,9 +120,7 @@ public class MainMenuBar extends JMenuBar {
 
                             otherMenus.add(currentMenuLabel);
 
-                            if (_logger.isDebugEnabled()) {
-                                _logger.debug("Add '" + currentMenuLabel + "' to other menus vector.");
-                            }
+                            _logger.debug("Add '{}' to other menus vector.", currentMenuLabel);
                         }
 
                         // Get the component according to the castor menu object
@@ -134,7 +130,7 @@ public class MainMenuBar extends JMenuBar {
                         _menusTable.put(currentMenuLabel, completeMenu);
 
                         if (_logger.isDebugEnabled()) {
-                            _logger.debug("Put '" + completeMenu.getName() + "' into the menus table.");
+                            _logger.debug("Put '{}' into the menus table.", completeMenu.getName());
                         }
                     }
                 }
@@ -149,9 +145,7 @@ public class MainMenuBar extends JMenuBar {
         for (String menuLabel : otherMenus) {
             add(_menusTable.get(menuLabel));
 
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("Add '" + menuLabel + "' menu into the menubar.");
-            }
+            _logger.debug("Add '{}' menu into the menubar.", menuLabel);
         }
 
         // Create Interop menu :
@@ -333,9 +327,7 @@ public class MainMenuBar extends JMenuBar {
 
                 if (!className.equals(currentClassName)) {
                     try {
-                        if (_logger.isInfoEnabled()) {
-                            _logger.info("use Look and Feel : " + className);
-                        }
+                        _logger.info("use Look and Feel : {}", className);
 
                         final LookAndFeel newLaf = (LookAndFeel) Introspection.getInstance(className);
 
@@ -463,7 +455,7 @@ public class MainMenuBar extends JMenuBar {
             parent.add(component);
 
             if (_logger.isDebugEnabled()) {
-                _logger.debug("'" + component.getName() + "' linked to '" + parent.getName() + "'.");
+                _logger.debug("'{}' linked to '{}'.", component.getName(), parent.getName());
             }
         }
 
@@ -624,14 +616,12 @@ public class MainMenuBar extends JMenuBar {
             if (iconURL != null) {
                 action.putValue(Action.SMALL_ICON, new ImageIcon(Urls.fixJarURL(iconURL)));
             } else {
-                if (_logger.isWarnEnabled()) {
-                    _logger.warn("Can't find iconUrl : " + icon);
-                }
+                _logger.warn("Can't find iconUrl: {}", icon);
             }
         }
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Attributes set on '" + menu.getLabel() + "'.");
+            _logger.debug("Attributes set on '{}'.", menu.getLabel());
         }
     }
 

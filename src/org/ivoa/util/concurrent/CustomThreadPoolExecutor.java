@@ -19,7 +19,7 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      * Logger for the base framework
      * @see org.ivoa.bean.LogSupport
      */
-    private static Logger logB = LogUtil.getLoggerBase();
+    private static Logger logger = LogUtil.getLogger();
     /** debug flag to log thread activity */
     public static final boolean DO_DEBUG = false;
     //~ Members ----------------------------------------------------------------------------------------------------------
@@ -73,11 +73,10 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      */
     @Override
     protected void beforeExecute(final Thread t, final Runnable r) {
-        if (logB.isDebugEnabled()) {
-            logB.debug(this.name + ".beforeExecute : runnable : " + r);
-        }
+        logger.debug("{}.beforeExecute : runnable: {}", this.name, r);
+
         if (DO_DEBUG) {
-            logB.warn(this.name + ".beforeExecute : runnable : " + r);
+            logger.warn("{}.beforeExecute : runnable: {}", this.name, r);
         }
     }
 
@@ -90,14 +89,13 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
     @Override
     protected void afterExecute(final Runnable r, final Throwable th) {
         if (th == null) {
-            if (logB.isDebugEnabled()) {
-                logB.debug(this.name + ".afterExecute : runnable : " + r);
-            }
+            logger.debug("{}.afterExecute : runnable: {}", this.name, r);
+
             if (DO_DEBUG) {
-                logB.warn(this.name + ".afterExecute : runnable : " + r);
+                logger.warn("{}.afterExecute : runnable: {}", this.name, r);
             }
         } else {
-            logB.error(this.name + ".afterExecute : uncaught exception : ", th);
+            logger.error("{}.afterExecute : uncaught exception: {}", this.name, th);
         }
     }
 
@@ -109,8 +107,6 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      */
     @Override
     protected void terminated() {
-        if (logB.isDebugEnabled()) {
-            logB.debug(this.name + ".terminated.");
-        }
+        logger.debug("{}.terminated.", this.name);
     }
 }

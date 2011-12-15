@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 public final class ProcessRunner {
 
     /** logger */
-    private static final Logger log = LogUtil.getLoggerDev();
+    private static final Logger logger = LogUtil.getLogger();
     /** ERROR prefix */
     public final static String ERR_PREFIX = "ERROR";
     /** undefined process status */
@@ -48,13 +48,13 @@ public final class ProcessRunner {
 
         final File workingDir = FileUtils.getDirectory(runCtx.getWorkingDir());
         if (workingDir == null) {
-            log.error("ProcessRunner.execute : working directory does not exist : " + runCtx.getWorkingDir());
+            logger.error("ProcessRunner.execute : working directory does not exist: ", runCtx.getWorkingDir());
         } else {
             final String[] args = runCtx.getCommandArray();
             final RingBuffer ring = runCtx.getRing();
 
-            if (log.isInfoEnabled()) {
-                log.info("ProcessRunner.execute : starting process : " + Arrays.toString(args) + " in " + workingDir);
+            if (logger.isInfoEnabled()) {
+                logger.info("ProcessRunner.execute : starting process: {} in directory: {}", Arrays.toString(args), workingDir);
             }
 
             // initialization :
@@ -78,15 +78,15 @@ public final class ProcessRunner {
                 Future<?> errorFuture = null;
 
                 // start StreamRedirectors and place in runnable state :
-                log.debug("ProcessRunner.execute : starting outputRedirect task ...");
+                logger.debug("ProcessRunner.execute : starting outputRedirect task ...");
 
                 outputFuture = ThreadExecutors.getGenericExecutor().submit(outputRedirect);
 
-                log.debug("ProcessRunner.execute : starting errorRedirect task ...");
+                logger.debug("ProcessRunner.execute : starting errorRedirect task ...");
 
                 errorFuture = ThreadExecutors.getGenericExecutor().submit(errorRedirect);
 
-                log.debug("ProcessRunner.execute : waitFor process to end ...");
+                logger.debug("ProcessRunner.execute : waitFor process to end ...");
 
                 // todo use timeout to stop waiting ...
                 status = process.waitFor();
@@ -95,29 +95,27 @@ public final class ProcessRunner {
                 // note: this thread is waiting FOR EVER until stdout/stderr streams are closed 
                 // by the child process itself
 
-                log.debug("ProcessRunner.execute : join output Redirect ...");
+                logger.debug("ProcessRunner.execute : join output Redirect ...");
 
                 outputFuture.get();
 
-                log.debug("ProcessRunner.execute : join error Redirect ...");
+                logger.debug("ProcessRunner.execute : join error Redirect ...");
 
                 errorFuture.get();
 
             } catch (CancellationException ce) {
-                log.error("ProcessRunner.run : execution failure :", ce);
+                logger.error("ProcessRunner.run : execution failure :", ce);
             } catch (ExecutionException ee) {
-                log.error("ProcessRunner.run : execution failure :", ee);
+                logger.error("ProcessRunner.run : execution failure :", ee);
             } catch (IllegalStateException ise) {
-                log.error("ProcessRunner.execute : illegal state failure :", ise);
+                logger.error("ProcessRunner.execute : illegal state failure :", ise);
             } catch (InterruptedException ie) {
                 // occurs when the threadpool shutdowns or interrupts the task (future.cancel) :
-                if (log.isInfoEnabled()) {
-                    log.info("ProcessRunner.execute : interrupted failure :", ie);
-                }
+                logger.info("ProcessRunner.execute : interrupted failure :", ie);
                 // Interrupted status :
                 status = STATUS_INTERRUPTED;
             } catch (IOException ioe) {
-                log.error("ProcessRunner.execute : unable to start process " + Arrays.toString(args) + " : ", ioe);
+                logger.error("ProcessRunner.execute : unable to start process: {}", Arrays.toString(args), ioe);
                 ring.add(ERR_PREFIX, ioe.getMessage());
             } finally {
                 // in all cases : 
@@ -129,9 +127,7 @@ public final class ProcessRunner {
                 // cleanup : free process in whatever state and close streams:
                 stop(runCtx, false);
 
-                if (log.isInfoEnabled()) {
-                    log.info("ProcessRunner.execute : process status : " + runCtx.getExitCode());
-                }
+                logger.info("ProcessRunner.execute : process status: {}", runCtx.getExitCode());
             }
         }
 
@@ -155,11 +151,9 @@ public final class ProcessRunner {
         final Process process = runCtx.getProcess();
         if (process != null) {
             if (kill) {
-                if (log.isInfoEnabled()) {
-                    log.info("ProcessRunner.stop : stop process ... " + process);
-                }
+                logger.info("ProcessRunner.stop : stop process: {}", process);
             } else {
-                log.debug("ProcessRunner.stop : stop process ... " + process);
+                logger.debug("ProcessRunner.stop : stop process: {}", process);
             }
 
             // workaround to closing bugs:
@@ -171,9 +165,9 @@ public final class ProcessRunner {
             process.destroy();
 
             if (kill) {
-                log.info("ProcessRunner.stop : process stopped.");
+                logger.info("ProcessRunner.stop : process stopped.");
             } else {
-                log.debug("ProcessRunner.stop : process stopped.");
+                logger.debug("ProcessRunner.stop : process stopped.");
             }
             // free killed process :
             runCtx.setProcess(null);

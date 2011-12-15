@@ -44,9 +44,8 @@ public abstract class Resources {
      * @param name Indicates property file to use.
      */
     public static void setResourceName(final String name) {
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("Application will grab resources from '" + name + "'");
-        }
+        _logger.debug("Application will grab resources from '{}'", name);
+
         _resourceName = name;
         _resolved = false;
     }
@@ -74,9 +73,7 @@ public abstract class Resources {
         if (_resources == null) {
 
             if (!_resolved) {
-                if (_logger.isDebugEnabled()) {
-                    _logger.debug("getResource for " + _resourceName);
-                }
+                _logger.debug("getResource for '{}'", _resourceName);
                 try {
                     // update the resolve flag to avoid redundant calls to getBundle when no bundle is available:
                     _resolved = true;
@@ -95,10 +92,7 @@ public abstract class Resources {
             }
         }
 
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("getResource for " + resourceKey);
-        }
-
+        _logger.debug("getResource for '{}'", resourceKey);
         try {
             return _resources.getString(resourceKey);
         } catch (MissingResourceException mre) {
@@ -173,8 +167,8 @@ public abstract class Resources {
         KeyStroke accelerator = KeyStroke.getKeyStroke(keyString);
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("keyString['" + actionName + "'] = '" + keyString
-                    + "' -> accelerator = '" + accelerator + "'.");
+            _logger.debug("keyString['{}'] = '{}' -> accelerator = '{}'.",
+                    new Object[]{actionName, keyString, accelerator});
         }
 
         return accelerator;
@@ -192,10 +186,7 @@ public abstract class Resources {
         String iconPath = getResource("actions.action." + actionName + ".icon", true);
 
         if (iconPath == null) {
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("No icon resource found for action name '" + actionName + "'.");
-            }
-
+            _logger.debug("No icon resource found for action name '{}'.", actionName);
             return null;
         }
 
@@ -203,16 +194,11 @@ public abstract class Resources {
         URL imgURL = Resources.class.getResource(iconPath);
 
         if (imgURL == null) {
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("Could not load icon '" + iconPath + "'.");
-            }
-
+            _logger.debug("Could not load icon '{}'.", iconPath);
             return null;
         }
 
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("Using imgUrl for icon resource  '" + imgURL);
-        }
+        _logger.debug("Using imgUrl for icon resource  '{}'.", imgURL);
 
         return new ImageIcon(imgURL);
     }

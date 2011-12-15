@@ -73,8 +73,8 @@ public final class ThreadExecutors extends LogSupport {
     protected ThreadExecutors(final CustomThreadPoolExecutor executor) {
         threadExecutor = executor;
 
-        if (logB.isDebugEnabled()) {
-            logB.debug("ThreadExecutors.new : creating a new thread pool : " + getPoolName());
+        if (logger.isDebugEnabled()) {
+            logger.debug("ThreadExecutors.new : creating a new thread pool: {}", getPoolName());
         }
 
         // creates now core threads (min threads) :
@@ -95,8 +95,8 @@ public final class ThreadExecutors extends LogSupport {
 
             return true;
         } catch (final InterruptedException ie) {
-            if (logB.isDebugEnabled()) {
-                logB.debug(Thread.currentThread().getName() + " sleep : interrupted : ", ie);
+            if (logger.isDebugEnabled()) {
+                logger.debug("{} sleep : interrupted:", Thread.currentThread().getName(), ie);
             }
         }
 
@@ -204,17 +204,17 @@ public final class ThreadExecutors extends LogSupport {
 
         return runnerExecutor;
     }
+
     /**
-     * Return the single-thread pool or create it (lazy) for the given name
+     * Return the default single-thread pool or create it (lazy)
      * 
-     * @param name key or name of the single-thread pool
      * @see #newFixedThreadPool(String, int, ThreadFactory)
-     * @return process thread pool
+     * @return default single thread pool
      */
     public static ThreadExecutors getDefaultSingleExecutor() {
         return getSingleExecutor(DEFAULT_SINGLE_THREAD_POOL);
     }
-    
+
     /**
      * Return the single-thread pool or create it (lazy) for the given name
      * 
@@ -292,8 +292,8 @@ public final class ThreadExecutors extends LogSupport {
      * @throws IllegalStateException if this task cannot be accepted for execution.
      */
     public void execute(final Runnable job) {
-        if (logB.isDebugEnabled()) {
-            logB.debug("ThreadExecutors.execute : execute job in pool : " + getPoolName() + " = " + job);
+        if (logger.isDebugEnabled()) {
+            logger.debug("ThreadExecutors.execute : execute job in pool: {} = {}", getPoolName(), job);
         }
         try {
             getExecutor().execute(job);
@@ -312,8 +312,8 @@ public final class ThreadExecutors extends LogSupport {
      * @throws IllegalStateException if task cannot be scheduled for execution
      */
     public Future<?> submit(final Runnable job) {
-        if (logB.isDebugEnabled()) {
-            logB.debug("ThreadExecutors.submit : submit job in pool : " + getPoolName() + " = " + job);
+        if (logger.isDebugEnabled()) {
+            logger.debug("ThreadExecutors.submit : submit job in pool: {} = {}", getPoolName(), job);
         }
         try {
             return getExecutor().submit(job);
@@ -333,8 +333,8 @@ public final class ThreadExecutors extends LogSupport {
      * @throws IllegalStateException if task cannot be scheduled for execution
      */
     public <T> Future<T> submit(final Callable<T> job) {
-        if (logB.isDebugEnabled()) {
-            logB.debug("ThreadExecutors.submit : submit job in pool : " + getPoolName() + " = " + job);
+        if (logger.isDebugEnabled()) {
+            logger.debug("ThreadExecutors.submit : submit job in pool: {} = {}", getPoolName(), job);
         }
         try {
             return getExecutor().submit(job);
@@ -349,41 +349,39 @@ public final class ThreadExecutors extends LogSupport {
      * @see ThreadPoolExecutor#shutdownNow()
      */
     private void stop() {
-        if (logB.isDebugEnabled()) {
-            logB.debug("ThreadExecutors.stop : starting shutdown : " + getPoolName());
+        if (logger.isDebugEnabled()) {
+            logger.debug("ThreadExecutors.stop : starting shutdown: {}", getPoolName());
         }
         getExecutor().shutdown();
 
         boolean terminated = false;
         try {
-            if (logB.isDebugEnabled()) {
-                logB.debug("ThreadExecutors.stop : waiting for termination [" + SHUTDOWN_DELAY + " s] : " + getPoolName());
+            if (logger.isDebugEnabled()) {
+                logger.debug("ThreadExecutors.stop : waiting for termination [{} s] : {}", SHUTDOWN_DELAY, getPoolName());
             }
             terminated = getExecutor().awaitTermination(SHUTDOWN_DELAY, TimeUnit.SECONDS);
         } catch (InterruptedException ie) {
-            if (log.isWarnEnabled()) {
-                log.warn("ThreadExecutors.stop : interrupted while waiting the pool to terminate properly : " + getPoolName(), ie);
-            }
+                logger.warn("ThreadExecutors.stop : interrupted while waiting the pool to terminate properly : {}", getPoolName(), ie);
             terminated = false;
         }
 
         if (!terminated) {
-            if (logB.isDebugEnabled()) {
-                logB.debug("ThreadExecutors.stop : starting shutdown now : " + getPoolName());
+            if (logger.isDebugEnabled()) {
+                logger.debug("ThreadExecutors.stop : starting shutdown now: {}", getPoolName());
             }
             getExecutor().shutdownNow();
 
             try {
-                if (logB.isDebugEnabled()) {
-                    logB.debug("ThreadExecutors.stop : waiting for termination [" + SHUTDOWN_NOW_DELAY + " s] : " + getPoolName());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("ThreadExecutors.stop : waiting for termination [{} s] : {}", SHUTDOWN_NOW_DELAY, getPoolName());
                 }
                 terminated = getExecutor().awaitTermination(SHUTDOWN_NOW_DELAY, TimeUnit.SECONDS);
             } catch (InterruptedException ie) {
-                log.error("ThreadExecutors.stop : interrupted while waiting the pool to terminate immediately : " + getPoolName(), ie);
+                logger.error("ThreadExecutors.stop : interrupted while waiting the pool to terminate immediately : {}", getPoolName(), ie);
             }
         }
-        if (logB.isDebugEnabled()) {
-            logB.debug("ThreadExecutors.stop : terminated : " + getPoolName() + " = " + terminated);
+        if (logger.isDebugEnabled()) {
+            logger.debug("ThreadExecutors.stop : terminated: {} = {}", getPoolName(), terminated);
         }
     }
 

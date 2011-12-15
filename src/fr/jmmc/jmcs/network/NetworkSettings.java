@@ -84,16 +84,11 @@ public final class NetworkSettings {
      * Define timeouts (http / socket)
      */
     public static void defineTimeouts() {
-        if (logger.isInfoEnabled()) {
-            logger.info("define default Connect timeout to " + DEFAULT_CONNECT_TIMEOUT + " ms.");
-        }
+        logger.info("define default Connect timeout to {} ms.", DEFAULT_CONNECT_TIMEOUT);
         System.setProperty(PROPERTY_DEFAULT_CONNECT_TIMEOUT, Integer.toString(DEFAULT_CONNECT_TIMEOUT));
 
-        if (logger.isInfoEnabled()) {
-            logger.info("define default Read timeout to " + DEFAULT_SOCKET_READ_TIMEOUT + " ms.");
-        }
+        logger.info("define default Read timeout to {} ms.", DEFAULT_SOCKET_READ_TIMEOUT);
         System.setProperty(PROPERTY_DEFAULT_READ_TIMEOUT, Integer.toString(DEFAULT_SOCKET_READ_TIMEOUT));
-
     }
 
     /**
@@ -133,48 +128,38 @@ public final class NetworkSettings {
             }
 
             if (!netProperties.isEmpty() && logger.isInfoEnabled()) {
-                logger.info("Java net properties:\n" + Preferences.dumpProperties(netProperties));
+                logger.info("Java net properties:\n{}", Preferences.dumpProperties(netProperties));
             }
         }
 
         final String proxyList = System.getProperty(PROPERTY_JAVA_PLUGIN_PROXY_LIST);
         if (proxyList != null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Java plugin proxy list : " + proxyList);
-            }
+            logger.info("Java plugin proxy list: {}", proxyList);
         }
 
         // Dump Http Proxy settings from ProxySelector:
         HostConfiguration hostConfiguration = Http.getHttpProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Found http proxy : " + hostConfiguration.getProxyHost() + ":" + hostConfiguration.getProxyPort());
-            }
+            logger.info("Found http proxy: {}:{}", hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
         }
 
         // Dump Socks Proxy settings from ProxySelector:
         hostConfiguration = Http.getSocksProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Found socks proxy : " + hostConfiguration.getProxyHost() + ":" + hostConfiguration.getProxyPort());
-            }
+            logger.info("Found socks proxy: {}:{}", hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
         }
 
         // Get Proxy settings (available at least in JNLP runtime environement):
         hostConfiguration = Http.getHttpProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Get proxy settings from Java ProxySelector.");
-            }
+            logger.info("Get proxy settings from Java ProxySelector.");
 
             defineProxy(hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
         } else {
-            if (logger.isInfoEnabled()) {
-                logger.info("Get proxy settings from CommonPreferences.");
-            }
+            logger.info("Get proxy settings from CommonPreferences.");
 
             final CommonPreferences prefs = CommonPreferences.getInstance();
 
@@ -194,9 +179,7 @@ public final class NetworkSettings {
                     }
                 }
             }
-            if (logger.isInfoEnabled()) {
-                logger.info("No http proxy defined.");
-            }
+            logger.info("No http proxy defined.");
         }
     }
 
@@ -206,9 +189,8 @@ public final class NetworkSettings {
      * @param proxyPort port
      */
     private static void defineProxy(final String proxyHost, final int proxyPort) {
-        if (logger.isInfoEnabled()) {
-            logger.info("define http proxy to " + proxyHost + ":" + proxyPort);
-        }
+        logger.info("define http proxy to {}:{}", proxyHost, proxyPort);
+
         // # http.proxyHost
         System.setProperty(PROPERTY_HTTP_PROXY_HOST, proxyHost);
 

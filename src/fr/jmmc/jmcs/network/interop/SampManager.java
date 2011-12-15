@@ -193,9 +193,7 @@ public final class SampManager {
             try {
                 _internalHub = Hub.runHub(getInternalHubMode());
             } catch (IOException ioe) {
-                if (_logger.isDebugEnabled()) {
-                    _logger.debug("unable to start internal hub (probably another hub is already running)", ioe);
-                }
+                _logger.debug("unable to start internal hub (probably another hub is already running)", ioe);
             }
 
             // Retry connection

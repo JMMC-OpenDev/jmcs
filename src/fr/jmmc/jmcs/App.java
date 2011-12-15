@@ -726,6 +726,34 @@ public abstract class App {
                 }
             });
         }
+
+        SwingUtils.invokeLaterEDT(new Runnable() {
+
+            /**
+             * Display warning if OpenJDK detected:
+             */
+            @Override
+            public void run() {
+                final String jvmName = System.getProperty("java.vm.name");
+                final String jvmVendor = System.getProperty("java.vm.vendor");
+                final String jvmVersion = System.getProperty("java.vm.version");
+
+                if (jvmName != null && jvmName.toLowerCase().contains("openjdk")) {
+                    String message = "The application is running on the OpenJDK JVM (Java Virtual Machine)\n"
+                            + "which has known bugs (Swing look and feel, fonts, pdf issues ...) \n"
+                            + "on several linux distributions.\n"
+                            + "Please update OpenJDK packages if possible.\n\n"
+                            + "JMMC recommends Sun Java Runtime Environments:\n"
+                            + "http://java.sun.com/javase/downloads/\n\n"
+                            + "JVM Information:\n"
+                            + "java.vm.name    = '" + jvmName + "'\n"
+                            + "java.vm.vendor  = '" + jvmVendor + "'\n"
+                            + "java.vm.version = '" + jvmVersion + "'";
+
+                    MessagePane.showWarning(message);
+                }
+            }
+        });
     }
 
     /**

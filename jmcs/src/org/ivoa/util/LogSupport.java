@@ -8,25 +8,14 @@ import org.slf4j.Logger;
  * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
  */
 public class LogSupport {
-//~ Constants --------------------------------------------------------------------------------------------------------
 
-    /** Hidden constructor */
-    protected LogSupport() {
-    }
     /** 
      * Main Logger for the application
      * @see org.ivoa.bean.LogSupport
      */
-    protected static Logger log = LogUtil.getLogger();
-    /** 
-     * Logger for the base framework
-     * @see org.ivoa.bean.LogSupport
-     */
-    protected static Logger logB = LogUtil.getLoggerBase();
-    /** 
-     * Logger for development purposes
-     * @see org.ivoa.bean.LogSupport
-     */
-    protected static Logger logD = LogUtil.getLoggerDev();
-//~ End of file --------------------------------------------------------------------------------------------------------
+    protected static Logger logger = LogUtil.getLogger();
+
+    /** Hidden constructor */
+    protected LogSupport() {
+    }
 }

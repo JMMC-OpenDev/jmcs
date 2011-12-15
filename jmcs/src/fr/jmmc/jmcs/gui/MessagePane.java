@@ -24,6 +24,8 @@ public final class MessagePane {
     private static final Logger _logger = LoggerFactory.getLogger(MessagePane.class.getName());
     /** default title for error messages */
     private final static String TITLE_ERROR = "Error";
+    /** default title for warning messages */
+    private final static String TITLE_WARNING = "Warning";
     /** default title for information messages */
     private final static String TITLE_INFO = "Information";
     /** save changes dialog options */
@@ -146,6 +148,25 @@ public final class MessagePane {
         App.showFrameToFront();
 
         JOptionPane.showMessageDialog(getApplicationFrame(), sp, title, messageType);
+    }
+    
+    // --- WARNING MESSAGES ---------------------------------------------------------
+
+    /**
+     * Show an information with the given message
+     * @param message message to display
+     */
+    public static void showWarning(final String message) {
+        showWarning(message, TITLE_WARNING);
+    }
+
+    /**
+     * Show an information with the given message and window title
+     * @param message message to display
+     * @param title window title to use
+     */
+    public static void showWarning(final String message, final String title) {
+        showMessageDialog(message, title, JOptionPane.WARNING_MESSAGE);
     }
 
     // --- INFO MESSAGES ---------------------------------------------------------

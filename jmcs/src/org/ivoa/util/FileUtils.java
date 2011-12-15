@@ -52,7 +52,7 @@ public final class FileUtils extends LogSupport {
      * @param fileName file name only no path included
      * @return URL to the file or null
      */
-    public static final URL getResource(final String fileName) {
+    public static URL getResource(final String fileName) {
         // Find properties in the classpath
         final URL url = FileUtils.class.getClassLoader().getResource(fileName);
 
@@ -60,9 +60,7 @@ public final class FileUtils extends LogSupport {
             throw new RuntimeException("Unable to find the file in classpath : " + fileName);
         }
 
-        if (logB.isDebugEnabled()) {
-            logB.debug("FileUtils.getSystemFileInputStream : URL : " + url);
-        }
+        logger.debug("FileUtils.getSystemFileInputStream: URL = {}", url);
 
         return url;
     }
@@ -74,7 +72,7 @@ public final class FileUtils extends LogSupport {
      * @return InputStream or RuntimeException if not found
      * @throws RuntimeException if not found
      */
-    public static final InputStream getSystemFileInputStream(final String fileName) {
+    public static InputStream getSystemFileInputStream(final String fileName) {
         final URL url = getResource(fileName);
 
         try {
@@ -94,7 +92,7 @@ public final class FileUtils extends LogSupport {
             try {
                 in.close();
             } catch (final IOException ioe) {
-                logB.error("FileUtils.closeStream : io close failure : ", ioe);
+                logger.error("FileUtils.closeStream : io close failure : ", ioe);
             }
         }
     }
@@ -109,7 +107,7 @@ public final class FileUtils extends LogSupport {
             try {
                 out.close();
             } catch (final IOException ioe) {
-                logB.error("FileUtils.closeStream : io close failure : ", ioe);
+                logger.error("FileUtils.closeStream : io close failure : ", ioe);
             }
         }
     }
@@ -210,7 +208,7 @@ public final class FileUtils extends LogSupport {
         try {
             return new BufferedWriter(new FileWriter(file), bufferSize);
         } catch (final IOException ioe) {
-            logB.error("FileUtils.openFile : io failure : ", ioe);
+            logger.error("FileUtils.openFile : io failure : ", ioe);
         }
 
         return null;
@@ -227,7 +225,7 @@ public final class FileUtils extends LogSupport {
             try {
                 w.close();
             } catch (final IOException ioe) {
-                logB.error("FileUtils.closeFile : io close failure : ", ioe);
+                logger.error("FileUtils.closeFile : io close failure : ", ioe);
             }
         }
 
@@ -276,7 +274,7 @@ public final class FileUtils extends LogSupport {
         try {
             return new BufferedReader(new FileReader(file), bufferSize);
         } catch (final IOException ioe) {
-            logB.error("FileUtils.readFile : io failure : ", ioe);
+            logger.error("FileUtils.readFile : io failure : ", ioe);
         }
 
         return null;
@@ -293,15 +291,20 @@ public final class FileUtils extends LogSupport {
             try {
                 r.close();
             } catch (final IOException ioe) {
-                logB.error("FileUtils.closeFile : io close failure : ", ioe);
+                logger.error("FileUtils.closeFile : io close failure : ", ioe);
             }
         }
 
         return null;
     }
 
-    public static void copyFile(File in, File out)
-            throws IOException {
+    /**
+     * Copy the input file to output file
+     * @param in input file
+     * @param out output file
+     * @throws IOException 
+     */
+    public static void copyFile(final File in, final File out) throws IOException {
         FileChannel inChannel = new FileInputStream(in).getChannel();
         FileChannel outChannel = new FileOutputStream(out).getChannel();
         try {
@@ -319,13 +322,18 @@ public final class FileUtils extends LogSupport {
         }
     }
 
-    public static void compress(File[] files, File outFile) {
+    /**
+     * Compress the given files into the output File
+     * @param files files to compress
+     * @param outputFile output file
+     */
+    public static void compress(final File[] files, final File outputFile) {
         // Create a buffer for reading the files
         byte[] buf = new byte[1024];
 
         try {
             // Create the ZIP file
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outFile));
+            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outputFile));
 
             // Compress the files
             for (int i = 0; i < files.length; i++) {

@@ -330,9 +330,7 @@ public abstract class Preferences extends Observable {
                 int currentPreferenceVersion = fileVersionNumber;
                 while (everythingWentFine && (currentPreferenceVersion < runtimeVersionNumber)) {
 
-                    if (_logger.isDebugEnabled()) {
-                        _logger.debug("Trying to update{}loaded preferences from revision '{}'.", logToken, currentPreferenceVersion);
-                    }
+                    _logger.debug("Trying to update{}loaded preferences from revision '{}'.", logToken, currentPreferenceVersion);
 
                     if (structuralUpdate) {
                         everythingWentFine = updateJmcsPreferencesVersion(currentPreferenceVersion);
@@ -950,9 +948,7 @@ public abstract class Preferences extends Observable {
         // Linux (and anything else) : [USER_HOME]/.fr.jmmc...properties
         _fullFilepath += getPreferenceFilename();
 
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("Computed preference file path = '{}'.", _fullFilepath);
-        }
+        _logger.debug("Computed preference file path = '{}'.", _fullFilepath);
 
         return _fullFilepath;
     }

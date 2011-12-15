@@ -18,7 +18,7 @@ public final class TimerFactory {
     // ~ Constants
     // --------------------------------------------------------------------------------------------------------
     /** Logger */
-    private static final Logger log = LoggerFactory.getLogger(TimerFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(TimerFactory.class.getName());
     /** diagnostics flag for warmup sequence */
     public final static boolean WARMUP_DIAGNOSTICS = false;
     /** maximum number of warmup steps */
@@ -78,15 +78,15 @@ public final class TimerFactory {
             stat = calibrateMilliSeconds(WARMUP_STEP_CYCLES);
             globalStatMs.add(stat);
 
-            if (WARMUP_DIAGNOSTICS && log.isWarnEnabled()) {
-                log.warn("TimerFactory : warmup [{}] : {}", i, dumpTimers());
+            if (WARMUP_DIAGNOSTICS && logger.isWarnEnabled()) {
+                logger.warn("TimerFactory : warmup [{}] : {}", i, dumpTimers());
             }
             resetTimers();
         }
 
-        if (WARMUP_DIAGNOSTICS && log.isWarnEnabled()) {
-            log.warn("TimerFactory : global nanoseconds  statistics : {}", globalStatNs.toString(true));
-            log.warn("TimerFactory : global milliseconds statistics : {}", globalStatMs.toString(true));
+        if (WARMUP_DIAGNOSTICS && logger.isWarnEnabled()) {
+            logger.warn("TimerFactory : global nanoseconds  statistics : {}", globalStatNs.toString(true));
+            logger.warn("TimerFactory : global milliseconds statistics : {}", globalStatMs.toString(true));
         }
 
         double delta;
@@ -98,13 +98,13 @@ public final class TimerFactory {
 
             CALIBRATION_NANO_SECONDS += delta;
 
-            if (WARMUP_DIAGNOSTICS && log.isWarnEnabled()) {
-                log.warn("TimerFactory : Nanoseconds   : ");
-                log.warn("TimerFactory : calibration [{}] : {}", i, dumpTimers());
-                log.warn("TimerFactory : min           : {}", stat.getMin());
-                log.warn("TimerFactory : avg - stddev  : {}", (stat.getAverage() - stat.getStdDevLow()));
-                log.warn("TimerFactory : delta         : {}", delta);
-                log.warn("TimerFactory : nanoseconds  calibration correction : {}", CALIBRATION_NANO_SECONDS);
+            if (WARMUP_DIAGNOSTICS && logger.isWarnEnabled()) {
+                logger.warn("TimerFactory : Nanoseconds   : ");
+                logger.warn("TimerFactory : calibration [{}] : {}", i, dumpTimers());
+                logger.warn("TimerFactory : min           : {}", stat.getMin());
+                logger.warn("TimerFactory : avg - stddev  : {}", (stat.getAverage() - stat.getStdDevLow()));
+                logger.warn("TimerFactory : delta         : {}", delta);
+                logger.warn("TimerFactory : nanoseconds  calibration correction : {}", CALIBRATION_NANO_SECONDS);
             }
 
             resetTimers();
@@ -115,13 +115,13 @@ public final class TimerFactory {
 
             CALIBRATION_MILLI_SECONDS += delta;
 
-            if (WARMUP_DIAGNOSTICS && log.isWarnEnabled()) {
-                log.warn("TimerFactory : Milliseconds   : ");
-                log.warn("TimerFactory : calibration [{}] : {}", i, dumpTimers());
-                log.warn("TimerFactory : min           : {}", stat.getMin());
-                log.warn("TimerFactory : avg - stddev  : {}", (stat.getAverage() - stat.getStdDevLow()));
-                log.warn("TimerFactory : delta         : {}", delta);
-                log.warn("TimerFactory : milliseconds calibration correction : {}", CALIBRATION_MILLI_SECONDS);
+            if (WARMUP_DIAGNOSTICS && logger.isWarnEnabled()) {
+                logger.warn("TimerFactory : Milliseconds   : ");
+                logger.warn("TimerFactory : calibration [{}] : {}", i, dumpTimers());
+                logger.warn("TimerFactory : min           : {}", stat.getMin());
+                logger.warn("TimerFactory : avg - stddev  : {}", (stat.getAverage() - stat.getStdDevLow()));
+                logger.warn("TimerFactory : delta         : {}", delta);
+                logger.warn("TimerFactory : milliseconds calibration correction : {}", CALIBRATION_MILLI_SECONDS);
             }
 
             resetTimers();
@@ -129,10 +129,10 @@ public final class TimerFactory {
 
         final long stop = System.nanoTime();
 
-        if (log.isWarnEnabled()) {
-            log.warn("TimerFactory : nanoseconds  calibration correction : " + StatLong.adjustValue(CALIBRATION_NANO_SECONDS));
-            log.warn("TimerFactory : milliseconds calibration correction : " + StatLong.adjustValue(CALIBRATION_MILLI_SECONDS));
-            log.warn("TimerFactory : calibration time (ms) : " + TimerFactory.elapsedMilliSeconds(start, stop));
+        if (logger.isWarnEnabled()) {
+            logger.warn("TimerFactory : nanoseconds  calibration correction : {}", StatLong.adjustValue(CALIBRATION_NANO_SECONDS));
+            logger.warn("TimerFactory : milliseconds calibration correction : {}", StatLong.adjustValue(CALIBRATION_MILLI_SECONDS));
+            logger.warn("TimerFactory : calibration time (ms) : {}", TimerFactory.elapsedMilliSeconds(start, stop));
         }
 
         // Adjust threshold to low values :

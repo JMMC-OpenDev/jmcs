@@ -19,7 +19,7 @@ public final class PoolThread extends Thread {
      * Logger for the base framework
      * @see org.ivoa.bean.LogSupport
      */
-    protected static Logger logB = LogUtil.getLoggerBase();
+    private static Logger logger = LogUtil.getLogger();
 
     //~ Constructors -----------------------------------------------------------------------------------------------------
     /**
@@ -39,8 +39,8 @@ public final class PoolThread extends Thread {
      */
     @Override
     public void interrupt() {
-        if (logB.isDebugEnabled()) {
-            logB.debug(getName() + " : interrupt");
+        if (logger.isDebugEnabled()) {
+            logger.debug("{} : interrupt", getName());
         }
         super.interrupt();
     }
@@ -50,8 +50,8 @@ public final class PoolThread extends Thread {
      */
     @Override
     public synchronized void start() {
-        if (logB.isDebugEnabled()) {
-            logB.debug(getName() + " : start");
+        if (logger.isDebugEnabled()) {
+            logger.debug("{} : start", getName());
         }
         super.start();
     }
@@ -61,14 +61,14 @@ public final class PoolThread extends Thread {
      */
     @Override
     public void run() {
-        if (logB.isDebugEnabled()) {
-            logB.debug(getName() + " : before run() : ");
+        if (logger.isDebugEnabled()) {
+            logger.debug("{} : before run()", getName());
         }
         try {
             super.run();
         } finally {
-            if (logB.isDebugEnabled()) {
-                logB.debug(getName() + " : after run() : ");
+            if (logger.isDebugEnabled()) {
+                logger.debug("{} : after run()", getName());
             }
         }
 

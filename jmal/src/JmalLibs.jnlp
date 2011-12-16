@@ -17,7 +17,7 @@
     <jar href="@SHARED@/sptype.jar"/>
 
     <!-- Model computations -->
-    <jar href="@SHARED@/commons-math-2.0.jar"/>
+    <jar href="@SHARED@/commons-math-2.2.jar"/>
 
     <!-- Model computations (bessel functions) -->
     <jar href="@SHARED@/colt.jar"/>

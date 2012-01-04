@@ -144,9 +144,11 @@ public final class MCSExceptionHandler {
                 // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
                 SwingUtils.invokeAndWaitEDT(new Runnable() {
 
+                    /**
+                     * Add my handler to the Event-Driven Thread.
+                     */
                     @Override
                     public void run() {
-                        // Adding my handler to the Event-Driven Thread.
                         applyUncaughtExceptionHandler(Thread.currentThread(), handler);
                     }
                 });

@@ -42,7 +42,7 @@ public final class SwingUtils {
     }
 
     /**
-     * Execute the given runnable code dedicated to Swing using the Event Dispatcher Thread (EDT)
+     * Execute LATER the given runnable code dedicated to Swing using the Event Dispatcher Thread (EDT)
      * @param runnable runnable code dedicated to Swing
      */
     public static void invokeLaterEDT(final Runnable runnable) {
@@ -57,16 +57,21 @@ public final class SwingUtils {
      * @throws IllegalStateException if any exception occurs while the given runnable code executes using EDT
      */
     public static void invokeAndWaitEDT(final Runnable runnable) throws IllegalStateException {
-        try {
-            // Using invokeAndWait to be in sync with the main thread :
-            SwingUtilities.invokeAndWait(runnable);
+        if (isEDT()) {
+            // current Thread is EDT, simply execute runnable:
+            runnable.run();
+        } else {
+            try {
+                // Using invokeAndWait to be in sync with the main thread :
+                SwingUtilities.invokeAndWait(runnable);
 
-        } catch (InterruptedException ie) {
-            // propagate the exception :
-            throw new IllegalStateException("SwingUtils.invokeAndWaitEDT : interrupted while running " + runnable, ie);
-        } catch (InvocationTargetException ite) {
-            // propagate the internal exception :
-            throw new IllegalStateException("SwingUtils.invokeAndWaitEDT : an exception occured while running " + runnable, ite.getCause());
+            } catch (InterruptedException ie) {
+                // propagate the exception :
+                throw new IllegalStateException("SwingUtils.invokeAndWaitEDT : interrupted while running " + runnable, ie);
+            } catch (InvocationTargetException ite) {
+                // propagate the internal exception :
+                throw new IllegalStateException("SwingUtils.invokeAndWaitEDT : an exception occured while running " + runnable, ite.getCause());
+            }
         }
     }
 }

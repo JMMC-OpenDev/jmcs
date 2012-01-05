@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="program" type="{}Program"/>
  *         &lt;element name="compilation" type="{}Compilation"/>
  *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="jnlp" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sampdescription" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="authors" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="dependences" type="{}Dependences" minOccurs="0"/>
@@ -53,6 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "program",
     "compilation",
     "text",
+    "jnlp",
     "sampdescription",
     "authors",
     "dependences",
@@ -69,6 +71,7 @@ public class ApplicationData {
     @XmlElement(required = true)
     protected Compilation compilation;
     protected String text;
+    protected String jnlp;
     protected String sampdescription;
     protected String authors;
     protected Dependences dependences;
@@ -199,6 +202,34 @@ public class ApplicationData {
 
     public boolean isSetText() {
         return (this.text!= null);
+    }
+
+    /**
+     * Gets the value of the jnlp property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getJnlp() {
+        return jnlp;
+    }
+
+    /**
+     * Sets the value of the jnlp property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setJnlp(String value) {
+        this.jnlp = value;
+    }
+
+    public boolean isSetJnlp() {
+        return (this.jnlp!= null);
     }
 
     /**

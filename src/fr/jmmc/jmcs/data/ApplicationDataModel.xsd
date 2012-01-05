@@ -30,7 +30,7 @@ Description: Store jMCS Application meta data.
         </xsd:documentation>
         <xsd:appinfo>
 
-            <!-- Comment the jaxb:globalBindings element in embedded xml schema used with XJC -->
+            <!-- Comment the jaxb:globalBindings element in embedded XML schema used with XJC -->
             <jaxb:globalBindings generateIsSetMethod="true">
                 <xjc:simple />
             </jaxb:globalBindings>
@@ -87,7 +87,7 @@ Description: Store jMCS Application meta data.
             <xsd:element name="compilation" type="Compilation">
                 <xsd:annotation>
                     <xsd:documentation>
-                        Build Date and Compilator
+                        Build Date and Compiler
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
@@ -101,11 +101,21 @@ Description: Store jMCS Application meta data.
                 </xsd:annotation>
             </xsd:element>
 
+            <!-- Element jnlp -->
+            <!-- TODO : Use URL type -->
+            <xsd:element name="jnlp" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Application JNLP URL
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
             <!-- Element sampdescription -->
             <xsd:element name="sampdescription" type="xsd:string" minOccurs="0">
                 <xsd:annotation>
                     <xsd:documentation>
-                        SAMP Application description
+                        SAMP Application Description
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
@@ -114,7 +124,7 @@ Description: Store jMCS Application meta data.
             <xsd:element name="authors" type="xsd:string" minOccurs="0">
                 <xsd:annotation>
                     <xsd:documentation>
-                        Application authors
+                        Application Authors String
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
@@ -236,7 +246,7 @@ Description: Store jMCS Application meta data.
     </xsd:complexType>
     
     
-    <!-- Stroe build date and used compilator -->
+    <!-- Store build date and used compiler -->
     <xsd:complexType name="Compilation">
         <xsd:attribute name="date" type="xsd:string" use="required"/>
         <xsd:attribute name="compiler" type="xsd:string" use="optional"/>

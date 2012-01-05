@@ -150,9 +150,9 @@ public final class SampManager {
         // Non-standard meatadata
         meta.put("affiliation.name", applicationDataModel.getShortCompanyName() + " (" + applicationDataModel.getLegalCompanyName() + ")");
         meta.put("affiliation.url", applicationDataModel.getMainWebPageURL());
-        final String feedbackReportUrl = applicationDataModel.getFeedbackReportFormURL();
-        if (feedbackReportUrl != null) {
-            meta.put("affiliation.feedback", "feedbackReportUrl");
+        final String jnlpUrl = applicationDataModel.getJnlpUrl();
+        if (jnlpUrl != null) {
+            meta.put("x-samp.jnlp.url", jnlpUrl);
         }
         final String userSupportUrl = applicationDataModel.getUserSupportURL();
         if (userSupportUrl != null) {

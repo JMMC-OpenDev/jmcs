@@ -441,5 +441,9 @@ public class ApplicationDataModel {
     public String getDocumetationUrl() {
         return _applicationDataModel.getDocumentationlink();
     }
+
+    public String getJnlpUrl() {
+        return _applicationDataModel.getJnlp();
+    }
 }
 /*___oOo___*/

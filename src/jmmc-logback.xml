@@ -52,9 +52,10 @@
     <!-- disable JDK loggers -->
     <!-- AWT / Swing -->
     <logger name="java.awt" level="INFO"/>
-    <logger name="sun.awt" level="INFO"/>
-   
     <logger name="javax.swing" level="INFO"/>
+
+    <logger name="sun.awt" level="INFO"/>
+    <logger name="sun.java2d" level="INFO"/>
 
     <!-- JAXB -->
     <logger name="javax.xml" level="INFO"/>

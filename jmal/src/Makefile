@@ -98,7 +98,8 @@ JARFILES        = jmal
 #
 # <brief description of jjjfff jar files>
 jmal_DIRS     = fr
-jmal_EXTRAS   = fr/jmmc/jmal/image/lut/*.lut
+jmal_EXTRAS   = fr/jmmc/jmal/image/lut/*.lut \
+                fr/jmmc/jmal/resource/ApplicationData.xml
 
 #
 # Java programs
@@ -135,7 +136,9 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../lib/*.jar
+# All required jars are installed during Jnlp deployement
+# leave here the jars that are used by executables but not jnlp applications
+INSTALL_FILES =
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
@@ -174,6 +177,7 @@ install : install_all
 	@echo "Install $(JNLP).jar"
 	# JmalLibs contains only shared libraries used to package application single jar file
 	@cp $$HOME/public_html/$(JNLP)/$(JNLP).jar $(INSTALL_ROOT)/lib
+	
 	@echo " . . . installation done"
 
 #___oOo___

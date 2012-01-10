@@ -69,7 +69,7 @@ public class MainMenuBar extends JMenuBar {
     public final static String SYSTEM_PROPERTY_LAF_MENU = "jmcs.laf.menu";
     /** Logger */
     private static final Logger _logger = Logger.getLogger(MainMenuBar.class.getName());
-    /** Store wether we are running under Mac OS X or not */
+    /** Store whether we are running under Mac OS X or not */
     private final boolean _isRunningUnderMacOSX = SystemUtils.IS_OS_MAC_OSX;
     /** Table where are stocked the menus */
     private final Hashtable<String, JMenu> _menusTable;

@@ -449,7 +449,7 @@ copyJnlpAndRelated()
         fi
         shllibEchoDebug "shared library = $shared. exist = $sharedExist"
 
-        if srcjar=$(miscLocateFile "$jarname" "../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib:$USERSEARCHPATH")
+        if srcjar=$(miscLocateFile "$jarname" "$SEARCHPATHS")
         then
 
             if [ $shared == true ]
@@ -568,15 +568,25 @@ createAppJar()
     cd tmpbigjar
     shllibEchoDebug "Working directory is $PWD "
 
-    # Include JmcsLibs.jar if the given jnlp contains one JmcsLibs.jnlp links
-    # (even in comments)
-    if grep "JmcsLibs.jnlp" "$GIVENJNLPFILE" &> /dev/null
-    then
-        jmcsLibsJarFile=$(miscLocateFile "JmcsLibs.jar" "../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib:$USERSEARCHPATH")
-    fi
-
-    for jarpath in  $(find $APP_WEBROOT -name '*.jar') $jmcsLibsJarFile
+    # try to include jar previously built for jnlp extensions ( jmcs/jmal at least )
+    extJars=""
+    for ext_jnlp in $(xml sel -t -m "//extension" -v "@href" -n $GIVENJNLPFILE)
     do
+        jnlpBase=$(basename $ext_jnlp)
+        jarname=${jnlpBase/%jnlp/jar}
+        if jarpath=$(miscLocateFile $jarname "$SEARCHPATHS")
+        then
+            shllibEchoDebug "Request inclusion of '$jarpath' according jnlp extension '$ext_jnlp'"
+            extJars="$extJars $jarpath"
+        else
+            echo
+            echo "WARNING: can't find jar associated to jnlp extension : '$ext_jnlp'"
+            echo
+        fi
+    done
+
+                for jarpath in  $(find $APP_WEBROOT -name '*.jar') $extJars
+                    do
         shllibEchoDebug " Add '$jarpath' content into tmpbigjar"
         jar xf $jarpath
         #  cat META-INF/MANIFEST.MF | awk '{if ( match($1,"Name: *") == 1 )p=1; if( length($1) == 0 ){p=0; print} ; if (p==1)print ;}' >> $BIGMANIFEST
@@ -791,6 +801,9 @@ then
     _usage
     exit 1
 fi
+
+
+export SEARCHPATHS="../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INTROOT/lib:$MCSROOT/lib:$USERSEARCHPATH"
 
 # define application name from given jnlp
 APPNAME=$(basename $JNLPFILE .jnlp 2> /dev/null)

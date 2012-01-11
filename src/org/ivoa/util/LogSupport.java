@@ -13,7 +13,7 @@ public class LogSupport {
      * Main Logger for the application
      * @see org.ivoa.bean.LogSupport
      */
-    protected static Logger logger = LogUtil.getLogger();
+    protected final static Logger logger = LogUtil.getLogger();
 
     /** Hidden constructor */
     protected LogSupport() {

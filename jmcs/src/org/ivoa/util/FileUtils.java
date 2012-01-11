@@ -5,22 +5,19 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
-import java.nio.channels.FileChannel;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
- * File utility methods : Several utility methods : finds a file in the class path (jar), open files
- * for read or write operation and close file
- * 
+ * File utility methods : Several utility methods : finds a file in the class
+ * path (jar), open files for read or write operation and close file
+ *
  * TODO: merge this class with jMCS FileUtils
  *
  * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
@@ -36,13 +33,19 @@ public final class FileUtils extends LogSupport {
      * default write buffer capacity : DEFAULT_WRITE_BUFFER_SIZE = 16K
      */
     private static final int DEFAULT_WRITE_BUFFER_SIZE = 16 * 1024;
+    /**
+     * File encoding use UTF-8
+     */
+    public static final String FILE_ENCODING = "UTF-8";
 
     //~ Constructors -----------------------------------------------------------------------------------------------------
     /**
      * Forbidden FileUtils constructor
      */
     private FileUtils() {
-        /* no-op */
+        /*
+         * no-op
+         */
     }
 
     //~ Methods ----------------------------------------------------------------------------------------------------------
@@ -163,7 +166,8 @@ public final class FileUtils extends LogSupport {
     }
 
     /**
-     * Returns a Writer for the given file path and use the default writer buffer capacity
+     * Returns a Writer for the given file path and use the default writer
+     * buffer capacity
      *
      * @param absoluteFilePath absolute file path
      * @return Writer (buffered) or null
@@ -173,7 +177,8 @@ public final class FileUtils extends LogSupport {
     }
 
     /**
-     * Returns a Writer for the given file path and use the given buffer capacity
+     * Returns a Writer for the given file path and use the given buffer
+     * capacity
      *
      * @param absoluteFilePath absolute file path
      * @param bufferSize write buffer capacity
@@ -188,7 +193,8 @@ public final class FileUtils extends LogSupport {
     }
 
     /**
-     * Returns a Writer for the given file and use the default writer buffer capacity
+     * Returns a Writer for the given file and use the default writer buffer
+     * capacity
      *
      * @param file file to write
      * @return Writer (buffered) or null
@@ -206,7 +212,13 @@ public final class FileUtils extends LogSupport {
      */
     public static Writer openFile(final File file, final int bufferSize) {
         try {
-            return new BufferedWriter(new FileWriter(file), bufferSize);
+            // Should define UTF-8 encoding for cross platform compatibility 
+            // but we must stay compatible with existing files (windows vs unix)
+            return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)), bufferSize);
+            /*
+             * return new BufferedWriter(new OutputStreamWriter(new
+             * FileOutputStream(file), FILE_ENCODING), bufferSize);
+             */
         } catch (final IOException ioe) {
             logger.error("FileUtils.openFile : io failure : ", ioe);
         }
@@ -233,7 +245,8 @@ public final class FileUtils extends LogSupport {
     }
 
     /**
-     * Returns a reader for the given file path and use the default read buffer capacity
+     * Returns a reader for the given file path and use the default read buffer
+     * capacity
      *
      * @param absoluteFilePath absolute file path
      * @return Reader (buffered) or null
@@ -243,7 +256,8 @@ public final class FileUtils extends LogSupport {
     }
 
     /**
-     * Returns a reader for the given file path and use the given read buffer capacity
+     * Returns a reader for the given file path and use the given read buffer
+     * capacity
      *
      * @param absoluteFilePath absolute file path
      * @param bufferSize write buffer capacity
@@ -254,7 +268,8 @@ public final class FileUtils extends LogSupport {
     }
 
     /**
-     * Returns a reader for the given file and use the default read buffer capacity
+     * Returns a reader for the given file and use the default read buffer
+     * capacity
      *
      * @param file file to read
      * @return Reader (buffered) or null
@@ -264,7 +279,8 @@ public final class FileUtils extends LogSupport {
     }
 
     /**
-     * Returns a reader for the given file and use the given read buffer capacity
+     * Returns a reader for the given file and use the given read buffer
+     * capacity
      *
      * @param file file to read
      * @param bufferSize write buffer capacity
@@ -272,7 +288,13 @@ public final class FileUtils extends LogSupport {
      */
     public static Reader readFile(final File file, final int bufferSize) {
         try {
-            return new BufferedReader(new FileReader(file), bufferSize);
+            // Should define UTF-8 encoding for cross platform compatibility 
+            // but we must stay compatible with existing files (windows vs unix)
+            return new BufferedReader(new InputStreamReader(new FileInputStream(file)), bufferSize);
+            /*
+             * return new BufferedReader(new InputStreamReader(new
+             * FileInputStream(file), FILE_ENCODING), bufferSize);
+             */
         } catch (final IOException ioe) {
             logger.error("FileUtils.readFile : io failure : ", ioe);
         }
@@ -296,67 +318,6 @@ public final class FileUtils extends LogSupport {
         }
 
         return null;
-    }
-
-    /**
-     * Copy the input file to output file
-     * @param in input file
-     * @param out output file
-     * @throws IOException 
-     */
-    public static void copyFile(final File in, final File out) throws IOException {
-        FileChannel inChannel = new FileInputStream(in).getChannel();
-        FileChannel outChannel = new FileOutputStream(out).getChannel();
-        try {
-            inChannel.transferTo(0, inChannel.size(),
-                    outChannel);
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            if (inChannel != null) {
-                inChannel.close();
-            }
-            if (outChannel != null) {
-                outChannel.close();
-            }
-        }
-    }
-
-    /**
-     * Compress the given files into the output File
-     * @param files files to compress
-     * @param outputFile output file
-     */
-    public static void compress(final File[] files, final File outputFile) {
-        // Create a buffer for reading the files
-        byte[] buf = new byte[1024];
-
-        try {
-            // Create the ZIP file
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outputFile));
-
-            // Compress the files
-            for (int i = 0; i < files.length; i++) {
-                FileInputStream in = new FileInputStream(files[i]);
-
-                // Add ZIP entry to output stream.
-                out.putNextEntry(new ZipEntry(files[i].getName()));
-
-                // Transfer bytes from the file to the ZIP file
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-
-                // Complete the entry
-                out.closeEntry();
-                in.close();
-            }
-
-            // Complete the ZIP file
-            out.close();
-        } catch (IOException e) {
-        }
     }
 }
 //~ End of file --------------------------------------------------------------------------------------------------------

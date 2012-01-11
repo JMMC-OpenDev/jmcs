@@ -30,7 +30,7 @@ public final class ProcessContext extends RunContext {
      */
     private int exitCode = -1;
     /** child UNIX process */
-    private Process process = null;
+    private transient Process process = null;
 
     //~ Constructors -----------------------------------------------------------------------------------------------------
     /**

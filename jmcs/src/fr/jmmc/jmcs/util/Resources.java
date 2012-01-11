@@ -25,10 +25,8 @@ public abstract class Resources {
 
     /** the logger facility */
     protected static final Logger _logger = LoggerFactory.getLogger(Resources.class.getName());
-    /** Contains the class nale for logging */
-    private static String _loggerClassName = "Resources";
     /** resource filename  that must be overloaded by subclasses */
-    protected static String _resourceName = "fr/jmmc/jmcs/resource/Resources";
+    private static String _resourceName = "fr/jmmc/jmcs/resource/Resources";
     /** cached resource bundle */
     private static ResourceBundle _resources = null;
     /** flag to indicate that the resource bundle is resolved */

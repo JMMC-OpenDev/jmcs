@@ -6,12 +6,12 @@
 package fr.jmmc.jmcs.data.preference;
 
 /**
- * PreferencesException can be thrown by the Preferences when anything went
- * wrong.
+ * MissingPreferenceException (unchecked exception i.e. RuntimeException) can be
+ * thrown if a preference is missing in the Preferences.
  *
  * @author Sylvain LAFRASSE.
  */
-public class PreferencesException extends Exception {
+public class MissingPreferenceException extends RuntimeException {
 
     /**
      * default serial UID for Serializable interface
@@ -24,7 +24,7 @@ public class PreferencesException extends Exception {
      * @param message the detail message (which is saved for later retrieval by
      * the {@link #getMessage()} method).
      */
-    public PreferencesException(final String message) {
+    public MissingPreferenceException(final String message) {
         super(message);
     }
 
@@ -37,7 +37,7 @@ public class PreferencesException extends Exception {
      *         {@link #getCause()} method). (A <tt>null</tt> value is permitted, and
      * indicates that the cause is nonexistent or unknown.)
      */
-    public PreferencesException(final String message, final Throwable cause) {
+    public MissingPreferenceException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

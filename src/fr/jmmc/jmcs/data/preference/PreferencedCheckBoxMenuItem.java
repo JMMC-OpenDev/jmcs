@@ -3,10 +3,10 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
-import java.awt.event.*;
-
-import java.util.*;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JCheckBoxMenuItem;
 
 /**
@@ -16,6 +16,7 @@ import javax.swing.JCheckBoxMenuItem;
  */
 public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem implements Observer, ActionListener {
 
+    /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1L;
     /** Menu item corresponding preference property */
     private String _preferenceProperty;
@@ -57,8 +58,8 @@ public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem implements Ob
         // If the widget changed, update the property value
         try {
             _preferences.setPreference(_preferenceProperty, isSelected());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (PreferencesException pe) {
+            throw new RuntimeException(pe);
         }
     }
 

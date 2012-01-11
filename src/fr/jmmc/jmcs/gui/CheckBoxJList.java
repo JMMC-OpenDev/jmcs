@@ -101,7 +101,7 @@ public class CheckBoxJList extends JList implements ListSelectionListener {
 
             for (int i = 0; i < size; i++) {
                 if (getSelectionModel().isSelectedIndex(i)) {
-                    newSelections.add(new Integer(i));
+                    newSelections.add(Integer.valueOf(i));
                 }
             }
 
@@ -140,7 +140,7 @@ public class CheckBoxJList extends JList implements ListSelectionListener {
             for (int i = 0; i < size; i++) {
                 if (getSelectionModel().isSelectedIndex(i)) {
                     //System.out.println("caching " + i);
-                    selectionCache.add(new Integer(i));
+                    selectionCache.add(Integer.valueOf(i));
                 }
             }
 
@@ -178,7 +178,7 @@ public class CheckBoxJList extends JList implements ListSelectionListener {
         frame.setVisible(true);
     }
 
-    class CheckBoxListCellRenderer extends JComponent
+    static class CheckBoxListCellRenderer extends JComponent
             implements ListCellRenderer {
 
         private static final long serialVersionUID = 1L;

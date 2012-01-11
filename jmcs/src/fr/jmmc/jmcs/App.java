@@ -987,7 +987,7 @@ public abstract class App {
     }
 
     /** Action to correctly handle file opening. */
-    protected class OpenAction extends RegisteredAction {
+    protected static class OpenAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1018,7 +1018,7 @@ public abstract class App {
     }
 
     /** Action to correctly handle operations before closing application. */
-    protected class QuitAction extends RegisteredAction {
+    protected static class QuitAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1049,7 +1049,7 @@ public abstract class App {
             }
 
             // If we are ready to finish application execution
-            if (finish()) {
+            if (App.getSharedInstance().finish()) {
                 _logger.debug("Application should be killed.");
 
                 // Verify if we are authorized to kill the application or not
@@ -1068,7 +1068,7 @@ public abstract class App {
     }
 
     /** Action to copy acknowledgment text to the clipboard. */
-    protected class AcknowledgmentAction extends RegisteredAction {
+    protected static class AcknowledgmentAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1123,7 +1123,7 @@ public abstract class App {
     }
 
     /** Action to show hot news RSS feed. */
-    protected class ShowHotNewsAction extends RegisteredAction {
+    protected static class ShowHotNewsAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1149,7 +1149,7 @@ public abstract class App {
     }
 
     /** Action to show release. */
-    protected class ShowReleaseAction extends RegisteredAction {
+    protected static class ShowReleaseAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1175,7 +1175,7 @@ public abstract class App {
     }
 
     /** Action to show FAQ. */
-    protected class ShowFaqAction extends RegisteredAction {
+    protected static class ShowFaqAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -1201,7 +1201,7 @@ public abstract class App {
     }
 
     /** Action to show help. */
-    protected class ShowHelpAction extends RegisteredAction {
+    protected static class ShowHelpAction extends RegisteredAction {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;

@@ -111,9 +111,9 @@ public final class PreferencedButtonModel extends DefaultButtonModel
 
         try {
             _preferences.setPreference(_preferenceProperty, nextValue);
-        } catch (Exception e) {
+        } catch (PreferencesException pe) {
             // Show the feedback report (modal) :
-            FeedbackReport.openDialog(true, e);
+            FeedbackReport.openDialog(true, pe);
         }
     }
 

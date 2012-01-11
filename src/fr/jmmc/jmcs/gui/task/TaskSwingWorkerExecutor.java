@@ -43,7 +43,7 @@ public final class TaskSwingWorkerExecutor {
     /**
      * Shutdown the TaskSwingWorkerExecutor
      */
-    public static void stop() {
+    public static synchronized void stop() {
         if (instance != null) {
             instance.shutdown();
 
@@ -58,7 +58,7 @@ public final class TaskSwingWorkerExecutor {
      * This code returns the singleton instance.
      * @return TaskSwingWorkerExecutor
      */
-    private static TaskSwingWorkerExecutor getInstance() {
+    private static synchronized TaskSwingWorkerExecutor getInstance() {
         if (instance == null) {
             instance = new TaskSwingWorkerExecutor();
 

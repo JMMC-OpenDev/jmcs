@@ -119,7 +119,7 @@ public final class ProcessRunner {
                 ring.add(ERR_PREFIX, ioe.getMessage());
             } finally {
                 // in all cases : 
-                final double duration = (System.nanoTime() - start) / 1000000L;
+                final double duration = 1e-6d * (System.nanoTime() - start);
 
                 runCtx.setDuration((long) duration);
                 runCtx.setExitCode(status);

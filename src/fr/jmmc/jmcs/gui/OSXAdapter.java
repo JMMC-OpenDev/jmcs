@@ -65,10 +65,6 @@ public class OSXAdapter extends ApplicationAdapter {
 
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(OSXAdapter.class.getName());
-    /**
-     * DOCUMENT ME!
-     */
-    private static boolean alreadyQuitting = false;
     // pseudo-singleton model; no point in making multiple instances
     /**
      * DOCUMENT ME!
@@ -78,6 +74,13 @@ public class OSXAdapter extends ApplicationAdapter {
      * DOCUMENT ME!
      */
     private static com.apple.eawt.Application theApplication;
+    
+    /* members */
+    /**
+     * flag to prevent handleQuit() to be called twice (known Apple bug)
+     */
+    private boolean alreadyQuitting = false;
+    
     /** Store a proxy to the shared ActionRegistrar facility */
     private ActionRegistrar _registrar = null;
     /**

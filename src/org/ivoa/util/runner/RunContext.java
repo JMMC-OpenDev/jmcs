@@ -33,11 +33,6 @@ public class RunContext implements Serializable, Cloneable {
      */
     private String name;
     /**
-     * Attribute description :
-     * A description of this context / job.
-     */
-    private String description;
-    /**
      * Job creation date
      */
     private Date creationDate;
@@ -64,7 +59,7 @@ public class RunContext implements Serializable, Cloneable {
     /**
      * Ring Buffer for logs
      */
-    private RingBuffer ring = null;
+    private transient RingBuffer ring = null;
 
     /**
      * Creates a new RunContext object for JPA
@@ -335,13 +330,5 @@ public class RunContext implements Serializable, Cloneable {
      */
     public final String getName() {
         return name;
-    }
-
-    /**
-     * Return the description of this context
-     * @return description of this context
-     */
-    public final String getDescription() {
-        return description;
     }
 }

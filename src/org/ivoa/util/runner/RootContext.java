@@ -23,7 +23,7 @@ public final class RootContext extends RunContext implements Iterator<RunContext
     private static final long serialVersionUID = 1L;
     //~ Members ----------------------------------------------------------------------------------------------------------
     /** future used to be able to cancel the job */
-    private Future<?> future = null;
+    private transient Future<?> future = null;
     /**
      * The user who owns this run (login)
      */

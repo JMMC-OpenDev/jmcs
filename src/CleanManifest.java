@@ -17,12 +17,22 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 
 /**
- * This program 
+ * This program will remove the Class-Path attributes of the manifest contained in the given jar files
+ * 
+ * TODO: move this class outside src folder to be not released
+ * 
  */
 public class CleanManifest {
 
     /** logger */
     private final static Logger logger = Logger.getLogger(CleanManifest.class.getName());
+    
+    /**
+     * Private constructor
+     */
+    private CleanManifest() {
+        super();
+    }
 
     public static void main(String[] args) {
         if (args.length == 0) {
@@ -33,46 +43,83 @@ public class CleanManifest {
         }
         for (String fname : args) {
 
-            System.out.println("Trying to clean " + fname);            
+            System.out.println("Trying to clean " + fname);
             File inFile = new File(fname);
-            
-            
+
+            JarFile jf = null;
+            Manifest manifest = null;
             try {
                 // Get manifest from input jar file
-                JarFile jf = new JarFile(inFile);
-                Manifest manifest = jf.getManifest();
+                jf = new JarFile(inFile);
+                manifest = jf.getManifest();
 
-                // Try to clean 
-                boolean modified = cleanManifest(manifest);
-                // Backup and update given jar if manifest has been modified
-                if (modified) {
-                    // Build input and output streams
-                    JarInputStream jis = new JarInputStream(new FileInputStream(inFile));
-                    
-                    File tmpFile = new File(fname + ".tmp");                    
-                    JarOutputStream jos = new JarOutputStream(new FileOutputStream(tmpFile), manifest);
-                    
-                    // Copy jar files 
-                    copyJarFile(jis, jos);
-                    jos.close();
-                    jis.close();
-                    
-                    // backup and 
-                    File oldFile = new File(fname + ".old");
-                   
-                    // display informations
-                    if (!inFile.renameTo(oldFile)) {
-                        System.out.print("Error");
-                    }
-                    System.out.println("moving " + inFile + " to " + oldFile);
-
-                    if (!tmpFile.renameTo(inFile)) {
-                        System.out.println("Error moving " + tmpFile + " to " + inFile);
-                    }
-                }
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, "io exception: ", ex);
-            }            
+            } finally {
+                if (jf != null) {
+                    try {
+                        jf.close();
+                    } catch (IOException ex) {
+                        logger.log(Level.SEVERE, "io exception: ", ex);
+                    }
+                }
+            }
+
+            if (manifest != null) {
+                // Try to clean 
+                boolean modified = cleanManifest(manifest);
+
+                // Backup and update given jar if manifest has been modified
+                if (modified) {
+                    final File tmpFile = new File(fname + ".tmp");
+
+                    JarInputStream jis = null;
+                    JarOutputStream jos = null;
+                    try {
+                        // Build input and output streams
+                        jis = new JarInputStream(new FileInputStream(inFile));
+
+                        jos = new JarOutputStream(new FileOutputStream(tmpFile), manifest);
+
+                        // Copy jar files 
+                        copyJarFile(jis, jos);
+
+                    } catch (IOException ex) {
+                        logger.log(Level.SEVERE, "io exception: ", ex);
+                    } finally {
+                        if (jis != null) {
+                            try {
+                                jis.close();
+                            } catch (IOException ex) {
+                                logger.log(Level.SEVERE, "io exception: ", ex);
+                            }
+                        }
+                        if (jos != null) {
+                            try {
+                                jos.close();
+                            } catch (IOException ex) {
+                                logger.log(Level.SEVERE, "io exception: ", ex);
+                            }
+                        }
+                    }
+
+                    // backup and 
+                    final File oldFile = new File(fname + ".old");
+
+                    System.out.println("moving '" + inFile + "' to '" + oldFile + "'");
+
+                    // display informations
+                    if (!inFile.renameTo(oldFile)) {
+                        System.out.print("Error moving file '" + inFile + "' to '" + oldFile + "'");
+                    } else {
+                        if (!tmpFile.renameTo(inFile)) {
+                            System.out.println("Error moving '" + tmpFile + "' to '" + inFile + "'");
+                        }
+
+                        System.out.println("Jar file '" + inFile + "' done");
+                    }
+                }
+            }
         }
     }
 

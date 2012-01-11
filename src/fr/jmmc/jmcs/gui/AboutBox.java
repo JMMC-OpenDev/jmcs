@@ -292,28 +292,28 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _logger.debug("All the textarea properties have been initialized");
 
         // HTML generation
-        String generatedHtml = "<html><head></head><body>";
-        String authors = _applicationDataModel.getAuthors();
+        final StringBuilder generatedHtml = new StringBuilder(4096);
+        generatedHtml.append("<html><head></head><body>");
+        
+        final String authors = _applicationDataModel.getAuthors();
         if ((authors != null) && (authors.length() > 0)) {
-            generatedHtml += "Brought to you by " + authors + ".<BR><BR>";
+            generatedHtml.append("Brought to you by ").append(authors).append(".<BR><BR>");
         }
-        generatedHtml += "<I>If this software was helpful for your study or research work, please include the mandatory acknowledgment (available from the Help menu) in your publications.</I><BR><BR>";
+        generatedHtml.append("<I>If this software was helpful for your study or research work, please include the mandatory acknowledgment (available from the Help menu) in your publications.</I><BR><BR>");
 
         // Get the Text value
-        String textValue = _applicationDataModel.getTextValue();
+        final String textValue = _applicationDataModel.getTextValue();
         if ((textValue != null) && (textValue.length() > 0)) {
-            generatedHtml += textValue;
-            generatedHtml += "<br><br>";
+            generatedHtml.append(textValue).append("<br><br>");
         }
 
         // Generate a HTML string with each package informations
-        List<String> packagesInfo = _applicationDataModel.getPackagesInfo();
-        String packageHtml = "";
+        final List<String> packagesInfo = _applicationDataModel.getPackagesInfo();
 
         // For each package
-        int nbElems = packagesInfo.size();
+        final int nbElems = packagesInfo.size();
         if (nbElems > 0) {
-            packageHtml += "<i>Dependencies</i>:<br>";
+            generatedHtml.append("<i>Dependencies</i>:<br>");
         }
 
         /* We have a step of 3 because for each
@@ -325,17 +325,18 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
             // We check if there is a link
             if (link == null) {
-                packageHtml += name;
+                generatedHtml.append(name);
             } else {
-                packageHtml += ("<a href='" + link + "'>" + name + "</a>");
+                generatedHtml.append("<a href='").append(link).append("'>").append(name).append("</a>");
             }
 
-            packageHtml += (" : <i>" + description + "</i><br>");
+            generatedHtml.append(" : <i>").append(description).append("</i><br>");
         }
 
-        generatedHtml += (packageHtml + "</body></html>");
+        generatedHtml.append("</body></html>");
 
-        _descriptionEditorPane.setText(generatedHtml);
+        _descriptionEditorPane.setText(generatedHtml.toString());
+        
         // Show first line of editor pane, and not its last line as by default !
         _descriptionEditorPane.setCaretPosition(0);
 

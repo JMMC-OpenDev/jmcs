@@ -38,6 +38,8 @@ public final class StarResolver {
     public static final String SEPARATOR_COMMA = ",";
     /** semicolon separator */
     public static final String SEPARATOR_SEMI_COLON = ";";
+    /** HTTP response encoding use UTF-8 */
+    private static final String HTTP_ENCODING = "UTF-8";
 
     /* members */
     /** The sought star name */
@@ -221,7 +223,7 @@ public final class StarResolver {
                 // Launch the network query
                 final InputStream inputStream = Urls.parseURL(simbadURL).openStream();
 
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream, HTTP_ENCODING));
 
                 // Read incoming data line by line
                 String currentLine = null;

@@ -98,6 +98,9 @@ public class StarResolverWidget extends SearchField implements Observer {
 
                 StatusBar.show("CDS Simbad star resolution failed.");
                 break;
+                
+            default:
+                return;
         }
 
         // Enable search field after request processing done :

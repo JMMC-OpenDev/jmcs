@@ -398,6 +398,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
           return parameter.getScale();
         case FIXED_VALUE:
           return parameter.isHasFixedValue();
+        default:
       }
     }
 
@@ -447,6 +448,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
           parameter.setHasFixedValue(bValue);
           modified = true;
           break;
+        default:
       }
 
       if (modified) {

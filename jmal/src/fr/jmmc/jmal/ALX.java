@@ -638,7 +638,7 @@ public class ALX
         }         
          */
 
-        Class c = null;
+        Class<?> c = null;
 
         try {
             c = Class.forName(ALX.class.getName());
@@ -646,16 +646,18 @@ public class ALX
             String method = args[0];
             String arg = args[1];
 
-            java.lang.reflect.Method userMethod = c.getMethod(method,
-                    String.class);
+            java.lang.reflect.Method userMethod = c.getMethod(method, String.class);
             System.out.println("" + userMethod.invoke(arg, arg));
+            
         } catch (Throwable th) { // main (test)
-            java.lang.reflect.Method[] m = c.getDeclaredMethods();
             System.out.println("Usage: <progname> <methodName> <arg>");
             System.out.println("     where <methodName> can be:");
 
-            for (int i = 0; i < m.length; i++) {
-                System.out.println("       - " + m[i].getName());
+            if (c != null) {
+                java.lang.reflect.Method[] m = c.getDeclaredMethods();
+                for (int i = 0; i < m.length; i++) {
+                    System.out.println("       - " + m[i].getName());
+                }
             }
         }
     }

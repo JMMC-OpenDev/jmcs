@@ -78,15 +78,15 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
   /**
    * DOCUMENT ME!
    */
-  private Image image_;
+  private transient Image image_;
   /**
    * DOCUMENT ME!
    */
-  private WritableRaster imageRaster_;
+  private transient WritableRaster imageRaster_;
   /**
    * DOCUMENT ME!
    */
-  private Image wedge_;
+  private transient Image wedge_;
   /**
    * DOCUMENT ME!
    */
@@ -450,7 +450,7 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
     return this.getCanvasDimension();
   }
 
-  private class ObservableImage extends Observable {
+  private static class ObservableImage extends Observable {
 
     public void notifyImageObservers() {
       setChanged();

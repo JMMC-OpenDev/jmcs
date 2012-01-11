@@ -157,7 +157,8 @@ public final class JAXBFactory {
         try {
             // create an Unmarshaller
             m = getJAXBContext().createMarshaller();
-
+            
+            m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         } catch (JAXBException je) {
             throw new XmlBindException("JAXBFactory.createMarshaller : JAXB Failure", je);

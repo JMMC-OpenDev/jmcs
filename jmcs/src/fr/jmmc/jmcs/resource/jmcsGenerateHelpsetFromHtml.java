@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
  * by the bash script <b>jmcsHTML2HelpSet.sh</b>. This Jar file will be used
  * by <b>HelpView</b> class in order to show the help window thanks
  * to <b>JavaHelp</b> system.
+ * 
+ * TODO: move this class outside src folder to be not released
  */
 public class jmcsGenerateHelpsetFromHtml
 {
@@ -64,8 +66,10 @@ public class jmcsGenerateHelpsetFromHtml
         // Name of this class
         String className = jmcsGenerateHelpsetFromHtml.class.getName();
 
+        // TODO: use EDT for Swing init / actions: see SwingUtils
+        
         // Launch the jhelpdev application
-        JHelpDevFrame.main(null);
+        JHelpDevFrame.main(new String[]{});
 
         // Hide the jhelpdev frame
         JHelpDevFrame.getAJHelpDevToolFrame().setVisible(false);

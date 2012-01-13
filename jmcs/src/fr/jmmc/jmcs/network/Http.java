@@ -202,7 +202,7 @@ public final class Http {
                 }
                 final int port = epoint.getPort();
 
-                if (!host.trim().isEmpty() && port > 0) {
+                if (host.trim().length() > 0 && port > 0) {
                     hostConfiguration.setProxy(host, port);
                 }
             }

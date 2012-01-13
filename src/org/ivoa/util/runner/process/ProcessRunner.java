@@ -111,7 +111,7 @@ public final class ProcessRunner {
                 logger.error("ProcessRunner.execute : illegal state failure :", ise);
             } catch (InterruptedException ie) {
                 // occurs when the threadpool shutdowns or interrupts the task (future.cancel) :
-                logger.info("ProcessRunner.execute : interrupted failure :", ie);
+                logger.debug("ProcessRunner.execute : interrupted failure :", ie);
                 // Interrupted status :
                 status = STATUS_INTERRUPTED;
             } catch (IOException ioe) {

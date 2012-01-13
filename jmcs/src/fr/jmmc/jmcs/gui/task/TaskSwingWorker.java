@@ -138,7 +138,8 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
                     }
                 }
 
-            } catch (InterruptedException ignore) {
+            } catch (InterruptedException ie) {
+                logger.debug("{}.done : interrupted failure :", logPrefix, ie);
             } catch (ExecutionException ee) {
                 handleException(ee);
             }

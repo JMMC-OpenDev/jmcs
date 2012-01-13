@@ -5,8 +5,8 @@ package fr.jmmc.jmcs.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test some FileUtils methods.
@@ -15,7 +15,7 @@ import java.util.logging.Level;
 public class TestFileUtils {
 
     /** logger */
-    private final static Logger logger = Logger.getLogger(TestFileUtils.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(TestFileUtils.class.getName());
 
     public static void main(String[] args) {
         try {
@@ -29,8 +29,8 @@ public class TestFileUtils {
             System.out.println("f2.length() = " + f2.length());
             System.out.println("f2.read() = " + FileUtils.readFile(f2));
 
-        } catch (IOException ex) {
-            logger.log(Level.SEVERE, "exception:", ex);
+        } catch (IOException ioe) {
+            logger.error("exception:", ioe);
         }
 
     }

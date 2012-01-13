@@ -1,7 +1,9 @@
 
-/*******************************************************************************
+/**
+ * *****************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- ******************************************************************************/
+ * ****************************************************************************
+ */
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,22 +13,25 @@ import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * This program will remove the Class-Path attributes of the manifest contained in the given jar files
- * 
+ * This program will remove the Class-Path attributes of the manifest contained
+ * in the given jar files
+ *
  * TODO: move this class outside src folder to be not released
- * 
+ *
  */
 public class CleanManifest {
 
-    /** logger */
-    private final static Logger logger = Logger.getLogger(CleanManifest.class.getName());
-    
+    /**
+     * logger
+     */
+    private final static Logger logger = LoggerFactory.getLogger(CleanManifest.class.getName());
+
     /**
      * Private constructor
      */
@@ -53,14 +58,14 @@ public class CleanManifest {
                 jf = new JarFile(inFile);
                 manifest = jf.getManifest();
 
-            } catch (IOException ex) {
-                logger.log(Level.SEVERE, "io exception: ", ex);
+            } catch (IOException ioe) {
+                logger.error("io exception: ", ioe);
             } finally {
                 if (jf != null) {
                     try {
                         jf.close();
-                    } catch (IOException ex) {
-                        logger.log(Level.SEVERE, "io exception: ", ex);
+                    } catch (IOException ioe) {
+                        logger.error("io exception: ", ioe);
                     }
                 }
             }
@@ -84,21 +89,21 @@ public class CleanManifest {
                         // Copy jar files 
                         copyJarFile(jis, jos);
 
-                    } catch (IOException ex) {
-                        logger.log(Level.SEVERE, "io exception: ", ex);
+                    } catch (IOException ioe) {
+                        logger.error("io exception: ", ioe);
                     } finally {
                         if (jis != null) {
                             try {
                                 jis.close();
-                            } catch (IOException ex) {
-                                logger.log(Level.SEVERE, "io exception: ", ex);
+                            } catch (IOException ioe) {
+                                logger.error("io exception: ", ioe);
                             }
                         }
                         if (jos != null) {
                             try {
                                 jos.close();
-                            } catch (IOException ex) {
-                                logger.log(Level.SEVERE, "io exception: ", ex);
+                            } catch (IOException ioe) {
+                                logger.error("io exception: ", ioe);
                             }
                         }
                     }
@@ -125,9 +130,9 @@ public class CleanManifest {
 
     /**
      * Copies all files from JarInputStream to JarOutputStream
-     * 
-     * @param jin       stream from which the files are copied from
-     * @param jout      output stream to store jar into    
+     *
+     * @param jin stream from which the files are copied from
+     * @param jout output stream to store jar into
      * @throws IOException
      */
     private static void copyJarFile(JarInputStream jin, JarOutputStream jout)
@@ -154,9 +159,10 @@ public class CleanManifest {
     }
 
     /**
-     *  This method clean the given manifest.
-     * Class-Path attributes are removed if present
-     * @param manifest 
+     * This method clean the given manifest. Class-Path attributes are removed
+     * if present
+     *
+     * @param manifest
      * @return true if manifest has been cleaned, else false.
      */
     private static boolean cleanManifest(Manifest manifest) {

@@ -1,10 +1,10 @@
-/*******************************************************************************
+/** *****************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- ******************************************************************************/
+ ***************************************************************************** */
 package fr.jmmc.jmal.model.function.math;
 
 import cern.jet.math.Bessel;
-import org.apache.commons.math.complex.Complex;
+import fr.jmmc.jmal.complex.MutableComplex;
 
 /**
  * @author Laurent BOURGES.
@@ -34,55 +34,130 @@ public final class Functions {
      * Returns the complex value applied in the Fourier transform at frequencies
      * (UFREQ,VFREQ) to account for a shift (X,Y) in image space of the given value.
      * X, Y are given in milliarcseconds.
+     *
      * @param ufreq UFREQ
      * @param vfreq VFREQ
+     * @param zero flag to indicate that x = 0 and y = 0
      * @param x X (mas)
      * @param y Y (mas)
      * @param value value to shift
-     * @return complex factor
+     * @param output complex Fourier transform value
      */
-    public static Complex shift(final double ufreq, final double vfreq, final double x, final double y, final double value) {
-        final double phase = 2D * PI * MAS2RAD * (x * ufreq + y * vfreq);
-        // create a new Complex object as Complex type is immutable:
-        return new Complex(value * Math.cos(phase), -value * Math.sin(phase));
+    public static void shift(final double ufreq, final double vfreq, final boolean zero, final double x, final double y, final double value, final MutableComplex output) {
+        if (zero) {
+            // update output complex instance (mutable):
+            output.updateComplex(value, 0d);
+        } else {
+            final double phase = 2D * PI * MAS2RAD * (x * ufreq + y * vfreq);
+            // update output complex instance (mutable):
+            output.updateComplex(value * Math.cos(phase), -value * Math.sin(phase));
+        }
     }
 
     /**
-     * Return the new spatial frequency U
-     * transform(ufreq, vfreq, t_ana, rotation)
+     * Return the cosinus of the beta angle in degrees
+     * beta is the trigonometric angle
+     * |y
+     * |
+     * ---|---> x beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
+     * |
+     * |
+     *
+     * The angle ROTATION is the astronomical position angle, |North
+     * equal to 0 or 180 for x=0, and 90 or 270 for y=0. |
+     * so, ROTATION = 90 - beta ---|--->East
+     * the positive x-semi-axis being the Est direction, and |
+     * the positive y-semi-axis beeing the North direction. |
+     *
+     * @param rotation rotation angle in degrees
+     * @return cosinus of the beta angle
+     */
+    public static double getCosBeta(final double rotation) {
+        return Math.cos(getBeta(rotation));
+    }
+
+    /**
+     * Return the sinus of the beta angle in degrees
+     * beta is the trigonometric angle
+     * |y
+     * |
+     * ---|---> x beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
+     * |
+     * |
+     *
+     * The angle ROTATION is the astronomical position angle, |North
+     * equal to 0 or 180 for x=0, and 90 or 270 for y=0. |
+     * so, ROTATION = 90 - beta ---|--->East
+     * the positive x-semi-axis being the Est direction, and |
+     * the positive y-semi-axis beeing the North direction. |
+     *
+     * @param rotation rotation angle in degrees
+     * @return sinus of the beta angle
+     */
+    public static double getSinBeta(final double rotation) {
+        return Math.sin(getBeta(rotation));
+    }
+
+    /**
+     * Return the beta angle in degrees
+     * beta is the trigonometric angle
+     * |y
+     * |
+     * ---|---> x beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
+     * |
+     * |
+     *
+     * The angle ROTATION is the astronomical position angle, |North
+     * equal to 0 or 180 for x=0, and 90 or 270 for y=0. |
+     * so, ROTATION = 90 - beta ---|--->East
+     * the positive x-semi-axis being the Est direction, and |
+     * the positive y-semi-axis beeing the North direction. |
+     *
+     * @param rotation rotation angle in degrees
+     * @return beta angle in degrees
+     */
+    private static double getBeta(final double rotation) {
+        return DEG2RAD * (90D - rotation);
+    }
+
+    /**
+     * Return the new spatial frequency U transform(ufreq, vfreq, t_ana, rotation)
      *
      * Returns the new spatial frequencies when the object has got geometrical
      * transformations, successively a rotation and an anamorphose.
      * (u,v)--> Transpose(Inverse(T))(u,v), with matrix T = HAR;
      * Inverse(R)= |cos(beta) -sin(beta)|
-     *             |sin(beta)  cos(beta)|   beta angle in degrees
-     *   beta is the trigonometric angle
-     *       |y
-     *       |
-     *    ---|---> x    beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
-     *       |
-     *       |
+     * |sin(beta) cos(beta)| beta angle in degrees
+     * beta is the trigonometric angle
+     * |y
+     * |
+     * ---|---> x beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
+     * |
+     * |
      *
      * Inverse(A)= |t_ana 0|
-     *             |0     1|  t_ana = ratio of anamorphose, >0
+     * |0 1| t_ana = ratio of anamorphose, >0
      *
-     * The angle ROTATION is the astronomical position angle,       |North
-     * equal to 0 or 180 for x=0, and  90 or 270 for y=0.           |
-     * so, ROTATION = 90 - beta                                  ---|--->East
-     * the positive x-semi-axis being the Est direction, and        |
-     * the positive y-semi-axis beeing the North direction.         |
+     * The angle ROTATION is the astronomical position angle, |North
+     * equal to 0 or 180 for x=0, and 90 or 270 for y=0. |
+     * so, ROTATION = 90 - beta ---|--->East
+     * the positive x-semi-axis being the Est direction, and |
+     * the positive y-semi-axis beeing the North direction. |
+     *
+     * @see getCosBeta(double)
+     * @see getSinBeta(double)
+     *
      * @param ufreq UFREQ
      * @param vfreq VFREQ
      * @param anamorphoseRatio t_ana = ratio of anamorphose, >0
-     * @param rotation rotation angle in degrees
+     * @param cosBeta cosinus of the beta angle; see getCosBeta(rotation)
+     * @param sinBeta sinus of the beta angle; see getSinBeta(rotation)
      * @return new spatial frequency UFREQ
      */
     public static double transformU(final double ufreq, final double vfreq,
-                                    final double anamorphoseRatio, final double rotation) {
+                                    final double anamorphoseRatio, final double cosBeta, final double sinBeta) {
 
-        final double angle = DEG2RAD * (90D - rotation);
-
-        return ufreq * Math.cos(angle) * anamorphoseRatio + vfreq * Math.sin(angle) * anamorphoseRatio;
+        return ufreq * cosBeta * anamorphoseRatio + vfreq * sinBeta * anamorphoseRatio;
     }
 
     /**
@@ -93,30 +168,33 @@ public final class Functions {
      * transformations, only a rotation.
      * (u,v)--> Transpose(Inverse(T))(u,v), with matrix T = HAR;
      * Inverse(R)= |cos(beta) -sin(beta)|
-     *             |sin(beta)  cos(beta)|   beta angle in degrees
-     *   beta is the trigonometric angle
-     *       |y
-     *       |
-     *    ---|---> x    beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
-     *       |
-     *       |
+     * |sin(beta) cos(beta)| beta angle in degrees
+     * beta is the trigonometric angle
+     * |y
+     * |
+     * ---|---> x beta =0 or 180 for y=0, beta = 90 or -90 for x=0)
+     * |
+     * |
      *
-     * The angle ROTATION is the astronomical position angle,       |North
-     * equal to 0 or 180 for x=0, and  90 or 270 for y=0.           |
-     * so, ROTATION = 90 - beta                                  ---|--->East
-     * the positive x-semi-axis being the Est direction, and        |
-     * the positive y-semi-axis beeing the North direction.         |
+     * The angle ROTATION is the astronomical position angle, |North
+     * equal to 0 or 180 for x=0, and 90 or 270 for y=0. |
+     * so, ROTATION = 90 - beta ---|--->East
+     * the positive x-semi-axis being the Est direction, and |
+     * the positive y-semi-axis beeing the North direction. |
+     *
+     * @see getCosBeta(double)
+     * @see getSinBeta(double)
+     *
      * @param ufreq UFREQ
      * @param vfreq VFREQ
-     * @param rotation rotation angle in degrees
+     * @param cosBeta cosinus of the beta angle; see getCosBeta(rotation)
+     * @param sinBeta sinus of the beta angle; see getSinBeta(rotation)
      * @return new spatial frequency VFREQ
      */
     public static double transformV(final double ufreq, final double vfreq,
-                                    final double rotation) {
+                                    final double cosBeta, final double sinBeta) {
 
-        final double angle = DEG2RAD * (90D - rotation);
-
-        return -ufreq * Math.sin(angle) + vfreq * Math.cos(angle);
+        return -ufreq * sinBeta + vfreq * cosBeta;
     }
 
     /* Model functions */
@@ -271,18 +349,18 @@ public final class Functions {
                                               final double diameter, final double a1, final double a2) {
         /*
          * 11- Limb darkened Disk
-         *     g(u,v) = ( a*(j1/x) + b* sqrt(PI/2)*(J3over2/x**1.5) + 2*c*(j2/x**2) )/s
-         *     where
-         *       BesselJ[3/2, z] == (Sqrt[2/Pi] ((-z) Cos[z] + Sin[z]))/z^(3/2)
-         *       x=pi*diametre*q
-         *       j1=J1(x)
-         *       j2=J2(x)
-         *       j3over2(x)=sqrt((2/PI)/x)*((sin(x)/x)-cos(x))
-         *       a=1-cu-cv
-         *       b=cu+2*cv
-         *       c=-cv
-         *       s=a/2+b/3+c/4
-         *       q**2 = u**2+v**2
+         * g(u,v) = ( a*(j1/x) + b* sqrt(PI/2)*(J3over2/x**1.5) + 2*c*(j2/x**2) )/s
+         * where
+         * BesselJ[3/2, z] == (Sqrt[2/Pi] ((-z) Cos[z] + Sin[z]))/z^(3/2)
+         * x=pi*diametre*q
+         * j1=J1(x)
+         * j2=J2(x)
+         * j3over2(x)=sqrt((2/PI)/x)*((sin(x)/x)-cos(x))
+         * a=1-cu-cv
+         * b=cu+2*cv
+         * c=-cv
+         * s=a/2+b/3+c/4
+         * q**2 = u**2+v**2
          */
 
         final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);

@@ -1,24 +1,26 @@
-/*******************************************************************************
+/** *****************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- ******************************************************************************/
+ ***************************************************************************** */
 package fr.jmmc.jmal.model;
 
+import fr.jmmc.jmal.complex.MutableComplex;
 import fr.jmmc.jmal.model.function.math.PunctFunction;
 import fr.jmmc.jmal.model.function.math.Functions;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmal.model.targetmodel.Parameter;
-import org.apache.commons.math.complex.Complex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @param <T> type of the function class
- * 
+ *
  * @author Laurent BOURGES.
  */
 public abstract class AbstractModelFunction<T extends PunctFunction> implements ModelFunction {
 
     /** Class logger */
-    protected final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AbstractModelFunction.class.getName());
+    protected final static Logger logger = LoggerFactory.getLogger(AbstractModelFunction.class.getName());
 
     /** variant enumeration (standard, elongated and flattened models) */
     public enum ModelVariant {
@@ -87,6 +89,7 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
 
     /**
      * Add a parameter supporting only positive values
+     *
      * @param model model to update
      * @param name name of the parameter
      */
@@ -101,6 +104,7 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
 
     /**
      * Add a parameter representing a ratio (value >= 1)
+     *
      * @param model model to update
      * @param name name of the parameter
      */
@@ -114,6 +118,7 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
 
     /**
      * Add a parameter supporting only angle values (0 - 180 degrees)
+     *
      * @param model model to update
      * @param name name of the parameter
      */
@@ -130,6 +135,7 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
     /**
      * Check the model parameters against their min/max bounds.
      * For now, it uses the parameter user min/max (LITpro) instead using anything else
+     *
      * @param model model to check
      * @throws IllegalArgumentException
      */
@@ -154,56 +160,44 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
      *
      * Note : the visibility array is given to add this model contribution to the total visibility
      *
+     * @param function model function to compute
      * @param ufreq U frequencies in rad-1
      * @param vfreq V frequencies in rad-1
-     * @param model model instance
      * @param vis complex visibility array
+     * @param modelVis complex variable to store model complex contribution
      */
-    @Override
-    public final void compute(final double[] ufreq, final double[] vfreq, final Model model, final Complex[] vis) {
-
-        // check model parameters :
-        validate(model);
-
-        /** Get the current thread to check if the computation is interrupted */
-        final Thread currentThread = Thread.currentThread();
+    public static final void compute(final PunctFunction function, final double[] ufreq, final double[] vfreq,
+                               final MutableComplex[] vis, final MutableComplex modelVis) {
 
         final int size = ufreq.length;
 
-        // this step indicates when the thread.isInterrupted() is called in the for loop
-        final int stepInterrupt = 1 + size / 20;
-
-        // Get parameters to fill the function context :
-        final T function = createFunction(model);
-
         // Compute :
         for (int i = 0; i < size; i++) {
-            vis[i] = vis[i].add(compute(ufreq[i], vfreq[i], function));
+            Functions.shift(ufreq[i], vfreq[i], function.isZero(), function.getX(), function.getY(),
+                    function.computeWeight(ufreq[i], vfreq[i]),
+                    modelVis);
 
-            // fast interrupt :
-            if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
-                return;
-            }
+            // mutable complex:
+            vis[i].add(modelVis);
         }
     }
 
     /**
-     * Compute the model function at a single Ufreq and Vfreq
+     * Prepare the computation function for the given model :
+     * Get model parameters to fill the function context
      *
-     * return function.computeWeight(ufreq, vfreq) * shift(ufreq, vfreq, x, y)
-     *
-     * @param ufreq U frequency in rad-1
-     * @param vfreq V frequency in rad-1
-     * @param function model function to compute
-     * @return complex Fourier transform value
+     * @param model model instance
+     * @return model function
      */
-    protected final Complex compute(final double ufreq, final double vfreq, final T function) {
-        return Functions.shift(ufreq, vfreq, function.getX(), function.getY(), function.computeWeight(ufreq, vfreq));
+    @Override
+    public PunctFunction prepareFunction(final Model model) {
+        return createFunction(model);
     }
 
     /**
      * Create the computation function for the given model :
      * Get model parameters to fill the function context
+     *
      * @param model model instance
      * @return model function
      */
@@ -211,6 +205,7 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
 
     /**
      * Return the parameter value of the given type among the parameters of the given model
+     *
      * @param type type of the parameter
      * @param model model to use
      * @return parameter value
@@ -226,6 +221,7 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
 
     /**
      * Create a parameter validation exception
+     *
      * @param type type of the parameter
      * @param model model instance
      * @param message validation message [< 0 for example]

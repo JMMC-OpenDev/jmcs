@@ -20,6 +20,7 @@ import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 
@@ -77,12 +78,12 @@ public final class Http {
     }
 
     /**
-     * This class returns a multi threaded http client for the associated URI.
+     * This class returns a multi-threaded HTTP client for the associated URI.
      * This client:
      *  * uses the default proxy configuration (based on http://www.jmmc.fr).
      *  * is thread safe.
-     * @param uri reference uri used to get the proper proxy
-     * @param multiThreaded true indicates to create a multi threaded http client
+     * @param uri reference URI used to get the proper proxy
+     * @param multiThreaded true indicates to create a multi threaded HTTP client
      *
      * @todo remove the limit for support of the first proxy.
      *
@@ -137,11 +138,7 @@ public final class Http {
      */
     private static URI getJmmcHttpURI() {
         if (JMMC_WEB_URI == null) {
-            try {
-                JMMC_WEB_URI = new URI(JMMC_WEB);
-            } catch (URISyntaxException use) {
-                logger.error("invalid URL", use);
-            }
+            JMMC_WEB_URI = validateURL(JMMC_WEB);
         }
         return JMMC_WEB_URI;
     }
@@ -152,13 +149,23 @@ public final class Http {
      */
     private static URI getJmmcSocksURI() {
         if (JMMC_SOCKS_URI == null) {
-            try {
-                JMMC_SOCKS_URI = new URI(JMMC_SOCKS);
-            } catch (URISyntaxException use) {
-                logger.error("invalid URL", use);
-            }
+            JMMC_SOCKS_URI = validateURL(JMMC_SOCKS);
         }
         return JMMC_SOCKS_URI;
+    }
+
+    /**
+     * Transform the given URL in URI if valid.
+     * @param url URL as string
+     * @return URI instance
+     * @throws IllegalArgumentException if the URI is malformed
+     */
+    public static URI validateURL(final String url) throws IllegalArgumentException {
+        try {
+            return new URI(url);
+        } catch (URISyntaxException use) {
+            throw new IllegalStateException("Invalid URL:" + url, use);
+        }
     }
 
     /**
@@ -212,12 +219,12 @@ public final class Http {
 
     /**
      * Save the document located at the given URI in the given file. 
-     * Requests with dedicatedClient will instance one new client with proxies compatible with given uri. 
-     * Other requests will use the common multithreaded httpclient.
+     * Requests with dedicatedClient will instance one new client with proxies compatible with given URI. 
+     * Other requests will use the common multi-threaded HTTP client .
      * 
      * @param uri URI to download
      * @param outputFile file to save into
-     * @param useDedicatedClient use one dedicated httpclient if true or the common multithreaded one else
+     * @param useDedicatedClient use one dedicated HttpClient if true or the common multi-threaded one else
      * @return true if successful
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
@@ -239,11 +246,11 @@ public final class Http {
     }
 
     /**
-     * Read a text file from the given uri into a string
+     * Read a text file from the given URI into a string
      *
-     * @param uri uri to load
-     * @param useDedicatedClient use one dedicated httpclient if true or the common multithreaded one else
-     * @return text file content
+     * @param uri URI to load
+     * @param useDedicatedClient use one dedicated HttpClient if true or the common multi-threaded one else
+     * @return text file content or null if no result
      *
      * @throws IOException if an I/O exception occurred
      */
@@ -259,57 +266,109 @@ public final class Http {
     }
 
     /**
-     * Save the document located at the given URI in the given file. 
-     * Requests with dedicatedClient will instance one new client with proxies compatible with given uri. 
-     * Other requests will use the common multithreaded httpclient.
+     * Post a request to the given URI and get a string as result.
+     *
+     * @param uri URI to load
+     * @param useDedicatedClient use one dedicated HttpClient if true or the common multi-threaded one else
+     * @param queryProcessor post query processor to define query parameters
+     * @return result as string or null if no result
+     *
+     * @throws IOException if an I/O exception occurred
+     */
+    public static String post(final URI uri, final boolean useDedicatedClient,
+            final PostQueryProcessor queryProcessor) throws IOException {
+
+        final StringStreamProcessor stringProcessor = new StringStreamProcessor();
+
+        if (post(uri, useDedicatedClient, queryProcessor, stringProcessor)) {
+            return stringProcessor.getResult();
+        }
+
+        return null;
+    }
+
+    /**
+     * Save the document located at the given URI and use the given processor to get the result.
+     * Requests with dedicatedClient will instance one new client with proxies compatible with given URI.
+     * Other requests will use the common multi-threaded HTTP client.
      * 
      * @param uri URI to download
-     * @param processor stream processor to use to consume http response
-     * @param useDedicatedClient use one dedicated httpclient if true or the common multithreaded one else
+     * @param resultProcessor stream processor to use to consume HTTP response
+     * @param useDedicatedClient use one dedicated HttpClient if true or the common multi-threaded one else
      * @return true if successful
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
-    private static boolean download(final URI uri, final boolean useDedicatedClient, final StreamProcessor processor) throws IOException {
+    private static boolean download(final URI uri, final boolean useDedicatedClient,
+            final StreamProcessor resultProcessor) throws IOException {
+
         // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
         final HttpClient client = (useDedicatedClient) ? Http.getHttpClient(uri, false) : Http.getHttpClient();
-
         final GetMethod method = new GetMethod(uri.toString());
+        logger.debug("HTTP client and GET method have been created");
 
         try {
-            logger.debug("Http client and get method have been created");
-
             // Send HTTP GET query:
-            int resultCode = client.executeMethod(method);
-
+            final int resultCode = client.executeMethod(method);
             logger.debug("The query has been sent. Status code: {}", resultCode);
 
+            // If everything went fine
             if (resultCode == 200) {
                 // Get response
                 final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
-
-                processor.process(in);
+                resultProcessor.process(in);
 
                 return true;
             }
-
         } finally {
             // Release the connection.
             method.releaseConnection();
         }
+
         return false;
     }
 
     /**
-     * Generic Stream processors
+     * Push the post form to the given URI and use the given processor to get the result.
+     * Requests with dedicatedClient will instance one new client (with automatic proxies compatible with given URI). 
+     * Other requests will use the common multi-threaded HttpClient.
+     * 
+     * @param uri URI to download
+     * @param queryProcessor post query processor to define query parameters
+     * @param resultProcessor stream processor to use to consume HTTP response
+     * @param useDedicatedClient use one dedicated HttpClient if true or the common multi-threaded one else
+     * @return true if successful
+     * @throws IOException if any I/O operation fails (HTTP or file) 
      */
-    private interface StreamProcessor {
+    private static boolean post(final URI uri, final boolean useDedicatedClient,
+            final PostQueryProcessor queryProcessor, final StreamProcessor resultProcessor) throws IOException {
 
-        /**
-         * Process the given input stream and CLOSE it anyway (try/finally)
-         * @param in input stream to process
-         * @throws IOException if any IO error occurs
-         */
-        public void process(final InputStream in) throws IOException;
+        // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
+        final HttpClient client = (useDedicatedClient) ? Http.getHttpClient(uri, false) : Http.getHttpClient();
+        final PostMethod method = new PostMethod(uri.toString());
+        logger.debug("HTTP client and POST method have been created");
+
+        try {
+            // Define HTTP POST parameters
+            queryProcessor.process(method);
+
+            // Send HTTP POST query
+            final int resultCode = client.executeMethod(method);
+            logger.debug("The query has been sent. Status code: {}", resultCode);
+
+            // If everything went fine
+            if (resultCode == 200) {
+                // Get response
+                final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
+                resultProcessor.process(in);
+
+                return true;
+            }
+        } finally {
+            // Release the connection.
+            method.releaseConnection();
+        }
+
+        return false;
     }
 
     /**
@@ -328,7 +387,7 @@ public final class Http {
         @Override
         public void process(final InputStream in) throws IOException {
 
-            // TODO check if we can get response size from http headers
+            // TODO check if we can get response size from HTTP headers
             result = FileUtils.readStream(in);
             logger.debug("String stored in memory ({} chars).", result.length());
         }

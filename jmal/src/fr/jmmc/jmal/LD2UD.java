@@ -8,8 +8,8 @@ import fr.jmmc.jmal.star.Star.Property;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This executable class returns the uniform diameters given to the limb
@@ -32,21 +32,20 @@ import java.util.logging.Logger;
  *
  * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public final class LD2UD
-{
+public final class LD2UD {
 
     /** Class logger */
-    static final Logger logger_;
+    private static final Logger _logger;
     /** Store tables extracted from three publications for given bands */
-    static final Map<ALX.STARTYPE, double[][]> loggAndTeffTables;
+    private static final Map<ALX.STARTYPE, double[][]> loggAndTeffTables;
     /** Store tables of coefficient extracted from three publications for given bands */
-    static final Map<Property, double[][]> coefficientsTables;
+    private static final Map<Property, double[][]> coefficientsTables;
 
     /**
      * Static initializer to define tasks and their child tasks
      */
     static {
-        logger_ = Logger.getLogger(LD2UD.class.getName());
+        _logger = LoggerFactory.getLogger(LD2UD.class.getName());
 
         loggAndTeffTables = new HashMap<ALX.STARTYPE, double[][]>();
         loggAndTeffTables.put(ALX.STARTYPE.DWARF, dwarfsSpToTeffAndLogg());
@@ -66,8 +65,7 @@ public final class LD2UD
         coefficientsTables.put(Property.UD_V, logGAndTeffToV());
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         try {
             System.out.println(ALX.ld2ud(Double.parseDouble(args[0]), args[1]));
             System.exit(0);
@@ -78,28 +76,26 @@ public final class LD2UD
         System.exit(1);
     }
 
-    public static double getLimbDarkenedCorrectionFactor(Property requestedUD, String sptype) throws ParseException
-    {
+    public static double getLimbDarkenedCorrectionFactor(Property requestedUD, String sptype) throws ParseException {
 
         Sptype s = ALX.getSptype(sptype);
         double logg = getGravity(s);
         double teff = getEffectiveTemperature(s);
         double result = getLimbDarkenedCorrectionFactor(requestedUD, teff, logg);
 
-        if (logger_.isLoggable(Level.FINE)) {
-            logger_.fine("LimbdarkenedCorrectionFactor of star with sptype = " + sptype + " in band " + requestedUD + " is " + result);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("LimbdarkenedCorrectionFactor of star with sptype = " + sptype + " in band " + requestedUD + " is " + result);
         }
         return result;
     }
 
-    public static double getLimbDarkenedCorrectionFactor(Property requestedUD, double teff, double logg)
-    {
+    public static double getLimbDarkenedCorrectionFactor(Property requestedUD, double teff, double logg) {
         double[][] table = coefficientsTables.get(requestedUD);
         double c = searchCoeff(table, logg, teff);
         double result = getCorrectionFactor(c);
 
-        if (logger_.isLoggable(Level.FINE)) {
-            logger_.fine("LimbdarkenedCorrectionFactor of star with teff=" + teff
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("LimbdarkenedCorrectionFactor of star with teff=" + teff
                     + " and logg=" + logg + " in band " + requestedUD + " is " + result);
         }
         return result;
@@ -113,8 +109,7 @@ public final class LD2UD
      * @param sptype Spectral Type value
      * @return effective temperature
      */
-    public static double getGravity(String sptype)
-    {
+    public static double getGravity(String sptype) {
         try {
             return getGravity(ALX.getSptype(sptype));
         } catch (ParseException ex) {
@@ -129,15 +124,14 @@ public final class LD2UD
      * @param sptype Spectral Type
      * @return effective temperature
      */
-    public static double getGravity(Sptype sptype)
-    {
+    public static double getGravity(Sptype sptype) {
         // Select one table to get logg and Teff
         double[][] table = loggAndTeffTables.get(ALX.getStarType(sptype));
         int tempCode = ALX.getTemperatureClass(sptype);
         double result = searchLogg(table, tempCode);
 
-        if (logger_.isLoggable(Level.FINE)) {
-            logger_.fine("Gravity of star with sptype = " + sptype + " is " + result);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Gravity of star with sptype = " + sptype + " is " + result);
         }
         return result;
     }
@@ -151,8 +145,7 @@ public final class LD2UD
      * @return effective temperature or NaN if sptype can't be decoded
 
      */
-    public static double getEffectiveTemperature(String sptype)
-    {
+    public static double getEffectiveTemperature(String sptype) {
         try {
             return getEffectiveTemperature(ALX.getSptype(sptype));
         } catch (ParseException ex) {
@@ -167,15 +160,14 @@ public final class LD2UD
      * @param sptype Spectral Type
      * @return effective temperature
      */
-    public static double getEffectiveTemperature(Sptype sptype)
-    {
+    public static double getEffectiveTemperature(Sptype sptype) {
         // Select one table to get logg and Teff
         double[][] table = loggAndTeffTables.get(ALX.getStarType(sptype));
         int tempCode = ALX.getTemperatureClass(sptype);
         double result = searchTeff(table, tempCode);
 
-        if (logger_.isLoggable(Level.FINE)) {
-            logger_.fine("Effective temperature of star with sptype = " + sptype + " is " + result);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Effective temperature of star with sptype = " + sptype + " is " + result);
         }
         return result;
     }
@@ -190,34 +182,30 @@ public final class LD2UD
      * @param u one extracted coefficient
      * @return the correction factor
      */
-    public static double getCorrectionFactor(double u)
-    {
+    public static double getCorrectionFactor(double u) {
         return Math.sqrt((1 - u / 3) / (1 - 7 * u / 15));
     }
 
-    private static double searchLogg(double[][] table, int tempClassCode)
-    {
+    private static double searchLogg(double[][] table, int tempClassCode) {
         double result = path1(table, tempClassCode, 0, 2) + ALX.SUN_LOGG;
 
-        if (logger_.isLoggable(Level.FINEST)) {
-            logger_.finest("Logg of star with tempCode = " + tempClassCode + " is " + result);
+        if (_logger.isTraceEnabled()) {
+            _logger.trace("Logg of star with tempCode = " + tempClassCode + " is " + result);
         }
         return result;
     }
 
-    private static double searchTeff(double[][] table, int tempClassCode)
-    {
+    private static double searchTeff(double[][] table, int tempClassCode) {
         double result = path1(table, tempClassCode, 0, 1);
 
-        if (logger_.isLoggable(Level.FINEST)) {
-            logger_.finest("Teff of star with tempCode = " + tempClassCode + " is " + result);
+        if (_logger.isTraceEnabled()) {
+            _logger.trace("Teff of star with tempCode = " + tempClassCode + " is " + result);
         }
         return result;
     }
 
     // @todo add test code ( especially for array limits )
-    private static double searchCoeff(final double[][] table, final double logg, final double teff)
-    {
+    private static double searchCoeff(final double[][] table, final double logg, final double teff) {
         double result = 0;
         double prevTeff, currentTeff = 0d;
         double prevLogg, currentLogg = 0d;
@@ -240,19 +228,19 @@ public final class LD2UD
 
                 // We are into two different temperature groups.
                 if (teff < currentTeff && teff >= prevTeff) {
-                    if (logger_.isLoggable(Level.FINE)) {
-                        logger_.fine("first index  = " + firstGroupIndex + " , second index was " + secondGroupIndex + " where teff=" + currentTeff);
+                    if (_logger.isDebugEnabled()) {
+                        _logger.debug("first index  = " + firstGroupIndex + " , second index was " + secondGroupIndex + " where teff=" + currentTeff);
                     }
 
                     if (teff >= (currentTeff + prevTeff) / 2d) {
                         result = currentCoeff;
-                        if (logger_.isLoggable(Level.FINE)) {
-                            logger_.fine("Using Temp = " + currentTeff);
+                        if (_logger.isDebugEnabled()) {
+                            _logger.debug("Using Temp = " + currentTeff);
                         }
                     } else {
                         result = prevCoeff;
-                        if (logger_.isLoggable(Level.FINE)) {
-                            logger_.fine("Using temp = " + prevTeff);
+                        if (_logger.isDebugEnabled()) {
+                            _logger.debug("Using temp = " + prevTeff);
                         }
                     }
                     // Now we need to jump to the next nearest logg values in the
@@ -269,13 +257,13 @@ public final class LD2UD
                             prevValue = ds3[2];
 
                             if (logg < (currentLogg + prevLogg) / 2d && (j + 1) < firstGroupIndex) {
-                                if (logger_.isLoggable(Level.FINE)) {
-                                    logger_.fine("using logg = " + prevLogg + " .");
+                                if (_logger.isDebugEnabled()) {
+                                    _logger.debug("using logg = " + prevLogg + " .");
                                 }
                                 result = prevValue;
                             } else {
-                                if (logger_.isLoggable(Level.FINE)) {
-                                    logger_.fine("using Logg = " + currentLogg);
+                                if (_logger.isDebugEnabled()) {
+                                    _logger.debug("using Logg = " + currentLogg);
                                 }
                             }
                             break;
@@ -286,9 +274,8 @@ public final class LD2UD
             }
         }
 
-        if (logger_.isLoggable(Level.FINE)) {
-            logger_.fine("Coeff for Teff=" + teff + " and logg=" + logg
-                    + " is " + result);
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Coeff for Teff=" + teff + " and logg=" + logg + " is " + result);
         }
         return result;
     }
@@ -306,8 +293,7 @@ public final class LD2UD
      * @return the value extracted from the columnIndex
      * @return
      */
-    private static double path1(double[][] table, double searchedValue, int searchedIndex, int columnIndex)
-    {
+    private static double path1(double[][] table, double searchedValue, int searchedIndex, int columnIndex) {
         double result = table[0][columnIndex];
 
         if (searchedValue >= table[0][searchedIndex]) {
@@ -337,8 +323,7 @@ public final class LD2UD
     // Following methods return the table content  //
     //                                             //
     /////////////////////////////////////////////////
-    private static double[][] dwarfsSpToTeffAndLogg()
-    {
+    private static double[][] dwarfsSpToTeffAndLogg() {
         final double[][] tmp = new double[][]{
             {12, 42000, -0.4}, // 1 O5
             {16, 41000, -0.45}, // 2 O6
@@ -402,8 +387,7 @@ public final class LD2UD
         return tmp;
     }
 
-    private static double[][] giantsSpToTeffAndLogg()
-    {
+    private static double[][] giantsSpToTeffAndLogg() {
         return new double[][]{
                     {32, 26000, -1.1}, // 6 B0
                     {36, 23000, -1}, // 7 B1
@@ -461,8 +445,7 @@ public final class LD2UD
                 };
     }
 
-    private static double[][] supergiantsSpToTeffAndLogg()
-    {
+    private static double[][] supergiantsSpToTeffAndLogg() {
         return new double[][]{
                     {28, 32000, -1.4}, // 5 O9
                     {32, 26000, -1.6}, // 6 B0
@@ -522,8 +505,7 @@ public final class LD2UD
     }
 
     // ClaretTable_H.vot.csv
-    private static double[][] logGAndTeffToH()
-    {
+    private static double[][] logGAndTeffToH() {
         return new double[][]{
                     {0.0, 3500, 0.482},
                     {0.5, 3500, 0.478},
@@ -937,8 +919,7 @@ public final class LD2UD
     }
 // ClaretTable_I.vot.csv
 
-    private static double[][] logGAndTeffToI()
-    {
+    private static double[][] logGAndTeffToI() {
         return new double[][]{
                     {0.0, 3500, 0.726},
                     {0.5, 3500, 0.713},
@@ -1352,8 +1333,7 @@ public final class LD2UD
     }
 // ClaretTable_J.vot.csv
 
-    private static double[][] logGAndTeffToJ()
-    {
+    private static double[][] logGAndTeffToJ() {
         return new double[][]{
                     {0.0, 3500, 0.529},
                     {0.5, 3500, 0.518},
@@ -1767,8 +1747,7 @@ public final class LD2UD
     }
 
 // ClaretTable_K.vot.csv
-    private static double[][] logGAndTeffToK()
-    {
+    private static double[][] logGAndTeffToK() {
         return new double[][]{
                     {0.0, 3500, 0.399},
                     {0.5, 3500, 0.395},
@@ -2182,8 +2161,7 @@ public final class LD2UD
     }
 
 // ClaretTable_R.vot.csv
-    private static double[][] logGAndTeffToR()
-    {
+    private static double[][] logGAndTeffToR() {
         return new double[][]{
                     {0.0, 3500, 0.853},
                     {0.5, 3500, 0.842},
@@ -2597,8 +2575,7 @@ public final class LD2UD
     }
 
 // DiazCordovez_B.vot.csv
-    private static double[][] logGAndTeffToB()
-    {
+    private static double[][] logGAndTeffToB() {
         return new double[][]{
                     {0.0, 3500, 0.869},
                     {0.5, 3500, 0.889},
@@ -3013,8 +2990,7 @@ public final class LD2UD
     }
 
 // DiazCordovez_U.vot.csv
-    private static double[][] logGAndTeffToU()
-    {
+    private static double[][] logGAndTeffToU() {
         return new double[][]{
                     {0.0, 3500, 0.749},
                     {0.5, 3500, 0.769},
@@ -3429,8 +3405,7 @@ public final class LD2UD
     }
 
 // DiazCordovez_V.vot.csv
-    private static double[][] logGAndTeffToV()
-    {
+    private static double[][] logGAndTeffToV() {
         return new double[][]{
                     {0.0, 3500, 0.901},
                     {0.5, 3500, 0.901},
@@ -3845,8 +3820,7 @@ public final class LD2UD
     }
 
     // VanHamme_L.vot.csv
-    private static double[][] logGAndTeffToL()
-    {
+    private static double[][] logGAndTeffToL() {
         return new double[][]{
                     {0.0, 3500, 0.242},
                     {0.5, 3500, 0.24},
@@ -4261,8 +4235,7 @@ public final class LD2UD
     }
 // VanHamme_N.vot.csv
 
-    private static double[][] logGAndTeffToN()
-    {
+    private static double[][] logGAndTeffToN() {
         return new double[][]{
                     {0.0, 3500, 0.117},
                     {0.5, 3500, 0.113},

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/** *****************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- ******************************************************************************/
+ ***************************************************************************** */
 package fr.jmmc.jmal.image;
 
 import fr.jmmc.jmcs.util.FileUtils;
@@ -19,17 +19,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Give access to several color models.
- * 
+ *
  * @author Laurent BOURGES.
  */
-public class ColorModels
-{
+public class ColorModels {
+
     /** Class logger */
-    protected static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ColorModels.class.getName());
+    protected static final Logger logger = LoggerFactory.getLogger(ColorModels.class.getName());
     /**
      * Maximum number of colors in a 8 byte palette
      */
@@ -111,13 +112,12 @@ public class ColorModels
 
         Collections.sort(colorModelNames);
 
-        if (logger.isLoggable(Level.INFO)) {
-            logger.info("ColorModels [" + colorModelNames.size() + " available] : duration = " + 1e-6d * (System.nanoTime() - start) + " ms.");
+        if (logger.isInfoEnabled()) {
+            logger.info("ColorModels [{} available] : duration = {} ms.", colorModelNames.size(), 1e-6d * (System.nanoTime() - start));
         }
     }
 
-    private static void addColorModel(final String name, final IndexColorModel colorModel)
-    {
+    private static void addColorModel(final String name, final IndexColorModel colorModel) {
         colorModelNames.add(name);
         colorModels.put(name, colorModel);
     }
@@ -125,23 +125,19 @@ public class ColorModels
     /**
      * Forbidden constructor
      */
-    private ColorModels()
-    {
+    private ColorModels() {
         // no-op
     }
 
-    public static Vector<String> getColorModelNames()
-    {
+    public static Vector<String> getColorModelNames() {
         return colorModelNames;
     }
 
-    public static IndexColorModel getDefaultColorModel()
-    {
+    public static IndexColorModel getDefaultColorModel() {
         return getColorModel(DEFAULT_COLOR_MODEL);
     }
 
-    public static IndexColorModel getColorModel(final String name)
-    {
+    public static IndexColorModel getColorModel(final String name) {
         IndexColorModel colorModel = colorModels.get(name);
         if (colorModel == null) {
             return getDefaultColorModel();
@@ -151,14 +147,13 @@ public class ColorModels
 
     /* Private methods */
     /** Returns one 'earth' color model */
-    private static IndexColorModel getEarthColorModel()
-    {
+    private static IndexColorModel getEarthColorModel() {
         /* dk blue - lt blue - dk green - yellow green - lt brown - white */
         /* sort of like mapmakers colors from deep ocean to snow capped peak */
         /* ncolors= 240 */
         /* ntsc gray scale looks slightly better than straight intensity */
         /* ntsc= 1 */
-        /* r   g   b */
+        /* r g b */
         final byte[] r = new byte[NB_COLORS];
         final byte[] g = new byte[NB_COLORS];
         final byte[] b = new byte[NB_COLORS];
@@ -887,12 +882,11 @@ public class ColorModels
     }
 
     /** Returns one 'rainbow' color model */
-    private static IndexColorModel getRainbowColorModel()
-    {
+    private static IndexColorModel getRainbowColorModel() {
         /* red - orange - yellow - green - blue - purple */
         /* colors in spectral order */
         /* ncolors= 240 */
-        /* r       g       b */
+        /* r g b */
         //int nbColors = 240;
         final byte[] r = new byte[NB_COLORS];
         final byte[] g = new byte[NB_COLORS];
@@ -1622,8 +1616,7 @@ public class ColorModels
     }
 
     /** Returns one gray color model */
-    private static IndexColorModel getGrayColorModel(int nbElements)
-    {
+    private static IndexColorModel getGrayColorModel(int nbElements) {
         final byte[] r = new byte[nbElements];
         final byte[] g = new byte[nbElements];
         final byte[] b = new byte[nbElements];
@@ -1644,8 +1637,7 @@ public class ColorModels
         return new IndexColorModel(4, nbElements, r, g, b);
     }
 
-    private static byte[][] loadLutFromFile(final String name)
-    {
+    private static byte[][] loadLutFromFile(final String name) {
 
         BufferedReader reader = null;
         try {
@@ -1718,19 +1710,16 @@ public class ColorModels
             return new byte[][]{r, g, b};
 
         } catch (UnsupportedEncodingException uee) {
-            throw new IllegalStateException("loadLutFromFile failure : ", uee);
+            throw new IllegalStateException("loadLutFromFile failure: ", uee);
         } catch (IOException ioe) {
-            if (logger.isLoggable(Level.INFO)) {
-                logger.log(Level.INFO, "loadFromFile failure : " + name, ioe);
-            }
+            logger.info("loadLutFromFile failure: {}", name, ioe);
         } finally {
             FileUtils.closeFile(reader);
         }
         return null;
     }
 
-    private static IndexColorModel loadFromFile(final String name)
-    {
+    private static IndexColorModel loadFromFile(final String name) {
 
         final byte[][] rgb = loadLutFromFile(name);
 
@@ -1746,8 +1735,7 @@ public class ColorModels
      * @throws URISyntaxException
      * @throws IOException
      */
-    public static String[] getResourceListing(final Class<?> clazz, final String path) throws URISyntaxException, IOException
-    {
+    public static String[] getResourceListing(final Class<?> clazz, final String path) throws URISyntaxException, IOException {
         URL dirURL = clazz.getClassLoader().getResource(path);
 
         if (dirURL != null && dirURL.getProtocol().equals("file")) {
@@ -1760,10 +1748,10 @@ public class ColorModels
 
     /**
      * Test code and generate the array of lut file names in the jmcs folder fr/jmmc/mcs/image/lut/
+     *
      * @param args unused
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
 
         // Prepare the lut file list :
         try {
@@ -1784,13 +1772,11 @@ public class ColorModels
                 }
                 sb.append("};");
 
-                logger.severe("lut files :\n" + sb.toString());
+                logger.info("lut files :\n{}", sb.toString());
             }
 
         } catch (Exception e) { // main (test)
-            if (logger.isLoggable(Level.INFO)) {
-                logger.log(Level.INFO, "resource listing failure : ", e);
-            }
+            logger.info("resource listing failure: ", e);
         }
 
         // test case :

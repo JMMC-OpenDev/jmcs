@@ -1,13 +1,14 @@
-/*******************************************************************************
+/** *****************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- ******************************************************************************/
+ ***************************************************************************** */
 package fr.jmmc.jmal;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Photometry band related information
- * 
+ *
  * @author Laurent BOURGES, Sylvain LAFRASSE.
  */
 public enum Band {
@@ -37,10 +38,11 @@ public enum Band {
     /** Q (Mid Infrared) */
     Q("Q", 16.575d, 4.05, -7.17d, 0.999d);
     /** Class logger */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Band.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Band.class.getName());
 
     /**
      * Find the band corresponding to the given wavelength
+     *
      * @param waveLength wave length in microns
      * @return corresponding band
      * @throws IllegalArgumentException if no band found
@@ -56,6 +58,7 @@ public enum Band {
 
     /**
      * Compute the strehl ratio. see le louarn et al (1998, mnras 295, 756), and amb-igr-011 p.5
+     *
      * @param magnitude object magnitude
      * @param waveLength wave length in microns
      * @param diameter telescope diameter in meters
@@ -64,14 +67,14 @@ public enum Band {
      * @return strehl ratio
      */
     public static double strehl(final double magnitude, final double waveLength,
-            final double diameter, final double seeing, final int nbOfActuators) {
+                                final double diameter, final double seeing, final int nbOfActuators) {
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("magnitude     = " + magnitude);
-            logger.fine("waveLength    = " + waveLength);
-            logger.fine("diameter      = " + diameter);
-            logger.fine("seeing        = " + seeing);
-            logger.fine("nbOfActuators = " + nbOfActuators);
+        if (logger.isDebugEnabled()) {
+            logger.debug("magnitude     = {}", magnitude);
+            logger.debug("waveLength    = {}", waveLength);
+            logger.debug("diameter      = {}", diameter);
+            logger.debug("seeing        = {}", seeing);
+            logger.debug("nbOfActuators = {}", nbOfActuators);
         }
 
         final double lambdaV = 0.55d;
@@ -82,9 +85,9 @@ public enum Band {
 
         final double doverr0 = diameter / r0;
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("r0            = " + r0);
-            logger.fine("doverr0       = " + doverr0);
+        if (logger.isDebugEnabled()) {
+            logger.debug("r0            = {}", r0);
+            logger.debug("doverr0       = {}", doverr0);
         }
 
         final double sigmaphi2_alias = 0.87d * Math.pow((double) nbOfActuators, -5d / 6d) * Math.pow(doverr0, 5d / 3d);
@@ -96,8 +99,8 @@ public enum Band {
         final double sigmaphi2 = sigmaphi2_alias + sigmaphi2_phot + sigmaphi2_fixe;
         final double strehl = Math.exp(-sigmaphi2) + (1 - Math.exp(-sigmaphi2)) / (1 + doverr0 * doverr0);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("strehl        = " + strehl);
+        if (logger.isDebugEnabled()) {
+            logger.debug("strehl        = {}", strehl);
         }
 
         return strehl;
@@ -117,6 +120,7 @@ public enum Band {
 
     /**
      * Custom constructor
+     *
      * @param name band name
      * @param lambda central wave length in microns
      * @param bandWidth band width in microns
@@ -133,6 +137,7 @@ public enum Band {
 
     /**
      * Return the band name
+     *
      * @return band name
      */
     public String getName() {
@@ -141,6 +146,7 @@ public enum Band {
 
     /**
      * Return the central wave length in microns
+     *
      * @return central wave length in microns
      */
     public double getLambda() {
@@ -149,6 +155,7 @@ public enum Band {
 
     /**
      * Return the band width in microns
+     *
      * @return band width in microns
      */
     public double getBandWidth() {
@@ -157,6 +164,7 @@ public enum Band {
 
     /**
      * Return the log10 zero magnitude flux at band in W/m^2/m
+     *
      * @return log10 zero magnitude flux at band in W/m^2/m
      */
     public double getLogFluxZero() {
@@ -165,6 +173,7 @@ public enum Band {
 
     /**
      * Return the maximum strehl ratio
+     *
      * @return maximum strehl ratio
      */
     public double getStrehlMax() {

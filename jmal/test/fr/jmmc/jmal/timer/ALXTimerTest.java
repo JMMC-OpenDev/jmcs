@@ -5,10 +5,10 @@ package fr.jmmc.jmal.timer;
 
 import fr.jmmc.jmal.ALX;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.ivoa.util.timer.TimerFactory;
 import org.ivoa.util.timer.TimerFactory.UNIT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple timer tests of ALX class
@@ -18,7 +18,7 @@ public class ALXTimerTest
 {
 
     /** Logger */
-    private static final Logger log = Logger.getLogger(ALXTimerTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ALXTimerTest.class.getName());
 
     /**
      * MicroBenchmarks of ALX.ld2ud()
@@ -54,7 +54,7 @@ public class ALXTimerTest
                 try {
                     ALX.ld2ud(1d, sptype);
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "test fail", e);
+                    logger.error("test fail", e);
                 }
 
             }
@@ -65,7 +65,7 @@ public class ALXTimerTest
                 try {
                     ALX.ld2ud(1d, sptype);
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "test fail", e);
+                    logger.error("test fail", e);
                 }
 
             }
@@ -74,7 +74,7 @@ public class ALXTimerTest
             try {
                 Thread.sleep(10l);
             } catch (InterruptedException ex) {
-                log.log(Level.SEVERE, "interrupted", ex);
+                logger.info("interrupted", ex);
             }
         }
     }
@@ -108,7 +108,7 @@ public class ALXTimerTest
                 try {
                     ALX.ld2ud(1d, sptype);
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "test fail", e);
+                    logger.error("test fail", e);
                 }
 
                 TimerFactory.getSimpleTimer("ALX.ld2ud(ns)", UNIT.ns).addNanoSeconds(start, System.nanoTime());
@@ -122,21 +122,21 @@ public class ALXTimerTest
                 try {
                     ALX.ld2ud(1d, sptype);
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "test fail", e);
+                    logger.error("test fail", e);
                 }
 
                 TimerFactory.getTimer("ALX.ld2ud(ms)", UNIT.ms, threshold).addMilliSeconds(start, System.nanoTime());
             }
 
             if (!TimerFactory.isEmpty()) {
-                log.warning("TimerFactory : statistics : " + TimerFactory.dumpTimers());
+                logger.info("TimerFactory : statistics : " + TimerFactory.dumpTimers());
             }
 
             // pause for 10 ms :
             try {
                 Thread.sleep(10l);
             } catch (InterruptedException ex) {
-                log.log(Level.SEVERE, "interrupted", ex);
+                logger.error("interrupted", ex);
             }
         }
         TimerFactory.onExit();

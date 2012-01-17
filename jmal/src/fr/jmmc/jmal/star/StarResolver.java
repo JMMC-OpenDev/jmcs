@@ -19,9 +19,8 @@ import java.text.ParseException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Store informations relative to a star.
@@ -31,7 +30,7 @@ import java.util.logging.Logger;
 public final class StarResolver {
 
     /** Logger - register on the current class to collect local logs */
-    private static final Logger _logger = Logger.getLogger(StarResolver.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(StarResolver.class.getName());
     /** Simbad main URL */
     public static final String _simbadBaseURL = "http://simbad.u-strasbg.fr/simbad/sim-script?script=";
     /** comma separator */
@@ -66,13 +65,13 @@ public final class StarResolver {
     }
 
     /**
-     * Asynchroneously query CDS Simbad to retrieve a given star information according to its name.
+     * Asynchronously query CDS Simbad to retrieve a given star information according to its name.
      */
     public void resolve() {
-        _logger.entering("StarResolver", "resolve");
+        _logger.trace("StarResolver.resolve");
 
         if (_resolveStarThread != null) {
-            _logger.warning("A star resolution thread is already running, so doing nothing.");
+            _logger.warn("A star resolution thread is already running, so doing nothing.");
             return;
         }
 
@@ -123,7 +122,7 @@ public final class StarResolver {
 
         @Override
         public void run() {
-            _logger.entering("ResolveStarThread", "run");
+            _logger.trace("ResolveStarThread.run");
 
             querySimbad();
 
@@ -175,7 +174,7 @@ public final class StarResolver {
          * Query Simbad using script
          */
         public void querySimbad() {
-            _logger.entering("ResolveStarThread", "querySimbad");
+            _logger.trace("ResolveStarThread.querySimbad");
 
             // Should never receive an empty scence object name
             if (_starName.length() == 0) {
@@ -205,9 +204,7 @@ public final class StarResolver {
 
             final String simbadScript = sb.toString();
 
-            if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("CDS Simbad script :\n" + simbadScript);
-            }
+            _logger.trace("CDS Simbad script :\n{}", simbadScript);
 
             // Try to get star data from CDS
             BufferedReader bufferedReader = null;
@@ -216,9 +213,7 @@ public final class StarResolver {
                 final String encodedScript = Urls.encode(simbadScript);
                 final String simbadURL = _simbadBaseURL + encodedScript;
 
-                if (_logger.isLoggable(Level.FINE)) {
-                    _logger.fine("Querying CDS Simbad at " + simbadURL);
-                }
+                _logger.debug("Querying CDS Simbad at {}", simbadURL);
 
                 // Launch the network query
                 final InputStream inputStream = Urls.parseURL(simbadURL).openStream();
@@ -237,9 +232,8 @@ public final class StarResolver {
 
                 _result = sb.toString();
 
-                if (_logger.isLoggable(Level.FINER)) {
-                    _logger.finer("CDS Simbad raw result :\n" + _result);
-                }
+                _logger.trace("CDS Simbad raw result :\n{}", _result);
+
             } catch (IOException ioe) {
                 raiseCDSimbadErrorMessage("CDS connection failed", ioe);
             } finally {
@@ -251,7 +245,7 @@ public final class StarResolver {
          * Parse Simbad response
          */
         public void parseResult() {
-            _logger.entering("ResolveStarThread", "parseResult");
+            _logger.trace("ResolveStarThread.parseResult");
 
             // If the result string is empty
             if (_result.length() < 1) {
@@ -263,9 +257,9 @@ public final class StarResolver {
             if (_result.startsWith("::error")) {
                 // sample error (name not found):
                 /*
-                ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-                [3] Identifier not found in the database : NAME TEST
+                 [3] Identifier not found in the database : NAME TEST
                 
 
                  */
@@ -284,9 +278,7 @@ public final class StarResolver {
             // Remove any blanking character (~) :
             _result = _result.replaceAll("~[ ]*", "");
 
-            if (_logger.isLoggable(Level.FINEST)) {
-                _logger.finest("CDS Simbad result without blanking values :\n" + _result);
-            }
+            _logger.trace("CDS Simbad result without blanking values :\n{}", _result);
 
             try {
                 // Parsing result line by line :
@@ -363,34 +355,32 @@ public final class StarResolver {
          * @throws NumberFormatException if parsing number(s) failed
          */
         private void parseCoordinates(final String coordinates) throws ParseException, NumberFormatException {
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Coordinates contains '" + coordinates + "'.");
-            }
+            _logger.debug("Coordinates contains '{}'.", coordinates);
 
             final StringTokenizer coordinatesTokenizer = new StringTokenizer(coordinates, SEPARATOR_SEMI_COLON);
 
             if (coordinatesTokenizer.countTokens() == 4) {
                 final double ra = Double.parseDouble(coordinatesTokenizer.nextToken());
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("RA_d = '" + ra + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("RA_d = '" + ra + "'.");
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.RA_d, ra);
 
                 final double dec = Double.parseDouble(coordinatesTokenizer.nextToken());
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("DEC_d = '" + dec + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("DEC_d = '" + dec + "'.");
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.DEC_d, dec);
 
                 final String hmsRa = coordinatesTokenizer.nextToken();
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("RA = '" + hmsRa + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("RA = '" + hmsRa + "'.");
                 }
                 _newStarModel.setPropertyAsString(Star.Property.RA, hmsRa);
 
                 final String dmsDec = coordinatesTokenizer.nextToken();
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("DEC = '" + dmsDec + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("DEC = '" + dmsDec + "'.");
                 }
                 _newStarModel.setPropertyAsString(Star.Property.DEC, dmsDec);
             } else {
@@ -403,9 +393,7 @@ public final class StarResolver {
          * @param objectTypes simbad object types
          */
         private void parseObjectTypes(final String objectTypes) {
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Object Types contains '" + objectTypes + "'.");
-            }
+            _logger.debug("Object Types contains '{}'.", objectTypes);
 
             _newStarModel.setPropertyAsString(Star.Property.OTYPELIST, objectTypes);
         }
@@ -416,9 +404,7 @@ public final class StarResolver {
          * @throws NumberFormatException if parsing number(s) failed
          */
         private void parseFluxes(final String fluxes) throws NumberFormatException {
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Fluxes contains '" + fluxes + "'.");
-            }
+            _logger.debug("Fluxes contains '{}'.", fluxes);
 
             final StringTokenizer fluxesTokenizer = new StringTokenizer(fluxes, SEPARATOR_COMMA);
 
@@ -429,8 +415,8 @@ public final class StarResolver {
                 // The second character is "=", followed by the magnitude value in double :
                 final String value = token.substring(2);
 
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest(magnitudeBand + " = '" + value + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace(magnitudeBand + " = '" + value + "'.");
                 }
 
                 _newStarModel.setPropertyAsDouble(Star.Property.fromString(magnitudeBand),
@@ -444,27 +430,25 @@ public final class StarResolver {
          * @throws NumberFormatException if parsing number(s) failed
          */
         private void parseProperMotion(final String properMotion) throws NumberFormatException {
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Proper Motion contains '" + properMotion + "'.");
-            }
+            _logger.debug("Proper Motion contains '{}'.", properMotion);
 
             final StringTokenizer properMotionTokenizer = new StringTokenizer(properMotion, SEPARATOR_SEMI_COLON);
 
             if (properMotionTokenizer.countTokens() == 2) {
                 final double pm_ra = Double.parseDouble(properMotionTokenizer.nextToken());
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("PROPERMOTION_RA = '" + pm_ra + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("PROPERMOTION_RA = '" + pm_ra + "'.");
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_RA, pm_ra);
 
                 final double pm_dec = Double.parseDouble(properMotionTokenizer.nextToken());
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("PROPERMOTION_DEC = '" + pm_dec + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("PROPERMOTION_DEC = '" + pm_dec + "'.");
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_DEC, pm_dec);
             } else {
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("No proper motion data for star '" + _starName + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("No proper motion data for star '" + _starName + "'.");
                 }
             }
         }
@@ -475,27 +459,25 @@ public final class StarResolver {
          * @throws NumberFormatException if parsing number(s) failed
          */
         private void parseParallax(final String parallax) throws NumberFormatException {
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Parallax contains '" + parallax + "'.");
-            }
+            _logger.debug("Parallax contains '{}'.", parallax);
 
             final StringTokenizer parallaxTokenizer = new StringTokenizer(parallax, SEPARATOR_SEMI_COLON);
 
             if (parallaxTokenizer.countTokens() == 2) {
                 final double plx = Double.parseDouble(parallaxTokenizer.nextToken());
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("PARALLAX = '" + plx + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("PARALLAX = '" + plx + "'.");
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.PARALLAX, plx);
 
                 final double plx_err = Double.parseDouble(parallaxTokenizer.nextToken());
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("PARALLAX_err = '" + plx_err + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("PARALLAX_err = '" + plx_err + "'.");
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.PARALLAX_err, plx_err);
             } else {
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("No parallax data for star '" + _starName + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("No parallax data for star '" + _starName + "'.");
                 }
             }
         }
@@ -505,9 +487,7 @@ public final class StarResolver {
          * @param spectralTypes simbad spectral types
          */
         private void parseSpectralTypes(final String spectralTypes) {
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Spectral Types contains '" + spectralTypes + "'.");
-            }
+            _logger.debug("Spectral Types contains '{}'.", spectralTypes);
 
             _newStarModel.setPropertyAsString(Star.Property.SPECTRALTYPES, spectralTypes);
         }
@@ -518,29 +498,27 @@ public final class StarResolver {
          * @throws NumberFormatException if parsing number(s) failed
          */
         private void parseRadialVelocity(final String radialVelocity) throws NumberFormatException {
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Radial velocity contains '" + radialVelocity + "'.");
-            }
+            _logger.debug("Radial velocity contains '{}'.", radialVelocity);
 
             final StringTokenizer rvTokenizer = new StringTokenizer(radialVelocity, SEPARATOR_SEMI_COLON);
 
             if (rvTokenizer.countTokens() > 0) {
                 final double rv = Double.parseDouble(rvTokenizer.nextToken());
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("RV = '" + rv + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("RV = '" + rv + "'.");
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.RV, rv);
 
                 if (rvTokenizer.hasMoreTokens()) {
                     final String rv_def = rvTokenizer.nextToken();
-                    if (_logger.isLoggable(Level.FINEST)) {
-                        _logger.finest("RV_DEF = '" + rv_def + "'.");
+                    if (_logger.isTraceEnabled()) {
+                        _logger.trace("RV_DEF = '" + rv_def + "'.");
                     }
                     _newStarModel.setPropertyAsString(Star.Property.RV_DEF, rv_def);
                 }
             } else {
-                if (_logger.isLoggable(Level.FINEST)) {
-                    _logger.finest("No radial velocity data for star '" + _starName + "'.");
+                if (_logger.isTraceEnabled()) {
+                    _logger.trace("No radial velocity data for star '" + _starName + "'.");
                 }
             }
         }
@@ -550,9 +528,7 @@ public final class StarResolver {
          * @param identifiers simbad identifiers
          */
         private void parseIdentifiers(final String identifiers) {
-            if (_logger.isLoggable(Level.FINER)) {
-                _logger.finer("Identifier contains '" + identifiers + "'.");
-            }
+            _logger.debug("Identifiers contain '{}'.", identifiers);
 
             String ids = identifiers;
 

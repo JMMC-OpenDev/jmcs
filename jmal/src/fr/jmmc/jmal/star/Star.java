@@ -7,8 +7,8 @@ import fr.jmmc.jmcs.gui.SwingUtils;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Observable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Store data relative to a star.
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class Star extends Observable {
 
     /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = Logger.getLogger(Star.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(Star.class.getName());
     /** Star property-value backing store for String data */
     final Map<Property, String> _stringContent;
     /** Star property-value backing store for Double data */
@@ -221,12 +221,11 @@ public class Star extends Observable {
     public final void fireNotification(final Notification notification) {
         // notify observers (swing components) within EDT :
         if (!SwingUtils.isEDT()) {
-            _logger.log(Level.SEVERE, "invalid thread : use EDT", new Throwable());
+            _logger.error("Invalid thread : use EDT", new Throwable());
         }
 
-        if (_logger.isLoggable(Level.FINE)) {
-            _logger.fine("Fire notification : " + notification);
-        }
+        _logger.debug("Fire notification: {}", notification);
+
         notifyObservers(notification);
     }
 

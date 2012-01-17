@@ -6,20 +6,17 @@ package fr.jmmc.jmcs.gui.task;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is a customization of the standard SwingWorker to have a single thread only
- * processing workers because our computations require serialization and cancellation
- * 
+ * This class is a customization of the standard SwingWorker to have a single
+ * thread only processing workers because our computations require serialization
+ * and cancellation
+ *
  * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class TaskSwingWorkerExecutor {
@@ -56,6 +53,7 @@ public final class TaskSwingWorkerExecutor {
 
     /**
      * This code returns the singleton instance.
+     *
      * @return TaskSwingWorkerExecutor
      */
     private static synchronized TaskSwingWorkerExecutor getInstance() {
@@ -71,6 +69,7 @@ public final class TaskSwingWorkerExecutor {
 
     /**
      * Return true if there is at least one worker running
+     *
      * @return true if there is at least one worker running
      */
     public static boolean isTaskRunning() {
@@ -78,8 +77,9 @@ public final class TaskSwingWorkerExecutor {
     }
 
     /**
-     * Schedules the given {@code TaskSwingWorker} for execution on a <i>worker</i>
-     * thread.
+     * Schedules the given {@code TaskSwingWorker} for execution on a
+     * <i>worker</i> thread.
+     *
      * @see #execute(TaskSwingWorker)
      * @param worker TaskSwingWorker instance to execute
      */
@@ -88,8 +88,9 @@ public final class TaskSwingWorkerExecutor {
     }
 
     /**
-     * Cancel any busy worker for the given task
-     * NOTE : No synchronization HERE as it must be called from Swing EDT
+     * Cancel any busy worker for the given task NOTE : No synchronization HERE
+     * as it must be called from Swing EDT
+     *
      * @param task task to find the current worker
      */
     public static void cancelTask(final Task task) {
@@ -118,10 +119,16 @@ public final class TaskSwingWorkerExecutor {
         }
     }
 
-    /* members */
-    /** Single threaded thread pool */
+    /*
+     * members
+     */
+    /**
+     * Single threaded thread pool
+     */
     private final ExecutorService executorService;
-    /** Current (or old) worker atomic reference for all tasks */
+    /**
+     * Current (or old) worker atomic reference for all tasks
+     */
     private final Map<String, AtomicReference<TaskSwingWorker<?>>> currentTaskWorkers;
 
     /**
@@ -131,7 +138,7 @@ public final class TaskSwingWorkerExecutor {
         super();
 
         // Use an unsynchronized Map as map modifications are only made by Swing EDT (put) :
-        this.currentTaskWorkers = new HashMap<String, AtomicReference<TaskSwingWorker<?>>>();
+        this.currentTaskWorkers = new HashMap<String, AtomicReference<TaskSwingWorker<?>>>(16);
 
         // Prepare the custom executor service with a single thread :
         this.executorService = new SwingWorkerSingleThreadExecutor(this);
@@ -145,21 +152,19 @@ public final class TaskSwingWorkerExecutor {
     }
 
     /**
-     * Schedules the given {@code TaskSwingWorker} for execution on a <i>worker</i>
-     * thread. There is a Single <i>worker</i> thread available. In the
-     * event the <i>worker</i> thread is busy handling other
+     * Schedules the given {@code TaskSwingWorker} for execution on a
+     * <i>worker</i> thread. There is a Single <i>worker</i> thread available.
+     * In the event the <i>worker</i> thread is busy handling other
      * {@code SwingWorkers} the given {@code SwingWorker} is placed in a waiting
-     * queue.
-     * NOTE : No synchronization HERE as it must be called from Swing EDT
+     * queue. NOTE : No synchronization HERE as it must be called from Swing EDT
+     *
      * @param worker TaskSwingWorker instance to execute
      */
     private void execute(final TaskSwingWorker<?> worker) {
         // note : there is no synchronisation here because this method must be called from Swing EDT
         final Task task = worker.getTask();
 
-        if (DEBUG_FLAG) {
-            _logger.info("execute task : {} with worker = {}", task, worker);
-        }
+        _logger.debug("execute task: {} with worker = {}", task, worker);
 
         // cancel the running worker for the task and child tasks
         this.cancelRelatedTasks(task);
@@ -167,17 +172,16 @@ public final class TaskSwingWorkerExecutor {
         // memorize the reference to the new worker before execution :
         defineReference(task, worker);
 
-        if (DEBUG_FLAG) {
-            _logger.info("execute worker = {}", worker);
-        }
+        _logger.debug("execute worker = {}", worker);
 
         // finally, execute the new worker with the custom executor service :
         this.executorService.execute(worker);
     }
 
     /**
-     * Cancel any busy worker related to the given task and its child tasks
-     * NOTE : No synchronization HERE as it must be called from Swing EDT
+     * Cancel any busy worker related to the given task and its child tasks NOTE
+     * : No synchronization HERE as it must be called from Swing EDT
+     *
      * @param task to use
      */
     private void cancelRelatedTasks(final Task task) {
@@ -194,8 +198,9 @@ public final class TaskSwingWorkerExecutor {
     }
 
     /**
-     * Cancel any busy worker for the given task
-     * NOTE : No synchronization HERE as it must be called from Swing EDT
+     * Cancel any busy worker for the given task NOTE : No synchronization HERE
+     * as it must be called from Swing EDT
+     *
      * @param task task to find the current worker
      */
     private void cancel(final Task task) {
@@ -207,9 +212,7 @@ public final class TaskSwingWorkerExecutor {
             // cancel the current running worker for the given task :
             if (currentWorker != null) {
                 // worker is still running ...
-                if (DEBUG_FLAG) {
-                    _logger.info("cancel worker = {}", currentWorker);
-                }
+                _logger.debug("cancel worker = {}", currentWorker);
 
                 // note : if the worker was previously cancelled, it has no effect.
                 // interrupt the thread to have Thread.isInterrupted() == true :
@@ -219,9 +222,9 @@ public final class TaskSwingWorkerExecutor {
     }
 
     /**
-     * Remove the given worker from the busy workers for its task.
-     * Useful when the worker terminates its execution (cancelled or not).
-     * NOTE : This method is invoked by the thread that executed the task.
+     * Remove the given worker from the busy workers for its task. Useful when
+     * the worker terminates its execution (cancelled or not). NOTE : This
+     * method is invoked by the thread that executed the task.
      *
      * @param worker worker to remove
      */
@@ -243,6 +246,7 @@ public final class TaskSwingWorkerExecutor {
 
     /**
      * Define the worker thread related to the given task
+     *
      * @param task task to find
      * @param worker new worker
      */
@@ -265,6 +269,7 @@ public final class TaskSwingWorkerExecutor {
 
     /**
      * Return the atomic reference corresponding to the given task
+     *
      * @param task task to find
      * @return atomic reference corresponding to the given task
      */
@@ -273,8 +278,9 @@ public final class TaskSwingWorkerExecutor {
     }
 
     /**
-     * Return the atomic reference corresponding to the given task.
-     * If it does not exist in the currentTaskWorkers, it creates a new ones.
+     * Return the atomic reference corresponding to the given task. If it does
+     * not exist in the currentTaskWorkers, it creates a new ones.
+     *
      * @param task task to find
      * @return atomic reference corresponding to the given task
      */
@@ -292,13 +298,19 @@ public final class TaskSwingWorkerExecutor {
      */
     private static final class SwingWorkerSingleThreadExecutor extends ThreadPoolExecutor {
 
-        /* members */
-        /** TaskSwingWorkerExecutor reference for clearWorker callback */
+        /*
+         * members
+         */
+        /**
+         * TaskSwingWorkerExecutor reference for clearWorker callback
+         */
         private final TaskSwingWorkerExecutor executor;
 
         /**
          * Create a single threaded Swing Worker executor
-         * @param executor TaskSwingWorkerExecutor reference for clearWorker callback
+         *
+         * @param executor TaskSwingWorkerExecutor reference for clearWorker
+         * callback
          */
         protected SwingWorkerSingleThreadExecutor(final TaskSwingWorkerExecutor executor) {
             super(1, 1,
@@ -312,10 +324,10 @@ public final class TaskSwingWorkerExecutor {
         }
 
         /**
-         * Method invoked prior to executing the given Runnable in the
-         * given thread.  This method is invoked by thread <tt>t</tt> that
-         * will execute task <tt>r</tt>, and may be used to re-initialize
-         * ThreadLocals, or to perform logging.
+         * Method invoked prior to executing the given Runnable in the given
+         * thread. This method is invoked by thread <tt>t</tt> that will execute
+         * task <tt>r</tt>, and may be used to re-initialize ThreadLocals, or to
+         * perform logging.
          *
          * <p>This implementation does nothing, but may be customized in
          * subclasses. Note: To properly nest multiple overridings, subclasses
@@ -335,24 +347,23 @@ public final class TaskSwingWorkerExecutor {
         /**
          * Method invoked upon completion of execution of the given Runnable.
          * This method is invoked by the thread that executed the task. If
-         * non-null, the Throwable is the uncaught <tt>RuntimeException</tt>
-         * or <tt>Error</tt> that caused execution to terminate abruptly.
+         * non-null, the Throwable is the uncaught <tt>RuntimeException</tt> or
+         * <tt>Error</tt> that caused execution to terminate abruptly.
          *
          * <p><b>Note:</b> When actions are enclosed in tasks (such as
          * {@link FutureTask}) either explicitly or via methods such as
-         * <tt>submit</tt>, these task objects catch and maintain
-         * computational exceptions, and so they do not cause abrupt
-         * termination, and the internal exceptions are <em>not</em>
-         * passed to this method.
+         * <tt>submit</tt>, these task objects catch and maintain computational
+         * exceptions, and so they do not cause abrupt termination, and the
+         * internal exceptions are <em>not</em> passed to this method.
          *
          * <p>This implementation does nothing, but may be customized in
          * subclasses. Note: To properly nest multiple overridings, subclasses
-         * should generally invoke <tt>super.afterExecute</tt> at the
-         * beginning of this method.
+         * should generally invoke <tt>super.afterExecute</tt> at the beginning
+         * of this method.
          *
          * @param r the runnable that has completed.
-         * @param t the exception that caused termination, or null if
-         * execution completed normally.
+         * @param t the exception that caused termination, or null if execution
+         * completed normally.
          */
         @Override
         protected void afterExecute(final Runnable r, final Throwable t) {
@@ -377,15 +388,17 @@ public final class TaskSwingWorkerExecutor {
      */
     private static final class SwingWorkerThreadFactory implements ThreadFactory {
 
-        /** thread count */
+        /**
+         * thread count
+         */
         private final AtomicInteger threadNumber = new AtomicInteger(1);
 
         /**
          * Constructs a new {@code Thread}.
          *
          * @param r a runnable to be executed by new thread instance
-         * @return constructed thread, or {@code null} if the request to
-         *         create a thread is rejected
+         * @return constructed thread, or {@code null} if the request to create
+         * a thread is rejected
          */
         @Override
         public Thread newThread(final Runnable r) {

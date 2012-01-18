@@ -234,7 +234,7 @@ public final class ModelUVMapService {
         }
 
         // provide results :
-        uvMapData = new UVMapData(mode, imageSize, colorModel, uvRect, Float.valueOf(min), Float.valueOf(max), uvMap);
+        uvMapData = new UVMapData(mode, imageSize, colorModel, uvRect, Float.valueOf(min), Float.valueOf(max), data, uvMap);
 
         if (logger.isInfoEnabled()) {
             logger.info("compute : duration = {} ms.", 1e-6d * (System.nanoTime() - start));

@@ -16,7 +16,7 @@
     <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
     <jar href="@SHARED@/sptype.jar"/>
 
-    <!-- Model computations -->
+    <!--  Commons Math (DEPRECATED but left until Aspro2/LITpro production releases are up to date) -->
     <jar href="@SHARED@/commons-math-2.2.jar"/>
 
     <!-- Model computations (bessel functions) -->

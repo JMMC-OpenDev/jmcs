@@ -47,10 +47,10 @@ public final class MutableComplex implements Complex {
     private static final boolean MUTABLE = true;
 
     /* members */
-    /** The imaginary part. */
-    private double imaginary;
     /** The real part. */
     private double real;
+    /** The imaginary part. */
+    private double imaginary;
     /** Record whether this complex number is equal to NaN. */
     private boolean isNaN;
     /** Record whether this complex number is infinite. */

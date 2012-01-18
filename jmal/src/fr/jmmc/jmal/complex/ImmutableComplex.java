@@ -54,12 +54,13 @@ public final class ImmutableComplex implements Complex {
     private boolean isNaN;
     /** Record whether this complex number is infinite. */
     private boolean isInfinite;
-
+    
     /**
-     * Create a mutable complex number (zero).
+     * Create an immutable complex number given another complex number.
+     * @param complex another complex number
      */
-    public ImmutableComplex() {
-        this(0d, 0d);
+    public ImmutableComplex(final Complex complex) {
+        this(complex.getReal(), complex.getImaginary());
     }
 
     /**

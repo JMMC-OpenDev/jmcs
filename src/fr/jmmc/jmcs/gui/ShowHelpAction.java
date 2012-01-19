@@ -12,7 +12,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
 /**
- * DOCUMENT ME!
+ * Show the help item given a button label
  * 
  * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
@@ -65,11 +65,6 @@ public class ShowHelpAction extends AbstractAction {
         }
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param e DOCUMENT ME!
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
         HelpView.show(_helpID);

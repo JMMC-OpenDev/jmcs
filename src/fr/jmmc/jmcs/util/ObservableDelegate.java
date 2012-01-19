@@ -15,23 +15,21 @@ import java.util.Observable;
  */
 public class ObservableDelegate extends Observable {
 
-    /**
-     * DOCUMENT ME!
-     */
-    Object _source;
+    /** object to be observed */
+    private final Object _source;
 
     /**
      * Build a new delegate object to be observable.
      *
      * @param source the object to be observed;
      */
-    public ObservableDelegate(Object source) {
+    public ObservableDelegate(final Object source) {
         super();
         _source = source;
     }
 
     /**
-     * DOCUMENT ME!
+     * Notify observers without argument
      */
     @Override
     public void notifyObservers() {
@@ -40,12 +38,12 @@ public class ObservableDelegate extends Observable {
     }
 
     /**
-     * DOCUMENT ME!
+     * Notify observers with the given argument
      *
-     * @param arg DOCUMENT ME!
+     * @param arg optional argument
      */
     @Override
-    public void notifyObservers(Object arg) {
+    public void notifyObservers(final Object arg) {
         setChanged();
         super.notifyObservers(arg);
     }

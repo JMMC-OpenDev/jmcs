@@ -6,7 +6,7 @@ package fr.jmmc.jmcs.util;
 import java.awt.Color;
 
 /**
- * DOCUMENT ME!
+ * Color to String encoder
  * 
  * @author Guillaume MELLA.
  */
@@ -17,13 +17,13 @@ public class ColorEncoder {
     }
 
     /**
-     * DOCUMENT ME!
+     * Convert the given integer to an hexadecimal string value
      *
-     * @param i DOCUMENT ME!
+     * @param i integer value
      *
-     * @return DOCUMENT ME!
+     * @return hexadecimal string value
      */
-    private static String hexForInt(int i) {
+    private static String hexForInt(final int i) {
         if (i == 0) {
             return "00";
         }
@@ -31,13 +31,14 @@ public class ColorEncoder {
         return Integer.toHexString(i);
     }
 
-    /** Converts a String to an integer and returns the specified opaque Color.
+    /** 
+     * Converts a String to an integer and returns the specified opaque Color.
      * This method handles string formats that are used to represent octal and
      * hexidecimal numbers.
      * @param c The color to encode
      * @return the encoded string for given color
      */
-    public static String encode(Color c) {
+    public static String encode(final Color c) {
         String ret = "#";
         ret += hexForInt(c.getRed());
         ret += hexForInt(c.getGreen());

@@ -14,6 +14,7 @@ import java.awt.Component;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -28,29 +29,20 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-
 /**
- * DOCUMENT ME!
+ * Custom JList implementation providing multiple selection with checkboxes
  * 
  * @author Guillaume MELLA.
  */
 public class CheckBoxJList extends JList implements ListSelectionListener {
 
-    /**
-     * DOCUMENT ME!
-     */
+    /** list foreground color */
     static Color listForeground;
-    /**
-     * DOCUMENT ME!
-     */
+    /** list background color */
     static Color listBackground;
-    /**
-     * DOCUMENT ME!
-     */
+    /** list selection color */
     static Color listSelectionForeground;
-    /**
-     * DOCUMENT ME!
-     */
+    /** list selection background color */
     static Color listSelectionBackground;
 
     static {
@@ -62,17 +54,9 @@ public class CheckBoxJList extends JList implements ListSelectionListener {
     }
     private static final long serialVersionUID = 1L;
     /**
-     * DOCUMENT ME!
+     * selection cache
      */
-    HashSet selectionCache = new HashSet();
-    /**
-     * DOCUMENT ME!
-     */
-    int toggleIndex = -1;
-    /**
-     * DOCUMENT ME!
-     */
-    boolean toggleWasSelected;
+    private Set selectionCache = new HashSet();
 
     /**
      * Creates a new CheckBoxJList object.
@@ -83,14 +67,13 @@ public class CheckBoxJList extends JList implements ListSelectionListener {
         addListSelectionListener(this);
     }
 
-    // ListSelectionListener implementation
     /**
-     * DOCUMENT ME!
+     * ListSelectionListener implementation
      *
-     * @param lse DOCUMENT ME!
+     * @param lse ListSelectionEvent
      */
     @Override
-    public void valueChanged(ListSelectionEvent lse) {
+    public void valueChanged(final ListSelectionEvent lse) {
         //System.out.println(lse);
         if (!lse.getValueIsAdjusting()) {
             removeListSelectionListener(this);
@@ -149,9 +132,9 @@ public class CheckBoxJList extends JList implements ListSelectionListener {
     }
 
     /**
-     * DOCUMENT ME!
+     * Test code
      *
-     * @param args DOCUMENT ME!
+     * @param args unused args
      */
     public static void main(String[] args) {
         JList list = new CheckBoxJList();
@@ -196,17 +179,10 @@ public class CheckBoxJList extends JList implements ListSelectionListener {
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {
+
             defaultComp.getListCellRendererComponent(list, value, index,
                     isSelected, cellHasFocus);
-            /*
-            checkbox.setSelected (isSelected);
-            checkbox.setForeground (isSelected ?
-            listSelectionForeground :
-            listForeground);
-            checkbox.setBackground (isSelected ?
-            listSelectionBackground :
-            listBackground);
-             */
+
             checkbox.setSelected(isSelected);
 
             Component[] comps = getComponents();

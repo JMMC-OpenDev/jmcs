@@ -126,12 +126,45 @@ public final class SampManager {
 
         _connector = new GuiHubConnector(profile);
 
-        // Build application metadata :
+        // Build application metadata
+        final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        final String applicationName = applicationDataModel.getProgramName();
+        Metadata metaData = forgeSampMetaDataFromApplicationDataModel(applicationName, applicationDataModel);
+        _connector.declareMetadata(metaData);
+
+        // Monitor hub connections
+        _connector.addConnectionListener(new SampConnectionChangeListener());
+
+        // Try to connect
+        _connector.setActive(true);
+        if (!_connector.isConnected()) {
+            // Try to start an internal SAMP hub if none available (JNLP do not support external hub) :
+            try {
+                _internalHub = Hub.runHub(getInternalHubMode());
+            } catch (IOException ioe) {
+                _logger.debug("unable to start internal hub (probably another hub is already running)", ioe);
+            }
+
+            // Retry connection
+            _connector.setActive(true);
+        }
+        if (_connector.isConnected()) {
+            _logger.info("Application ['{}'] connected to the SAMP Hub.", applicationName);
+        } else {
+            StatusBar.show("Could not connect to an existing hub or start an internal SAMP hub.");
+        }
+
+        // Keep a look out for hubs if initial one shuts down
+        _connector.setAutoconnect(5);
+
+        // This step required even if no message handlers added.
+        _connector.declareSubscriptions(_connector.computeSubscriptions());
+    }
+
+    private Metadata forgeSampMetaDataFromApplicationDataModel(final String applicationName, final ApplicationDataModel applicationDataModel) {
+
         final Metadata meta = new Metadata();
 
-        final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
-
-        final String applicationName = applicationDataModel.getProgramName();
         meta.setName(applicationName);
 
         final String sampDescription = applicationDataModel.getSampDescription();
@@ -149,11 +182,14 @@ public final class SampManager {
 
         // Non-standard meatadata
         meta.put("affiliation.name", applicationDataModel.getShortCompanyName() + " (" + applicationDataModel.getLegalCompanyName() + ")");
+
         meta.put("affiliation.url", applicationDataModel.getMainWebPageURL());
+
         final String jnlpUrl = applicationDataModel.getJnlpUrl();
         if (jnlpUrl != null) {
             meta.put("x-samp.jnlp.url", jnlpUrl);
         }
+
         final String userSupportUrl = applicationDataModel.getUserSupportURL();
         if (userSupportUrl != null) {
             meta.put("affiliation.support", userSupportUrl);
@@ -164,53 +200,31 @@ public final class SampManager {
         if (authors != null) {
             meta.put(lowerCaseApplicationName + ".authors", "Brought to you by " + authors);
         }
+
         meta.put(lowerCaseApplicationName + ".homepage", applicationDataModel.getLinkValue());
+
         meta.put(lowerCaseApplicationName + ".version", applicationDataModel.getProgramVersion());
+
         meta.put(lowerCaseApplicationName + ".compilationdate", applicationDataModel.getCompilationDate());
+
         meta.put(lowerCaseApplicationName + ".compilatorversion", applicationDataModel.getCompilatorVersion());
+
         final String newsUrl = applicationDataModel.getHotNewsRSSFeedLinkValue();
         if (newsUrl != null) {
             meta.put(lowerCaseApplicationName + ".news", newsUrl);
         }
+
         final String releaseNoteUrl = applicationDataModel.getReleaseNotesLinkValue();
         if (releaseNoteUrl != null) {
             meta.put(lowerCaseApplicationName + ".releasenotes", releaseNoteUrl);
         }
+
         final String faq = applicationDataModel.getFaqLinkValue();
         if (faq != null) {
             meta.put(lowerCaseApplicationName + ".faq", faq);
         }
 
-        _connector.declareMetadata(meta);
-
-        _connector.addConnectionListener(new SampConnectionChangeListener());
-
-        // Try to connect
-        _connector.setActive(true);
-
-        if (!_connector.isConnected()) {
-            // Try to start an internal SAMP hub if none available (JNLP do not support external hub) :
-            try {
-                _internalHub = Hub.runHub(getInternalHubMode());
-            } catch (IOException ioe) {
-                _logger.debug("unable to start internal hub (probably another hub is already running)", ioe);
-            }
-
-            // Retry connection
-            _connector.setActive(true);
-        }
-
-        if (_connector.isConnected()) {
-            _logger.info("Application ['{}'] connected to the SAMP Hub.", applicationName);
-        } else {
-            StatusBar.show("Could not connect to an existing hub or start an internal SAMP hub.");
-        }
-
-        // Keep a look out for hubs if initial one shuts down
-        _connector.setAutoconnect(5);
-
-        // This step required even if no message handlers added.
-        _connector.declareSubscriptions(_connector.computeSubscriptions());
+        return meta;
     }
 
     /**

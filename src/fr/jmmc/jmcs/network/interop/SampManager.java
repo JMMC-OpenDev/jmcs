@@ -8,19 +8,12 @@ import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.gui.MessagePane;
 import fr.jmmc.jmcs.gui.StatusBar;
 import java.io.IOException;
-import java.util.Collections;
-
-import java.util.HashMap;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 import javax.swing.Action;
-
 import javax.swing.JMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.astrogrid.samp.Client;
-
 import org.astrogrid.samp.Message;
 import org.astrogrid.samp.Metadata;
 import org.astrogrid.samp.client.ClientProfile;
@@ -31,6 +24,8 @@ import org.astrogrid.samp.gui.SubscribedClientListModel;
 import org.astrogrid.samp.gui.SysTray;
 import org.astrogrid.samp.hub.Hub;
 import org.astrogrid.samp.hub.HubServiceMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SampManager singleton class.
@@ -382,6 +377,23 @@ public final class SampManager {
             return client.getMetadata();
         }
         return null;
+    }
+
+    /**
+     * Return the list of id for a given SAMP client name
+     * @param name client
+     * @return id list
+     */
+    public static List<String> getClientIdsForName(final String name) {
+        final List<String> clientIdList = new ArrayList<String>();
+        final Map clientMap = getGuiHubConnector().getClientMap();
+        for (Iterator it = clientMap.keySet().iterator(); it.hasNext();) {
+            Client client = (Client) clientMap.get(it.next());
+            if (client.getMetadata().getName().matches(name)) {
+                clientIdList.add(client.getId());
+            }
+        }
+        return clientIdList;
     }
 
     /**

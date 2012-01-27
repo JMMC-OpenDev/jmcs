@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public enum SampCapability {
 
-    /** Load votable MType */
+    /** Load VOTable MType */
     LOAD_VO_TABLE("table.load.votable"),
     /** Load fits table MType */
     LOAD_FITS_TABLE("table.load.fits"),
@@ -21,7 +21,7 @@ public enum SampCapability {
     LOAD_FITS_IMAGE("image.load.fits"),
     /** Load spectrum MType */
     LOAD_SPECTRUM("spectrum.load.ssa-generic"),
-    /** Load bibcode MType */
+    /** Load BibCode MType */
     LOAD_BIBCODE("bibcode.load"),
     /** Highlight row MType */
     HIGHLIGHT_ROW("table.highlight.row"),
@@ -31,7 +31,9 @@ public enum SampCapability {
     POINT_COORDINATES("coord.pointAt.sky"),
     /** Get environment variable MType */
     GET_ENV_VAR("client.env.get"),
-    // Private jmmc samp capability are prefixed with application name:
+    // Private JMMC SAMP capabilities are prefixed with application name:
+    /** JMMC SearchCal Start Query MType */
+    APPLAUNCHERTESTER_TRY_LAUNCH("fr.jmmc.applaunchertester.try.launch"),
     /** JMMC SearchCal Start Query MType */
     SEARCHCAL_START_QUERY("fr.jmmc.searchcal.start.query"),
     /** JMMC LITpro open settings file MType */

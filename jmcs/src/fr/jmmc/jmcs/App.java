@@ -197,7 +197,6 @@ public abstract class App {
      * @param waitBeforeExecution if true, do not launch run() automatically
      */
     protected App(String[] args, boolean waitBeforeExecution) {
-        // Start application with splashscreen
         this(args, waitBeforeExecution, true);
     }
 
@@ -210,6 +209,20 @@ public abstract class App {
      * @param exitWhenClosed if true, the application will close when exit method is called
      */
     protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed) {
+        // Start application with splashscreen
+        this(args, waitBeforeExecution, true, CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN));
+    }
+
+    /**
+     * Constructor with possibility to specify if the application should be
+     * stopped when the exit method is called
+     *
+     * @param args command-line arguments
+     * @param waitBeforeExecution if true, do not launch run() automatically
+     * @param exitWhenClosed if true, the application will close when exit method is called
+     * @param shouldShowSplashScreen show startup splash screen if true, nothing otherwise
+     */
+    protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed, boolean shouldShowSplashScreen) {
         try {
             _registrar = ActionRegistrar.getInstance();
 
@@ -222,7 +235,7 @@ public abstract class App {
             _exitApplicationWhenClosed = exitWhenClosed;
 
             // Check in common preferences whether startup splashscreen should be shown or not
-            _showSplashScreen = CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN);
+            _showSplashScreen = shouldShowSplashScreen;
 
             _logger.debug("App object instantiated and logger created.");
 

@@ -76,7 +76,9 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void openDialog(final boolean modal, final Throwable exception) {
-        if (App.getSharedApplicationDataModel().getFeedbackReportFormURL() != null) {
+        // Fallback if no application data:
+        if (App.getSharedApplicationDataModel() != null
+                && App.getSharedApplicationDataModel().getFeedbackReportFormURL() != null) {
             // Create Gui using EDT:
             SwingUtils.invokeEDT(new Runnable() {
 
@@ -87,7 +89,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             });
         } else {
             // If no feedback report form is available, show a standard error dialog instead...
-            MessagePane.showErrorMessage("An unexpeted error occured !", exception);
+            MessagePane.showErrorMessage("An unexpected error occured !", exception);
         }
     }
 
@@ -167,7 +169,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         // and update ui
         keyReleased(null);
 
-        final String headerMessage = App.getSharedApplicationDataModel().getFeedabackReportHeaderMessage();
+        final String headerMessage = App.getSharedApplicationDataModel().getFeedbackReportHeaderMessage();
         headerLabel.setText(headerMessage);
 
         typeComboBox.setModel(_feedbackTypeDataModel);

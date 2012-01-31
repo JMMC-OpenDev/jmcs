@@ -215,7 +215,7 @@ public class ApplicationDataModel {
     /**
      * @return the feedback report window header message
      */
-    public String getFeedabackReportHeaderMessage() {
+    public String getFeedbackReportHeaderMessage() {
         return _feedbackReportHeaderMessage;
     }
 

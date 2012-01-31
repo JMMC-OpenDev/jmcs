@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.util.concurrent;
 
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -26,7 +27,7 @@ public final class ParallelJobExecutor {
     private static volatile ParallelJobExecutor instance = null;
     /* members */
     /** number of available processors */
-    private final int nCpu;
+    private final int cpuCount;
     /** maximum number of running parallel job */
     private int maxParallelJob;
     /** thread pool dedicated to this computation */
@@ -60,21 +61,16 @@ public final class ParallelJobExecutor {
      */
     private ParallelJobExecutor() {
         super();
-        this.nCpu = Runtime.getRuntime().availableProcessors();
-        this.maxParallelJob = nCpu;
+        this.cpuCount = Runtime.getRuntime().availableProcessors();
+        this.maxParallelJob = cpuCount;
 
-        if (nCpu > 1) {
-            parallelExecutor = (nCpu > 1) ? (ThreadPoolExecutor) Executors.newFixedThreadPool(nCpu, new JobWorkerThreadFactory()) : null;
+        // create any the thread pool even if there is only 1 CPU:
+        parallelExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cpuCount, new JobWorkerThreadFactory());
 
-            if (parallelExecutor != null) {
-                // create threads now:
-                parallelExecutor.prestartAllCoreThreads();
+        // create threads now:
+        parallelExecutor.prestartAllCoreThreads();
 
-                logger.info("ParallelJobExecutor ready with {} threads", parallelExecutor.getMaximumPoolSize());
-            }
-        } else {
-            parallelExecutor = null;
-        }
+        logger.info("ParallelJobExecutor ready with {} threads", parallelExecutor.getMaximumPoolSize());
     }
 
     /**
@@ -83,7 +79,7 @@ public final class ParallelJobExecutor {
      * @return true if this machine has more than 1 CPU
      */
     public boolean isEnabled() {
-        return parallelExecutor != null && this.maxParallelJob > 1;
+        return this.maxParallelJob > 1;
     }
 
     /**
@@ -109,8 +105,8 @@ public final class ParallelJobExecutor {
      *
      * @return number of available processors
      */
-    public int getnCpu() {
-        return nCpu;
+    public int getCpuCount() {
+        return cpuCount;
     }
 
     /**
@@ -123,13 +119,57 @@ public final class ParallelJobExecutor {
     }
 
     /**
+     * Submit the given job to immediate execution and returns its Future object to wait for or cancel job
+     *
+     * @param job runnable job
+     * @return Future object to wait for or cancel jobs
+     */
+    public Future<?> fork(final Runnable job) {
+        if (job != null) {
+            // start job:
+            final Future<?> future = parallelExecutor.submit(job);
+
+            logger.debug("started job: {}", future);
+
+            return future;
+        }
+        // illegal state ?
+        return null;
+    }
+
+    /**
      * Submit the given jobs to immediate execution and returns Future objects to wait for or cancel jobs
      *
      * @param jobs runnable jobs
      * @return Future objects to wait for or cancel jobs
      */
     public Future<?>[] fork(final Runnable[] jobs) {
-        if (isEnabled() && jobs != null) {
+        if (jobs != null) {
+            final int len = jobs.length;
+            final Future<?>[] futures = new Future<?>[len];
+
+            // start jobs:
+            for (int i = 0; i < len; i++) {
+                final Future<?> future = parallelExecutor.submit(jobs[i]);
+
+                logger.debug("started job: {}", future);
+
+                futures[i] = future;
+            }
+            return futures;
+        }
+        // illegal state ?
+        return null;
+    }
+
+    /**
+     * Submit the given jobs to immediate execution and returns Future objects to wait for or cancel jobs
+     *
+     * @param jobs callable jobs i.e. jobs that return results
+     * @return Future objects to wait for or cancel jobs
+     */
+    public Future<?>[] fork(final Callable<?>[] jobs) {
+        if (jobs != null) {
             final int len = jobs.length;
             final Future<?>[] futures = new Future<?>[len];
 
@@ -151,11 +191,13 @@ public final class ParallelJobExecutor {
      * Waits for all threads to complete computation.
      * If the current thread is interrupted (cancelled), then futures are cancelled too.
      *
+     * @param jobName job name used when throwing an exception
      * @param futures Future objects to wait for
      *
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
      * @throws RuntimeException if any exception occured during the computation
      */
-    public void join(final Future<?>[] futures) throws RuntimeException {
+    public void join(final String jobName, final Future<?>[] futures) throws InterruptedJobException, RuntimeException {
         final int len = futures.length;
 
         int done = 0;
@@ -173,10 +215,11 @@ public final class ParallelJobExecutor {
             }
         } catch (ExecutionException ee) {
             doCancel = true;
-            throw new RuntimeException("Computation failure:", ee.getCause());
+            throw new RuntimeException(jobName + ": failed:", ee.getCause());
         } catch (InterruptedException ie) {
             logger.debug("join: waiting thread cancelled:", ie);
             doCancel = true;
+            throw new InterruptedJobException(jobName + ": interrupted", ie);
         } finally {
             if (doCancel) {
                 // Cancel and interrupt any running job:

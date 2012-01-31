@@ -19,7 +19,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.MemoryImageSource;
-import java.awt.image.WritableRaster;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -37,178 +36,219 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
-    /**
-     * DOCUMENT ME!
-     */
+    /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(ImageCanvas.class.getName());
     /** float value formatter used by wedge rendering */
     public static final NumberFormat floatFormatter = new DecimalFormat("0.00E0");
-    // Define constant to place differnet members of plot
-    /**
-     * DOCUMENT ME!
-     */
-    private static final int leftInset = 20;
-    /**
-     * DOCUMENT ME!
-     */
+    // Define constant to place different members of plot
+    /** left inset */
+    private static final int leftInset = 40;
+    /** right inset */
     private static final int rightInset = 40;
-    /**
-     * DOCUMENT ME!
-     */
-    private static final int topInset = 10;
-    /**
-     * DOCUMENT ME!
-     */
-    private static final int bottomInset = 25;
-    /**
-     * DOCUMENT ME!
-     */
+    /** top inset */
+    private static final int topInset = 40;
+    /** bottom inset */
+    private static final int bottomInset = 40;
+    /** width of the wedge */
     private static final int wedgeWidth = 10;
-    /**
-     * DOCUMENT ME!
-     */
+    /** distance between wedge and image */
     private static final int wedgeImageDist = 10;
-    /**
-     * DOCUMENT ME!
-     */
+    /** distance between wedge and its legend */
     private static final int wedgeLegendDist = 10;
-    /** float data array */
-    private float[] dataArray;
-    /**
-     * DOCUMENT ME!
-     */
-    private transient Image image_;
-    /**
-     * DOCUMENT ME!
-     */
-    private transient WritableRaster imageRaster_;
-    /**
-     * DOCUMENT ME!
-     */
-    private transient Image wedge_;
-    /**
-     * DOCUMENT ME!
-     */
-    private IndexColorModel colorModel_;
-    /**
-     * DOCUMENT ME!
-     */
-    private int w_;
-    /**
-     * DOCUMENT ME!
-     */
-    private int h_;
-    /**
-     * DOCUMENT ME!
-     */
-    private int canvasWidth_;
-    /**
-     * DOCUMENT ME!
-     */
-    private int canvasHeight_;
-    /**
-     * DOCUMENT ME!
-     */
-    private int mouseX_;
-    /**
-     * DOCUMENT ME!
-     */
-    private int mouseY_;
-    /**
-     * DOCUMENT ME!
-     */
-    private int mousePixel_;
-    /**
-     * Minimum Float value
-     */
-    private float minValue_;
-    /**
-     * Maximum Float value
-     */
-    private float maxValue_;
-    /**
-     * Float value to Pixel conversion factor
-     */
-    private float normalisePixelCoefficient_;
-    /**
-     * DOCUMENT ME!
-     */
-    private boolean antiAliasing = false;
+    /* members */
+    /** antialiasing flag */
+    private boolean antiAliasing;
     /** draw ticks flag */
     private boolean drawTicks = true;
-    /**
-     * DOCUMENT ME!
-     */
+    /** color model used by image */
+    private IndexColorModel colorModel_;
+    /** wedge image */
+    private transient Image wedge_ = null;
+    /** main image */
+    private transient BufferedImage image_ = null;
+    /** observable image instance */
     private ObservableImage observe_;
+    /** image width */
+    private int w_;
+    /** image height */
+    private int h_;
+    /** canvas width */
+    private int canvasWidth_;
+    /** canvas height */
+    private int canvasHeight_;
+    /** mouse x coordinate */
+    private int mouseX_;
+    /** mouse y coordinate */
+    private int mouseY_;
+    /** mouse pixel value */
+    private int mousePixel_;
+    /* data */
+    /** float data array (1D) */
+    private float[] data1D = null;
+    /** float data array (2D) */
+    private float[][] data2D = null;
+    /** Minimum Float value */
+    private float minValue_;
+    /** Maximum Float value */
+    private float maxValue_;
+    /** float value to Pixel conversion factor */
+    private float normalisePixelCoefficient_;
 
     /**
      * Creates a new instance of ImageCanvas
      */
     public ImageCanvas() {
-        image_ = null;
-        imageRaster_ = null;
         // set default properties
         colorModel_ = ColorModels.getDefaultColorModel();
-        antiAliasing = false;
+        antiAliasing = true;
 
         setColorModel(colorModel_);
         w_ = 0;
         h_ = 0;
-        canvasWidth_ = 500;
-        canvasHeight_ = 500;
+        canvasWidth_ = 600;
+        canvasHeight_ = 600;
 
         observe_ = new ObservableImage();
         this.addMouseMotionListener(this);
     }
 
-    public boolean isAntiAliasing() {
-        return antiAliasing;
-    }
-
-    public void setAntiAliasing(boolean antiAliasing) {
-        this.antiAliasing = antiAliasing;
-    }
-
-    public boolean isDrawTicks() {
-        return drawTicks;
-    }
-
-    public void setDrawTicks(boolean drawTicks) {
-        this.drawTicks = drawTicks;
-    }
-
     /**
-     * DOCUMENT ME!
+     * Initialize the image with given data
      *
-     * @param e DOCUMENT ME!
+     * @param width image width
+     * @param height image height
+     * @param array image data
      */
-    public void mouseMoved(MouseEvent e) {
-        mouseX_ = ((e.getX() - leftInset) * w_) / canvasWidth_;
-        mouseY_ = ((e.getY() - topInset) * h_) / canvasHeight_;
+    public void initImage(int width, int height, float[] array) {
 
-        if ((mouseX_ >= 0) && (mouseY_ >= 0) && (mouseX_ < w_) && (mouseY_ < h_)) {
-            // first band = Red. => buggy with RGB rendering
-            mousePixel_ = imageRaster_.getSample(mouseX_, mouseY_, 0);
-            observe_.setChanged();
+        // search min and max of input array
+
+        final int size = array.length;
+
+        float min = array[0];
+        float max = array[0];
+
+        float val;
+        for (int i = 0; i < size; i++) {
+            val = array[i];
+
+            if (min > val) {
+                min = val;
+            }
+
+            if (max < val) {
+                max = val;
+            }
         }
 
-        observe_.notifyObservers();
+        if (logger.isDebugEnabled()) {
+            logger.debug("min = " + min + ", max = " + max);
+        }
+
+        initImage(width, height, array, min, max);
     }
 
     /**
-     * DOCUMENT ME!
+     * Initialize the image with given data
      *
-     * @param e DOCUMENT ME!
+     * @param width image width
+     * @param height image height
+     * @param array image data
      */
-    public void mouseDragged(MouseEvent e) {
+    public void initImage(int width, int height, float[][] array) {
+
+        // search min and max of input array
+
+        float min = array[0][0];
+        float max = array[0][0];
+
+        float val;
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                val = array[j][i];
+
+                if (min > val) {
+                    min = val;
+                }
+
+                if (max < val) {
+                    max = val;
+                }
+            }
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("min = " + min + ", max = " + max);
+        }
+        logger.info("min = " + min + ", max = " + max);
+
+        initImage(width, height, array, min, max);
     }
 
     /**
-     * DOCUMENT ME!
+     * Initialize the image with given data
      *
-     * @param observer DOCUMENT ME!
+     * @param width image width
+     * @param height image height
+     * @param array1D image data
+     * @param min minimum value
+     * @param max maximum value
      */
-    public void addObserver(Observer observer) {
+    public void initImage(int width, int height, float[] array1D, final float min, final float max) {
+        initImage(width, height, array1D, null, min, max);
+    }
+
+    /**
+     * Initialize the image with given data
+     *
+     * @param width image width
+     * @param height image height
+     * @param array2D image data
+     * @param min minimum value
+     * @param max maximum value
+     */
+    private void initImage(int width, int height, float[][] array2D, final float min, final float max) {
+        initImage(width, height, null, array2D, min, max);
+    }
+
+    /**
+     * Initialize the image with given data
+     *
+     * @param width image width
+     * @param height image height
+     * @param array1D image data
+     * @param array2D image data
+     * @param min minimum value
+     * @param max maximum value
+     */
+    private void initImage(int width, int height, float[] array1D, float[][] array2D, final float min, final float max) {
+        this.w_ = width;
+        this.h_ = height;
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("initImage: using array of size  " + width + "x" + height);
+        }
+
+        this.minValue_ = min;
+        this.maxValue_ = max;
+        this.data1D = array1D;
+        this.data2D = array2D;
+
+        // rebuild image :
+        buildImage();
+
+        // set new canvas dimension
+        final Dimension d = new Dimension(width, height);
+        setMinimumSize(d);
+        setPreferredSize(d);
+    }
+
+    /**
+     * Add an observer
+     *
+     * @param observer observer to add
+     */
+    public void addObserver(final Observer observer) {
         observe_.addObserver(observer);
     }
 
@@ -223,118 +263,64 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
     }
 
     /**
-     * DOCUMENT ME!
+     * MouseMotionListener implementation
+     *
+     * @param me mouse event
      */
+    @Override
+    public void mouseMoved(MouseEvent me) {
+        mouseX_ = ((me.getX() - leftInset) * w_) / canvasWidth_;
+        mouseY_ = ((me.getY() - topInset) * h_) / canvasHeight_;
+
+        if ((mouseX_ >= 0) && (mouseY_ >= 0) && (mouseX_ < w_) && (mouseY_ < h_)) {
+            if (image_ != null) {
+                // first band = Red. => buggy with RGB rendering
+                mousePixel_ = image_.getRaster().getSample(mouseX_, mouseY_, 0);
+                observe_.setChanged();
+            }
+        }
+
+        observe_.notifyObservers();
+    }
+
+    /**
+     * MouseMotionListener implementation
+     *
+     * @param me mouse event
+     */
+    @Override
+    public void mouseDragged(MouseEvent me) {
+    }
+
     private void buildWedge() {
-        int wedgeSize = colorModel_.getMapSize();
-        wedge_ = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(1, wedgeSize, colorModel_,
-                generateWedge(0, wedgeSize, wedgeSize), 0, 1));
+        final int wedgeSize = colorModel_.getMapSize();
+
+        final int[] pixels = new int[wedgeSize];
+
+        for (int i = 0, last = wedgeSize - 1; i <= last; i++) {
+            pixels[i] = last - i;
+        }
+
+        // max first, min last:
+        wedge_ = Toolkit.getDefaultToolkit().createImage(
+                new MemoryImageSource(1, wedgeSize, colorModel_, pixels, 0, 1));
     }
 
     /**
-     * DOCUMENT ME!
-     *
-     * @param w DOCUMENT ME!
-     * @param h DOCUMENT ME!
-     * @param array DOCUMENT ME!
-     */
-    public void initImage(int width, int height, float[] array) {
-
-        // search min and max of input array
-
-        final int size = array.length;
-
-        float aMin = array[0];
-        float aMax = array[0];
-
-        for (int i = 1; i < size; i++) {
-            float a = array[i];
-
-            if (aMin > a) {
-                aMin = a;
-            }
-
-            if (aMax < a) {
-                aMax = a;
-            }
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("min = " + aMin + ", max = " + aMax);
-        }
-
-        initImage(width, height, array, aMin, aMax);
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param w DOCUMENT ME!
-     * @param h DOCUMENT ME!
-     * @param array DOCUMENT ME!
-     */
-    public void initImage(int width, int height, float[] array, final float min, final float max) {
-        this.w_ = width;
-        this.h_ = height;
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("initImage: using array of size  " + width + "x" + height
-                    + " array : nb of point is " + array.length);
-        }
-
-        this.minValue_ = min;
-        this.maxValue_ = max;
-        this.dataArray = array;
-
-        // rebuild image :
-        buildImage();
-
-        // set new canvas dimension
-        final Dimension d = new Dimension(width, height);
-        setMinimumSize(d);
-        setPreferredSize(d);
-    }
-
-    /**
-     * DOCUMENT ME!
+     * Convert the data to image using the current color model
      */
     private void buildImage() {
         // build image with RGB linear LUT interpolation :
-        if (this.dataArray != null) {
+        if (this.data1D != null) {
             this.normalisePixelCoefficient_ = ImageUtils.computeScalingFactor(this.minValue_, this.maxValue_, colorModel_.getMapSize());
+            this.image_ = ImageUtils.createImage(this.w_, this.h_, this.data1D, this.minValue_, colorModel_, normalisePixelCoefficient_);
 
-            final BufferedImage bi = ImageUtils.createImage(this.w_, this.h_, this.dataArray, this.minValue_, colorModel_, normalisePixelCoefficient_);
-
-            this.imageRaster_ = bi.getRaster();
-
-            this.image_ = bi;
+        } else if (this.data2D != null) {
+            this.normalisePixelCoefficient_ = ImageUtils.computeScalingFactor(this.minValue_, this.maxValue_, colorModel_.getMapSize());
+            this.image_ = ImageUtils.createImage(this.w_, this.h_, this.data2D, this.minValue_, colorModel_, normalisePixelCoefficient_);
         }
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param min DOCUMENT ME!
-     * @param max DOCUMENT ME!
-     * @param size DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
-    private int[] generateWedge(int min, int max, int size) {
-        int[] pixels = new int[size];
-
-        for (int i = 0; i < size; i++) {
-            pixels[size - i - 1] = ((i * (max - min)) / size);
-        }
-
-        return pixels;
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
     public Dimension getCanvasDimension() {
         Dimension canvasDim = new Dimension();
         canvasDim.setSize(canvasHeight_, canvasWidth_);
@@ -342,11 +328,6 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
         return canvasDim;
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
     public Dimension getImageDimension() {
         Dimension imageDim = new Dimension();
         imageDim.setSize(h_, w_);
@@ -355,9 +336,9 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
     }
 
     /**
-     * DOCUMENT ME!
+     * Paint this component
      *
-     * @param g DOCUMENT ME!
+     * @param g graphics 2D object
      */
     @Override
     public void paint(Graphics g) {
@@ -366,6 +347,13 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
         // set antiAliasing
         if (antiAliasing) {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // set quality flags:
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+
+            // Use bicubic interpolation (slower) for quality:
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         } else {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         }
@@ -386,15 +374,17 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
 
                 if (isDrawTicks()) {
 
+                    final int step = 32;
+
                     // draw vertical tics
-                    for (int i = 0; i < h_; i++) {
+                    for (int i = 0; i < h_; i += step) {
                         int y = topInset + ((canvasHeight_ * i) / h_) + (canvasHeight_ / (2 * h_));
                         g2d.drawLine(leftInset - 2, y, leftInset, y);
                         g2d.drawString("" + i, leftInset - 20, y + 4);
                     }
 
                     // draw horizontal tics
-                    for (int i = 0; i < w_; i++) {
+                    for (int i = 0; i < w_; i += step) {
                         int x = leftInset + ((canvasWidth_ * i) / w_) + (canvasWidth_ / (2 * w_));
                         g2d.drawLine(x, topInset + canvasHeight_, x, topInset + canvasHeight_ + 3);
                         g2d.drawString("" + i, x - 4, topInset + canvasHeight_ + 15);
@@ -419,31 +409,16 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
         observe_.notifyImageObservers();
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
     @Override
     public Dimension getPreferredSize() {
         return this.getCanvasDimension();
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
     @Override
     public Dimension getMinimumSize() {
         return this.getCanvasDimension();
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
     @Override
     public Dimension getMaximumSize() {
         return this.getCanvasDimension();
@@ -484,5 +459,21 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
 
     public float getMaxValue() {
         return maxValue_;
+    }
+
+    public boolean isAntiAliasing() {
+        return antiAliasing;
+    }
+
+    public void setAntiAliasing(final boolean antiAliasing) {
+        this.antiAliasing = antiAliasing;
+    }
+
+    public boolean isDrawTicks() {
+        return drawTicks;
+    }
+
+    public void setDrawTicks(final boolean drawTicks) {
+        this.drawTicks = drawTicks;
     }
 }

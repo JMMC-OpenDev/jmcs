@@ -3,19 +3,23 @@
  ******************************************************************************/
 package fr.jmmc.jmal.image;
 
+import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.gui.SwingUtils;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Observable;
 import java.util.Observer;
 
 /**
+ * Simple Image viewer used in tests
  * @author Laurent BOURGES.
  */
-public class ImageViewer extends javax.swing.JFrame implements Observer {
+public final class ImageViewer extends javax.swing.JFrame implements Observer {
 
   /** default serial UID for Serializable interface */
   private static final long serialVersionUID = 1;
-  /**
-   * DOCUMENT ME!
-   */
+  /* members */
+  /** image canvas */
   private ImageCanvas imageCanvas;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox colorModelComboBox;
@@ -30,10 +34,14 @@ public class ImageViewer extends javax.swing.JFrame implements Observer {
   }
 
   /**
-   * DOCUMENT ME!
+   * Initialize components
    */
-  protected void init() {
+  private void init() {
     initComponents();
+    
+    // handle closing by mouse :
+    addWindowListener(new CloseFrameAdapter());
+
     // add image canvas
     imageCanvas = new ImageCanvas();
 
@@ -48,19 +56,20 @@ public class ImageViewer extends javax.swing.JFrame implements Observer {
   }
 
   /**
-   * DOCUMENT ME!
+   * Observer implementation
    *
-   * @param observable DOCUMENT ME!
-   * @param object DOCUMENT ME!
+   * @param observable observable object
+   * @param object unused argument
    */
-  public void update(Observable observable, Object object) {
+  public void update(Observable observable, final Object object) {
     final float value = imageCanvas.getMousePixel() / imageCanvas.getNormalisePixelCoefficient() + imageCanvas.getMinValue();
 
-    String info = imageCanvas.getImageDimension().height + "x" +
+    final String info = imageCanvas.getImageDimension().height + "x" +
             imageCanvas.getImageDimension().width + " Image " +
             imageCanvas.getCanvasDimension().height + "x" + imageCanvas.getCanvasDimension().width +
             " pixels [" + imageCanvas.getMouseX() + "," + imageCanvas.getMouseY() + " : " +
             imageCanvas.getMousePixel() + "] = " + ImageCanvas.floatFormatter.format(value);
+    
     imageInfoTextField.setText(info);
     imageInfoTextField.validate();
   }
@@ -112,37 +121,52 @@ public class ImageViewer extends javax.swing.JFrame implements Observer {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * DOCUMENT ME!
+     * Handle color model selection change
      *
-     * @param evt DOCUMENT ME!
+     * @param evt action event
      */
     private void colorModelComboBoxActionPerformed(java.awt.event.ActionEvent evt)
     {//GEN-FIRST:event_colorModelComboBoxActionPerformed
-      imageCanvas.setColorModel(ColorModels.getColorModel((String)colorModelComboBox.getSelectedItem()));
+        imageCanvas.setColorModel(ColorModels.getColorModel((String) colorModelComboBox.getSelectedItem()));
     }//GEN-LAST:event_colorModelComboBoxActionPerformed
 
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        SwingUtils.invokeEDT(new Runnable() {
+
+            public void run() {
+                final ImageViewer viewer = new ImageViewer();
+
+                int w = 32;
+                int h = 32;
+                float[] img = new float[w * h];
+
+                for (int i = 0, size = img.length; i < size; i++) {
+                    img[i] = i;
+                }
+
+                viewer.getImageCanvas().initImage(w, h, img);
+
+                viewer.pack();
+                viewer.setVisible(true);
+            }
+        });
+    }
+    
+
   /**
-   * @param args the command line arguments
+   * Window adapter to handle windowClosing event.
    */
-  public static void main(String[] args) {
-    java.awt.EventQueue.invokeLater(new Runnable() {
+  private final class CloseFrameAdapter extends WindowAdapter {
 
-      public void run() {
-        final ImageViewer viewer = new ImageViewer();
-
-        int w = 32;
-        int h = 32;
-        float[] img = new float[w * h];
-
-        for (int i = 0, size = img.length; i < size; i++) {
-          img[i] = i;
-        }
-
-        viewer.getImageCanvas().initImage(w, h, img);
-
-        viewer.pack();
-        viewer.setVisible(true);
-      }
-    });
+    @Override
+    public void windowClosing(final WindowEvent e) {
+      // callback on exit :
+        dispose();
+        System.exit(0);
+    }
   }
+    
 }

@@ -4,9 +4,9 @@
 package fr.jmmc.jmal.model;
 
 import fr.jmmc.jmal.complex.MutableComplex;
-import fr.jmmc.jmal.image.ColorModels;
 import fr.jmmc.jmal.image.ImageUtils;
 import fr.jmmc.jmal.model.targetmodel.Model;
+import fr.jmmc.jmcs.util.concurrent.InterruptedJobException;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -25,16 +25,14 @@ public final class ModelUVMapService {
 
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(ModelUVMapService.class.getName());
-    /** default image width / height */
-    private final static int DEFAULT_IMAGE_SIZE = 512;
-    /** default color model (aspro - Rainbow) */
-    private final static IndexColorModel DEFAULT_COLOR_MODEL = ColorModels.getColorModel("aspro");
     /** standard visibility amplitude range [0;1] */
     private final static float[] RANGE_AMPLITUDE = new float[]{0f, 1f};
     /** standard visibility phase range [-PI;PI] */
     private final static float[] RANGE_PHASE = new float[]{(float) -Math.PI, (float) Math.PI};
     /** threshold to use parallel jobs (65535 UV points) */
     private final static int JOB_THRESHOLD = 256 * 256 - 1;
+    /** Jmcs Parallel Job executor */
+    private static final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
 
     /**
      * Image modes (amplitude, phase)
@@ -59,43 +57,16 @@ public final class ModelUVMapService {
      *
      * @param models list of models to use
      * @param uvRect UV frequency area in rad-1
-     * @param mode image mode (amplitude or phase)
-     * @return UVMapData
-     */
-    public static UVMapData computeUVMap(final List<Model> models,
-                                         final Rectangle2D.Double uvRect,
-                                         final ImageMode mode) {
-        return computeUVMap(models, uvRect, null, null, mode, DEFAULT_IMAGE_SIZE, DEFAULT_COLOR_MODEL);
-    }
-
-    /**
-     * Compute the UV Map for the given models and UV ranges
-     *
-     * @param models list of models to use
-     * @param uvRect UV frequency area in rad-1
-     * @param refMin minimum reference double value used only for sub images
-     * @param refMax maximum reference double value used only for sub images
-     * @param mode image mode (amplitude or phase)
-     * @return UVMapData
-     */
-    public static UVMapData computeUVMap(final List<Model> models,
-                                         final Rectangle2D.Double uvRect,
-                                         final Float refMin, final Float refMax,
-                                         final ImageMode mode) {
-        return computeUVMap(models, uvRect, refMin, refMax, mode, DEFAULT_IMAGE_SIZE, DEFAULT_COLOR_MODEL);
-    }
-
-    /**
-     * Compute the UV Map for the given models and UV ranges
-     *
-     * @param models list of models to use
-     * @param uvRect UV frequency area in rad-1
      * @param refMin minimum reference value used only for sub images
      * @param refMax maximum reference value used only for sub images
      * @param mode image mode (amplitude or phase)
      * @param imageSize number of pixels for both width and height of the generated image
      * @param colorModel color model to use
      * @return UVMapData
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws IllegalArgumentException if a model parameter value is invalid
+     * @throws RuntimeException if any exception occured during the computation
      */
     public static UVMapData computeUVMap(final List<Model> models,
                                          final Rectangle2D.Double uvRect,
@@ -136,18 +107,15 @@ public final class ModelUVMapService {
 
         // fast interrupt :
         if (currentThread.isInterrupted()) {
-            return null;
+            throw new InterruptedJobException("ModelUVMapService.computeUVMap: interrupted");
         }
 
         // use single precision for performance (image needs not double precision) :
+        // model data as float [rows][cols]:
         final float[][] data = new float[imageSize][imageSize];
 
         // Should split the computation in parts ?
         // i.e. enough big compute task ?
-
-        // TODO: add threshold check here (imageSize * imageSize * modelSize) > 300k
-
-        final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
 
         if (jobExecutor.isEnabled()
                 && (imageSize * imageSize * normModels.size()) >= JOB_THRESHOLD) {
@@ -179,17 +147,15 @@ public final class ModelUVMapService {
 
             // fast interrupt :
             if (currentThread.isInterrupted()) {
-                logger.debug("main thread cancelled.");
-                return null;
+                throw new InterruptedJobException("ModelUVMapService.computeUVMap: interrupted");
             }
 
             // execute jobs in parallel:
             final Future<?>[] futures = jobExecutor.fork(jobs);
 
-            // start first part using this thread
             logger.debug("wait for jobs to terminate ...");
 
-            jobExecutor.join(futures);
+            jobExecutor.join("ModelUVMapService.computeUVMap", futures);
 
         } else {
             // single processor: use this thread to compute the complete model image:
@@ -198,8 +164,7 @@ public final class ModelUVMapService {
 
         // fast interrupt :
         if (currentThread.isInterrupted()) {
-            logger.debug("main thread cancelled.");
-            return null;
+            throw new InterruptedJobException("ModelUVMapService.computeUVMap: interrupted");
         }
 
         // 4 - Get the image with the given color model :
@@ -225,13 +190,8 @@ public final class ModelUVMapService {
             logger.debug("value range in [{}, {}]", min, max);
         }
 
+        // throws InterruptedJobException if the current thread is interrupted (cancelled):
         final BufferedImage uvMap = ImageUtils.createImage(imageSize, imageSize, data, min, max, colorModel);
-
-        // fast interrupt :
-        if (currentThread.isInterrupted()) {
-            logger.debug("main thread cancelled.");
-            return null;
-        }
 
         // provide results :
         uvMapData = new UVMapData(mode, imageSize, colorModel, uvRect, Float.valueOf(min), Float.valueOf(max), data, uvMap);
@@ -340,7 +300,7 @@ public final class ModelUVMapService {
 
             // Prepare other variables:
             MutableComplex[] vis;
-            final double[] ufreq = new double[imageSize];
+            final double[] ufreq = u;
             final double[] vfreq = new double[imageSize];
 
             final ModelManager modelManager = ModelManager.getInstance();
@@ -353,17 +313,15 @@ public final class ModelUVMapService {
 
             // Compute model line by line to reduce memory footprint (complex array, double[] U and v frequencies ...)
 
-            // Note : the image is produced from an array where 0,0 corresponds to the upper left corner
-            // whereas it corresponds in UV to the lower U and Upper V coordinates => inverse the V axis
+            float[] row;
 
             // Compute model line by line:
-            for (int i, k, j = lineStart; j < lineEnd; j++) {
-                // inverse the v axis for the image :
-                k = imageSize - j - 1;
+            for (int i, j = lineStart; j < lineEnd; j++) {
 
+                // ufreq corresponds to all U frequencies:
+                // vfreq corresponds to the same V frequency:
                 for (i = 0; i < imageSize; i++) {
-                    ufreq[i] = u[i];
-                    vfreq[i] = v[k];
+                    vfreq[i] = v[j];
                 }
 
                 // 2 - Compute complex visibility for the given models :
@@ -380,18 +338,19 @@ public final class ModelUVMapService {
                 }
 
                 // 3 - Extract the amplitude/phase to get the uv map :
+                row = data[j];
 
                 switch (mode) {
                     case AMP:
                         for (i = 0; i < imageSize; i++) {
                             // amplitude = complex modulus (abs in commons-math) :
-                            data[i][j] = (float) vis[i].abs();
+                            row[i] = (float) vis[i].abs();
                         }
                         break;
                     case PHASE:
                         for (i = 0; i < imageSize; i++) {
                             // phase [-PI;PI] = complex phase (argument in commons-math) :
-                            data[i][j] = (float) vis[i].getArgument();
+                            row[i] = (float) vis[i].getArgument();
                         }
                         break;
                     default:

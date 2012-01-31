@@ -5,6 +5,7 @@
  */
 package fr.jmmc.jmal.image;
 
+import fr.jmmc.jmcs.util.concurrent.InterruptedJobException;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -31,6 +32,8 @@ public final class ImageUtils {
     public final static boolean USE_RGB_INTERPOLATION = true;
     /** threshold to use parallel jobs (256 x 256 pixels) */
     private final static int JOB_THRESHOLD = 256 * 256 - 1;
+    /** Jmcs Parallel Job executor */
+    private static final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
 
     /**
      * Forbidden constructor
@@ -68,7 +71,10 @@ public final class ImageUtils {
      * @param min lower data value (lower threshold)
      * @param max upper data value (upper threshold)
      * @param colorModel color model
-     * @return new BufferedImage
+     * @return new BufferedImage or null if interrupted
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
      */
     public static BufferedImage createImage(final int width, final int height,
                                             final float[] array, final float min, final float max,
@@ -88,7 +94,10 @@ public final class ImageUtils {
      * @param min lower data value (lower threshold)
      * @param colorModel color model
      * @param scalingFactor value to pixel coefficient
-     * @return new BufferedImage
+     * @return new BufferedImage or null if interrupted
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
      */
     public static BufferedImage createImage(final int width, final int height,
                                             final float[] array, final float min,
@@ -113,8 +122,6 @@ public final class ImageUtils {
         // Should split the computation in parts ?
         // i.e. enough big compute task ?
 
-        final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
-
         if (jobExecutor.isEnabled()
                 && array.length >= JOB_THRESHOLD) {
             // split model image in parts for parallel threads:
@@ -138,14 +145,18 @@ public final class ImageUtils {
             // execute jobs in parallel:
             final Future<?>[] futures = jobExecutor.fork(jobs);
 
-            // start first part using this thread
             logger.debug("wait for jobs to terminate ...");
 
-            jobExecutor.join(futures);
+            jobExecutor.join("ImageUtils.createImage", futures);
 
         } else {
             // single processor: use this thread to compute the complete model image:
-            new ComputeImagePart(array, min, colorModel, scalingFactor, dataBuffer, 0, height).run();
+            new ComputeImagePart(array, min, colorModel, scalingFactor, dataBuffer, 0, array.length).run();
+        }
+
+        // fast interrupt :
+        if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedJobException("ImageUtils.createImage: interrupted");
         }
 
         if (logger.isDebugEnabled()) {
@@ -164,7 +175,10 @@ public final class ImageUtils {
      * @param min lower data value (lower threshold)
      * @param max upper data value (upper threshold)
      * @param colorModel color model
-     * @return new BufferedImage
+     * @return new BufferedImage or null if interrupted
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
      */
     public static BufferedImage createImage(final int width, final int height,
                                             final float[][] array, final float min, final float max,
@@ -184,7 +198,10 @@ public final class ImageUtils {
      * @param min lower data value (lower threshold)
      * @param colorModel color model
      * @param scalingFactor value to pixel coefficient
-     * @return new BufferedImage
+     * @return new BufferedImage or null if interrupted
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
      */
     public static BufferedImage createImage(final int width, final int height,
                                             final float[][] array, final float min,
@@ -192,11 +209,11 @@ public final class ImageUtils {
         if (array == null) {
             throw new IllegalStateException("Undefined data array.");
         }
-        if (array.length != width) {
-            throw new IllegalStateException("Invalid data array size: " + array.length + "; expected: " + width + ".");
+        if (array.length != height) {
+            throw new IllegalStateException("Invalid data array size: " + array.length + "; expected: " + height + ".");
         }
-        if (array[0].length != height) {
-            throw new IllegalStateException("Invalid data array size: " + array[0].length + "; expected: " + height + ".");
+        if (array[0].length != width) {
+            throw new IllegalStateException("Invalid data array size: " + array[0].length + "; expected: " + width + ".");
         }
 
         if (logger.isDebugEnabled()) {
@@ -213,8 +230,6 @@ public final class ImageUtils {
         // Should split the computation in parts ?
         // i.e. enough big compute task ?
 
-        final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
-
         if (jobExecutor.isEnabled()
                 && (width * height) >= JOB_THRESHOLD) {
             // split model image in parts for parallel threads:
@@ -228,7 +243,7 @@ public final class ImageUtils {
             int lineEnd = step;
             for (int i = 0; i < nJobs; i++) {
                 // ensure last job goes until lineEnd:
-                jobs[i] = new ComputeImagePart(array, width, min, colorModel, scalingFactor, dataBuffer,
+                jobs[i] = new ComputeImagePart(array, width, height, min, colorModel, scalingFactor, dataBuffer,
                         lineStart, ((i == (nJobs - 1)) || (lineEnd > height)) ? height : lineEnd);
 
                 lineStart += step;
@@ -238,14 +253,18 @@ public final class ImageUtils {
             // execute jobs in parallel:
             final Future<?>[] futures = jobExecutor.fork(jobs);
 
-            // start first part using this thread
             logger.debug("wait for jobs to terminate ...");
 
-            jobExecutor.join(futures);
+            jobExecutor.join("ImageUtils.createImage", futures);
 
         } else {
             // single processor: use this thread to compute the complete model image:
-            new ComputeImagePart(array, width, min, colorModel, scalingFactor, dataBuffer, 0, height).run();
+            new ComputeImagePart(array, width, height, min, colorModel, scalingFactor, dataBuffer, 0, height).run();
+        }
+
+        // fast interrupt :
+        if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedJobException("ImageUtils.createImage: interrupted");
         }
 
         if (logger.isDebugEnabled()) {
@@ -359,10 +378,12 @@ public final class ImageUtils {
         /* input */
         /** data array (1D) */
         private final float[] _array1D;
-        /** data array (2D) */
+        /** data array (2D) [rows][cols] */
         private final float[][] _array2D;
         /** image width */
         private final int _width;
+        /** image height */
+        private final int _height;
         /** lower data value */
         private final float _min;
         /** indexed color model */
@@ -397,6 +418,7 @@ public final class ImageUtils {
             this._array1D = array;
             this._array2D = null;
             this._width = 0;
+            this._height = 0;
             this._min = min;
             this._colorModel = colorModel;
             this._scalingFactor = scalingFactor;
@@ -410,6 +432,7 @@ public final class ImageUtils {
          *
          * @param array data array (2D)
          * @param width image width
+         * @param height image height
          * @param min lower data value
          * @param colorModel indexed color model
          * @param scalingFactor data to color linear scaling factor
@@ -417,7 +440,7 @@ public final class ImageUtils {
          * @param lineStart index of first line (inclusive)
          * @param lineEnd index of last line (exclusive)
          */
-        ComputeImagePart(final float[][] array, final int width, final float min,
+        ComputeImagePart(final float[][] array, final int width, final int height, final float min,
                          final IndexColorModel colorModel, final float scalingFactor,
                          final DataBuffer dataBuffer,
                          final int lineStart, final int lineEnd) {
@@ -425,6 +448,7 @@ public final class ImageUtils {
             this._array1D = null;
             this._array2D = array;
             this._width = width;
+            this._height = height;
             this._min = min;
             this._colorModel = colorModel;
             this._scalingFactor = scalingFactor;
@@ -444,6 +468,7 @@ public final class ImageUtils {
             // Copy members to local variables:
             /* input */
             final int width = _width;
+            final int height = _height;
             final float[] array1D = _array1D;
             final float[][] array2D = _array2D;
             final float min = _min;
@@ -478,11 +503,14 @@ public final class ImageUtils {
                         }
                     } // pixel by pixel
                 } else if (array2D != null) {
-                    for (int i, offset, j = lineStart; j < lineEnd; j++) {
-                        offset = width * j;
+                    float[] row;
+                    for (int i, offset, j = lineStart, lastRow = height - 1; j < lineEnd; j++) {
+                        // inverse vertical axis (0 at bottom, height at top):
+                        offset = width * (lastRow - j);
+                        row = array2D[j];
 
                         for (i = 0; i < width; i++) {
-                            dataBuffer.setElem(offset + i, getRGB(colorModel, iMaxColor, (array2D[i][j] - min) * scalingFactor, ALPHA_MASK));
+                            dataBuffer.setElem(offset + i, getRGB(colorModel, iMaxColor, (row[i] - min) * scalingFactor, ALPHA_MASK));
                         }
 
                         // fast interrupt:
@@ -507,10 +535,14 @@ public final class ImageUtils {
                         }
                     } // pixel by pixel
                 } else if (array2D != null) {
-                    for (int i, offset, j = lineStart; j < lineEnd; j++) {
-                        offset = width * j;
+                    float[] row;
+                    for (int i, offset, j = lineStart, lastRow = height - 1; j < lineEnd; j++) {
+                        // inverse vertical axis (0 at bottom, height at top):
+                        offset = width * (lastRow - j);
+                        row = array2D[j];
+
                         for (i = 0; i < width; i++) {
-                            dataBuffer.setElem(offset + i, getColor(colorModel, iMaxColor, (array2D[i][j] - min) * scalingFactor));
+                            dataBuffer.setElem(offset + i, getColor(colorModel, iMaxColor, (row[i] - min) * scalingFactor));
                         }
 
                         // fast interrupt:

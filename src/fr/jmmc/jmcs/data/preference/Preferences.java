@@ -293,7 +293,7 @@ public abstract class Preferences extends Observable {
         boolean everythingWentFine = true;
 
         final String[] versionNumberKeys = {JMCS_STRUCTURE_VERSION_NUMBER_ID, PREFERENCES_VERSION_NUMBER_ID};
-        
+
         for (String key : versionNumberKeys) {
 
             // Store whether we are in the process of updating internal preference file structure or not
@@ -330,7 +330,7 @@ public abstract class Preferences extends Observable {
             if (fileVersionNumber < runtimeVersionNumber) {
                 // If the preference file version is older than the current default version
                 _logger.warn("Loaded an 'out-of-date'{}preference version, will try to update preference file.", logToken);
-                
+
                 tryUpdate = true;
 
                 // Handle version differences
@@ -370,7 +370,7 @@ public abstract class Preferences extends Observable {
                     _logger.warn("Cannot save preference to disk: ", pe);
                 }
             }
-        } else { 
+        } else {
             // If any update went wrong (or was not handled)
             // Use default values instead
             resetToDefaultPreferences();
@@ -401,7 +401,7 @@ public abstract class Preferences extends Observable {
             try {
                 _currentProperties.loadFromXML(inputFile);
                 ok = true;
-                
+
             } catch (InvalidPropertiesFormatException ipfe) {
                 _logger.error("Cannot parse '{}' preference file: ", _fullFilepath, ipfe);
             } catch (IOException ioe) {
@@ -667,10 +667,26 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return the preference value.
+     * 
+     * @throws MissingPreferenceException if the preference value is missing
      */
-    final public String getPreference(final Object preferenceName) {
+    final public String getPreference(final Object preferenceName) throws MissingPreferenceException {
+        return getPreference(preferenceName, false);
+    }
+
+    /**
+     * Get a preference value.
+     *
+     * @param preferenceName the preference name.
+     * @param ignoreMissing true to return null when the property is missing
+     *
+     * @return the preference value or null if the preference value is missing and the ignoreMissing argument is true.
+     * 
+     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false
+     */
+    final public String getPreference(final Object preferenceName, final boolean ignoreMissing) throws MissingPreferenceException {
         final String value = _currentProperties.getProperty(preferenceName.toString());
-        if (value == null) {
+        if ((value == null) && (!ignoreMissing)) {
             throw new MissingPreferenceException("Could not find '" + preferenceName + "' preference value.");
         }
 
@@ -683,9 +699,28 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return one boolean representing the preference value.
+     * 
+     * @throws MissingPreferenceException if the preference value is missing
      */
-    final public boolean getPreferenceAsBoolean(final Object preferenceName) {
-        final String value = getPreference(preferenceName);
+    final public boolean getPreferenceAsBoolean(final Object preferenceName) throws MissingPreferenceException {
+        return getPreferenceAsBoolean(preferenceName, false);
+    }
+
+    /**
+     * Get a boolean preference value.
+     *
+     * @param preferenceName the preference name.
+     * @param ignoreMissing true to return false when the property is missing
+     *
+     * @return one boolean representing the preference value or false if the preference value is missing and the ignoreMissing argument is true.
+     * 
+     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false
+     */
+    final public boolean getPreferenceAsBoolean(final Object preferenceName, final boolean ignoreMissing) throws MissingPreferenceException {
+        final String value = getPreference(preferenceName, ignoreMissing);
+        if (value == null) {
+            return false;
+        }
         return Boolean.valueOf(value).booleanValue();
     }
 
@@ -695,9 +730,28 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return one double representing the preference value.
+     * 
+     * @throws MissingPreferenceException if the preference value is missing
      */
-    final public double getPreferenceAsDouble(final Object preferenceName) {
-        final String value = getPreference(preferenceName);
+    final public double getPreferenceAsDouble(final Object preferenceName) throws MissingPreferenceException {
+        return getPreferenceAsDouble(preferenceName, false);
+    }
+
+    /**
+     * Get a double preference value.
+     *
+     * @param preferenceName the preference name.
+     * @param ignoreMissing true to return 0.0 when the property is missing
+     *
+     * @return one double representing the preference value or 0.0 if the preference value is missing and the ignoreMissing argument is true.
+     * 
+     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false
+     */
+    final public double getPreferenceAsDouble(final Object preferenceName, final boolean ignoreMissing) throws MissingPreferenceException {
+        final String value = getPreference(preferenceName, ignoreMissing);
+        if (value == null) {
+            return 0d;
+        }
         return Double.valueOf(value).doubleValue();
     }
 
@@ -707,9 +761,28 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return one integer representing the preference value.
+     * 
+     * @throws MissingPreferenceException if the preference value is missing
      */
-    final public int getPreferenceAsInt(final Object preferenceName) {
-        final String value = getPreference(preferenceName);
+    final public int getPreferenceAsInt(final Object preferenceName) throws MissingPreferenceException {
+        return getPreferenceAsInt(preferenceName, false);
+    }
+
+    /**
+     * Get an integer preference value.
+     *
+     * @param preferenceName the preference name.
+     * @param ignoreMissing true to return 0 when the property is missing
+     *
+     * @return one integer representing the preference value or 0 if the preference value is missing and the ignoreMissing argument is true.
+     * 
+     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false
+     */
+    final public int getPreferenceAsInt(final Object preferenceName, final boolean ignoreMissing) throws MissingPreferenceException {
+        final String value = getPreference(preferenceName, ignoreMissing);
+        if (value == null) {
+            return 0;
+        }
         return Integer.valueOf(value).intValue();
     }
 
@@ -720,9 +793,10 @@ public abstract class Preferences extends Observable {
      *
      * @return one Color object representing the preference value.
      *
+     * @throws MissingPreferenceException if the preference value is missing
      * @throws PreferencesException if the preference value is not a Color
      */
-    final public Color getPreferenceAsColor(final Object preferenceName) throws PreferencesException {
+    final public Color getPreferenceAsColor(final Object preferenceName) throws MissingPreferenceException, PreferencesException {
         final String value = getPreference(preferenceName);
 
         Color colorValue = null;
@@ -1038,8 +1112,8 @@ public abstract class Preferences extends Observable {
     protected class SavePrefAction extends RegisteredAction {
 
         /**
-        * default serial UID for Serializable interface
-        */
+         * default serial UID for Serializable interface
+         */
         private static final long serialVersionUID = 1L;
 
         /**
@@ -1066,8 +1140,8 @@ public abstract class Preferences extends Observable {
     protected class RestoreDefaultPrefAction extends RegisteredAction {
 
         /**
-        * default serial UID for Serializable interface
-        */
+         * default serial UID for Serializable interface
+         */
         private static final long serialVersionUID = 1L;
 
         /**

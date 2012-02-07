@@ -78,7 +78,7 @@ public enum SampMetaData {
      * Return the samp meta data identifier
      * @return samp meta data identifier
      */
-    public String mType() {
+    public String id() {
         return _metaDataId;
     }
 
@@ -114,7 +114,7 @@ public enum SampMetaData {
     public static void main(String[] args) {
         // For each catalog in the enum
         for (SampMetaData metaData : SampMetaData.values()) {
-            String id = metaData.mType();
+            String id = metaData.id();
             System.out.println("SampMetaData '" + metaData + "' has id '" + id + "' : match '" + (metaData == SampMetaData.fromMetaDataId(id) ? "OK" : "FAILED") + "'.");
         }
 
@@ -137,7 +137,7 @@ public enum SampMetaData {
      */
     private final static class SampMetaDataNastyTrick {
 
-        /** cached map of SampMetaData keyed by mType */
+        /** cached map of SampMetaData keyed by id */
         static final Map<String, SampMetaData> TYPES = new HashMap<String, SampMetaData>(16);
 
         /**

@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public enum SampCapability {
 
+    // Standard SAMP mTypes
     /** Load VOTable MType */
     LOAD_VO_TABLE("table.load.votable"),
     /** Load fits table MType */

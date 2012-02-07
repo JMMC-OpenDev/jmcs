@@ -182,7 +182,7 @@ public final class SampManager {
 
         final String jnlpUrl = applicationDataModel.getJnlpUrl();
         if (jnlpUrl != null) {
-            meta.put("x-samp.jnlp.url", jnlpUrl);
+            meta.put(SampMetaData.JNLP_URL.id(), jnlpUrl);
         }
 
         final String userSupportUrl = applicationDataModel.getUserSupportURL();
@@ -193,30 +193,28 @@ public final class SampManager {
         final String lowerCaseApplicationName = applicationName.toLowerCase();
         String authors = applicationDataModel.getAuthors();
         if (authors != null) {
-            meta.put(lowerCaseApplicationName + ".authors", "Brought to you by " + authors);
+            meta.put(SampMetaData.AUTHORS.id(), "Brought to you by " + authors);
         }
 
-        meta.put(lowerCaseApplicationName + ".homepage", applicationDataModel.getLinkValue());
+        meta.put(SampMetaData.HOMEPAGE_URL.id(), applicationDataModel.getLinkValue());
 
-        meta.put(lowerCaseApplicationName + ".version", applicationDataModel.getProgramVersion());
+        meta.put(SampMetaData.RELEASE_VERSION.id(), applicationDataModel.getProgramVersion());
 
-        meta.put(lowerCaseApplicationName + ".compilationdate", applicationDataModel.getCompilationDate());
-
-        meta.put(lowerCaseApplicationName + ".compilatorversion", applicationDataModel.getCompilatorVersion());
+        meta.put(SampMetaData.RELEASE_DATE.id(), applicationDataModel.getCompilationDate());
 
         final String newsUrl = applicationDataModel.getHotNewsRSSFeedLinkValue();
         if (newsUrl != null) {
-            meta.put(lowerCaseApplicationName + ".news", newsUrl);
+            meta.put(SampMetaData.RSS_URL.id(), newsUrl);
         }
 
         final String releaseNoteUrl = applicationDataModel.getReleaseNotesLinkValue();
         if (releaseNoteUrl != null) {
-            meta.put(lowerCaseApplicationName + ".releasenotes", releaseNoteUrl);
+            meta.put(SampMetaData.RELEASENOTES_URL.id(), releaseNoteUrl);
         }
 
         final String faq = applicationDataModel.getFaqLinkValue();
         if (faq != null) {
-            meta.put(lowerCaseApplicationName + ".faq", faq);
+            meta.put(SampMetaData.FAQ_URL.id(), faq);
         }
 
         return meta;

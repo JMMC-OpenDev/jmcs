@@ -74,7 +74,7 @@ public class ActionRegistrar {
         if (previousAction == null) {
             _logger.debug("Registered '{}' action for the first time.", internalActionKey);
         } else if (previousAction != action) {
-            _logger.warn("Overwritten the previously registered '{}' action.", internalActionKey);
+            _logger.debug("Overwritten the previously registered '{}' action.", internalActionKey);
         } else {
             _logger.debug("Registered '{}' action succesfully.", internalActionKey);
         }

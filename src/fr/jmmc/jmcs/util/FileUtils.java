@@ -464,7 +464,7 @@ public final class FileUtils {
      * @return the temporary filename
      */
     public static File getTempFile(final String filename) {
-        final File file = new File(getTempDir(), filename);
+        final File file = new File(getTempDirPath(), filename);
         file.deleteOnExit();
         return file;
     }
@@ -474,7 +474,7 @@ public final class FileUtils {
      *
      * @return the temporary directory name
      */
-    public static String getTempDir() {
+    public static String getTempDirPath() {
         return System.getProperty("java.io.tmpdir");
     }
 

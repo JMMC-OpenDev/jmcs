@@ -6,12 +6,12 @@ package fr.jmmc.jmcs.gui;
 import fr.jmmc.jmcs.App;
 import java.awt.Component;
 import java.awt.Dimension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides utility methods to create message panes (message, error) with/without exceptions
@@ -134,24 +134,30 @@ public final class MessagePane {
     private static void showMessageDialog(final String message, final String title, final int messageType) {
         final JTextArea textArea = new JTextArea(message);
         textArea.setEditable(false);
-        textArea.setBackground(null);
-        final JScrollPane sp = new JScrollPane(textArea);
-        sp.setBorder(null);
+
+        final JScrollPane scrollPane = new JScrollPane(textArea);
         // Try not to display windows bigger than screen for huge messages
         // 40px margins are here to avoid some scrollbars...
-        final Dimension dims = new Dimension(Math.min(textArea.getMinimumSize().width + 50, 600),
-                Math.min(textArea.getMinimumSize().height + 50, 500));
-        sp.setMaximumSize(dims);
-        sp.setPreferredSize(dims);
+        final Dimension dims = new Dimension(Math.min(textArea.getMinimumSize().width + 50, 500),
+                Math.min(textArea.getMinimumSize().height + 50, 100));
+        scrollPane.setMaximumSize(dims);
+        scrollPane.setPreferredSize(dims);
+
+        boolean textAreaBackgroundShouldBeOpaque = (textArea.getMinimumSize().width > dims.width) || (textArea.getMinimumSize().height > dims.height);
+        textArea.setOpaque(textAreaBackgroundShouldBeOpaque);
+        scrollPane.setOpaque(textAreaBackgroundShouldBeOpaque);
+        scrollPane.getViewport().setOpaque(textAreaBackgroundShouldBeOpaque);
+        if (!textAreaBackgroundShouldBeOpaque) {
+            scrollPane.setBorder(null);
+        }
 
         // ensure window is visible (not iconified):
         App.showFrameToFront();
 
-        JOptionPane.showMessageDialog(getApplicationFrame(), sp, title, messageType);
+        JOptionPane.showMessageDialog(getApplicationFrame(), scrollPane, title, messageType);
     }
-    
-    // --- WARNING MESSAGES ---------------------------------------------------------
 
+    // --- WARNING MESSAGES ---------------------------------------------------------
     /**
      * Show an information with the given message
      * @param message message to display

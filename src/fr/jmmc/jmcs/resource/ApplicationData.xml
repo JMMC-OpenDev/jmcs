@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ApplicationData link="http://www.jmmc.fr/jmcs/">
+<ApplicationData link="http://www.jmmc.fr/dev/jmcs/">
   
     <program name="jMCS framework" version="UNKNOWN Release Version"/>
     <compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
@@ -9,18 +9,6 @@
     
     <dependences>
         <!-- SEE / UPDATE jmcs/lib/README.txt -->
-
-        <!-- JMMC -->
-
-        <!-- Java Mariotti Common Software -->
-        <package name="jMCS"
-            description="JMMC framework, enabling better user interface and platform integration across Mac, Linux and Windows through numerous third-party libraries and in-house code"
-            link="https://www.jmmc.fr/dev/jmcs/"
-            jars="jmcs.jar"
-            license="CECILL-B ???"/>     
-
-
-        <!-- 1. Science / VO libraries (always on top for better visibility) -->
 
         <!-- jMCS dependencies -->
 
@@ -33,8 +21,6 @@
 
 
         <!-- 2. Swing -->
-
-        <!-- jMCS dependencies -->
 
         <!-- Mac OS X Desktop integration -->
         <package name="AppleJavaExtensions"
@@ -63,8 +49,6 @@
 
 
         <!-- 3. Tools -->
-
-        <!-- jMCS dependencies -->
         
         <!-- slf4j + JUL and JCL wrappers -->
         <package name="SLF4J"
@@ -122,8 +106,8 @@
         </release>
     </releasenotes>
     
-    <acknowledgment><![CDATA[This research has made use of one of the services of the Jean-Marie Mariotti Center
-\footnote{Available at http://www.jmmc.fr}
-]]>
+    <acknowledgment>
+        <![CDATA[This research has made use of one of the services of the Jean-Marie Mariotti Center \footnote{Available at http://www.jmmc.fr}]]>
     </acknowledgment>
+
 </ApplicationData>

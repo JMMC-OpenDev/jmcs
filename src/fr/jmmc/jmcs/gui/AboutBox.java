@@ -173,9 +173,10 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /**
      * Handle window closing when using either Escape or ctrl-W keys.
      */
+    @Override
     protected JRootPane createRootPane() {
 
-        JRootPane rootPane = new JRootPane();
+        JRootPane myRootPane = new JRootPane();
 
         // Trap Escape key
         KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -191,9 +192,9 @@ public class AboutBox extends JDialog implements HyperlinkListener {
                 setVisible(false);
             }
         };
-        rootPane.registerKeyboardAction(actionListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        rootPane.registerKeyboardAction(actionListener, metaWStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        return rootPane;
+        myRootPane.registerKeyboardAction(actionListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        myRootPane.registerKeyboardAction(actionListener, metaWStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        return myRootPane;
     }
 
     /**
@@ -294,7 +295,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         // HTML generation
         final StringBuilder generatedHtml = new StringBuilder(4096);
         generatedHtml.append("<html><head></head><body>");
-        
+
         final String authors = _applicationDataModel.getAuthors();
         if ((authors != null) && (authors.length() > 0)) {
             generatedHtml.append("Brought to you by ").append(authors).append(".<BR><BR>");
@@ -307,18 +308,19 @@ public class AboutBox extends JDialog implements HyperlinkListener {
             generatedHtml.append(textValue).append("<br><br>");
         }
 
+        generatedHtml.append("<i>Dependencies</i>:<br>");
+        final ApplicationDataModel data = App.getJMcsApplicationDataModel();
+        final String jMcsName = data.getProgramName();
+        final String jMcsUrl = data.getLinkValue();
+        final String jMcsDescription = data.getTextValue();
+        generatedHtml.append("<a href='").append(jMcsUrl).append("'>").append(jMcsName).append("</a>");
+        generatedHtml.append(" : <i>").append(jMcsDescription).append("</i><br/>");
+
         // Generate a HTML string with each package informations
         final List<String> packagesInfo = _applicationDataModel.getPackagesInfo();
 
-        // For each package
-        final int nbElems = packagesInfo.size();
-        if (nbElems > 0) {
-            generatedHtml.append("<i>Dependencies</i>:<br>");
-        }
-
-        /* We have a step of 3 because for each
-        package we have a name, a link and a description */
-        for (int i = 0; i < nbElems; i += 3) {
+        /* We have a step of 3 because for each package we have a name, a link and a description */
+        for (int i = 0; i < packagesInfo.size(); i += 3) {
             String name = packagesInfo.get(i);
             String link = packagesInfo.get(i + 1);
             String description = packagesInfo.get(i + 2);
@@ -330,13 +332,13 @@ public class AboutBox extends JDialog implements HyperlinkListener {
                 generatedHtml.append("<a href='").append(link).append("'>").append(name).append("</a>");
             }
 
-            generatedHtml.append(" : <i>").append(description).append("</i><br>");
+            generatedHtml.append(" : <i>").append(description).append("</i><br/>");
         }
 
         generatedHtml.append("</body></html>");
 
         _descriptionEditorPane.setText(generatedHtml.toString());
-        
+
         // Show first line of editor pane, and not its last line as by default !
         _descriptionEditorPane.setCaretPosition(0);
 

@@ -364,8 +364,13 @@ public class MainMenuBar extends JMenuBar {
         // Create menu
         JMenu helpMenu = new JMenu("Help");
 
-        // Add helpview action
+        // Add HelpView action
         helpMenu.add(App.showHelpAction());
+
+        helpMenu.add(new JSeparator());
+
+        // Add DependenciesView action
+        helpMenu.add(App.showDependenciesAction());
 
         helpMenu.add(new JSeparator());
 

@@ -45,6 +45,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import fr.jmmc.jmcs.gui.*;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
@@ -148,6 +149,8 @@ public abstract class App {
     private static App _sharedInstance;
     /** flag indicating if the application started properly and is ready (visible) */
     private static boolean _applicationReady = false;
+    /** jMCS application data model */
+    private static ApplicationDataModel _jMcsApplicationDataModel;
     /** Shared application data model */
     private static ApplicationDataModel _applicationDataModel;
     /** AboutBox */
@@ -170,6 +173,8 @@ public abstract class App {
     private static ShowReleaseAction _showReleaseAction = null;
     /** Show FAQ handling action */
     private static ShowFaqAction _showFaqAction = null;
+    /** Show Dependencies action */
+    private static ShowDependenciesAction _showDependenciesAction = null;
 
     /* members */
     /** Store a proxy to the shared ActionRegistrar facility */
@@ -239,6 +244,8 @@ public abstract class App {
 
             _logger.debug("App object instantiated and logger created.");
 
+            // Set jMCS application data attribute
+            loadDefaultApplicationData();
             // Set the application data attribute
             loadApplicationData();
 
@@ -257,6 +264,7 @@ public abstract class App {
             _showReleaseAction = new ShowReleaseAction("fr.jmmc.mcs.gui.App", "_showReleaseAction");
             _showFaqAction = new ShowFaqAction("fr.jmmc.mcs.gui.App", "_showFaqAction");
             _showHelpAction = new ShowHelpAction("fr.jmmc.mcs.gui.App", "_showHelpAction");
+            _showDependenciesAction = new ShowDependenciesAction("fr.jmmc.mcs.gui.App", "_showDependenciesAction");
 
             // If execution should not be delayed
             if (!waitBeforeExecution) {
@@ -289,16 +297,14 @@ public abstract class App {
 
         if (fileURL == null) {
             // Take the defaultData XML in order to take the default menus
-            loadDefaultApplicationData();
+            _applicationDataModel = _jMcsApplicationDataModel;
         } else {
             try {
                 // We reinstantiate the application data model
                 _applicationDataModel = new ApplicationDataModel(fileURL);
             } catch (IllegalStateException iae) {
                 _logger.error("Could not load application data from '{}' file.", fileURL, iae);
-
-                // Take the defaultData XML in order to take the default menus:
-                loadDefaultApplicationData();
+                _applicationDataModel = _jMcsApplicationDataModel;
             }
         }
     }
@@ -318,7 +324,7 @@ public abstract class App {
         _logger.warn("Loading default application data from '{}' file.", defaultXmlURL);
 
         // We reinstantiate the application data model
-        _applicationDataModel = new ApplicationDataModel(defaultXmlURL);
+        _jMcsApplicationDataModel = new ApplicationDataModel(defaultXmlURL);
     }
 
     /**
@@ -399,6 +405,14 @@ public abstract class App {
      */
     public static Action showHelpAction() {
         return _showHelpAction;
+    }
+
+    /**
+     * Return the action which tries to display dependencies
+     * @return action which tries to display dependencies
+     */
+    public static Action showDependenciesAction() {
+        return _showDependenciesAction;
     }
 
     /**
@@ -835,6 +849,13 @@ public abstract class App {
     }
 
     /**
+     * @return jMCS ApplicationDataModel instance.
+     */
+    public static ApplicationDataModel getJMcsApplicationDataModel() {
+        return _jMcsApplicationDataModel;
+    }
+
+    /**
      * Tell if the application is a beta version or not.
      * This flag is given searching one 'b' in the program version number.
      *
@@ -1210,6 +1231,32 @@ public abstract class App {
         @Override
         public void actionPerformed(ActionEvent evt) {
             BrowserLauncher.openURL(_applicationDataModel.getFaqLinkValue());
+        }
+    }
+
+    /** Action to show dependencies. */
+    protected static class ShowDependenciesAction extends RegisteredAction {
+
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+
+        /**
+         * Public constructor
+         * @param classPath the path of the class containing the field pointing to
+         * the action, in the form returned by 'getClass().getName();'.
+         * @param fieldName the name of the field pointing to the action.
+         */
+        ShowDependenciesAction(String classPath, String fieldName) {
+            super(classPath, fieldName, "Dependencies");
+        }
+
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            new DependenciesView();
         }
     }
 

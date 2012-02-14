@@ -41,8 +41,6 @@ package fr.jmmc.jmal.complex;
  */
 public final class MutableComplex implements Complex {
 
-    /** flag to enable or disable NaN / Infinity checks */
-    public static final boolean CHECK_NAN_INF = false;
     /** mutable flag to indicate if this class is mutable or not */
     private static final boolean MUTABLE = true;
 
@@ -103,21 +101,23 @@ public final class MutableComplex implements Complex {
                 return Double.POSITIVE_INFINITY;
             }
         }
-        final double absRe = abs(real);
-        final double absIm = abs(imaginary);
+        return ImmutableComplex.abs(real, imaginary);
+    }
 
-        if (absRe < absIm) {
-            if (imaginary == 0.0d) {
-                return absRe;
-            }
-            final double q = real / imaginary;
-            return absIm * Math.sqrt(1d + q * q);
-        }
-        if (real == 0.0d) {
-            return absIm;
-        }
-        final double q = imaginary / real;
-        return absRe * Math.sqrt(1d + q * q);
+    /**
+     * <p>Compute the argument of this complex number. </p> <p>The argument is the angle phi between the positive real
+     * axis and the point representing this number in the complex plane. The value returned is between -PI (not
+     * inclusive) and PI (inclusive), with negative values returned for numbers with negative imaginary parts. </p>
+     * <p>If either real or imaginary part (or both) is NaN, NaN is returned. Infinite parts are handled as
+     * java.Math.atan2 handles them, essentially treating finite parts as zero in the presence of an infinite coordinate
+     * and returning a multiple of pi/4 depending on the signs of the infinite parts. See the javadoc for
+     * java.Math.atan2 for full details.</p>
+     *
+     * @return the argument of this complex number
+     */
+    @Override
+    public double getArgument() {
+        return ImmutableComplex.getArgument(real, imaginary);
     }
 
     /**
@@ -402,22 +402,6 @@ public final class MutableComplex implements Complex {
             }
         }
         return updateOrCreateComplex(real - rhs.getReal(), imaginary - rhs.getImaginary());
-    }
-
-    /**
-     * <p>Compute the argument of this complex number. </p> <p>The argument is the angle phi between the positive real
-     * axis and the point representing this number in the complex plane. The value returned is between -PI (not
-     * inclusive) and PI (inclusive), with negative values returned for numbers with negative imaginary parts. </p>
-     * <p>If either real or imaginary part (or both) is NaN, NaN is returned. Infinite parts are handled as
-     * java.Math.atan2 handles them, essentially treating finite parts as zero in the presence of an infinite coordinate
-     * and returning a multiple of pi/4 depending on the signs of the infinite parts. See the javadoc for
-     * java.Math.atan2 for full details.</p>
-     *
-     * @return the argument of this complex number
-     */
-    @Override
-    public double getArgument() {
-        return Math.atan2(getImaginary(), getReal());
     }
 
     /**

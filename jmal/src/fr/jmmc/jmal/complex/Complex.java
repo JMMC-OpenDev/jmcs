@@ -9,6 +9,9 @@ package fr.jmmc.jmal.complex;
  */
 public interface Complex {
 
+    /** flag to enable or disable NaN / Infinity checks */
+    public boolean CHECK_NAN_INF = false;
+
     /** The square root of -1. A number representing "0.0 + 1.0i" */
     public Complex I = new ImmutableComplex(0.0d, 1.0d); // immutable complex for safety
     /** A complex number representing "NaN + NaNi" */

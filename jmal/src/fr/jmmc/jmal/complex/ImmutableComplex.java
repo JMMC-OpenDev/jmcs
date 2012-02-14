@@ -40,8 +40,6 @@ package fr.jmmc.jmal.complex;
  */
 public final class ImmutableComplex implements Complex {
 
-    /** flag to enable or disable NaN / Infinity checks */
-    public static final boolean CHECK_NAN_INF = false;
     /** mutable flag to indicate if this class is mutable or not */
     private static final boolean MUTABLE = false;
 
@@ -54,7 +52,7 @@ public final class ImmutableComplex implements Complex {
     private boolean isNaN;
     /** Record whether this complex number is infinite. */
     private boolean isInfinite;
-    
+
     /**
      * Create an immutable complex number given another complex number.
      * @param complex another complex number
@@ -84,6 +82,49 @@ public final class ImmutableComplex implements Complex {
     }
 
     /**
+     * Return the absolute value of the complex number given its real and imaginary part.
+     *
+     * @param re real part 
+     * @param im imaginary part
+     * @return the absolute value
+     */
+    public static double abs(final double re, final double im) {
+        final double absRe = abs(re);
+        final double absIm = abs(im);
+
+        if (absRe < absIm) {
+            if (im == 0.0d) {
+                return absRe;
+            }
+            final double q = re / im;
+            return absIm * Math.sqrt(1d + q * q);
+        }
+        if (re == 0.0d) {
+            return absIm;
+        }
+        final double q = im / re;
+        return absRe * Math.sqrt(1d + q * q);
+    }
+
+    /**
+     * <p>Compute the argument of the complex number given its real and imaginary part.</p>
+     * <p>The argument is the angle phi between the positive real
+     * axis and the point representing this number in the complex plane. The value returned is between -PI (not
+     * inclusive) and PI (inclusive), with negative values returned for numbers with negative imaginary parts. </p>
+     * <p>If either real or imaginary part (or both) is NaN, NaN is returned. Infinite parts are handled as
+     * java.Math.atan2 handles them, essentially treating finite parts as zero in the presence of an infinite coordinate
+     * and returning a multiple of pi/4 depending on the signs of the infinite parts. See the javadoc for
+     * java.Math.atan2 for full details.</p>
+     *
+     * @param re real part 
+     * @param im imaginary part
+     * @return the argument of the complex number given its real and imaginary part
+     */
+    public static double getArgument(final double re, final double im) {
+        return Math.atan2(im, re);
+    }
+
+    /**
      * Return the absolute value of this complex number. <p> Returns
      * <code>NaN</code> if either real or imaginary part is
      * <code>NaN</code> and
@@ -103,21 +144,23 @@ public final class ImmutableComplex implements Complex {
                 return Double.POSITIVE_INFINITY;
             }
         }
-        final double absRe = abs(real);
-        final double absIm = abs(imaginary);
+        return ImmutableComplex.abs(real, imaginary);
+    }
 
-        if (absRe < absIm) {
-            if (imaginary == 0.0d) {
-                return absRe;
-            }
-            final double q = real / imaginary;
-            return absIm * Math.sqrt(1d + q * q);
-        }
-        if (real == 0.0d) {
-            return absIm;
-        }
-        final double q = imaginary / real;
-        return absRe * Math.sqrt(1d + q * q);
+    /**
+     * <p>Compute the argument of this complex number. </p> <p>The argument is the angle phi between the positive real
+     * axis and the point representing this number in the complex plane. The value returned is between -PI (not
+     * inclusive) and PI (inclusive), with negative values returned for numbers with negative imaginary parts. </p>
+     * <p>If either real or imaginary part (or both) is NaN, NaN is returned. Infinite parts are handled as
+     * java.Math.atan2 handles them, essentially treating finite parts as zero in the presence of an infinite coordinate
+     * and returning a multiple of pi/4 depending on the signs of the infinite parts. See the javadoc for
+     * java.Math.atan2 for full details.</p>
+     *
+     * @return the argument of this complex number
+     */
+    @Override
+    public double getArgument() {
+        return ImmutableComplex.getArgument(real, imaginary);
     }
 
     /**
@@ -405,22 +448,6 @@ public final class ImmutableComplex implements Complex {
     }
 
     /**
-     * <p>Compute the argument of this complex number. </p> <p>The argument is the angle phi between the positive real
-     * axis and the point representing this number in the complex plane. The value returned is between -PI (not
-     * inclusive) and PI (inclusive), with negative values returned for numbers with negative imaginary parts. </p>
-     * <p>If either real or imaginary part (or both) is NaN, NaN is returned. Infinite parts are handled as
-     * java.Math.atan2 handles them, essentially treating finite parts as zero in the presence of an infinite coordinate
-     * and returning a multiple of pi/4 depending on the signs of the infinite parts. See the javadoc for
-     * java.Math.atan2 for full details.</p>
-     *
-     * @return the argument of this complex number
-     */
-    @Override
-    public double getArgument() {
-        return Math.atan2(getImaginary(), getReal());
-    }
-
-    /**
      * Create a complex number (immutable) or update this instance given the real and imaginary parts.
      *
      * @param other the other complex instance
@@ -445,10 +472,10 @@ public final class ImmutableComplex implements Complex {
         /*
         this.real = other.getReal();
         this.imaginary = other.getImaginary();
-
+        
         this.isNaN = other.isNaN();
         this.isInfinite = other.isInfinite();
-        */
+         */
     }
 
     /**
@@ -479,15 +506,15 @@ public final class ImmutableComplex implements Complex {
         /*
         this.real = real;
         this.imaginary = imaginary;
-
+        
         if (CHECK_NAN_INF) {
-            this.isNaN = Double.isNaN(real) || Double.isNaN(imaginary);
-            this.isInfinite = !this.isNaN && (Double.isInfinite(real) || Double.isInfinite(imaginary));
+        this.isNaN = Double.isNaN(real) || Double.isNaN(imaginary);
+        this.isInfinite = !this.isNaN && (Double.isInfinite(real) || Double.isInfinite(imaginary));
         } else {
-            this.isNaN = false;
-            this.isInfinite = false;
+        this.isNaN = false;
+        this.isInfinite = false;
         }
-        */
+         */
     }
 
     // FastMath utils:

@@ -36,10 +36,52 @@ public final class ImageUtils {
     private static final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
 
     /**
+     * Color scaling method enumeration
+     */
+    public enum ColorScale {
+
+        /** linar color scale */
+        LINEAR,
+        /** logarithmic color scale */
+        LOGARITHMIC
+    }
+
+    /**
      * Forbidden constructor
      */
     private ImageUtils() {
         // no-op
+    }
+
+    /**
+     * Convert min/max range to the given color scaling method
+     * @param min data min value
+     * @param max data max value
+     * @param colorScale color scaling method
+     * @return scaled min / max values
+     */
+    public static float[] scaleMinMax(final float min, final float max, final ColorScale colorScale) {
+
+        final float scaledMin;
+        final float scaledMax;
+        switch (colorScale) {
+            default:
+            case LINEAR:
+                scaledMin = min;
+                scaledMax = max;
+                break;
+            case LOGARITHMIC:
+                // protect against negative values including zero:
+                if (min <= 0f || max <= 0f) {
+                    throw new IllegalArgumentException("Negative or zero values in range[" + min + " - " + max + "] !");
+                }
+                scaledMin = (float) Math.log10(min);
+                scaledMax = (float) Math.log10(max);
+
+                logger.info("scaleMinMax: new range[" + scaledMin + " - " + scaledMax + "]");
+                break;
+        }
+        return new float[]{scaledMin, scaledMax};
     }
 
     /**
@@ -53,13 +95,13 @@ public final class ImageUtils {
     public static float computeScalingFactor(final float min, final float max, final int iMaxColor) {
         final int iMax = iMaxColor - 1;
 
-        float c = iMax / (max - min);
+        float factor = iMax / (max - min);
 
-        if (c == 0f) {
-            c = 1f;
+        if (factor == 0f) {
+            factor = 1f;
         }
 
-        return c;
+        return factor;
     }
 
     /**
@@ -79,10 +121,34 @@ public final class ImageUtils {
     public static BufferedImage createImage(final int width, final int height,
                                             final float[] array, final float min, final float max,
                                             final IndexColorModel colorModel) {
+        return ImageUtils.createImage(width, height, array, min, max, colorModel, ColorScale.LINEAR);
+    }
 
-        final float scalingFactor = ImageUtils.computeScalingFactor(min, max, colorModel.getMapSize());
+    /**
+     * Create an Image from the given data array using the specified Color Model
+     *
+     * @param width image width
+     * @param height image height
+     * @param array data array (1D)
+     * @param min lower data value (lower threshold)
+     * @param max upper data value (upper threshold)
+     * @param colorModel color model
+     * @param colorScale color scaling method
+     * @return new BufferedImage or null if interrupted
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
+     */
+    public static BufferedImage createImage(final int width, final int height,
+                                            final float[] array, final float min, final float max,
+                                            final IndexColorModel colorModel,
+                                            final ColorScale colorScale) {
 
-        return ImageUtils.createImage(width, height, array, min, colorModel, scalingFactor);
+        final float[] scaledMinMax = scaleMinMax(min, max, colorScale);
+
+        final float scalingFactor = computeScalingFactor(scaledMinMax[0], scaledMinMax[1], colorModel.getMapSize());
+
+        return ImageUtils.createImage(width, height, array, scaledMinMax[0], colorModel, scalingFactor, colorScale);
     }
 
     /**
@@ -102,6 +168,28 @@ public final class ImageUtils {
     public static BufferedImage createImage(final int width, final int height,
                                             final float[] array, final float min,
                                             final IndexColorModel colorModel, final float scalingFactor) {
+        return ImageUtils.createImage(width, height, array, min, colorModel, scalingFactor, ColorScale.LINEAR);
+    }
+
+    /**
+     * Create an Image from the given data array using the specified Color Model
+     *
+     * @param width image width
+     * @param height image height
+     * @param array data array (1D)
+     * @param scaledMin minimum data value or log10(min) 
+     * @param colorModel color model
+     * @param scalingFactor value to pixel coefficient
+     * @param colorScale color scaling method
+     * @return new BufferedImage or null if interrupted
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
+     */
+    public static BufferedImage createImage(final int width, final int height,
+                                            final float[] array, final float scaledMin,
+                                            final IndexColorModel colorModel, final float scalingFactor,
+                                            final ColorScale colorScale) {
         if (array == null) {
             throw new IllegalStateException("Undefined data array.");
         }
@@ -135,7 +223,7 @@ public final class ImageUtils {
             int pixEnd = step;
             for (int i = 0; i < nJobs; i++) {
                 // ensure last job goes until lineEnd:
-                jobs[i] = new ComputeImagePart(array, min, colorModel, scalingFactor, dataBuffer,
+                jobs[i] = new ComputeImagePart(array, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer,
                         pixStart, ((i == (nJobs - 1)) || (pixEnd > array.length)) ? array.length : pixEnd);
 
                 pixStart += step;
@@ -151,7 +239,7 @@ public final class ImageUtils {
 
         } else {
             // single processor: use this thread to compute the complete model image:
-            new ComputeImagePart(array, min, colorModel, scalingFactor, dataBuffer, 0, array.length).run();
+            new ComputeImagePart(array, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, 0, array.length).run();
         }
 
         // fast interrupt :
@@ -183,10 +271,33 @@ public final class ImageUtils {
     public static BufferedImage createImage(final int width, final int height,
                                             final float[][] array, final float min, final float max,
                                             final IndexColorModel colorModel) {
+        return ImageUtils.createImage(width, height, array, min, max, colorModel, ColorScale.LINEAR);
+    }
 
-        final float scalingFactor = ImageUtils.computeScalingFactor(min, max, colorModel.getMapSize());
+    /**
+     * Create an Image from the given data array using the specified Color Model
+     *
+     * @param width image width
+     * @param height image height
+     * @param array data array (2D)
+     * @param min lower data value (lower threshold)
+     * @param max upper data value (upper threshold)
+     * @param colorModel color model
+     * @param colorScale color scaling method
+     * @return new BufferedImage or null if interrupted
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
+     */
+    public static BufferedImage createImage(final int width, final int height,
+                                            final float[][] array, final float min, final float max,
+                                            final IndexColorModel colorModel, final ColorScale colorScale) {
 
-        return ImageUtils.createImage(width, height, array, min, colorModel, scalingFactor);
+        final float[] scaledMinMax = scaleMinMax(min, max, colorScale);
+
+        final float scalingFactor = computeScalingFactor(scaledMinMax[0], scaledMinMax[1], colorModel.getMapSize());
+
+        return ImageUtils.createImage(width, height, array, scaledMinMax[0], colorModel, scalingFactor, colorScale);
     }
 
     /**
@@ -206,6 +317,28 @@ public final class ImageUtils {
     public static BufferedImage createImage(final int width, final int height,
                                             final float[][] array, final float min,
                                             final IndexColorModel colorModel, final float scalingFactor) {
+        return ImageUtils.createImage(width, height, array, min, colorModel, scalingFactor, ColorScale.LINEAR);
+    }
+
+    /**
+     * Create an Image from the given data array using the specified Color Model
+     *
+     * @param width image width
+     * @param height image height
+     * @param array data array (2D) [rows][cols]
+     * @param scaledMin minimum data value or log10(min) 
+     * @param colorModel color model
+     * @param scalingFactor value to pixel coefficient
+     * @param colorScale color scaling method
+     * @return new BufferedImage or null if interrupted
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
+     */
+    public static BufferedImage createImage(final int width, final int height,
+                                            final float[][] array, final float scaledMin,
+                                            final IndexColorModel colorModel, final float scalingFactor,
+                                            final ColorScale colorScale) {
         if (array == null) {
             throw new IllegalStateException("Undefined data array.");
         }
@@ -243,8 +376,8 @@ public final class ImageUtils {
             int lineEnd = step;
             for (int i = 0; i < nJobs; i++) {
                 // ensure last job goes until lineEnd:
-                jobs[i] = new ComputeImagePart(array, width, height, min, colorModel, scalingFactor, dataBuffer,
-                        lineStart, ((i == (nJobs - 1)) || (lineEnd > height)) ? height : lineEnd);
+                jobs[i] = new ComputeImagePart(array, width, height, scaledMin, colorModel, scalingFactor, colorScale,
+                        dataBuffer, lineStart, ((i == (nJobs - 1)) || (lineEnd > height)) ? height : lineEnd);
 
                 lineStart += step;
                 lineEnd += step;
@@ -259,7 +392,7 @@ public final class ImageUtils {
 
         } else {
             // single processor: use this thread to compute the complete model image:
-            new ComputeImagePart(array, width, height, min, colorModel, scalingFactor, dataBuffer, 0, height).run();
+            new ComputeImagePart(array, width, height, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, 0, height).run();
         }
 
         // fast interrupt :
@@ -310,7 +443,7 @@ public final class ImageUtils {
      *
      * @param colorModel color model
      * @param iMaxColor index of the highest color
-     * @param value data value to convert
+     * @param value data value to convert between 0.0 and 255.0
      * @return color index
      */
     public static int getColor(final IndexColorModel colorModel, final int iMaxColor, final float value) {
@@ -329,7 +462,7 @@ public final class ImageUtils {
      *
      * @param colorModel color model
      * @param iMaxColor index of the highest color
-     * @param value data value to convert
+     * @param value data value to convert between 0.0 and 255.0
      * @param alphaMask alpha mask (0 - 255) << 24
      * @return RGB color
      */
@@ -370,6 +503,27 @@ public final class ImageUtils {
     }
 
     /**
+     * Scale the given value using linear or logarithmic scale
+     * 
+     * @param doLog10 true to use logarithmic scale
+     * @param scaledMin minimum data value or log10(min) 
+     * @param scalingFactor data to color linear scaling factor
+     * @param value value to convert
+     * @return scaled value
+     */
+    public static float getScaledValue(final boolean doLog10, final float scaledMin, final float scalingFactor, final float value) {
+        if (doLog10) {
+            if (value <= 0f) {
+                // lowest color
+                return 0f;
+            }
+            return ((float) Math.log10(value) - scaledMin) * scalingFactor;
+        }
+
+        return (value - scaledMin) * scalingFactor;
+    }
+
+    /**
      * Compute image Task that process one image slice in parallel with other tasks working on the same image:
      * Convert the given 1D or 2D data array to RGB color using the given scaling factor
      */
@@ -385,9 +539,11 @@ public final class ImageUtils {
         /** image height */
         private final int _height;
         /** lower data value */
-        private final float _min;
+        private final float _scaledMin;
         /** indexed color model */
         private final IndexColorModel _colorModel;
+        /** color scaling method */
+        private final ColorScale _colorScale;
         /** data to color linear scaling factor */
         private final float _scalingFactor;
         /* output */
@@ -403,15 +559,16 @@ public final class ImageUtils {
          * Create the task
          *
          * @param array data array (1D)
-         * @param min lower data value
+         * @param scaledMin lower data value
          * @param colorModel indexed color model
          * @param scalingFactor data to color linear scaling factor
+         * @param colorScale color scaling method
          * @param dataBuffer image raster dataBuffer
          * @param lineStart index of first line (inclusive)
          * @param lineEnd index of last line (exclusive)
          */
-        ComputeImagePart(final float[] array, final float min,
-                         final IndexColorModel colorModel, final float scalingFactor,
+        ComputeImagePart(final float[] array, final float scaledMin,
+                         final IndexColorModel colorModel, final float scalingFactor, final ColorScale colorScale,
                          final DataBuffer dataBuffer,
                          final int lineStart, final int lineEnd) {
 
@@ -419,8 +576,9 @@ public final class ImageUtils {
             this._array2D = null;
             this._width = 0;
             this._height = 0;
-            this._min = min;
+            this._scaledMin = scaledMin;
             this._colorModel = colorModel;
+            this._colorScale = colorScale;
             this._scalingFactor = scalingFactor;
             this._dataBuffer = dataBuffer;
             this._lineStart = lineStart;
@@ -433,15 +591,16 @@ public final class ImageUtils {
          * @param array data array (2D)
          * @param width image width
          * @param height image height
-         * @param min lower data value
+         * @param scaledMin lower data value
          * @param colorModel indexed color model
          * @param scalingFactor data to color linear scaling factor
+         * @param colorScale color scaling method
          * @param dataBuffer image raster dataBuffer
          * @param lineStart index of first line (inclusive)
          * @param lineEnd index of last line (exclusive)
          */
-        ComputeImagePart(final float[][] array, final int width, final int height, final float min,
-                         final IndexColorModel colorModel, final float scalingFactor,
+        ComputeImagePart(final float[][] array, final int width, final int height, final float scaledMin,
+                         final IndexColorModel colorModel, final float scalingFactor, final ColorScale colorScale,
                          final DataBuffer dataBuffer,
                          final int lineStart, final int lineEnd) {
 
@@ -449,8 +608,9 @@ public final class ImageUtils {
             this._array2D = array;
             this._width = width;
             this._height = height;
-            this._min = min;
+            this._scaledMin = scaledMin;
             this._colorModel = colorModel;
+            this._colorScale = colorScale;
             this._scalingFactor = scalingFactor;
             this._dataBuffer = dataBuffer;
             this._lineStart = lineStart;
@@ -471,9 +631,10 @@ public final class ImageUtils {
             final int height = _height;
             final float[] array1D = _array1D;
             final float[][] array2D = _array2D;
-            final float min = _min;
+            final float scaledMin = _scaledMin;
             final IndexColorModel colorModel = _colorModel;
             final float scalingFactor = _scalingFactor;
+            final boolean doLog10 = (_colorScale == ColorScale.LOGARITHMIC);
             /* output */
             final DataBuffer dataBuffer = _dataBuffer;
             /* job boundaries */
@@ -494,7 +655,9 @@ public final class ImageUtils {
                 // initialize raster pixels
                 if (array1D != null) {
                     for (int i = lineStart; i < lineEnd; i++) {
-                        dataBuffer.setElem(i, getRGB(colorModel, iMaxColor, (array1D[i] - min) * scalingFactor, ALPHA_MASK));
+
+                        dataBuffer.setElem(i, getRGB(colorModel, iMaxColor,
+                                getScaledValue(doLog10, scaledMin, scalingFactor, array1D[i]), ALPHA_MASK));
 
                         // fast interrupt:
                         if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
@@ -510,7 +673,9 @@ public final class ImageUtils {
                         row = array2D[j];
 
                         for (i = 0; i < width; i++) {
-                            dataBuffer.setElem(offset + i, getRGB(colorModel, iMaxColor, (row[i] - min) * scalingFactor, ALPHA_MASK));
+
+                            dataBuffer.setElem(offset + i, getRGB(colorModel, iMaxColor,
+                                    getScaledValue(doLog10, scaledMin, scalingFactor, row[i]), ALPHA_MASK));
                         }
 
                         // fast interrupt:
@@ -526,7 +691,9 @@ public final class ImageUtils {
                 // initialize raster pixels
                 if (array1D != null) {
                     for (int i = lineStart; i < lineEnd; i++) {
-                        dataBuffer.setElem(i, getColor(colorModel, iMaxColor, (array1D[i] - min) * scalingFactor));
+
+                        dataBuffer.setElem(i, getColor(colorModel, iMaxColor,
+                                getScaledValue(doLog10, scaledMin, scalingFactor, array1D[i])));
 
                         // fast interrupt:
                         if (i % stepInterrupt == 0 && currentThread.isInterrupted()) {
@@ -542,7 +709,9 @@ public final class ImageUtils {
                         row = array2D[j];
 
                         for (i = 0; i < width; i++) {
-                            dataBuffer.setElem(offset + i, getColor(colorModel, iMaxColor, (row[i] - min) * scalingFactor));
+
+                            dataBuffer.setElem(offset + i, getColor(colorModel, iMaxColor,
+                                    getScaledValue(doLog10, scaledMin, scalingFactor, row[i])));
                         }
 
                         // fast interrupt:

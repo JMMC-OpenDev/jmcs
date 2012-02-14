@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmal.model;
 
+import fr.jmmc.jmal.image.ImageUtils.ColorScale;
 import fr.jmmc.jmal.model.ModelUVMapService.ImageMode;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -22,6 +23,8 @@ public final class UVMapData {
     private final ImageMode mode;
     /** image color model */
     private final IndexColorModel colorModel;
+    /** image color scale */
+    private final ColorScale colorScale;
     /** uv frequency area */
     private final Rectangle.Double uvRect;
     /** target name */
@@ -49,10 +52,11 @@ public final class UVMapData {
      * @param max visibility maximum value (amplitude or phase)
      * @param uvData UV Model image
      * @param uvMap uv map image
+     * @param colorScale color scaling method
      */
     public UVMapData(final ImageMode mode, final int imageSize, final IndexColorModel colorModel,
                      final Rectangle.Double uvRect, final Float min, final Float max,
-                     final float[][] uvData, final BufferedImage uvMap) {
+                     final float[][] uvData, final BufferedImage uvMap, final ColorScale colorScale) {
         this.mode = mode;
         this.imageSize = imageSize;
         this.colorModel = colorModel;
@@ -61,6 +65,7 @@ public final class UVMapData {
         this.max = max;
         this.uvData = uvData;
         this.uvMap = uvMap;
+        this.colorScale = colorScale;
     }
 
     /**
@@ -160,6 +165,14 @@ public final class UVMapData {
     }
 
     /**
+     * Return the image color scale
+     * @return image color scale
+     */
+    public ColorScale getColorScale() {
+        return colorScale;
+    }
+
+    /**
      * Check if this UV Map Data has the same input parameters to reuse its computed model image :
      * @param targetName target name
      * @param targetVersion target version
@@ -194,6 +207,7 @@ public final class UVMapData {
             return false;
         }
 
+        // TODO: add colorScale:
         return true;
     }
 }

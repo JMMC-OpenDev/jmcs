@@ -5,6 +5,8 @@ package fr.jmmc.jmal.model;
 
 import fr.jmmc.jmal.complex.MutableComplex;
 import fr.jmmc.jmal.image.ImageUtils;
+import fr.jmmc.jmal.image.ImageUtils.ColorScale;
+import fr.jmmc.jmal.image.job.ImageMinMaxJob;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmcs.util.concurrent.InterruptedJobException;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
@@ -168,15 +170,31 @@ public final class ModelUVMapService {
         }
 
         // 4 - Get the image with the given color model :
+        final ColorScale colorScale;
 
         // min - max range used by color conversion:
         final float[] stdRange;
         switch (mode) {
             case AMP:
-                stdRange = RANGE_AMPLITUDE;
+                // stdRange = RANGE_AMPLITUDE;
+
+                // update min/max ignoring zero:
+                final ImageMinMaxJob minMaxJob = new ImageMinMaxJob(data, imageSize, imageSize, true);
+
+                logger.info("ImageMinMaxJob forkAndJoin");
+
+                minMaxJob.forkAndJoin();
+
+                logger.info("ImageMinMaxJob result: " + minMaxJob.getMin() + " - " + minMaxJob.getMax());                
+                
+                stdRange = new float[] {minMaxJob.getMin(), minMaxJob.getMax()};
+                
+                colorScale = ImageUtils.ColorScale.LOGARITHMIC;
+                
                 break;
             case PHASE:
                 stdRange = RANGE_PHASE;
+                colorScale = ImageUtils.ColorScale.LINEAR;
                 break;
             default:
                 return null;
@@ -191,10 +209,10 @@ public final class ModelUVMapService {
         }
 
         // throws InterruptedJobException if the current thread is interrupted (cancelled):
-        final BufferedImage uvMap = ImageUtils.createImage(imageSize, imageSize, data, min, max, colorModel);
+        final BufferedImage uvMap = ImageUtils.createImage(imageSize, imageSize, data, min, max, colorModel, colorScale);
 
-        // provide results :
-        uvMapData = new UVMapData(mode, imageSize, colorModel, uvRect, Float.valueOf(min), Float.valueOf(max), data, uvMap);
+        // provide results :;
+        uvMapData = new UVMapData(mode, imageSize, colorModel, uvRect, Float.valueOf(min), Float.valueOf(max), data, uvMap, colorScale);
 
         if (logger.isInfoEnabled()) {
             logger.info("compute : duration = {} ms.", 1e-6d * (System.nanoTime() - start));

@@ -3,7 +3,10 @@
  ***************************************************************************** */
 package fr.jmmc.jmcs.util.concurrent;
 
+import ch.qos.logback.classic.Level;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -25,6 +28,8 @@ public final class ParallelJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(ParallelJobExecutor.class.getName());
     /** singleton pattern */
     private static volatile ParallelJobExecutor instance = null;
+    /** debug flag */
+    private static final boolean DEBUG_JOBS = false;
     /* members */
     /** number of available processors */
     private final int cpuCount;
@@ -65,12 +70,16 @@ public final class ParallelJobExecutor {
         this.maxParallelJob = cpuCount;
 
         // create any the thread pool even if there is only 1 CPU:
-        parallelExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cpuCount, new JobWorkerThreadFactory());
+        parallelExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cpuCount * 3 / 2, new JobWorkerThreadFactory());
 
         // create threads now:
         parallelExecutor.prestartAllCoreThreads();
 
         logger.info("ParallelJobExecutor ready with {} threads", parallelExecutor.getMaximumPoolSize());
+
+        if (DEBUG_JOBS) {
+            ((ch.qos.logback.classic.Logger) logger).setLevel(Level.DEBUG);
+        }
     }
 
     /**
@@ -170,6 +179,13 @@ public final class ParallelJobExecutor {
      */
     public Future<?>[] fork(final Callable<?>[] jobs) {
         if (jobs != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("starting {} jobs ...", jobs.length);
+            }
+            if (DEBUG_JOBS) {
+                logger.info("starting {} jobs ...", jobs.length, new Throwable());
+            }
+
             final int len = jobs.length;
             final Future<?>[] futures = new Future<?>[len];
 
@@ -181,6 +197,10 @@ public final class ParallelJobExecutor {
 
                 futures[i] = future;
             }
+            if (logger.isDebugEnabled()) {
+                logger.debug("{} jobs started.", futures.length);
+            }
+
             return futures;
         }
         // illegal state ?
@@ -193,12 +213,22 @@ public final class ParallelJobExecutor {
      *
      * @param jobName job name used when throwing an exception
      * @param futures Future objects to wait for
+     * @return results as List<Object>
      *
      * @throws InterruptedJobException if the current thread is interrupted (cancelled)
      * @throws RuntimeException if any exception occured during the computation
      */
-    public void join(final String jobName, final Future<?>[] futures) throws InterruptedJobException, RuntimeException {
+    public List<Object> join(final String jobName, final Future<?>[] futures) throws InterruptedJobException, RuntimeException {
         final int len = futures.length;
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("join {} jobs ...", len);
+        }
+        if (DEBUG_JOBS) {
+            logger.info("join {} jobs ...", len, new Throwable());
+        }
+
+        final List<Object> results = new ArrayList<Object>(len);
 
         int done = 0;
         boolean doCancel = false;
@@ -210,7 +240,7 @@ public final class ParallelJobExecutor {
 
                 logger.debug("wait for job: {}", future);
 
-                future.get();
+                results.add(future.get());
                 done++;
             }
         } catch (ExecutionException ee) {
@@ -235,6 +265,11 @@ public final class ParallelJobExecutor {
                 Thread.currentThread().interrupt();
             }
         }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("{} jobs joined.", len);
+        }
+        return results;
     }
 
     /**

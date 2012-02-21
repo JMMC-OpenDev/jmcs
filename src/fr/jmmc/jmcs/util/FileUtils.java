@@ -5,27 +5,19 @@
  */
 package fr.jmmc.jmcs.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
-
+import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * Several File utility methods
@@ -37,7 +29,7 @@ public final class FileUtils {
     /**
      * Class logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(FileUtils.class.getName());
     /**
      * platform dependent line separator
      */
@@ -131,7 +123,7 @@ public final class FileUtils {
      * @throws IllegalStateException if the file is not found
      */
     public static URL getResource(final String classpathLocation) throws IllegalStateException {
-        logger.debug("getResource : {}", classpathLocation);
+        _logger.debug("getResource : {}", classpathLocation);
 
         // use the class loader resource resolver
         final URL url = FileUtils.class.getClassLoader().getResource(classpathLocation);
@@ -141,6 +133,76 @@ public final class FileUtils {
         }
 
         return url;
+    }
+
+    /**
+     * List directory contents for a resource folder (not recursive, skip sub-folders).
+     * 
+     * @author based on Greg Briggs work available at http://www.uofr.net/~greg/java/get-resource-listing.html
+     *
+     * @param path Should end with "/", but not start with one.
+     *
+     * @return Just the name of each member item, not the full paths.
+     *
+     * @throws URISyntaxException 
+     * @throws IOException 
+     */
+    public static String[] getResourceNamesAtPath(final String path) throws URISyntaxException, IOException {
+        _logger.debug("getResourceNamesAtPath : {}", path);
+
+        final Class clazz = FileUtils.class;
+        URL pathURL = clazz.getClassLoader().getResource(path);
+
+        // A file path : easy enough !
+        if (pathURL != null && pathURL.getProtocol().equals("file")) {
+            return new File(pathURL.toURI()).list();
+        }
+
+        /* 
+         * In case of a jar file, we can't actually find a directory.
+         * Have to assume the same jar as clazz.
+         */
+        if (pathURL == null) {
+            final String me = clazz.getName().replace(".", "/") + ".class";
+            pathURL = clazz.getClassLoader().getResource(me);
+        }
+
+        // A JAR path
+        if (pathURL.getProtocol().equals("jar")) {
+            final String fullPath = pathURL.getPath();
+            final String jarPath = fullPath.substring(5, fullPath.indexOf("!")); // Strip out only the JAR file
+
+            final Set<String> fileNames = new HashSet<String>(); // Avoid duplicates in case of subdirectories
+
+            final JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+            final Enumeration<JarEntry> entries = jar.entries(); // Gives ALL entries in jar
+
+            // Loop over ALL jar entries
+            while (entries.hasMoreElements()) {
+
+                final String fullEntryPath = entries.nextElement().getName();
+
+                // Only consider entries starting with given path
+                if (fullEntryPath.startsWith(path)) {
+
+                    String entryName = fullEntryPath.substring(path.length());
+
+                    // If it is a subdirectory
+                    int checkSubdir = entryName.indexOf("/");
+                    if (checkSubdir >= 0) {
+                        //entry = entry.substring(0, checkSubdir); // We just return the directory name
+                        continue; // Skip sub-folders
+                    }
+
+                    // Skip ./
+                    if (entryName.length() > 0) {
+                        fileNames.add(entryName);
+                    }
+                }
+            }
+            return fileNames.toArray(new String[fileNames.size()]);
+        }
+        throw new UnsupportedOperationException("Cannot list files for URL " + pathURL);
     }
 
     /**
@@ -267,7 +329,7 @@ public final class FileUtils {
             try {
                 r.close();
             } catch (IOException ioe) {
-                logger.debug("IO close failure.", ioe);
+                _logger.debug("IO close failure.", ioe);
             }
         }
     }
@@ -282,7 +344,7 @@ public final class FileUtils {
             try {
                 w.close();
             } catch (IOException ioe) {
-                logger.debug("IO close failure.", ioe);
+                _logger.debug("IO close failure.", ioe);
             }
         }
     }
@@ -297,7 +359,7 @@ public final class FileUtils {
             try {
                 in.close();
             } catch (IOException ioe) {
-                logger.debug("IO close failure.", ioe);
+                _logger.debug("IO close failure.", ioe);
             }
         }
     }
@@ -312,7 +374,7 @@ public final class FileUtils {
             try {
                 out.close();
             } catch (IOException ioe) {
-                logger.debug("IO close failure.", ioe);
+                _logger.debug("IO close failure.", ioe);
             }
         }
     }

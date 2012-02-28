@@ -49,16 +49,17 @@ import edu.emory.mathcs.utils.ConcurrencyUtils;
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
  * 
  */
-public strictfp class FloatFFT_2D {
+public final strictfp class FloatFFT_2D {
 
-    private int rows;
+    private final FloatFFT_1D fftColumns;
+    private final FloatFFT_1D fftRows;
+    private final boolean isPowerOfTwo;
+    private final boolean useThreads;
+    private final int rows;
     private int columns;
     private float[] t;
-    private FloatFFT_1D fftColumns, fftRows;
     private int oldNthreads;
     private int nt;
-    private boolean isPowerOfTwo = false;
-    private boolean useThreads = false;
 
     /**
      * Creates new instance of FloatFFT_2D.
@@ -68,7 +69,20 @@ public strictfp class FloatFFT_2D {
      * @param columns
      *            number of columns
      */
-    public FloatFFT_2D(int rows, int columns) {
+    public FloatFFT_2D(final int rows, final int columns) {
+        this(rows, columns, false);
+    }
+
+    /**
+     * Creates new instance of FloatFFT_2D.
+     * 
+     * @param rows
+     *            number of rows
+     * @param columns
+     *            number of columns
+     * @param useSubSet true to allocate only memory for realForwardSubset
+     */
+    public FloatFFT_2D(final int rows, final int columns, final boolean useSubSet) {
         if (rows <= 1 || columns <= 1) {
             throw new IllegalArgumentException("rows and columns must be greater than 1");
         }
@@ -76,25 +90,34 @@ public strictfp class FloatFFT_2D {
         this.columns = columns;
 
         // fix integer capacity for rows = columns = 65536 !
-        if (((long) rows * columns) >= ConcurrencyUtils.getThreadsBeginN_2D()) {
-            this.useThreads = true;
-        }
+        this.useThreads = (((long) rows * columns) >= ConcurrencyUtils.getThreadsBeginN_2D());
+
         if (ConcurrencyUtils.isPowerOf2(rows) && ConcurrencyUtils.isPowerOf2(columns)) {
             isPowerOfTwo = true;
-            oldNthreads = ConcurrencyUtils.getNumberOfThreads();
-            nt = 8 * oldNthreads * rows;
-            if (2 * columns == 4 * oldNthreads) {
-                nt >>= 1;
-            } else if (2 * columns < 4 * oldNthreads) {
-                nt >>= 2;
+
+            // subset allocation:
+            if (useSubSet) {
+                oldNthreads = -1;
+                nt = ConcurrencyUtils.getNumberOfThreads() * 2 * rows;
+                t = new float[nt];
+            } else {
+                oldNthreads = ConcurrencyUtils.getNumberOfThreads();
+                nt = 8 * oldNthreads * rows;
+                if (2 * columns == 4 * oldNthreads) {
+                    nt >>= 1;
+                } else if (2 * columns < 4 * oldNthreads) {
+                    nt >>= 2;
+                }
+                t = new float[nt];
             }
-            t = new float[nt];
+        } else {
+            isPowerOfTwo = false;
         }
-        fftRows = new FloatFFT_1D(rows);
+        fftRows = new FloatFFT_1D(rows, false);
         if (rows == columns) {
             fftColumns = fftRows;
         } else {
-            fftColumns = new FloatFFT_1D(columns);
+            fftColumns = new FloatFFT_1D(columns, false);
         }
     }
 
@@ -696,213 +719,243 @@ public strictfp class FloatFFT_2D {
      * forward transform, use <code>realForwardFull</code>. To get back the
      * original data, use <code>realInverse</code> on the output of this method.
      * 
-     * @param subSize size = rows = columns of the input array a and the output array
-     *                containing the subset of the 2D forward DFT (must be a power of two)
+     * @param subSize size = rows = columns of the output array containing the subset of the 2D forward DFT (must be a power of two TODO check)
+     * @param inputSize size = rows = columns of the input array a
      * @param a data to transform
      * @return subset of the 2D forward DFT (power of two) of the given size subSize = rows = columns
      */
-    public float[][] realForwardSubset(final int subSize, final float[][] a) {
+    public float[][] realForwardSubset(final int subSize, final int inputSize, final float[][] a) {
+//        System.out.println("realForwardSubset: inputSize = " + inputSize + " - subSize = " + subSize + " - fft rows = " + rows + " - cols = " + columns);
+
         if (isPowerOfTwo == false) {
-            throw new IllegalArgumentException("rows and columns must be power of two numbers");
+            throw new IllegalArgumentException("rows and columns must be power of two numbers.");
         }
-        // add 1 column more to compute/ store columns/2 values:
-        final int subSizeColumns = subSize + 2;
+        if (subSize % 2 == 1) {
+            throw new IllegalArgumentException("sub size must be an even number because subSize = number of rows = 2 * (columns / 2).");
+        }
+        if (inputSize % 2 == 1) {
+            throw new IllegalArgumentException("input size must be an even number because input size / 2 = center of image.");
+        }
+        if (inputSize > subSize) {
+            throw new IllegalArgumentException("output size must be larger than input size.");
+        }
+
+        // Test useThreads flag to use then only 1 thread:
+        final int nthreads = (!useThreads) ? 1 : ConcurrencyUtils.getNumberOfThreads();
+
+        // fix t array capacity:
+        if (oldNthreads != -1) {
+            nt = nthreads * 2 * rows;
+            t = new float[nt];
+            oldNthreads = -1; // to ensure correct allocation next time
+        }
+
+        // add 1 column more to compute and store columns/2 values:
+        final int subSizeColumns = (subSize < columns) ? subSize + 2 : subSize;
 
         // Create new output array (could be given):
         final float[][] output = new float[subSize][subSizeColumns];
 
-//        System.out.println("realForwardSubset: size = " + subSize + " - fft rows = " + rows + " - cols = " + columns);
-
-        // backup FFT dimensions:
-        final int backupRows = rows;
-        final int backupColumns = columns;
-
-//        System.out.println("realForwardSubset: FFT domain size = subSize * (rows == columns) = " + (subSize * (long) columns));
-
-
-        // 0 - determine chunk size to consume less memory for very big FFT (rows / columns):
-        final int memoryThreshold = 16384 * 1024; // 32M
-
-        final int chunkSize = (((long) subSize * columns) > memoryThreshold) ? memoryThreshold / columns : subSize;
-
-        final boolean useChunks = (chunkSize != subSize);
-
-//        System.out.println("realForwardSubset: FFT chunkSize = " + chunkSize + " / Pass = " + (subSize / chunkSize));
-
-
-        // fix arrays using rows = FFT size and columns = chunkSize
-        final int nthreads = ConcurrencyUtils.getNumberOfThreads();
-
-        nt = 8 * nthreads * rows;
-        if (chunkSize == 4 * nthreads) {
-            nt >>= 1;
-        } else if (chunkSize < 4 * nthreads) {
-            nt >>= 2;
-        }
-        t = new float[nt];
-        oldNthreads = nthreads;
-
+//        System.out.println("realForwardSubset: nthreads = " + nthreads);
 //        System.out.println("realForwardSubset: 1D array t[] size = " + t.length);
 
+
         // idem for columns or rows (equals):
-        final int centerOffset = (columns - subSize) / 2;
+        final int centerOffset = (columns - inputSize) / 2;
+        final int rmul2 = 2 * rows;
+        final int sdiv2 = subSize / 2;
+        final int scdiv2 = subSizeColumns / 2;
+        final int colOffset = (columns - sdiv2);
+
+        // emptyData contain 2 * rows or columns used by both rows and columns:
+        final float[] emptyData = new float[Math.max(rmul2, columns)];
+
+        // computation tasks:
+        final Runnable[] tasks = new Runnable[nthreads];
 
 
         // 1 - Process rows:
 //        System.out.println("realForwardSubset: process rows ...");
+        /*
+         * xdft2d0_subth1(1, 1, a, true);
+         */
+//        long start = System.nanoTime();
 
-        float[][] newRows = new float[chunkSize][columns];
-        float[] emptyRows = (useChunks) ? new float[columns] : null;
+        // create tasks:
+        for (int i = 0; i < nthreads; i++) {
+            final int n0 = i;
+            final int startt = columns * i;
 
-        for (int chunk = 0; chunk < subSize; chunk += chunkSize) {
+            tasks[i] = new Runnable() {
 
-            // center image in newRows:
-            for (int j = 0; j < chunkSize; j++) {
-                if (useChunks) {
-                    // clear complete row:
-                    System.arraycopy(emptyRows, 0, newRows[j], 0, columns);
+                @Override
+                public void run() {
+
+                    for (int r = n0; r < inputSize; r += nthreads) {
+
+                        // A - clear complete row:
+                        System.arraycopy(emptyData, 0, t, startt, columns);
+
+                        // B - copy input data and center image in t:
+                        System.arraycopy(a[r], 0, t, startt + centerOffset, inputSize);
+
+                        // C - compute real forward as t contains real data:
+                        fftColumns.realForward(t, startt);
+
+                        // D - copy data from t to the beginning of output (complex data ie 2*columns):
+                        System.arraycopy(t, startt, output[r], 0, subSizeColumns);
+                    }
                 }
-                System.arraycopy(a[chunk + j], 0, newRows[j], centerOffset, subSize);
-            }
+            };
+        }
 
-            // fix rows:
-            rows = chunkSize;
+        if (nthreads > 1) {
+            // fork and join tasks:
+            ConcurrencyUtils.forkAndJoin(tasks);
 
-            if ((nthreads > 1) && useThreads) {
-                xdft2d0_subth1(1, 1, newRows, true); // multi thread
-            } else {
-                for (int r = 0; r < rows; r++) {
-                    fftColumns.realForward(newRows[r]);
-                }
-            }
+        } else {
+            // execute the single task using the current thread:
+            tasks[0].run();
+        }
+//        System.out.println("rows: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");
 
-            // restore rows:
-            rows = backupRows;
-
-            // 1b - copy data from newRows(first quadrant) to output:
-
-            // complex data (2*columns):
-            for (int j = 0; j < chunkSize; j++) {
-                System.arraycopy(newRows[j], 0, output[chunk + j], 0, subSizeColumns);
-            }
-
-        } // chunk
-
-        // cleanup (GC):
-        newRows = null;
-        emptyRows = null;
 
 
         // 2 - Process columns (complex data):
 //        System.out.println("realForwardSubset: process columns ...");
+        /*
+         * cdft2d_subth(-1, a, true);
+         */
+//        start = System.nanoTime();
 
-        float[][] newCols = new float[rows][chunkSize];
-        float[] emptyCols = (useChunks) ? new float[chunkSize] : null;
+        for (int i = 0; i < nthreads; i++) {
+            final int n0 = i;
+            final int startt = rmul2 * i;
 
-        final int ro2 = subSize / 2;
-        final int colOffset = (columns - ro2);
+            tasks[i] = new Runnable() {
 
-        for (int chunk = 0; chunk < subSize; chunk += chunkSize) {
+                @Override
+                public void run() {
+                    int idx2, reIdx, imIdx;
+                    float[] oRow;
+                    float re, im;
 
-            // copy data from output to newCols:
+                    // include column/2:
+                    for (int c = n0; c < scdiv2; c += nthreads) {
+                        reIdx = 2 * c;
+                        imIdx = reIdx + 1;
 
-            if (useChunks) {
-                for (int j = 0; j < rows; j++) {
-                    // clear complete column:
-                    System.arraycopy(emptyCols, 0, newCols[j], 0, chunkSize);
+                        // A - clear complete column:
+                        System.arraycopy(emptyData, 0, t, startt, rmul2);
+
+                        // B - copy row data and center rows in t (complex data ie 2*columns):
+                        for (int r = 0; r < inputSize; r++) {
+                            idx2 = startt + 2 * (r + centerOffset);
+
+                            oRow = output[r];
+
+                            // process array one by one (cache efficiency):
+                            re = oRow[reIdx];
+                            im = oRow[imIdx];
+
+                            t[idx2] = re;
+                            t[idx2 + 1] = im;
+                        }
+
+                        // C - compute complex forward as t contains complex data:
+                        fftRows.complexForward(t, startt);
+
+                        // D - Fix column 0 and column/2 directly on t:
+                        if (c == 0 || c == sdiv2) {
+                            /*
+                             * rdft2d_sub(1, a);
+                             */
+
+                            // process only subSize / 2 rows:
+
+                            for (int i = 1, idxI, idxJ; i < sdiv2; i++) {
+                                idxI = 2 * i;
+                                idxJ = 2 * (rows - i);
+
+                                t[idxJ] = 0.5f * (t[idxI] - t[idxJ]);
+                                t[idxI] -= t[idxJ]; // ie : 0.5f * (t[idxI] + t[idxJ])
+
+                                t[idxJ + 1] = 0.5f * (t[idxI + 1] + t[idxJ + 1]);
+                                t[idxI + 1] -= t[idxJ + 1];
+                            }
+                        }
+
+                        // E - copy data from t(start and end) to output (complex data ie 2*columns):
+                        for (int r = 0; r < sdiv2; r++) {
+                            idx2 = startt + 2 * r;
+
+                            // process array one by one (cache efficiency):
+                            re = t[idx2];
+                            im = t[idx2 + 1];
+
+                            oRow = output[r];
+                            oRow[reIdx] = re;
+                            oRow[imIdx] = im;
+
+                            idx2 = startt + 2 * (r + colOffset);
+
+                            // process array one by one (cache efficiency):
+                            re = t[idx2];
+                            im = t[idx2 + 1];
+
+                            oRow = output[r + sdiv2];
+                            oRow[reIdx] = re;
+                            oRow[imIdx] = im;
+                        }
+                    }
                 }
-            }
-
-            // center image in newCols with complex data (2*columns):
-            for (int j = 0; j < subSize; j++) {
-                System.arraycopy(output[j], chunk, newCols[j + centerOffset], 0, chunkSize);
-            }
-
-            // fix columns:
-            columns = chunkSize;
-
-            if ((nthreads > 1) && useThreads) {
-                cdft2d_subth(-1, newCols, true); // multi thread
-            } else {
-                cdft2d_sub(-1, newCols, true); // single thread
-            }
-
-            // restore columns:
-            columns = backupColumns;
-
-
-            // 3 - Fix column 0 on newCols:
-            if (chunk == 0) {
-                rdft2d_sub(1, newCols);
-            }
-
-            // 4 - copy data from newCols to output:
-
-            // complex data (2*columns):
-            for (int j = 0; j < ro2; j++) {
-                System.arraycopy(newCols[j], 0, output[j], chunk, chunkSize);
-                System.arraycopy(newCols[j + colOffset], 0, output[j + ro2], chunk, chunkSize);
-            }
+            };
         }
 
-        // cleanup (GC):
-        newCols = null;
-        emptyCols = null;
+        if (nthreads > 1) {
+            // fork and join tasks:
+            ConcurrencyUtils.forkAndJoin(tasks);
 
-        // fix columns/2 column - single thread:
+        } else {
+            // execute the single task using the current thread:
+            tasks[0].run();
+        }
+//        System.out.println("cols: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");
 
-        int idx2;
-        for (int r = 0; r < rows; r++) {
-            idx2 = 2 * r;
-            if (r < centerOffset || r >= centerOffset + subSize) {
-                t[idx2] = 0f;
-                t[idx2 + 1] = 0f;
-            } else {
-                t[idx2] = output[r - centerOffset][subSize];
-                t[idx2 + 1] = output[r - centerOffset][subSize + 1];
+
+        if (subSize < columns) {
+            // fix column zero:
+            // Known problem on values at row=rows/2 and col=columns/2 (data symetry on boundaries and missing imaginary part) = acceptable.
+            // Solution: fix output[rows][0/1] when rows > 1
+            /*
+             * a[rows-k1][1] = Re[k1][columns/2] = Re[rows-k1][columns/2], 
+             * a[rows-k1][0] = -Im[k1][columns/2] = Im[rows-k1][columns/2], 
+             *       0&lt;k1&lt;rows/2, 
+             */
+            for (int r = 1, j; r < sdiv2; r++) {
+                j = subSize - r;
+
+                output[j][1] = output[r][subSize];
+                output[j][0] = -output[r][subSize + 1];
+            }
+
+            /*
+             * a[0][1] = Re[0][columns/2], 
+             */
+            output[0][1] = output[0][subSize];
+
+            /*
+             * a[rows/2][1] = Re[rows/2][columns/2]
+             */
+            output[sdiv2][1] = output[sdiv2][subSize]; // quadrant 3
+
+
+            // Clear column/2 values:
+            for (int r = 0; r < subSize; r++) {
+                output[r][subSize] = 0f;
+                output[r][subSize + 1] = 0f;
             }
         }
-        fftRows.complexForward(t, 0);
-
-        for (int r = 0; r < ro2; r++) {
-            idx2 = 2 * r;
-            output[r][subSize] = t[idx2];
-            output[r][subSize + 1] = t[idx2 + 1];
-
-            idx2 = 2 * (r + colOffset);
-            output[r + ro2][subSize] = t[idx2];
-            output[r + ro2][subSize + 1] = t[idx2 + 1];
-        }
-
-        // fix column zero:
-
-        // Known problem on values at row=rows/2 and col=columns/2 (data symetry on boundaries and missing imaginary part) = acceptable.
-
-        // Solution: fix output[rows][0/1] when rows > 1
-        /*
-         * a[rows-k1][1] = Re[k1][columns/2] = Re[rows-k1][columns/2], 
-         * a[rows-k1][0] = -Im[k1][columns/2] = Im[rows-k1][columns/2], 
-         *       0&lt;k1&lt;rows/2, 
-         */
-        for (int r = 1, j; r < ro2; r++) {
-            j = subSize - r;
-
-            output[j][1] = output[r][subSize];
-            output[j][0] = -output[r][subSize + 1];
-        }
-
-        /*
-         * a[0][0] = Re[0][0],        => OK
-         * a[0][1] = Re[0][columns/2], 
-         */
-        output[0][1] = output[0][subSize];
-
-        /*
-         * a[rows/2][0] = Re[rows/2][0], 
-         * a[rows/2][1] = Re[rows/2][columns/2]
-         */
-//        output[ro2][0] = output[ro2][0]; // quadrant 2
-        output[ro2][1] = output[ro2][subSize]; // quadrant 3
 
         return output;
     }

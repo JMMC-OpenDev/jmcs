@@ -70,7 +70,8 @@ public final class ParallelJobExecutor {
         this.maxParallelJob = cpuCount;
 
         // create any the thread pool even if there is only 1 CPU:
-        parallelExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cpuCount * 3 / 2, new JobWorkerThreadFactory());
+        final int threadCount = cpuCount; /* cpuCount * 3 / 2; */
+        parallelExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount, new JobWorkerThreadFactory());
 
         // create threads now:
         parallelExecutor.prestartAllCoreThreads();

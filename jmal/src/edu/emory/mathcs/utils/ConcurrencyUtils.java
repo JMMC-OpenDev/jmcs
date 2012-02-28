@@ -59,11 +59,10 @@ public final class ConcurrencyUtils {
      */
     static {
         jobExecutor = ParallelJobExecutor.getInstance();
-        
+
         NTHREADS = prevPow2(getNumberOfProcessors());
     }
-    
-    
+
     /** Private constructor */
     private ConcurrencyUtils() {
         super();
@@ -279,5 +278,14 @@ public final class ConcurrencyUtils {
      */
     public static void waitForCompletion(final Future<?>[] futures) {
         jobExecutor.join("JTransforms.wait", futures);
+    }
+
+    /**
+     * Submits Runnable tasks for execution and waits for all threads to complete tasks
+     * 
+     * @param tasks Runnable tasks for execution
+     */
+    public static void forkAndJoin(final Runnable[] tasks) {
+        waitForCompletion(jobExecutor.fork(tasks));
     }
 }

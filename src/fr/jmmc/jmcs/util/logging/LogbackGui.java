@@ -185,6 +185,9 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         // update text value (rounded to 0.1s):
         this.jTextFieldPeriod.setText(df1.format(0.001d * milliseconds) + " s");
+        
+        // apply new delay to the timer
+        this.timerRefresh.setDelay(milliseconds);
     }
 
     /* Tree related methods */

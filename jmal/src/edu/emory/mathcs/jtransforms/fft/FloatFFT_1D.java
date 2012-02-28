@@ -51,13 +51,22 @@ import edu.emory.mathcs.utils.ConcurrencyUtils;
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
  * 
  */
-public strictfp class FloatFFT_1D {
+public strictfp final class FloatFFT_1D {
 
     private static enum Plans {
         SPLIT_RADIX, MIXED_RADIX, BLUESTEIN
     }
 
-    private int n;
+    private static final int[] factors = { 4, 2, 3, 5 };
+
+    private static final float PI = 3.14159265358979311599796346854418516f;
+
+    private static final float TWO_PI = 6.28318530717958623199592693708837032f;
+
+    /* members */
+    private final boolean useThreads;
+    
+    private final int n;
 
     private int nBluestein;
 
@@ -77,13 +86,8 @@ public strictfp class FloatFFT_1D {
 
     private float[] bk2;
 
-    private Plans plan;
+    private final Plans plan;
 
-    private static final int[] factors = { 4, 2, 3, 5 };
-
-    private static final float PI = 3.14159265358979311599796346854418516f;
-
-    private static final float TWO_PI = 6.28318530717958623199592693708837032f;
 
     /**
      * Creates new instance of FloatFFT_1D.
@@ -91,11 +95,22 @@ public strictfp class FloatFFT_1D {
      * @param n
      *            size of data
      */
-    public FloatFFT_1D(int n) {
+    public FloatFFT_1D(final int n) {
+        this(n, true);
+    }
+    
+    /**
+     * Creates new instance of FloatFFT_1D.
+     * 
+     * @param n size of data
+     * @param useThreads true to enable threads during computation
+     */
+    public FloatFFT_1D(final int n, final boolean useThreads) {
         if (n < 1) {
             throw new IllegalArgumentException("n must be greater than 0");
         }
         this.n = n;
+        this.useThreads = useThreads;
 
         if (!ConcurrencyUtils.isPowerOf2(n)) {
             if (getReminder(n, factors) >= 211) {
@@ -384,8 +399,8 @@ public strictfp class FloatFFT_1D {
         switch (plan) {
         case SPLIT_RADIX:
             realForward(a, offa);
-            int nthreads = ConcurrencyUtils.getNumberOfThreads();
-            if ((nthreads > 1) && (n / 2 > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+            final int nthreads = ConcurrencyUtils.getNumberOfThreads();
+            if ((this.useThreads) && (nthreads > 1) && (n / 2 > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
                 Future<?>[] futures = new Future[nthreads];
                 int k = n / 2 / nthreads;
                 for (int i = 0; i < nthreads; i++) {
@@ -587,8 +602,8 @@ public strictfp class FloatFFT_1D {
         switch (plan) {
         case SPLIT_RADIX:
             realInverse2(a, offa, scale);
-            int nthreads = ConcurrencyUtils.getNumberOfThreads();
-            if ((nthreads > 1) && (n / 2 > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+            final int nthreads = ConcurrencyUtils.getNumberOfThreads();
+            if ((this.useThreads) && (nthreads > 1) && (n / 2 > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
                 Future<?>[] futures = new Future[nthreads];
                 int k = n / 2 / nthreads;
                 for (int i = 0; i < nthreads; i++) {
@@ -1105,8 +1120,8 @@ public strictfp class FloatFFT_1D {
     private void bluestein_complex(final float[] a, final int offa, final int isign) {
         final float[] ak = new float[2 * nBluestein];
         int nthreads = 1;
-        int threads = ConcurrencyUtils.getNumberOfThreads();
-        if ((threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+        final int threads = ConcurrencyUtils.getNumberOfThreads();
+        if ((this.useThreads) && (threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
             nthreads = 2;
             if ((threads >= 4) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_4Threads())) {
                 nthreads = 4;
@@ -1270,8 +1285,8 @@ public strictfp class FloatFFT_1D {
     private void bluestein_real_full(final float[] a, final int offa, final int isign) {
         final float[] ak = new float[2 * nBluestein];
         int nthreads = 1;
-        int threads = ConcurrencyUtils.getNumberOfThreads();
-        if ((threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+        final int threads = ConcurrencyUtils.getNumberOfThreads();
+        if ((this.useThreads) && (threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
             nthreads = 2;
             if ((threads >= 4) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_4Threads())) {
                 nthreads = 4;
@@ -1424,8 +1439,8 @@ public strictfp class FloatFFT_1D {
     private void bluestein_real_forward(final float[] a, final int offa) {
         final float[] ak = new float[2 * nBluestein];
         int nthreads = 1;
-        int threads = ConcurrencyUtils.getNumberOfThreads();
-        if ((threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+        final int threads = ConcurrencyUtils.getNumberOfThreads();
+        if ((this.useThreads) && (threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
             nthreads = 2;
             if ((threads >= 4) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_4Threads())) {
                 nthreads = 4;
@@ -1574,8 +1589,8 @@ public strictfp class FloatFFT_1D {
         cftbsub(2 * nBluestein, ak, 0, ip, nw, w);
 
         int nthreads = 1;
-        int threads = ConcurrencyUtils.getNumberOfThreads();
-        if ((threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+        final int threads = ConcurrencyUtils.getNumberOfThreads();
+        if ((this.useThreads) && (threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
             nthreads = 2;
             if ((threads >= 4) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_4Threads())) {
                 nthreads = 4;
@@ -1640,8 +1655,8 @@ public strictfp class FloatFFT_1D {
     private void bluestein_real_inverse2(final float[] a, final int offa) {
         final float[] ak = new float[2 * nBluestein];
         int nthreads = 1;
-        int threads = ConcurrencyUtils.getNumberOfThreads();
-        if ((threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+        final int threads = ConcurrencyUtils.getNumberOfThreads();
+        if ((this.useThreads) && (threads > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
             nthreads = 2;
             if ((threads >= 4) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_4Threads())) {
                 nthreads = 4;
@@ -4015,7 +4030,7 @@ public strictfp class FloatFFT_1D {
         if (n > 8) {
             if (n > 32) {
                 cftf1st(n, a, offa, w, nw - (n >> 2));
-                if ((ConcurrencyUtils.getNumberOfThreads() > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+                if ((this.useThreads) && (ConcurrencyUtils.getNumberOfThreads() > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
                     cftrec4_th(n, a, offa, nw, w);
                 } else if (n > 512) {
                     cftrec4(n, a, offa, nw, w);
@@ -4043,7 +4058,7 @@ public strictfp class FloatFFT_1D {
         if (n > 8) {
             if (n > 32) {
                 cftb1st(n, a, offa, w, nw - (n >> 2));
-                if ((ConcurrencyUtils.getNumberOfThreads() > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+                if ((this.useThreads) && (ConcurrencyUtils.getNumberOfThreads() > 1) && (n > ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
                     cftrec4_th(n, a, offa, nw, w);
                 } else if (n > 512) {
                     cftrec4(n, a, offa, nw, w);
@@ -5571,18 +5586,18 @@ public strictfp class FloatFFT_1D {
         ConcurrencyUtils.waitForCompletion(futures);
     }
 
-    private void cftrec4(int n, float[] a, int offa, int nw, float[] w) {
+    private void cftrec4(final int n, final float[] a, final int offa, final int nw, final float[] w) {
         int isplt, j, k, m;
 
         m = n;
-        int idx1 = offa + n;
+        final int idx1 = offa + n;
         while (m > 512) {
             m >>= 2;
             cftmdl1(m, a, idx1 - m, w, nw - (m >> 1));
         }
         cftleaf(m, 1, a, idx1 - m, nw, w);
         k = 0;
-        int idx2 = offa - m;
+        final int idx2 = offa - m;
         for (j = n - m; j > 0; j -= m) {
             k++;
             isplt = cfttree(m, j, k, a, offa, nw, w);
@@ -5590,10 +5605,10 @@ public strictfp class FloatFFT_1D {
         }
     }
 
-    private int cfttree(int n, int j, int k, float[] a, int offa, int nw, float[] w) {
+    private int cfttree(final int n, final int j, final int k, final float[] a, final int offa, final int nw, final float[] w) {
         int i, isplt, m;
-        int idx1 = offa - n;
         if ((k & 3) != 0) {
+            final int idx1 = offa - n;
             isplt = k & 1;
             if (isplt != 0) {
                 cftmdl1(n, a, idx1 + j, w, nw - (n >> 1));
@@ -5606,7 +5621,7 @@ public strictfp class FloatFFT_1D {
                 m <<= 2;
             }
             isplt = i & 1;
-            int idx2 = offa + j;
+            final int idx2 = offa + j;
             if (isplt != 0) {
                 while (m > 128) {
                     cftmdl1(m, a, idx2 - m, w, nw - (m >> 1));
@@ -5622,7 +5637,7 @@ public strictfp class FloatFFT_1D {
         return isplt;
     }
 
-    private void cftleaf(int n, int isplt, float[] a, int offa, int nw, float[] w) {
+    private void cftleaf(final int n, final int isplt, final float[] a, final int offa, final int nw, final float[] w) {
         if (n == 512) {
             cftmdl1(128, a, offa, w, nw - 64);
             cftf161(a, offa, w, nw - 8);
@@ -5678,9 +5693,11 @@ public strictfp class FloatFFT_1D {
         }
     }
 
-    private void cftmdl1(int n, float[] a, int offa, float[] w, int startw) {
-        int j0, j1, j2, j3, k, m, mh;
-        float wn4r, wk1r, wk1i, wk3r, wk3i;
+    private void cftmdl1(final int n, final float[] a, final int offa, final float[] w, final int startw) {
+        int j0, j1, j2, j3, k;
+        final int m, mh;
+        final float wn4r;
+        float wk1r, wk1i, wk3r, wk3i;
         float x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
         int idx0, idx1, idx2, idx3, idx4, idx5;
 
@@ -5803,9 +5820,11 @@ public strictfp class FloatFFT_1D {
         a[idx3 + 1] = -wn4r * (x0i - x0r);
     }
 
-    private void cftmdl2(int n, float[] a, int offa, float[] w, int startw) {
-        int j0, j1, j2, j3, k, kr, m, mh;
-        float wn4r, wk1r, wk1i, wk3r, wk3i, wd1r, wd1i, wd3r, wd3i;
+    private void cftmdl2(final int n, final float[] a, final int offa, final float[] w, final int startw) {
+        int j0, j1, j2, j3, k, kr;
+        final int m, mh;
+        final float wn4r;
+        float wk1r, wk1i, wk3r, wk3i, wd1r, wd1i, wd3r, wd3i;
         float x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i, y0r, y0i, y2r, y2i;
         int idx0, idx1, idx2, idx3, idx4, idx5, idx6;
 
@@ -5967,8 +5986,10 @@ public strictfp class FloatFFT_1D {
         }
     }
 
-    private void cftf161(float[] a, int offa, float[] w, int startw) {
-        float wn4r, wk1r, wk1i, x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i, y0r, y0i, y1r, y1i, y2r, y2i, y3r, y3i, y4r, y4i, y5r, y5i, y6r, y6i, y7r, y7i, y8r, y8i, y9r, y9i, y10r, y10i, y11r, y11i, y12r, y12i, y13r, y13i, y14r, y14i, y15r, y15i;
+    private void cftf161(final float[] a, final int offa, final float[] w, final int startw) {
+        final float wn4r, wk1r, wk1i;
+        float x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
+        final float y0r, y0i, y1r, y1i, y2r, y2i, y3r, y3i, y4r, y4i, y5r, y5i, y6r, y6i, y7r, y7i, y8r, y8i, y9r, y9i, y10r, y10i, y11r, y11i, y12r, y12i, y13r, y13i, y14r, y14i, y15r, y15i;
 
         wn4r = w[startw + 1];
         wk1r = w[startw + 2];
@@ -6120,8 +6141,10 @@ public strictfp class FloatFFT_1D {
         a[offa + 7] = x1i - x3r;
     }
 
-    private void cftf162(float[] a, int offa, float[] w, int startw) {
-        float wn4r, wk1r, wk1i, wk2r, wk2i, wk3r, wk3i, x0r, x0i, x1r, x1i, x2r, x2i, y0r, y0i, y1r, y1i, y2r, y2i, y3r, y3i, y4r, y4i, y5r, y5i, y6r, y6i, y7r, y7i, y8r, y8i, y9r, y9i, y10r, y10i, y11r, y11i, y12r, y12i, y13r, y13i, y14r, y14i, y15r, y15i;
+    private void cftf162(final float[] a, final int offa, final float[] w, final int startw) {
+        final float wn4r, wk1r, wk1i, wk2r, wk2i, wk3r, wk3i;
+        float x0r, x0i, x1r, x1i, x2r, x2i;
+        final float y0r, y0i, y1r, y1i, y2r, y2i, y3r, y3i, y4r, y4i, y5r, y5i, y6r, y6i, y7r, y7i, y8r, y8i, y9r, y9i, y10r, y10i, y11r, y11i, y12r, y12i, y13r, y13i, y14r, y14i, y15r, y15i;
 
         wn4r = w[startw + 1];
         wk1r = w[startw + 4];
@@ -6296,9 +6319,10 @@ public strictfp class FloatFFT_1D {
         a[offa + 31] = x1i - x2r;
     }
 
-    private void cftf081(float[] a, int offa, float[] w, int startw) {
-        float wn4r, x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i, y0r, y0i, y1r, y1i, y2r, y2i, y3r, y3i, y4r, y4i, y5r, y5i, y6r, y6i, y7r, y7i;
-
+    private void cftf081(final float[] a, final int offa, final float[] w, final int startw) {
+        float x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
+        final float wn4r, y0r, y0i, y1r, y1i, y2r, y2i, y3r, y3i, y4r, y4i, y5r, y5i, y6r, y6i, y7r, y7i;
+        
         wn4r = w[startw + 1];
         x0r = a[offa] + a[offa + 8];
         x0i = a[offa + 1] + a[offa + 9];
@@ -6354,8 +6378,9 @@ public strictfp class FloatFFT_1D {
         a[offa + 7] = y2i - y6r;
     }
 
-    private void cftf082(float[] a, int offa, float[] w, int startw) {
-        float wn4r, wk1r, wk1i, x0r, x0i, x1r, x1i, y0r, y0i, y1r, y1i, y2r, y2i, y3r, y3i, y4r, y4i, y5r, y5i, y6r, y6i, y7r, y7i;
+    private void cftf082(final float[] a, final int offa, final float[] w, final int startw) {
+        float x0r, x0i, x1r, x1i;
+        final float wn4r, wk1r, wk1i, y0r, y0i, y1r, y1i, y2r, y2i, y3r, y3i, y4r, y4i, y5r, y5i, y6r, y6i, y7r, y7i;
 
         wn4r = w[startw + 1];
         wk1r = w[startw + 2];
@@ -6556,8 +6581,8 @@ public strictfp class FloatFFT_1D {
         } else {
             n2 = n;
         }
-        int nthreads = ConcurrencyUtils.getNumberOfThreads();
-        if ((nthreads > 1) && (n2 >= ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
+        final int nthreads = ConcurrencyUtils.getNumberOfThreads();
+        if ((this.useThreads) && (nthreads > 1) && (n2 >= ConcurrencyUtils.getThreadsBeginN_1D_FFT_2Threads())) {
             final int k = n2 / nthreads;
             Future<?>[] futures = new Future[nthreads];
             for (int i = 0; i < nthreads; i++) {

@@ -12,9 +12,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class ImageArrayUtils {
 
-    /** Class logger */
-    private static final Logger logger = LoggerFactory.getLogger(ImageArrayUtils.class.getName());
-
     /**
      * Forbidden constructor
      */
@@ -29,7 +26,7 @@ public final class ImageArrayUtils {
     public static final float[][] copy(final int rows, final int cols, final float[][] input, final float[][] output) {
         return copy(rows, cols, input, output, 0);
     }
-    
+
     public static final float[][] copy(final int rows, final int cols, final float[][] input, final float[][] output, final int rowOffset) {
 
         for (int j = 0; j < rows; j++) {
@@ -38,7 +35,7 @@ public final class ImageArrayUtils {
 
         return output;
     }
-    
+
     public static final float[][] enlarge(final int rows, final int cols, final float[][] input, final int rowsDest, final int colsDest) {
         if (rowsDest < rows || colsDest < cols) {
             return null;
@@ -79,6 +76,28 @@ public final class ImageArrayUtils {
         return output;
     }
 
+    public static final float[][] extract(final int rows, final int cols, final float[][] input,
+                                          final int rows1, final int cols1, final int rows2, final int cols2) {
+        if (rows1 < 0 || rows1 > rows || cols1 < 0 || cols1 > cols
+                || rows2 < 0 || rows2 > rows || cols2 < 0 || cols2 > cols
+                || rows2 < rows1 || cols2 < cols1) {
+            return null;
+        }
+        if (rows1 == 0 && rows2 == rows && cols1 == 0 && cols2 == cols) {
+            return copy(rows, cols, input);
+        }
+
+        int destRows = rows2 - rows1;
+        int destCols = cols2 - cols1;
+
+        final float[][] output = new float[destRows][destCols];
+
+        for (int j = 0; j < destRows; j++) {
+            System.arraycopy(input[j + rows1], cols1, output[j], 0, destCols);
+        }
+
+        return output;
+    }
 
     /**
      * Copy all values from input array to output array
@@ -91,5 +110,19 @@ public final class ImageArrayUtils {
         for (int j = 0; j < rows; j++) {
             System.arraycopy(input[j], 0, output[j], 0, cols);
         }
+    }
+
+    /**
+     * Return the sum of all values in the given array
+     * @param data values to sum
+     * @return sum of all values
+     */
+    public static float sum(final float[] data) {
+        float sum = 0f;
+
+        for (int i = 0, len = data.length; i < len; i++) {
+            sum += data[i];
+        }
+        return sum;
     }
 }

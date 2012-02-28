@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class generates an UV Map Image for given target Models and UV area
+ * This stateless class generates an UV Map Image for given target Models and UV area
  *
  * @author Laurent BOURGES.
  */
@@ -35,17 +35,6 @@ public final class ModelUVMapService {
     private final static int JOB_THRESHOLD = 256 * 256 - 1;
     /** Jmcs Parallel Job executor */
     private static final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
-
-    /**
-     * Image modes (amplitude, phase)
-     */
-    public enum ImageMode {
-
-        /** Amplitude */
-        AMP,
-        /** Phase */
-        PHASE
-    }
 
     /**
      * Forbidden constructor

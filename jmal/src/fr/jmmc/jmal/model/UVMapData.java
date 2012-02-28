@@ -4,7 +4,7 @@
 package fr.jmmc.jmal.model;
 
 import fr.jmmc.jmal.image.ImageUtils.ColorScale;
-import fr.jmmc.jmal.model.ModelUVMapService.ImageMode;
+import fr.jmmc.jmal.model.ImageMode;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;

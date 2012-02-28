@@ -5,7 +5,7 @@ package fr.jmmc.jmal.model.test;
 
 import fr.jmmc.jmal.image.ColorModels;
 import fr.jmmc.jmal.model.ModelUVMapService;
-import fr.jmmc.jmal.model.ModelUVMapService.ImageMode;
+import fr.jmmc.jmal.model.ImageMode;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;

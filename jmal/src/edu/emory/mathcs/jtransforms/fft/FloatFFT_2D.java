@@ -691,7 +691,7 @@ public final strictfp class FloatFFT_2D {
     }
 
     /**
-     * Computes only a subset of the 2D forward DFT of real (data without leaving
+     * Computes only a subset of the 2D forward DFT of real data (without leaving
      * the result in <code>a</code>).
      * This method only works when the sizes of both dimensions are
      * power-of-two numbers. The physical layout of the output data is as follows:
@@ -738,6 +738,9 @@ public final strictfp class FloatFFT_2D {
         }
         if (inputSize > subSize) {
             throw new IllegalArgumentException("output size must be larger than input size.");
+        }
+        if (subSize > rows) {
+            throw new IllegalArgumentException("sub size must be larger than fft size.");
         }
 
         // Test useThreads flag to use then only 1 thread:
@@ -791,6 +794,12 @@ public final strictfp class FloatFFT_2D {
                 @Override
                 public void run() {
 
+                    /** Get the current thread to check if the computation is interrupted */
+                    final Thread currentThread = Thread.currentThread();
+
+                    // this step indicates when the thread.isInterrupted() is called in the for loop
+                    final int stepInterrupt = Math.min(16, 1 + inputSize / 16);
+
                     for (int r = n0; r < inputSize; r += nthreads) {
 
                         // A - clear complete row:
@@ -804,6 +813,11 @@ public final strictfp class FloatFFT_2D {
 
                         // D - copy data from t to the beginning of output (complex data ie 2*columns):
                         System.arraycopy(t, startt, output[r], 0, subSizeColumns);
+
+                        // fast interrupt:
+                        if (r % stepInterrupt == 0 && currentThread.isInterrupted()) {
+                            return;
+                        }
                     }
                 }
             };
@@ -836,6 +850,13 @@ public final strictfp class FloatFFT_2D {
 
                 @Override
                 public void run() {
+
+                    /** Get the current thread to check if the computation is interrupted */
+                    final Thread currentThread = Thread.currentThread();
+
+                    // this step indicates when the thread.isInterrupted() is called in the for loop
+                    final int stepInterrupt = Math.min(16, 1 + scdiv2 / 16);
+
                     int idx2, reIdx, imIdx;
                     float[] oRow;
                     float re, im;
@@ -874,8 +895,8 @@ public final strictfp class FloatFFT_2D {
                             // process only subSize / 2 rows:
 
                             for (int i = 1, idxI, idxJ; i < sdiv2; i++) {
-                                idxI = 2 * i;
-                                idxJ = 2 * (rows - i);
+                                idxI = startt + 2 * i;
+                                idxJ = startt + rmul2 - 2 * i;
 
                                 t[idxJ] = 0.5f * (t[idxI] - t[idxJ]);
                                 t[idxI] -= t[idxJ]; // ie : 0.5f * (t[idxI] + t[idxJ])
@@ -906,6 +927,11 @@ public final strictfp class FloatFFT_2D {
                             oRow = output[r + sdiv2];
                             oRow[reIdx] = re;
                             oRow[imIdx] = im;
+                        }
+
+                        // fast interrupt:
+                        if (c % stepInterrupt == 0 && currentThread.isInterrupted()) {
+                            return;
                         }
                     }
                 }

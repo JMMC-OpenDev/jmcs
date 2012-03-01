@@ -40,7 +40,7 @@ public class CloneableObject implements Cloneable {
    * @return deep "copy" of the list
    */
   @SuppressWarnings("unchecked")
-  public static final <K extends CloneableObject> List<K> deepCopyList(final List<K> list) {
+  public static <K extends CloneableObject> List<K> deepCopyList(final List<K> list) {
     if (list != null) {
       final List<K> newList = new ArrayList<K>(list.size());
       for (K o : list) {

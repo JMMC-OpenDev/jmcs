@@ -4,7 +4,6 @@
 package fr.jmmc.jmal.model;
 
 import fr.jmmc.jmal.complex.MutableComplex;
-import fr.jmmc.jmal.model.AbstractModelFunction.ModelVariant;
 import fr.jmmc.jmal.model.function.CircleModelFunction;
 import fr.jmmc.jmal.model.function.DiskModelFunction;
 import fr.jmmc.jmal.model.function.GaussianModelFunction;

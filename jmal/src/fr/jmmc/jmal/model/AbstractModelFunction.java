@@ -22,17 +22,6 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
     /** Class logger */
     protected final static Logger logger = LoggerFactory.getLogger(AbstractModelFunction.class.getName());
 
-    /** variant enumeration (standard, elongated and flattened models) */
-    public enum ModelVariant {
-
-        /** default/standard model variant */
-        Standard,
-        /** elongated model variant */
-        Elongated,
-        /** flattened model variant */
-        Flattened;
-    }
-
     /* specific parameters for elongated models */
     /** Parameter type for the parameter elong_ratio */
     public final static String PARAM_ELONG_RATIO = "elong_ratio";
@@ -166,7 +155,7 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
      * @param vis complex visibility array
      * @param modelVis complex variable to store model complex contribution
      */
-    public static final void compute(final PunctFunction function, final double[] ufreq, final double[] vfreq,
+    public static void compute(final PunctFunction function, final double[] ufreq, final double[] vfreq,
                                final MutableComplex[] vis, final MutableComplex modelVis) {
 
         final int size = ufreq.length;

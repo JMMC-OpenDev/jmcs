@@ -36,17 +36,6 @@ public final class ImageUtils {
     private static final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
 
     /**
-     * Color scaling method enumeration
-     */
-    public enum ColorScale {
-
-        /** linar color scale */
-        LINEAR,
-        /** logarithmic color scale */
-        LOGARITHMIC
-    }
-
-    /**
      * Forbidden constructor
      */
     private ImageUtils() {
@@ -78,7 +67,9 @@ public final class ImageUtils {
                 scaledMin = (float) Math.log10(min);
                 scaledMax = (float) Math.log10(max);
 
-                logger.info("scaleMinMax: new range[" + scaledMin + " - " + scaledMax + "]");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("scaleMinMax: new range[{} - {}]", scaledMin, scaledMax);
+                }
                 break;
         }
         return new float[]{scaledMin, scaledMax};

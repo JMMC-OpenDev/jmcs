@@ -24,12 +24,12 @@ import org.slf4j.LoggerFactory;
  */
 public final class ParallelJobExecutor {
 
+    /** debug flag */
+    private static final boolean DEBUG_JOBS = false;
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(ParallelJobExecutor.class.getName());
     /** singleton pattern */
     private static volatile ParallelJobExecutor instance = null;
-    /** debug flag */
-    private static final boolean DEBUG_JOBS = false;
     /* members */
     /** number of available processors */
     private final int cpuCount;
@@ -107,7 +107,7 @@ public final class ParallelJobExecutor {
      * @param maxParallelJob maximum number of running parallel job
      */
     public void setMaxParallelJob(final int maxParallelJob) {
-        this.maxParallelJob = maxParallelJob;
+        this.maxParallelJob = (maxParallelJob > this.cpuCount) ? this.cpuCount : maxParallelJob;
     }
 
     /**

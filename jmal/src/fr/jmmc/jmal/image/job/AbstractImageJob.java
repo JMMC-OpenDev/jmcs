@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract Job dedicated to image i.e. float[][] processing
  * 
+ * TODO: do no more use chunks but let thread work interlaced: see FloatFFT_2D ...
+ * 
  * @param <V> the result type of method <tt>call</tt>
  *
  * @author bourgesl
@@ -29,7 +31,7 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
 
     /* members */
     /** job name */
-    private final String _jobName;
+    protected final String _jobName;
     /* input */
     /** data array (2D) [rows][cols] */
     protected final float[][] _array2D;
@@ -90,7 +92,7 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
     protected AbstractImageJob(final AbstractImageJob<V> parentJob,
                                final int lineStart, final int lineEnd) {
 
-        this._jobName = parentJob.getJobName();
+        this._jobName = parentJob._jobName;
         this._array2D = parentJob._array2D;
         this._width = parentJob._width;
         this._height = parentJob._height;
@@ -106,7 +108,7 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
      * @throws InterruptedJobException if the current thread is interrupted (cancelled)
      */
     @SuppressWarnings("unchecked")
-    public V forkAndJoin() throws InterruptedJobException {
+    public final V forkAndJoin() throws InterruptedJobException {
 
         V result = null;
 
@@ -141,7 +143,7 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
 
             logger.debug("wait for jobs to terminate ...");
 
-            final List<V> partialResults = (List<V>) jobExecutor.join(getJobName(), futures);
+            final List<V> partialResults = (List<V>) jobExecutor.join(_jobName, futures);
 
             merge(partialResults);
 
@@ -154,7 +156,7 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
 
         // fast interrupt :
         if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedJobException(getJobName() + ": interrupted");
+            throw new InterruptedJobException(_jobName + ": interrupted");
         }
 
         if (logger.isDebugEnabled()) {
@@ -165,20 +167,12 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
     }
 
     /**
-     * Return true if the job should be forked in smaller jobs
-     * @return true if the job should be forked in smaller jobs 
-     */
-    public boolean shouldForkJobs() {
-        return _width * _height > DEFAULT_THRESHOLD;
-    }
-
-    /**
      * Execute the task i.e. performs computations
      * 
      * @return result object or null if interrupted
      */
     @Override
-    public V call() {
+    public final V call() {
         if (logger.isDebugEnabled()) {
             logger.debug("AbstractImageJob: start [{} - {}]", _lineStart, _lineEnd);
         }
@@ -249,10 +243,10 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
     protected abstract void processValue(final int col, final int row, final float value);
 
     /**
-     * Return the job name
-     * @return job name
+     * Return true if the job should be forked in smaller jobs
+     * @return true if the job should be forked in smaller jobs 
      */
-    public String getJobName() {
-        return _jobName;
+    public boolean shouldForkJobs() {
+        return _width * _height > DEFAULT_THRESHOLD;
     }
 }

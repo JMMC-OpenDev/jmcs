@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract Job dedicated to image i.e. float[][] processing
  * 
- * TODO: do no more use chunks but let thread work interlaced: see FloatFFT_2D ...
- * 
  * @param <V> the result type of method <tt>call</tt>
  *
  * @author bourgesl
@@ -40,10 +38,10 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
     /** image height */
     protected final int _height;
     /* job boundaries */
-    /** index of first line (inclusive) */
-    private final int _lineStart;
-    /** index of last line (exclusive) */
-    private final int _lineEnd;
+    /** job index */
+    private final int _jobIndex;
+    /** total number of concurrent jobs */
+    private final int _jobCount;
     /* output */
     /** result object */
     protected final V _result;
@@ -57,27 +55,13 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
      * @param height image height
      */
     public AbstractImageJob(final String jobName, final float[][] array, final int width, final int height) {
-        this(jobName, array, width, height, 0, height);
-    }
-
-    /**
-     * Create the image Job
-     *
-     * @param jobName job name used when throwing an exception
-     * @param array data array (2D)
-     * @param width image width
-     * @param height image height
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
-     */
-    public AbstractImageJob(final String jobName, final float[][] array, final int width, final int height,
-                            final int lineStart, final int lineEnd) {
         this._jobName = jobName;
         this._array2D = array;
         this._width = width;
         this._height = height;
-        this._lineStart = lineStart;
-        this._lineEnd = lineEnd;
+        // job boundaries for single thread:
+        this._jobIndex = 0;
+        this._jobCount = 1;
         // define result object:
         this._result = initializeResult();
     }
@@ -86,18 +70,16 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
      * Create the image Job given a parent job
      *
      * @param parentJob parent Job producing same result
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      */
-    protected AbstractImageJob(final AbstractImageJob<V> parentJob,
-                               final int lineStart, final int lineEnd) {
-
+    protected AbstractImageJob(final AbstractImageJob<V> parentJob, final int jobIndex, final int jobCount) {
         this._jobName = parentJob._jobName;
         this._array2D = parentJob._array2D;
         this._width = parentJob._width;
         this._height = parentJob._height;
-        this._lineStart = lineStart;
-        this._lineEnd = lineEnd;
+        this._jobIndex = jobIndex;
+        this._jobCount = jobCount;
         // define result object:
         this._result = initializeResult();
     }
@@ -119,23 +101,13 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
         // i.e. enough big compute task ?
 
         if (jobExecutor.isEnabled() && shouldForkJobs()) {
-            // split model image in parts for parallel threads:
-
+            // process image using parallel threads working interlaced :
             final int nJobs = jobExecutor.getMaxParallelJob();
 
             final AbstractImageJob<V>[] jobs = new AbstractImageJob[nJobs];
 
-            final int end = _height;
-            final int step = end / nJobs;
-
-            int pixStart = 0;
-            int pixEnd = step;
             for (int i = 0; i < nJobs; i++) {
-                // ensure last job goes until lineEnd:
-                jobs[i] = initializeChildJob(pixStart, ((i == (nJobs - 1)) || (pixEnd > end)) ? end : pixEnd);
-
-                pixStart += step;
-                pixEnd += step;
+                jobs[i] = initializeChildJob(i, nJobs);
             }
 
             // execute jobs in parallel:
@@ -174,52 +146,55 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
     @Override
     public final V call() {
         if (logger.isDebugEnabled()) {
-            logger.debug("AbstractImageJob: start [{} - {}]", _lineStart, _lineEnd);
+            logger.debug("AbstractImageJob: start [{}]", _jobIndex);
         }
         // Copy members to local variables:
         /* input */
+        final float[][] array2D = _array2D;
         final int width = _width;
+        final int height = _height;
         /* job boundaries */
-        final int lineStart = _lineStart;
-        final int lineEnd = _lineEnd;
+        final int jobIndex = _jobIndex;
+        final int jobCount = _jobCount;
 
         /** Get the current thread to check if the computation is interrupted */
         final Thread currentThread = Thread.currentThread();
 
         // this step indicates when the thread.isInterrupted() is called in the for loop
-        final int stepInterrupt = Math.min(16, 1 + (lineEnd - lineStart) / 32);
+        final int stepInterrupt = Math.min(16, 1 + height / 16);
 
         float[] row;
-        // iterate on rows:
-        for (int i, j = lineStart; j < lineEnd; j++) {
-            row = _array2D[j];
+        
+        // iterate on rows starting at jobIndex and skip jobCount rows at each iteration:
+        for (int i, j = jobIndex; j < height; j += jobCount) {
+            row = array2D[j];
 
             // iterate on cols:
             for (i = 0; i < width; i++) {
                 processValue(i, j, row[i]);
-            }
+            } // column
 
             // fast interrupt:
             if (j % stepInterrupt == 0 && currentThread.isInterrupted()) {
                 logger.debug("AbstractImageJob: cancelled (vis)");
                 return null;
             }
-        } // line by line
+        } // row
 
         // Compute done.
         if (logger.isDebugEnabled()) {
-            logger.debug("AbstractImageJob: end   [{} - {}]", _lineStart, _lineEnd);
+            logger.debug("AbstractImageJob: end   [{}]", _jobIndex);
         }
         return _result;
     }
 
     /**
-     * Initialize a new child job
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * Initialize a new child job for the given job index
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      * @return child job
      */
-    protected abstract AbstractImageJob<V> initializeChildJob(final int lineStart, final int lineEnd);
+    protected abstract AbstractImageJob<V> initializeChildJob(final int jobIndex, final int jobCount);
 
     /**
      * Initialize the result object (one per job)

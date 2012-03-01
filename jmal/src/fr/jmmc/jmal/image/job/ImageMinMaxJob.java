@@ -45,24 +45,23 @@ public final class ImageMinMaxJob extends AbstractImageJob<MinMaxResult> {
      * Create the image Job given a parent job
      *
      * @param parentJob parent Job producing same result
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      */
-    protected ImageMinMaxJob(final ImageMinMaxJob parentJob,
-                             final int lineStart, final int lineEnd) {
-        super(parentJob, lineStart, lineEnd);
+    protected ImageMinMaxJob(final ImageMinMaxJob parentJob,final int jobIndex, final int jobCount) {
+        super(parentJob, jobIndex, jobCount);
         this._excludeZero = parentJob._excludeZero;
     }
 
     /**
      * Initialize a new child job
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      * @return child job
      */
     @Override
-    protected ImageMinMaxJob initializeChildJob(final int lineStart, final int lineEnd) {
-        return new ImageMinMaxJob(this, lineStart, lineEnd);
+    protected ImageMinMaxJob initializeChildJob(final int jobIndex, final int jobCount) {
+        return new ImageMinMaxJob(this, jobIndex, jobCount);
     }
 
     /**

@@ -34,24 +34,23 @@ public final class ImageNormalizeJob extends AbstractImageJob<Void> {
      * Create the image Job given a parent job
      *
      * @param parentJob parent Job producing same result
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      */
-    protected ImageNormalizeJob(final ImageNormalizeJob parentJob,
-                                final int lineStart, final int lineEnd) {
-        super(parentJob, lineStart, lineEnd);
+    protected ImageNormalizeJob(final ImageNormalizeJob parentJob,final int jobIndex, final int jobCount) {
+        super(parentJob, jobIndex, jobCount);
         this._factor = parentJob._factor;
     }
 
     /**
      * Initialize a new child job
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      * @return child job
      */
     @Override
-    protected ImageNormalizeJob initializeChildJob(final int lineStart, final int lineEnd) {
-        return new ImageNormalizeJob(this, lineStart, lineEnd);
+    protected ImageNormalizeJob initializeChildJob(final int jobIndex, final int jobCount) {
+        return new ImageNormalizeJob(this, jobIndex, jobCount);
     }
 
     /**

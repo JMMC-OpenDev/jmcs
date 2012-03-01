@@ -43,25 +43,24 @@ public final class ImageLowerThresholdJob extends AbstractImageJob<AtomicInteger
      * Create the image Job given a parent job
      *
      * @param parentJob parent Job producing same result
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      */
-    protected ImageLowerThresholdJob(final ImageLowerThresholdJob parentJob,
-                                     final int lineStart, final int lineEnd) {
-        super(parentJob, lineStart, lineEnd);
+    protected ImageLowerThresholdJob(final ImageLowerThresholdJob parentJob,final int jobIndex, final int jobCount) {
+        super(parentJob, jobIndex, jobCount);
         this._threshold = parentJob._threshold;
         this._replaceBy = parentJob._replaceBy;
     }
 
     /**
      * Initialize a new child job
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      * @return child job
      */
     @Override
-    protected ImageLowerThresholdJob initializeChildJob(final int lineStart, final int lineEnd) {
-        return new ImageLowerThresholdJob(this, lineStart, lineEnd);
+    protected ImageLowerThresholdJob initializeChildJob(final int jobIndex, final int jobCount) {
+        return new ImageLowerThresholdJob(this, jobIndex, jobCount);
     }
 
     /**

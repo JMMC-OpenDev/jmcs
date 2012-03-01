@@ -45,25 +45,24 @@ public final class ImageFlipJob extends AbstractImageJob<Void> {
      * Create the image Job given a parent job
      *
      * @param parentJob parent Job producing same result
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      */
-    protected ImageFlipJob(final ImageFlipJob parentJob,
-                           final int lineStart, final int lineEnd) {
-        super(parentJob, lineStart, lineEnd);
+    protected ImageFlipJob(final ImageFlipJob parentJob, final int jobIndex, final int jobCount) {
+        super(parentJob, jobIndex, jobCount);
         this._flipX = parentJob._flipX;
         this._lastIdx = parentJob._lastIdx;
     }
 
     /**
      * Initialize a new child job
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      * @return child job
      */
     @Override
-    protected ImageFlipJob initializeChildJob(final int lineStart, final int lineEnd) {
-        return new ImageFlipJob(this, lineStart, lineEnd);
+    protected ImageFlipJob initializeChildJob(final int jobIndex, final int jobCount) {
+        return new ImageFlipJob(this, jobIndex, jobCount);
     }
 
     /**
@@ -93,11 +92,13 @@ public final class ImageFlipJob extends AbstractImageJob<Void> {
     @Override
     protected void processValue(final int col, final int row, final float value) {
         if (_flipX) {
-            _array2D[row][col] = _array2D[row][_lastIdx - col];
-            _array2D[row][_lastIdx - col] = value;
+            final int lastCol = _lastIdx - col;
+            _array2D[row][col] = _array2D[row][lastCol];
+            _array2D[row][lastCol] = value;
         } else {
-            _array2D[row][col] = _array2D[_lastIdx - row][col];
-            _array2D[_lastIdx - row][col] = value;
+            final int lastRow = _lastIdx - row;
+            _array2D[row][col] = _array2D[lastRow][col];
+            _array2D[lastRow][col] = value;
         }
     }
 }

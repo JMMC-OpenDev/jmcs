@@ -30,23 +30,22 @@ public final class ImageXYProjectionJob extends AbstractImageJob<ProjectionResul
      * Create the image Job given a parent job
      *
      * @param parentJob parent Job producing same result
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      */
-    protected ImageXYProjectionJob(final ImageXYProjectionJob parentJob,
-                                   final int lineStart, final int lineEnd) {
-        super(parentJob, lineStart, lineEnd);
+    protected ImageXYProjectionJob(final ImageXYProjectionJob parentJob,final int jobIndex, final int jobCount) {
+        super(parentJob, jobIndex, jobCount);
     }
 
     /**
      * Initialize a new child job
-     * @param lineStart index of first line (inclusive)
-     * @param lineEnd index of last line (exclusive)
+     * @param jobIndex job index used to process data interlaced
+     * @param jobCount total number of concurrent jobs
      * @return child job
      */
     @Override
-    protected ImageXYProjectionJob initializeChildJob(final int lineStart, final int lineEnd) {
-        return new ImageXYProjectionJob(this, lineStart, lineEnd);
+    protected ImageXYProjectionJob initializeChildJob(final int jobIndex, final int jobCount) {
+        return new ImageXYProjectionJob(this, jobIndex, jobCount);
     }
 
     /**

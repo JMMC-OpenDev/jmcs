@@ -8,7 +8,8 @@ import edu.emory.mathcs.jtransforms.fft.RealFFTUtils_2D;
 import edu.emory.mathcs.utils.ConcurrencyUtils;
 import fr.jmmc.jmal.complex.ImmutableComplex;
 import fr.jmmc.jmal.model.ImageMode;
-import fr.jmmc.jmcs.util.concurrent.InterruptedJobException;
+import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
+import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,8 @@ public final class FFTUtils {
 
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(FFTUtils.class.getName());
+    /** Jmcs Parallel Job executor */
+    private static final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
 
     /**
      * Forbidden constructor
@@ -127,16 +130,22 @@ public final class FFTUtils {
         final int ro2 = outputSize / 2;
         final int fftOffset = fftSize - ro2;
 
-        final int nthreads = ConcurrencyUtils.getNumberOfThreads();
+        /** Get the current thread to check if the computation is interrupted */
+        final Thread currentThread = Thread.currentThread();
+
+        // this step indicates when the thread.isInterrupted() is called in the for loop
+        final int stepInterrupt = Math.min(16, 1 + outputSize / 32);
+
+        final int nJobs = jobExecutor.getMaxParallelJob();
 
         // computation tasks:
-        final Runnable[] tasks = new Runnable[nthreads];
+        final Runnable[] jobs = new Runnable[nJobs];
 
         // create tasks:
-        for (int i = 0; i < nthreads; i++) {
+        for (int i = 0; i < nJobs; i++) {
             final int n0 = i;
 
-            tasks[i] = new Runnable() {
+            jobs[i] = new Runnable() {
 
                 @Override
                 public void run() {
@@ -144,7 +153,7 @@ public final class FFTUtils {
                     float re, im;
 
                     // Process quadrant 1 and 2 (cache locality):
-                    for (int r = n0; r < ro2; r += nthreads) {
+                    for (int r = n0; r < ro2; r += nJobs) {
                         oRow = output[r];
 
                         for (int i = 0, c; i < ro2; i++) {
@@ -162,10 +171,16 @@ public final class FFTUtils {
 
                             oRow[ro2 + i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
                         }
+
+                        // fast interrupt:
+                        if (r % stepInterrupt == 0 && currentThread.isInterrupted()) {
+                            logger.debug("convert: cancelled");
+                            return;
+                        }
                     }
 
                     // Process quadrant 4 and 3 (cache locality):
-                    for (int r = n0; r < ro2; r += nthreads) {
+                    for (int r = n0; r < ro2; r += nJobs) {
                         oRow = output[r + ro2];
 
                         for (int i = 0, c; i < ro2; i++) {
@@ -183,18 +198,28 @@ public final class FFTUtils {
 
                             oRow[ro2 + i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
                         }
+
+                        // fast interrupt:
+                        if (r % stepInterrupt == 0 && currentThread.isInterrupted()) {
+                            logger.debug("convert: cancelled");
+                            return;
+                        }
                     }
                 }
             };
         }
 
-        if (nthreads > 1) {
-            // fork and join tasks:
-            ConcurrencyUtils.forkAndJoin(tasks);
+        if (nJobs > 1) {
+            // execute jobs in parallel:
+            final Future<?>[] futures = jobExecutor.fork(jobs);
+
+            logger.debug("wait for jobs to terminate ...");
+
+            jobExecutor.join("FFTUtils.convert", futures);
 
         } else {
             // execute the single task using the current thread:
-            tasks[0].run();
+            jobs[0].run();
         }
 
         logger.info("convert: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");

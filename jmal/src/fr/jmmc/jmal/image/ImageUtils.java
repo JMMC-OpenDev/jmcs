@@ -208,17 +208,9 @@ public final class ImageUtils {
             final int nJobs = jobExecutor.getMaxParallelJob();
             final ComputeImagePart[] jobs = new ComputeImagePart[nJobs];
 
-            final int step = array.length / nJobs;
-
-            int pixStart = 0;
-            int pixEnd = step;
             for (int i = 0; i < nJobs; i++) {
                 // ensure last job goes until lineEnd:
-                jobs[i] = new ComputeImagePart(array, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer,
-                        pixStart, ((i == (nJobs - 1)) || (pixEnd > array.length)) ? array.length : pixEnd);
-
-                pixStart += step;
-                pixEnd += step;
+                jobs[i] = new ComputeImagePart(array, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, i, nJobs);
             }
 
             // execute jobs in parallel:
@@ -230,7 +222,7 @@ public final class ImageUtils {
 
         } else {
             // single processor: use this thread to compute the complete model image:
-            new ComputeImagePart(array, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, 0, array.length).run();
+            new ComputeImagePart(array, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, 0, 1).run();
         }
 
         // fast interrupt :
@@ -354,24 +346,15 @@ public final class ImageUtils {
         // Should split the computation in parts ?
         // i.e. enough big compute task ?
 
-        if (jobExecutor.isEnabled()
-                && (width * height) >= JOB_THRESHOLD) {
-            // split model image in parts for parallel threads:
+        if (jobExecutor.isEnabled() && (width * height) >= JOB_THRESHOLD) {
+            // process image using parallel threads:
 
             final int nJobs = jobExecutor.getMaxParallelJob();
             final ComputeImagePart[] jobs = new ComputeImagePart[nJobs];
 
-            final int step = height / nJobs;
-
-            int lineStart = 0;
-            int lineEnd = step;
             for (int i = 0; i < nJobs; i++) {
                 // ensure last job goes until lineEnd:
-                jobs[i] = new ComputeImagePart(array, width, height, scaledMin, colorModel, scalingFactor, colorScale,
-                        dataBuffer, lineStart, ((i == (nJobs - 1)) || (lineEnd > height)) ? height : lineEnd);
-
-                lineStart += step;
-                lineEnd += step;
+                jobs[i] = new ComputeImagePart(array, width, height, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, i, nJobs);
             }
 
             // execute jobs in parallel:
@@ -383,7 +366,7 @@ public final class ImageUtils {
 
         } else {
             // single processor: use this thread to compute the complete model image:
-            new ComputeImagePart(array, width, height, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, 0, height).run();
+            new ComputeImagePart(array, width, height, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, 0, 1).run();
         }
 
         // fast interrupt :
@@ -541,10 +524,10 @@ public final class ImageUtils {
         /** image raster dataBuffer */
         private final DataBuffer _dataBuffer;
         /* job boundaries */
-        /** index of first line (inclusive) */
-        private final int _lineStart;
-        /** index of last line (exclusive) */
-        private final int _lineEnd;
+        /** job index */
+        private final int _jobIndex;
+        /** total number of concurrent jobs */
+        private final int _jobCount;
 
         /**
          * Create the task
@@ -555,25 +538,25 @@ public final class ImageUtils {
          * @param scalingFactor data to color linear scaling factor
          * @param colorScale color scaling method
          * @param dataBuffer image raster dataBuffer
-         * @param lineStart index of first line (inclusive)
-         * @param lineEnd index of last line (exclusive)
+         * @param jobIndex job index used to process data interlaced
+         * @param jobCount total number of concurrent jobs
          */
         ComputeImagePart(final float[] array, final float scaledMin,
                          final IndexColorModel colorModel, final float scalingFactor, final ColorScale colorScale,
                          final DataBuffer dataBuffer,
-                         final int lineStart, final int lineEnd) {
+                         final int jobIndex, final int jobCount) {
 
             this._array1D = array;
             this._array2D = null;
-            this._width = 0;
+            this._width = array.length;
             this._height = 0;
             this._scaledMin = scaledMin;
             this._colorModel = colorModel;
             this._colorScale = colorScale;
             this._scalingFactor = scalingFactor;
             this._dataBuffer = dataBuffer;
-            this._lineStart = lineStart;
-            this._lineEnd = lineEnd;
+            this._jobIndex = jobIndex;
+            this._jobCount = jobCount;
         }
 
         /**
@@ -587,13 +570,13 @@ public final class ImageUtils {
          * @param scalingFactor data to color linear scaling factor
          * @param colorScale color scaling method
          * @param dataBuffer image raster dataBuffer
-         * @param lineStart index of first line (inclusive)
-         * @param lineEnd index of last line (exclusive)
+         * @param jobIndex job index used to process data interlaced
+         * @param jobCount total number of concurrent jobs
          */
         ComputeImagePart(final float[][] array, final int width, final int height, final float scaledMin,
                          final IndexColorModel colorModel, final float scalingFactor, final ColorScale colorScale,
                          final DataBuffer dataBuffer,
-                         final int lineStart, final int lineEnd) {
+                         final int jobIndex, final int jobCount) {
 
             this._array1D = null;
             this._array2D = array;
@@ -604,8 +587,8 @@ public final class ImageUtils {
             this._colorScale = colorScale;
             this._scalingFactor = scalingFactor;
             this._dataBuffer = dataBuffer;
-            this._lineStart = lineStart;
-            this._lineEnd = lineEnd;
+            this._jobIndex = jobIndex;
+            this._jobCount = jobCount;
         }
 
         /**
@@ -614,7 +597,7 @@ public final class ImageUtils {
         @Override
         public void run() {
             if (logger.isDebugEnabled()) {
-                logger.debug("ComputeImagePart: start [{} - {}]", _lineStart, _lineEnd);
+                logger.debug("ComputeImagePart: start [{}]", _jobIndex);
             }
             // Copy members to local variables:
             /* input */
@@ -629,8 +612,8 @@ public final class ImageUtils {
             /* output */
             final DataBuffer dataBuffer = _dataBuffer;
             /* job boundaries */
-            final int lineStart = _lineStart;
-            final int lineEnd = _lineEnd;
+            final int jobIndex = _jobIndex;
+            final int jobCount = _jobCount;
 
             // Prepare other variables:
             final int iMaxColor = colorModel.getMapSize() - 1;
@@ -639,13 +622,13 @@ public final class ImageUtils {
             final Thread currentThread = Thread.currentThread();
 
             // this step indicates when the thread.isInterrupted() is called in the for loop
-            final int stepInterrupt = Math.min(16, 1 + (lineEnd - lineStart) / 32);
+            final int stepInterrupt = Math.min(16, 1 + height / 16);
 
             if (USE_RGB_INTERPOLATION) {
 
                 // initialize raster pixels
                 if (array1D != null) {
-                    for (int i = lineStart; i < lineEnd; i++) {
+                    for (int i = jobIndex; i < width; i += jobCount) {
 
                         dataBuffer.setElem(i, getRGB(colorModel, iMaxColor,
                                 getScaledValue(doLog10, scaledMin, scalingFactor, array1D[i]), ALPHA_MASK));
@@ -658,7 +641,7 @@ public final class ImageUtils {
                     } // pixel by pixel
                 } else if (array2D != null) {
                     float[] row;
-                    for (int i, offset, j = lineStart, lastRow = height - 1; j < lineEnd; j++) {
+                    for (int i, offset, j = jobIndex, lastRow = height - 1; j < height; j += jobCount) {
                         // inverse vertical axis (0 at bottom, height at top):
                         offset = width * (lastRow - j);
                         row = array2D[j];
@@ -681,7 +664,7 @@ public final class ImageUtils {
 
                 // initialize raster pixels
                 if (array1D != null) {
-                    for (int i = lineStart; i < lineEnd; i++) {
+                    for (int i = jobIndex; i < width; i += jobCount) {
 
                         dataBuffer.setElem(i, getColor(colorModel, iMaxColor,
                                 getScaledValue(doLog10, scaledMin, scalingFactor, array1D[i])));
@@ -694,7 +677,7 @@ public final class ImageUtils {
                     } // pixel by pixel
                 } else if (array2D != null) {
                     float[] row;
-                    for (int i, offset, j = lineStart, lastRow = height - 1; j < lineEnd; j++) {
+                    for (int i, offset, j = jobIndex, lastRow = height - 1; j < height; j += jobCount) {
                         // inverse vertical axis (0 at bottom, height at top):
                         offset = width * (lastRow - j);
                         row = array2D[j];
@@ -716,7 +699,7 @@ public final class ImageUtils {
 
             // Compute done.
             if (logger.isDebugEnabled()) {
-                logger.debug("ComputeImagePart: end   [{} - {}]", _lineStart, _lineEnd);
+                logger.debug("ComputeImagePart: end   [{}]", _jobIndex);
             }
         }
     }

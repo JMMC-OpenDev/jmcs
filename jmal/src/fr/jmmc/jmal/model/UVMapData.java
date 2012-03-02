@@ -3,14 +3,13 @@
  ******************************************************************************/
 package fr.jmmc.jmal.model;
 
-import fr.jmmc.jmal.image.ImageUtils.ColorScale;
-import fr.jmmc.jmal.model.ImageMode;
+import fr.jmmc.jmal.image.ColorScale;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 
 /**
- * This class contains the results of the ModelUVMap service
+ * This class contains UV Map results (data, image ...)
  * 
  * @author Laurent BOURGES.
  */
@@ -33,13 +32,13 @@ public final class UVMapData {
     private int targetVersion = -1;
 
     /* outputs */
-    /** visibility minimum value (amplitude or phase) */
+    /** minimum value (amplitude or phase) */
     private final Float min;
-    /** visibility maximum value (amplitude or phase) */
+    /** maximum value (amplitude or phase) */
     private final Float max;
-    /** UV Model image */
-    private final float[][] uvData;
-    /** uv map image */
+    /** Model complex visiblities */
+    private final float[][] visData;
+    /** uv map image (amplitude or phase) */
     private final BufferedImage uvMap;
 
     /**
@@ -50,20 +49,20 @@ public final class UVMapData {
      * @param uvRect UV frequency area in rad-1
      * @param min visibility minimum value (amplitude or phase)
      * @param max visibility maximum value (amplitude or phase)
-     * @param uvData UV Model image
+     * @param visData Model complex visiblities
      * @param uvMap uv map image
      * @param colorScale color scaling method
      */
     public UVMapData(final ImageMode mode, final int imageSize, final IndexColorModel colorModel,
                      final Rectangle.Double uvRect, final Float min, final Float max,
-                     final float[][] uvData, final BufferedImage uvMap, final ColorScale colorScale) {
+                     final float[][] visData, final BufferedImage uvMap, final ColorScale colorScale) {
         this.mode = mode;
         this.imageSize = imageSize;
         this.colorModel = colorModel;
         this.uvRect = uvRect;
         this.min = min;
         this.max = max;
-        this.uvData = uvData;
+        this.visData = visData;
         this.uvMap = uvMap;
         this.colorScale = colorScale;
     }
@@ -149,11 +148,11 @@ public final class UVMapData {
     }
 
     /**
-     * Return the UV Model image
-     * @return UV Model image
+     * Return the Model complex visiblities
+     * @return Model complex visiblities
      */
-    public float[][] getUvData() {
-        return uvData;
+    public float[][] getVisData() {
+        return visData;
     }
 
     /**
@@ -180,13 +179,15 @@ public final class UVMapData {
      * @param mode image mode (amplitude or phase)
      * @param imageSize number of pixels for both width and height of the generated image
      * @param colorModel image color model
+     * @param colorScale color scaling method
      * @return true only if input parameters are equals
      */
     public boolean isValid(final String targetName, final int targetVersion,
                            final Rectangle.Double uvRect,
                            final ImageMode mode,
                            final int imageSize,
-                           final IndexColorModel colorModel) {
+                           final IndexColorModel colorModel,
+                           final ColorScale colorScale) {
 
         if (!targetName.equals(getTargetName())) {
             return false;
@@ -206,8 +207,36 @@ public final class UVMapData {
         if (colorModel != getColorModel()) {
             return false;
         }
+        if (colorScale != getColorScale()) {
+            return false;
+        }
+        return true;
+    }
 
-        // TODO: add colorScale:
+    /**
+     * Check if this UV Map Data has the same data parameters to reuse its computed complex visibility data :
+     * @param targetName target name
+     * @param targetVersion target version
+     * @param uvRect uv frequency area
+     * @param imageSize number of pixels for both width and height of the generated image
+     * @return true only if input parameters are equals
+     */
+    public boolean isDataValid(final String targetName, final int targetVersion,
+                               final Rectangle.Double uvRect,
+                               final int imageSize) {
+
+        if (!targetName.equals(getTargetName())) {
+            return false;
+        }
+        if (targetVersion != getTargetVersion()) {
+            return false;
+        }
+        if (!uvRect.equals(getUvRect())) {
+            return false;
+        }
+        if (imageSize != getImageSize()) {
+            return false;
+        }
         return true;
     }
 }

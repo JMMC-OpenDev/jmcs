@@ -4,6 +4,7 @@
 package fr.jmmc.jmal.model.test;
 
 import fr.jmmc.jmal.image.ColorModels;
+import fr.jmmc.jmal.image.ColorScale;
 import fr.jmmc.jmal.model.ModelUVMapService;
 import fr.jmmc.jmal.model.ImageMode;
 import fr.jmmc.jmal.model.targetmodel.Model;
@@ -213,7 +214,7 @@ public class ConcurrentModelTest {
 
         ParallelJobExecutor.getInstance().setMaxParallelJob(maxParallelJob);
 
-        ModelUVMapService.computeUVMap(models, uvRect, null, null, mode, imageSize, colorModel);
+        ModelUVMapService.computeUVMap(models, uvRect, mode, imageSize, colorModel, ColorScale.LINEAR);
     }
 
     /**

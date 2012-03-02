@@ -798,7 +798,7 @@ public final strictfp class FloatFFT_2D {
                     final Thread currentThread = Thread.currentThread();
 
                     // this step indicates when the thread.isInterrupted() is called in the for loop
-                    final int stepInterrupt = Math.min(16, 1 + inputSize / 16);
+                    final int stepInterrupt = Math.min(4, 1 + inputSize / 32);
 
                     for (int r = n0; r < inputSize; r += nthreads) {
 
@@ -855,7 +855,7 @@ public final strictfp class FloatFFT_2D {
                     final Thread currentThread = Thread.currentThread();
 
                     // this step indicates when the thread.isInterrupted() is called in the for loop
-                    final int stepInterrupt = Math.min(16, 1 + scdiv2 / 16);
+                    final int stepInterrupt = Math.min(4, 1 + scdiv2 / 32);
 
                     int idx2, reIdx, imIdx;
                     float[] oRow;

@@ -762,13 +762,13 @@ public final strictfp class FloatFFT_2D {
 //        System.out.println("realForwardSubset: nthreads = " + nthreads);
 //        System.out.println("realForwardSubset: 1D array t[] size = " + t.length);
 
-
-        // idem for columns or rows (equals):
-        final int centerOffset = (columns - inputSize) / 2;
+        
         final int rmul2 = 2 * rows;
+        final int idiv2 = inputSize / 2;
+        final int rowInOffset = (columns - idiv2);
         final int sdiv2 = subSize / 2;
         final int scdiv2 = subSizeColumns / 2;
-        final int colOffset = (columns - sdiv2);
+        final int rowOutOffset = (columns - sdiv2);
 
         // emptyData contain 2 * rows or columns used by both rows and columns:
         final float[] emptyData = new float[Math.max(rmul2, columns)];
@@ -805,13 +805,35 @@ public final strictfp class FloatFFT_2D {
                         // A - clear complete row:
                         System.arraycopy(emptyData, 0, t, startt, columns);
 
-                        // B - copy input data and center image in t:
-                        System.arraycopy(a[r], 0, t, startt + centerOffset, inputSize);
+                        // B - copy input data in t:
+                        // NOTE: the fft reference is not the center of the image but (0,0):
+                        // it implies to split input image in quadrants and shift them 
+                        // to have image at each corners and compute a correct phase i.e. atan2(imaginary/real)
+                        
+                        if (r < idiv2) {
+                            // quadrants 3 and 4 from input image:
+                            System.arraycopy(a[r + idiv2], idiv2, t, startt, idiv2);
+                            System.arraycopy(a[r + idiv2], 0, t, startt + rowInOffset, idiv2);
+                        } else {
+                            // quadrants 2 and 1 from input image (inverted):
+                            System.arraycopy(a[r - idiv2], idiv2, t, startt, idiv2);
+                            System.arraycopy(a[r - idiv2], 0, t, startt + rowInOffset, idiv2);
+                        }
 
                         // C - compute real forward as t contains real data:
+                        /*
+                         * <pre>
+                         * a[2*k] = Re[k], 0&lt;=k&lt;n/2
+                         * a[2*k+1] = Im[k], 0&lt;k&lt;n/2
+                         * a[1] = Re[n/2]
+                         * </pre>
+                         */
                         fftColumns.realForward(t, startt);
 
                         // D - copy data from t to the beginning of output (complex data ie 2*columns):
+                        // NOTE: output data contains:
+                        // - fft data for quadrants 3 and 4 for 0 < r < idiv2
+                        // - fft data for quadrants 2 and 1 for idiv2 < r < inputSize
                         System.arraycopy(t, startt, output[r], 0, subSizeColumns);
 
                         // fast interrupt:
@@ -833,7 +855,7 @@ public final strictfp class FloatFFT_2D {
         }
 //        System.out.println("rows: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");
 
-
+        
 
         // 2 - Process columns (complex data):
 //        System.out.println("realForwardSubset: process columns ...");
@@ -865,19 +887,49 @@ public final strictfp class FloatFFT_2D {
                     for (int c = n0; c < scdiv2; c += nthreads) {
                         reIdx = 2 * c;
                         imIdx = reIdx + 1;
+                        /*
+                         * <pre>
+                         * a[2*k] = Re[k], 0&lt;=k&lt;n/2
+                         * a[2*k+1] = Im[k], 0&lt;k&lt;n/2
+                         * a[1] = Re[n/2]
+                         * </pre>
+                         */
 
                         // A - clear complete column:
                         System.arraycopy(emptyData, 0, t, startt, rmul2);
 
+                        
+                        
+                        // B - copy input data in t:
+                        // NOTE: output data contains:
+                        // - fft data for quadrants 3 and 4 for 0 < r < idiv2
+                        // - fft data for quadrants 2 and 1 for idiv2 < r < inputSize
+                        // copy these data at the beginning and end of each column:
+                        
                         // B - copy row data and center rows in t (complex data ie 2*columns):
-                        for (int r = 0; r < inputSize; r++) {
-                            idx2 = startt + 2 * (r + centerOffset);
-
+                        for (int r = 0; r < idiv2; r++) {
+                            // copy fft data for quadrants 3 and 4:
                             oRow = output[r];
 
                             // process array one by one (cache efficiency):
                             re = oRow[reIdx];
                             im = oRow[imIdx];
+
+                            // put fft data at the beginning of the t array:
+                            idx2 = startt + 2 * r;
+
+                            t[idx2] = re;
+                            t[idx2 + 1] = im;
+                            
+                            // copy fft data for quadrants 2 and 1:
+                            oRow = output[r + idiv2];
+
+                            // process array one by one (cache efficiency):
+                            re = oRow[reIdx];
+                            im = oRow[imIdx];
+
+                            // put fft data at the end of the t array:
+                            idx2 = startt + 2 * (r + rowInOffset);
 
                             t[idx2] = re;
                             t[idx2 + 1] = im;
@@ -886,8 +938,8 @@ public final strictfp class FloatFFT_2D {
                         // C - compute complex forward as t contains complex data:
                         fftRows.complexForward(t, startt);
 
-                        // D - Fix column 0 and column/2 directly on t:
-                        if (c == 0 || c == sdiv2) {
+                        // D - Fix column 0 directly on t:
+                        if (c == 0) {
                             /*
                              * rdft2d_sub(1, a);
                              */
@@ -918,7 +970,7 @@ public final strictfp class FloatFFT_2D {
                             oRow[reIdx] = re;
                             oRow[imIdx] = im;
 
-                            idx2 = startt + 2 * (r + colOffset);
+                            idx2 = startt + 2 * (r + rowOutOffset);
 
                             // process array one by one (cache efficiency):
                             re = t[idx2];

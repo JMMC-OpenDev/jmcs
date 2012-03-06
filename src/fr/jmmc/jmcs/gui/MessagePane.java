@@ -104,7 +104,8 @@ public final class MessagePane {
 
         final String msg;
         if (th != null && th.getMessage() != null) {
-            msg = message + "\n\n" + "Explanation : " + th.getMessage() + cause;
+            /* Add exception name to improve given information e.g. ArrayOutOfBound just returned a number as message...*/
+            msg = message + "\n\n" + "Explanation (" + th.getClass().getName() + "): " + th.getMessage() + cause;
         } else {
             msg = message;
         }

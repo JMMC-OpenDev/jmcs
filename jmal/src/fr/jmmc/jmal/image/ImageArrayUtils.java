@@ -3,9 +3,6 @@
  ******************************************************************************/
 package fr.jmmc.jmal.image;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This utility class gathers methods related to 2D array manipulation (images)
  * @author bourgesl
@@ -19,24 +16,42 @@ public final class ImageArrayUtils {
         super();
     }
 
-    public static final float[][] copy(final int rows, final int cols, final float[][] input) {
+    /**
+     * Copy the given input 2D array float[rows][columns] to a new 2D array with same sizes
+     * @param rows number of rows in the input array
+     * @param cols number of columns in the input array
+     * @param input input 2D array
+     * @return output 2D array
+     */
+    public static float[][] copy(final int rows, final int cols, final float[][] input) {
         return copy(rows, cols, input, new float[rows][cols]);
     }
 
-    public static final float[][] copy(final int rows, final int cols, final float[][] input, final float[][] output) {
-        return copy(rows, cols, input, output, 0);
-    }
-
-    public static final float[][] copy(final int rows, final int cols, final float[][] input, final float[][] output, final int rowOffset) {
-
+    /**
+     * Copy the given input 2D array float[rows][columns] to the given output 2D array
+     * @param rows number of rows in the input array
+     * @param cols number of columns in the input array
+     * @param input input 2D array
+     * @param output output 2D array (must have same sizes than the input 2D array)
+     * @return output array
+     */
+    public static float[][] copy(final int rows, final int cols, final float[][] input, final float[][] output) {
         for (int j = 0; j < rows; j++) {
-            System.arraycopy(input[j], 0, output[j + rowOffset], 0, cols);
+            System.arraycopy(input[j], 0, output[j], 0, cols);
         }
-
         return output;
     }
 
-    public static final float[][] enlarge(final int rows, final int cols, final float[][] input, final int rowsDest, final int colsDest) {
+    /**
+     * Enlarge the given input 2D array float[rows][columns] putting its data at the center of the larger output 2D array
+     * @param rows number of rows in the input array
+     * @param cols number of columns in the input array
+     * @param input input 2D array
+     * @param rowsDest number of rows for the output 2D array
+     * @param colsDest number of columns for the output 2D array
+     * @return new 2D array float
+     */
+    public static float[][] enlarge(final int rows, final int cols, final float[][] input, final int rowsDest, final int colsDest) {
         if (rowsDest < rows || colsDest < cols) {
             return null;
         }
@@ -56,7 +71,16 @@ public final class ImageArrayUtils {
         return output;
     }
 
-    public static final float[][] extract(final int rows, final int cols, final float[][] input, final int rowsDest, final int colsDest) {
+    /**
+     * Extract one rectangular area at the center of the given input 2D array float[rows][columns]
+     * @param rows number of rows in the input array
+     * @param cols number of columns in the input array
+     * @param input input 2D array
+     * @param rowsDest number of rows arround the input image center
+     * @param colsDest number of columns arround the input image center
+     * @return new 2D array float
+     */
+    public static float[][] extract(final int rows, final int cols, final float[][] input, final int rowsDest, final int colsDest) {
         if (rowsDest > rows || colsDest > cols) {
             return null;
         }
@@ -76,8 +100,20 @@ public final class ImageArrayUtils {
         return output;
     }
 
-    public static final float[][] extract(final int rows, final int cols, final float[][] input,
-                                          final int rows1, final int cols1, final int rows2, final int cols2) {
+    /**
+     * Extract one rectangular area of the given input 2D array float[rows][columns]
+     * @param rows number of rows in the input array
+     * @param cols number of columns in the input array
+     * @param input input 2D array
+     * @param rows1 index of the first row (inclusive)
+     * @param cols1 index of the first column (inclusive)
+     * @param rows2 index of the last row (exclusive)
+     * @param cols2 index of the last column (exclusive)
+     * @return new 2D array float
+     */
+    public static float[][] extract(final int rows, final int cols, final float[][] input,
+                                    final int rows1, final int cols1, final int rows2, final int cols2) {
+
         if (rows1 < 0 || rows1 > rows || cols1 < 0 || cols1 > cols
                 || rows2 < 0 || rows2 > rows || cols2 < 0 || cols2 > cols
                 || rows2 < rows1 || cols2 < cols1) {
@@ -97,19 +133,6 @@ public final class ImageArrayUtils {
         }
 
         return output;
-    }
-
-    /**
-     * Copy all values from input array to output array
-     * @param rows number of rows
-     * @param cols number of columns
-     * @param input input array
-     * @param output output array
-     */
-    public static void multiArrayCopy(final int rows, final int cols, final float[][] input, final float[][] output) {
-        for (int j = 0; j < rows; j++) {
-            System.arraycopy(input[j], 0, output[j], 0, cols);
-        }
     }
 
     /**

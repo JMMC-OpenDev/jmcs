@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.util.concurrent;
 
 import ch.qos.logback.classic.Level;
+import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,9 @@ public final class ParallelJobExecutor {
 
         // create threads now:
         parallelExecutor.prestartAllCoreThreads();
+        
+        // Initialize LogBack configuration:
+        App.isReady();
 
         logger.info("ParallelJobExecutor ready with {} threads", parallelExecutor.getMaximumPoolSize());
 

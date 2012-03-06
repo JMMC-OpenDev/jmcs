@@ -50,9 +50,9 @@ public final class ModelUVMapService {
      * Compute the UV Map for the given models and UV ranges
      *
      * @param models list of models to use
-     * @param uvRect UV frequency area in rad-1
+     * @param uvRect expected UV frequency area in rad-1
      * @param mode image mode (amplitude or phase)
-     * @param imageSize number of pixels for both width and height of the generated image
+     * @param imageSize expected number of pixels for both width and height of the generated image
      * @param colorModel color model to use
      * @param colorScale color scaling method
      * @return UVMapData
@@ -74,12 +74,12 @@ public final class ModelUVMapService {
      * Compute the UV Map for the given models and UV ranges
      *
      * @param models list of models to use
-     * @param uvRect UV frequency area in rad-1
+     * @param uvRect expected UV frequency area in rad-1
      * @param refMin minimum reference value used only for sub images
      * @param refMax maximum reference value used only for sub images
      * @param refVisData reference complex visibility data (optional)
      * @param mode image mode (amplitude or phase)
-     * @param imageSize number of pixels for both width and height of the generated image
+     * @param imageSize expected number of pixels for both width and height of the generated image
      * @param colorModel color model to use
      * @param colorScale color scaling method
      * @return UVMapData
@@ -97,10 +97,6 @@ public final class ModelUVMapService {
                                          final IndexColorModel colorModel,
                                          final ColorScale colorScale) {
 
-        if (models == null || models.isEmpty()) {
-            return null;
-        }
-
         /** Get the current thread to check if the computation is interrupted */
         final Thread currentThread = Thread.currentThread();
 
@@ -111,6 +107,10 @@ public final class ModelUVMapService {
         final float[][] visData;
 
         if (refVisData == null) {
+            
+            if (models == null || models.isEmpty()) {
+                return null;
+            }
 
             // Clone models and normalize fluxes :
             final List<Model> normModels = ModelManager.normalizeModels(models);
@@ -195,7 +195,7 @@ public final class ModelUVMapService {
 
 
         // 4 - Get the image with the given color model and color scale :
-        final UVMapData uvMapData = computeImage(uvRect, refMin, refMax, mode, imageSize, colorModel, colorScale, imageSize, visData, data);
+        final UVMapData uvMapData = computeImage(uvRect, refMin, refMax, mode, imageSize, colorModel, colorScale, imageSize, visData, data, uvRect);
 
         if (logger.isInfoEnabled()) {
             logger.info("compute : duration = {} ms.", 1e-6d * (System.nanoTime() - start));
@@ -210,12 +210,13 @@ public final class ModelUVMapService {
      * @param refMin minimum reference value used only for sub images
      * @param refMax maximum reference value used only for sub images
      * @param mode image mode (amplitude or phase)
-     * @param imageSize number of pixels for both width and height of the generated image
+     * @param imageSize expected number of pixels for both width and height of the generated image
      * @param colorModel color model to use
      * @param colorScale color scaling method
      * @param dataSize number of rows and columns of the model image data
      * @param visData complex visibility data
      * @param imgData model image data (amplitude or phase)
+     * @param uvMapRect concrete UV frequency area in rad-1
      * @return UVMapData
      * 
      * @throws InterruptedJobException if the current thread is interrupted (cancelled)
@@ -230,7 +231,8 @@ public final class ModelUVMapService {
                                          final ColorScale colorScale,
                                          final int dataSize,
                                          final float[][] visData,
-                                         final float[][] imgData) {
+                                         final float[][] imgData,
+                                         final Rectangle2D.Double uvMapRect) {
 
         // Get the image with the given color model :
         final ColorScale usedColorScale;
@@ -243,18 +245,26 @@ public final class ModelUVMapService {
 
                 // update min/max ignoring zero:
                 if (colorScale == ColorScale.LOGARITHMIC && (refMin == null || refMax == null)) {
+                    // ignore zero values:
                     final ImageMinMaxJob minMaxJob = new ImageMinMaxJob(imgData, dataSize, dataSize, true);
 
                     logger.info("ImageMinMaxJob forkAndJoin");
 
                     minMaxJob.forkAndJoin();
 
-                    final float dataMin = minMaxJob.getMin();
-                    final float dataMax = minMaxJob.getMax();
+                    float dataMin = minMaxJob.getMin();
+                    float dataMax = minMaxJob.getMax();
 
                     logger.info("ImageMinMaxJob result: " + dataMin + " - " + dataMax);
 
                     if (dataMin != dataMax && !Float.isInfinite(dataMin) && !Float.isInfinite(dataMax)) {
+                        // force min to 0.1 at least to have log scale ticks displayed:
+                        if (dataMin > RANGE_AMPLITUDE_LOGARITHMIC[0]) {
+                            dataMin = RANGE_AMPLITUDE_LOGARITHMIC[0];
+                        }
+                        // force max to 1 because dataMax can be 0.99999:
+                        dataMax = RANGE_AMPLITUDE_LOGARITHMIC[1];
+
                         stdRange = new float[]{dataMin, dataMax};
                         break;
                     }
@@ -281,7 +291,8 @@ public final class ModelUVMapService {
         final BufferedImage uvMap = ImageUtils.createImage(dataSize, dataSize, imgData, min, max, colorModel, usedColorScale);
 
         // provide results :;
-        return new UVMapData(mode, imageSize, colorModel, uvRect, Float.valueOf(min), Float.valueOf(max), visData, uvMap, usedColorScale);
+        return new UVMapData(uvRect, mode, imageSize, colorModel, usedColorScale,
+                Float.valueOf(min), Float.valueOf(max), visData, uvMap, dataSize, uvMapRect);
     }
 
     /**

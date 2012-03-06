@@ -16,7 +16,9 @@ import java.awt.image.IndexColorModel;
 public final class UVMapData {
 
     /* inputs */
-    /** number of pixels for both width and height of the generated image */
+    /** expected uv frequency area */
+    private final Rectangle.Double uvRect;
+    /** expected number of pixels for both width and height of the generated image */
     private final int imageSize;
     /** image mode (amplitude or phase) */
     private final ImageMode mode;
@@ -24,8 +26,6 @@ public final class UVMapData {
     private final IndexColorModel colorModel;
     /** image color scale */
     private final ColorScale colorScale;
-    /** uv frequency area */
-    private final Rectangle.Double uvRect;
     /** target name */
     private String targetName = null;
     /** target model version */
@@ -40,22 +40,31 @@ public final class UVMapData {
     private final float[][] visData;
     /** uv map image (amplitude or phase) */
     private final BufferedImage uvMap;
+    /** concrete number of pixels for both width and height of the generated image (may be different than imageSize) */
+    private final int uvMapSize;
+    /** concrete uv frequency area */
+    private final Rectangle.Double uvMapRect;
 
     /**
      * Constuctor
+     * @param uvRect expected UV frequency area in rad-1
      * @param mode image mode (amplitude or phase)
-     * @param imageSize number of pixels for both width and height of the generated image
+     * @param imageSize expected number of pixels for both width and height of the generated image
      * @param colorModel color model to use
-     * @param uvRect UV frequency area in rad-1
+     * @param colorScale color scaling method
      * @param min visibility minimum value (amplitude or phase)
      * @param max visibility maximum value (amplitude or phase)
      * @param visData Model complex visiblities
      * @param uvMap uv map image
-     * @param colorScale color scaling method
+     * @param uvMapSize concrete number of pixels for both width and height of the generated image
+     * @param uvMapRect concrete UV frequency area in rad-1
      */
-    public UVMapData(final ImageMode mode, final int imageSize, final IndexColorModel colorModel,
-                     final Rectangle.Double uvRect, final Float min, final Float max,
-                     final float[][] visData, final BufferedImage uvMap, final ColorScale colorScale) {
+    public UVMapData(final Rectangle.Double uvRect,
+                     final ImageMode mode, final int imageSize, 
+                     final IndexColorModel colorModel, final ColorScale colorScale,
+                     final Float min, final Float max,
+                     final float[][] visData, final BufferedImage uvMap,
+                     final int uvMapSize, final Rectangle.Double uvMapRect) {
         this.mode = mode;
         this.imageSize = imageSize;
         this.colorModel = colorModel;
@@ -64,12 +73,14 @@ public final class UVMapData {
         this.max = max;
         this.visData = visData;
         this.uvMap = uvMap;
+        this.uvMapSize = uvMapSize;
+        this.uvMapRect = uvMapRect;
         this.colorScale = colorScale;
     }
 
     /**
-     * Return the number of pixels for both width and height of the generated image
-     * @return number of pixels for both width and height of the generated image
+     * Return the expected number of pixels for both width and height of the generated image
+     * @return expected number of pixels for both width and height of the generated image
      */
     public int getImageSize() {
         return imageSize;
@@ -92,8 +103,8 @@ public final class UVMapData {
     }
 
     /**
-     * Return the uv frequency area
-     * @return uv frequency area
+     * Return the expected uv frequency area
+     * @return expected uv frequency area
      */
     public Rectangle.Double getUvRect() {
         return uvRect;
@@ -161,6 +172,22 @@ public final class UVMapData {
      */
     public BufferedImage getUvMap() {
         return uvMap;
+    }
+
+    /**
+     * Return the concrete number of pixels for both width and height of the generated image (may be different than imageSize)
+     * @return concrete number of pixels for both width and height of the generated image (may be different than imageSize)
+     */
+    public int getUvMapSize() {
+        return uvMapSize;
+    }
+
+    /**
+     * Return the concrete uv frequency area
+     * @return concrete uv frequency area
+     */
+    public Rectangle.Double getUvMapRect() {
+        return uvMapRect;
     }
 
     /**

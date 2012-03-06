@@ -719,8 +719,8 @@ public final strictfp class FloatFFT_2D {
      * forward transform, use <code>realForwardFull</code>. To get back the
      * original data, use <code>realInverse</code> on the output of this method.
      * 
-     * @param subSize size = rows = columns of the output array containing the subset of the 2D forward DFT (must be a power of two TODO check)
-     * @param inputSize size = rows = columns of the input array a
+     * @param subSize size = rows = columns of the output array containing the subset of the 2D forward DFT (must be an even number)
+     * @param inputSize size = rows = columns of the input array a (must be an even number)
      * @param a data to transform
      * @return subset of the 2D forward DFT (power of two) of the given size subSize = rows = columns
      */

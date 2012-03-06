@@ -273,6 +273,9 @@ public final class FFTUtils {
 
     /**
      * Extract a sub part of the given real FFT 2D array
+     * 
+     * @see FloatFFT_2D.realForward(float[][])
+     * 
      * @param size input size of the real FFT (rows = columns = size)
      * @param fftData real FFT
      * @param outputSize output size (must be an even number)
@@ -290,26 +293,6 @@ public final class FFTUtils {
         }
 
         logger.info("extractFFT: output size = " + outputSize + " - FFT size = " + size);
-        /*
-         * <pre>
-         * a[k1][2*k2] = Re[k1][k2] = Re[rows-k1][columns-k2], 
-         * a[k1][2*k2+1] = Im[k1][k2] = -Im[rows-k1][columns-k2], 
-         *       0&lt;k1&lt;rows, 0&lt;k2&lt;columns/2, 
-         * 
-         * a[0][2*k2] = Re[0][k2] = Re[0][columns-k2], 
-         * a[0][2*k2+1] = Im[0][k2] = -Im[0][columns-k2], 
-         *       0&lt;k2&lt;columns/2, 
-         * a[k1][0] = Re[k1][0] = Re[rows-k1][0], 
-         * a[k1][1] = Im[k1][0] = -Im[rows-k1][0], 
-         * a[rows-k1][1] = Re[k1][columns/2] = Re[rows-k1][columns/2], 
-         * a[rows-k1][0] = -Im[k1][columns/2] = Im[rows-k1][columns/2], 
-         *       0&lt;k1&lt;rows/2, 
-         * a[0][0] = Re[0][0], 
-         * a[0][1] = Re[0][columns/2], 
-         * a[rows/2][0] = Re[rows/2][0], 
-         * a[rows/2][1] = Re[rows/2][columns/2]
-         * </pre>
-         */
 
         final int ro2 = outputSize / 2; // half of row dimension
 
@@ -317,35 +300,26 @@ public final class FFTUtils {
 
         final float[][] output = new float[outputSize][outputSize];
 
+        /*
+         * a[k1][2*k2] = Re[k1][k2] = Re[rows-k1][columns-k2], 
+         * a[k1][2*k2+1] = Im[k1][k2] = -Im[rows-k1][columns-k2], 
+         *       0&lt;k1&lt;rows, 0&lt;k2&lt;columns/2, 
+         */
+
         float[] oRow, fRow;
-        float[] o2Row, f2Row;
 
         for (int r = 0; r < ro2; r++) {
             oRow = output[r];
-            o2Row = output[r + ro2];
-
             fRow = fftData[r];
-            f2Row = fftData[ef2 + r];
 
-            for (int i = 0, c; i < ro2; i++) {
-                c = 2 * i;
+            // copy complex data (re, im) from fftData beginning to output row:
+            System.arraycopy(fRow, 0, oRow, 0, outputSize);
 
-                /*
-                 * a[k1][2*k2] = Re[k1][k2] = Re[rows-k1][columns-k2], 
-                 * a[k1][2*k2+1] = Im[k1][k2] = -Im[rows-k1][columns-k2], 
-                 *       0&lt;k1&lt;rows, 0&lt;k2&lt;columns/2, 
-                 */
+            oRow = output[r + ro2];
+            fRow = fftData[ef2 + r];
 
-                // TODO: use System.arrayCopy()
-
-                // quadrant 1:
-                oRow[c] = fRow[c];
-                oRow[c + 1] = fRow[c + 1];
-
-                // quadrant 4:
-                o2Row[c] = f2Row[c];
-                o2Row[c + 1] = f2Row[c + 1];
-            }
+            // copy complex data (re, im) from fftData end to output row:
+            System.arraycopy(fRow, 0, oRow, 0, outputSize);
         }
 
         // Probleme connu (symetrie horiz/vert) for row=rows/2 column=columns/2

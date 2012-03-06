@@ -51,6 +51,56 @@ public final class FileUtils {
     }
 
     /**
+     * Returns an existing File for the given path
+     *
+     * @param path file path
+     * @return File or null
+     */
+    private static File getExistingFile(final String path) {
+        if (path != null && path.length() > 0) {
+            final File file = new File(path);
+
+            if (file.exists()) {
+                return file;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns an existing directory for the given path
+     *
+     * @param path directory path
+     * @return directory or null
+     */
+    public static File getDirectory(final String path) {
+        final File dir = getExistingFile(path);
+
+        if (dir != null && dir.isDirectory()) {
+            return dir;
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns an existing File for the given path
+     *
+     * @param path file path
+     * @return File or null
+     */
+    public static File getFile(final String path) {
+        final File file = getExistingFile(path);
+
+        if (file != null && file.isFile()) {
+            return file;
+        }
+
+        return null;
+    }
+
+    /**
      * Get the file name part without extension
      *
      * @param file file as File

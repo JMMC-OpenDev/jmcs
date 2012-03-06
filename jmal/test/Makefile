@@ -97,19 +97,22 @@ JARFILES        = jmalTest
 
 #
 # <brief description of jjjfff jar files>
-jmalTest_DIRS     = fr
+jmalTest_DIRS     = edu \
+                    fr
 jmalTest_EXTRAS   = fr/jmmc/jmal/model/test/*.xml
 
 #
 # Java programs
 # ---------------------------------
 JAVA_EXECUTABLES= jmalTestConcurrentImage \
-                  jmalTestConcurrentModel
+                  jmalTestConcurrentModel \
+                  jmalBenchmarkFloatFFT
 
 #
 # <brief description of jjjjjj java program>
 jmalTestConcurrentImage_CLASS  = fr.jmmc.jmal.model.test.ConcurrentImageTest
 jmalTestConcurrentModel_CLASS  = fr.jmmc.jmal.model.test.ConcurrentModelTest
+jmalBenchmarkFloatFFT_CLASS    = edu.emory.mathcs.jtransforms.fft.BenchmarkFloatFFT
 
 #
 # Command Definition Files (CDF)

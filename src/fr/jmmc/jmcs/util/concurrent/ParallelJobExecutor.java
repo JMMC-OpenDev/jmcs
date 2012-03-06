@@ -76,9 +76,6 @@ public final class ParallelJobExecutor {
 
         // create threads now:
         parallelExecutor.prestartAllCoreThreads();
-        
-        // Initialize LogBack configuration:
-        App.isReady();
 
         logger.info("ParallelJobExecutor ready with {} threads", parallelExecutor.getMaximumPoolSize());
 

@@ -56,7 +56,7 @@ public final class ImageArrayUtils {
             return null;
         }
         if (rowsDest == rows && colsDest == cols) {
-            return copy(rows, cols, input);
+            return input;
         }
         final float[][] output = new float[rowsDest][colsDest];
 
@@ -85,7 +85,7 @@ public final class ImageArrayUtils {
             return null;
         }
         if (rowsDest == rows && colsDest == cols) {
-            return copy(rows, cols, input);
+            return input;
         }
         final float[][] output = new float[rowsDest][colsDest];
 
@@ -120,7 +120,7 @@ public final class ImageArrayUtils {
             return null;
         }
         if (rows1 == 0 && rows2 == rows && cols1 == 0 && cols2 == cols) {
-            return copy(rows, cols, input);
+            return input;
         }
 
         int destRows = rows2 - rows1;

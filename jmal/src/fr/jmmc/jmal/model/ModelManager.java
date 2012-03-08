@@ -174,8 +174,8 @@ public final class ModelManager {
      *
      * @return new compute context
      */
-    public static ModelComputeContext cloneContext(final ModelComputeContext context) {
-        return new ModelComputeContext(context.getFreqCount(), context.getModelFunctions());
+    public static ModelFunctionComputeContext cloneContext(final ModelFunctionComputeContext context) {
+        return new ModelFunctionComputeContext(context.getFreqCount(), context.getModelFunctions());
     }
 
     /**
@@ -185,7 +185,7 @@ public final class ModelManager {
      * @param freqCount uv frequencey count used to preallocate arrays
      * @return new compute context
      */
-    public ModelComputeContext prepareModels(final List<Model> models, final int freqCount) {
+    public ModelFunctionComputeContext prepareModels(final List<Model> models, final int freqCount) {
         if (models == null || models.isEmpty() || freqCount <= 0) {
             return null;
         }
@@ -204,7 +204,7 @@ public final class ModelManager {
             functions.add(mf.prepareFunction(model));
         }
 
-        return new ModelComputeContext(freqCount, functions);
+        return new ModelFunctionComputeContext(freqCount, functions);
     }
 
     /**
@@ -216,12 +216,14 @@ public final class ModelManager {
      * @return normalized complex visibility or null if thread interrupted
      * @throws IllegalArgumentException if a parameter value is invalid !
      */
-    public MutableComplex[] computeModels(final ModelComputeContext context, final double[] ufreq, final double[] vfreq) throws IllegalArgumentException {
+    public MutableComplex[] computeModels(final ModelFunctionComputeContext context, final double[] ufreq, final double[] vfreq) throws IllegalArgumentException {
         MutableComplex[] vis = null;
 
         if (ufreq != null && vfreq != null && context != null) {
 
-            if (ufreq.length != vfreq.length || ufreq.length != context.getFreqCount()) {
+            final int nVis = ufreq.length;
+
+            if (nVis != vfreq.length || nVis != context.getFreqCount()) {
                 throw new IllegalStateException("incorrect array sizes (Ufreq, VFreq, freqCount) !");
             }
 
@@ -233,7 +235,7 @@ public final class ModelManager {
             for (PunctFunction function : context.getModelFunctions()) {
 
                 // add the model contribution to the current visibility array :
-                AbstractModelFunction.compute(function, ufreq, vfreq, vis, modelVis);
+                AbstractModelFunction.compute(function, ufreq, vfreq, nVis, vis, modelVis);
             }
         }
 

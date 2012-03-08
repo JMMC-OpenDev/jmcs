@@ -107,7 +107,7 @@ public final class ModelUVMapService {
         final float[][] visData;
 
         if (refVisData == null) {
-            
+
             if (models == null || models.isEmpty()) {
                 return null;
             }
@@ -115,7 +115,7 @@ public final class ModelUVMapService {
             // Clone models and normalize fluxes :
             final List<Model> normModels = ModelManager.normalizeModels(models);
 
-            final ModelComputeContext context;
+            final ModelFunctionComputeContext context;
             try {
                 // prepare models once for all:
                 context = ModelManager.getInstance().prepareModels(normModels, imageSize);
@@ -148,9 +148,10 @@ public final class ModelUVMapService {
                 final int nJobs = jobExecutor.getMaxParallelJob();
                 final ComputeModelPart[] jobs = new ComputeModelPart[nJobs];
 
+                ModelFunctionComputeContext jobContext;
                 for (int i = 0; i < nJobs; i++) {
                     // clone computation contexts except for first job:
-                    final ModelComputeContext jobContext = (i == 0) ? context : ModelManager.cloneContext(context);
+                    jobContext = (i == 0) ? context : ModelManager.cloneContext(context);
 
                     // ensure last job goes until lineEnd:
                     jobs[i] = new ComputeModelPart(jobContext, u, v, imageSize, visData, i, nJobs);
@@ -323,7 +324,7 @@ public final class ModelUVMapService {
 
         /* input */
         /** compute context (list of model functions, temporary variables) */
-        private final ModelComputeContext _context;
+        private final ModelFunctionComputeContext _context;
         /** sampled U frequencies in rad-1 (width) */
         private final double[] _u;
         /** sampled V frequencies in rad-1 (height) */
@@ -350,7 +351,7 @@ public final class ModelUVMapService {
          * @param jobIndex job index used to process data interlaced
          * @param jobCount total number of concurrent jobs
          */
-        ComputeModelPart(final ModelComputeContext context,
+        ComputeModelPart(final ModelFunctionComputeContext context,
                          final double[] u, final double[] v,
                          final int imageSize, final float[][] data,
                          final int jobIndex, final int jobCount) {
@@ -374,7 +375,7 @@ public final class ModelUVMapService {
             }
             // Copy members to local variables:
             /* input */
-            final ModelComputeContext context = _context;
+            final ModelFunctionComputeContext context = _context;
             final double[] u = _u;
             final double[] v = _v;
             final int imageSize = _imageSize;

@@ -5,8 +5,8 @@ package fr.jmmc.jmal.model.test;
 
 import fr.jmmc.jmal.complex.MutableComplex;
 import fr.jmmc.jmal.image.ImageViewer;
-import fr.jmmc.jmal.model.ModelComputeContext;
 import fr.jmmc.jmal.model.ModelDefinition;
+import fr.jmmc.jmal.model.ModelFunctionComputeContext;
 import fr.jmmc.jmal.model.ModelManager;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmcs.App;
@@ -152,7 +152,7 @@ public class TestModel {
         final long start = System.nanoTime();
 
         // prepare models once for all:
-        final ModelComputeContext context = ModelManager.getInstance().prepareModels(models, width * height);
+        final ModelFunctionComputeContext context = ModelManager.getInstance().prepareModels(models, width * height);
 
         // ASPRO = 200m :
 

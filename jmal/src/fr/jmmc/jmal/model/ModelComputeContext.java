@@ -4,19 +4,15 @@
 package fr.jmmc.jmal.model;
 
 import fr.jmmc.jmal.complex.MutableComplex;
-import fr.jmmc.jmal.model.function.math.PunctFunction;
-import java.util.List;
 
 /**
- * This class holds several variables used during model computations: model functions ...
+ * This class holds several variables used during model computations ...
  *
  * @author bourgesl
  */
-public final class ModelComputeContext {
+public class ModelComputeContext {
 
     /* members */
-    /** list of model functions to compute */
-    private final List<PunctFunction> modelFunctions;
     /** uv frequency count used to preallocate arrays */
     private final int freqCount;
     /* output */
@@ -29,11 +25,9 @@ public final class ModelComputeContext {
      * Protected constructor
      *
      * @param freqCount uv frequency count used to preallocate arrays
-     * @param modelFunctions list of model functions to compute
      */
-    ModelComputeContext(final int freqCount, final List<PunctFunction> modelFunctions) {
+    protected ModelComputeContext(final int freqCount) {
         this.freqCount = freqCount;
-        this.modelFunctions = modelFunctions;
 
         allocateVis();
     }
@@ -41,7 +35,7 @@ public final class ModelComputeContext {
     /**
      * Allocate complex visiblity array for outputs
      */
-    private void allocateVis() {
+    private final void allocateVis() {
         this.vis = new MutableComplex[this.freqCount];
 
         // initialize visibilities to (0,0):
@@ -55,17 +49,8 @@ public final class ModelComputeContext {
      *
      * @return uv frequency count
      */
-    int getFreqCount() {
+    public final int getFreqCount() {
         return freqCount;
-    }
-
-    /**
-     * Return the list of model functions to compute
-     *
-     * @return list of model functions to compute
-     */
-    List<PunctFunction> getModelFunctions() {
-        return modelFunctions;
     }
 
     /* outputs */
@@ -74,7 +59,7 @@ public final class ModelComputeContext {
      *
      * @return model complex contribution to visibility
      */
-    MutableComplex getModelVis() {
+    public final MutableComplex getModelVis() {
         return modelVis;
     }
 
@@ -83,9 +68,9 @@ public final class ModelComputeContext {
      *
      * @return complex visiblity array
      */
-    public MutableComplex[] resetAndGetVis() {
+    public final MutableComplex[] resetAndGetVis() {
         // reset visibilities to (0,0):
-        for (int i = 0, len = this.freqCount; i < len; i++) {
+        for (int i = this.freqCount - 1; i >= 0; i--) {
             vis[i].updateComplex(0d, 0d);
         }
         return vis;

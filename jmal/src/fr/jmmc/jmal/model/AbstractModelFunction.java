@@ -152,16 +152,14 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
      * @param function model function to compute
      * @param ufreq U frequencies in rad-1
      * @param vfreq V frequencies in rad-1
+     * @param nVis number of visibility to compute
      * @param vis complex visibility array
      * @param modelVis complex variable to store model complex contribution
      */
     public static void compute(final PunctFunction function, final double[] ufreq, final double[] vfreq,
-                               final MutableComplex[] vis, final MutableComplex modelVis) {
-
-        final int size = ufreq.length;
-
+                               final int nVis, final MutableComplex[] vis, final MutableComplex modelVis) {
         // Compute :
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < nVis; i++) {
             Functions.shift(ufreq[i], vfreq[i], function.isZero(), function.getX(), function.getY(),
                     function.computeWeight(ufreq[i], vfreq[i]),
                     modelVis);

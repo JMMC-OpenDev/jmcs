@@ -119,5 +119,14 @@ public class StatusBar extends JPanel {
     private static void setStatusLabel(final String message) {
         _statusLabel.setText(message);
     }
+
+    /**
+     * Return the content of the status bar 
+     * Note: Must be called by EDT
+     * @return content of the status bar 
+     */
+    public static String getStatusLabel() {
+        return _statusLabel.getText();
+    }
 }
 /*___oOo___*/

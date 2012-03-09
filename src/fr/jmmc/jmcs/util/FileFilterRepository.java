@@ -167,6 +167,8 @@ final class GenericFileFilter extends FileFilter {
     private final HashMap<String, String> _fileExtensions = new HashMap<String, String>(4);
     /** Filter description */
     private final String _description;
+    /** number of dots in extension (0 or 1 supported) */
+    private final int _nDots;
 
     /**
      * Creates a new GenericFileFilter object.
@@ -184,9 +186,12 @@ final class GenericFileFilter extends FileFilter {
 
         final int nbOfFileExtensions = fileExtensions.length;
 
+        boolean hasDot = false;
         for (int i = 0; i < nbOfFileExtensions; i++) {
             // Add filters one by one
             final String fileExtension = fileExtensions[i].toLowerCase();
+            
+            hasDot |= fileExtension.contains(".");
 
             _fileExtensions.put(fileExtension, description);
 
@@ -195,6 +200,8 @@ final class GenericFileFilter extends FileFilter {
                         new Object[]{(i + 1), nbOfFileExtensions, fileExtension});
             }
         }
+        
+        _nDots = (hasDot) ? 2 : 1;
 
         _description = description;
     }
@@ -219,7 +226,7 @@ final class GenericFileFilter extends FileFilter {
             }
 
             // If the file has no extension
-            final String fileExtension = FileUtils.getExtension(currentFile);
+            final String fileExtension = FileUtils.getExtension(currentFile, _nDots);
 
             if (fileExtension == null) {
                 return false; // Discard it

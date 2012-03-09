@@ -5,16 +5,23 @@
  */
 package fr.jmmc.jmcs.util;
 
-import java.io.*;
-import java.net.URISyntaxException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,6 +164,52 @@ public final class FileUtils {
 
             if (i > 0 && i < fileName.length() - 1) {
                 return fileName.substring(i + 1).toLowerCase();
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get the extension of a file in lower case
+     *
+     * @param file file as File
+     * @param nDots number of dots in extension
+     * @return the extension of the file (without first dot char) or null
+     */
+    public static String getExtension(final File file, final int nDots) {
+        if (file != null) {
+            return getExtension(file.getName(), nDots);
+        }
+        return null;
+    }
+
+    /**
+     * Get the extension of a file in lower case
+     *
+     * @param fileName file name as String
+     * @param nDots number of dots in extension
+     * @return the extension of the file (without first dot char) or null
+     */
+    public static String getExtension(final String fileName, final int nDots) {
+        if (fileName != null) {
+            final int end = fileName.length() - 1;
+            int from = end;
+            int nDot = 0;
+            
+            for (;;) {
+                int i = fileName.lastIndexOf('.', from);
+
+                if (i > 0 && i < end) {
+                    nDot++;
+                    from = i - 1;
+
+                    if (nDot == nDots) {
+                        return fileName.substring(i + 1).toLowerCase();
+                    }
+                    
+                } else {
+                    break;
+                }
             }
         }
         return null;

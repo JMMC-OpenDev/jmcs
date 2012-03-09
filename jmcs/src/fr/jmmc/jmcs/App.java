@@ -916,12 +916,9 @@ public abstract class App {
         if (frame.getState() == Frame.ICONIFIED) {
             frame.setState(Frame.NORMAL);
         }
-        
-        // Tricky code to force window display
-        frame.setVisible(false);
+                       
+        // force the frame to be visible and bring it to front
         frame.setVisible(true);        
-        
-        // bring it to front
         frame.toFront();        
     }
 

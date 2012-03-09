@@ -97,9 +97,10 @@ public final class TaskSwingWorkerExecutor {
      * as it must be called from Swing EDT
      *
      * @param task task to find the current worker
+     * @return true if one task was cancelled
      */
-    public static void cancelTask(final Task task) {
-        getInstance().cancel(task);
+    public static boolean cancelTask(final Task task) {
+        return getInstance().cancel(task);
     }
 
     /**
@@ -207,8 +208,10 @@ public final class TaskSwingWorkerExecutor {
      * as it must be called from Swing EDT
      *
      * @param task task to find the current worker
+     * @return true if one task was cancelled
      */
-    private void cancel(final Task task) {
+    private boolean cancel(final Task task) {
+        boolean cancelled = false;
         final AtomicReference<TaskSwingWorker<?>> workerRef = getReference(task);
         if (workerRef != null) {
             // get current worker and clear the reference :
@@ -216,6 +219,7 @@ public final class TaskSwingWorkerExecutor {
 
             // cancel the current running worker for the given task :
             if (currentWorker != null) {
+                cancelled = true;
                 // worker is still running ...
                 _logger.debug("cancel worker = {}", currentWorker);
 
@@ -224,6 +228,7 @@ public final class TaskSwingWorkerExecutor {
                 currentWorker.cancel(true);
             }
         }
+        return cancelled;
     }
 
     /**

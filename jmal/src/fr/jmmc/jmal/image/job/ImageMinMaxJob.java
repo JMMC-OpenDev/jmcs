@@ -48,7 +48,7 @@ public final class ImageMinMaxJob extends AbstractImageJob<MinMaxResult> {
      * @param jobIndex job index used to process data interlaced
      * @param jobCount total number of concurrent jobs
      */
-    protected ImageMinMaxJob(final ImageMinMaxJob parentJob,final int jobIndex, final int jobCount) {
+    protected ImageMinMaxJob(final ImageMinMaxJob parentJob, final int jobIndex, final int jobCount) {
         super(parentJob, jobIndex, jobCount);
         this._excludeZero = parentJob._excludeZero;
     }
@@ -81,14 +81,18 @@ public final class ImageMinMaxJob extends AbstractImageJob<MinMaxResult> {
     protected void merge(final List<MinMaxResult> partialResults) {
 
         for (MinMaxResult partial : partialResults) {
-            // _min:
+            // nData:
+            _result._nData += partial._nData;
+            // min:
             if (partial._min < _result._min) {
                 _result._min = partial._min;
             }
-            // _max:
+            // max:
             if (partial._max > _result._max) {
                 _result._max = partial._max;
             }
+            // sum:
+            _result._sum += partial._sum;
         }
     }
 
@@ -103,14 +107,26 @@ public final class ImageMinMaxJob extends AbstractImageJob<MinMaxResult> {
         if (_excludeZero && value == 0f) {
             return;
         }
-        // _min:
+        // nData:
+        _result._nData++;
+        // min:
         if (value < _result._min) {
             _result._min = value;
         }
-        // _max:
+        // max:
         if (value > _result._max) {
             _result._max = value;
         }
+        // sum:
+        _result._sum += value;
+    }
+
+    /**
+     * Return the number of data
+     * @return number of data
+     */
+    public int getNData() {
+        return _result._nData;
     }
 
     /**
@@ -130,14 +146,26 @@ public final class ImageMinMaxJob extends AbstractImageJob<MinMaxResult> {
     }
 
     /**
+     * Return the sum of values
+     * @return sum of values
+     */
+    public float getSum() {
+        return _result._sum;
+    }
+
+    /**
      * Result container
      */
     protected static class MinMaxResult {
 
+        /** number of data */
+        protected int _nData = 0;
         /** minimum value */
         protected float _min = Float.POSITIVE_INFINITY;
         /** maximum value */
         protected float _max = Float.NEGATIVE_INFINITY;
+        /** sum of values */
+        protected float _sum = 0f;
 
         /**
          * Protected Constructor

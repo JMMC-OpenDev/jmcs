@@ -113,6 +113,28 @@ public class StatusBar extends JPanel {
     }
 
     /**
+     * Set the status bar text if the current message equals the given previous message (ignore case)
+     *
+     * @param previous the previous message to override
+     * @param message the message to be displayed by the status bar.
+     */
+    public static void showIfPrevious(final String previous, final String message) {
+        SwingUtils.invokeEDT(new Runnable() {
+
+            /**
+             * Update the status bar using EDT
+             */
+            @Override
+            public void run() {
+                final String lastStatus = getStatusLabel();
+                if (lastStatus != null && lastStatus.equalsIgnoreCase(previous)) {
+                    setStatusLabel(message);
+                }
+            }
+        });
+    }
+
+    /**
      * Change the content of the status bar
      * @param message message to display
      */
@@ -125,7 +147,7 @@ public class StatusBar extends JPanel {
      * Note: Must be called by EDT
      * @return content of the status bar 
      */
-    public static String getStatusLabel() {
+    private static String getStatusLabel() {
         return _statusLabel.getText();
     }
 }

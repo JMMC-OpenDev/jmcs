@@ -134,18 +134,4 @@ public final class ImageArrayUtils {
 
         return output;
     }
-
-    /**
-     * Return the sum of all values in the given array
-     * @param data values to sum
-     * @return sum of all values
-     */
-    public static float sum(final float[] data) {
-        float sum = 0f;
-
-        for (int i = 0, len = data.length; i < len; i++) {
-            sum += data[i];
-        }
-        return sum;
-    }
 }

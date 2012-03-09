@@ -29,5 +29,5 @@ public interface VisNoiseService {
      * @param visErr complex visiblity error or NaN if the error can not be computed
      * @return gaussian noise value
      */
-    public double getNoise(final double visErr);
+    public double gaussianNoise(final double visErr);
 }

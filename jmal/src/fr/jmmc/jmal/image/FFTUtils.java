@@ -181,8 +181,8 @@ public final class FFTUtils {
 
                             if (doNoise) {
                                 err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
-                                re += noiseService.getNoise(err);
-                                im += noiseService.getNoise(err);
+                                re += noiseService.gaussianNoise(err);
+                                im += noiseService.gaussianNoise(err);
                             }
 
                             oRow[i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
@@ -194,8 +194,8 @@ public final class FFTUtils {
 
                             if (doNoise) {
                                 err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
-                                re += noiseService.getNoise(err);
-                                im += noiseService.getNoise(err);
+                                re += noiseService.gaussianNoise(err);
+                                im += noiseService.gaussianNoise(err);
                             }
 
                             oRow[ro2 + i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
@@ -220,8 +220,8 @@ public final class FFTUtils {
 
                             if (doNoise) {
                                 err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
-                                re += noiseService.getNoise(err);
-                                im += noiseService.getNoise(err);
+                                re += noiseService.gaussianNoise(err);
+                                im += noiseService.gaussianNoise(err);
                             }
 
                             oRow[i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
@@ -233,8 +233,8 @@ public final class FFTUtils {
 
                             if (doNoise) {
                                 err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
-                                re += noiseService.getNoise(err);
-                                im += noiseService.getNoise(err);
+                                re += noiseService.gaussianNoise(err);
+                                im += noiseService.gaussianNoise(err);
                             }
 
                             oRow[ro2 + i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));

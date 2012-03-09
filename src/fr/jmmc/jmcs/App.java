@@ -51,6 +51,7 @@ import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
 import fr.jmmc.jmcs.util.logging.LogOutput;
 import java.io.IOException;
+import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -910,14 +911,18 @@ public abstract class App {
      */
     public static void showFrameToFront() {
         final JFrame frame = getFrame();
-
-        if (frame.isVisible()) {
-            // ensure window is visible (not iconified):
-            if (frame.getState() == Frame.ICONIFIED) {
-                frame.setState(Frame.NORMAL);
-            }
-            frame.toFront();
+                       
+        // ensure window is visible (not iconified):
+        if (frame.getState() == Frame.ICONIFIED) {
+            frame.setState(Frame.NORMAL);
         }
+        
+        // Tricky code to force window display
+        frame.setVisible(false);
+        frame.setVisible(true);        
+        
+        // bring it to front
+        frame.toFront();        
     }
 
     /**

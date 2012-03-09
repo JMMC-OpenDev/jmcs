@@ -16,7 +16,7 @@ import javax.swing.ImageIcon;
 public final class ImageUtils {
 
     /** Class logger */
-    private static final Logger logger = LoggerFactory.getLogger(ImageUtils.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(ImageUtils.class.getName());
 
     /**
      * Forbidden constructor
@@ -56,10 +56,13 @@ public final class ImageUtils {
         if (maxHeight > 0) {
             newHeight = Math.min(iconHeight, maxHeight);
             newWidth = (int) Math.floor((double) iconWidth * ((double) newHeight / (double) iconHeight));
-        } else if (maxWidth > 0) {
+        }
+        if (maxWidth > 0) {
             newWidth = Math.min(iconWidth, maxWidth);
             newHeight = (int) Math.floor((double) iconHeight * ((double) newWidth / (double) iconWidth));
         }
+
+        _logger.debug("Scaling image from w" + iconWidth + "*h" + iconHeight + " to w" + newWidth + "*h" + newHeight + ".");
 
         final Image image = imageIcon.getImage();
         final Image scaledImage = image.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);

@@ -26,6 +26,8 @@ public final class UVMapData {
     private final IndexColorModel colorModel;
     /** image color scale */
     private final ColorScale colorScale;
+    /** optional Complex visibility Noise Service ready to use to compute noise on model images */
+    private final VisNoiseService noiseService;
     /** target name */
     private String targetName = null;
     /** target model version */
@@ -58,24 +60,27 @@ public final class UVMapData {
      * @param uvMap uv map image
      * @param uvMapSize concrete number of pixels for both width and height of the generated image
      * @param uvMapRect concrete UV frequency area in rad-1
+     * @param noiseService optional Complex visibility Noise Service ready to use to compute noise on model images
      */
     public UVMapData(final Rectangle.Double uvRect,
-                     final ImageMode mode, final int imageSize, 
+                     final ImageMode mode, final int imageSize,
                      final IndexColorModel colorModel, final ColorScale colorScale,
                      final Float min, final Float max,
                      final float[][] visData, final BufferedImage uvMap,
-                     final int uvMapSize, final Rectangle.Double uvMapRect) {
+                     final int uvMapSize, final Rectangle.Double uvMapRect,
+                     final VisNoiseService noiseService) {
+        this.uvRect = uvRect;
         this.mode = mode;
         this.imageSize = imageSize;
         this.colorModel = colorModel;
-        this.uvRect = uvRect;
+        this.colorScale = colorScale;
         this.min = min;
         this.max = max;
         this.visData = visData;
         this.uvMap = uvMap;
         this.uvMapSize = uvMapSize;
         this.uvMapRect = uvMapRect;
-        this.colorScale = colorScale;
+        this.noiseService = noiseService;
     }
 
     /**
@@ -199,6 +204,14 @@ public final class UVMapData {
     }
 
     /**
+     * Return the optional Complex visibility Noise Service ready to use to compute noise on model images
+     * @return optional Complex visibility Noise Service ready to use to compute noise on model images
+     */
+    public VisNoiseService getNoiseService() {
+        return noiseService;
+    }
+
+    /**
      * Check if this UV Map Data has the same input parameters to reuse its computed model image :
      * @param targetName target name
      * @param targetVersion target version
@@ -207,6 +220,7 @@ public final class UVMapData {
      * @param imageSize number of pixels for both width and height of the generated image
      * @param colorModel image color model
      * @param colorScale color scaling method
+     * @param noiseService optional Complex visibility Noise Service ready to use to compute noise on model images
      * @return true only if input parameters are equals
      */
     public boolean isValid(final String targetName, final int targetVersion,
@@ -214,7 +228,8 @@ public final class UVMapData {
                            final ImageMode mode,
                            final int imageSize,
                            final IndexColorModel colorModel,
-                           final ColorScale colorScale) {
+                           final ColorScale colorScale,
+                           final VisNoiseService noiseService) {
 
         if (!targetName.equals(getTargetName())) {
             return false;
@@ -235,6 +250,10 @@ public final class UVMapData {
             return false;
         }
         if (colorScale != getColorScale()) {
+            return false;
+        }
+        // TODO: check correctly noise service equality (i.e. check each individual parameters)
+        if (noiseService != getNoiseService()) {
             return false;
         }
         return true;

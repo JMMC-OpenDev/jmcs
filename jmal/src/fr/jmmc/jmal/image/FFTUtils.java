@@ -8,6 +8,7 @@ import edu.emory.mathcs.jtransforms.fft.RealFFTUtils_2D;
 import edu.emory.mathcs.utils.ConcurrencyUtils;
 import fr.jmmc.jmal.complex.ImmutableComplex;
 import fr.jmmc.jmal.model.ImageMode;
+import fr.jmmc.jmal.model.VisNoiseService;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import java.util.concurrent.Future;
 import org.slf4j.Logger;
@@ -104,7 +105,7 @@ public final class FFTUtils {
      * @return amplitude or phase image
      */
     public static float[][] convert(final int fftSize, final float[][] fftData, final ImageMode mode) {
-        return convert(fftSize, fftData, mode, fftSize);
+        return convert(fftSize, fftData, mode, fftSize, null);
     }
 
     /**
@@ -117,6 +118,21 @@ public final class FFTUtils {
      * @return amplitude or phase image
      */
     public static float[][] convert(final int fftSize, final float[][] fftData, final ImageMode mode, final int outputSize) {
+        return convert(fftSize, fftData, mode, outputSize, null);
+    }
+
+    /**
+     * Convert the given FFT data (real packed data) of the given size to Amplitude or Phase according to the given mode
+     * And shift quadrants to have zero (DC) at the image center
+     * @param fftSize number of rows = number of columns
+     * @param fftData FFT data (real packed data)
+     * @param mode image mode (amplitude or phase)
+     * @param outputSize output size (width == height); must be an even number
+     * @param noiseService optional noise service to compute noisy complex visibilities before computing amplitude or phase
+     * @return amplitude or phase image
+     */
+    public static float[][] convert(final int fftSize, final float[][] fftData, final ImageMode mode, final int outputSize,
+                                    final VisNoiseService noiseService) {
 
         final long start = System.nanoTime();
 
@@ -126,6 +142,7 @@ public final class FFTUtils {
         final float[][] output = new float[outputSize][outputSize];
 
         final boolean isAmp = (mode == ImageMode.AMP);
+        final boolean doNoise = (noiseService != null && noiseService.isEnabled());
 
         final int ro2 = outputSize / 2;
         final int fftOffset = fftSize - ro2;
@@ -150,7 +167,7 @@ public final class FFTUtils {
                 @Override
                 public void run() {
                     float[] oRow;
-                    float re, im;
+                    double re, im, err;
 
                     // Process quadrant 1 and 2 (cache locality):
                     for (int r = n0; r < ro2; r += nJobs) {
@@ -162,12 +179,24 @@ public final class FFTUtils {
                             re = unpacker.unpack(r, c, fftData);
                             im = unpacker.unpack(r, c + 1, fftData);
 
+                            if (doNoise) {
+                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
+                                re += noiseService.getNoise(err);
+                                im += noiseService.getNoise(err);
+                            }
+
                             oRow[i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
 
                             // quadrant 2:
                             c = 2 * (fftOffset + i);
                             re = unpacker.unpack(r, c, fftData);
                             im = unpacker.unpack(r, c + 1, fftData);
+
+                            if (doNoise) {
+                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
+                                re += noiseService.getNoise(err);
+                                im += noiseService.getNoise(err);
+                            }
 
                             oRow[ro2 + i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
                         }
@@ -189,12 +218,24 @@ public final class FFTUtils {
                             re = unpacker.unpack(r + fftOffset, c, fftData);
                             im = unpacker.unpack(r + fftOffset, c + 1, fftData);
 
+                            if (doNoise) {
+                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
+                                re += noiseService.getNoise(err);
+                                im += noiseService.getNoise(err);
+                            }
+
                             oRow[i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
 
                             // quadrant 3:
                             c = 2 * (fftOffset + i);
                             re = unpacker.unpack(r + fftOffset, c, fftData);
                             im = unpacker.unpack(r + fftOffset, c + 1, fftData);
+
+                            if (doNoise) {
+                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
+                                re += noiseService.getNoise(err);
+                                im += noiseService.getNoise(err);
+                            }
 
                             oRow[ro2 + i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
                         }

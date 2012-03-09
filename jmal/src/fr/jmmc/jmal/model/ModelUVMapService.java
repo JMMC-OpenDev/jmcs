@@ -67,7 +67,33 @@ public final class ModelUVMapService {
                                          final int imageSize,
                                          final IndexColorModel colorModel,
                                          final ColorScale colorScale) {
-        return computeUVMap(models, uvRect, null, null, null, mode, imageSize, colorModel, colorScale);
+        return computeUVMap(models, uvRect, null, null, null, mode, imageSize, colorModel, colorScale, null);
+    }
+
+    /**
+     * Compute the UV Map for the given models and UV ranges
+     *
+     * @param models list of models to use
+     * @param uvRect expected UV frequency area in rad-1
+     * @param mode image mode (amplitude or phase)
+     * @param imageSize expected number of pixels for both width and height of the generated image
+     * @param colorModel color model to use
+     * @param colorScale color scaling method
+     * @param noiseService optional noise service to compute noisy complex visibilities before computing amplitude or phase
+     * @return UVMapData
+     * 
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws IllegalArgumentException if a model parameter value is invalid
+     * @throws RuntimeException if any exception occured during the computation
+     */
+    public static UVMapData computeUVMap(final List<Model> models,
+                                         final Rectangle2D.Double uvRect,
+                                         final ImageMode mode,
+                                         final int imageSize,
+                                         final IndexColorModel colorModel,
+                                         final ColorScale colorScale,
+                                         final VisNoiseService noiseService) {
+        return computeUVMap(models, uvRect, null, null, null, mode, imageSize, colorModel, colorScale, noiseService);
     }
 
     /**
@@ -82,6 +108,7 @@ public final class ModelUVMapService {
      * @param imageSize expected number of pixels for both width and height of the generated image
      * @param colorModel color model to use
      * @param colorScale color scaling method
+     * @param noiseService optional noise service to compute noisy complex visibilities before computing amplitude or phase
      * @return UVMapData
      * 
      * @throws InterruptedJobException if the current thread is interrupted (cancelled)
@@ -95,7 +122,8 @@ public final class ModelUVMapService {
                                          final ImageMode mode,
                                          final int imageSize,
                                          final IndexColorModel colorModel,
-                                         final ColorScale colorScale) {
+                                         final ColorScale colorScale,
+                                         final VisNoiseService noiseService) {
 
         /** Get the current thread to check if the computation is interrupted */
         final Thread currentThread = Thread.currentThread();
@@ -187,7 +215,7 @@ public final class ModelUVMapService {
         // 3 - Extract the amplitude/phase to get the uv map :
 
         // data as float [rows][cols]:
-        final float[][] data = convert(imageSize, visData, mode);
+        final float[][] data = convert(imageSize, visData, mode, noiseService);
 
         // fast interrupt :
         if (currentThread.isInterrupted()) {
@@ -196,7 +224,8 @@ public final class ModelUVMapService {
 
 
         // 4 - Get the image with the given color model and color scale :
-        final UVMapData uvMapData = computeImage(uvRect, refMin, refMax, mode, imageSize, colorModel, colorScale, imageSize, visData, data, uvRect);
+        final UVMapData uvMapData = computeImage(uvRect, refMin, refMax, mode, imageSize, colorModel, colorScale,
+                imageSize, visData, data, uvRect, noiseService);
 
         if (logger.isInfoEnabled()) {
             logger.info("compute : duration = {} ms.", 1e-6d * (System.nanoTime() - start));
@@ -218,6 +247,7 @@ public final class ModelUVMapService {
      * @param visData complex visibility data
      * @param imgData model image data (amplitude or phase)
      * @param uvMapRect concrete UV frequency area in rad-1
+     * @param noiseService optional noise service to compute noisy complex visibilities before computing amplitude or phase
      * @return UVMapData
      * 
      * @throws InterruptedJobException if the current thread is interrupted (cancelled)
@@ -233,7 +263,8 @@ public final class ModelUVMapService {
                                          final int dataSize,
                                          final float[][] visData,
                                          final float[][] imgData,
-                                         final Rectangle2D.Double uvMapRect) {
+                                         final Rectangle2D.Double uvMapRect,
+                                         final VisNoiseService noiseService) {
 
         // Get the image with the given color model :
         final ColorScale usedColorScale;
@@ -293,7 +324,7 @@ public final class ModelUVMapService {
 
         // provide results :;
         return new UVMapData(uvRect, mode, imageSize, colorModel, usedColorScale,
-                Float.valueOf(min), Float.valueOf(max), visData, uvMap, dataSize, uvMapRect);
+                Float.valueOf(min), Float.valueOf(max), visData, uvMap, dataSize, uvMapRect, noiseService);
     }
 
     /**
@@ -446,15 +477,18 @@ public final class ModelUVMapService {
      * @param size number of rows = number of columns / 2 (re, im)
      * @param ftData FT data (complex data)
      * @param mode image mode (amplitude or phase)
+     * @param noiseService optional noise service to compute noisy complex visibilities before computing amplitude or phase
      * @return amplitude or phase image
      */
-    private static float[][] convert(final int size, final float[][] ftData, final ImageMode mode) {
+    private static float[][] convert(final int size, final float[][] ftData, final ImageMode mode,
+                                     final VisNoiseService noiseService) {
 
         final long start = System.nanoTime();
 
         final float[][] output = new float[size][size];
 
         final boolean isAmp = (mode == ImageMode.AMP);
+        final boolean doNoise = (noiseService != null && noiseService.isEnabled());
 
         /** Get the current thread to check if the computation is interrupted */
         final Thread currentThread = Thread.currentThread();
@@ -476,7 +510,7 @@ public final class ModelUVMapService {
                 @Override
                 public void run() {
                     float[] oRow;
-                    float re, im;
+                    double re, im, err;
 
                     for (int r = jobIndex; r < size; r += nJobs) {
                         oRow = output[r];
@@ -485,6 +519,12 @@ public final class ModelUVMapService {
                             c = 2 * i;
                             re = ftData[r][c];
                             im = ftData[r][c + 1];
+
+                            if (doNoise) {
+                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
+                                re += noiseService.getNoise(err);
+                                im += noiseService.getNoise(err);
+                            }
 
                             oRow[i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
                         }

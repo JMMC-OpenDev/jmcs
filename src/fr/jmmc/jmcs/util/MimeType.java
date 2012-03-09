@@ -25,6 +25,8 @@ public enum MimeType {
     OBX("application/obx", "Observing Blocks", "obx"),
     /** MimeType associated to OIFITS format */
     OIFITS("application/oifits", "Optical Interferometry FITS", "fits", "oifits"),
+    /** MimeType associated to FITS format */
+    FITS_IMAGE("application/fits", "FITS Image", "fits", "fits.gz"),
     /** MimeType associated to PDF documents */
     PDF("application/pdf", "Portable Document Format", "pdf"),
     /** MimeType associated to VEGA Star Lists */

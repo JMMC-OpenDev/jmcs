@@ -33,7 +33,7 @@ public final class ImageXYProjectionJob extends AbstractImageJob<ProjectionResul
      * @param jobIndex job index used to process data interlaced
      * @param jobCount total number of concurrent jobs
      */
-    protected ImageXYProjectionJob(final ImageXYProjectionJob parentJob,final int jobIndex, final int jobCount) {
+    protected ImageXYProjectionJob(final ImageXYProjectionJob parentJob, final int jobIndex, final int jobCount) {
         super(parentJob, jobIndex, jobCount);
     }
 
@@ -66,7 +66,7 @@ public final class ImageXYProjectionJob extends AbstractImageJob<ProjectionResul
 
         final int width = _width;
         final int height = _height;
-        float[] resultData, partialData;
+        double[] resultData, partialData;
 
         for (ProjectionResult partial : partialResults) {
 
@@ -153,10 +153,10 @@ public final class ImageXYProjectionJob extends AbstractImageJob<ProjectionResul
     }
 
     /**
-     * Return the data values on column axis (X)
-     * @return data values on column axis (X)
+     * Return the sum of data values on column axis (X)
+     * @return sum of data values on column axis (X)
      */
-    public float[] getColumnData() {
+    public double[] getColumnData() {
         return _result._columnData;
     }
 
@@ -177,10 +177,10 @@ public final class ImageXYProjectionJob extends AbstractImageJob<ProjectionResul
     }
 
     /**
-     * Return the data values on row axis (Y)
-     * @return data values on row axis (Y)
+     * Return the sum of data values on row axis (Y)
+     * @return sum of data values on row axis (Y)
      */
-    public float[] getRowData() {
+    public double[] getRowData() {
         return _result._rowData;
     }
 
@@ -197,14 +197,14 @@ public final class ImageXYProjectionJob extends AbstractImageJob<ProjectionResul
         protected int _columnLowerIndex = UNDEFINED_INDEX;
         /** upper column index where projected data != 0.0 */
         protected int _columnUpperIndex = UNDEFINED_INDEX;
-        /** data values on column axis (X) */
-        protected final float[] _columnData;
+        /** sum of data values on column axis (X) */
+        protected final double[] _columnData;
         /** lower row index where projected data != 0.0 */
         protected int _rowLowerIndex = UNDEFINED_INDEX;
         /** upper row index where projected data != 0.0 */
         protected int _rowUpperIndex = UNDEFINED_INDEX;
-        /** data values on row axis (Y) */
-        protected final float[] _rowData;
+        /** sum of data values on row axis (Y) */
+        protected final double[] _rowData;
 
         /**
          * Protected Constructor
@@ -215,8 +215,8 @@ public final class ImageXYProjectionJob extends AbstractImageJob<ProjectionResul
             super();
             this._width = width;
             this._height = height;
-            this._columnData = new float[width];
-            this._rowData = new float[height];
+            this._columnData = new double[width];
+            this._rowData = new double[height];
         }
     }
 }

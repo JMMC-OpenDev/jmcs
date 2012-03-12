@@ -16,6 +16,7 @@ import javax.swing.event.ChangeListener;
 import org.astrogrid.samp.Client;
 import org.astrogrid.samp.Message;
 import org.astrogrid.samp.Metadata;
+import org.astrogrid.samp.Subscriptions;
 import org.astrogrid.samp.client.ClientProfile;
 import org.astrogrid.samp.client.DefaultClientProfile;
 import org.astrogrid.samp.client.SampException;
@@ -365,14 +366,36 @@ public final class SampManager {
     }
 
     /**
+     * Return the client corresponding to the given client Id known by the hub
+     * @param clientId client id
+     * @return client or null
+     */
+    public static Client getClient(final String clientId) {
+        return (Client) getGuiHubConnector().getClientMap().get(clientId);
+    }
+
+    /**
      * Return the meta data corresponding to the given client Id known by the hub
      * @param clientId client id
      * @return meta data or null
      */
     public static Metadata getMetaData(final String clientId) {
-        final Client client = (Client) getGuiHubConnector().getClientMap().get(clientId);
+        final Client client = getClient(clientId);
         if (client != null) {
             return client.getMetadata();
+        }
+        return null;
+    }
+
+    /**
+     * Return the subscriptions corresponding to the given client Id known by the hub
+     * @param clientId client id
+     * @return subscriptions or null
+     */
+    public static Subscriptions getSubscriptions(final String clientId) {
+        final Client client = getClient(clientId);
+        if (client != null) {
+            return client.getSubscriptions();
         }
         return null;
     }

@@ -25,11 +25,11 @@ public enum SampCapability {
     /** Load BibCode MType */
     LOAD_BIBCODE("bibcode.load"),
     /** Highlight row MType */
-    HIGHLIGHT_ROW("table.highlight.row"),
+    HIGHLIGHT_ROW("table.highlight.row", true),
     /** Select rows MType */
-    SELECT_LIST("table.select.rowList"),
+    SELECT_LIST("table.select.rowList", true),
     /** Point at given coordinates MType */
-    POINT_COORDINATES("coord.pointAt.sky"),
+    POINT_COORDINATES("coord.pointAt.sky", true),
     /** Get environment variable MType */
     GET_ENV_VAR("client.env.get"),
     // Private JMMC SAMP capabilities are prefixed with application name:
@@ -50,14 +50,26 @@ public enum SampCapability {
     /* members */
     /** Store the SAMP 'cryptic' mType */
     private final String _mType;
+    /** true if the SAMP capability is highly likely to be broadcasted, false otherwise */
+    private final boolean _broadcastingSusceptibility;
 
     /**
      * Constructor
      * @param mType samp message type (MTYPE)
      */
     SampCapability(final String mType) {
-        this._mType = (mType == null) ? UNKNOWN_MTYPE : mType;
-        SampCapabilityNastyTrick.TYPES.put(this._mType, this);
+        this(mType, false);
+    }
+
+    /**
+     * Constructor
+     * @param mType samp message type (MTYPE)
+     * @param true if the SAMP capability is highly likely to be broadcasted, false otherwise
+     */
+    SampCapability(final String mType, final boolean broadcastingSusceptibility) {
+        _mType = (mType == null) ? UNKNOWN_MTYPE : mType;
+        _broadcastingSusceptibility = broadcastingSusceptibility;
+        SampCapabilityNastyTrick.TYPES.put(_mType, this);
     }
 
     /**
@@ -66,6 +78,13 @@ public enum SampCapability {
      */
     public String mType() {
         return _mType;
+    }
+
+    /**
+     * @return true if the SAMP capability is likely to be broadcasted, false otherwise.
+     */
+    public boolean isLikelyBroadcastable() {
+        return _broadcastingSusceptibility;
     }
 
     /**
@@ -101,7 +120,8 @@ public enum SampCapability {
         // For each catalog in the enum
         for (SampCapability capability : SampCapability.values()) {
             String mType = capability.mType();
-            System.out.println("Capability '" + capability + "' has mType '" + mType + "' : match '" + (capability == SampCapability.fromMType(mType) ? "OK" : "FAILED") + "'.");
+            boolean broadcastingSusceptibility = capability.isLikelyBroadcastable();
+            System.out.println("Capability '" + capability + "' has mType '" + mType + "' (broadcating susceptibility = " + broadcastingSusceptibility + ") : match '" + (capability == SampCapability.fromMType(mType) ? "OK" : "FAILED") + "'.");
         }
 
         SampCapability tmp;

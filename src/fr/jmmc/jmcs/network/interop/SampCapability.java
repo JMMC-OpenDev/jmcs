@@ -14,6 +14,19 @@ import java.util.Map;
 public enum SampCapability {
 
     // Standard SAMP mTypes
+    // Hub Administrative SAMP capabilities:
+    HUB_EVENT_SHUTDOWN("samp.hub.event.shutdown", ExclusionReason.SAMP_INTERNAL),
+    HUB_EVENT_REGISTER("samp.hub.event.register", ExclusionReason.SAMP_INTERNAL),
+    HUB_EVENT_UNREGISTER("samp.hub.event.unregister", ExclusionReason.SAMP_INTERNAL),
+    HUB_EVENT_METADATA("samp.hub.event.metadata", ExclusionReason.SAMP_INTERNAL),
+    HUB_EVENT_SUBSCRIPTIONS("samp.hub.event.subscriptions", ExclusionReason.SAMP_INTERNAL),
+    HUB_EVENT_DISCONNECT("samp.hub.event.disconnect", ExclusionReason.SAMP_INTERNAL),
+    // Client Administrative SAMP capabilities:
+    CLIENT_APP_PING("samp.app.ping", ExclusionReason.SAMP_INTERNAL),
+    CLIENT_APP_STATUS("samp.app.status", ExclusionReason.SAMP_INTERNAL),
+    CLIENT_EVENT_SHUTDOWN("samp.app.event.shutdown", ExclusionReason.SAMP_INTERNAL),
+    CLIENT_EVENT_PROGRESS("samp.app.event.progress", ExclusionReason.SAMP_INTERNAL),
+    // Application SAMP capabilities:
     /** Load VOTable MType */
     LOAD_VO_TABLE("table.load.votable"),
     /** Load fits table MType */
@@ -32,6 +45,19 @@ public enum SampCapability {
     POINT_COORDINATES("coord.pointAt.sky", ExclusionReason.LIKELY_BROADCASTED),
     /** Get environment variable MType */
     GET_ENV_VAR("client.env.get", ExclusionReason.SAMP_INTERNAL),
+    // VOResource SAMP capabilities:
+    /** VOResource list loading MType */
+    VORESOURCE_LOAD_LIST("voresource.loadlist"),
+    /** VOResource cone list loading MType */
+    VORESOURCE_LOAD_LIST_CONE("voresource.loadlist.cone"),
+    /** VOResource SIAP list loading MType */
+    VORESOURCE_LOAD_LIST_SIAP("voresource.loadlist.siap"),
+    /** VOResource SSAP list loading MType */
+    VORESOURCE_LOAD_LIST_SSAP("voresource.loadlist.ssap"),
+    /** VOResource TAP list loading MType */
+    VORESOURCE_LOAD_LIST_TAP("voresource.loadlist.tap"),
+    /** VOResource VOSpace list loading MType */
+    VORESOURCE_LOAD_LIST_VOSPACE("voresource.loadlist.vospace"),
     // Private JMMC SAMP capabilities are prefixed with application name:
     /** JMMC SearchCal Start Query MType */
     APPLAUNCHERTESTER_TRY_LAUNCH("fr.jmmc.applaunchertester.try.launch"),
@@ -45,14 +71,6 @@ public enum SampCapability {
     ALADIN_LOAD_SCRIPT("script.aladin.send"),
     /** TOPCAT STIL loading MType */
     TOPCAT_LOAD_STIL("table.load.stil"),
-    /** TOPCAT VOResource list loading MType */
-    TOPCAT_VORESOURCE_LOAD_LIST("voresource.loadlist"),
-    /** TOPCAT VOResource cone list loading MType */
-    TOPCAT_VORESOURCE_LOAD_LIST_CONE("voresource.loadlist.cone"),
-    /** TOPCAT VOResource SIAP list loading MType */
-    TOPCAT_VORESOURCE_LOAD_LIST_SIAP("voresource.loadlist.siap"),
-    /** TOPCAT VOResource SSAP list loading MType */
-    TOPCAT_VORESOURCE_LOAD_LIST_SSAP("voresource.loadlist.ssap"),
     /** Undefined MType */
     UNKNOWN("UNKNOWN");
 

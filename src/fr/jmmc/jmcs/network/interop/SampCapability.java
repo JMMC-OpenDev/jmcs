@@ -25,13 +25,13 @@ public enum SampCapability {
     /** Load BibCode MType */
     LOAD_BIBCODE("bibcode.load"),
     /** Highlight row MType */
-    HIGHLIGHT_ROW("table.highlight.row", true),
+    HIGHLIGHT_ROW("table.highlight.row", ExclusionReason.LIKELY_BROADCASTED),
     /** Select rows MType */
-    SELECT_LIST("table.select.rowList", true),
+    SELECT_LIST("table.select.rowList", ExclusionReason.LIKELY_BROADCASTED),
     /** Point at given coordinates MType */
-    POINT_COORDINATES("coord.pointAt.sky", true),
+    POINT_COORDINATES("coord.pointAt.sky", ExclusionReason.LIKELY_BROADCASTED),
     /** Get environment variable MType */
-    GET_ENV_VAR("client.env.get"),
+    GET_ENV_VAR("client.env.get", ExclusionReason.SAMP_INTERNAL),
     // Private JMMC SAMP capabilities are prefixed with application name:
     /** JMMC SearchCal Start Query MType */
     APPLAUNCHERTESTER_TRY_LAUNCH("fr.jmmc.applaunchertester.try.launch"),
@@ -63,14 +63,14 @@ public enum SampCapability {
     /** Store the SAMP 'cryptic' mType */
     private final String _mType;
     /** true if the SAMP capability is highly likely to be broadcasted, false otherwise */
-    private final boolean _broadcastingSusceptibility;
+    private final ExclusionReason _exclusionReason;
 
     /**
      * Constructor
      * @param mType samp message type (MTYPE)
      */
     SampCapability(final String mType) {
-        this(mType, false);
+        this(mType, ExclusionReason.NONE);
     }
 
     /**
@@ -78,9 +78,9 @@ public enum SampCapability {
      * @param mType samp message type (MTYPE)
      * @param true if the SAMP capability is highly likely to be broadcasted, false otherwise
      */
-    SampCapability(final String mType, final boolean broadcastingSusceptibility) {
+    SampCapability(final String mType, final ExclusionReason exclusionReason) {
         _mType = (mType == null) ? UNKNOWN_MTYPE : mType;
-        _broadcastingSusceptibility = broadcastingSusceptibility;
+        _exclusionReason = exclusionReason;
         SampCapabilityNastyTrick.TYPES.put(_mType, this);
     }
 
@@ -96,7 +96,21 @@ public enum SampCapability {
      * @return true if the SAMP capability is likely to be broadcasted, false otherwise.
      */
     public boolean isLikelyBroadcastable() {
-        return _broadcastingSusceptibility;
+        return (_exclusionReason == ExclusionReason.LIKELY_BROADCASTED);
+    }
+
+    /**
+     * @return true if the SAMP capability is likely internal, false otherwise.
+     */
+    public boolean isLikelyInternal() {
+        return (_exclusionReason == ExclusionReason.SAMP_INTERNAL);
+    }
+
+    /**
+     * @return true if the SAMP capability is flagged whatsoever, false otherwise.
+     */
+    public boolean isFlagged() {
+        return (_exclusionReason != ExclusionReason.NONE);
     }
 
     /**
@@ -132,8 +146,7 @@ public enum SampCapability {
         // For each catalog in the enum
         for (SampCapability capability : SampCapability.values()) {
             String mType = capability.mType();
-            boolean broadcastingSusceptibility = capability.isLikelyBroadcastable();
-            System.out.println("Capability '" + capability + "' has mType '" + mType + "' (broadcating susceptibility = " + broadcastingSusceptibility + ") : match '" + (capability == SampCapability.fromMType(mType) ? "OK" : "FAILED") + "'.");
+            System.out.println("Capability '" + capability + "' has mType '" + mType + "' (flag = " + capability._exclusionReason + ") : match '" + (capability == SampCapability.fromMType(mType) ? "OK" : "FAILED") + "'.");
         }
 
         SampCapability tmp;
@@ -165,4 +178,10 @@ public enum SampCapability {
             super();
         }
     }
+}
+
+enum ExclusionReason {
+    LIKELY_BROADCASTED,
+    SAMP_INTERNAL,
+    NONE
 }

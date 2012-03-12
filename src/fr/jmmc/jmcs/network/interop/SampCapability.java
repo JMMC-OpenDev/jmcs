@@ -41,6 +41,18 @@ public enum SampCapability {
     LITPRO_START_SETTING("fr.jmmc.litpro.start.setting"),
     /** OCA Pivot load star list MType */
     LOAD_STAR_LIST("starlist.load"),
+    /** Aladin script loading MType */
+    ALADIN_LOAD_SCRIPT("script.aladin.send"),
+    /** TOPCAT STIL loading MType */
+    TOPCAT_LOAD_STIL("table.load.stil"),
+    /** TOPCAT VOResource list loading MType */
+    TOPCAT_VORESOURCE_LOAD_LIST("voresource.loadlist"),
+    /** TOPCAT VOResource cone list loading MType */
+    TOPCAT_VORESOURCE_LOAD_LIST_CONE("voresource.loadlist.cone"),
+    /** TOPCAT VOResource SIAP list loading MType */
+    TOPCAT_VORESOURCE_LOAD_LIST_SIAP("voresource.loadlist.siap"),
+    /** TOPCAT VOResource SSAP list loading MType */
+    TOPCAT_VORESOURCE_LOAD_LIST_SSAP("voresource.loadlist.ssap"),
     /** Undefined MType */
     UNKNOWN("UNKNOWN");
 

@@ -20,7 +20,7 @@ public enum SampCapability {
     HUB_EVENT_UNREGISTER("samp.hub.event.unregister", ExclusionReason.SAMP_INTERNAL),
     HUB_EVENT_METADATA("samp.hub.event.metadata", ExclusionReason.SAMP_INTERNAL),
     HUB_EVENT_SUBSCRIPTIONS("samp.hub.event.subscriptions", ExclusionReason.SAMP_INTERNAL),
-    HUB_EVENT_DISCONNECT("samp.hub.event.disconnect", ExclusionReason.SAMP_INTERNAL),
+    HUB_DISCONNECT("samp.hub.disconnect", ExclusionReason.SAMP_INTERNAL),
     // Client Administrative SAMP capabilities:
     CLIENT_APP_PING("samp.app.ping", ExclusionReason.SAMP_INTERNAL),
     CLIENT_APP_STATUS("samp.app.status", ExclusionReason.SAMP_INTERNAL),

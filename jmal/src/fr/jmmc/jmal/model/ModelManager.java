@@ -152,7 +152,7 @@ public final class ModelManager {
     /**
      * Validate the given models i.e. all parameter values are valid
      *
-     * @param models list of models to compute
+     * @param models list of models to validate
      * @throws IllegalArgumentException if a parameter value is invalid !
      */
     public void validateModels(final List<Model> models) throws IllegalArgumentException {

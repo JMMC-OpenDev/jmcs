@@ -67,8 +67,13 @@ public final class FFTUtils {
         // use size to have hyper resolution in fourier plane:
         FloatFFT_2D fft2d = new FloatFFT_2D(fftSize, fftSize, true); // rows, cols must be power of two !!
 
-        // compute subset of real FFT (power of 2):
-        float[][] fftData = fft2d.realForwardSubset(fftSubSize, inputSize, array);
+        float[][] fftData = null;
+        try {
+            // compute subset of real FFT (power of 2):
+            fftData = fft2d.realForwardSubset(fftSubSize, inputSize, array);
+        } catch (IllegalArgumentException iae) {
+            throw new IllegalStateException("Invalid argument to compute FFT :", iae);
+        }
 
         // fast interrupt:
         if (Thread.currentThread().isInterrupted()) {

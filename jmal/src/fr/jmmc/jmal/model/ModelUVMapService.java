@@ -280,14 +280,12 @@ public final class ModelUVMapService {
                     // ignore zero values:
                     final ImageMinMaxJob minMaxJob = new ImageMinMaxJob(imgData, dataSize, dataSize, true);
 
-                    logger.info("ImageMinMaxJob forkAndJoin");
-
                     minMaxJob.forkAndJoin();
 
                     float dataMin = minMaxJob.getMin();
                     float dataMax = minMaxJob.getMax();
 
-                    logger.info("ImageMinMaxJob result: " + dataMin + " - " + dataMax);
+                    logger.info("ImageMinMaxJob min: " + dataMin + " - max: " + dataMax);
 
                     if (dataMin != dataMax && !Float.isInfinite(dataMin) && !Float.isInfinite(dataMax)) {
                         // force min to 0.1 at least to have log scale ticks displayed:

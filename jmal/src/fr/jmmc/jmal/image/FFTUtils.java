@@ -54,7 +54,7 @@ public final class FFTUtils {
      */
     public static float[][] computeFFT(final int inputSize, final float[][] array, final int fftSize, final int outputSize) {
 
-        logger.info("testFFT: image size = " + inputSize + " - FFT size = " + fftSize + " - output size = " + outputSize);
+        logger.info("computeFFT: image size = " + inputSize + " - FFT size = " + fftSize + " - output size = " + outputSize);
 
         // FFT sub size must be larger than input image:
         final int fftSubSize = Math.max(inputSize, outputSize);
@@ -324,10 +324,10 @@ public final class FFTUtils {
      */
     public static float[][] extractFFT(final int size, final float[][] fftData, final int outputSize) {
         if (outputSize % 2 == 1) {
-            throw new IllegalStateException("invalid output size (" + outputSize + ") must be an even number !");
+            throw new IllegalStateException("Invalid output size (" + outputSize + ") must be an even number !");
         }
         if (outputSize > size) {
-            throw new IllegalStateException("invalid output size (" + outputSize + ") > fft size (" + size + ") !");
+            throw new IllegalStateException("Invalid output size (" + outputSize + ") > fft size (" + size + ") !");
         }
         if (outputSize == size) {
             return fftData;

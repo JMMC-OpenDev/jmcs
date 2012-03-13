@@ -167,8 +167,8 @@ final class GenericFileFilter extends FileFilter {
     private final HashMap<String, String> _fileExtensions = new HashMap<String, String>(4);
     /** Filter description */
     private final String _description;
-    /** number of dots in extension (0 or 1 supported) */
-    private final int _nDots;
+    /** flag to indicate that one extension contains '.' char */
+    private final boolean _extWithDot;
 
     /**
      * Creates a new GenericFileFilter object.
@@ -187,10 +187,11 @@ final class GenericFileFilter extends FileFilter {
         final int nbOfFileExtensions = fileExtensions.length;
 
         boolean hasDot = false;
+
         for (int i = 0; i < nbOfFileExtensions; i++) {
             // Add filters one by one
             final String fileExtension = fileExtensions[i].toLowerCase();
-            
+
             hasDot |= fileExtension.contains(".");
 
             _fileExtensions.put(fileExtension, description);
@@ -200,9 +201,8 @@ final class GenericFileFilter extends FileFilter {
                         new Object[]{(i + 1), nbOfFileExtensions, fileExtension});
             }
         }
-        
-        _nDots = (hasDot) ? 2 : 1;
 
+        _extWithDot = hasDot;
         _description = description;
     }
 
@@ -216,7 +216,7 @@ final class GenericFileFilter extends FileFilter {
     @Override
     public boolean accept(final File currentFile) {
         if (currentFile != null) {
-            String fileName = currentFile.getName();
+            final String fileName = currentFile.getName();
 
             // If current file is not regular (e.g directory, links, ...)
             if (!currentFile.isFile()) {
@@ -226,19 +226,37 @@ final class GenericFileFilter extends FileFilter {
             }
 
             // If the file has no extension
-            final String fileExtension = FileUtils.getExtension(currentFile, _nDots);
+            final String fileExtension = FileUtils.getExtension(currentFile);
 
             if (fileExtension == null) {
                 return false; // Discard it
             }
 
             // If corresponding mime-type is handled
-            final String fileType = _fileExtensions.get(fileExtension);
+            String fileType = _fileExtensions.get(fileExtension);
 
             if (fileType != null) {
                 _logger.debug("Accepting file '{}' of type '{}'.", fileName, fileType);
 
                 return true; // Accept it
+            }
+
+            if (_extWithDot) {
+                // retry with extension with dot:
+                final String fileExtWithDot = FileUtils.getExtension(currentFile, 2);
+
+                if (fileExtWithDot == null) {
+                    return false; // Discard it
+                }
+
+                // If corresponding mime-type is handled
+                fileType = _fileExtensions.get(fileExtWithDot);
+
+                if (fileType != null) {
+                    _logger.debug("Accepting file '{}' of type '{}'.", fileName, fileType);
+
+                    return true; // Accept it
+                }
             }
         }
 

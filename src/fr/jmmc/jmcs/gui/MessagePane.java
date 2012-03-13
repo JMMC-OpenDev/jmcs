@@ -152,6 +152,9 @@ public final class MessagePane {
             scrollPane.setBorder(null);
         }
 
+        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+
         // ensure window is visible (not iconified):
         App.showFrameToFront();
 

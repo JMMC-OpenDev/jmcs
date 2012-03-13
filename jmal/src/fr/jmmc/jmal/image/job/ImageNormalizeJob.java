@@ -14,7 +14,7 @@ public final class ImageNormalizeJob extends AbstractImageJob<Void> {
 
     /* members */
     /** factor value */
-    final float _factor;
+    final double _factor;
 
     /**
      * Create the image Job
@@ -25,7 +25,7 @@ public final class ImageNormalizeJob extends AbstractImageJob<Void> {
      * @param factor factor value to use
      */
     public ImageNormalizeJob(final float[][] array, final int width, final int height,
-                             final float factor) {
+                             final double factor) {
         super("ImageNormalizeJob", array, width, height);
         this._factor = factor;
     }
@@ -37,7 +37,7 @@ public final class ImageNormalizeJob extends AbstractImageJob<Void> {
      * @param jobIndex job index used to process data interlaced
      * @param jobCount total number of concurrent jobs
      */
-    protected ImageNormalizeJob(final ImageNormalizeJob parentJob,final int jobIndex, final int jobCount) {
+    protected ImageNormalizeJob(final ImageNormalizeJob parentJob, final int jobIndex, final int jobCount) {
         super(parentJob, jobIndex, jobCount);
         this._factor = parentJob._factor;
     }
@@ -79,6 +79,9 @@ public final class ImageNormalizeJob extends AbstractImageJob<Void> {
      */
     @Override
     protected void processValue(final int col, final int row, final float value) {
-        _array2D[row][col] = value * _factor;
+        if (value != 0f) {
+            // use double precision for accuracy:
+            _array2D[row][col] = (float) (_factor * value);
+        }
     }
 }

@@ -149,7 +149,7 @@ public final class ImageMinMaxJob extends AbstractImageJob<MinMaxResult> {
      * Return the sum of values
      * @return sum of values
      */
-    public float getSum() {
+    public double getSum() {
         return _result._sum;
     }
 
@@ -165,7 +165,7 @@ public final class ImageMinMaxJob extends AbstractImageJob<MinMaxResult> {
         /** maximum value */
         protected float _max = Float.NEGATIVE_INFINITY;
         /** sum of values */
-        protected float _sum = 0f;
+        protected double _sum = 0d;
 
         /**
          * Protected Constructor

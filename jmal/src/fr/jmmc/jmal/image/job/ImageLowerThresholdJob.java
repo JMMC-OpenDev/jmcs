@@ -46,7 +46,7 @@ public final class ImageLowerThresholdJob extends AbstractImageJob<AtomicInteger
      * @param jobIndex job index used to process data interlaced
      * @param jobCount total number of concurrent jobs
      */
-    protected ImageLowerThresholdJob(final ImageLowerThresholdJob parentJob,final int jobIndex, final int jobCount) {
+    protected ImageLowerThresholdJob(final ImageLowerThresholdJob parentJob, final int jobIndex, final int jobCount) {
         super(parentJob, jobIndex, jobCount);
         this._threshold = parentJob._threshold;
         this._replaceBy = parentJob._replaceBy;
@@ -91,7 +91,7 @@ public final class ImageLowerThresholdJob extends AbstractImageJob<AtomicInteger
      */
     @Override
     protected void processValue(final int col, final int row, final float value) {
-        if (value < _threshold) {
+        if (value != 0f && value < _threshold) {
             if (DEBUG) {
                 logger.info("threshold reached at column " + col + " row = " + row + " : " + value);
             }

@@ -366,12 +366,10 @@ public class MainMenuBar extends JMenuBar {
 
         // Add HelpView action
         helpMenu.add(App.showHelpAction());
-
         helpMenu.add(new JSeparator());
 
         // Add DependenciesView action
         helpMenu.add(App.showDependenciesAction());
-
         helpMenu.add(new JSeparator());
 
         // Add feedback action (if supported)
@@ -381,55 +379,52 @@ public class MainMenuBar extends JMenuBar {
 
         // Add log Gui anyway:
         helpMenu.add(App.logGuiAction());
+        helpMenu.add(new JSeparator());
 
         // Get help menu from table
         JMenu help = _menusTable.get("Help");
-
         if (help != null) {
             Component[] components = help.getMenuComponents();
 
             if (components.length > 0) {
-                helpMenu.add(new JSeparator());
-
                 // Add each component
                 for (Component currentComponent : components) {
                     helpMenu.add(currentComponent);
                 }
+                helpMenu.add(new JSeparator());
             }
         }
-
-        helpMenu.add(new JSeparator());
 
         // Add acknowledgement action
         helpMenu.add(App.acknowledgmentAction());
 
-        helpMenu.add(new JSeparator());
-
-        boolean shouldAddSeparator = false;
-
-        // Add hot news action
-        if (_applicationDataModel.getHotNewsRSSFeedLinkValue() != null) {
-            helpMenu.add(App.showHotNewsAction());
-            shouldAddSeparator = true;
-        }
-
-        // Add release action
-        if (_applicationDataModel.getReleaseNotesLinkValue() != null) {
-            helpMenu.add(App.showReleaseAction());
-            shouldAddSeparator = true;
-        }
-
-        // Add FAQ action
-        if (_applicationDataModel.getFaqLinkValue() != null) {
-            helpMenu.add(App.showFaqAction());
-            shouldAddSeparator = true;
-        }
-
+        final boolean isHotNewsAvailable = _applicationDataModel.getHotNewsRSSFeedLinkValue() != null;
+        final boolean isReleaseNotesAvailable = _applicationDataModel.getReleaseNotesLinkValue() != null;
+        final boolean isFaqAvailable = _applicationDataModel.getFaqLinkValue() != null;
+        final boolean shouldAddSeparator = (isHotNewsAvailable || isReleaseNotesAvailable || isFaqAvailable);
         if (shouldAddSeparator) {
             helpMenu.add(new JSeparator());
         }
 
+        // Add hot news action
+        if (isHotNewsAvailable) {
+            helpMenu.add(App.showHotNewsAction());
+        }
+
+        // Add release action
+        if (isReleaseNotesAvailable) {
+            helpMenu.add(App.showReleaseAction());
+        }
+
+        // Add FAQ action
+        if (isFaqAvailable) {
+            helpMenu.add(App.showFaqAction());
+        }
+
         if (!_isRunningUnderMacOSX) {
+            if (shouldAddSeparator) {
+                helpMenu.add(new JSeparator());
+            }
             // Add aboutbox action
             helpMenu.add(App.aboutBoxAction());
         }

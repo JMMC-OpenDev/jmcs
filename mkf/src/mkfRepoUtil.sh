@@ -29,9 +29,10 @@ SCRIPTNAME=$(basename $0)
 # Print usage 
 function printUsage ()
 {
-    echo -e "Usage: $SCRIPTNAME [-h] [-v version] [-d outputDir] <info<.versions>|checkout|export|update> <PROJECT> [... <PROJECT_N>]"
+    echo -e "Usage: $SCRIPTNAME [-h] [-v version] [-d outputDir] <info<.versions>|checkout|export|update|tag> <PROJECT> [... <PROJECT_N>]"
     echo -e "\t-h\tprint this help.";
-    echo -e "\t-v <version>\tuse given version (default is development one) when retrieving sources.";
+    echo -e "\t-n\tdisplay svn command which is performed when this option is not set.";
+    echo -e "\t-v <version>\tuse given version (default is development one) when retrieving sources or tagging.";
     echo -e "\t-d <directory>\tset working area for modules (default is current dir).";
     echo -e "\tACTIONS  :";
     echo -e "\t   info          : list modules of given projects.";
@@ -39,6 +40,7 @@ function printUsage ()
     echo -e "\t   checkout      : retrieve the modules of given projects.";
     echo -e "\t   export        : retrieve the modules of given projects without versionning files (packaging cases).";
     echo -e "\t   update        : update the modules of given projects.";
+    echo -e "\t   tag           : tag the modules of given projects with tag given by -v option.";
     echo -e "\tPROJECTS :";
     echo -e "\t   ${supportedModules}";
     exit 1
@@ -54,9 +56,9 @@ function getModules ()
 
     case "${svnOptions}" in 
         update)
-        CMD="svn ${svnOptions}" ;;
+        CMD="${SVN_COMMAND} ${svnOptions}" ;;
         *)
-        CMD="svn ${svnOptions}" ;;
+        CMD="${SVN_COMMAND} ${svnOptions}" ;;
     esac
 
     echo "Retrieving following modules for '${project}' project :"
@@ -80,7 +82,7 @@ function getModules ()
             *)
                 CMD="$CMD ${prjSvnroot}/${module}" ;;
         esac
-        echo "'${prjSvnroot}/${module}' ..."
+        echo " '${prjSvnroot}/${module}' ..."
     done
 
     # export/checkout in current dir
@@ -106,7 +108,7 @@ function displayProjectVersions()
 {
     prjSvnroot="$1"
     project="$2"
-    svnTags=$(svn list $prjSvnroot/$project/tags)
+    svnTags=$(${SVN_COMMAND} list $prjSvnroot/$project/tags)
     echo $svnTags | sed "s@/@@g"
 }
 
@@ -126,10 +128,24 @@ function displayModules()
     echo
 }
 
+function tagModules(){
+    prjSvnroot="$1"
+    project="$2"
+    userTag="$3"
+    shift 3
+    modules="$*"
+    echo "Tagging following modules for '${project}' project :"
+    for module in $modules
+    do
+        echo " '${prjSvnroot}/${module}' ..."
+        trunkModule="${module/$userTag/trunk}"
+        ${SVN_COMMAND} copy --parents -m "Automatically tagged ${project} in version ${version/$tagPrefix/} by $SCRIPTNAME" "$prjSvnroot/$trunkModule" "$prjSvnroot/$module"
+    done
+}
 # This function contains the description of the svn repository and modules for a given project and version
 # it returns on the output the svnroot followed by the list of modules paths
 # TODO complete with full project list if they require to be packed or handled automatically by scripts
-supportedModules="AMBER ASPRO2 LITpro MCS SearchCal WISARD YOCO"
+supportedModules="AMBER AppLauncher ASPRO2 LITpro MCS SearchCal WISARD YOCO "
 function getProjectDesc()
 {
     project="${1}"
@@ -140,6 +156,8 @@ function getProjectDesc()
             echo "${JMMC_SVNROOT} AMBER/${version}/amdlib" ;;
         ASPRO2 )
             echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal oiTools/${version}/oitools ASPRO2/${version}/aspro" ;;
+        AppLauncher )
+            echo "${JMMC_SVNROOT} MCS/${version}/jmcs AppLauncher/${version}/smpins AppLauncher/${version}/smptest AppLauncher/${version}/smprsc /AppLauncher/${version}/smprun" ;;
         LITpro ) 
             echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal oiTools/${version}/oitools LITpro/${version}/mfgui";;
         MCS )
@@ -162,21 +180,25 @@ function getProjectDesc()
 # Set default value for 
 # - development version 
 # - output directory
+# - svn command 
 version="trunk";
 outputDir="$PWD"
-
+SVN_COMMAND="svn"
+tagPrefix="tags/"
 
 # Parse command-line parameters
-while getopts "hv:d:" option
+while getopts "hnv:d:" option
     # : after option shows it will have an argument passed with it.
 do
     case $option in
         h ) 
             printUsage ;;
         v ) 
-            version="tags/$OPTARG";;
+            version="${tagPrefix}${OPTARG}";;
         d ) 
-            outputDir="$OPTARG";;
+            outputDir="${OPTARG}";;
+        n )
+            SVN_COMMAND="echo svn";;
         * ) # Unknown option
             echo "Invalid option -- $option"
             printUsage ;;
@@ -202,7 +224,6 @@ then
     exit 1
 fi
 
-
 for project in $userProjects
 do
     # Retrieve svnroot and module list for given project 
@@ -224,6 +245,8 @@ export )
     getModules "${prjSvnroot}" export "${project}" "${modules}" ;;
 update )
     getModules "${prjSvnroot}" update "${project}" "${modules}" ;;
+tag )
+    tagModules "${prjSvnroot}" "${project}" "${version}" "${modules}";;
 info )
     displayModules "${prjSvnroot}" "${project}" "${modules}" ;;
 info.versions )

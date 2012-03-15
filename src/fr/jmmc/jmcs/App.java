@@ -168,7 +168,7 @@ public abstract class App {
     private static AcknowledgmentAction _acknowledgmentAction = null;
     /** Show help handling action */
     private static ShowHelpAction _showHelpAction = null;
-    /** Show hto news handling action */
+    /** Show hot news handling action */
     private static ShowHotNewsAction _showHotNewsAction = null;
     /** Show release handling action */
     private static ShowReleaseAction _showReleaseAction = null;
@@ -812,7 +812,7 @@ public abstract class App {
      * @return logGui action which open the LogbackGui window
      */
     public static Action logGuiAction() {
-        return new AbstractAction("Show Log") {
+        return new AbstractAction("Show Execution Log") {
 
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
@@ -911,15 +911,15 @@ public abstract class App {
      */
     public static void showFrameToFront() {
         final JFrame frame = getFrame();
-                       
+
         // ensure window is visible (not iconified):
         if (frame.getState() == Frame.ICONIFIED) {
             frame.setState(Frame.NORMAL);
         }
-                       
+
         // force the frame to be visible and bring it to front
-        frame.setVisible(true);        
-        frame.toFront();        
+        frame.setVisible(true);
+        frame.toFront();
     }
 
     /**
@@ -1249,7 +1249,7 @@ public abstract class App {
          * @param fieldName the name of the field pointing to the action.
          */
         ShowDependenciesAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "Dependencies");
+            super(classPath, fieldName, "jMCS Dependencies");
         }
 
         /**
@@ -1278,10 +1278,11 @@ public abstract class App {
             super(classPath, fieldName, "User Manual");
             setEnabled(HelpView.isAvailable());
 
-            // Set Icon
-            String icon = "/fr/jmmc/jmcs/resource/help.png";
-            this.putValue(SMALL_ICON,
-                    new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
+            // Set Icon only if not under Mac OS X
+            if (!SystemUtils.IS_OS_MAC_OSX) {
+                String icon = "/fr/jmmc/jmcs/resource/help.png";
+                putValue(SMALL_ICON, new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
+            }
         }
 
         /**

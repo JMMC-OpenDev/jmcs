@@ -139,7 +139,7 @@ function tagModules(){
     do
         echo " '${prjSvnroot}/${module}' ..."
         trunkModule="${module/$userTag/trunk}"
-        ${SVN_COMMAND} copy --parents -m "Automatically tagged ${project} in version ${version/$tagPrefix/} by $SCRIPTNAME" "$prjSvnroot/$trunkModule" "$prjSvnroot/$module"
+        ${SVN_COMMAND} copy --parents -m "Automatically tagged ${project} in version ${version/$tagPrefix/} ($SCRIPTNAME)" "$prjSvnroot/$trunkModule" "$prjSvnroot/$module"
     done
 }
 # This function contains the description of the svn repository and modules for a given project and version
@@ -155,15 +155,19 @@ function getProjectDesc()
         AMBER  ) 
             echo "${JMMC_SVNROOT} AMBER/${version}/amdlib" ;;
         ASPRO2 )
-            echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal oiTools/${version}/oitools ASPRO2/${version}/aspro" ;;
+            echo -n "${JMMC_SVNROOT} "
+            echo -n MCS/${version}/{jmcs,jmal}
+            echo "oiTools/${version}/oitools ASPRO2/${version}/aspro" ;;
         AppLauncher )
-            echo "${JMMC_SVNROOT} MCS/${version}/jmcs AppLauncher/${version}/smpins AppLauncher/${version}/smptest AppLauncher/${version}/smprsc /AppLauncher/${version}/smprun" ;;
+            echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs "
+            echo AppLauncher/${version}/{smpins,smptest,smprsc,smprun} ;;
         LITpro ) 
-            echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal oiTools/${version}/oitools LITpro/${version}/mfgui";;
+            echo -n "${JMMC_SVNROOT} "
+            echo -n MCS/${version}/{jmcs,jmal}
+            echo "oiTools/${version}/oitools LITpro/${version}/mfgui" ;;
         MCS )
             echo -n "${JMMC_SVNROOT} "
-            echo -n MCS/${version}/{mkf,mcscfg,tat,ctoo,mcs,log,err,misc,thrd,timlog,mth,fnd,misco,env,cmd,msg,sdb,evh,gwt,jmcs,jmal,modc,modcpp,modsh,modjava,testgui}
-            echo ;;
+            echo MCS/${version}/{mkf,mcscfg,tat,ctoo,mcs,log,err,misc,thrd,timlog,mth,fnd,misco,env,cmd,msg,sdb,evh,gwt,jmcs,jmal,modc,modcpp,modsh,modjava,testgui} ;;
         SearchCal ) 
             echo -n "${JMMC_SVNROOT} "
             echo SearchCal/${version}/{simcli,alx,vobs,sclsvr,sclws,sclgui} ;;
@@ -240,19 +244,19 @@ do
 
     case "$userAction" in
         checkout )
-    getModules "${prjSvnroot}" checkout "${project}" "${modules}" ;;
-export )
-    getModules "${prjSvnroot}" export "${project}" "${modules}" ;;
-update )
-    getModules "${prjSvnroot}" update "${project}" "${modules}" ;;
-tag )
-    tagModules "${prjSvnroot}" "${project}" "${version}" "${modules}";;
-info )
-    displayModules "${prjSvnroot}" "${project}" "${modules}" ;;
-info.versions )
-    displayProjectVersions "${prjSvnroot}" "${project}" ;;
-*)
-    echo "ERROR: Action '$userAction' not supported"
-    printUsage ;;
+		    getModules "${prjSvnroot}" checkout "${project}" "${modules}" ;;
+		export )
+		    getModules "${prjSvnroot}" export "${project}" "${modules}" ;;
+		update )
+		    getModules "${prjSvnroot}" update "${project}" "${modules}" ;;
+		tag )
+		    tagModules "${prjSvnroot}" "${project}" "${version}" "${modules}" ;;
+		info )
+		    displayModules "${prjSvnroot}" "${project}" "${modules}" ;;
+		info.versions )
+		    displayProjectVersions "${prjSvnroot}" "${project}" ;;
+		*)
+		    echo "ERROR: Action '$userAction' not supported"
+		    printUsage ;;
     esac
 done

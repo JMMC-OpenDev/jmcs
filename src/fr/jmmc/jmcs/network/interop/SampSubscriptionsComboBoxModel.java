@@ -11,57 +11,55 @@ import org.astrogrid.samp.Client;
 import org.astrogrid.samp.gui.SubscribedClientListModel;
 
 /**
- * Synchronized comboBoxModel with samp applications associated to a given samp capability.
+ * Provide a combo box model that contains the up-to-date list of SAMP applications capable of a given SAMP capability.
  * @author Sylvain Lafrasse, Guillaume Mella
  */
 public class SampSubscriptionsComboBoxModel extends DefaultComboBoxModel {
 
-    /** logger */
-    private final static Logger logger = Logger.getLogger(SampSubscriptionsComboBoxModel.class.getName());
-    private final SubscribedClientListModel clientListModel;
+    /** Logger */
+    private final static Logger _logger = Logger.getLogger(SampSubscriptionsComboBoxModel.class.getName());
+    /** Contains the list of capable application for a given mType */
+    private final SubscribedClientListModel _clientListModel;
 
     /**
-     * Build one new comboBoxModel and link it the the applications supporting given capability.
-     * @param sampCapability capability used to filter applications 
+     * Constructor.
+     * @param sampCapability SAMP capability against which the combo box model should be sync.
      */
     public SampSubscriptionsComboBoxModel(SampCapability sampCapability) {
 
-        clientListModel = SampManager.createSubscribedClientListModel(sampCapability.mType());
-        clientListModel.addListDataListener(new ListDataListener() {
+        _clientListModel = SampManager.createSubscribedClientListModel(sampCapability.mType());
+        _clientListModel.addListDataListener(new ListDataListener() {
 
             @Override
             public void contentsChanged(final ListDataEvent e) {
-                logger.entering("ListDataListener", "contentsChanged");
-                handleHubEvent();
+                _logger.entering("ListDataListener", "contentsChanged");
+                updateModelOnHubEvent();
             }
 
             @Override
             public void intervalAdded(final ListDataEvent e) {
-                logger.entering("ListDataListener", "intervalAdded");
-                handleHubEvent();
+                _logger.entering("ListDataListener", "intervalAdded");
+                updateModelOnHubEvent();
             }
 
             @Override
             public void intervalRemoved(final ListDataEvent e) {
-                logger.entering("ListDataListener", "intervalRemoved");
+                _logger.entering("ListDataListener", "intervalRemoved");
                 // note: this event is never invoked by JSamp code (1.3) !
-                handleHubEvent();
+                updateModelOnHubEvent();
             }
         });
     }
 
-    /**
-     * Perform sync operation between list of applications and combobox model.
-     */
-    private void handleHubEvent() {
-        // clean combobox model
-        this.removeAllElements();
+    /** Update the combo box model content with the refreshed list of capable applications. */
+    private void updateModelOnHubEvent() {
+        // First flush the combo box model
+        removeAllElements();
 
-        // and fill with list of capable client
-        final int size = clientListModel.getSize();
-        final Client[] clients = new Client[size];
+        // Then fill it with the current list of capable clients
+        final int size = _clientListModel.getSize();
         for (int i = 0; i < size; i++) {
-            this.addElement((Client) clientListModel.getElementAt(i));
+            addElement((Client) _clientListModel.getElementAt(i));
         }
     }
 }

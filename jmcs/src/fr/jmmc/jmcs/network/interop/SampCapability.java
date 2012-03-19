@@ -72,7 +72,7 @@ public enum SampCapability {
     /** TOPCAT STIL loading MType */
     TOPCAT_LOAD_STIL("table.load.stil"),
     /** Undefined MType */
-    UNKNOWN("UNKNOWN");
+    UNKNOWN("UNKNOWN", ExclusionReason.SAMP_INTERNAL);
 
     /** Blanking value for undefined Strings (null, ...) */
     public static final String UNKNOWN_MTYPE = "UNKNOWN";

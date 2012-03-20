@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="description" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="link" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="jars" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="license" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="license" use="required" type="{}License" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -41,7 +41,7 @@ public class Package {
     @XmlAttribute(name = "jars", required = true)
     protected String jars;
     @XmlAttribute(name = "license", required = true)
-    protected String license;
+    protected License license;
 
     /**
      * Gets the value of the name property.
@@ -160,10 +160,10 @@ public class Package {
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link License }
      *     
      */
-    public String getLicense() {
+    public License getLicense() {
         return license;
     }
 
@@ -172,10 +172,10 @@ public class Package {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link License }
      *     
      */
-    public void setLicense(String value) {
+    public void setLicense(License value) {
         this.license = value;
     }
 

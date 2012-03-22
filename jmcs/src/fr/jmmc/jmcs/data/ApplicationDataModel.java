@@ -7,6 +7,7 @@ import fr.jmmc.jmcs.data.model.ApplicationData;
 import fr.jmmc.jmcs.data.model.Company;
 import fr.jmmc.jmcs.data.model.Compilation;
 import fr.jmmc.jmcs.data.model.Dependences;
+import fr.jmmc.jmcs.data.model.Package;
 import fr.jmmc.jmcs.data.model.Menubar;
 import fr.jmmc.jmcs.data.model.Program;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
@@ -349,6 +350,13 @@ public class ApplicationDataModel {
      */
     public String getAuthors() {
         return _authors;
+    }
+
+    /**
+     * @return list of dependency packages.
+     */
+    public List<Package> getPackages() {
+        return _applicationDataModel.getDependences().getPackages();
     }
 
     /**

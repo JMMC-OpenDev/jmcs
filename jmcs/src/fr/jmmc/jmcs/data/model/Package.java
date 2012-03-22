@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="link" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="jars" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="license" use="required" type="{}License" />
+ *       &lt;attribute name="file" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -42,6 +43,8 @@ public class Package {
     protected String jars;
     @XmlAttribute(name = "license", required = true)
     protected License license;
+    @XmlAttribute(name = "file")
+    protected String file;
 
     /**
      * Gets the value of the name property.
@@ -181,6 +184,34 @@ public class Package {
 
     public boolean isSetLicense() {
         return (this.license!= null);
+    }
+
+    /**
+     * Gets the value of the file property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getFile() {
+        return file;
+    }
+
+    /**
+     * Sets the value of the file property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFile(String value) {
+        this.file = value;
+    }
+
+    public boolean isSetFile() {
+        return (this.file!= null);
     }
 
 }

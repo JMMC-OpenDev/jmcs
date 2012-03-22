@@ -268,6 +268,7 @@ Description: Store jMCS Application meta data.
         <xsd:attribute name="link" type="xsd:string" use="required"/>
         <xsd:attribute name="jars" type="xsd:string" use="required"/>
         <xsd:attribute name="license" type="License" use="required"/>
+        <xsd:attribute name="file" type="xsd:string" use="optional"/>
     </xsd:complexType>
     
     
@@ -338,14 +339,15 @@ Description: Store jMCS Application meta data.
     <!-- Define dependencies licenses -->
     <xsd:simpleType name="License">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="Apache_v2"/>
+            <xsd:enumeration value="Apache v2"/>
             <xsd:enumeration value="BSD"/>
-            <xsd:enumeration value="Eclipse_v1"/>
-            <xsd:enumeration value="GPL_v2"/>
+            <xsd:enumeration value="Eclipse v1"/>
+            <xsd:enumeration value="GPL v2"/>
             <xsd:enumeration value="LGPL"/>
-            <xsd:enumeration value="LGPL_v2"/>
-            <xsd:enumeration value="LGPL_v2.1"/>
+            <xsd:enumeration value="LGPL v2"/>
+            <xsd:enumeration value="LGPL v2.1"/>
             <xsd:enumeration value="MIT"/>
+            <xsd:enumeration value="Proprietary"/>
             <xsd:enumeration value="UNKNOWN"/>
         </xsd:restriction>
     </xsd:simpleType>

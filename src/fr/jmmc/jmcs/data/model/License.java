@@ -14,14 +14,15 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;simpleType name="License">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="Apache_v2"/>
+ *     &lt;enumeration value="Apache v2"/>
  *     &lt;enumeration value="BSD"/>
- *     &lt;enumeration value="Eclipse_v1"/>
- *     &lt;enumeration value="GPL_v2"/>
+ *     &lt;enumeration value="Eclipse v1"/>
+ *     &lt;enumeration value="GPL v2"/>
  *     &lt;enumeration value="LGPL"/>
- *     &lt;enumeration value="LGPL_v2"/>
- *     &lt;enumeration value="LGPL_v2.1"/>
+ *     &lt;enumeration value="LGPL v2"/>
+ *     &lt;enumeration value="LGPL v2.1"/>
  *     &lt;enumeration value="MIT"/>
+ *     &lt;enumeration value="Proprietary"/>
  *     &lt;enumeration value="UNKNOWN"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
@@ -32,19 +33,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum License {
 
-    @XmlEnumValue("Apache_v2")
-    APACHE_V_2("Apache_v2"),
+    @XmlEnumValue("Apache v2")
+    APACHE_V_2("Apache v2"),
     BSD("BSD"),
-    @XmlEnumValue("Eclipse_v1")
-    ECLIPSE_V_1("Eclipse_v1"),
-    @XmlEnumValue("GPL_v2")
-    GPL_V_2("GPL_v2"),
+    @XmlEnumValue("Eclipse v1")
+    ECLIPSE_V_1("Eclipse v1"),
+    @XmlEnumValue("GPL v2")
+    GPL_V_2("GPL v2"),
     LGPL("LGPL"),
-    @XmlEnumValue("LGPL_v2")
-    LGPL_V_2("LGPL_v2"),
-    @XmlEnumValue("LGPL_v2.1")
-    LGPL_V_2_1("LGPL_v2.1"),
+    @XmlEnumValue("LGPL v2")
+    LGPL_V_2("LGPL v2"),
+    @XmlEnumValue("LGPL v2.1")
+    LGPL_V_2_1("LGPL v2.1"),
     MIT("MIT"),
+    @XmlEnumValue("Proprietary")
+    PROPRIETARY("Proprietary"),
     UNKNOWN("UNKNOWN");
     private final String value;
 

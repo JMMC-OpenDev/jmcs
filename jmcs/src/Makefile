@@ -104,6 +104,7 @@ jmcs_DIRS     = fr \
 
 jmcs_EXTRAS   = jmmc-logback.xml \
                 fr/jmmc/jmcs/resource/*.png \
+                fr/jmmc/jmcs/resource/license/*.txt \
                 fr/jmmc/jmcs/resource/ApplicationData.xml
 
 #

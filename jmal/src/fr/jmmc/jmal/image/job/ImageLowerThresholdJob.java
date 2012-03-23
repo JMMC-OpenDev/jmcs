@@ -18,7 +18,7 @@ public final class ImageLowerThresholdJob extends AbstractImageJob<AtomicInteger
     /** log coordinates + value when the threshold is reached */
     private final static boolean DEBUG = false;
     /* members */
-    /** threshold value */
+    /** threshold value (exclusive) */
     final float _threshold;
     /** replacement value */
     final float _replaceBy;

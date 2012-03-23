@@ -266,6 +266,8 @@ public final class ModelUVMapService {
                                          final Rectangle2D.Double uvMapRect,
                                          final VisNoiseService noiseService) {
 
+        final boolean doNoise = (noiseService != null && noiseService.isEnabled());
+
         // Get the image with the given color model :
         final ColorScale usedColorScale;
 
@@ -275,28 +277,33 @@ public final class ModelUVMapService {
             case AMP:
                 usedColorScale = colorScale;
 
-                // update min/max ignoring zero:
-                if (colorScale == ColorScale.LOGARITHMIC && (refMin == null || refMax == null)) {
-                    // ignore zero values:
-                    final ImageMinMaxJob minMaxJob = new ImageMinMaxJob(imgData, dataSize, dataSize, true);
+                if (refMin == null || refMax == null) {
+                    // update min/max ignoring zero:
+                    if (colorScale == ColorScale.LOGARITHMIC || doNoise) {
+                        // ignore zero values:
+                        final ImageMinMaxJob minMaxJob = new ImageMinMaxJob(imgData, dataSize, dataSize, true);
 
-                    minMaxJob.forkAndJoin();
+                        minMaxJob.forkAndJoin();
 
-                    float dataMin = minMaxJob.getMin();
-                    float dataMax = minMaxJob.getMax();
+                        float dataMin = minMaxJob.getMin();
+                        float dataMax = minMaxJob.getMax();
 
-                    logger.info("ImageMinMaxJob min: " + dataMin + " - max: " + dataMax);
+                        logger.info("ImageMinMaxJob min: " + dataMin + " - max: " + dataMax);
 
-                    if (dataMin != dataMax && !Float.isInfinite(dataMin) && !Float.isInfinite(dataMax)) {
-                        // force min to 0.1 at least to have log scale ticks displayed:
-                        if (dataMin > RANGE_AMPLITUDE_LOGARITHMIC[0]) {
-                            dataMin = RANGE_AMPLITUDE_LOGARITHMIC[0];
+                        if (dataMin != dataMax && !Float.isInfinite(dataMin) && !Float.isInfinite(dataMax)) {
+                            final float[] defStdRange = (colorScale == ColorScale.LOGARITHMIC) ? RANGE_AMPLITUDE_LOGARITHMIC : RANGE_AMPLITUDE_LINEAR;
+                            // force min to 0.1 at least to have log scale ticks displayed:
+                            if (dataMin > defStdRange[0]) {
+                                dataMin = defStdRange[0];
+                            }
+                            // force max to 1 because dataMax can be 0.99999:
+                            if (dataMax < defStdRange[1]) {
+                                dataMax = defStdRange[1];
+                            }
+
+                            stdRange = new float[]{dataMin, dataMax};
+                            break;
                         }
-                        // force max to 1 because dataMax can be 0.99999:
-                        dataMax = RANGE_AMPLITUDE_LOGARITHMIC[1];
-
-                        stdRange = new float[]{dataMin, dataMax};
-                        break;
                     }
                 }
                 stdRange = (colorScale == ColorScale.LOGARITHMIC) ? RANGE_AMPLITUDE_LOGARITHMIC : RANGE_AMPLITUDE_LINEAR;

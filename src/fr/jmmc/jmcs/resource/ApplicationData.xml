@@ -75,7 +75,8 @@
           description="The Simple Logging Facade for Java or (SLF4J) serves as a simple facade or abstraction for various logging frameworks, e.g. java.util.logging, log4j and logback, allowing the end user to plug in the desired logging framework at deployment time."
           link="http://www.slf4j.org/"
           jars="slf4j-api-1.6.4.jar jul-to-slf4j-1.6.4.jar jcl-over-slf4j-1.6.4.jar"
-          license="MIT"/>
+          license="MIT"
+          file="SLF4J.txt"/>
 
         <!-- logback -->
         <package name="Logback"
@@ -97,7 +98,7 @@
         <package name="JAXB"
           description="Java Architecture for XML Binding (JAXB) allows Java developers to map Java classes to XML representations."
           link="https://jaxb.dev.java.net/"
-          jars="jaxb-api.jar jaxb-impl.jar jaxb-xjc.jar"
+          jars="jaxb-api.jar jaxb-impl.jar jaxb-xjc.jar simple-regenerator-1.0.jar"
           license="GPL v2"/>
 
         <package name="Activation"
@@ -113,12 +114,6 @@
           jars="jsr173_1.0_api.jar"
           license="Proprietary"
           file="Jsr173.txt"/>
-
-        <package name="SimpleRegenerator"
-          description="Used by JAXB."
-          link="http://java.net/projects/jaxb2-commons/sources/svn0/show/trunk/www/simple-regenerator?rev=339"
-          jars="simple-regenerator-1.0.jar"
-          license="MIT"/>
 
        <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
         <package name="commons-httpclient"

@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;simpleType name="License">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="AFL v2.1"/>
  *     &lt;enumeration value="Apache v2"/>
  *     &lt;enumeration value="BSD"/>
  *     &lt;enumeration value="Eclipse v1"/>
@@ -33,6 +34,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum License {
 
+    @XmlEnumValue("AFL v2.1")
+    AFL_V_2_1("AFL v2.1"),
     @XmlEnumValue("Apache v2")
     APACHE_V_2("Apache v2"),
     BSD("BSD"),

@@ -339,6 +339,7 @@ Description: Store jMCS Application meta data.
     <!-- Define dependencies licenses -->
     <xsd:simpleType name="License">
         <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="AFL v2.1"/>
             <xsd:enumeration value="Apache v2"/>
             <xsd:enumeration value="BSD"/>
             <xsd:enumeration value="Eclipse v1"/>

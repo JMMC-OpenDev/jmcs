@@ -9,7 +9,7 @@
   </Variables>
   <Classpath shortContainerNames="yes">
     <ClasspathPart type="bin-class">{JMCS_DIST}jmcs.jar</ClasspathPart>
-    <ClasspathPart type="bin-class">{JMCS_LIB}AppleJavaExtensions.jar</ClasspathPart>
+    <ClasspathPart type="bin-class">{JMCS_LIB}AppleJavaExtensions-1.6.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}BrowserLauncher2-1_3.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}activation.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}commons-codec-1.3.jar</ClasspathPart>
@@ -20,7 +20,7 @@
     <ClasspathPart type="bin-class">{JMCS_LIB}jaxb-impl.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}jcl-over-slf4j-1.6.4.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}jhall.jar</ClasspathPart>
-    <ClasspathPart type="bin-class">{JMCS_LIB}jsamp-1.3.jar</ClasspathPart>
+    <ClasspathPart type="bin-class">{JMCS_LIB}jsamp-1.3-2.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}jsr173_1.0_api.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}jul-to-slf4j-1.6.4.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}logback-classic-1.0.0.jar</ClasspathPart>

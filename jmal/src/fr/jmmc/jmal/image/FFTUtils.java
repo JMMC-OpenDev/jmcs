@@ -328,7 +328,7 @@ public final class FFTUtils {
      * @return sub part of the given real FFT encoded as another real FFT 2D array
      */
     public static float[][] extractFFT(final int size, final float[][] fftData, final int outputSize) {
-        if (outputSize % 2 == 1) {
+        if (outputSize % 2 != 0) {
             throw new IllegalStateException("Invalid output size (" + outputSize + ") must be an even number !");
         }
         if (outputSize > size) {

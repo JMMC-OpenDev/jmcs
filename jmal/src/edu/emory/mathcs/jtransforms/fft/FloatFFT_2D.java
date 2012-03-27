@@ -730,10 +730,10 @@ public final strictfp class FloatFFT_2D {
         if (isPowerOfTwo == false) {
             throw new IllegalArgumentException("rows and columns must be power of two numbers.");
         }
-        if (subSize % 2 == 1) {
+        if (subSize % 2 != 0) {
             throw new IllegalArgumentException("sub size must be an even number because subSize = number of rows = 2 * (columns / 2).");
         }
-        if (inputSize % 2 == 1) {
+        if (inputSize % 2 != 0) {
             throw new IllegalArgumentException("input size must be an even number because input size / 2 = center of image.");
         }
         if (inputSize > subSize) {

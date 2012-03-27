@@ -31,10 +31,10 @@ public final class ImageFlipJob extends AbstractImageJob<Void> {
                         final boolean flipX) {
         // process only half rows or columns:
         super("ImageFlipJob", array, (flipX) ? width / 2 : width, (!flipX) ? height / 2 : height);
-        if (width % 2 == 1) {
+        if (width % 2 != 0) {
             throw new IllegalStateException("Image width (" + width + ") must be an even number !");
         }
-        if (height % 2 == 1) {
+        if (height % 2 != 0) {
             throw new IllegalStateException("Image height (" + height + ") must be an even number !");
         }
         this._flipX = flipX;

@@ -13,7 +13,7 @@ Runtime Libraries (JNLP) are described in the following files :
 ../src/Jmcs.jnlp
 
 -rw-r--r--. 1 bourgesl laogsite  124332 27 avril  2011 activation.jar
--rwxr-xr-x. 1 bourgesl laogsite    4189 27 avril  2011 AppleJavaExtensions.jar
+-rwxr-xr-x   1 lafrasse  3021    25K 27 mar 11:19 AppleJavaExtensions-1.6.jar
 -rw-r--r--. 1 bourgesl laogsite  102603 27 avril  2011 BrowserLauncher2-1_3.jar
 -rw-r--r--. 1 bourgesl laogsite   46725 27 avril  2011 commons-codec-1.3.jar
 -rw-r--r--. 1 bourgesl laogsite  305001 27 avril  2011 commons-httpclient-3.1.jar
@@ -36,8 +36,8 @@ Libraries used by shell scripts (build) are defined in :
 ../src/Makefile
 
 -rw-r--r--. 1 bourgesl laogsite  458371 27 avril  2011 jhelpdev.jar
--rw-r--r--. 1 bourgesl laogsite  177868 27 avril  2011 Tidy.jar
 -rw-r--r--. 1 bourgesl laogsite   14204 27 avril  2011 xmlenc.jar
+-rw-r--r--. 1 bourgesl laogsite  177868 27 avril  2011 Tidy.jar
 
 
 Libraries used by ant scripts (JAXB XJC) are :
@@ -47,16 +47,7 @@ Libraries used by ant scripts (JAXB XJC) are :
 
 Deprecated libraries to be removed ASAP (all JMMC applications must be updated in production before removal):
 -rw-r--r--. 1 bourgesl laogsite 1599469 25 nov.  10:18 castor.jar
--rw-r--r--. 1 bourgesl laogsite   60841 27 avril  2011 commons-logging-1.1.1.jar
--rw-r--r--. 1 bourgesl laogsite  124741 27 avril  2011 loggui.jar
 -rw-r--r--. 1 bourgesl laogsite 1010675 25 nov.  10:19 xercesImpl.jar
 -rw-r--r--. 1 bourgesl laogsite  124724 25 nov.  10:19 xmlParserAPIs.jar
-
-
-Licences:
-- JAXB 2.2.2:
--rw-r--r--. 1 bourgesl laogsite   36551 27 avril  2011 JAXB-RI-License.txt
--rw-r--r--. 1 bourgesl laogsite   34309 27 avril  2011 JAXB-RI-ThirdPartyLicenseReadme.txt
-
-
----
+-rw-r--r--. 1 bourgesl laogsite   60841 27 avril  2011 commons-logging-1.1.1.jar
+-rw-r--r--. 1 bourgesl laogsite  124741 27 avril  2011 loggui.jar

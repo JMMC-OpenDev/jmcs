@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
-public class ALX {
+public final class ALX {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(ALX.class.getName());
@@ -74,16 +74,25 @@ public class ALX {
         // Replace ':' by ' ', and remove trailing and leading space
         final String input = raHms.replace(':', ' ').trim();
 
-        double hh;
-        double hm;
-        double hs;
+        double hh = 0d;
+        double hm = 0d;
+        double hs = 0d;
+
         // Parse the given string
         try {
             final String[] tokens = input.split(" ");
 
-            hh = Double.parseDouble(tokens[0]);
-            hm = Double.parseDouble(tokens[1]);
-            hs = Double.parseDouble(tokens[2]);
+            final int len = tokens.length;
+
+            if (len > 0) {
+                hh = Double.parseDouble(tokens[0]);
+            }
+            if (len > 1) {
+                hm = Double.parseDouble(tokens[1]);
+            }
+            if (len > 2) {
+                hs = Double.parseDouble(tokens[2]);
+            }
 
         } catch (NumberFormatException nfe) {
             _logger.debug("format exception: ", nfe);
@@ -141,16 +150,25 @@ public class ALX {
         // Replace ':' by ' ', and remove trailing and leading space
         final String input = decDms.replace(':', ' ').trim();
 
-        double dd;
-        double dm;
-        double ds;
+        double dd = 0d;
+        double dm = 0d;
+        double ds = 0d;
+        
         // Parse the given string
         try {
-            String[] tokens = input.split(" ");
+            final String[] tokens = input.split(" ");
 
-            dd = Double.parseDouble(tokens[0]);
-            dm = Double.parseDouble(tokens[1]);
-            ds = Double.parseDouble(tokens[2]);
+            final int len = tokens.length;
+
+            if (len > 0) {
+                dd = Double.parseDouble(tokens[0]);
+            }
+            if (len > 1) {
+                dm = Double.parseDouble(tokens[1]);
+            }
+            if (len > 2) {
+                ds = Double.parseDouble(tokens[2]);
+            }
 
         } catch (NumberFormatException nfe) {
             _logger.debug("format exception: ", nfe);
@@ -178,7 +196,7 @@ public class ALX {
      * @param angle angle in degrees > -360.0
      * @return string DMS representation
      */
-    public final static String toDMS(final double angle) {
+    public static String toDMS(final double angle) {
         if (angle < -360d) {
             return null;
         }
@@ -202,7 +220,7 @@ public class ALX {
      * @param angle angle in degrees > -360.0
      * @return string HMS representation, null otherwise
      */
-    public final static String toHMS(final double angle) {
+    public static String toHMS(final double angle) {
         if (angle < -360d) {
             return null;
         }
@@ -219,7 +237,7 @@ public class ALX {
         return sb.toString();
     }
 
-    private final static String toMS(final double angle, final StringBuilder sb) {
+    private static String toMS(final double angle, final StringBuilder sb) {
         final double fMinute = 60d * angle;
         final int iMinute = (int) Math.floor(fMinute);
 
@@ -591,16 +609,16 @@ public class ALX {
      */
     public static void main(String[] args) {
         /*
-         System.out.println("" + STARTYPE.DWARF);
-         System.out.println("" + STARTYPE.GIANT);
-         System.out.println("" + STARTYPE.SUPERGIANT);
-
+        System.out.println("" + STARTYPE.DWARF);
+        System.out.println("" + STARTYPE.GIANT);
+        System.out.println("" + STARTYPE.SUPERGIANT);
         
-         for (int i = -10050; i < 11000; i++) {
-         double f = i / 27.9;
-         System.out.println("toDMS(" + f + ") = '" + toDMS(f) + "'.");
-         System.out.println("toHMS(" + f + ") = '" + toHMS(f) + "'.");
-         }         
+        
+        for (int i = -10050; i < 11000; i++) {
+        double f = i / 27.9;
+        System.out.println("toDMS(" + f + ") = '" + toDMS(f) + "'.");
+        System.out.println("toHMS(" + f + ") = '" + toHMS(f) + "'.");
+        }         
          */
 
         Class<?> c = null;

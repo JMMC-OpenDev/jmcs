@@ -1,0 +1,2 @@
+Copyright (c) 2003-2007 by InforMatrix GmbH. 
+All rights reserved. This software is freeware.

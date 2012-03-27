@@ -1,7 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.App;
@@ -34,20 +33,31 @@ import org.slf4j.LoggerFactory;
  */
 public class DependenciesView extends javax.swing.JFrame implements HyperlinkListener {
 
+    /** jMCS license files resource path constant */
     private static final String JMCS_LICENSE_CONTENT_FILE_PATH = "fr/jmmc/jmcs/resource/license/";
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(DependenciesView.class.getName());
+    /** Singleton instance */
+    private static DependenciesView _instance = null;
+    // Class members
     private JEditorPane _editorPane;
     private JScrollPane _scrollPane;
     private HashMap<String, String> _licenseContent;
 
-    /** Creates new form DependenciesView */
-    public DependenciesView() {
+    private DependenciesView() {
         _licenseContent = new HashMap<String, String>();
         initComponents();
         generateContent();
         setupKeyListeners();
         finsihLayout();
+    }
+
+    /** Show the dependencies window */
+    public static void display() {
+        if (_instance == null) {
+            _instance = new DependenciesView();
+        }
+        _instance.setVisible(true);
     }
 
     private void initComponents() {
@@ -171,7 +181,6 @@ public class DependenciesView extends javax.swing.JFrame implements HyperlinkLis
         setPreferredSize(new Dimension(700, 600));
         pack();
         WindowCenterer.centerOnMainScreen(this);
-        setVisible(true);
     }
 
     /**

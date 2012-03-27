@@ -1249,7 +1249,7 @@ public abstract class App {
          * @param fieldName the name of the field pointing to the action.
          */
         ShowDependenciesAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "jMCS Dependencies");
+            super(classPath, fieldName, "jMCS Dependencies Copyrights");
         }
 
         /**
@@ -1258,7 +1258,7 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            new DependenciesView();
+            DependenciesView.display();
         }
     }
 

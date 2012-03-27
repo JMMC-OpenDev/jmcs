@@ -35,7 +35,7 @@
     <jar href="@SHARED@/swing-worker-1.2.jar"/>
     
     <!-- Mac OS X Desktop integration -->
-    <jar href="@SHARED@/AppleJavaExtensions.jar"/>
+    <jar href="@SHARED@/AppleJavaExtensions-1.6.jar"/>
     
     <!-- Xml binding (target models and aspro2) -->
     <jar href="@SHARED@/jaxb-api.jar"/>

@@ -1,53 +1,62 @@
 /*
- File:                OSXAdapter.java
- Abstract:   A single class with clear, static entry points for
- hooking existing preferences, about, quit functionality
- from an existing Java app into handlers for the Mac OS X
- application menu.  Useful for developers looking to support
- multiple platforms with a single codebase, and support
- Mac OS X features with minimal impact.
- Version:        1.1
- Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
- Computer, Inc. ("Apple") in consideration of your agreement to the
- following terms, and your use, installation, modification or
- redistribution of this Apple software constitutes acceptance of these
- terms.  If you do not agree with these terms, please do not use,
- install, modify or redistribute this Apple software.
- In consideration of your agreement to abide by the following terms, and
- subject to these terms, Apple grants you a personal, non-exclusive
- license, under Apple's copyrights in this original Apple software (the
- "Apple Software"), to use, reproduce, modify and redistribute the Apple
- Software, with or without modifications, in source and/or binary forms;
- provided that if you redistribute the Apple Software in its entirety and
- without modifications, you must retain this notice and the following
- text and disclaimers in all such redistributions of the Apple Software.
- Neither the name, trademarks, service marks or logos of Apple Computer,
- Inc. may be used to endorse or promote products derived from the Apple
- Software without specific prior written permission from Apple.  Except
- as expressly stated in this notice, no other rights or licenses, express
- or implied, are granted by Apple herein, including but not limited to
- any patent rights that may be infringed by your derivative works or by
- other works in which the Apple Software may be incorporated.
- The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
- MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
- THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
- FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
- OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
- IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
- OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
- MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
- AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
- STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
- POSSIBILITY OF SUCH DAMAGE.
- Copyright � 2003-2006 Apple Computer, Inc., All Rights Reserved
+File:                OSXAdapter.java
+Abstract:   A single class with clear, static entry points for
+hooking existing preferences, about, quit functionality
+from an existing Java app into handlers for the Mac OS X
+application menu.  Useful for developers looking to support
+multiple platforms with a single codebase, and support
+Mac OS X features with minimal impact.
+Version:        1.1
+Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
+Computer, Inc. ("Apple") in consideration of your agreement to the
+following terms, and your use, installation, modification or
+redistribution of this Apple software constitutes acceptance of these
+terms.  If you do not agree with these terms, please do not use,
+install, modify or redistribute this Apple software.
+In consideration of your agreement to abide by the following terms, and
+subject to these terms, Apple grants you a personal, non-exclusive
+license, under Apple's copyrights in this original Apple software (the
+"Apple Software"), to use, reproduce, modify and redistribute the Apple
+Software, with or without modifications, in source and/or binary forms;
+provided that if you redistribute the Apple Software in its entirety and
+without modifications, you must retain this notice and the following
+text and disclaimers in all such redistributions of the Apple Software.
+Neither the name, trademarks, service marks or logos of Apple Computer,
+Inc. may be used to endorse or promote products derived from the Apple
+Software without specific prior written permission from Apple.  Except
+as expressly stated in this notice, no other rights or licenses, express
+or implied, are granted by Apple herein, including but not limited to
+any patent rights that may be infringed by your derivative works or by
+other works in which the Apple Software may be incorporated.
+The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
+MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
+OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
+IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
+OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
+MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
+AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
+STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+Copyright � 2003-2006 Apple Computer, Inc., All Rights Reserved
  */
 package fr.jmmc.jmcs.gui;
 
+import com.apple.eawt.Application;
+import com.apple.eawt.AboutHandler;
+import com.apple.eawt.AppEvent.AboutEvent;
+import com.apple.eawt.OpenFilesHandler;
+import com.apple.eawt.AppEvent.OpenFilesEvent;
+import com.apple.eawt.PreferencesHandler;
+import com.apple.eawt.AppEvent.PreferencesEvent;
+import com.apple.eawt.QuitHandler;
+import com.apple.eawt.AppEvent.QuitEvent;
+import com.apple.eawt.QuitResponse;
+import com.apple.eawt.QuitStrategy;
 import fr.jmmc.jmcs.App;
-import com.apple.eawt.ApplicationAdapter;
-import com.apple.eawt.ApplicationEvent;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import java.awt.event.ActionEvent;
 import org.slf4j.Logger;
@@ -61,14 +70,14 @@ import javax.swing.JFrame;
  * 
  * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public class OSXAdapter extends ApplicationAdapter {
+public class OSXAdapter implements AboutHandler, PreferencesHandler, QuitHandler, OpenFilesHandler {
 
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(OSXAdapter.class.getName());
     /** pseudo-singleton model; no point in making multiple instances */
-    private static OSXAdapter theAdapter;
+    private static OSXAdapter _instance;
     /** application */
-    private static com.apple.eawt.Application theApplication;
+    private static Application _application;
     /* members */
     /** flag to prevent handleQuit() to be called twice (known Apple bug) */
     private boolean alreadyQuitting = false;
@@ -84,34 +93,23 @@ public class OSXAdapter extends ApplicationAdapter {
      */
     private OSXAdapter(final JFrame mainFrame) {
         mainAppFrame = mainFrame;
-
         _registrar = ActionRegistrar.getInstance();
     }
 
-    /**
-     * Handle about action
-     *
-     * @param ae application event
-     */
+    /** Handle about action */
     @Override
-    public void handleAbout(final ApplicationEvent ae) {
+    public void handleAbout(AboutEvent ae) {
         if (mainAppFrame != null) {
-            ae.setHandled(true);
             App.aboutBoxAction().actionPerformed(null);
         } else {
             throw new IllegalStateException("handleAbout: MyApp instance detached from listener");
         }
     }
 
-    /**
-     * Show the user preferences
-     *
-     * @param ae application event
-     */
+    /** Show the user preferences */
     @Override
-    public void handlePreferences(ApplicationEvent ae) {
+    public void handlePreferences(PreferencesEvent ae) {
         if (mainAppFrame != null) {
-            ae.setHandled(true);
             AbstractAction preferenceAction = _registrar.getPreferenceAction();
             if (preferenceAction != null) {
                 preferenceAction.actionPerformed(null);
@@ -121,49 +119,34 @@ public class OSXAdapter extends ApplicationAdapter {
         }
     }
 
-    /**
-     * Handle quit action
-     *
-     * @param ae application event
-     */
+    /** Handle quit action */
     @Override
-    public void handleQuit(ApplicationEvent ae) {
+    public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
         if (mainAppFrame != null) {
             /* You MUST setHandled(false) if you want to delay or cancel the quit.
              * This is important for cross-platform development -- have a universal quit
              * routine that chooses whether or not to quit, so the functionality is identical
              * on all platforms.  This example simply cancels the AppleEvent-based quit and
              * defers to that universal method. */
-            if (!alreadyQuitting) {
-                alreadyQuitting = true; // Prevent handleQuit() to be called twice (known Apple bug)
-                _registrar.getQuitAction().actionPerformed(null);
-            } else {
-                alreadyQuitting = false;
-            }
-
-            ae.setHandled(false);
+            ActionEvent evt = new ActionEvent(response, 0, null);
+            _registrar.getQuitAction().actionPerformed(evt);
         } else {
-            throw new IllegalStateException("handleQuit: MyApp instance detached from listener");
+            throw new IllegalStateException("handleQuitRequestWith: MyApp instance detached from listener");
         }
     }
 
-    /**
-     * Handle the open action
-     *
-     * @param ae application event
-     */
+    /** Handle the open action */
     @Override
-    public void handleOpenFile(ApplicationEvent ae) {
+    public void openFiles(OpenFilesEvent e) {
         if (mainAppFrame != null) {
-            ae.setHandled(true);
-
+            final int FIRST_FILE_INDEX = 0;
+            final String firstFilePath = e.getFiles().get(FIRST_FILE_INDEX).getAbsolutePath();
             if (logger.isInfoEnabled()) {
-                logger.info("Should open '{}'.", ae.getFilename());
+                logger.info("Should open '{}' file.", firstFilePath);
             }
-
-            _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, ae.getFilename()));
+            _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, firstFilePath));
         } else {
-            throw new IllegalStateException("handleOpenFile: MyApp instance detached from listener");
+            throw new IllegalStateException("openFiles: MyApp instance detached from listener");
         }
     }
 
@@ -173,32 +156,32 @@ public class OSXAdapter extends ApplicationAdapter {
      * @param mainFrame main application frame
      */
     public static void registerMacOSXApplication(final JFrame mainFrame) {
-        if (theApplication == null) {
-            theApplication = new com.apple.eawt.Application();
+
+        if (_application == null) {
+            _application = Application.getApplication();
         }
 
-        if (theAdapter == null) {
-            theAdapter = new OSXAdapter(mainFrame);
+        if (_instance == null) {
+            _instance = new OSXAdapter(mainFrame);
         }
 
-        theApplication.addApplicationListener(theAdapter);
-    }
+        // Link 'About...' menu entry
+        _application.setAboutHandler(_instance);
 
-    /**
-     * Enable Application Preferences action
-     *
-     * @param enabled boolean enable preferences action
-     */
-    public static void enablePrefs(boolean enabled) {
-        if (theApplication == null) {
-            theApplication = new com.apple.eawt.Application();
-        }
+        // Set up quitiing behaviour
+        _application.setQuitHandler(_instance);
+        _application.disableSuddenTermination();
+        _application.setQuitStrategy(QuitStrategy.SYSTEM_EXIT_0);
 
+        // Set up double-clicked file opening handler
+        _application.setOpenFileHandler(_instance);
+
+        // Link 'Preferences' menu entry (if any)
         AbstractAction preferenceAction = ActionRegistrar.getInstance().getPreferenceAction();
-        if (preferenceAction != null) {
-            theApplication.setEnabledPreferencesMenu(enabled);
+        if (preferenceAction == null) {
+            _application.setPreferencesHandler(null);
         } else {
-            theApplication.setEnabledPreferencesMenu(!enabled);
+            _application.setPreferencesHandler(_instance);
         }
     }
 }

@@ -9,16 +9,8 @@ import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
-import fr.jmmc.jmcs.gui.AboutBox;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.network.BrowserLauncher;
-import fr.jmmc.jmcs.gui.FeedbackReport;
-import fr.jmmc.jmcs.gui.HelpView;
-import fr.jmmc.jmcs.gui.MainMenuBar;
-import fr.jmmc.jmcs.gui.MessagePane;
-import fr.jmmc.jmcs.gui.SplashScreen;
-import fr.jmmc.jmcs.gui.SwingSettings;
-import fr.jmmc.jmcs.gui.SwingUtils;
 import fr.jmmc.jmcs.util.Urls;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
@@ -45,13 +37,13 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import com.apple.eawt.QuitResponse;
 import fr.jmmc.jmcs.gui.*;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
 import fr.jmmc.jmcs.util.logging.LogOutput;
 import java.io.IOException;
-import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -77,11 +69,11 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
  */
 public abstract class App {
 
-    /** jmmc logback configuration file as one resource file (in classpath) */
+    /** JMMC logback configuration file as one resource file (in classpath) */
     public final static String JMMC_LOGBACK_CONFIG_RESOURCE = "jmmc-logback.xml";
-    /** jmmc main logger */
+    /** JMMC main logger */
     public final static String JMMC_LOGGER = "fr.jmmc";
-    /** Jmmc Logger to be able to set its level in interpretArguments() */
+    /** JMMC Logger to be able to set its level in interpretArguments() */
     private static final ch.qos.logback.classic.Logger JmmcLogger;
 
     /**
@@ -1077,10 +1069,18 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            _logger.debug("Should we kill the application ?");
+            _logger.debug("Application is about to die, should we proceed ?");
+
+            QuitResponse response = null;
+            if (evt != null) {
+                response = (QuitResponse) evt.getSource();
+            }
 
             // Check if user is OK to kill SAMP hub (if any)
             if (!SampManager.getInstance().allowHubKilling()) {
+                _logger.debug("SAMP cancelled application kill.");
+                // Otherwise cancel quit
+                response.cancelQuit();
                 return;
             }
 
@@ -1092,6 +1092,7 @@ public abstract class App {
                 if (_exitApplicationWhenClosed) {
 
                     // Exit the application
+                    response.performQuit();
                     App.exit(0);
 
                 } else {
@@ -1100,6 +1101,7 @@ public abstract class App {
             } else {
                 _logger.debug("Application killing cancelled.");
             }
+            response.cancelQuit();
         }
     }
 
@@ -1325,15 +1327,6 @@ public abstract class App {
 
                 if (registerMethod != null) {
                     Introspection.executeMethod(registerMethod, new Object[]{frame});
-                }
-
-                // This is slightly gross.  to reflectively access methods with boolean args,
-                // use "boolean.class", then pass a Boolean object in as the arg, which apparently
-                // gets converted for you by the reflection system.
-                final Method prefsEnableMethod = Introspection.getMethod(osxAdapter, "enablePrefs", new Class<?>[]{boolean.class});
-
-                if (prefsEnableMethod != null) {
-                    Introspection.executeMethod(prefsEnableMethod, new Object[]{Boolean.TRUE});
                 }
             }
         }

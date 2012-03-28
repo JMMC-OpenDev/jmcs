@@ -38,7 +38,15 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.apple.eawt.QuitResponse;
-import fr.jmmc.jmcs.gui.*;
+import fr.jmmc.jmcs.gui.AboutBox;
+import fr.jmmc.jmcs.gui.DependenciesView;
+import fr.jmmc.jmcs.gui.FeedbackReport;
+import fr.jmmc.jmcs.gui.HelpView;
+import fr.jmmc.jmcs.gui.MainMenuBar;
+import fr.jmmc.jmcs.gui.MessagePane;
+import fr.jmmc.jmcs.gui.SplashScreen;
+import fr.jmmc.jmcs.gui.SwingSettings;
+import fr.jmmc.jmcs.gui.SwingUtils;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
@@ -1071,16 +1079,22 @@ public abstract class App {
         public void actionPerformed(ActionEvent evt) {
             _logger.debug("Application is about to die, should we proceed ?");
 
-            QuitResponse response = null;
-            if (evt != null) {
+            // Mac os X Quit action handler:
+            final QuitResponse response;
+            if (evt != null && evt.getSource() instanceof QuitResponse) {
                 response = (QuitResponse) evt.getSource();
+            } else {
+                response = null;
             }
 
             // Check if user is OK to kill SAMP hub (if any)
             if (!SampManager.getInstance().allowHubKilling()) {
                 _logger.debug("SAMP cancelled application kill.");
                 // Otherwise cancel quit
-                response.cancelQuit();
+
+                if (response != null) {
+                    response.cancelQuit();
+                }
                 return;
             }
 
@@ -1090,9 +1104,11 @@ public abstract class App {
 
                 // Verify if we are authorized to kill the application or not
                 if (_exitApplicationWhenClosed) {
-
                     // Exit the application
-                    response.performQuit();
+
+                    if (response != null) {
+                        response.performQuit();
+                    }
                     App.exit(0);
 
                 } else {
@@ -1101,7 +1117,9 @@ public abstract class App {
             } else {
                 _logger.debug("Application killing cancelled.");
             }
-            response.cancelQuit();
+            if (response != null) {
+                response.cancelQuit();
+            }
         }
     }
 

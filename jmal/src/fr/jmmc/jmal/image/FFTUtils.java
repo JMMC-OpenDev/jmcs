@@ -54,13 +54,18 @@ public final class FFTUtils {
      */
     public static float[][] computeFFT(final int inputSize, final float[][] array, final int fftSize, final int outputSize) {
 
-        logger.info("computeFFT: image size = " + inputSize + " - FFT size = " + fftSize + " - output size = " + outputSize);
+        if (logger.isDebugEnabled()) {
+            logger.debug("computeFFT: image size = {} - FFT size = {} - output size = {}",
+                    new Object[]{inputSize, fftSize, outputSize});
+        }
 
         // FFT sub size must be larger than input image:
         final int fftSubSize = Math.max(inputSize, outputSize);
 
-        logger.info("FloatFFT_2D.realForwardSubset: FFT size = " + fftSize + " - sub size = " + fftSubSize
-                + " - input size = " + inputSize + " - start...");
+        if (logger.isInfoEnabled()) {
+            logger.info("computeFFT: FFT size = {} - sub size = {} - input size = {}",
+                    new Object[]{fftSize, fftSubSize, inputSize});
+        }
 
         long start = System.nanoTime();
 
@@ -80,9 +85,7 @@ public final class FFTUtils {
             return null;
         }
 
-        long time = System.nanoTime() - start;
-
-        logger.info("FloatFFT_2D.realForwardSubset: duration = " + (1e-6d * time) + " ms.");
+        logger.info("FloatFFT_2D.realForwardSubset: duration = {} ms.", 1e-6d * (System.nanoTime() - start));
 
         // free FFT2D (GC):
         fft2d = null;
@@ -95,7 +98,7 @@ public final class FFTUtils {
 
             fftData = extractFFT(fftSubSize, fftData, outputSize);
 
-            logger.info("extractFFT: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");
+            logger.info("extractFFT: duration = {} ms.", 1e-6d * (System.nanoTime() - start));
         }
 
         return fftData;
@@ -268,7 +271,7 @@ public final class FFTUtils {
             jobs[0].run();
         }
 
-        logger.info("convert: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");
+        logger.info("convert: duration = {} ms.", 1e-6d * (System.nanoTime() - start));
 
         FFTUtils.shiftQuadrants(outputSize, output);
 
@@ -314,7 +317,7 @@ public final class FFTUtils {
             }
         }
 
-        logger.info("shiftQuadrants: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");
+        logger.info("shiftQuadrants: duration = {} ms.", 1e-6d * (System.nanoTime() - start));
     }
 
     /**
@@ -338,7 +341,9 @@ public final class FFTUtils {
             return fftData;
         }
 
-        logger.info("extractFFT: output size = " + outputSize + " - FFT size = " + size);
+        if (logger.isDebugEnabled()) {
+            logger.debug("extractFFT: output size = {} - FFT size = {}", outputSize, size);
+        }
 
         final int ro2 = outputSize / 2; // half of row dimension
 

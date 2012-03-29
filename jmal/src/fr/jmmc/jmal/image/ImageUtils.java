@@ -188,7 +188,7 @@ public final class ImageUtils {
             throw new IllegalStateException("Invalid data array size: " + array.length + "; expected: " + (width * height) + ".");
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("createImage: using array of size " + width + "x" + height);
+            logger.debug("createImage: using array of size {} x {}", width, height);
         }
 
         // Start the computations :
@@ -333,7 +333,7 @@ public final class ImageUtils {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("createImage: using array of size " + width + "x" + height);
+            logger.debug("createImage: using array of size {} x {}", width, height);
         }
 
         // Start the computations :
@@ -393,7 +393,7 @@ public final class ImageUtils {
                                             final IndexColorModel colorModel) {
 
         if (logger.isDebugEnabled()) {
-            logger.debug("createImage: using array of size  " + width + "x" + height);
+            logger.debug("createImage: using array of size {} x {}", width, height);
         }
 
         final ColorModel imageColorModel;

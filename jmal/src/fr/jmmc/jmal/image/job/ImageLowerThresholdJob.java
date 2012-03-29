@@ -93,7 +93,7 @@ public final class ImageLowerThresholdJob extends AbstractImageJob<AtomicInteger
     protected void processValue(final int col, final int row, final float value) {
         if (value != 0f && value < _threshold) {
             if (DEBUG) {
-                logger.info("threshold reached at column " + col + " row = " + row + " : " + value);
+                logger.info("threshold reached at ({}, {}) : {}", new Object[]{col, row, value});
             }
             _array2D[row][col] = _replaceBy;
             _result.incrementAndGet();

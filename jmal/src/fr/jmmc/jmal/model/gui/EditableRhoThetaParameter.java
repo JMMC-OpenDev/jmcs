@@ -27,7 +27,9 @@ public final class EditableRhoThetaParameter implements Editable {
      */
     public enum Type {
 
+        /** rho parameter */
         RHO("rho", "rho", "mas"),
+        /** theta parameter */
         THETA("theta", "theta", "deg");
 
         /**
@@ -49,14 +51,26 @@ public final class EditableRhoThetaParameter implements Editable {
         /** parameter units */
         private final String units;
 
+        /**
+         * Return the parameter name
+         * @return parameter name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Return the parameter type
+         * @return parameter type
+         */
         public String getType() {
             return type;
         }
 
+        /**
+         * Return the parameter units
+         * @return parameter units
+         */
         public String getUnits() {
             return units;
         }
@@ -95,6 +109,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return model
      */
+    @Override
     public Model getModel() {
         return model;
     }
@@ -104,6 +119,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return true if the parameter is a shared parameter
      */
+    @Override
     public boolean isShared() {
         return false;
     }
@@ -113,6 +129,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return true if the parameter is a position
      */
+    @Override
     public boolean isPosition() {
         return true;
     }
@@ -125,6 +142,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return value of the name property
      */
+    @Override
     public String getName() {
         return this.name;
     }
@@ -134,6 +152,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return value of the type property
      */
+    @Override
     public String getType() {
         return this.type.getType();
     }
@@ -143,6 +162,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return value of the units property
      */
+    @Override
     public String getUnits() {
         return this.type.getUnits();
     }
@@ -153,12 +173,13 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return value property
      */
+    @Override
     public double getValue() {
         final double x = paramX.getValue();
         final double y = paramY.getValue();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("getValue[" + type + "] [x,y] = [" + x + ", " + y + "]");
+            logger.debug("getValue[{}] [x,y] = [{}, {}]", new Object[]{type, x, y});
         }
 
         double value = 0d;
@@ -172,7 +193,7 @@ public final class EditableRhoThetaParameter implements Editable {
             default:
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("getValue[" + type + "] = [" + value + "]");
+            logger.debug("getValue[{}] = [{}]", type, value);
         }
         return value;
     }
@@ -182,16 +203,17 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @param value value to set
      */
+    @Override
     public void setValue(final double value) {
         if (logger.isDebugEnabled()) {
-            logger.debug("setValue[" + type + "] = [" + value + "]");
+            logger.debug("setValue[{}] = [{}]", type, value);
         }
         // old values :
         final double x = paramX.getValue();
         final double y = paramY.getValue();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("setValue[" + type + "] [x,y] = [" + x + ", " + y + "]");
+            logger.debug("setValue[{}] [x,y] = [{}, {}]", new Object[]{type, x, y});
         }
 
         double x2 = 0d;
@@ -216,7 +238,7 @@ public final class EditableRhoThetaParameter implements Editable {
         paramY.setValue(y2);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("setValue[" + type + "] [x2,y2] = [" + x2 + ", " + y2 + "]");
+            logger.debug("setValue[{}] [x2,y2] = [{}, {}]", new Object[]{type, x2, y2});
         }
     }
 
@@ -225,6 +247,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return null
      */
+    @Override
     public Double getMinValue() {
         return null;
     }
@@ -234,6 +257,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return null
      */
+    @Override
     public Double getMaxValue() {
         return null;
     }
@@ -243,6 +267,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return null
      */
+    @Override
     public Double getScale() {
         return null;
     }
@@ -252,6 +277,7 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @return false
      */
+    @Override
     public boolean isHasFixedValue() {
         return false;
     }
@@ -261,7 +287,8 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @param value value to set
      */
-    public void setMinValue(Double value) {
+    @Override
+    public void setMinValue(final Double value) {
     }
 
     /**
@@ -269,7 +296,8 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @param value value to set
      */
-    public void setMaxValue(Double value) {
+    @Override
+    public void setMaxValue(final Double value) {
     }
 
     /**
@@ -277,7 +305,8 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @param value value to set
      */
-    public void setScale(Double value) {
+    @Override
+    public void setScale(final Double value) {
     }
 
     /**
@@ -285,7 +314,8 @@ public final class EditableRhoThetaParameter implements Editable {
      *
      * @param value value to set
      */
-    public void setHasFixedValue(boolean value) {
+    @Override
+    public void setHasFixedValue(final boolean value) {
     }
 
     /* --- utility methods */
@@ -296,7 +326,7 @@ public final class EditableRhoThetaParameter implements Editable {
      * @param y coordinate y
      * @return distance rho
      */
-    public final static double getRho(final double x, final double y) {
+    public static double getRho(final double x, final double y) {
         return Math.sqrt(x * x + y * y);
     }
 
@@ -307,7 +337,7 @@ public final class EditableRhoThetaParameter implements Editable {
      * @param y coordinate y
      * @return theta angle in [-180;180]
      */
-    public final static double getTheta(final double x, final double y) {
+    public static double getTheta(final double x, final double y) {
         return Math.toDegrees(Math.atan2(y, x));
     }
 
@@ -318,7 +348,7 @@ public final class EditableRhoThetaParameter implements Editable {
      * @param theta angle in [-180;180]
      * @return coordinate x
      */
-    public final static double getX(final double rho, final double theta) {
+    public static double getX(final double rho, final double theta) {
         final double x = rho * Math.cos(Math.toRadians(theta));
         /*
          * if (Math.abs(x) < ZERO_THRESHOLD) {
@@ -335,7 +365,7 @@ public final class EditableRhoThetaParameter implements Editable {
      * @param theta angle in [-180;180]
      * @return coordinate y
      */
-    public final static double getY(final double rho, final double theta) {
+    public static double getY(final double rho, final double theta) {
         final double y = rho * Math.sin(Math.toRadians(theta));
         /*
          * if (Math.abs(y) < ZERO_THRESHOLD) {

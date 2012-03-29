@@ -143,7 +143,7 @@ public final class LD2UD {
      * todo Add units
      * @param sptype Spectral Type value
      * @return effective temperature or NaN if sptype can't be decoded
-
+    
      */
     public static double getEffectiveTemperature(String sptype) {
         try {
@@ -235,12 +235,12 @@ public final class LD2UD {
                     if (teff >= (currentTeff + prevTeff) / 2d) {
                         result = currentCoeff;
                         if (_logger.isDebugEnabled()) {
-                            _logger.debug("Using Temp = " + currentTeff);
+                            _logger.debug("Using Temp = {}", currentTeff);
                         }
                     } else {
                         result = prevCoeff;
                         if (_logger.isDebugEnabled()) {
-                            _logger.debug("Using temp = " + prevTeff);
+                            _logger.debug("Using temp = {}", prevTeff);
                         }
                     }
                     // Now we need to jump to the next nearest logg values in the
@@ -258,12 +258,12 @@ public final class LD2UD {
 
                             if (logg < (currentLogg + prevLogg) / 2d && (j + 1) < firstGroupIndex) {
                                 if (_logger.isDebugEnabled()) {
-                                    _logger.debug("using logg = " + prevLogg + " .");
+                                    _logger.debug("using logg = {}", prevLogg);
                                 }
                                 result = prevValue;
                             } else {
                                 if (_logger.isDebugEnabled()) {
-                                    _logger.debug("using Logg = " + currentLogg);
+                                    _logger.debug("using Logg = {}", currentLogg);
                                 }
                             }
                             break;

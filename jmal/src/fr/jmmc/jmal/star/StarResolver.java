@@ -99,6 +99,7 @@ public final class StarResolver {
         final Star star = new Star();
         star.addObserver(new Observer() {
 
+            @Override
             public void update(Observable o, Object arg) {
                 // Outpout results
                 System.out.println("Star '" + starName + "' contains:\n" + star);
@@ -257,11 +258,9 @@ public final class StarResolver {
             if (_result.startsWith("::error")) {
                 // sample error (name not found):
                 /*
-                 ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-                 [3] Identifier not found in the database : NAME TEST
+                ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                 
-
+                [3] Identifier not found in the database : NAME TEST
                  */
                 // try to get error message:
                 String errorMessage = null;
@@ -362,25 +361,25 @@ public final class StarResolver {
             if (coordinatesTokenizer.countTokens() == 4) {
                 final double ra = Double.parseDouble(coordinatesTokenizer.nextToken());
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("RA_d = '" + ra + "'.");
+                    _logger.trace("RA_d = '{}'.", ra);
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.RA_d, ra);
 
                 final double dec = Double.parseDouble(coordinatesTokenizer.nextToken());
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("DEC_d = '" + dec + "'.");
+                    _logger.trace("DEC_d = '{}'.", dec);
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.DEC_d, dec);
 
                 final String hmsRa = coordinatesTokenizer.nextToken();
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("RA = '" + hmsRa + "'.");
+                    _logger.trace("RA = '{}'.", hmsRa);
                 }
                 _newStarModel.setPropertyAsString(Star.Property.RA, hmsRa);
 
                 final String dmsDec = coordinatesTokenizer.nextToken();
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("DEC = '" + dmsDec + "'.");
+                    _logger.trace("DEC = '{}'.", dmsDec);
                 }
                 _newStarModel.setPropertyAsString(Star.Property.DEC, dmsDec);
             } else {
@@ -416,11 +415,10 @@ public final class StarResolver {
                 final String value = token.substring(2);
 
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace(magnitudeBand + " = '" + value + "'.");
+                    _logger.trace("{} = '{}'.", magnitudeBand, value);
                 }
 
-                _newStarModel.setPropertyAsDouble(Star.Property.fromString(magnitudeBand),
-                        Double.parseDouble(value));
+                _newStarModel.setPropertyAsDouble(Star.Property.fromString(magnitudeBand), Double.parseDouble(value));
             }
         }
 
@@ -437,18 +435,18 @@ public final class StarResolver {
             if (properMotionTokenizer.countTokens() == 2) {
                 final double pm_ra = Double.parseDouble(properMotionTokenizer.nextToken());
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("PROPERMOTION_RA = '" + pm_ra + "'.");
+                    _logger.trace("PROPERMOTION_RA = '{}'.", pm_ra);
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_RA, pm_ra);
 
                 final double pm_dec = Double.parseDouble(properMotionTokenizer.nextToken());
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("PROPERMOTION_DEC = '" + pm_dec + "'.");
+                    _logger.trace("PROPERMOTION_DEC = '{}'.", pm_dec);
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.PROPERMOTION_DEC, pm_dec);
             } else {
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("No proper motion data for star '" + _starName + "'.");
+                    _logger.trace("No proper motion data for star '{}'.", _starName);
                 }
             }
         }
@@ -466,18 +464,18 @@ public final class StarResolver {
             if (parallaxTokenizer.countTokens() == 2) {
                 final double plx = Double.parseDouble(parallaxTokenizer.nextToken());
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("PARALLAX = '" + plx + "'.");
+                    _logger.trace("PARALLAX = '{}'.", plx);
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.PARALLAX, plx);
 
                 final double plx_err = Double.parseDouble(parallaxTokenizer.nextToken());
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("PARALLAX_err = '" + plx_err + "'.");
+                    _logger.trace("PARALLAX_err = '{}'.", plx_err);
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.PARALLAX_err, plx_err);
             } else {
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("No parallax data for star '" + _starName + "'.");
+                    _logger.trace("No parallax data for star '{}'.", _starName);
                 }
             }
         }
@@ -505,20 +503,20 @@ public final class StarResolver {
             if (rvTokenizer.countTokens() > 0) {
                 final double rv = Double.parseDouble(rvTokenizer.nextToken());
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("RV = '" + rv + "'.");
+                    _logger.trace("RV = '{}'.", rv);
                 }
                 _newStarModel.setPropertyAsDouble(Star.Property.RV, rv);
 
                 if (rvTokenizer.hasMoreTokens()) {
                     final String rv_def = rvTokenizer.nextToken();
                     if (_logger.isTraceEnabled()) {
-                        _logger.trace("RV_DEF = '" + rv_def + "'.");
+                        _logger.trace("RV_DEF = '{}'.", rv_def);
                     }
                     _newStarModel.setPropertyAsString(Star.Property.RV_DEF, rv_def);
                 }
             } else {
                 if (_logger.isTraceEnabled()) {
-                    _logger.trace("No radial velocity data for star '" + _starName + "'.");
+                    _logger.trace("No radial velocity data for star '{}'.", _starName);
                 }
             }
         }
@@ -565,7 +563,7 @@ public final class StarResolver {
          * @param input input string
          * @param delimiter delimiter
          */
-        public StrictStringTokenizer(final String input, final String delimiter) {
+        StrictStringTokenizer(final String input, final String delimiter) {
             this.delimiter = delimiter;
             this.st = new StringTokenizer(input, delimiter, true);
             this.lastToken = delimiter;// if first token is separator

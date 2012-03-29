@@ -288,7 +288,9 @@ public final class ModelUVMapService {
                         float dataMin = minMaxJob.getMin();
                         float dataMax = minMaxJob.getMax();
 
-                        logger.info("ImageMinMaxJob min: " + dataMin + " - max: " + dataMax);
+                        if (logger.isInfoEnabled()) {
+                            logger.info("ImageMinMaxJob min: {} - max: {}", dataMin, dataMax);
+                        }
 
                         if (dataMin != dataMax && !Float.isInfinite(dataMin) && !Float.isInfinite(dataMax)) {
                             final float[] defStdRange = (colorScale == ColorScale.LOGARITHMIC) ? RANGE_AMPLITUDE_LOGARITHMIC : RANGE_AMPLITUDE_LINEAR;
@@ -557,7 +559,7 @@ public final class ModelUVMapService {
             jobs[0].run();
         }
 
-        logger.info("convert: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");
+        logger.info("convert: duration = {} ms.", 1e-6d * (System.nanoTime() - start));
 
         return output;
     }

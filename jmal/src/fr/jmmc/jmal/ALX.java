@@ -153,7 +153,7 @@ public final class ALX {
         double dd = 0d;
         double dm = 0d;
         double ds = 0d;
-        
+
         // Parse the given string
         try {
             final String[] tokens = input.split(" ");
@@ -608,19 +608,6 @@ public final class ALX {
      * If no argument is given, then it prints out the usage form.
      */
     public static void main(String[] args) {
-        /*
-        System.out.println("" + STARTYPE.DWARF);
-        System.out.println("" + STARTYPE.GIANT);
-        System.out.println("" + STARTYPE.SUPERGIANT);
-        
-        
-        for (int i = -10050; i < 11000; i++) {
-        double f = i / 27.9;
-        System.out.println("toDMS(" + f + ") = '" + toDMS(f) + "'.");
-        System.out.println("toHMS(" + f + ") = '" + toHMS(f) + "'.");
-        }         
-         */
-
         Class<?> c = null;
 
         try {

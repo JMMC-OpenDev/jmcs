@@ -142,7 +142,7 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("min = " + min + ", max = " + max);
+            logger.debug("min = {}, max = {}", min, max);
         }
 
         initImage(width, height, array, min, max);
@@ -178,9 +178,8 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("min = " + min + ", max = " + max);
+            logger.debug("min = {}, max = {}", min, max);
         }
-        logger.info("min = " + min + ", max = " + max);
 
         initImage(width, height, array, min, max);
     }
@@ -226,7 +225,7 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
         this.h_ = height;
 
         if (logger.isDebugEnabled()) {
-            logger.debug("initImage: using array of size  " + width + "x" + height);
+            logger.debug("initImage: using array of size {} x {}", width, height);
         }
 
         this.minValue_ = min;
@@ -380,14 +379,14 @@ public class ImageCanvas extends Canvas implements MouseMotionListener {
                     for (int i = 0; i < h_; i += step) {
                         int y = topInset + ((canvasHeight_ * i) / h_) + (canvasHeight_ / (2 * h_));
                         g2d.drawLine(leftInset - 2, y, leftInset, y);
-                        g2d.drawString("" + i, leftInset - 20, y + 4);
+                        g2d.drawString(Integer.toString(i), leftInset - 20, y + 4);
                     }
 
                     // draw horizontal tics
                     for (int i = 0; i < w_; i += step) {
                         int x = leftInset + ((canvasWidth_ * i) / w_) + (canvasWidth_ / (2 * w_));
                         g2d.drawLine(x, topInset + canvasHeight_, x, topInset + canvasHeight_ + 3);
-                        g2d.drawString("" + i, x - 4, topInset + canvasHeight_ + 15);
+                        g2d.drawString(Integer.toString(i), x - 4, topInset + canvasHeight_ + 15);
                     }
                 }
 

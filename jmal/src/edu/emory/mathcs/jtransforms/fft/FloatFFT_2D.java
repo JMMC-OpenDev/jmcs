@@ -782,7 +782,6 @@ public final strictfp class FloatFFT_2D {
         /*
          * xdft2d0_subth1(1, 1, a, true);
          */
-//        long start = System.nanoTime();
 
         // create tasks:
         for (int i = 0; i < nthreads; i++) {
@@ -853,7 +852,6 @@ public final strictfp class FloatFFT_2D {
             // execute the single task using the current thread:
             tasks[0].run();
         }
-//        System.out.println("rows: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");
 
         
 
@@ -862,7 +860,6 @@ public final strictfp class FloatFFT_2D {
         /*
          * cdft2d_subth(-1, a, true);
          */
-//        start = System.nanoTime();
 
         for (int i = 0; i < nthreads; i++) {
             final int n0 = i;
@@ -998,7 +995,6 @@ public final strictfp class FloatFFT_2D {
             // execute the single task using the current thread:
             tasks[0].run();
         }
-//        System.out.println("cols: duration = " + (1e-6d * (System.nanoTime() - start)) + " ms.");
 
 
         if (subSize < columns) {

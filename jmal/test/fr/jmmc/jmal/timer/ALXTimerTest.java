@@ -14,8 +14,7 @@ import org.slf4j.LoggerFactory;
  * Simple timer tests of ALX class
  * @author bourgesl
  */
-public class ALXTimerTest
-{
+public class ALXTimerTest {
 
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(ALXTimerTest.class.getName());
@@ -24,8 +23,7 @@ public class ALXTimerTest
      * MicroBenchmarks of ALX.ld2ud()
      * @param args
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         // Set the default locale to en-US locale (for Numerical Fields "." ",")
         Locale.setDefault(Locale.US);
 
@@ -40,8 +38,7 @@ public class ALXTimerTest
      * Use this test with Netbeans Profiler enabled
      * @param sptype spectral type
      */
-    private static void testProfiler(final String sptype)
-    {
+    private static void testProfiler(final String sptype) {
 
         final int N = 50000;
 
@@ -83,8 +80,7 @@ public class ALXTimerTest
      * Use this test to have micro benchmarks
      * @param sptype spectral type
      */
-    private static void testTimers(final String sptype)
-    {
+    private static void testTimers(final String sptype) {
 
         /** ALX ld2ud - threshold = 0.5 ms */
         final double threshold = 0.5d;
@@ -129,7 +125,7 @@ public class ALXTimerTest
             }
 
             if (!TimerFactory.isEmpty()) {
-                logger.info("TimerFactory : statistics : " + TimerFactory.dumpTimers());
+                logger.info("TimerFactory statistics: {}", TimerFactory.dumpTimers());
             }
 
             // pause for 10 ms :
@@ -145,8 +141,7 @@ public class ALXTimerTest
     /**
      * Test class
      */
-    private ALXTimerTest()
-    {
+    private ALXTimerTest() {
         //no-op
     }
 }

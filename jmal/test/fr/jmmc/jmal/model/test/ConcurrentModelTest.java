@@ -263,7 +263,7 @@ public class ConcurrentModelTest {
             final URL url = FileUtils.getResource(uri);
 
             if (logger.isInfoEnabled()) {
-                logger.info("loading url : " + url);
+                logger.info("loading url: {}", url);
             }
 
             // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)

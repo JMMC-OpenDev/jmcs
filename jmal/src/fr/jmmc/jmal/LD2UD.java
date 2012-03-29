@@ -84,7 +84,8 @@ public final class LD2UD {
         double result = getLimbDarkenedCorrectionFactor(requestedUD, teff, logg);
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("LimbdarkenedCorrectionFactor of star with sptype = " + sptype + " in band " + requestedUD + " is " + result);
+            _logger.debug("LimbdarkenedCorrectionFactor of star with sptype = {} in band {} is {}",
+                    new Object[]{sptype, requestedUD, result});
         }
         return result;
     }
@@ -95,8 +96,8 @@ public final class LD2UD {
         double result = getCorrectionFactor(c);
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("LimbdarkenedCorrectionFactor of star with teff=" + teff
-                    + " and logg=" + logg + " in band " + requestedUD + " is " + result);
+            _logger.debug("LimbdarkenedCorrectionFactor of star with teff = {} and logg = {} in band {} is {}",
+                    new Object[]{teff, logg, requestedUD, result});
         }
         return result;
     }
@@ -131,7 +132,7 @@ public final class LD2UD {
         double result = searchLogg(table, tempCode);
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Gravity of star with sptype = " + sptype + " is " + result);
+            _logger.debug("Gravity of star with sptype = {} is {}", sptype, result);
         }
         return result;
     }
@@ -167,7 +168,7 @@ public final class LD2UD {
         double result = searchTeff(table, tempCode);
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Effective temperature of star with sptype = " + sptype + " is " + result);
+            _logger.debug("Effective temperature of star with sptype = {} is {}", sptype, result);
         }
         return result;
     }
@@ -190,7 +191,7 @@ public final class LD2UD {
         double result = path1(table, tempClassCode, 0, 2) + ALX.SUN_LOGG;
 
         if (_logger.isTraceEnabled()) {
-            _logger.trace("Logg of star with tempCode = " + tempClassCode + " is " + result);
+            _logger.trace("Logg of star with tempCode = {} is {}", tempClassCode, result);
         }
         return result;
     }
@@ -199,7 +200,7 @@ public final class LD2UD {
         double result = path1(table, tempClassCode, 0, 1);
 
         if (_logger.isTraceEnabled()) {
-            _logger.trace("Teff of star with tempCode = " + tempClassCode + " is " + result);
+            _logger.trace("Teff of star with tempCode = {} is {}", tempClassCode, result);
         }
         return result;
     }
@@ -229,7 +230,8 @@ public final class LD2UD {
                 // We are into two different temperature groups.
                 if (teff < currentTeff && teff >= prevTeff) {
                     if (_logger.isDebugEnabled()) {
-                        _logger.debug("first index  = " + firstGroupIndex + " , second index was " + secondGroupIndex + " where teff=" + currentTeff);
+                        _logger.debug("first index  = {}, second index was {} where teff = {}",
+                                new Object[]{firstGroupIndex, secondGroupIndex, currentTeff});
                     }
 
                     if (teff >= (currentTeff + prevTeff) / 2d) {
@@ -275,7 +277,7 @@ public final class LD2UD {
         }
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Coeff for Teff=" + teff + " and logg=" + logg + " is " + result);
+            _logger.debug("Coeff for teff = {} and logg = {} is {}", new Object[]{teff, logg, result});
         }
         return result;
     }

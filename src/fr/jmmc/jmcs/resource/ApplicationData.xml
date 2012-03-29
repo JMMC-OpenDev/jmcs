@@ -78,6 +78,13 @@
           jars="swing-worker-1.2.jar"
           license="LGPL v2.1"/>
 
+        <!-- Missing Swing Widgets -->
+        <package name="JCL"
+          description="JIDE Common Layer."
+          link="http://java.net/projects/jide-oss"
+          jars="jide-oss-3.3.7.jar"
+          license="GPL v3"/>
+
 
         <!-- 3. Tools -->      
 

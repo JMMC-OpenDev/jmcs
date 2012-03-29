@@ -25,9 +25,12 @@
     <!-- VO interoperability -->
     <jar href="@SHARED@/jsamp-1.3-2.jar"/>
     
-    <!-- Launch one desktop browser -->
+    <!-- Open URLs in user's default web browser -->
     <jar href="@SHARED@/BrowserLauncher2-1_3.jar"/>
     
+    <!-- Missing Swing Widgets -->
+    <jar href="@SHARED@/jide-oss-3.3.7.jar"/>
+
     <!-- Documentation reader -->
     <jar href="@SHARED@/jhall.jar "/>
     

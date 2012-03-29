@@ -44,7 +44,6 @@ public enum SampMetaData {
     // Private JMMC SAMP capabilities are prefixed with application name:
     /** Undefined */
     UNKNOWN("UNKNOWN", null);
-
     /** Blanking value for undefined Strings (null, ...) */
     public static final String UNKNOWN_METADATA_ID = "UNKNOWN";
     /** AppLauncher prefix for custom samp meta data id */
@@ -119,28 +118,6 @@ public enum SampMetaData {
     }
 
     /**
-     * For test and debug purpose only.
-     * @param args unused
-     */
-    public static void main(String[] args) {
-        // For each catalog in the enum
-        for (SampMetaData metaData : SampMetaData.values()) {
-            String id = metaData.id();
-            System.out.println("SampMetaData '" + metaData + "' has id '" + id + "' : match '" + (metaData == SampMetaData.fromMetaDataId(id) ? "OK" : "FAILED") + "'.");
-        }
-
-        SampMetaData tmp;
-        String id;
-
-        id = "toto";
-        tmp = SampMetaData.fromMetaDataId(id);
-        System.out.println("'" + id + "' => '" + tmp + "'.");
-        id = null;
-        tmp = SampMetaData.fromMetaDataId(id);
-        System.out.println("'" + id + "' => '" + tmp + "'.");
-    }
-
-    /**
      * To get over Java 1.5 limitation prohibiting static members in enum (initialization order hazard).
      *
      * @sa http://www.velocityreviews.com/forums/t145807-an-enum-mystery-solved.html
@@ -156,5 +133,28 @@ public enum SampMetaData {
          */
         private SampMetaDataNastyTrick() {
         }
+    }
+
+    /**
+     * For test and debug purpose only.
+     * @param args unused
+     */
+    public static void main(String[] args) {
+        // For each catalog in the enum
+        for (SampMetaData metaData : SampMetaData.values()) {
+            String id = metaData.id();
+            String label = metaData.getLabel();
+            System.out.println("SampMetaData '" + metaData + "' has id '" + id + "' and label '" + label + "' : match '" + (metaData == SampMetaData.fromMetaDataId(id) ? "OK" : "FAILED") + "'.");
+        }
+
+        SampMetaData tmp;
+        String id;
+
+        id = "toto";
+        tmp = SampMetaData.fromMetaDataId(id);
+        System.out.println("'" + id + "' => '" + tmp + "'.");
+        id = null;
+        tmp = SampMetaData.fromMetaDataId(id);
+        System.out.println("'" + id + "' => '" + tmp + "'.");
     }
 }

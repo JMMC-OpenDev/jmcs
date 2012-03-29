@@ -322,7 +322,7 @@ public abstract class App {
             throw new IllegalStateException("Cannot load default application data.");
         }
 
-        _logger.warn("Loading default application data from '{}' file.", defaultXmlURL);
+        _logger.info("Loading default application data from '{}' file.", defaultXmlURL);
 
         // We reinstantiate the application data model
         _jMcsApplicationDataModel = new ApplicationDataModel(defaultXmlURL);

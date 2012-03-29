@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="BSD"/>
  *     &lt;enumeration value="Eclipse v1"/>
  *     &lt;enumeration value="GPL v2"/>
+ *     &lt;enumeration value="GPL v3"/>
  *     &lt;enumeration value="LGPL"/>
  *     &lt;enumeration value="LGPL v2"/>
  *     &lt;enumeration value="LGPL v2.1"/>
@@ -43,6 +44,8 @@ public enum License {
     ECLIPSE_V_1("Eclipse v1"),
     @XmlEnumValue("GPL v2")
     GPL_V_2("GPL v2"),
+    @XmlEnumValue("GPL v3")
+    GPL_V_3("GPL v3"),
     LGPL("LGPL"),
     @XmlEnumValue("LGPL v2")
     LGPL_V_2("LGPL v2"),

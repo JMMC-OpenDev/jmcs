@@ -344,6 +344,7 @@ Description: Store jMCS Application meta data.
             <xsd:enumeration value="BSD"/>
             <xsd:enumeration value="Eclipse v1"/>
             <xsd:enumeration value="GPL v2"/>
+            <xsd:enumeration value="GPL v3"/>
             <xsd:enumeration value="LGPL"/>
             <xsd:enumeration value="LGPL v2"/>
             <xsd:enumeration value="LGPL v2.1"/>

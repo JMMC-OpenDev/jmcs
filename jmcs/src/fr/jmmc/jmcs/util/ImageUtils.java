@@ -62,7 +62,10 @@ public final class ImageUtils {
             newHeight = (int) Math.floor((double) iconHeight * ((double) newWidth / (double) iconWidth));
         }
 
-        _logger.debug("Scaling image from w" + iconWidth + "*h" + iconHeight + " to w" + newWidth + "*h" + newHeight + ".");
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Scaling image from {} x {} to {} x {}.",
+                    new Object[]{iconWidth, iconHeight, newWidth, newHeight});
+        }
 
         final Image image = imageIcon.getImage();
         final Image scaledImage = image.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);

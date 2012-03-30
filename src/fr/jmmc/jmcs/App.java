@@ -1334,7 +1334,7 @@ public abstract class App {
             // Set the menu bar under Mac OS X
             System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-            final Class<?> osxAdapter = Introspection.getClass("fr.jmmc.jmcs.gui.OSXAdapter");
+            final Class<?> osxAdapter = Introspection.getClass("fr.jmmc.jmcs.gui.util.MacOSXAdapter");
 
             if (osxAdapter == null) {
                 // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT

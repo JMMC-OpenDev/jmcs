@@ -4,7 +4,7 @@
 package fr.jmmc.jmal.image;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.gui.SwingUtils;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Observable;

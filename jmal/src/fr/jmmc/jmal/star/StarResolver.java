@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmal.star;
 
-import fr.jmmc.jmcs.gui.SwingUtils;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import fr.jmmc.jmcs.util.Urls;

@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmal.star;
 
-import fr.jmmc.jmcs.gui.SwingUtils;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Observable;

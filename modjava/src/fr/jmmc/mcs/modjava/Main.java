@@ -4,7 +4,7 @@
 package fr.jmmc.mcs.modjava;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.gui.DismissableMessagePane;
+import fr.jmmc.jmcs.gui.component.DismissableMessagePane;
 import fr.jmmc.jmcs.network.interop.SampCapability;
 import fr.jmmc.jmcs.network.interop.SampMessageHandler;
 import java.awt.BorderLayout;

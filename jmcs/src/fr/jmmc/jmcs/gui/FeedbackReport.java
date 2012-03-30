@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.gui.component.MessagePane;
-import fr.jmmc.jmcs.gui.util.WindowCenterer;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.App;
@@ -136,7 +136,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         this.setMinimumSize(new Dimension(600, 600));
         this.setPreferredSize(new Dimension(600, 600));
 
-        WindowCenterer.centerOnMainScreen(this);
+        WindowUtils.centerOnMainScreen(this);
 
         cancelButton.addActionListener(new ActionListener() {
 

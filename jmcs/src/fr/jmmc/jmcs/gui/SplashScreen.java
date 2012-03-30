@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.gui.util.WindowCenterer;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.App;
 import java.awt.BorderLayout;
@@ -72,7 +72,7 @@ public class SplashScreen extends JFrame {
             // Draw window
             setAllProperties();
             pack();
-            WindowCenterer.centerOnMainScreen(this);
+            WindowUtils.centerOnMainScreen(this);
 
             // Show window :
             setVisible(true);

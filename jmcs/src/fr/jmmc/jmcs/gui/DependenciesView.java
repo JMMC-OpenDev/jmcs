@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.gui.util.WindowCenterer;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.data.model.Package;
@@ -49,7 +49,6 @@ public class DependenciesView extends javax.swing.JFrame implements HyperlinkLis
         _licenseContent = new HashMap<String, String>();
         initComponents();
         generateContent();
-        setupKeyListeners();
         finsihLayout();
     }
 
@@ -159,29 +158,12 @@ public class DependenciesView extends javax.swing.JFrame implements HyperlinkLis
         _editorPane.setText(generatedHtml.toString());
     }
 
-    private void setupKeyListeners() {
-        // Trap Escape key
-        KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        // Trap command-W key
-        KeyStroke metaWStroke = KeyStroke.getKeyStroke(MainMenuBar.getSystemCommandKey() + "W");
-
-        // Close window on either strike
-        ActionListener actionListener = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                setVisible(false);
-            }
-        };
-        getRootPane().registerKeyboardAction(actionListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        getRootPane().registerKeyboardAction(actionListener, metaWStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    }
-
     private void finsihLayout() {
         _editorPane.setCaretPosition(0); // Move back focus at the top of the content
         setPreferredSize(new Dimension(700, 600));
+        WindowUtils.setClosingKeyboardShortcuts(getRootPane(), this);
         pack();
-        WindowCenterer.centerOnMainScreen(this);
+        WindowUtils.centerOnMainScreen(this);
     }
 
     /**

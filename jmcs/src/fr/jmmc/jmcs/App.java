@@ -45,7 +45,7 @@ import fr.jmmc.jmcs.gui.HelpView;
 import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.MessagePane;
 import fr.jmmc.jmcs.gui.SplashScreen;
-import fr.jmmc.jmcs.gui.SwingSettings;
+import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import fr.jmmc.jmcs.util.FileUtils;

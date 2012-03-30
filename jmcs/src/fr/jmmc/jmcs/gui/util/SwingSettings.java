@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.jmcs.gui;
+package fr.jmmc.jmcs.gui.util;
 
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.Locale;

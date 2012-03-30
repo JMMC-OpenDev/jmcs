@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.util;
 
+import fr.jmmc.jmcs.gui.MainMenuBar;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
@@ -10,6 +11,12 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import javax.swing.JComponent;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +26,10 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Brice COLUCCI, Guillaume MELLA, Laurent BOURGES.
  */
-public class WindowCenterer {
+public class WindowUtils {
 
     /** Logger */
-    private static final Logger _logger = LoggerFactory.getLogger(WindowCenterer.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(WindowUtils.class.getName());
     /** Screen width */
     private static int _screenWidth = 0;
     /** Screen height */
@@ -89,9 +96,40 @@ public class WindowCenterer {
     }
 
     /**
+     * Installs standard window-closing keyboard shortcuts (i.e ESC and ctrl-W).
+     *
+     * @param rootPane the pane to listen keystroke.
+     * @param window the JFrame or JDialog to close on keystroke.
+     *
+     * @return the rootPane (mainly for JDialog override createRootPane() method).
+     */
+    public static JRootPane setClosingKeyboardShortcuts(final JRootPane rootPane, final Window window) {
+
+        // Trap Escape key
+        KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        // Trap command-W key
+        KeyStroke metaWStroke = KeyStroke.getKeyStroke(MainMenuBar.getSystemCommandKey() + "W");
+
+        // Close window on either stroke
+        ActionListener actionListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                _logger.trace("Hiding window on keyboard shortcut.");
+                window.setVisible(false);
+            }
+        };
+
+        rootPane.registerKeyboardAction(actionListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        rootPane.registerKeyboardAction(actionListener, metaWStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+        return rootPane;
+    }
+
+    /**
      * Private constructor
      */
-    private WindowCenterer() {
+    private WindowUtils() {
         super();
     }
 }

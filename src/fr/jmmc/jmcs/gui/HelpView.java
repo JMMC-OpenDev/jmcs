@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.gui.util.WindowCenterer;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.util.Urls;
 
 import java.net.URL;
@@ -100,7 +100,7 @@ public class HelpView {
 
             HelpSet helpSet = new HelpSet(_instance.getClass().getClassLoader(), url);
             _helpBroker = helpSet.createHelpBroker();
-            _helpBroker.setLocation(WindowCenterer.getCenteringPoint(_helpBroker.getSize()));
+            _helpBroker.setLocation(WindowUtils.getCenteringPoint(_helpBroker.getSize()));
 
         } catch (Exception ex) {
             // skip complex case

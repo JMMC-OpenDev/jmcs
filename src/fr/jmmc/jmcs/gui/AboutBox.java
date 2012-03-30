@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.gui.util.WindowCenterer;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.App;
@@ -177,25 +177,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     @Override
     protected JRootPane createRootPane() {
 
-        JRootPane myRootPane = new JRootPane();
-
-        // Trap Escape key
-        KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        // Trap command-W key
-        KeyStroke metaWStroke = KeyStroke.getKeyStroke(MainMenuBar.getSystemCommandKey() + "W");
-
-        // Close window on either strike
-        ActionListener actionListener = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                _logger.debug("Hiding about box on keyboard shortcut.");
-                setVisible(false);
-            }
-        };
-        myRootPane.registerKeyboardAction(actionListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        myRootPane.registerKeyboardAction(actionListener, metaWStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        return myRootPane;
+        return WindowUtils.setClosingKeyboardShortcuts(new JRootPane(), this);
     }
 
     /**
@@ -514,7 +496,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         pack();
 
         // Center window on main screen
-        WindowCenterer.centerOnMainScreen(this);
+        WindowUtils.centerOnMainScreen(this);
 
         _logger.debug("All the frame properties have been initialized");
     }

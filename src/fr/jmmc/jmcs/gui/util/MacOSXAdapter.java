@@ -43,7 +43,7 @@ STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 Copyright � 2003-2006 Apple Computer, Inc., All Rights Reserved
  */
-package fr.jmmc.jmcs.gui;
+package fr.jmmc.jmcs.gui.util;
 
 import com.apple.eawt.Application;
 import com.apple.eawt.AboutHandler;
@@ -70,12 +70,12 @@ import javax.swing.JFrame;
  * 
  * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public class OSXAdapter implements AboutHandler, PreferencesHandler, QuitHandler, OpenFilesHandler {
+public class MacOSXAdapter implements AboutHandler, PreferencesHandler, QuitHandler, OpenFilesHandler {
 
     /** Class logger */
-    private static final Logger logger = LoggerFactory.getLogger(OSXAdapter.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(MacOSXAdapter.class.getName());
     /** pseudo-singleton model; no point in making multiple instances */
-    private static OSXAdapter _instance;
+    private static MacOSXAdapter _instance;
     /** application */
     private static Application _application;
     /* members */
@@ -91,7 +91,7 @@ public class OSXAdapter implements AboutHandler, PreferencesHandler, QuitHandler
      *
      * @param mainFrame application main frame
      */
-    private OSXAdapter(final JFrame mainFrame) {
+    private MacOSXAdapter(final JFrame mainFrame) {
         mainAppFrame = mainFrame;
         _registrar = ActionRegistrar.getInstance();
     }
@@ -162,7 +162,7 @@ public class OSXAdapter implements AboutHandler, PreferencesHandler, QuitHandler
         }
 
         if (_instance == null) {
-            _instance = new OSXAdapter(mainFrame);
+            _instance = new MacOSXAdapter(mainFrame);
         }
 
         // Link 'About...' menu entry

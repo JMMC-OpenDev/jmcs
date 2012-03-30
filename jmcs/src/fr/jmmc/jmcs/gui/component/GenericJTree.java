@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.jmcs.gui;
+package fr.jmmc.jmcs.gui.component;
 
 import java.util.Enumeration;
 import org.slf4j.Logger;

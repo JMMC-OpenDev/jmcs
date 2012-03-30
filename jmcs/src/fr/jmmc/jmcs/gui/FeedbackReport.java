@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
+import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.util.WindowCenterer;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.data.ApplicationDataModel;

@@ -43,7 +43,7 @@ import fr.jmmc.jmcs.gui.DependenciesView;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.HelpView;
 import fr.jmmc.jmcs.gui.MainMenuBar;
-import fr.jmmc.jmcs.gui.MessagePane;
+import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.SplashScreen;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.gui.util.SwingUtils;

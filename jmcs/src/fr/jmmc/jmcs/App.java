@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs;
 
-import fr.jmmc.jmcs.util.Introspection;
+import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
@@ -1334,17 +1334,17 @@ public abstract class App {
             // Set the menu bar under Mac OS X
             System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-            final Class<?> osxAdapter = Introspection.getClass("fr.jmmc.jmcs.gui.util.MacOSXAdapter");
+            final Class<?> osxAdapter = IntrospectionUtils.getClass("fr.jmmc.jmcs.gui.util.MacOSXAdapter");
 
             if (osxAdapter == null) {
                 // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
                 // because OSXAdapter extends ApplicationAdapter in its def
                 _logger.error("This version of Mac OS X does not support the Apple EAWT. Application Menu handling has been disabled.");
             } else {
-                final Method registerMethod = Introspection.getMethod(osxAdapter, "registerMacOSXApplication", new Class<?>[]{JFrame.class});
+                final Method registerMethod = IntrospectionUtils.getMethod(osxAdapter, "registerMacOSXApplication", new Class<?>[]{JFrame.class});
 
                 if (registerMethod != null) {
-                    Introspection.executeMethod(registerMethod, new Object[]{frame});
+                    IntrospectionUtils.executeMethod(registerMethod, new Object[]{frame});
                 }
             }
         }

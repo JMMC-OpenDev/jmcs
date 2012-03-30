@@ -7,7 +7,7 @@ import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.model.Menu;
 import fr.jmmc.jmcs.data.model.Menubar;
-import fr.jmmc.jmcs.util.Introspection;
+import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
@@ -329,7 +329,7 @@ public class MainMenuBar extends JMenuBar {
                     try {
                         _logger.info("use Look and Feel : {}", className);
 
-                        final LookAndFeel newLaf = (LookAndFeel) Introspection.getInstance(className);
+                        final LookAndFeel newLaf = (LookAndFeel) IntrospectionUtils.getInstance(className);
 
                         UIManager.setLookAndFeel(newLaf);
 

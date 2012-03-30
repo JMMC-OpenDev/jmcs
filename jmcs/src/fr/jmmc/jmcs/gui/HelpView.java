@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
+import fr.jmmc.jmcs.gui.util.WindowCenterer;
 import fr.jmmc.jmcs.util.Urls;
 
 import java.net.URL;

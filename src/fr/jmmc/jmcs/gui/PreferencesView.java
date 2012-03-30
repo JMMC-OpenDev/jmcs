@@ -37,9 +37,17 @@ public class PreferencesView extends JFrame implements ActionListener {
 
     /**
      * Constructor.
+     * @param preferences your application Preferences instance.
+     * @param panels a map of tab title (string) -> panel (JPanel).
      */
     public PreferencesView(Preferences preferences, LinkedHashMap<String, JPanel> panels) {
+
         super("Preferences");
+
+        // Check arguments validity
+        if ((preferences == null) || (panels == null) || (panels.isEmpty())) {
+            throw new IllegalArgumentException();
+        }
 
         // Window size
         setSize(600, 400);
@@ -48,16 +56,27 @@ public class PreferencesView extends JFrame implements ActionListener {
         // Get and listen to data model modifications
         _preferences = preferences;
 
-        // Build the tabbed pane
-        JTabbedPane tabbedPane = new JTabbedPane();
         Container contentPane = getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-        contentPane.add(tabbedPane);
 
-        // Add each preferences pane
-        for (Map.Entry<String, JPanel> entry : panels.entrySet()) {
-            System.out.println("entry = " + entry.getKey());
-            tabbedPane.add(entry.getKey(), entry.getValue());
+        // Skip tabbed pane if only one panel to display
+        if (panels.size() == 1) {
+            final JPanel firstPanel = panels.values().iterator().next();
+            contentPane.add(firstPanel);
+        } else {
+            // Build the tabbed pane
+            JTabbedPane tabbedPane = new JTabbedPane();
+            contentPane.add(tabbedPane);
+
+            // Add each preferences pane
+            for (Map.Entry<String, JPanel> entry : panels.entrySet()) {
+
+                final String panelName = entry.getKey();
+                final JPanel panel = entry.getValue();
+
+                tabbedPane.add(panelName, panel);
+                _logger.fine("Added '" + panelName + "' panel to PreferenceView tabbed pane.");
+            }
         }
 
         // Add the restore and sace buttons

@@ -5,7 +5,7 @@ package fr.jmmc.jmcs.network.interop;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
-import fr.jmmc.jmcs.gui.MessagePane;
+import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.StatusBar;
 import java.io.IOException;
 import java.util.*;

@@ -4,7 +4,7 @@
 package fr.jmmc.jmal.star;
 
 import fr.jmmc.jmal.ALX;
-import fr.jmmc.jmcs.gui.MessagePane;
+import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.StatusBar;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.awt.Container;

@@ -4,7 +4,7 @@
 package fr.jmmc.jmal.star;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.gui.MessagePane;
+import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.SearchField;
 import fr.jmmc.jmcs.gui.component.StatusBar;
 import java.awt.event.ActionEvent;

@@ -6,7 +6,7 @@ package fr.jmmc.jmal.star;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
-import fr.jmmc.jmcs.util.Urls;
+import fr.jmmc.jmcs.util.UrlUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -211,13 +211,13 @@ public final class StarResolver {
             BufferedReader bufferedReader = null;
             try {
                 // Forge the URL int UTF8 unicode charset
-                final String encodedScript = Urls.encode(simbadScript);
+                final String encodedScript = UrlUtils.encode(simbadScript);
                 final String simbadURL = _simbadBaseURL + encodedScript;
 
                 _logger.debug("Querying CDS Simbad at {}", simbadURL);
 
                 // Launch the network query
-                final InputStream inputStream = Urls.parseURL(simbadURL).openStream();
+                final InputStream inputStream = UrlUtils.parseURL(simbadURL).openStream();
 
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream, HTTP_ENCODING));
 

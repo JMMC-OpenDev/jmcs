@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.awt.Component;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ListSelectionModel;

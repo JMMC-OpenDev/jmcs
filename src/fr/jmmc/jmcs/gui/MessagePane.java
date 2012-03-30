@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.App;
 import java.awt.Component;
 import java.awt.Dimension;

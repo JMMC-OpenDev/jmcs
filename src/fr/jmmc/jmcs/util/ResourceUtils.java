@@ -16,15 +16,15 @@ import org.apache.commons.lang.SystemUtils;
 
 /**
  * Class used to get resources informations from one central point (xml file).
- * Applications must start to set the resource file name before
- * any gui construction.
+ * 
+ * Applications must start to set the resource file name before any GUI construction.
  * 
  * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public abstract class Resources {
+public abstract class ResourceUtils {
 
     /** the logger facility */
-    protected static final Logger _logger = LoggerFactory.getLogger(Resources.class.getName());
+    protected static final Logger _logger = LoggerFactory.getLogger(ResourceUtils.class.getName());
     /** resource filename  that must be overloaded by subclasses */
     private static String _resourceName = "fr/jmmc/jmcs/resource/Resources";
     /** cached resource bundle */
@@ -189,7 +189,7 @@ public abstract class Resources {
         }
 
         // Get the image from path
-        URL imgURL = Resources.class.getResource(iconPath);
+        URL imgURL = ResourceUtils.class.getResource(iconPath);
 
         if (imgURL == null) {
             _logger.debug("Could not load icon '{}'.", iconPath);
@@ -204,7 +204,7 @@ public abstract class Resources {
     /**
      * Private constructor
      */
-    private Resources() {
+    private ResourceUtils() {
         super();
     }
 }

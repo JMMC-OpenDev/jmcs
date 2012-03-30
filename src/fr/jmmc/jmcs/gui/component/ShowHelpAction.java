@@ -1,9 +1,12 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.jmcs.gui;
+package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.gui.FeedbackReport;
+import fr.jmmc.jmcs.gui.HelpView;
+import fr.jmmc.jmcs.gui.MessagePane;
 import fr.jmmc.jmcs.util.Urls;
 
 import java.awt.event.ActionEvent;

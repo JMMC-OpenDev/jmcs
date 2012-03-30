@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
-import fr.jmmc.jmcs.gui.SwingUtils;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

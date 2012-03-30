@@ -20,17 +20,17 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public class Urls {
+public class UrlUtils {
 
     /** Class logger */
-    private static final Logger _logger = LoggerFactory.getLogger(Urls.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(UrlUtils.class.getName());
     /** URL encoding use UTF-8 */
     private static final String URL_ENCODING = "UTF-8";
 
     /**
      * Private constructor
      */
-    private Urls() {
+    private UrlUtils() {
         super();
     }
 

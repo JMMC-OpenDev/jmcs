@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.App;

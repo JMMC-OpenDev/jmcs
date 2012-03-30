@@ -3,9 +3,9 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.MessagePane;
-import fr.jmmc.jmcs.gui.SwingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

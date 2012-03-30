@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
-import fr.jmmc.jmcs.gui.SwingUtils;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.util.FileUtils;
 import org.apache.commons.lang.SystemUtils;

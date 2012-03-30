@@ -6,7 +6,7 @@
  *   ISBN: 0-596-00907-0
  *   http://www.oreilly.com/catalog/swinghks/
  */
-package fr.jmmc.jmcs.gui;
+package fr.jmmc.jmcs.gui.component;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,6 +33,8 @@ import javax.swing.event.ListSelectionListener;
  * Custom JList implementation providing multiple selection with checkboxes
  * 
  * @author Guillaume MELLA.
+ *
+ * @TODO : Move to JIDE one ???
  */
 public class CheckBoxJList extends JList implements ListSelectionListener {
 

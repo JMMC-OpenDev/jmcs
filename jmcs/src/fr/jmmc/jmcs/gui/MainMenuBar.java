@@ -12,7 +12,7 @@ import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
-import fr.jmmc.jmcs.util.Urls;
+import fr.jmmc.jmcs.util.UrlUtils;
 
 import org.apache.commons.lang.SystemUtils;
 
@@ -614,7 +614,7 @@ public class MainMenuBar extends JMenuBar {
             URL iconURL = getClass().getResource(icon);
 
             if (iconURL != null) {
-                action.putValue(Action.SMALL_ICON, new ImageIcon(Urls.fixJarURL(iconURL)));
+                action.putValue(Action.SMALL_ICON, new ImageIcon(UrlUtils.fixJarURL(iconURL)));
             } else {
                 _logger.warn("Can't find iconUrl: {}", icon);
             }

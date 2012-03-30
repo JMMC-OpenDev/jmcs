@@ -11,7 +11,7 @@ import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.network.BrowserLauncher;
-import fr.jmmc.jmcs.util.Urls;
+import fr.jmmc.jmcs.util.UrlUtils;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
@@ -1019,7 +1019,7 @@ public abstract class App {
         }
         _logger.debug("fileURL = '{}'.", fileURL);
 
-        return Urls.fixJarURL(fileURL);
+        return UrlUtils.fixJarURL(fileURL);
     }
 
     /** Action to correctly handle file opening. */
@@ -1301,7 +1301,7 @@ public abstract class App {
             // Set Icon only if not under Mac OS X
             if (!SystemUtils.IS_OS_MAC_OSX) {
                 String icon = "/fr/jmmc/jmcs/resource/help.png";
-                putValue(SMALL_ICON, new ImageIcon(Urls.fixJarURL(getClass().getResource(icon))));
+                putValue(SMALL_ICON, new ImageIcon(UrlUtils.fixJarURL(getClass().getResource(icon))));
             }
         }
 

@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.gui.util.WindowUtils;
-import fr.jmmc.jmcs.util.Urls;
+import fr.jmmc.jmcs.util.UrlUtils;
 
 import java.net.URL;
 import java.util.Enumeration;
@@ -87,7 +87,7 @@ public class HelpView {
             }
 
             // http://forums.sun.com/thread.jspa?messageID=10522645
-            url = Urls.fixJarURL(url);
+            url = UrlUtils.fixJarURL(url);
 
             _logger.debug("using helpset url = '{}'.", url);
 

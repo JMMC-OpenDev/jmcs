@@ -19,10 +19,10 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public final class Introspection {
+public final class IntrospectionUtils {
 
     /** Logger */
-    private static final Logger _logger = LoggerFactory.getLogger(Introspection.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(IntrospectionUtils.class.getName());
     /** empty class array */
     private final static Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[]{};
     /** empty object array */
@@ -496,7 +496,7 @@ public final class Introspection {
     /**
      * Private constructor
      */
-    private Introspection() {
+    private IntrospectionUtils() {
         super();
     }
 }

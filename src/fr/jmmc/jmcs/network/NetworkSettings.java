@@ -5,7 +5,7 @@ package fr.jmmc.jmcs.network;
 
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.Preferences;
-import fr.jmmc.jmcs.util.Introspection;
+import fr.jmmc.jmcs.util.IntrospectionUtils;
 import java.lang.reflect.Method;
 import java.util.Properties;
 import org.slf4j.Logger;
@@ -215,7 +215,7 @@ public final class NetworkSettings {
      * returns the default value, if it exists, otherwise returns <code>null</code>.
      */
     private static String getNetProperty(final Method netPropertiesGetMethod, final String key) {
-        return (String) Introspection.getMethodValue(netPropertiesGetMethod, new Object[]{key});
+        return (String) IntrospectionUtils.getMethodValue(netPropertiesGetMethod, new Object[]{key});
     }
 
     /**
@@ -223,6 +223,6 @@ public final class NetworkSettings {
      * @return NetProperties.get(String) method or null if unavailable
      */
     private static Method getNetPropertiesGetMethod() {
-        return Introspection.getMethod("sun.net.NetProperties", "get", new Class<?>[]{String.class});
+        return IntrospectionUtils.getMethod("sun.net.NetProperties", "get", new Class<?>[]{String.class});
     }
 }

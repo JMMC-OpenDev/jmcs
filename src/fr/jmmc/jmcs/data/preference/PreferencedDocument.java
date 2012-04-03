@@ -1,6 +1,8 @@
-/*******************************************************************************
+/**
+ * *****************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- ******************************************************************************/
+ * ****************************************************************************
+ */
 package fr.jmmc.jmcs.data.preference;
 
 import fr.jmmc.jmcs.gui.util.SwingUtils;
@@ -17,46 +19,54 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
 /**
- * Associate one string to a preference entry.
- * This class should be associated to Text widgets that change
- * a string preference. After setModel call, the preference will be
- * automatically changed according user events and UI will be automatically
- * updated according preference change. Moreover actions should be associated to
- * implement application behaviour associated to user events.
- * 
+ * Associate one string to a preference entry. This class should be associated
+ * to Text widgets that change a string preference. After setModel call, the
+ * preference will be automatically changed according user events and UI will be
+ * automatically updated according preference change. Moreover actions should be
+ * associated to implement application behaviour associated to user events.
+ *
  * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class PreferencedDocument extends javax.swing.text.PlainDocument
         implements Observer, DocumentListener {
 
-    /** default serial UID for Serializable interface */
+    /**
+     * default serial UID for Serializable interface
+     */
     private static final long serialVersionUID = 1;
-    /** Class logger */
+    /**
+     * Class logger
+     */
     private final static Logger _logger = LoggerFactory.getLogger(PreferencedDocument.class.getName());
-    /** Store PreferencedDocument instances for a given preference name */
+    /**
+     * Store PreferencedDocument instances for a given preference name
+     */
     private static Map<String, PreferencedDocument> _instanceMap = Collections.synchronizedMap(new HashMap<String, PreferencedDocument>(8));
-    /* members */
-    /** Shared instance */
+    /*
+     * members
+     */
+    /**
+     * Shared instance
+     */
     private final Preferences _preferences;
-    /** Preference property */
+    /**
+     * Preference property
+     */
     private final String _preferenceProperty;
-    /** 
-     * Tells if preference must be saved automatically or not (default)
-     * Caution: the whole preference list associated in the preference 
-     * will also be saved ...
+    /**
+     * Tells if preference must be saved automatically or not (default) Caution:
+     * the whole preference list associated in the preference will also be saved
+     * ...
      */
     private final boolean _autosave;
-    /**
-     * Tells if changes must be notified as a preference change issued from user gesture.
-     */
-    private boolean _notify = true;
-
+    
     /**
      * PreferencedButtonModel constructor
      *
      * @param preferences the preference that lists every entries
      * @param preferenceProperty the preference name
-     * @param autosave Tells if preference must be saved automatically or not (default)
+     * @param autosave Tells if preference must be saved automatically or not
+     * (default)
      */
     private PreferencedDocument(final Preferences preferences,
             final String preferenceProperty, final boolean autosave) {
@@ -85,7 +95,8 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      *
      * @param preferences the preference that lists every entries
      * @param preferenceProperty the preference name
-     * @param autosave Tells if preference must be saved automatically or not (default)
+     * @param autosave Tells if preference must be saved automatically or not
+     * (default)
      *
      * @return the PreferencedDocument singleton
      */
@@ -105,7 +116,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     /**
      * Return one shared instance associated to the preference property name
      * which preference is not saved automatically (autosave = false)
-     * 
+     *
      * @param preferences the preference that lists every entries
      * @param preferenceProperty the preference name
      * @return the PreferencedDocument singleton
@@ -146,13 +157,11 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     }
 
     /**
-     * Sett new preference value.
+     * Set new preference value.
      *
      * @param newValue new string value.
      */
     private void setPrefValue(final String newValue) {
-        // Must be true only if this is issued from one user input (could loop else)
-        if (_notify) {
             try {
                 _preferences.setPreference(_preferenceProperty, newValue);
                 if (_autosave) {
@@ -160,8 +169,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
                 }
             } catch (PreferencesException ex) {
                 throw new IllegalStateException("Can't set value for preference " + _preferenceProperty);
-            }
-        }
+            }        
     }
 
     /**
@@ -183,7 +191,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     @Override
     public void insertUpdate(final DocumentEvent evt) {
         // Gives notification that there was an insert into the document.        
-        _logger.trace("insertUpdate:\n event: {}\n text: {}", evt, getMyText());
+        _logger.trace("insertUpdate:\n event: {}\n text: {}", evt, getMyText());      
         setPrefValue(getMyText());
     }
 
@@ -201,33 +209,25 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
 
     /**
      * Triggerd if the preference shared instance has been modified.
+     *
      * @param o
-     * @param arg  
+     * @param arg
      */
     @Override
-    public void update(final Observable o, final Object arg) {
-        // Notify event Listener (telling this that it is an internal update)
-        _logger.debug("Fire action listeners ");
-
-        // Update the widget view according property value changed
+    public void update(final Observable o, final Object arg) {  
+        String currentValue = getMyText();
+        // Update the widget view according property value changed if value changed
         final String nextValue = _preferences.getPreference(_preferenceProperty);
-
+        if (currentValue.equals(nextValue)){
+            return;
+        }
+        
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Setting '{}' from {} to {}", new Object[]{_preferenceProperty, getMyText(), nextValue});
-        }
-
-        // Do modify the widget content only if we are not in the EDT
-        // because it is probably already beeing edited if we are in the EDT
-        // This helps to prevent "Attempt to mutate in notification" IllegalStateException from AbstractDocument.
-        if (!SwingUtils.isEDT()) {
-            // Modify changes but do not notify changes
-            _notify = false;
-            try {
-                setMyText(nextValue);
-            } finally {
-                _notify = true;
-            }
-        }
+            _logger.debug("Setting '{}' from {} to {}", new Object[]{_preferenceProperty, currentValue, nextValue});
+        }        
+        setMyText(nextValue);
     }
 }
-/*___oOo___*/
+/*
+ * ___oOo___
+ */

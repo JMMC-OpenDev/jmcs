@@ -11,11 +11,7 @@ import org.apache.commons.lang.SystemUtils;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -30,6 +26,7 @@ import java.util.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.Action;
+import org.apache.xerces.impl.dv.util.Base64;
 
 /**
  * This is the mother class to manage preferences (aka user defaults).
@@ -527,6 +524,7 @@ public abstract class Preferences extends Observable {
 
         setPreferenceToProperties(properties, preferenceName, order, preferenceValue);
     }
+    private Byte[] toto;
 
     /**
      * Set a preference in the given properties set.
@@ -541,31 +539,47 @@ public abstract class Preferences extends Observable {
     private void setPreferenceToProperties(Properties properties, Object preferenceName, int preferenceIndex, Object preferenceValue)
             throws PreferencesException {
 
-        String currentValue = properties.getProperty(preferenceName.toString());
+        final String preferenceNameString = preferenceName.toString();
+
+        String currentValue = properties.getProperty(preferenceNameString);
         if (currentValue != null && currentValue.equals(preferenceValue.toString())) {
             // nothing to do
             _logger.debug("Preference '{}' not changed", preferenceName);
             return;
         }
 
+        final Class<?> preferenceClass = preferenceValue.getClass();
         // If the constraint is a String object
-        if (preferenceValue.getClass() == java.lang.String.class) {
-            properties.setProperty(preferenceName.toString(), (String) preferenceValue);
+        if (preferenceClass == java.lang.String.class) {
+            properties.setProperty(preferenceNameString, (String) preferenceValue);
         } // Else if the constraint is a Boolean object
-        else if (preferenceValue.getClass() == java.lang.Boolean.class) {
-            properties.setProperty(preferenceName.toString(), ((Boolean) preferenceValue).toString());
+        else if (preferenceClass == java.lang.Boolean.class) {
+            properties.setProperty(preferenceNameString, ((Boolean) preferenceValue).toString());
         } // Else if the constraint is an Integer object
-        else if (preferenceValue.getClass() == java.lang.Integer.class) {
-            properties.setProperty(preferenceName.toString(), ((Integer) preferenceValue).toString());
+        else if (preferenceClass == java.lang.Integer.class) {
+            properties.setProperty(preferenceNameString, ((Integer) preferenceValue).toString());
         } // Else if the constraint is a Double object
-        else if (preferenceValue.getClass() == java.lang.Double.class) {
-            properties.setProperty(preferenceName.toString(), ((Double) preferenceValue).toString());
+        else if (preferenceClass == java.lang.Double.class) {
+            properties.setProperty(preferenceNameString, ((Double) preferenceValue).toString());
         } // Else if the constraint is a Color object
-        else if (preferenceValue.getClass() == java.awt.Color.class) {
-            properties.setProperty(preferenceName.toString(), fr.jmmc.jmcs.util.ColorEncoder.encode((Color) preferenceValue));
+        else if (preferenceClass == java.awt.Color.class) {
+            properties.setProperty(preferenceNameString, fr.jmmc.jmcs.util.ColorEncoder.encode((Color) preferenceValue));
+        } // Else if the constraint is a List<String> object
+        else if (preferenceClass == java.util.ArrayList.class) {
+            try {
+                // Serialize to a byte array
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutput out = new ObjectOutputStream(bos);
+                out.writeObject(preferenceValue);
+                out.close();
+                String temp = Base64.encode(bos.toByteArray());
+                properties.setProperty(preferenceNameString, temp);
+            } catch (IOException e) {
+                throw new PreferencesException("Cannot handle the given List<String> preference value.");
+            }
         } // Otherwise we don't know how to handle the given object type
         else {
-            throw new PreferencesException("Cannot handle the given preference value.");
+            throw new PreferencesException("Cannot handle the given '" + preferenceClass + "' preference value.");
         }
 
         // Add property index for order if needed
@@ -807,6 +821,39 @@ public abstract class Preferences extends Observable {
         }
 
         return colorValue;
+    }
+
+    /**
+     * Get a string list preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return one List<String> object representing the preference value.
+     *
+     * @throws MissingPreferenceException if the preference value is missing
+     * @throws PreferencesException if the preference value is not a List<String>
+     */
+    final public ArrayList<String> getPreferenceAsStringList(final Object preferenceName) throws MissingPreferenceException, PreferencesException {
+
+        final String value = getPreference(preferenceName);
+
+        ArrayList<String> stringList = null;
+
+        try {
+            // Get some byte array data
+            byte[] data = Base64.decode(value);
+
+            // Deserialize from a byte array
+            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
+
+            // Deserialize the object
+            stringList = (ArrayList<String>) in.readObject();
+            in.close();
+        } catch (Exception e) {
+            throw new PreferencesException("Cannot decode preference '" + preferenceName + "' value '" + value + "' as a List<String>.", e);
+        }
+
+        return stringList;
     }
 
     /**

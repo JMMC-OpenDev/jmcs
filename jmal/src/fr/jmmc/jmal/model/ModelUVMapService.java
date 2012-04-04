@@ -3,18 +3,19 @@
  ***************************************************************************** */
 package fr.jmmc.jmal.model;
 
-import fr.jmmc.jmal.complex.ImmutableComplex;
 import fr.jmmc.jmal.complex.MutableComplex;
 import fr.jmmc.jmal.image.ImageUtils;
 import fr.jmmc.jmal.image.ColorScale;
 import fr.jmmc.jmal.image.job.ImageMinMaxJob;
 import fr.jmmc.jmal.model.targetmodel.Model;
+import fr.jmmc.jmal.util.ThreadLocalRandom;
 import fr.jmmc.jmcs.util.concurrent.InterruptedJobException;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -274,6 +275,7 @@ public final class ModelUVMapService {
         // min - max range used by color conversion:
         final float[] stdRange;
         switch (mode) {
+            case SQUARE:
             case AMP:
                 usedColorScale = colorScale;
 
@@ -494,8 +496,8 @@ public final class ModelUVMapService {
 
         final float[][] output = new float[size][size];
 
-        final boolean isAmp = (mode == ImageMode.AMP);
-        final boolean doNoise = (noiseService != null && noiseService.isEnabled());
+        // thread safe data converter:
+        final VisConverter converter = VisConverter.create(mode, noiseService);
 
         /** Get the current thread to check if the computation is interrupted */
         final Thread currentThread = Thread.currentThread();
@@ -516,8 +518,11 @@ public final class ModelUVMapService {
 
                 @Override
                 public void run() {
+                    // random instance dedicated to this thread:
+                    final Random threadRandom = ThreadLocalRandom.current();
+
                     float[] oRow;
-                    double re, im, err;
+                    double re, im;
 
                     for (int r = jobIndex; r < size; r += nJobs) {
                         oRow = output[r];
@@ -527,13 +532,7 @@ public final class ModelUVMapService {
                             re = ftData[r][c];
                             im = ftData[r][c + 1];
 
-                            if (doNoise) {
-                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
-                                re += noiseService.gaussianNoise(err);
-                                im += noiseService.gaussianNoise(err);
-                            }
-
-                            oRow[i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
+                            oRow[i] = converter.convert(re, im, threadRandom);
                         }
 
                         // fast interrupt:

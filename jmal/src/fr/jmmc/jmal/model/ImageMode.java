@@ -13,5 +13,7 @@ public enum ImageMode {
     /** Amplitude */
     AMP,
     /** Phase */
-    PHASE
+    PHASE,
+    /** Square amplitude */
+    SQUARE
 }

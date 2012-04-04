@@ -6,10 +6,12 @@ package fr.jmmc.jmal.image;
 import edu.emory.mathcs.jtransforms.fft.FloatFFT_2D;
 import edu.emory.mathcs.jtransforms.fft.RealFFTUtils_2D;
 import edu.emory.mathcs.utils.ConcurrencyUtils;
-import fr.jmmc.jmal.complex.ImmutableComplex;
 import fr.jmmc.jmal.model.ImageMode;
+import fr.jmmc.jmal.model.VisConverter;
 import fr.jmmc.jmal.model.VisNoiseService;
+import fr.jmmc.jmal.util.ThreadLocalRandom;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
+import java.util.Random;
 import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,8 +151,8 @@ public final class FFTUtils {
 
         final float[][] output = new float[outputSize][outputSize];
 
-        final boolean isAmp = (mode == ImageMode.AMP);
-        final boolean doNoise = (noiseService != null && noiseService.isEnabled());
+        // thread safe data converter:
+        final VisConverter converter = VisConverter.create(mode, noiseService);
 
         final int ro2 = outputSize / 2;
         final int fftOffset = fftSize - ro2;
@@ -174,8 +176,11 @@ public final class FFTUtils {
 
                 @Override
                 public void run() {
+                    // random instance dedicated to this thread:
+                    final Random threadRandom = ThreadLocalRandom.current();
+
                     float[] oRow;
-                    double re, im, err;
+                    double re, im;
 
                     // Process quadrant 1 and 2 (cache locality):
                     for (int r = n0; r < ro2; r += nJobs) {
@@ -187,26 +192,14 @@ public final class FFTUtils {
                             re = unpacker.unpack(r, c, fftData);
                             im = unpacker.unpack(r, c + 1, fftData);
 
-                            if (doNoise) {
-                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
-                                re += noiseService.gaussianNoise(err);
-                                im += noiseService.gaussianNoise(err);
-                            }
-
-                            oRow[i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
+                            oRow[i] = converter.convert(re, im, threadRandom);
 
                             // quadrant 2:
                             c = 2 * (fftOffset + i);
                             re = unpacker.unpack(r, c, fftData);
                             im = unpacker.unpack(r, c + 1, fftData);
 
-                            if (doNoise) {
-                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
-                                re += noiseService.gaussianNoise(err);
-                                im += noiseService.gaussianNoise(err);
-                            }
-
-                            oRow[ro2 + i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
+                            oRow[ro2 + i] = converter.convert(re, im, threadRandom);
                         }
 
                         // fast interrupt:
@@ -226,26 +219,14 @@ public final class FFTUtils {
                             re = unpacker.unpack(r + fftOffset, c, fftData);
                             im = unpacker.unpack(r + fftOffset, c + 1, fftData);
 
-                            if (doNoise) {
-                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
-                                re += noiseService.gaussianNoise(err);
-                                im += noiseService.gaussianNoise(err);
-                            }
-
-                            oRow[i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
+                            oRow[i] = converter.convert(re, im, threadRandom);
 
                             // quadrant 3:
                             c = 2 * (fftOffset + i);
                             re = unpacker.unpack(r + fftOffset, c, fftData);
                             im = unpacker.unpack(r + fftOffset, c + 1, fftData);
 
-                            if (doNoise) {
-                                err = noiseService.computeVisComplexErrorValue(ImmutableComplex.abs(re, im));
-                                re += noiseService.gaussianNoise(err);
-                                im += noiseService.gaussianNoise(err);
-                            }
-
-                            oRow[ro2 + i] = (float) ((isAmp) ? ImmutableComplex.abs(re, im) : ImmutableComplex.getArgument(re, im));
+                            oRow[ro2 + i] = converter.convert(re, im, threadRandom);
                         }
 
                         // fast interrupt:

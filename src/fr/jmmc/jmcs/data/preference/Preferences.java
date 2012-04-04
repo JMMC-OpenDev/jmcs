@@ -524,7 +524,6 @@ public abstract class Preferences extends Observable {
 
         setPreferenceToProperties(properties, preferenceName, order, preferenceValue);
     }
-    private Byte[] toto;
 
     /**
      * Set a preference in the given properties set.

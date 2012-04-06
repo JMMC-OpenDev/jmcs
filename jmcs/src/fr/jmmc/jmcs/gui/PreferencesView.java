@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.data.preference.Preferences;
+import fr.jmmc.jmcs.data.preference.PreferencesException;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import java.awt.Container;
@@ -11,9 +12,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // @TODO handle close button correctly
 // @TODO add deleteObserver(this) to dispose() to dereference each subview properly
@@ -25,7 +31,7 @@ public class PreferencesView extends JFrame implements ActionListener {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(PreferencesView.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(PreferencesView.class.getName());
     /** Data model */
     Preferences _preferences = null;
     /** Preferences... action */
@@ -75,7 +81,8 @@ public class PreferencesView extends JFrame implements ActionListener {
                 final JPanel panel = entry.getValue();
 
                 tabbedPane.add(panelName, panel);
-                _logger.fine("Added '" + panelName + "' panel to PreferenceView tabbed pane.");
+
+                _logger.debug("Added '{}' panel to PreferenceView tabbed pane.", panelName);
             }
         }
 
@@ -110,24 +117,19 @@ public class PreferencesView extends JFrame implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent evt) {
-        _logger.entering("PreferencesView", "actionPerformed");
+        _logger.trace("PreferencesView.actionPerformed");
 
         // If the "Restore to default settings" button has been pressed
         if (evt.getSource().equals(_restoreDefaultButton)) {
-            try {
-                _preferences.resetToDefaultPreferences();
-            } catch (Exception ex) {
-                _logger.log(Level.WARNING,
-                        "Could not reset preferences to default.", ex);
-            }
+            _preferences.resetToDefaultPreferences();
         }
 
         // If the "Save modifications" button has been pressed
         if (evt.getSource().equals(_saveModificationButton)) {
             try {
                 _preferences.saveToFile();
-            } catch (Exception ex) {
-                _logger.log(Level.WARNING, "Could not save preferences.", ex);
+            } catch (PreferencesException pe) {
+                _logger.warn("Could not save preferences.", pe);
             }
         }
     }
@@ -147,7 +149,7 @@ public class PreferencesView extends JFrame implements ActionListener {
 
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
-            _logger.entering("ShowPreferencesAction", "actionPerformed");
+            _logger.trace("ShowPreferencesAction.actionPerformed");
 
             // Show the Preferences window
             setVisible(true);

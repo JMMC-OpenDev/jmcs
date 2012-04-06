@@ -26,7 +26,6 @@ import java.util.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.Action;
-import org.apache.xerces.impl.dv.util.Base64;
 
 /**
  * This is the mother class to manage preferences (aka user defaults).
@@ -54,7 +53,10 @@ public abstract class Preferences extends Observable {
 
     /** Logger - get from given class name */
     private static final Logger _logger = LoggerFactory.getLogger(Preferences.class.getName());
-
+    /** separator used to encode list<String> preference values */
+    private static final char LIST_SEPARATOR = '|';
+    /** regexp expression used to decode list<String> preference values */
+    private static final String LIST_SPLITTER = "\\|";
     /* jMCS private stuff */
     /** Hidden internal preferences prefix managed by jMCS. */
     private static final String JMCS_PRIVATE_PREFIX = "JMCS_PRIVATE.";
@@ -538,6 +540,9 @@ public abstract class Preferences extends Observable {
     private void setPreferenceToProperties(Properties properties, Object preferenceName, int preferenceIndex, Object preferenceValue)
             throws PreferencesException {
 
+        if (preferenceValue == null) {
+            throw new PreferencesException("Cannot handle 'null' value for preference [" + preferenceName + "].");
+        }
         final String preferenceNameString = preferenceName.toString();
 
         String currentValue = properties.getProperty(preferenceNameString);
@@ -564,18 +569,43 @@ public abstract class Preferences extends Observable {
         else if (preferenceClass == java.awt.Color.class) {
             properties.setProperty(preferenceNameString, fr.jmmc.jmcs.util.ColorEncoder.encode((Color) preferenceValue));
         } // Else if the constraint is a List<String> object
-        else if (preferenceClass == java.util.ArrayList.class) {
-            try {
-                // Serialize to a byte array
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ObjectOutput out = new ObjectOutputStream(bos);
-                out.writeObject(preferenceValue);
-                out.close();
-                String temp = Base64.encode(bos.toByteArray());
-                properties.setProperty(preferenceNameString, temp);
-            } catch (IOException e) {
-                throw new PreferencesException("Cannot handle the given List<String> preference value.");
+        else if (List.class.isAssignableFrom(preferenceClass)) {
+            @SuppressWarnings("unchecked")
+            final List<?> list = (List<?>) preferenceValue;
+
+            Object value;
+            String str;
+            final StringBuilder sb = new StringBuilder(256);
+            for (int i = 0, len = list.size() - 1; i <= len; i++) {
+                value = list.get(i);
+                // reject null values
+                if (value == null) {
+                    throw new PreferencesException("Invalid null element in list preference [" + preferenceName + "].");
+                }
+
+                // reject not string values:
+                if (value instanceof String) {
+                    str = (String) value;
+                    // reject values containing the list separator:
+                    if (str.indexOf(LIST_SEPARATOR) != -1) {
+                        throw new PreferencesException("Invalid element '" + str + "' containing reserved separator character '"
+                                + LIST_SEPARATOR + "' in list preference [" + preferenceName + "].");
+                    }
+
+                    sb.append(str);
+                } else {
+                    throw new PreferencesException("Invalid element type '" + value.getClass().getName() + "' in list preference [" + preferenceName + "].");
+                }
+                if (i < len) {
+                    sb.append(LIST_SEPARATOR);
+                }
             }
+            final String prefStringValue = sb.toString();
+            
+            _logger.debug("{} = {}", preferenceNameString, prefStringValue);
+            
+            properties.setProperty(preferenceNameString, prefStringValue);
+
         } // Otherwise we don't know how to handle the given object type
         else {
             throw new PreferencesException("Cannot handle the given '" + preferenceClass + "' preference value.");
@@ -832,27 +862,11 @@ public abstract class Preferences extends Observable {
      * @throws MissingPreferenceException if the preference value is missing
      * @throws PreferencesException if the preference value is not a List<String>
      */
-    final public ArrayList<String> getPreferenceAsStringList(final Object preferenceName) throws MissingPreferenceException, PreferencesException {
+    final public List<String> getPreferenceAsStringList(final Object preferenceName) throws MissingPreferenceException, PreferencesException {
 
         final String value = getPreference(preferenceName);
 
-        ArrayList<String> stringList = null;
-
-        try {
-            // Get some byte array data
-            byte[] data = Base64.decode(value);
-
-            // Deserialize from a byte array
-            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
-
-            // Deserialize the object
-            stringList = (ArrayList<String>) in.readObject();
-            in.close();
-        } catch (Exception e) {
-            throw new PreferencesException("Cannot decode preference '" + preferenceName + "' value '" + value + "' as a List<String>.", e);
-        }
-
-        return stringList;
+        return Arrays.asList(value.split(LIST_SPLITTER));
     }
 
     /**

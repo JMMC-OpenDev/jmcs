@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory;
  */
 public class PreferencesView extends JFrame implements ActionListener {
 
+    public static final int FRAME_WIDTH = 600;
+    public static final int FRAME_HEIGHT = 400;
+
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
@@ -51,12 +54,12 @@ public class PreferencesView extends JFrame implements ActionListener {
         super("Preferences");
 
         // Check arguments validity
-        if ((preferences == null) || (panels == null) || (panels.isEmpty())) {
+        if ((preferences == null) || (panels == null) || (panels.size() == 0)) {
             throw new IllegalArgumentException();
         }
 
         // Window size
-        setSize(600, 400);
+        setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setResizable(false);
 
         // Get and listen to data model modifications

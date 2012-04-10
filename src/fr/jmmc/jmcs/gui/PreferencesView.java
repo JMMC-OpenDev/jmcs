@@ -83,6 +83,9 @@ public class PreferencesView extends JFrame implements ActionListener {
                 final String panelName = entry.getKey();
                 final JPanel panel = entry.getValue();
 
+                // To correctly match deeper background color of inner tab panes
+                panel.setOpaque(false);
+
                 tabbedPane.add(panelName, panel);
 
                 _logger.debug("Added '{}' panel to PreferenceView tabbed pane.", panelName);

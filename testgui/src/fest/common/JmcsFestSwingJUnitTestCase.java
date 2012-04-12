@@ -107,7 +107,7 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
         logger.info("onTearDownOnce : exit application = " + app);
       }
 
-      app.onFinish();
+      app.cleanup();
     }
   }
 

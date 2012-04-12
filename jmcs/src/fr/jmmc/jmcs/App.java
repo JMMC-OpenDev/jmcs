@@ -625,10 +625,10 @@ public abstract class App {
     }
 
     /**
-     * Hook to handle operations when exiting application.
+     * Hook to handle operations when at exit time.
      * @see App#exit(int)
      */
-    public void onFinish() {
+    public void cleanup() {
         // Disconnect from SAMP Hub
         SampManager.shutdown();
 
@@ -649,7 +649,7 @@ public abstract class App {
             final App application = App.getSharedInstance();
 
             if (application != null) {
-                application.onFinish();
+                application.cleanup();
             }
         } finally {
             _sharedInstance = null;

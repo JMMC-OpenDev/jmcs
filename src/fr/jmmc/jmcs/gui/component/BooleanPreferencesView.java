@@ -24,10 +24,10 @@ import org.slf4j.LoggerFactory;
  * Generic panel to display check boxes associated with boolean preferences.
  * @author Sylvain LAFRASSE
  */
-public class BooleanSettingsView extends JPanel implements Observer, ChangeListener {
+public class BooleanPreferencesView extends JPanel implements Observer, ChangeListener {
 
     /** Logger - get from given class name */
-    private static final Logger _logger = LoggerFactory.getLogger(BooleanSettingsView.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(BooleanPreferencesView.class.getName());
     private final Preferences _preferences;
     private final Map<Object, JCheckBox> _booleanPreferencesHashMap;
     private boolean _programaticUpdateUnderway = false;
@@ -37,7 +37,7 @@ public class BooleanSettingsView extends JPanel implements Observer, ChangeListe
      * @param preferences the PReferences instance to work on.
      * @param booleanPreferencesHashMap the ordered map linking preference key to its check box label.
      */
-    public BooleanSettingsView(Preferences preferences, LinkedHashMap<Object, String> booleanPreferencesHashMap) {
+    public BooleanPreferencesView(Preferences preferences, LinkedHashMap<Object, String> booleanPreferencesHashMap) {
 
         super();
 
@@ -156,7 +156,7 @@ public class BooleanSettingsView extends JPanel implements Observer, ChangeListe
         booleanSettings.put(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN, "Show splashscreen at startup");
         // And so on...
 
-        final BooleanSettingsView generalSettingsView = new BooleanSettingsView(preferences, booleanSettings);
+        final BooleanPreferencesView generalSettingsView = new BooleanPreferencesView(preferences, booleanSettings);
         generalSettingsView.init();
 
         JFrame frame = new JFrame();

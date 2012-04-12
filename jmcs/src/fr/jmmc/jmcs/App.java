@@ -607,9 +607,9 @@ public abstract class App {
      *
      * This method is automatically triggered when the application "Quit" menu
      * has been used. Thus, you have a chance to do things like saves before the
-     * application really quit.
+     * application really quits.
      *
-     * The default implementation lets the application quitting gently.
+     * The default implementation lets the application quitting without further ado.
      *
      * @warning This method should be overridden to handle quit as you intend to.
      * In its default behavior, all changes that occurred during application life
@@ -622,6 +622,26 @@ public abstract class App {
         _logger.info("Default App.finish() handler called.");
 
         return true;
+    }
+
+    /**
+     * Hook to handle SAMP hub destiny before closing application.
+     *
+     * This method is automatically triggered when the application "Quit" menu
+     * has been used. Thus, you have a chance to bypass SAMP warning message.
+     *
+     * The default implementation asks the user if he really wants to shutdown hub.
+     *
+     * @warning This method should be overridden to handle SAMP hub die as you intend to.
+     * In its default behavior, the SAMP warning message will be shown.
+     *
+     * @return should return true if the SAMP hub should be silently killed, false otherwise
+     * to ask user permission.
+     */
+    public boolean shouldSilentlyKillSampHubOnQuit() {
+        _logger.info("Default App.silentlyKillSampHubOnQuit() handler called.");
+
+        return false;
     }
 
     /**

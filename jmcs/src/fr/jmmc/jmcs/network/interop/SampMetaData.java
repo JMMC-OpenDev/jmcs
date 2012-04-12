@@ -27,6 +27,8 @@ public enum SampMetaData {
     // Extended SAMP meta data identifiers
     /** Get the application JNLP URL */
     JNLP_URL("x-samp.jnlp.url", "JNLP"),
+    /** Get the application beta JNLP URL */
+    JNLP_BETA_URL("x-samp.jnlp.beta.url", "Beta JNLP"),
     /** Get the application home page URL */
     HOMEPAGE_URL("x-samp.homepage.url", "Homepage"),
     /** Get the application release notes URL */

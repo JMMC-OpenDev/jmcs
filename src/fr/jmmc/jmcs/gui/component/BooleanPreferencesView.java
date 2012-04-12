@@ -6,14 +6,18 @@ package fr.jmmc.jmcs.gui.component;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.data.preference.PreferencesException;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -26,11 +30,14 @@ import org.slf4j.LoggerFactory;
  */
 public class BooleanPreferencesView extends JPanel implements Observer, ChangeListener {
 
+    // Constants
+    public static final String SAVE_AND_RESTART_MESSAGE = "Please save modifications and restart the application to apply changes.";
     /** Logger - get from given class name */
     private static final Logger _logger = LoggerFactory.getLogger(BooleanPreferencesView.class.getName());
     private final Preferences _preferences;
     private final Map<Object, JCheckBox> _booleanPreferencesHashMap;
     private boolean _programaticUpdateUnderway = false;
+    private final String _message;
 
     /**
      * Constructor.
@@ -38,45 +45,88 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
      * @param booleanPreferencesHashMap the ordered map linking preference key to its check box label.
      */
     public BooleanPreferencesView(Preferences preferences, LinkedHashMap<Object, String> booleanPreferencesHashMap) {
+        this(preferences, booleanPreferencesHashMap, null);
+    }
+
+    /**
+     * Constructor.
+     * @param preferences the PReferences instance to work on.
+     * @param booleanPreferencesHashMap the ordered map linking preference key to its check box label.
+     * @param message (optional) string added at the bottom of the pane, null otherwise.
+     */
+    public BooleanPreferencesView(Preferences preferences, LinkedHashMap<Object, String> booleanPreferencesHashMap, String message) {
 
         super();
 
+        // Check arguments validity
         if ((preferences == null) || (booleanPreferencesHashMap == null) || (booleanPreferencesHashMap.size() < 1)) {
             throw new IllegalArgumentException();
+        }
+
+        // Decipher message availability
+        if ((message == null) || (message.length() == 0)) {
+            _message = null;
+        } else {
+            _message = message;
         }
 
         _preferences = preferences;
 
         _booleanPreferencesHashMap = new LinkedHashMap<Object, JCheckBox>();
         for (Map.Entry<Object, String> entry : booleanPreferencesHashMap.entrySet()) {
+
             final Object preferenceKey = entry.getKey();
             final String checkBoxLabel = entry.getValue();
-            _booleanPreferencesHashMap.put(preferenceKey, new JCheckBox(checkBoxLabel));
+
+            final JCheckBox newCheckBox = new JCheckBox(checkBoxLabel);
+            _booleanPreferencesHashMap.put(preferenceKey, newCheckBox);
         }
     }
 
     /** MANDATORY call after construction. */
     public void init() {
 
-        JPanel topPanel = new JPanel();
-        topPanel.setOpaque(false);
+        JPanel checkBoxesPanel = new JPanel();
+        checkBoxesPanel.setOpaque(false);
 
         // Layout management
-        topPanel.setLayout(new GridBagLayout());
+        checkBoxesPanel.setLayout(new GridBagLayout());
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridx = 0;
 
-        // Initialize all checkboxes
+        // Layout each checkbox
+        int biggestMinimumCheckBoxesWidth = 0;
         for (JCheckBox checkBox : _booleanPreferencesHashMap.values()) {
-            topPanel.add(checkBox, gridBagConstraints);
-            checkBox.addChangeListener(this);
-            gridBagConstraints.gridy++;
-        }
-        add(topPanel);
 
+            checkBoxesPanel.add(checkBox, gridBagConstraints);
+            gridBagConstraints.gridy++;
+
+            final int currentMinimumCheckBoxWidth = checkBox.getMinimumSize().width;
+            biggestMinimumCheckBoxesWidth = Math.max(biggestMinimumCheckBoxesWidth, currentMinimumCheckBoxWidth);
+
+            checkBox.addChangeListener(this);
+        }
+
+        // Set checkboxes panel width to center properly
+        final Dimension dimension = new Dimension(biggestMinimumCheckBoxesWidth, 0);
+        checkBoxesPanel.setMaximumSize(dimension);
+
+        // Layout the checkboxes panel centered at the top
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        add(checkBoxesPanel);
+        add(Box.createVerticalGlue());
+
+        // Add the centered bottom label (if any)
+        if (_message != null) {
+            final JLabel label = new JLabel(_message);
+            label.setAlignmentX(CENTER_ALIGNMENT);
+            add(label);
+        }
+
+        // Synchronize checkboxes state with their associated preference values
         update(null, null);
     }
 
@@ -156,7 +206,7 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
         booleanSettings.put(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN, "Show splashscreen at startup");
         // And so on...
 
-        final BooleanPreferencesView generalSettingsView = new BooleanPreferencesView(preferences, booleanSettings);
+        final BooleanPreferencesView generalSettingsView = new BooleanPreferencesView(preferences, booleanSettings, "For testing purpose only !");
         generalSettingsView.init();
 
         JFrame frame = new JFrame();

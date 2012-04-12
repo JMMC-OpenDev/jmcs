@@ -67,13 +67,19 @@ public final class SampManager {
     }
 
     /**
-     * @return true if SAMP hub cannot prevent quitting, false otherwise.
+     * @return true if SAMP hub should not prevent quitting, false otherwise.
      */
     public synchronized boolean allowHubKilling() {
 
+        // If the application wants to bypass SAMP hub killing warning message
+        if (App.getSharedInstance().shouldSilentlyKillSampHubOnQuit()) {
+            // Let the hub die without prompting confirmation
+            return true;
+        }
+
         // If no one else is registered to the hub
         int nbOfConnectedClient = _connector.getClientListModel().getSize();
-        if (nbOfConnectedClient < 3) { // 1 for the hub, 1 for us
+        if (nbOfConnectedClient <= 2) { // at least 1 for the hub, and possibly 1 for us
             _logger.info("No one else but us is registered to SAMP hub, letting application quits.");
             // Let the hub die without prompting confirmation
             return true;
@@ -97,7 +103,7 @@ public final class SampManager {
         }
 
         _logger.info("User allowed SAMP hub termination, proceeding with application quitting.");
-        // Let the hub die
+        // Let the hub die after all
         return true;
     }
 

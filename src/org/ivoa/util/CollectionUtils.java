@@ -11,12 +11,18 @@ import java.util.Map;
  */
 public final class CollectionUtils {
 
+    /** one line begin separator = { */
+    public static final String ONE_LINE_BEGIN_SEPARATOR = "{";
+    /** one line end separator = } */
+    public static final String ONE_LINE_END_SEPARATOR = "}";
+    /** one line separator string */
+    public static final String ONE_LINE_VALUE_SEPARATOR = ", ";
     /** Line separator string */
     public final static String LINE_SEPARATOR = System.getProperty("line.separator");
     /** begin separator = \n{\n */
-    public final static String BEGIN_SEPARATOR = LINE_SEPARATOR + "{" + LINE_SEPARATOR;
+    public final static String BEGIN_SEPARATOR = LINE_SEPARATOR + ONE_LINE_BEGIN_SEPARATOR + LINE_SEPARATOR;
     /** end separator = \n} */
-    public final static String END_SEPARATOR = LINE_SEPARATOR + "}";
+    public final static String END_SEPARATOR = LINE_SEPARATOR + ONE_LINE_END_SEPARATOR;
 
     //~ Constructors -----------------------------------------------------------------------------------------------------
     /**
@@ -27,6 +33,18 @@ public final class CollectionUtils {
     }
 
     //~ Methods ----------------------------------------------------------------------------------------------------------
+    /**
+     * toString method for a Collection instance Format : <code><br/>
+     * {value, ...}
+     * </code>
+     * 
+     * @param c collection
+     * @return string
+     */
+    public static String toLine(final Collection<?> c) {
+        return (c != null) ? toString(c, ONE_LINE_VALUE_SEPARATOR, ONE_LINE_BEGIN_SEPARATOR, ONE_LINE_END_SEPARATOR) : "";
+    }
+
     /**
      * toString method for a Collection instance Format : <code><br/>
      * {<br/>

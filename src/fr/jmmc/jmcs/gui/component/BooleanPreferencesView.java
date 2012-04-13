@@ -86,6 +86,8 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
     /** MANDATORY call after construction. */
     public void init() {
 
+        _preferences.addObserver(this);
+
         JPanel checkBoxesPanel = new JPanel();
         checkBoxesPanel.setOpaque(false);
 

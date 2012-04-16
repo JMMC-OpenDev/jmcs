@@ -21,6 +21,10 @@ import org.slf4j.LoggerFactory;
  */
 public final class MessagePane {
 
+    // Constants
+    private static final int FIXED_WIDTH = 400;
+    private static final int MINIMUM_HEIGHT = 70;
+
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(MessagePane.class.getName());
     /** default title for error messages */
@@ -134,18 +138,20 @@ public final class MessagePane {
      *			or <code>PLAIN_MESSAGE</code>
      */
     private static void showMessageDialog(final String message, final String title, final int messageType) {
-        final JTextArea textArea = new JTextArea(message);
-        textArea.setEditable(false);
 
+        final JTextArea textArea = new JTextArea(message);
+
+        // Sizing
+        final int textAreaWidth = textArea.getMinimumSize().width;
+        final int textAreaHeight = textArea.getMinimumSize().height;
+        final int finalHeight = Math.min(textAreaHeight, MINIMUM_HEIGHT);
+        final Dimension dims = new Dimension(FIXED_WIDTH, finalHeight);
         final JScrollPane scrollPane = new JScrollPane(textArea);
-        // Try not to display windows bigger than screen for huge messages
-        // 40px margins are here to avoid some scrollbars...
-        final Dimension dims = new Dimension(Math.min(textArea.getMinimumSize().width + 50, 500),
-                Math.min(textArea.getMinimumSize().height + 50, 100));
         scrollPane.setMaximumSize(dims);
         scrollPane.setPreferredSize(dims);
 
-        boolean textAreaBackgroundShouldBeOpaque = (textArea.getMinimumSize().width > dims.width) || (textArea.getMinimumSize().height > dims.height);
+        // Show scrollpane only when needed
+        final boolean textAreaBackgroundShouldBeOpaque = (textAreaWidth > FIXED_WIDTH) || (textAreaHeight > finalHeight);
         textArea.setOpaque(textAreaBackgroundShouldBeOpaque);
         scrollPane.setOpaque(textAreaBackgroundShouldBeOpaque);
         scrollPane.getViewport().setOpaque(textAreaBackgroundShouldBeOpaque);
@@ -153,6 +159,7 @@ public final class MessagePane {
             scrollPane.setBorder(null);
         }
 
+        textArea.setEditable(false);
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
 
@@ -352,5 +359,19 @@ public final class MessagePane {
      */
     private static JFrame getApplicationFrame() {
         return App.getFrame();
+    }
+
+    public static void main(String[] args) {
+
+        String message = "";
+
+        for (int i = 1; i < 10; i++) {
+            message += "Blah blah... " + i;
+            MessagePane.showMessage(message, "Title");
+            message += "\n";
+        }
+
+        message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue tincidunt justo. Etiam massa arcu, vestibulum pulvinar accumsan ut, ullamcorper sed sapien. Quisque ullamcorper felis eget turpis mattis vestibulum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras et turpis justo, sed lacinia libero. Sed in tellus eget libero posuere euismod. In nulla mi, semper a condimentum quis, tincidunt eget magna. Etiam tristique venenatis ante eu interdum. Phasellus ultrices rhoncus urna, ac pretium ante ultricies condimentum. Vestibulum et turpis ac felis pulvinar rhoncus nec a nulla. Proin eu ante eu leo fringilla ornare in a massa. Morbi varius porttitor nibh ac elementum. Cras sed neque massa, sed vulputate magna. Ut viverra velit magna, sagittis tempor nibh.";
+        MessagePane.showMessage(message, "Lorem Ipsum");
     }
 }

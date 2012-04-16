@@ -1,8 +1,6 @@
-/**
- * *****************************************************************************
+/*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- * ****************************************************************************
- */
+ ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
 import fr.jmmc.jmcs.gui.util.SwingUtils;
@@ -30,28 +28,15 @@ import javax.swing.text.BadLocationException;
 public final class PreferencedDocument extends javax.swing.text.PlainDocument
         implements Observer, DocumentListener {
 
-    /**
-     * default serial UID for Serializable interface
-     */
+    /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
-    /**
-     * Class logger
-     */
+    /** Class logger */
     private final static Logger _logger = LoggerFactory.getLogger(PreferencedDocument.class.getName());
-    /**
-     * Store PreferencedDocument instances for a given preference name
-     */
+    /** Store PreferencedDocument instances for a given preference name */
     private static Map<String, PreferencedDocument> _instanceMap = Collections.synchronizedMap(new HashMap<String, PreferencedDocument>(8));
-    /*
-     * members
-     */
-    /**
-     * Shared instance
-     */
+    /** Shared instance */
     private final Preferences _preferences;
-    /**
-     * Preference property
-     */
+    /** Preference property */
     private final String _preferenceProperty;
     /**
      * Tells if preference must be saved automatically or not (default) Caution:
@@ -59,7 +44,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      * ...
      */
     private final boolean _autosave;
-    
+
     /**
      * PreferencedButtonModel constructor
      *
@@ -162,14 +147,14 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      * @param newValue new string value.
      */
     private void setPrefValue(final String newValue) {
-            try {
-                _preferences.setPreference(_preferenceProperty, newValue);
-                if (_autosave) {
-                    _preferences.saveToFile();
-                }
-            } catch (PreferencesException ex) {
-                throw new IllegalStateException("Can't set value for preference " + _preferenceProperty);
-            }        
+        try {
+            _preferences.setPreference(_preferenceProperty, newValue);
+            if (_autosave) {
+                _preferences.saveToFile();
+            }
+        } catch (PreferencesException ex) {
+            throw new IllegalStateException("Can't set value for preference " + _preferenceProperty);
+        }
     }
 
     /**
@@ -191,7 +176,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     @Override
     public void insertUpdate(final DocumentEvent evt) {
         // Gives notification that there was an insert into the document.        
-        _logger.trace("insertUpdate:\n event: {}\n text: {}", evt, getMyText());      
+        _logger.trace("insertUpdate:\n event: {}\n text: {}", evt, getMyText());
         setPrefValue(getMyText());
     }
 
@@ -214,17 +199,17 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      * @param arg
      */
     @Override
-    public void update(final Observable o, final Object arg) {  
+    public void update(final Observable o, final Object arg) {
         String currentValue = getMyText();
         // Update the widget view according property value changed if value changed
         final String nextValue = _preferences.getPreference(_preferenceProperty);
-        if (currentValue.equals(nextValue)){
+        if (currentValue.equals(nextValue)) {
             return;
         }
-        
+
         if (_logger.isDebugEnabled()) {
             _logger.debug("Setting '{}' from {} to {}", new Object[]{_preferenceProperty, currentValue, nextValue});
-        }        
+        }
         setMyText(nextValue);
     }
 }

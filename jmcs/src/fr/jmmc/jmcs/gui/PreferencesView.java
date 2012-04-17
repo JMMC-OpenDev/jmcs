@@ -21,16 +21,13 @@ import javax.swing.JTabbedPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// @TODO handle close button correctly
-// @TODO add deleteObserver(this) to dispose() to dereference each subview properly
 /**
- * This is a preference dedicated to the java SearchCal Client.
+ * This class provides one preference view containing tabbed panes.
  */
 public class PreferencesView extends JFrame implements ActionListener {
 
     public static final int FRAME_WIDTH = 600;
     public static final int FRAME_HEIGHT = 400;
-
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
@@ -100,7 +97,8 @@ public class PreferencesView extends JFrame implements ActionListener {
         buttonsPanel.add(_saveModificationButton);
         contentPane.add(buttonsPanel);
 
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        // only hide on close as this view is reused by the application:
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
 
         pack();
 
@@ -114,6 +112,19 @@ public class PreferencesView extends JFrame implements ActionListener {
 
         _restoreDefaultButton.addActionListener(this);
         _saveModificationButton.addActionListener(this);
+    }
+
+    /**
+     * Free any ressource or reference to this instance :
+     * remove this instance form Preference Observers
+     */
+    @Override
+    public void dispose() {
+        _logger.debug("dispose: {}", this);
+
+        // @TODO add deleteObserver(this) to dispose() to dereference each subview properly
+        
+        super.dispose();
     }
 
     /**

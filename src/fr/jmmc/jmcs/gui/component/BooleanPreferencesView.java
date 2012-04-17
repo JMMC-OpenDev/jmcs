@@ -145,7 +145,10 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
             final Object currentPreferenceKey = entry.getKey();
             final boolean currentPreferenceState = _preferences.getPreferenceAsBoolean(currentPreferenceKey);
 
-            _logger.debug("Set checkbox '" + currentCheckBoxName + "' to '" + currentPreferenceState + "' (was '" + currentCheckBoxState + "').");
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Set checkbox '{}' to '{}' (was '{}').",
+                        new Object[]{currentCheckBoxName, currentPreferenceState, currentCheckBoxState});
+            }
             currentCheckBox.setSelected(currentPreferenceState);
         }
 
@@ -154,19 +157,19 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
 
     /**
      * Update preferences according buttons change
-     * @param ev 
+     * @param ce change event
      */
     @Override
-    public void stateChanged(ChangeEvent ev) {
+    public void stateChanged(ChangeEvent ce) {
 
-        JCheckBox clickedCheckBox = (JCheckBox) ev.getSource();
+        JCheckBox clickedCheckBox = (JCheckBox) ce.getSource();
         if (clickedCheckBox == null) {
-            _logger.error("Could not retrieve event source : " + ev);
+            _logger.error("Could not retrieve event source: {}", ce);
             return;
         }
 
         final String clickedCheckBoxName = clickedCheckBox.getText();
-        _logger.debug("Checkbox '" + clickedCheckBoxName + "' state changed:");
+        _logger.debug("Checkbox '{}' state changed.", clickedCheckBoxName);
 
         if (_programaticUpdateUnderway) {
             _logger.trace("Programatic update underway, SKIPPING.");
@@ -185,15 +188,15 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
             final boolean clickedCheckBoxState = currentCheckBox.isSelected();
 
             if (clickedCheckBoxState == currentPreferenceState) {
-                _logger.trace("State did not trully changed (" + clickedCheckBoxState + " == " + currentPreferenceState + "), SKIPPING.");
+                _logger.trace("State did not trully changed ({} == {}), SKIPPING.", clickedCheckBoxState, currentPreferenceState);
                 return;
             }
 
             try {
-                _logger.debug("State did changed (" + currentPreferenceState + " -> " + clickedCheckBoxState + "), WRITING.");
+                _logger.debug("State did changed ({} -> {}), WRITING.", currentPreferenceState, clickedCheckBoxState);
                 _preferences.setPreference(currentPreferenceKey, clickedCheckBoxState);
-            } catch (PreferencesException ex) {
-                _logger.warn("Could not set preference : " + ex);
+            } catch (PreferencesException pe) {
+                _logger.warn("Could not set preference: ", pe);
             }
 
             return;

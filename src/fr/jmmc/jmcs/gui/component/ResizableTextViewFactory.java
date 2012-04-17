@@ -109,7 +109,6 @@ public class ResizableTextViewFactory {
         final int finalHeight = Math.max(Math.min(minmumEditorPaneHeight, MAXIMUM_HEIGHT), MINIMUM_HEIGHT);
         frame.setPreferredSize(new Dimension(finalWidth, finalHeight));
         final Dimension size = frame.getSize();
-        System.out.println("size = " + size);
 
         WindowUtils.setClosingKeyboardShortcuts(frame.getRootPane(), frame);
         frame.pack();

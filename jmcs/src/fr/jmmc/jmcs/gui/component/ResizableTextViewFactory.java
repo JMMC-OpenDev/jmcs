@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import java.awt.BorderLayout;
@@ -15,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Create resizable, best-sized window able to display either plain text or HTML.
@@ -23,6 +26,8 @@ import javax.swing.event.HyperlinkListener;
  */
 public class ResizableTextViewFactory {
 
+    /** Logger */
+    private static final Logger _logger = LoggerFactory.getLogger(ResizableTextViewFactory.class.getName());
     // Constants
     private static final int MARGIN = 35;
     private static final int MINIMUM_WIDTH = 400;
@@ -35,68 +40,115 @@ public class ResizableTextViewFactory {
      * @param text plain text to show.
      * @param title window title
      */
-    public static void createTextWindow(String text, String title) {
-        JFrame frame = new JFrame(title);
-        final JEditorPane editorPane = startLayout(frame);
-        finishLayout(editorPane, frame, text);
+    public static void createTextWindow(final String text, final String title) {
+        SwingUtils.invokeLaterEDT(new Runnable() {
+
+            @Override
+            public void run() {
+                final JFrame frame = createFrame(title);
+                final JEditorPane editorPane = startLayout(frame);
+                finishLayout(editorPane, frame, text);
+            }
+        });
     }
 
     /**
      * Create a window containing the given HTML text with the given title.
-     * @param text HTML text to show.
+     * @param html HTML text to show.
      * @param title window title
      */
-    public static void createHtmlWindow(String html, String title) {
-
-        JFrame frame = new JFrame(title);
-
-        final JEditorPane editorPane = startLayout(frame);
-
-        editorPane.setContentType("text/html");
-        editorPane.addHyperlinkListener(new HyperlinkListener() {
+    public static void createHtmlWindow(final String html, final String title) {
+        SwingUtils.invokeLaterEDT(new Runnable() {
 
             @Override
-            public void hyperlinkUpdate(HyperlinkEvent event) {
-                // When a link is clicked
-                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            public void run() {
+                final JFrame frame = createFrame(title);
+                final JEditorPane editorPane = startLayout(frame);
 
-                    // Get the clicked URL
-                    final URL url = event.getURL();
+                editorPane.setContentType("text/html");
+                editorPane.addHyperlinkListener(new HyperlinkListener() {
 
-                    // If it is valid
-                    if (url != null) {
-                        // Get it in the good format
-                        final String clickedURL = url.toExternalForm();
-                        // Open the url in web browser
-                        BrowserLauncher.openURL(clickedURL);
-                    } else { // Assume it was an anchor
-                        String anchor = event.getDescription();
-                        editorPane.scrollToReference(anchor);
+                    @Override
+                    public void hyperlinkUpdate(HyperlinkEvent event) {
+                        // When a link is clicked
+                        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+
+                            // Get the clicked URL
+                            final URL url = event.getURL();
+
+                            // If it is valid
+                            if (url != null) {
+                                // Get it in the good format
+                                final String clickedURL = url.toExternalForm();
+                                // Open the url in web browser
+                                BrowserLauncher.openURL(clickedURL);
+                            } else { // Assume it was an anchor
+                                String anchor = event.getDescription();
+                                editorPane.scrollToReference(anchor);
+                            }
+                        }
                     }
-                }
+                });
+
+                finishLayout(editorPane, frame, html);
             }
         });
-
-        finishLayout(editorPane, frame, html);
     }
 
-    private static JEditorPane startLayout(JFrame frame) throws SecurityException {
+    /**
+     * Create JFrame
+     * @param title window title
+     * @return new JFrame
+     */
+    private static JFrame createFrame(final String title) {
+        return new JFrame(title) {
+
+            /** default serial UID for Serializable interface */
+            private static final long serialVersionUID = 1L;
+
+            /**
+             * Free any ressource or reference to this instance :
+             * remove this instance form Preference Observers
+             */
+            @Override
+            public void dispose() {
+                _logger.debug("dispose: {}", this);
+
+                super.dispose();
+            }
+        };
+    }
+
+    /**
+     * Initialize the frame layout and return the editor pane
+     * @param frame frame to layout
+     * @return editor pane
+     * @throws SecurityException 
+     */
+    private static JEditorPane startLayout(final JFrame frame) throws SecurityException {
         frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         frame.setAlwaysOnTop(true);
-        JEditorPane editorPane = new JEditorPane();
+
+        final JEditorPane editorPane = new JEditorPane();
         editorPane.setEditable(false);
         editorPane.setMargin(new Insets(5, 5, 5, 5));
         return editorPane;
     }
 
-    private static void finishLayout(JEditorPane editorPane, JFrame frame, String text) {
+    /**
+     * Finish the frame layout (editor pane) using the given text to display
+     * @param editorPane editor pane to use
+     * @param frame frame to layout
+     * @param text text to display
+     */
+    private static void finishLayout(final JEditorPane editorPane, final JFrame frame, final String text) {
 
-        JScrollPane scrollPane = new JScrollPane();
+        final JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(editorPane);
         scrollPane.setBorder(null);
 
         // Window layout
-        Container contentPane = frame.getContentPane();
+        final Container contentPane = frame.getContentPane();
         contentPane.add(scrollPane, BorderLayout.CENTER);
         editorPane.setText(text);
         editorPane.setCaretPosition(0); // Move back focus at the top of the content
@@ -104,12 +156,12 @@ public class ResizableTextViewFactory {
 
         // Sizing
         frame.pack();
-        final int mininmumEditorPaneWidth = editorPane.getMinimumSize().width + MARGIN;
-        final int minmumEditorPaneHeight = editorPane.getMinimumSize().height + MARGIN;
-        final int finalWidth = Math.max(Math.min(mininmumEditorPaneWidth, MAXIMUM_WIDTH), MINIMUM_WIDTH);
-        final int finalHeight = Math.max(Math.min(minmumEditorPaneHeight, MAXIMUM_HEIGHT), MINIMUM_HEIGHT);
+
+        final int minimumEditorPaneWidth = editorPane.getMinimumSize().width + MARGIN;
+        final int minimumEditorPaneHeight = editorPane.getMinimumSize().height + MARGIN;
+        final int finalWidth = Math.max(Math.min(minimumEditorPaneWidth, MAXIMUM_WIDTH), MINIMUM_WIDTH);
+        final int finalHeight = Math.max(Math.min(minimumEditorPaneHeight, MAXIMUM_HEIGHT), MINIMUM_HEIGHT);
         frame.setPreferredSize(new Dimension(finalWidth, finalHeight));
-        final Dimension size = frame.getSize();
 
         WindowUtils.setClosingKeyboardShortcuts(frame.getRootPane(), frame);
         frame.pack();
@@ -117,6 +169,17 @@ public class ResizableTextViewFactory {
         frame.setVisible(true);
     }
 
+    /**
+     * Private constructor
+     */
+    private ResizableTextViewFactory() {
+        super();
+    }
+
+    /**
+     * Test code
+     * @param args unused args
+     */
     public static void main(String[] args) {
         final String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue tincidunt justo. Etiam massa arcu, vestibulum pulvinar accumsan ut, ullamcorper sed sapien. Quisque ullamcorper felis eget turpis mattis vestibulum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras et turpis justo, sed lacinia libero. Sed in tellus eget libero posuere euismod. In nulla mi, semper a condimentum quis, tincidunt eget magna. Etiam tristique venenatis ante eu interdum. Phasellus ultrices rhoncus urna, ac pretium ante ultricies condimentum. Vestibulum et turpis ac felis pulvinar rhoncus nec a nulla. Proin eu ante eu leo fringilla ornare in a massa. Morbi varius porttitor nibh ac elementum. Cras sed neque massa, sed vulputate magna. Ut viverra velit magna, sagittis tempor nibh.";
         ResizableTextViewFactory.createTextWindow(text, "Text");

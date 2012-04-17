@@ -142,8 +142,9 @@ public class ResizableTextViewFactory {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //Execute when button is pressed
-                    dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+                    // Close window when button is pressed
+                    dialog.setVisible(false);
+                    dialog.dispose();
                 }
             });
             contentPane.add(button, BorderLayout.SOUTH);

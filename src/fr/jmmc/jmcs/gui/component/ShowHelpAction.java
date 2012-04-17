@@ -22,13 +22,13 @@ public class ShowHelpAction extends AbstractAction {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
-    /** Help id associted to the given label.*/
+    /** Help id associated to the given label.*/
     private String _helpID;
     /** flag to display only the first missing do in production */
     private static boolean _alreadyShown = false;
 
     /**
-     * Instanciate one action that will show the help view on the page associated to the given label.
+     * Constructor of the action that will show the help view on the page associated to the given label.
      * The label is used to retrieve one target from the documentationTOC.xml file.
      *
      * @param label the key used to retrieve the documentation page.

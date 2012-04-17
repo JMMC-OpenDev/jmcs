@@ -14,8 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * @author lafrasse
+ * Show the list of jMCS dependencies in a dedicated window.
+ * @author Sylvain LAFRASSE
  */
 public class DependenciesView {
 
@@ -38,7 +38,7 @@ public class DependenciesView {
         if (_instance == null) {
             _instance = new DependenciesView();
         }
-        ResizableTextViewFactory.createHtmlWindow(_windowContent, WINDOW_TITLE);
+        ResizableTextViewFactory.createHtmlWindow(_windowContent, WINDOW_TITLE, false);
     }
 
     private String generateHtml() {

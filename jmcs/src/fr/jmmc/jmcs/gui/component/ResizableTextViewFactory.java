@@ -93,6 +93,7 @@ public class ResizableTextViewFactory {
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(editorPane);
+        scrollPane.setBorder(null);
 
         // Window layout
         Container contentPane = frame.getContentPane();

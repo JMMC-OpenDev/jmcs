@@ -14,6 +14,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import javax.swing.JComponent;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
@@ -111,12 +112,15 @@ public class WindowUtils {
         KeyStroke metaWStroke = KeyStroke.getKeyStroke(MainMenuBar.getSystemCommandKey() + "W");
 
         // Close window on either stroke
-        ActionListener actionListener = new ActionListener() {
+        final ActionListener actionListener = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                _logger.trace("Hiding window on keyboard shortcut.");
-                window.setVisible(false);
+                _logger.trace("Handling close window shortcut.");
+
+                // trigger standard closing action (@see JFrame.setDefaultCloseOperation)
+                // i.e. hide or dispose the window:
+                window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
             }
         };
 

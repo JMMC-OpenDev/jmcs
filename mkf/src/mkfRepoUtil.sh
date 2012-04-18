@@ -119,7 +119,7 @@ function displayModules()
     project="$2"
     shift 2
     modules=$*
-    echo "'${project}' project get following modules:"
+    echo "'${project}' project get following modules ($modules):"
     for module in $modules ; do
         moduleName=${module##*/}
         echo " - ${moduleName} ( ${prjSvnroot}/${module} )"
@@ -181,20 +181,21 @@ function getProjectDesc()
             echo "${JMMC_SVNROOT} AMBER/${version}/amdlib" ;;
         ASPRO2 )
             echo -n "${JMMC_SVNROOT} "
-            echo -n MCS/${version}/{jmcs,jmal}
+            echo -n MCS/${version}/{jmcs,jmal}" "
             echo "oiTools/${version}/oitools ASPRO2/${version}/aspro" ;;
         AppLauncher )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs "
             echo AppLauncher/${version}/{smpins,smptest,smprsc,smprun} ;;
         LITpro ) 
             echo -n "${JMMC_SVNROOT} "
-            echo -n MCS/${version}/{jmcs,jmal}
+            echo -n MCS/${version}/{jmcs,jmal}" "
             echo "oiTools/${version}/oitools LITpro/${version}/mfgui" ;;
         MCS )
             echo -n "${JMMC_SVNROOT} "
             echo MCS/${version}/{mkf,mcscfg,tat,ctoo,mcs,log,err,misc,thrd,timlog,mth,fnd,misco,env,cmd,msg,sdb,evh,gwt,jmcs,jmal,modc,modcpp,modsh,modjava,testgui} ;;
         SearchCal ) 
             echo -n "${JMMC_SVNROOT} "
+            echo -n MCS/${version}/{jmcs,jmal}" "
             echo SearchCal/${version}/{simcli,alx,vobs,sclsvr,sclws,sclgui} ;;
         WISARD )
             echo "${JMMC_SVNROOT} WISARD/${version}/wisard" ;;

@@ -41,6 +41,7 @@ function printUsage ()
     echo -e "\t   export        : retrieve the modules of given projects without versionning files (packaging cases).";
     echo -e "\t   update        : update the modules of given projects.";
     echo -e "\t   tag           : tag the modules of given projects with tag given by -v option.";
+    echo -e "\t   install       : install the modules of given projects with tag given by -v option.";
     echo -e "\tPROJECTS :";
     echo -e "\t   ${supportedModules}";
     exit 1

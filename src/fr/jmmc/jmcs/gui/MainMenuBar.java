@@ -24,9 +24,10 @@ import java.awt.event.ActionListener;
 
 import java.net.URL;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,7 @@ public class MainMenuBar extends JMenuBar {
     /** Store whether we are running under Mac OS X or not */
     private final boolean _isRunningUnderMacOSX = SystemUtils.IS_OS_MAC_OSX;
     /** Table where are stocked the menus */
-    private final Hashtable<String, JMenu> _menusTable;
+    private final Map<String, JMenu> _menusTable;
     /** Store a proxy to the shared ActionRegistrar facility */
     private final ActionRegistrar _registrar;
     /** Proxy to the application data model */
@@ -85,14 +86,14 @@ public class MainMenuBar extends JMenuBar {
      */
     public MainMenuBar() {
         // Member initialization
-        _menusTable = new Hashtable<String, JMenu>();
+        _menusTable = new HashMap<String, JMenu>();
         _registrar = ActionRegistrar.getInstance();
 
         // Get the application data model
         _applicationDataModel = App.getSharedApplicationDataModel();
 
         // Contains the name of the others menus
-        Vector<String> otherMenus = new Vector<String>();
+        List<String> otherMenus = new ArrayList<String>();
 
         // If it's null, we exit
         if (_applicationDataModel != null) {

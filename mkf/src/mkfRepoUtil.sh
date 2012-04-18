@@ -164,6 +164,11 @@ function tagModules(){
     do
         echo " '${prjSvnroot}/${module}' ..."
         trunkModule="${module/$userTag/trunk}"
+        if svn info "$prjSvnroot/$module" &> /dev/null
+        then
+          echo "ERROR module $prjSvnroot/$module already present remove first if you want to overwrite"
+          return 1
+        fi
         ${SVN_COMMAND} copy --parents -m "Automatically tagged ${project} in version ${version/$tagPrefix/} ($SCRIPTNAME)" "$prjSvnroot/$trunkModule" "$prjSvnroot/$module"
     done
 }

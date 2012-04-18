@@ -128,6 +128,30 @@ function displayModules()
     echo
 }
 
+function installModules()
+{
+    prjSvnroot="$1"
+    project="$2"
+    userTag="$3"
+    shift 3
+    modules="$*"
+    version_path="${project}/${userTag}"
+    echo "'${project}' project will be installed in '${version_path}':"
+    mkdir -p "${version_path}"
+    cd "${version_path}"
+    for module in $modules ; do
+        moduleName=${module##*/}
+        repos_path="${prjSvnroot}/${module}"
+        echo -n " - installing '${moduleName}' from '${repos_path}' ... "
+        ${SVN_COMMAND} checkout "${repos_path}"
+        module_src_path="${moduleName}/src"
+        (cd "${module_src_path}" ; make clean all man install)
+        echo "DONE."
+    done
+    echo "Installation finished."
+    echo
+}
+
 function tagModules(){
     prjSvnroot="$1"
     project="$2"
@@ -251,6 +275,8 @@ do
 		    getModules "${prjSvnroot}" update "${project}" "${modules}" ;;
 		tag )
 		    tagModules "${prjSvnroot}" "${project}" "${version}" "${modules}" ;;
+		install )
+		    installModules "${prjSvnroot}" "${project}" "${version}" "${modules}" ;;
 		info )
 		    displayModules "${prjSvnroot}" "${project}" "${modules}" ;;
 		info.versions )

@@ -124,7 +124,7 @@ public class MainMenuBar extends JMenuBar {
                             _logger.debug("Add '{}' to other menus vector.", currentMenuLabel);
                         }
 
-                        // Get the component according to the castor menu object
+                        // Get the component according to the menu object
                         JMenu completeMenu = (JMenu) recursiveParser(menu, null, true, null); // It is a JMenu, has no button group
 
                         // Put it in the menu table
@@ -438,7 +438,7 @@ public class MainMenuBar extends JMenuBar {
     /**
      * Recursively instantiate each application-specific menu element.
      *
-     * @param menu castor Menu object to instantiate.
+     * @param menu Menu object to instantiate.
      * @param parent parent component, null for the root element.
      * @param createMenu create a JMenu if true, specific menu items otherwise.
      * @param buttonGroup a ButtonGroup in which radio-buttons should be added, null
@@ -483,9 +483,9 @@ public class MainMenuBar extends JMenuBar {
     }
 
     /**
-     * Create the component according to the castor Menu object.
+     * Create the component according to the  Menu object.
      *
-     * @param menu castor Menu object to instantiate.
+     * @param menu Menu object to instantiate.
      * @param isMenu create a JMenu if true, specific menu items otherwise.
      * @param buttonGroup used to only have a single menu item selected at any
      * time, if not null.
@@ -583,7 +583,7 @@ public class MainMenuBar extends JMenuBar {
     /**
      * Set menu attributes (all but the label).
      *
-     * @param menu castor Menu object to get data from.
+     * @param menu Menu object to get data from.
      * @param action Action instance to modify.
      */
     private void setAttributes(Menu menu, Action action) {

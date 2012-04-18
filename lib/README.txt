@@ -44,11 +44,3 @@ Libraries used by shell scripts (build) are defined in :
 Libraries used by ant scripts (JAXB XJC) are :
 -rw-r--r--. 1 bourgesl laogsite 3133496 27 avril  2011 jaxb-xjc.jar
 -rw-r--r--. 1 bourgesl laogsite    5779 27 avril  2011 simple-regenerator-1.0.jar
-
-
-Deprecated libraries to be removed ASAP (all JMMC applications must be updated in production before removal):
--rw-r--r--. 1 bourgesl laogsite 1599469 25 nov.  10:18 castor.jar
--rw-r--r--. 1 bourgesl laogsite 1010675 25 nov.  10:19 xercesImpl.jar
--rw-r--r--. 1 bourgesl laogsite  124724 25 nov.  10:19 xmlParserAPIs.jar
--rw-r--r--. 1 bourgesl laogsite   60841 27 avril  2011 commons-logging-1.1.1.jar
--rw-r--r--. 1 bourgesl laogsite  124741 27 avril  2011 loggui.jar

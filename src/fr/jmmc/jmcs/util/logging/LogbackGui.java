@@ -34,7 +34,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class provides two major functionnalities:
+ * This class provides two major functionalities:
  * - application log viewer
  * - one simple  log GUI : Logger hierarchy browser / Level editor and displays current logs
  * 
@@ -185,7 +185,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         // update text value (rounded to 0.1s):
         this.jTextFieldPeriod.setText(df1.format(0.001d * milliseconds) + " s");
-        
+
         // apply new delay to the timer
         this.timerRefresh.setDelay(milliseconds);
     }

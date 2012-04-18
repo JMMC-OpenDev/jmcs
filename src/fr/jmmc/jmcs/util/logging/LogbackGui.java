@@ -440,8 +440,10 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         setLayout(new java.awt.BorderLayout());
 
+        jPanelLog.setOpaque(false);
         jPanelLog.setLayout(new java.awt.BorderLayout());
 
+        jPanelLogButtons.setOpaque(false);
         jPanelLogButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 0));
 
         jToggleButtonAutoRefresh.setText("Auto Refresh");
@@ -461,6 +463,8 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         jPanelLog.add(jPanelLogButtons, java.awt.BorderLayout.PAGE_START);
 
+        logScrollPane.setOpaque(false);
+
         logTextArea.setEditable(false);
         logTextArea.setFont(new java.awt.Font("Monospaced", 1, 12));
         logTextArea.setTabSize(4);
@@ -470,8 +474,10 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         jTabbedPane.addTab("Log content", jPanelLog);
 
+        jPanelConf.setOpaque(false);
         jPanelConf.setLayout(new java.awt.GridBagLayout());
 
+        jPanelConfButtons.setOpaque(false);
         jPanelConfButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 0));
 
         jButtonExpand.setText("Expand");
@@ -511,6 +517,8 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
         gridBagConstraints.insets = new java.awt.Insets(4, 3, 0, 3);
         jPanelConf.add(jPanelConfButtons, gridBagConstraints);
 
+        jScrollPaneLoggerTree.setOpaque(false);
+
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Loggers");
         jTreeLoggers.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTreeLoggers.setVisibleRowCount(5);
@@ -525,6 +533,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanelConf.add(jScrollPaneLoggerTree, gridBagConstraints);
 
+        jPanelLoggerInfo.setOpaque(false);
         jPanelLoggerInfo.setLayout(new java.awt.GridBagLayout());
 
         jLabelInfo.setText("Logger information:");

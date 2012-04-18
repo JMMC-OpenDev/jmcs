@@ -154,40 +154,7 @@
           link="http://www.urbanophile.com/arenn/hacking/download.html"
           jars="java-getopt-1.0.13.jar"
           license="LGPL v2"/>
-
-
-        <!-- Soon to be deprecated packages -->
-
-        <!-- logging utilities -->
-        <package name="commons-logging"
-          description="Provide an ultra-thin bridge between different logging implementations."
-          link="http://commons.apache.org/logging/"
-          jars="commons-logging-1.1.1.jar"
-          license="Apache v2"/>
-
-        <!-- LogGui -->
-        <package name="LogGui"
-          description="Graphical user interface for the java.util.logging package implemented in Swing."
-          link="http://www.informatrix.ch/loggui/index.html"
-          jars="loggui.jar"
-          license="Proprietary"
-          file="LogGui.txt"/>
-
-        <!-- Castor -->
-        <package name="Castor"
-          description="Open Source XML data binding framework for Java."
-          link="http://www.castor.org/"
-          jars="castor.jar"
-          license="Proprietary"
-          file="Castor.txt"/>
-       
-        <!-- Castor dependencies -->
-        <package name="Xerces"
-          description="XML parser."
-          link="http://xerces.apache.org/"
-          jars="xercesImpl.jar xmlParserAPIs.jar"
-          license="Apache v2"/>
-       
+          
     </dependences>
     
     <releasenotes>

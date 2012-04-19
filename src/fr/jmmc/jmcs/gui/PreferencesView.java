@@ -108,14 +108,14 @@ public class PreferencesView extends JFrame implements ActionListener {
     public void init() {
 
         WindowUtils.centerOnMainScreen(this);
-        WindowUtils.setClosingKeyboardShortcuts(rootPane, this);
+        WindowUtils.setClosingKeyboardShortcuts(this);
 
         _restoreDefaultButton.addActionListener(this);
         _saveModificationButton.addActionListener(this);
     }
 
     /**
-     * Free any ressource or reference to this instance :
+     * Free any resource or reference to this instance :
      * remove this instance form Preference Observers
      */
     @Override

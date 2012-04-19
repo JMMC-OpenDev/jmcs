@@ -196,7 +196,7 @@ public class StatusBar extends JPanel {
 
         frame.pack();
         WindowUtils.centerOnMainScreen(frame);
-        WindowUtils.setClosingKeyboardShortcuts(null, frame);
+        WindowUtils.setClosingKeyboardShortcuts(frame);
         frame.setVisible(true);
     }
 }

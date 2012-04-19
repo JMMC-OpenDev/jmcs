@@ -16,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import org.slf4j.Logger;
@@ -99,12 +101,32 @@ public class WindowUtils {
     /**
      * Installs standard window-closing keyboard shortcuts (i.e ESC and ctrl-W).
      *
+     * @param dialog the JDialog to close on keystroke.
+     */
+    public static void setClosingKeyboardShortcuts(final JDialog dialog) {
+        setClosingKeyboardShortcuts(dialog.getRootPane(), dialog);
+    }
+
+    /**
+     * Installs standard window-closing keyboard shortcuts (i.e ESC and ctrl-W).
+     *
+     * @param frame the JFrame to close on keystroke.
+     */
+    public static void setClosingKeyboardShortcuts(final JFrame frame) {
+        setClosingKeyboardShortcuts(frame.getRootPane(), frame);
+    }
+
+    /**
+     * Installs standard window-closing keyboard shortcuts (i.e ESC and ctrl-W).
+     *
      * @param rootPane the pane to listen keystroke.
      * @param window the JFrame or JDialog to close on keystroke.
-     *
-     * @return the rootPane (mainly for JDialog override createRootPane() method).
      */
-    public static JRootPane setClosingKeyboardShortcuts(final JRootPane rootPane, final Window window) {
+    private static void setClosingKeyboardShortcuts(JRootPane rootPane, final Window window) {
+
+        if ((rootPane == null) || (window == null)) {
+            throw new IllegalArgumentException();
+        }
 
         // Trap Escape key
         KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -126,8 +148,6 @@ public class WindowUtils {
 
         rootPane.registerKeyboardAction(actionListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
         rootPane.registerKeyboardAction(actionListener, metaWStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-        return rootPane;
     }
 
     /**

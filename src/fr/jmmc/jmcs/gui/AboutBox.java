@@ -172,15 +172,6 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     }
 
     /**
-     * Handle window closing when using either Escape or ctrl-W keys.
-     */
-    @Override
-    protected JRootPane createRootPane() {
-
-        return WindowUtils.setClosingKeyboardShortcuts(new JRootPane(), this);
-    }
-
-    /**
      * Instantiate and draw all the GUI.
      */
     private void setAllProperties() {
@@ -497,6 +488,8 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
         // Center window on main screen
         WindowUtils.centerOnMainScreen(this);
+        // Handle window closing when using either Escape or ctrl-W keys.
+        WindowUtils.setClosingKeyboardShortcuts(this);
 
         _logger.debug("All the frame properties have been initialized");
     }

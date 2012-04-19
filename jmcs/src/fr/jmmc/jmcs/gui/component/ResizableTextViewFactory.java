@@ -161,7 +161,7 @@ public class ResizableTextViewFactory {
         }
         dialog.setPreferredSize(new Dimension(finalWidth, finalHeight));
 
-        WindowUtils.setClosingKeyboardShortcuts(dialog.getRootPane(), dialog);
+        WindowUtils.setClosingKeyboardShortcuts(dialog);
         dialog.pack();
         WindowUtils.centerOnMainScreen(dialog);
         dialog.setVisible(true);

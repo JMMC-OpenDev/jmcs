@@ -25,6 +25,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -65,7 +66,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      * @param name name of the editor frame
      * @param loggerPath logger path
      */
-    public static void showEditor(final JFrame parent, final String name, final String loggerPath) {
+    public static void showWindow(final JFrame parent, final String name, final String loggerPath) {
         if (_guiFrameSingleton != null) {
             _guiFrameSingleton.toFront();
 
@@ -78,7 +79,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
             _guiFrameSingleton.setVisible(true);
             _guiFrameSingleton.toFront();
         } else {
-            final String frameName = (name != null) ? name : "Log GUI";
+            final String frameName = (name != null) ? name : "Log Console";
 
             // Create Gui:
             _guiSingleton = new LogbackGui();
@@ -142,6 +143,11 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      * Initialize the Swing components
      */
     private void postInit() {
+
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            jPanelConf.setOpaque(false);
+        }
+
 
         // add log panel automatically:
         int tabIndex = 0;

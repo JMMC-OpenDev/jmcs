@@ -7,32 +7,23 @@ import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.util.ImageUtils;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
+import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
 import java.awt.event.ActionEvent;
 import org.apache.commons.lang.SystemUtils;
 
 import java.awt.Font;
 
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 /**
  * A status bar that can be shared all along an application.
@@ -44,11 +35,9 @@ public class StatusBar extends JPanel {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    private static final Logger _logger = LoggerFactory.getLogger(StatusBar.class.getName());
+    private static final Logger _statusLogger = ApplicationLogSingleton.getInstance().getLogger(ApplicationLogSingleton.JMMC_STATUS_LOG);
     /** Status label */
     private static final JLabel _statusLabel = new JLabel();
-    /** Store all status messages */
-    private static final List<String> _history = new ArrayList<String>(100);
 
     /**
      * Constructor.
@@ -75,20 +64,21 @@ public class StatusBar extends JPanel {
         textStatusBar.setFont(new Font("Comic Sans MS", 2, 10));
         textStatusBar.setVisible(true);
 
-        JButton historyButton = new JButton("Status :");
+        JButton historyButton = new JButton(new ImageIcon(getClass().getResource("/fr/jmmc/jmcs/resource/edit-paste.png")));
+        historyButton.setBorder(null);
         historyButton.setToolTipText("Click to view status history");
-        historyButton.addActionListener(new AbstractAction() {
+        historyButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                showStatusHistoryWindow();
+                App.showLogGui(ApplicationLogSingleton.JMMC_STATUS_LOG);
             }
         });
 
         // StatusBar elements placement
         Box hBox = Box.createHorizontalBox();
         hBox.add(historyButton);
-        //hBox.add(new JLabel("Status : "));
+        hBox.add(new JLabel(" Status : "));
         hBox.add(_statusLabel);
         hBox.add(Box.createHorizontalGlue());
         hBox.add(textStatusBar);
@@ -163,7 +153,9 @@ public class StatusBar extends JPanel {
      */
     private static void setStatusLabel(final String message) {
         _statusLabel.setText(message);
-        _history.add(message);
+
+        // use status log:
+        _statusLogger.info(message);
     }
 
     /**
@@ -173,31 +165,6 @@ public class StatusBar extends JPanel {
      */
     private static String getStatusLabel() {
         return _statusLabel.getText();
-    }
-
-    private void showStatusHistoryWindow() {
-        // TODO :
-        // - auto-refresh;
-        // - add event time of each entry;
-        // - put in LogbackGui ???
-        JFrame frame = new JFrame("Status History");
-
-        JList _columnList = new JList(_history.toArray());
-        _columnList.setCellRenderer(new AlternateRawColorCellRenderer());
-
-        // Add scrolling capacity to the list
-        JScrollPane scrollingList = new JScrollPane(_columnList);
-        scrollingList.setPreferredSize(new Dimension(400, 250));
-        scrollingList.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollingList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollingList.getVerticalScrollBar().setFocusable(false);
-        scrollingList.setBorder(BorderFactory.createLoweredBevelBorder());
-        frame.add(scrollingList);
-
-        frame.pack();
-        WindowUtils.centerOnMainScreen(frame);
-        WindowUtils.setClosingKeyboardShortcuts(frame);
-        frame.setVisible(true);
     }
 }
 /*___oOo___*/

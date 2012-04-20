@@ -3,11 +3,10 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util.logging;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.Appender;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.slf4j.Logger;
 
 /**
  * This class keeps into memory the full application log using the logback root logger 
@@ -22,10 +21,13 @@ import org.slf4j.LoggerFactory;
  */
 public final class ApplicationLogSingleton {
 
-    /** jmmc application log appender name */
-    public final static String JMMC_APPLOG_APPENDER = "APPLOG";
     /** singleton instance */
     private volatile static ApplicationLogSingleton instance = null;
+    /* loggers */
+    /** jmmc application log */
+    public final static String JMMC_APP_LOG = Logger.ROOT_LOGGER_NAME;
+    /** jmmc status log */
+    public final static String JMMC_STATUS_LOG = "fr.jmmc.jmcs.status";
 
     /**
      * Get the singleton instance or create a new one if needed
@@ -39,8 +41,8 @@ public final class ApplicationLogSingleton {
     }
 
     /* members */
-    /** Logback appender which keeps Application log */
-    private final ByteArrayOutputStreamAppender _appLogAppender;
+    /** mappers collection keyed by logger path */
+    private final Map<String, AppenderLogMapper> mappers = new LinkedHashMap<String, AppenderLogMapper>(8);
 
     /**
      * Private constructor that gets one ByteArrayOutputStreamAppender:
@@ -75,43 +77,13 @@ public final class ApplicationLogSingleton {
     private ApplicationLogSingleton() {
         super();
 
-        // Try to get the root logger (logback):
-        ch.qos.logback.classic.Logger _rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-
-        // Get the root logger's appender 'APPLOG':
-        final Appender<ILoggingEvent> appender = _rootLogger.getAppender(JMMC_APPLOG_APPENDER);
-
-        // Check if this appender has the correct type (ByteArrayOutputStreamAppender):
-        if ((appender != null) && !(appender instanceof ByteArrayOutputStreamAppender)) {
-            throw new IllegalStateException("Bad class type [" + appender.getClass() + " - " + ByteArrayOutputStreamAppender.class
-                    + "expected] for appender [" + JMMC_APPLOG_APPENDER + "] attached to the " + Logger.ROOT_LOGGER_NAME + " logger !");
-        }
-        if (appender != null) {
-            // use this appender:
-            _appLogAppender = (ByteArrayOutputStreamAppender) appender;
-        } else {
-            // create a new ByteArrayOutputStreamAppender:
-            final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
-            encoder.setContext(_rootLogger.getLoggerContext());
-            encoder.setPattern("%d{HH:mm:ss.SSS} %-5level [%thread] %logger{60} - %msg%n");
-            encoder.start();
-
-            // Logger's byteBuffer stream handler creation:
-            final ByteArrayOutputStreamAppender streamAppender = new ByteArrayOutputStreamAppender();
-            streamAppender.setContext(_rootLogger.getLoggerContext());
-            streamAppender.setEncoder(encoder);
-            streamAppender.start();
-
-            // We add the memory handler created to the root logger
-            _rootLogger.addAppender(streamAppender);
-
-            // use this new appender:
-            _appLogAppender = streamAppender;
-        }
+        // define Log Mappers:
+        addLogMapper("Status history", JMMC_STATUS_LOG, "STATUSLOG");
+        addLogMapper("Execution log", JMMC_APP_LOG, "APPLOG");
     }
 
     /**
-     * Return the complete log as string (THREAD SAFE)
+     * Return the complete application log as string (THREAD SAFE)
      * @return complete log output
      */
     public LogOutput getLogOutput() {
@@ -119,11 +91,62 @@ public final class ApplicationLogSingleton {
     }
 
     /**
-     * Return the partial log as string starting at the given argument from (THREAD SAFE)
+     * Return the partial application log as string starting at the given argument from (THREAD SAFE)
      * @param from gives the position in the buffer to copy from
      * @return partial log output
      */
     public LogOutput getLogOutput(final int from) {
-        return _appLogAppender.getLogOutput(from);
-    }    
+        return getLogOutput(JMMC_APP_LOG, from);
+    }
+
+    /**
+     * Return the partial log for the given logger path as string starting at the given argument from (THREAD SAFE)
+     * @param loggerPath logger path
+     * @param from gives the position in the buffer to copy from
+     * @return partial log output
+     */
+    public LogOutput getLogOutput(final String loggerPath, final int from) {
+        return getLogMapper(loggerPath).getLogAppender().getLogOutput(from);
+    }
+
+    /**
+     * Return the logger for the given logger path
+     * @param loggerPath logger path
+     * @return logger for the given logger path
+     */
+    public Logger getLogger(final String loggerPath) {
+        return getLogMapper(loggerPath).getLogger();
+    }
+
+    /**
+     * Register a new log given its attributes (logger path, appender name)
+     * @param displayName display name
+     * @param loggerPath logger path
+     * @param appenderName appender name
+     */
+    public void addLogMapper(final String displayName, final String loggerPath, final String appenderName) {
+        mappers.put(loggerPath, new AppenderLogMapper(displayName, loggerPath, appenderName));
+    }
+
+    /**
+     * Return the ordered collection of Log mappers
+     * @return collection of Log mappers
+     */
+    Collection<AppenderLogMapper> getLogMappers() {
+        return mappers.values();
+    }
+
+    /**
+     * Return the mapper associated to the given logger path
+     * @param loggerPath logger path
+     * @return mapper associated to the given logger path or null
+     * @throws IllegalStateException if the logger path is not present in the mappers collection
+     */
+    private AppenderLogMapper getLogMapper(final String loggerPath) throws IllegalStateException {
+        final AppenderLogMapper mapper = mappers.get(loggerPath);
+        if (mapper == null) {
+            throw new IllegalStateException("Unsupported logger [" + loggerPath + "]");
+        }
+        return mapper;
+    }
 }

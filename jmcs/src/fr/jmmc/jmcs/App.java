@@ -501,7 +501,7 @@ public abstract class App {
 
                 // Display the LogGUI panel
                 case 2:
-                    showLogGui();
+                    showLogConsole();
                     break;
 
                 // Open the given file
@@ -823,16 +823,16 @@ public abstract class App {
     /**
      * Show the logging utility and displays the application log
      */
-    public static void showLogGui() {
-        showLogGui(ApplicationLogSingleton.JMMC_APP_LOG);
+    public static void showLogConsole() {
+        showLogConsole(ApplicationLogSingleton.JMMC_APP_LOG);
     }
 
     /**
      * Show the logging utility and displays the log corresponding to the given logger path
      * @param loggerPath logger path
      */
-    public static void showLogGui(final String loggerPath) {
-        LogbackGui.showEditor(App.getFrame(), _applicationDataModel.getProgramName() + " Log GUI", loggerPath);
+    public static void showLogConsole(final String loggerPath) {
+        LogbackGui.showWindow(App.getFrame(), _applicationDataModel.getProgramName() + " Log Console", loggerPath);
     }
 
     /**
@@ -840,7 +840,7 @@ public abstract class App {
      * @return logGui action which open the LogbackGui window
      */
     public static Action logGuiAction() {
-        return new AbstractAction("Show Execution Log") {
+        return new AbstractAction("Show Log Console") {
 
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
@@ -852,7 +852,7 @@ public abstract class App {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 // Show the LogbackGui:
-                showLogGui();
+                showLogConsole();
             }
         };
     }

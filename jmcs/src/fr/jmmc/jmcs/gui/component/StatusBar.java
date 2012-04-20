@@ -71,7 +71,7 @@ public class StatusBar extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                App.showLogGui(ApplicationLogSingleton.JMMC_STATUS_LOG);
+                App.showLogConsole(ApplicationLogSingleton.JMMC_STATUS_LOG);
             }
         });
 

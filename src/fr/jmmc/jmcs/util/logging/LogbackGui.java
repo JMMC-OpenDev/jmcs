@@ -9,22 +9,16 @@ import ch.qos.logback.classic.LoggerContext;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Enumeration;
 import javax.swing.JFrame;
 import javax.swing.JTree;
-import javax.swing.Timer;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -44,89 +38,101 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Bourgès Laurent
  */
-public final class LogbackGui extends javax.swing.JPanel implements TreeSelectionListener, ActionListener, ChangeListener {
+public final class LogbackGui extends javax.swing.JPanel implements TreeSelectionListener, ActionListener {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1L;
-    /** default auto refresh period = 5 second */
-    private static final int REFRESH_PERIOD = 1000;
     /** undefined level */
     private static final String UNDEFINED_LEVEL = "UNDEFINED";
     /** Root Logger */
     private static final Logger _rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     /** Class logger */
     private static final Logger _logger = (Logger) LoggerFactory.getLogger(LogbackGui.class.getName());
+    /** Single instance Gui Frame */
+    private static JFrame _guiFrameSingleton = null;
+    /** Single instance Gui */
+    private static LogbackGui _guiSingleton = null;
 
     /* members */
     /** current edited logger */
     private Logger currentLogger = null;
     /** flag to enable / disable the automatic update of the logger when any swing component changes */
     private boolean doAutoUpdateLogger = true;
-    /** log buffer byte count */
-    private int logByteCount = 0;
-    /* Swing components */
-    /** refresh Swing timer */
-    private final Timer timerRefresh;
-    /** double formatter for auto refresh period */
-    private final NumberFormat df1 = new DecimalFormat("0.0");
 
     /**
      * Display the logger editor
      * @param parent parent frame used to center this window (null means center on screen)
      * @param name name of the editor frame
+     * @param loggerPath logger path
      */
-    public static void showEditor(final JFrame parent, final String name) {
-        final String frameName = (name != null) ? name : "Log GUI";
+    public static void showEditor(final JFrame parent, final String name, final String loggerPath) {
+        if (_guiFrameSingleton != null) {
+            _guiFrameSingleton.toFront();
 
-        // Create Gui:
-        final LogbackGui logGui = new LogbackGui();
-
-        // 1. Create the frame
-        final JFrame frame = new JFrame(frameName) {
-
-            /** default serial UID for Serializable interface */
-            private static final long serialVersionUID = 1L;
-
-            /**
-             * Free any resource or reference to this instance :
-             * stop the Swing timer if started
-             */
-            @Override
-            public void dispose() {
-                // free LogbackGui resources:
-                logGui.onDispose();
-
-                // dispose Frame :
-                super.dispose();
+            // ensure window is visible (not iconified):
+            if (_guiFrameSingleton.getState() == Frame.ICONIFIED) {
+                _guiFrameSingleton.setState(Frame.NORMAL);
             }
-        };
 
-        final Dimension dim = new Dimension(700, 500);
-        frame.setMinimumSize(dim);
-        frame.addComponentListener(new ComponentResizeAdapter(dim));
+            // force the frame to be visible and bring it to front
+            _guiFrameSingleton.setVisible(true);
+            _guiFrameSingleton.toFront();
+        } else {
+            final String frameName = (name != null) ? name : "Log GUI";
 
-        // 2. Optional: What happens when the frame closes ?
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            // Create Gui:
+            _guiSingleton = new LogbackGui();
 
-        // 3. Create components and put them in the frame
-        frame.add(logGui);
+            // 1. Create the frame
+            _guiFrameSingleton = new JFrame(frameName) {
 
-        // 4. Size the frame.
-        frame.pack();
+                /** default serial UID for Serializable interface */
+                private static final long serialVersionUID = 1L;
 
-        // Center it :
-        frame.setLocationRelativeTo(parent);
+                /**
+                 * Free any resource or reference to this instance :
+                 * stop the Swing timer if started
+                 */
+                @Override
+                public void dispose() {
+                    // free LogbackGui resources:
+                    _guiSingleton.onDispose();
 
-        // 5. Show it and waits until frame is not visible or disposed :
-        frame.setVisible(true);
+                    // free singletons:
+                    _guiSingleton = null;
+                    _guiFrameSingleton = null;
+
+                    // dispose Frame :
+                    super.dispose();
+                }
+            };
+
+            final Dimension dim = new Dimension(700, 500);
+            _guiFrameSingleton.setMinimumSize(dim);
+            _guiFrameSingleton.addComponentListener(new ComponentResizeAdapter(dim));
+
+            // 2. Optional: What happens when the frame closes ?
+            _guiFrameSingleton.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            // 3. Create components and put them in the frame
+            _guiFrameSingleton.add(_guiSingleton);
+
+            // 4. Size the frame.
+            _guiFrameSingleton.pack();
+
+            // Center it :
+            _guiFrameSingleton.setLocationRelativeTo(parent);
+
+            // 5. Show it and waits until frame is not visible or disposed :
+            _guiFrameSingleton.setVisible(true);
+        }
+
+        // Select the log tab:
+        _guiSingleton.selectLogTab(loggerPath);
     }
 
     /** Creates new form LogbackGui */
     private LogbackGui() {
-        // Create the autoRefresh timer before any Swing component (see button action listeners):
-        this.timerRefresh = new Timer(REFRESH_PERIOD, this);
-        this.timerRefresh.setInitialDelay(0);
-
         initComponents();
 
         postInit();
@@ -136,6 +142,12 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      * Initialize the Swing components
      */
     private void postInit() {
+
+        // add log panel automatically:
+        int tabIndex = 0;
+        for (AppenderLogMapper mapper : ApplicationLogSingleton.getInstance().getLogMappers()) {
+            this.jTabbedPane.insertTab(mapper.getDisplayName(), null, new LogPanel(mapper.getLoggerPath()), null, tabIndex++);
+        }
 
         this.generateTree();
 
@@ -148,17 +160,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         // display root logger information:
         processLoggerSelection(_rootLogger);
-
-        // Refresh buttons listener :
-        this.jButtonRefreshLogs.addActionListener(this);
-        this.jToggleButtonAutoRefresh.addActionListener(this);
-        this.jSliderPeriod.addChangeListener(this);
-
-        // set slider to 10 (1s):
-        this.jSliderPeriod.setValue(10);
-
-        // start autoRefresh timer by simulating one click:
-        this.jToggleButtonAutoRefresh.doClick();
     }
 
     /**
@@ -167,27 +168,32 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
     private void onDispose() {
         _logger.debug("onDispose: {}", this);
 
-        // stop anyway timer if started:
-        enableAutoRefreshTimer(false);
+        // free log panel resources (timers):
+        for (Component com : this.jTabbedPane.getComponents()) {
+            if (com instanceof LogPanel) {
+                final LogPanel logPanel = (LogPanel) com;
+                logPanel.onDispose();
+            }
+        }
     }
 
-    /** 
-     * Handle the stateChanged event from the slider.
-     * @param ce slider change event
+    /**
+     * Select the log tab corresponding to the given logger path 
+     * @param loggerPath logger path
      */
-    @Override
-    public void stateChanged(final ChangeEvent ce) {
-        final int milliseconds = 100 * this.jSliderPeriod.getValue();
-
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("slider changed to: {} ms", milliseconds);
+    private void selectLogTab(final String loggerPath) {
+        if (loggerPath != null) {
+            for (Component com : this.jTabbedPane.getComponents()) {
+                if (com instanceof LogPanel) {
+                    final LogPanel logPanel = (LogPanel) com;
+                    if (logPanel.getLoggerPath().equals(loggerPath)) {
+                        this.jTabbedPane.setSelectedComponent(logPanel);
+                        return;
+                    }
+                }
+            }
         }
-
-        // update text value (rounded to 0.1s):
-        this.jTextFieldPeriod.setText(df1.format(0.001d * milliseconds) + " s");
-
-        // apply new delay to the timer
-        this.timerRefresh.setDelay(milliseconds);
+        this.jTabbedPane.setSelectedIndex(0);
     }
 
     /* Tree related methods */
@@ -313,14 +319,17 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      */
     @Override
     public void actionPerformed(final ActionEvent ae) {
-        if (ae.getSource() == this.timerRefresh || ae.getSource() == this.jButtonRefreshLogs) {
-            updateApplicationLog();
-        } else if (ae.getSource() == this.jComboBoxLevel) {
+        if (ae.getSource() == this.jComboBoxLevel) {
             if (this.doAutoUpdateLogger) {
                 if (this.currentLogger != null) {
                     final Level level = Level.toLevel((String) this.jComboBoxLevel.getSelectedItem(), null);
 
-                    this.currentLogger.setLevel(level);
+                    // intercept known bug in JUL-to-SLF4J:
+                    try {
+                        this.currentLogger.setLevel(level);
+                    } catch (RuntimeException re) {
+                        _logger.info("setLevel failure:", re);
+                    }
 
                     _logger.warn("Updated level for Logger [{}] to [{}]", this.currentLogger.getName(), this.currentLogger.getLevel());
 
@@ -328,12 +337,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
                     processLoggerSelection(this.currentLogger);
                 }
             }
-        } else if (ae.getSource() == this.jToggleButtonAutoRefresh) {
-            final boolean autoRefresh = this.jToggleButtonAutoRefresh.isSelected();
-
-            enableAutoRefreshTimer(autoRefresh);
-
-            this.jButtonRefreshLogs.setEnabled(!autoRefresh);
         }
     }
 
@@ -380,24 +383,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
         return previous;
     }
 
-    /**
-     * Start/Stop the internal autoRefresh timer
-     * @param enable true to enable it, false otherwise
-     */
-    private void enableAutoRefreshTimer(final boolean enable) {
-        if (enable) {
-            if (!this.timerRefresh.isRunning()) {
-                _logger.debug("starting timer: {}", this.timerRefresh);
-                this.timerRefresh.start();
-            }
-        } else {
-            if (this.timerRefresh.isRunning()) {
-                _logger.debug("stopping timer: {}", this.timerRefresh);
-                this.timerRefresh.stop();
-            }
-        }
-    }
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -410,14 +395,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         buttonGroupAdditivity = new javax.swing.ButtonGroup();
         jTabbedPane = new javax.swing.JTabbedPane();
-        jPanelLog = new javax.swing.JPanel();
-        jPanelLogButtons = new javax.swing.JPanel();
-        jToggleButtonAutoRefresh = new javax.swing.JToggleButton();
-        jSliderPeriod = new javax.swing.JSlider();
-        jTextFieldPeriod = new javax.swing.JTextField();
-        jButtonRefreshLogs = new javax.swing.JButton();
-        logScrollPane = new javax.swing.JScrollPane();
-        logTextArea = new javax.swing.JTextArea();
         jPanelConf = new javax.swing.JPanel();
         jPanelConfButtons = new javax.swing.JPanel();
         jButtonExpand = new javax.swing.JButton();
@@ -440,41 +417,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         setLayout(new java.awt.BorderLayout());
 
-        jPanelLog.setOpaque(false);
-        jPanelLog.setLayout(new java.awt.BorderLayout());
-
-        jPanelLogButtons.setOpaque(false);
-        jPanelLogButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 0));
-
-        jToggleButtonAutoRefresh.setText("Auto Refresh");
-        jPanelLogButtons.add(jToggleButtonAutoRefresh);
-
-        jSliderPeriod.setMajorTickSpacing(10);
-        jSliderPeriod.setMinimum(1);
-        jSliderPeriod.setToolTipText("auto refresh periodicity (100ms to 10s)");
-        jPanelLogButtons.add(jSliderPeriod);
-
-        jTextFieldPeriod.setColumns(6);
-        jTextFieldPeriod.setEditable(false);
-        jPanelLogButtons.add(jTextFieldPeriod);
-
-        jButtonRefreshLogs.setText("Refresh");
-        jPanelLogButtons.add(jButtonRefreshLogs);
-
-        jPanelLog.add(jPanelLogButtons, java.awt.BorderLayout.PAGE_START);
-
-        logScrollPane.setOpaque(false);
-
-        logTextArea.setEditable(false);
-        logTextArea.setFont(new java.awt.Font("Monospaced", 1, 12));
-        logTextArea.setTabSize(4);
-        logScrollPane.setViewportView(logTextArea);
-
-        jPanelLog.add(logScrollPane, java.awt.BorderLayout.CENTER);
-
-        jTabbedPane.addTab("Log content", jPanelLog);
-
-        jPanelConf.setOpaque(false);
         jPanelConf.setLayout(new java.awt.GridBagLayout());
 
         jPanelConfButtons.setOpaque(false);
@@ -663,7 +605,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
     private javax.swing.JButton jButtonDumpLoggers;
     private javax.swing.JButton jButtonExpand;
     private javax.swing.JButton jButtonRefreshLoggers;
-    private javax.swing.JButton jButtonRefreshLogs;
     private javax.swing.JComboBox jComboBoxLevel;
     private javax.swing.JLabel jLabelAdditivity;
     private javax.swing.JLabel jLabelEffectiveLevel;
@@ -672,21 +613,14 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
     private javax.swing.JLabel jLabelName;
     private javax.swing.JPanel jPanelConf;
     private javax.swing.JPanel jPanelConfButtons;
-    private javax.swing.JPanel jPanelLog;
-    private javax.swing.JPanel jPanelLogButtons;
     private javax.swing.JPanel jPanelLoggerInfo;
     private javax.swing.JRadioButton jRadioButtonAdditivityOff;
     private javax.swing.JRadioButton jRadioButtonAdditivityOn;
     private javax.swing.JScrollPane jScrollPaneLoggerTree;
-    private javax.swing.JSlider jSliderPeriod;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JTextField jTextFieldEffectiveLevel;
     private javax.swing.JTextField jTextFieldName;
-    private javax.swing.JTextField jTextFieldPeriod;
-    private javax.swing.JToggleButton jToggleButtonAutoRefresh;
     private javax.swing.JTree jTreeLoggers;
-    private javax.swing.JScrollPane logScrollPane;
-    private javax.swing.JTextArea logTextArea;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -715,37 +649,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
                 return userObject.getName();
             }
         };
-    }
-
-    /**
-     * Update the application log
-     */
-    private void updateApplicationLog() {
-
-        final boolean append = (this.logByteCount > 0) ? true : false;
-
-        // Get the partial application log as string starting at the given byteCount
-        final LogOutput logOutput = ApplicationLogSingleton.getInstance().getLogOutput(this.logByteCount);
-
-        // update byte count:
-        this.logByteCount = logOutput.getByteCount();
-
-        final String content = logOutput.getContent();
-
-        if (content.length() > 0) {
-            if (append) {
-                final Document doc = this.logTextArea.getDocument();
-                try {
-                    doc.insertString(doc.getLength(), content, null);
-                } catch (BadLocationException ble) {
-                    _logger.error("bad location: ", ble);
-                }
-            } else {
-                this.logTextArea.setText(content);
-            }
-            // scroll to end:
-            this.logTextArea.setCaretPosition(this.logTextArea.getText().length());
-        }
     }
 
     /**

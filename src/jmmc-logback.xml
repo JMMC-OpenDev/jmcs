@@ -10,16 +10,22 @@
 
 
     <!-- Appenders -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are  by default assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{60} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="APPLOG" class="fr.jmmc.jmcs.util.logging.ByteArrayOutputStreamAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{60} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <!-- encoders are  by default assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+    <appender name="STATUSLOG" class="fr.jmmc.jmcs.util.logging.ByteArrayOutputStreamAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{60} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
         </encoder>
     </appender>
   
@@ -28,10 +34,12 @@
   
     <!-- JMMC -->
     <logger name="fr.jmmc" level="INFO"/>
-<!--    
-    <logger name="fr.jmmc.data" level="INFO"/>
-    <logger name="fr.jmmc.gui" level="INFO"/>
-  -->
+
+    <!-- JMMC status -->
+    <logger name="fr.jmmc.jmcs.status" level="INFO" additivity="false">
+        <appender-ref ref="STATUSLOG" />
+    </logger>
+    
   
     <!-- include application specific configuration -->
     <include resource="jmmc-app-logback.xml"/>
@@ -47,6 +55,7 @@
     <!-- apache http client -->
     <logger name="org.apache.commons.httpclient" level="INFO"/>
     <logger name="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager" level="INFO"/>
+    <logger name="httpclient" level="INFO"/>
 
 
     <!-- disable JDK loggers -->
@@ -72,7 +81,7 @@
     <!-- Root Logger -->
     <!-- Note: level must be INFO in production to avoid performance issues with JUL -->
     <!-- <root level="DEBUG"> -->
-    <root level="INFO">
+    <root level="TRACE">
         <appender-ref ref="APPLOG" />
         <appender-ref ref="STDOUT" />
     </root>

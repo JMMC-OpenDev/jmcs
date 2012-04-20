@@ -821,10 +821,18 @@ public abstract class App {
     }
 
     /**
-     * Show third party logging utility.
+     * Show the logging utility and displays the application log
      */
     public static void showLogGui() {
-        LogbackGui.showEditor(App.getFrame(), _applicationDataModel.getProgramName() + " Log GUI");
+        showLogGui(ApplicationLogSingleton.JMMC_APP_LOG);
+    }
+
+    /**
+     * Show the logging utility and displays the log corresponding to the given logger path
+     * @param loggerPath logger path
+     */
+    public static void showLogGui(final String loggerPath) {
+        LogbackGui.showEditor(App.getFrame(), _applicationDataModel.getProgramName() + " Log GUI", loggerPath);
     }
 
     /**

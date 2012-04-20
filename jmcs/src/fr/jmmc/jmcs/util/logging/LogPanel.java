@@ -12,6 +12,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,10 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
      * Initialize the Swing components
      */
     private void postInit() {
+
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            this.setOpaque(false);
+        }
 
         // Refresh buttons listener :
         this.jButtonRefreshLogs.addActionListener(this);

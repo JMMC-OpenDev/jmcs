@@ -36,15 +36,18 @@ public final class ImageUtils {
     public static ImageIcon loadResourceIcon(final String url) {
 
         if (url == null) {
+            _logger.debug("No icon resource found for url '{}'.", url);
             return null;
         }
 
         URL imageUrl = ImageUtils.class.getResource(url);
-        imageUrl = UrlUtils.fixJarURL(imageUrl);
-
         if (imageUrl == null) {
+            _logger.debug("Could not load icon '{}'.", imageUrl);
             return null;
         }
+
+        imageUrl = UrlUtils.fixJarURL(imageUrl);
+        _logger.debug("Using fixed URL '{}' for icon resource.", imageUrl);
 
         return new ImageIcon(imageUrl);
     }

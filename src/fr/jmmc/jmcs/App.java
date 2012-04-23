@@ -1317,8 +1317,8 @@ public abstract class App {
 
             // Set Icon only if not under Mac OS X
             if (!SystemUtils.IS_OS_MAC_OSX) {
-                final String icon = ResourceImage.HELP.path(); // "/fr/jmmc/jmcs/resource/help.png";
-                final ImageIcon imageIcon = ImageUtils.loadResourceIcon(icon); //new ImageIcon(UrlUtils.fixJarURL(getClass().getResource(icon)));
+                final String icon = ResourceImage.HELP.path();
+                final ImageIcon imageIcon = ImageUtils.loadResourceIcon(icon);
                 putValue(SMALL_ICON, imageIcon);
             }
         }

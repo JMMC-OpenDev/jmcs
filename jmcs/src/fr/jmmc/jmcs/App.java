@@ -3,56 +3,46 @@
  ******************************************************************************/
 package fr.jmmc.jmcs;
 
-import fr.jmmc.jmcs.util.IntrospectionUtils;
-import fr.jmmc.jmcs.network.interop.SampManager;
-import fr.jmmc.jmcs.gui.action.ActionRegistrar;
-import fr.jmmc.jmcs.data.preference.CommonPreferences;
-import fr.jmmc.jmcs.network.NetworkSettings;
-import fr.jmmc.jmcs.gui.action.RegisteredAction;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+import com.apple.eawt.QuitResponse;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.preference.CommonPreferences;
+import fr.jmmc.jmcs.gui.*;
+import fr.jmmc.jmcs.gui.action.ActionRegistrar;
+import fr.jmmc.jmcs.gui.action.RegisteredAction;
+import fr.jmmc.jmcs.gui.component.MessagePane;
+import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
+import fr.jmmc.jmcs.gui.util.SwingSettings;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.network.BrowserLauncher;
+import fr.jmmc.jmcs.network.NetworkSettings;
+import fr.jmmc.jmcs.network.interop.SampManager;
+import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
+import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
+import fr.jmmc.jmcs.util.logging.LogOutput;
+import fr.jmmc.jmcs.util.logging.LogbackGui;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
-
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-
+import java.io.IOException;
 import java.lang.reflect.Method;
-
 import java.net.URL;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.util.StatusPrinter;
-import com.apple.eawt.QuitResponse;
-import fr.jmmc.jmcs.gui.AboutBox;
-import fr.jmmc.jmcs.gui.DependenciesView;
-import fr.jmmc.jmcs.gui.FeedbackReport;
-import fr.jmmc.jmcs.gui.HelpView;
-import fr.jmmc.jmcs.gui.MainMenuBar;
-import fr.jmmc.jmcs.gui.component.MessagePane;
-import fr.jmmc.jmcs.gui.SplashScreen;
-import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
-import fr.jmmc.jmcs.gui.util.SwingSettings;
-import fr.jmmc.jmcs.gui.util.SwingUtils;
-import fr.jmmc.jmcs.util.logging.LogbackGui;
-import fr.jmmc.jmcs.util.FileUtils;
-import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
-import fr.jmmc.jmcs.util.logging.LogOutput;
-import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -83,7 +73,7 @@ public abstract class App {
     /** JMMC main logger */
     public final static String JMMC_LOGGER = "fr.jmmc";
     /** JMMC Logger to be able to set its level in interpretArguments() */
-    private static final ch.qos.logback.classic.Logger JmmcLogger;
+    private final static ch.qos.logback.classic.Logger JmmcLogger;
 
     /**
      * Static Logger initialization and Network settings
@@ -142,7 +132,7 @@ public abstract class App {
         SwingSettings.setup();
     }
     /** application data file i.e. "ApplicationData.xml" */
-    public static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
+    public final static String APPLICATION_DATA_FILE = "ApplicationData.xml";
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = LoggerFactory.getLogger(App.class.getName());
     /** flag to avoid calls to System.exit() (JUnit) */
@@ -233,7 +223,7 @@ public abstract class App {
         try {
             _registrar = ActionRegistrar.getInstance();
 
-            String classPath = getClass().getName();
+            final String classPath = getClass().getName();
             new OpenAction(classPath, "_openAction");
             _quitAction = new QuitAction(classPath, "_quitAction");
 
@@ -1325,7 +1315,7 @@ public abstract class App {
 
             // Set Icon only if not under Mac OS X
             if (!SystemUtils.IS_OS_MAC_OSX) {
-                String icon = "/fr/jmmc/jmcs/resource/help.png";
+                final String icon = "/fr/jmmc/jmcs/resource/help.png";
                 putValue(SMALL_ICON, new ImageIcon(UrlUtils.fixJarURL(getClass().getResource(icon))));
             }
         }

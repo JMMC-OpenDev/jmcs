@@ -6,6 +6,8 @@ package fr.jmmc.jmcs.gui.component;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.HelpView;
+import fr.jmmc.jmcs.resource.image.ResourceImage;
+import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
 
 import java.awt.event.ActionEvent;
@@ -35,8 +37,9 @@ public class ShowHelpAction extends AbstractAction {
      */
     public ShowHelpAction(String label) {
         // Set Icon (without additional label)
-        final String icon = "/fr/jmmc/jmcs/resource/help.png";
-        this.putValue(SMALL_ICON, new ImageIcon(UrlUtils.fixJarURL(getClass().getResource(icon))));
+        final String helpIconPath = ResourceImage.HELP.path();
+        final ImageIcon helpIcon = ImageUtils.loadResourceIcon(helpIconPath);
+        this.putValue(SMALL_ICON, helpIcon);
 
         // If help is available, then try to get the HelpID that ends with given label
         boolean helpIsAvailable = HelpView.isAvailable();

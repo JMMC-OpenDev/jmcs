@@ -1172,17 +1172,16 @@ public abstract class App {
             // If the application does not provide an acknowledgement
             if (_acknowledgement == null) {
                 // Generate one instead
-                String appName = _applicationDataModel.getProgramName();
-                String appURL = _applicationDataModel.getLinkValue();
-                _acknowledgement = "This research has made use of the "
-                        + "Jean-Marie Mariotti Center\\texttt{" + appName
+                final String compagny = _applicationDataModel.getLegalCompanyName();
+                final String appName = _applicationDataModel.getProgramName();
+                final String appURL = _applicationDataModel.getLinkValue();
+                _acknowledgement = "This research has made use of the " + compagny
+                        + "\\texttt{" + appName
                         + "} service\n\\footnote{Available at " + appURL + "}";
             }
 
             // If the application does not provide an ApplicationData.xml file,
             // the generic acknowledgement found in jMCS will be used instead.
-
-            // TODO : remove JMMC references
         }
 
         /**

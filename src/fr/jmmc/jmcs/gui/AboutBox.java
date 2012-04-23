@@ -3,42 +3,21 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.gui.util.WindowUtils;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
-import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
+import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.util.ImageUtils;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class opens a new About window. Informations of this window
@@ -201,10 +180,10 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /** Sets logo label properties */
     private void setupLogo() {
         // Create the Icon with the company image from ApplicationData.xml
-        String logoURL = _applicationDataModel.getCompanyLogoResourcePath();
+        final String logoURL = _applicationDataModel.getCompanyLogoResourcePath();
         if (logoURL != null) {
             // Get and scale image
-            ImageIcon logo = new ImageIcon(getClass().getResource(logoURL));
+            ImageIcon logo = ImageUtils.loadResourceIcon(logoURL);
             logo = ImageUtils.getScaledImageIcon(logo, 81, 300);
             _logoLabel.setIcon(logo);
             _logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
@@ -262,7 +241,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _descriptionEditorPane.addHyperlinkListener(this);
 
         // The textarea should have the same width than the logo
-        Dimension textareaDimension = new Dimension(300, 170);
+        final Dimension textareaDimension = new Dimension(300, 170);
         _descriptionEditorPane.setPreferredSize(textareaDimension);
         _logger.debug("All the textarea properties have been initialized");
 
@@ -295,9 +274,9 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
         /* We have a step of 3 because for each package we have a name, a link and a description */
         for (int i = 0; i < packagesInfo.size(); i += 3) {
-            String name = packagesInfo.get(i);
-            String link = packagesInfo.get(i + 1);
-            String description = packagesInfo.get(i + 2);
+            final String name = packagesInfo.get(i);
+            final String link = packagesInfo.get(i + 1);
+            final String description = packagesInfo.get(i + 2);
 
             // We check if there is a link
             if (link == null) {
@@ -332,7 +311,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         // When a link is clicked
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             // Get the clicked URL
-            String clickedURL = event.getURL().toExternalForm();
+            final String clickedURL = event.getURL().toExternalForm();
 
             // Open the url in web browser
             BrowserLauncher.openURL(clickedURL);
@@ -347,8 +326,8 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         _linkLabel.addHyperlinkListener(this);
         _linkLabel.setContentType("text/html");
 
-        String link = _applicationDataModel.getLinkValue();
-        String linkHTML = "<a href='" + link + "'>" + link + "</a>";
+        final String link = _applicationDataModel.getLinkValue();
+        final String linkHTML = "<a href='" + link + "'>" + link + "</a>";
 
         _linkLabel.setText("<html><head></head><body><center>" + linkHTML
                 + "</center></body></html>");
@@ -359,7 +338,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /** Sets program name label properties */
     private void setupProgramNameLabel() {
         // Get program informations
-        String name = _applicationDataModel.getProgramName();
+        final String name = _applicationDataModel.getProgramName();
 
         _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programNameLabel.setText(name);
@@ -371,7 +350,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /** Sets program version label properties */
     private void setupProgramVersionLabel() {
         // Get program informations
-        String version = "Version " + _applicationDataModel.getProgramVersion();
+        final String version = "Version " + _applicationDataModel.getProgramVersion();
 
         _programVersionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programVersionLabel.setText(version);
@@ -382,9 +361,9 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /** Sets compilation info label properties */
     private void setupCompilationInfoLabel() {
         // Get compilation information
-        String compilationDate = _applicationDataModel.getCompilationDate();
-        String compilatorVersion = _applicationDataModel.getCompilatorVersion();
-        String compilationInfo = "Build the " + compilationDate + " with "
+        final String compilationDate = _applicationDataModel.getCompilationDate();
+        final String compilatorVersion = _applicationDataModel.getCompilatorVersion();
+        final String compilationInfo = "Build the " + compilationDate + " with "
                 + compilatorVersion;
 
         _compilationInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -472,15 +451,15 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /** Sets frame properties and make the window visible */
     private void setupWindow() {
         // Set the window title
-        String programName = _applicationDataModel.getProgramName();
-        String windowTitle = "About " + programName + "...";
+        final String programName = _applicationDataModel.getProgramName();
+        final String windowTitle = "About " + programName + "...";
         setTitle(windowTitle);
 
         // Disable window resizing
         setResizable(false);
 
         // Window layout
-        Container contentPane = getContentPane();
+        final Container contentPane = getContentPane();
         contentPane.add(_logoLabel, BorderLayout.PAGE_START);
         contentPane.add(_descriptionSplit, BorderLayout.CENTER);
         contentPane.add(_copyrightLabel, BorderLayout.PAGE_END);

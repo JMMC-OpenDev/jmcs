@@ -21,7 +21,9 @@ import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
+import fr.jmmc.jmcs.resource.image.ResourceImage;
 import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
@@ -1315,8 +1317,9 @@ public abstract class App {
 
             // Set Icon only if not under Mac OS X
             if (!SystemUtils.IS_OS_MAC_OSX) {
-                final String icon = "/fr/jmmc/jmcs/resource/help.png";
-                putValue(SMALL_ICON, new ImageIcon(UrlUtils.fixJarURL(getClass().getResource(icon))));
+                final String icon = ResourceImage.HELP.path(); // "/fr/jmmc/jmcs/resource/help.png";
+                final ImageIcon imageIcon = ImageUtils.loadResourceIcon(icon); //new ImageIcon(UrlUtils.fixJarURL(getClass().getResource(icon)));
+                putValue(SMALL_ICON, imageIcon);
             }
         }
 

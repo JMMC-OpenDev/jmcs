@@ -173,7 +173,7 @@ public abstract class ResourceUtils {
     }
 
     /**
-     * Get the icon of an action .
+     * Get the icon of an action.
      *
      * @param actionName the actionInstanceName
      *
@@ -182,23 +182,7 @@ public abstract class ResourceUtils {
     public static ImageIcon getActionIcon(final String actionName) {
         // Get back the icon image path
         String iconPath = getResource("actions.action." + actionName + ".icon", true);
-
-        if (iconPath == null) {
-            _logger.debug("No icon resource found for action name '{}'.", actionName);
-            return null;
-        }
-
-        // Get the image from path
-        URL imgURL = ResourceUtils.class.getResource(iconPath);
-
-        if (imgURL == null) {
-            _logger.debug("Could not load icon '{}'.", iconPath);
-            return null;
-        }
-
-        _logger.debug("Using imgUrl for icon resource  '{}'.", imgURL);
-
-        return new ImageIcon(imgURL);
+        return ImageUtils.loadResourceIcon(iconPath);
     }
 
     /**

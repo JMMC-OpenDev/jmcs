@@ -49,7 +49,14 @@ public final class ImageUtils {
         imageUrl = UrlUtils.fixJarURL(imageUrl);
         _logger.debug("Using fixed URL '{}' for icon resource.", imageUrl);
 
-        return new ImageIcon(imageUrl);
+        ImageIcon imageIcon = null;
+        try {
+            // Forge icon resource path
+            imageIcon = new ImageIcon(imageUrl);
+        } catch (IllegalStateException ise) {
+            _logger.warn("Could not find '{}' embedded icon.", imageUrl);
+        }
+        return imageIcon;
     }
 
     /**

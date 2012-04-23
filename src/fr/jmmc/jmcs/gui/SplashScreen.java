@@ -6,6 +6,7 @@ package fr.jmmc.jmcs.gui;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.util.ImageUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -131,24 +132,12 @@ public class SplashScreen extends JFrame {
 
     /** Sets logo properties */
     private void setLogoLabelProperties() {
+
         _logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // @TODO : get this from AppData.xml or pkgName/resources/AppIcon.png convention
-        /*
-        URL url = getClass().getResource("/fr/jmmc/scalib/resources/AppIcon.png");
-        if (url == null)
-        {
-        url = getClass().getResource(_applicationDataModel.getLogoURL());
-        }
-        System.out.println("url = " + url);
-        
-        ImageIcon icon = new ImageIcon(url);
-        Dimension fixedDimension = new Dimension(64, 64);
-        _logoLabel.setIcon(new ImageIcon(icon.getImage().getScaledInstance(fixedDimension.height, fixedDimension.width, Image.SCALE_SMOOTH)));
-        _logoLabel.setMinimumSize(fixedDimension);
-        _logoLabel.setMaximumSize(fixedDimension);
-         */
-        _logoLabel.setIcon(new ImageIcon(getClass().getResource(_applicationDataModel.getCompanyLogoResourcePath())));
+        final String companyLogoResourcePath = _applicationDataModel.getCompanyLogoResourcePath();
+        final ImageIcon companyLogo = ImageUtils.loadResourceIcon(companyLogoResourcePath);
+        _logoLabel.setIcon(companyLogo);
         _logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         _logger.debug("Every logo label properties have been initialized");

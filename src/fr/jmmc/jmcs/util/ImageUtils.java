@@ -34,13 +34,18 @@ public final class ImageUtils {
      * @return the retrieved image icon if found, null otherwise.
      */
     public static ImageIcon loadResourceIcon(final String url) {
+
         if (url == null) {
             return null;
         }
-        final URL imageUrl = ImageUtils.class.getResource(url);
+
+        URL imageUrl = ImageUtils.class.getResource(url);
+        imageUrl = UrlUtils.fixJarURL(imageUrl);
+
         if (imageUrl == null) {
             return null;
         }
+
         return new ImageIcon(imageUrl);
     }
 

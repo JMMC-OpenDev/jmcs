@@ -10,7 +10,8 @@ package fr.jmmc.jmcs.resource.image;
 public enum ResourceImage {
 
     STATUS_HISTORY("/fr/jmmc/jmcs/resource/script-start.png"),
-    HELP("/fr/jmmc/jmcs/resource/help.png");
+    HELP("/fr/jmmc/jmcs/resource/help.png"),
+    JMMC_FAVICON("/fr/jmmc/jmcs/resource/favicon.png");
     /** the preferenced value identifying token */
     private final String _path;
 

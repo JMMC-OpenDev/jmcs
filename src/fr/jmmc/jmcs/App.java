@@ -45,6 +45,7 @@ import fr.jmmc.jmcs.gui.HelpView;
 import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.SplashScreen;
+import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
@@ -1179,9 +1180,6 @@ public abstract class App {
                         + "\\texttt{" + appName
                         + "} service\n\\footnote{Available at " + appURL + "}";
             }
-
-            // If the application does not provide an ApplicationData.xml file,
-            // the generic acknowledgement found in jMCS will be used instead.
         }
 
         /**
@@ -1201,7 +1199,7 @@ public abstract class App {
             final String windowContent = delimiter + _acknowledgement + "\n"
                     + delimiter + "\n" + message;
 
-            MessagePane.showMessage(windowContent, windowTitle);
+            ResizableTextViewFactory.createTextWindow(windowContent, windowTitle, enabled);
         }
     }
 

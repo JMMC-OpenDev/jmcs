@@ -6,6 +6,7 @@ package fr.jmmc.jmcs.util.logging;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -122,7 +123,8 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
             _guiFrameSingleton.pack();
 
             // Center it :
-            _guiFrameSingleton.setLocationRelativeTo(parent);
+            WindowUtils.centerOnMainScreen(_guiFrameSingleton);
+            WindowUtils.setClosingKeyboardShortcuts(_guiFrameSingleton);
 
             // 5. Show it and waits until frame is not visible or disposed :
             _guiFrameSingleton.setVisible(true);
@@ -147,7 +149,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
         if (SystemUtils.IS_OS_MAC_OSX) {
             jPanelConf.setOpaque(false);
         }
-
 
         // add log panel automatically:
         int tabIndex = 0;

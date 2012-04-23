@@ -11,7 +11,8 @@ public enum ResourceImage {
 
     STATUS_HISTORY("/fr/jmmc/jmcs/resource/script-start.png"),
     HELP("/fr/jmmc/jmcs/resource/help.png"),
-    JMMC_FAVICON("/fr/jmmc/jmcs/resource/favicon.png");
+    JMMC_FAVICON("/fr/jmmc/jmcs/resource/favicon.png"),
+    WARNING_ICON("/fr/jmmc/aspro/gui/icons/dialog-warning.png");
     /** the preferenced value identifying token */
     private final String _path;
 

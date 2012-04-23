@@ -57,7 +57,7 @@ public class StatusBar extends JPanel {
 
         // Create logo
         final String logoURL = App.getSharedApplicationDataModel().getCompanyLogoResourcePath();
-        final ImageIcon imageIcon = new ImageIcon(getClass().getResource(logoURL));
+        final ImageIcon imageIcon = ImageUtils.loadResourceIcon(logoURL);
         final ImageIcon scaledImageIcon = ImageUtils.getScaledImageIcon(imageIcon, 17, 0);
         final JLabel logo = new JLabel();
         logo.setIcon(scaledImageIcon);

@@ -7,6 +7,7 @@ import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.resource.image.ResourceImage;
 import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
 import java.awt.event.ActionEvent;
@@ -72,7 +73,8 @@ public class StatusBar extends JPanel {
 
         // Create status history button
         // http://www.iconseeker.com/search-icon/aspnet/script-start.html### by http://www.aspneticons.com/ (Creative Commons Attribution 3.0 License)
-        final ImageIcon historyIcon = new ImageIcon(getClass().getResource("/fr/jmmc/jmcs/resource/script-start.png"));
+        final String historyIconPath = ResourceImage.STATUS_HISTORY.path();
+        final ImageIcon historyIcon = ImageUtils.loadResourceIcon(historyIconPath);
         final JButton historyButton = new JButton(historyIcon);
         final Border historyBorder = new EmptyBorder(0, 4, 4, 0);
         historyButton.setBorder(historyBorder);

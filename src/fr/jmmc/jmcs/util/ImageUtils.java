@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.util;
 
 import java.awt.Image;
+import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.ImageIcon;
@@ -23,6 +24,24 @@ public final class ImageUtils {
      */
     private ImageUtils() {
         // no-op
+    }
+
+    /**
+     * Try to load the given resource path as ImageIcon.
+     *
+     * @param url the image icon resource path
+     *
+     * @return the retrieved image icon if found, null otherwise.
+     */
+    public static ImageIcon loadResourceIcon(final String url) {
+        if (url == null) {
+            return null;
+        }
+        final URL imageUrl = ImageUtils.class.getResource(url);
+        if (imageUrl == null) {
+            return null;
+        }
+        return new ImageIcon(imageUrl);
     }
 
     /**

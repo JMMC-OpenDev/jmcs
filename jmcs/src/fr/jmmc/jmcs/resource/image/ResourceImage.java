@@ -3,17 +3,14 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.resource.image;
 
-import fr.jmmc.jmcs.util.ImageUtils;
-import java.net.URL;
-import javax.swing.ImageIcon;
-
 /**
  *
  * @author Sylvain LAFRASSE
  */
 public enum ResourceImage {
 
-    STATUS_HISTORY("/fr/jmmc/jmcs/resource/script-start.png");
+    STATUS_HISTORY("/fr/jmmc/jmcs/resource/script-start.png"),
+    HELP("/fr/jmmc/jmcs/resource/help.png");
     /** the preferenced value identifying token */
     private final String _path;
 

@@ -8,23 +8,22 @@ package fr.jmmc.jmcs.util;
  *
  * Copyright 2002 - 2005 JIDE Software Inc. All rights reserved.
  */
-import com.jidesoft.icons.IconsFactory;
 import com.jidesoft.plaf.LookAndFeelFactory;
-import com.jidesoft.range.Category;
 import com.jidesoft.swing.*;
-
-import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 /**
  * Demoed Component: {@link com.jidesoft.swing.CheckBoxTree} <br> Required jar files: jide-common.jar, jide-grids.jar
@@ -56,6 +55,7 @@ public class TestJide extends JFrame {
 
             private static final long serialVersionUID = -5580913906799074020L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (_tree.getCheckBoxTreeSelectionModel().isDigIn()) {
                     _tree.getCheckBoxTreeSelectionModel().setSelectionPath(new TreePath(_tree.getModel().getRoot()));
@@ -66,6 +66,7 @@ public class TestJide extends JFrame {
 
             private static final long serialVersionUID = -2500587806953898010L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 _tree.getCheckBoxTreeSelectionModel().clearSelection();
             }
@@ -76,6 +77,7 @@ public class TestJide extends JFrame {
 
             private static final long serialVersionUID = 3184279982208173561L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 _tree.getCheckBoxTreeSelectionModel().setDigIn(digIn.isSelected());
                 selectAll.setEnabled(digIn.isSelected());
@@ -88,6 +90,7 @@ public class TestJide extends JFrame {
 
             private static final long serialVersionUID = 7752042312121853308L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 _tree.setCheckBoxEnabled(checkBoxEnabled.isSelected());
             }
@@ -99,6 +102,7 @@ public class TestJide extends JFrame {
 
             private static final long serialVersionUID = 5234198740430142668L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 _tree.setClickInCheckBoxOnly(clickInCheckBoxOnly.isSelected());
             }
@@ -110,6 +114,7 @@ public class TestJide extends JFrame {
 
             private static final long serialVersionUID = -1027526532901305794L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 _tree.setEnabled(treeEnabled.isSelected());
             }
@@ -121,6 +126,7 @@ public class TestJide extends JFrame {
 
             private static final long serialVersionUID = 6687098092701174807L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 _tree.setSelectPartialOnToggling(selectPartialFirst.isSelected());
             }
@@ -136,6 +142,7 @@ public class TestJide extends JFrame {
         JComboBox comboBox = new JComboBox(selectionModes);
         comboBox.addItemListener(new ItemListener() {
 
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED && e.getItem() instanceof String) {
                     if ((e.getItem()).equals(TestJide.SINGLE_SELECTION)) {
@@ -166,6 +173,7 @@ public class TestJide extends JFrame {
 
             private static final long serialVersionUID = -8967823755465307651L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 _tree.getCheckBoxTreeSelectionModel().setSingleEventMode(singleEventMode.isSelected());
             }
@@ -262,6 +270,7 @@ public class TestJide extends JFrame {
     static public void main(String[] s) {
         SwingUtilities.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 LookAndFeelFactory.installDefaultLookAndFeelAndExtension();
                 new TestJide();

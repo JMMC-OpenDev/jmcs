@@ -24,6 +24,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 /**
  * A status bar that can be shared all along an application.
@@ -65,7 +67,8 @@ public class StatusBar extends JPanel {
         textStatusBar.setVisible(true);
 
         JButton historyButton = new JButton(new ImageIcon(getClass().getResource("/fr/jmmc/jmcs/resource/edit-paste.png")));
-        historyButton.setBorder(null);
+        final Border border = new EmptyBorder(0, 4, 4, 0);
+        historyButton.setBorder(border);
         historyButton.setToolTipText("Click to view status history");
         historyButton.addActionListener(new ActionListener() {
 

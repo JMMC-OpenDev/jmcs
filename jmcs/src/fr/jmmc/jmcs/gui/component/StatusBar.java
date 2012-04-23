@@ -52,23 +52,30 @@ public class StatusBar extends JPanel {
         // Layed out horizontally
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
+        final Border leftBorder = new EmptyBorder(0, 0, 4, 0);
+
         // Create logo
-        String logoURL = App.getSharedApplicationDataModel().getCompanyLogoResourcePath();
+        final String logoURL = App.getSharedApplicationDataModel().getCompanyLogoResourcePath();
         final ImageIcon imageIcon = new ImageIcon(getClass().getResource(logoURL));
-        JLabel logo = new JLabel();
-        ImageIcon scaledImageIcon = ImageUtils.getScaledImageIcon(imageIcon, 17, 0);
+        final ImageIcon scaledImageIcon = ImageUtils.getScaledImageIcon(imageIcon, 17, 0);
+        final JLabel logo = new JLabel();
         logo.setIcon(scaledImageIcon);
         logo.setVisible(true);
+        logo.setBorder(leftBorder);
 
         // Create text logo
-        JLabel textStatusBar = new JLabel();
+        final JLabel textStatusBar = new JLabel();
         textStatusBar.setText("Provided by ");
         textStatusBar.setFont(new Font("Comic Sans MS", 2, 10));
         textStatusBar.setVisible(true);
+        textStatusBar.setBorder(leftBorder);
 
-        JButton historyButton = new JButton(new ImageIcon(getClass().getResource("/fr/jmmc/jmcs/resource/edit-paste.png")));
-        final Border border = new EmptyBorder(0, 4, 4, 0);
-        historyButton.setBorder(border);
+        // Create status history button
+        // http://www.iconseeker.com/search-icon/aspnet/script-start.html### by http://www.aspneticons.com/ (Creative Commons Attribution 3.0 License)
+        final ImageIcon historyIcon = new ImageIcon(getClass().getResource("/fr/jmmc/jmcs/resource/script-start.png"));
+        final JButton historyButton = new JButton(historyIcon);
+        final Border historyBorder = new EmptyBorder(0, 4, 4, 0);
+        historyButton.setBorder(historyBorder);
         historyButton.setToolTipText("Click to view status history");
         historyButton.addActionListener(new ActionListener() {
 
@@ -79,7 +86,7 @@ public class StatusBar extends JPanel {
         });
 
         // StatusBar elements placement
-        Box hBox = Box.createHorizontalBox();
+        final Box hBox = Box.createHorizontalBox();
         hBox.add(historyButton);
         hBox.add(new JLabel(" Status : "));
         hBox.add(_statusLabel);

@@ -24,7 +24,6 @@ public final class MessagePane {
     // Constants
     private static final int FIXED_WIDTH = 400;
     private static final int MINIMUM_HEIGHT = 70;
-
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(MessagePane.class.getName());
     /** default title for error messages */
@@ -33,6 +32,10 @@ public final class MessagePane {
     private final static String TITLE_WARNING = "Warning";
     /** default title for information messages */
     private final static String TITLE_INFO = "Information";
+    /** create directory dialog options */
+    private final static Object[] DIRECTORY_CREATE_OPTIONS = {"Cancel", "Create"};
+    /** overwrite file dialog options */
+    private final static Object[] FILE_OVERWRITE_OPTIONS = {"Cancel", "Replace"};
     /** save changes dialog options */
     private final static Object[] SAVE_CHANGES_OPTIONS = {"Save", "Cancel", "Don't Save"};
     /** save changes dialog options */
@@ -216,15 +219,37 @@ public final class MessagePane {
                 + "A file or folder with the same name already exists in the current folder.\n"
                 + "Replacing it will overwrite its current contents.";
 
-        // Ask the user if he wants to save modifications
-        final Object[] options = {"Cancel", "Replace"};
+        // ensure window is visible (not iconified):
+        App.showFrameToFront();
+
+        final int result = JOptionPane.showOptionDialog(getApplicationFrame(), message,
+                null, JOptionPane.DEFAULT_OPTION,
+                JOptionPane.WARNING_MESSAGE, null, FILE_OVERWRITE_OPTIONS, FILE_OVERWRITE_OPTIONS[0]);
+
+        // If the user clicked the "Replace" button
+        if (result == 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Show a confirmation dialog to ask if the user wants to create the directory
+     * @param directoryPath directory path
+     * @return true if the user wants the directory created, false otherwise.
+     */
+    public static boolean showConfirmDirectoryCreation(final String directoryPath) {
+        final String message = "\"" + directoryPath + "\" does not exists. Do you want to create it ?\n\n";
 
         // ensure window is visible (not iconified):
         App.showFrameToFront();
 
-        final int result = JOptionPane.showOptionDialog(getApplicationFrame(), message, null, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+        final int result = JOptionPane.showOptionDialog(getApplicationFrame(), message,
+                null, JOptionPane.DEFAULT_OPTION,
+                JOptionPane.WARNING_MESSAGE, null, DIRECTORY_CREATE_OPTIONS, DIRECTORY_CREATE_OPTIONS[0]);
 
-        // If the user clicked the "Replace" button
+        // If the user clicked the "Create" button
         if (result == 1) {
             return true;
         }
@@ -273,7 +298,6 @@ public final class MessagePane {
             case 0: // options[0] = "Save" button
                 // Save the current data if no cancel occured
                 return ConfirmSaveChanges.Save;
-//                canLostModifications = _saveFileAction.save();
 
             // If the user clicked the "Don't Save" button
             case 2: // options[2] = "Don't Save" button

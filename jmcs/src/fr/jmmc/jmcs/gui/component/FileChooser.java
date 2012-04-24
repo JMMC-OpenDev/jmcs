@@ -147,12 +147,13 @@ public final class FileChooser {
             }
         }
         if (file != null) {
-
             // check if file exists :
             if (!file.exists()) {
                 _logger.warn("Selected file does not exist: {}", file);
 
-                if (FileUtils.getExtension(file) == null) {
+                if (mimeType == null) {
+                    file = null;
+                } else if (FileUtils.getExtension(file) == null) {
                     // try using the same file name with extension :
                     file = mimeType.checkFileExtension(file);
                     // check again if that file exists :
@@ -225,7 +226,7 @@ public final class FileChooser {
                 file = mimeType.checkFileExtension(file);
             }
 
-            if (file.exists() && !SystemUtils.IS_OS_MAC_OSX) {
+            if (!SystemUtils.IS_OS_MAC_OSX && file.exists()) {
                 if (!MessagePane.showConfirmFileOverwrite(file.getName())) {
                     StatusBar.show("overwritting cancelled.");
                     file = null;

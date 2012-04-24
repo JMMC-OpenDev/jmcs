@@ -6,7 +6,6 @@ package fr.jmmc.jmcs.util;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * List the mime types that are used by multiples applications using jmcs.
@@ -95,7 +94,7 @@ public enum MimeType {
      *
      * @return the retrieved registered file filter.
      */
-    public FileFilter getFileFilter() {
+    public GenericFileFilter getFileFilter() {
         return FileFilterRepository.get(this);
     }
 

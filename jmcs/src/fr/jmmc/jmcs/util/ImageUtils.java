@@ -35,14 +35,18 @@ public final class ImageUtils {
      */
     public static ImageIcon loadResourceIcon(final String url) {
 
+        // TODO : Maybe cache previously loaded icon
+
         if (url == null) {
             _logger.debug("No icon resource found for url '{}'.", url);
             return null;
         }
 
-        URL imageUrl = ImageUtils.class.getResource(url);
-        if (imageUrl == null) {
-            _logger.debug("Could not load icon '{}'.", imageUrl);
+        URL imageUrl;
+        try {
+            imageUrl = FileUtils.getResource(url);
+        } catch (IllegalStateException e) {
+            _logger.info("Could not load icon '{}'.", url);
             return null;
         }
 

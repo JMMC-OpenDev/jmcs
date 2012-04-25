@@ -125,7 +125,7 @@ public final class FileFilterRepository {
      * @return the retrieved registered file filter, null otherwise.
      */
     public static GenericFileFilter get(final MimeType mimeType) {
-        return get(mimeType.getName());
+        return get(mimeType.getMimeType());
     }
 
     /**

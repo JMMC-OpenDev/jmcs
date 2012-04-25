@@ -1316,7 +1316,7 @@ public abstract class App {
 
             // Set Icon only if not under Mac OS X
             if (!SystemUtils.IS_OS_MAC_OSX) {
-                final ImageIcon helpIcon = ResourceImage.HELP.icon();
+                final ImageIcon helpIcon = ResourceImage.HELP_ICON.icon();
                 putValue(SMALL_ICON, helpIcon);
             }
         }

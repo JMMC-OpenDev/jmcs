@@ -35,7 +35,7 @@ public class ShowHelpAction extends AbstractAction {
      */
     public ShowHelpAction(String label) {
         // Set Icon (without additional label)
-        final ImageIcon helpIcon = ResourceImage.HELP.icon();
+        final ImageIcon helpIcon = ResourceImage.HELP_ICON.icon();
         this.putValue(SMALL_ICON, helpIcon);
 
         // If help is available, then try to get the HelpID that ends with given label

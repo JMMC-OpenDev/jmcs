@@ -32,20 +32,20 @@ public final class ThreadExecutors extends LogSupport {
 
     /** running flag (volatile) */
     private static volatile boolean RUNNING = true;
-    /** default single thread pool name */
-    public static final String DEFAULT_SINGLE_THREAD_POOL = "DefaultSingleThreadPool";
     /** generic thread pool name */
     public static final String GENERIC_THREAD_POOL = "GenericThreadPool";
     /** process thread pool name */
     public static final String PROCESS_THREAD_POOL = "ProcessThreadPool";
     /** Generic thread Pool : idle thread keep alive before kill : 120s */
     public static final long GENERIC_THREAD_KEEP_ALIVE = 120L;
-    /** Process thread pool : maximum threads : 5 */
-    public static final int PROCESS_THREAD_MAX = 5;
-    /** Generic thread pool : minimum threads : 7 */
+    /** Process thread pool type : true to use fixed thread pool (resource limited) or false to use cached thread pool */
+    public static final boolean PROCESS_THREAD_FIXED = false;
+    /** Process thread pool : minimum threads : 2 */
+    public static final int PROCESS_THREAD_MIN = 2;
+    /** Process thread pool : maximum threads = number of cpu */
+    public static final int PROCESS_THREAD_MAX = Runtime.getRuntime().availableProcessors();
+    /** Generic thread pool : minimum threads : 2 */
     public static final int GENERIC_THREAD_MIN = 2;
-    /** Generic thread pool : maximum threads : 11 */
-    public static final int GENERIC_THREAD_MAX = (2 * PROCESS_THREAD_MAX) + 5;
     /** delay to wait for shutdown */
     public static final long SHUTDOWN_DELAY = 10L;
     /** delay to wait for shutdownNow */
@@ -110,7 +110,6 @@ public final class ThreadExecutors extends LogSupport {
      * @see #getGenericExecutor()
      */
     public static void startExecutors() {
-        getDefaultSingleExecutor();
         getRunnerExecutor();
         getGenericExecutor();
     }
@@ -181,8 +180,7 @@ public final class ThreadExecutors extends LogSupport {
         checkRunning();
         if (genericExecutor == null) {
             genericExecutor = new ThreadExecutors(
-                    newCachedThreadPool(GENERIC_THREAD_POOL, GENERIC_THREAD_MIN,
-                    GENERIC_THREAD_MAX, new CustomThreadFactory(GENERIC_THREAD_POOL)));
+                    newCachedThreadPool(GENERIC_THREAD_POOL, GENERIC_THREAD_MIN, new CustomThreadFactory(GENERIC_THREAD_POOL)));
         }
 
         return genericExecutor;
@@ -199,20 +197,11 @@ public final class ThreadExecutors extends LogSupport {
         checkRunning();
         if (runnerExecutor == null) {
             runnerExecutor = new ThreadExecutors(
-                    newFixedThreadPool(PROCESS_THREAD_POOL, PROCESS_THREAD_MAX, new CustomThreadFactory(PROCESS_THREAD_POOL)));
+                    PROCESS_THREAD_FIXED ? newFixedThreadPool(PROCESS_THREAD_POOL, PROCESS_THREAD_MAX, new CustomThreadFactory(PROCESS_THREAD_POOL))
+                    : newCachedThreadPool(PROCESS_THREAD_POOL, PROCESS_THREAD_MIN, new CustomThreadFactory(PROCESS_THREAD_POOL)));
         }
 
         return runnerExecutor;
-    }
-
-    /**
-     * Return the default single-thread pool or create it (lazy)
-     * 
-     * @see #newFixedThreadPool(String, int, ThreadFactory)
-     * @return default single thread pool
-     */
-    public static ThreadExecutors getDefaultSingleExecutor() {
-        return getSingleExecutor(DEFAULT_SINGLE_THREAD_POOL);
     }
 
     /**
@@ -250,10 +239,8 @@ public final class ThreadExecutors extends LogSupport {
      */
     private static CustomThreadPoolExecutor newFixedThreadPool(final String pPoolName, final int nThreads,
             final ThreadFactory threadFactory) {
-        return new CustomThreadPoolExecutor(pPoolName, nThreads, nThreads,
-                0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(),
-                threadFactory);
+        return new CustomThreadPoolExecutor(pPoolName, nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(), threadFactory);
     }
 
     /**
@@ -261,15 +248,16 @@ public final class ThreadExecutors extends LogSupport {
      * threads when they are available, and uses the provided ThreadFactory to create new threads when
      * needed.
      * 
+     * @see Executors.newCachedThreadPool()
+     * 
      * @param pPoolName thread pool name
      * @param minThreads the number of threads to keep in the pool, even if they are idle.
-     * @param nThreads the maximum number of threads to allow in the pool.
      * @param threadFactory the factory to use when creating new threads
      * @return the newly created thread pool
      */
-    private static CustomThreadPoolExecutor newCachedThreadPool(final String pPoolName, final int minThreads, final int nThreads,
+    private static CustomThreadPoolExecutor newCachedThreadPool(final String pPoolName, final int minThreads,
             final ThreadFactory threadFactory) {
-        return new CustomThreadPoolExecutor(pPoolName, minThreads, nThreads, GENERIC_THREAD_KEEP_ALIVE,
+        return new CustomThreadPoolExecutor(pPoolName, minThreads, Integer.MAX_VALUE, GENERIC_THREAD_KEEP_ALIVE,
                 TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), threadFactory);
     }
 
@@ -361,7 +349,7 @@ public final class ThreadExecutors extends LogSupport {
             }
             terminated = getExecutor().awaitTermination(SHUTDOWN_DELAY, TimeUnit.SECONDS);
         } catch (InterruptedException ie) {
-                logger.warn("ThreadExecutors.stop : interrupted while waiting the pool to terminate properly : {}", getPoolName(), ie);
+            logger.warn("ThreadExecutors.stop : interrupted while waiting the pool to terminate properly : {}", getPoolName(), ie);
             terminated = false;
         }
 

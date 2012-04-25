@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
+import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.MimeType;
 import java.awt.FileDialog;
@@ -32,18 +33,20 @@ public final class FileChooser {
     /**
      * Show the directory chooser using following properties:
      * @param title dialog title
-     * @param currentDir optional current directory as file
+     * @param givenDirectory optional current directory as file (last one used for given mime type if null)
      * @return File instance or null if dialog was discarded
      */
-    public static File showDirectoryChooser(final String title, final File currentDir) {
-        File dir = null;
+    public static File showDirectoryChooser(final String title, final File givenDirectory, final MimeType mimeType) {
+
+        File preselectedDirectory = retrieveLastDirectoryForMimeType(givenDirectory, mimeType);
+        File selectedDirectory = null;
 
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
             final FileDialog fileDialog = new FileDialog((Frame) null, title);
-            if (currentDir != null) {
-                fileDialog.setDirectory(currentDir.getParent());
-                fileDialog.setFile(currentDir.getName());
+            if (preselectedDirectory != null) {
+                fileDialog.setDirectory(preselectedDirectory.getParent());
+                fileDialog.setFile(preselectedDirectory.getName());
             }
 
             // force the file dialog to use directories only:
@@ -59,12 +62,12 @@ public final class FileChooser {
 
             // note: this avoid to choose the root folder '/':
             if (fileDialog.getFile() != null && fileDialog.getDirectory() != null) {
-                dir = new File(fileDialog.getDirectory(), fileDialog.getFile());
+                selectedDirectory = new File(fileDialog.getDirectory(), fileDialog.getFile());
             }
         } else {
             final JFileChooser fileChooser = new JFileChooser();
-            if (currentDir != null) {
-                fileChooser.setCurrentDirectory(currentDir);
+            if (preselectedDirectory != null) {
+                fileChooser.setCurrentDirectory(preselectedDirectory);
             }
 
             // select one directory:
@@ -74,42 +77,48 @@ public final class FileChooser {
             final int returnVal = fileChooser.showSaveDialog(null);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                dir = fileChooser.getSelectedFile();
+                selectedDirectory = fileChooser.getSelectedFile();
             }
         }
-        if (dir != null) {
-            if (!dir.isDirectory()) {
-                _logger.warn("Expected directory: {}", dir);
-                dir = null;
+        if (selectedDirectory != null) {
+            if (!selectedDirectory.isDirectory()) {
+                _logger.warn("Expected directory: {}", selectedDirectory);
+                selectedDirectory = null;
             } else {
-                if (!dir.exists()) {
-                    if (MessagePane.showConfirmDirectoryCreation(dir.getAbsolutePath())) {
-                        dir.mkdirs();
+                if (!selectedDirectory.exists()) {
+                    if (MessagePane.showConfirmDirectoryCreation(selectedDirectory.getAbsolutePath())) {
+                        selectedDirectory.mkdirs();
                     } else {
                         StatusBar.show("directory creation cancelled.");
-                        dir = null;
+                        selectedDirectory = null;
                     }
                 }
             }
         }
-        return dir;
+        if (selectedDirectory != null) {
+            final String directory = selectedDirectory.getPath();
+            FileChooserPreferences.setCurrentDirectoryForMimeType(mimeType, directory);
+        }
+        return selectedDirectory;
     }
 
     /**
      * Show the Open File Dialog using following properties:
      * @param title dialog title
-     * @param currentDir optional current directory as file
+     * @param givenDirectory optional current directory as file (last one used for given mime type if null)
      * @param mimeType optional file mime type used to get both file extension(s) and file chooser filter
      * @param defaultFileName optional default file name
      * @return File instance or null if dialog was discarded
      */
-    public static File showOpenFileChooser(final String title, final File currentDir, final MimeType mimeType, final String defaultFileName) {
-        File file = null;
+    public static File showOpenFileChooser(final String title, final File givenDirectory, final MimeType mimeType, final String defaultFileName) {
+
+        File preselectedDirectory = retrieveLastDirectoryForMimeType(givenDirectory, mimeType);
+        File selectedFile = null;
 
         if (USE_DIALOG_FOR_FILE_CHOOSER) {
             final FileDialog fileDialog = new FileDialog((Frame) null, title, FileDialog.LOAD);
-            if (currentDir != null) {
-                fileDialog.setDirectory(currentDir.getAbsolutePath());
+            if (preselectedDirectory != null) {
+                fileDialog.setDirectory(preselectedDirectory.getAbsolutePath());
             }
             if (mimeType != null) {
                 fileDialog.setFilenameFilter(mimeType.getFileFilter());
@@ -122,13 +131,13 @@ public final class FileChooser {
             fileDialog.setVisible(true);
 
             if (fileDialog.getFile() != null && fileDialog.getDirectory() != null) {
-                file = new File(fileDialog.getDirectory(), fileDialog.getFile());
+                selectedFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
             }
 
         } else {
             final JFileChooser fileChooser = new JFileChooser();
-            if (currentDir != null) {
-                fileChooser.setCurrentDirectory(currentDir);
+            if (preselectedDirectory != null) {
+                fileChooser.setCurrentDirectory(preselectedDirectory);
             }
 
             // select one file:
@@ -146,49 +155,55 @@ public final class FileChooser {
             final int returnVal = fileChooser.showOpenDialog(null);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                file = fileChooser.getSelectedFile();
+                selectedFile = fileChooser.getSelectedFile();
             }
         }
-        if (file != null) {
+        if (selectedFile != null) {
             // Mac OS X can return application packages:
-            if (SystemUtils.IS_OS_MAC_OSX && file.isDirectory()) {
-                _logger.warn("Selected file is an application package: {}", file);
-                file = null;
+            if (SystemUtils.IS_OS_MAC_OSX && selectedFile.isDirectory()) {
+                _logger.warn("Selected file is an application package: {}", selectedFile);
+                selectedFile = null;
             } else {
-                if (!file.exists()) {
-                    _logger.warn("Selected file does not exist: {}", file);
+                if (!selectedFile.exists()) {
+                    _logger.warn("Selected file does not exist: {}", selectedFile);
 
                     if (mimeType == null) {
-                        file = null;
-                    } else if (FileUtils.getExtension(file) == null) {
+                        selectedFile = null;
+                    } else if (FileUtils.getExtension(selectedFile) == null) {
                         // try using the same file name with extension :
-                        file = mimeType.checkFileExtension(file);
+                        selectedFile = mimeType.checkFileExtension(selectedFile);
                         // check again if that file exists :
-                        if (!file.exists()) {
-                            file = null;
+                        if (!selectedFile.exists()) {
+                            selectedFile = null;
                         }
                     }
                 }
             }
         }
-        return file;
+        if (selectedFile != null) {
+            final String directory = selectedFile.getParent();
+            FileChooserPreferences.setCurrentDirectoryForMimeType(mimeType, directory);
+        }
+        return selectedFile;
     }
 
     /**
      * Show the Save File Dialog using following properties:
      * @param title dialog title
-     * @param currentDir optional current directory as file
+     * @param givenDirectory optional current directory as file (last one used for given mime type if null)
      * @param mimeType optional file mime type used to get both file extension(s) and file chooser filter
      * @param defaultFileName optional default file name
      * @return File instance or null if dialog was discarded
      */
-    public static File showSaveFileChooser(final String title, final File currentDir, final MimeType mimeType, final String defaultFileName) {
-        File file = null;
+    public static File showSaveFileChooser(final String title, final File givenDirectory, final MimeType mimeType, final String defaultFileName) {
+
+        File preselectedDirectory = retrieveLastDirectoryForMimeType(givenDirectory, mimeType);
+        File selectedFile = null;
 
         if (USE_DIALOG_FOR_FILE_CHOOSER) {
             final FileDialog fileDialog = new FileDialog((Frame) null, title, FileDialog.SAVE);
-            if (currentDir != null) {
-                fileDialog.setDirectory(currentDir.getAbsolutePath());
+            if (preselectedDirectory != null) {
+                fileDialog.setDirectory(preselectedDirectory.getAbsolutePath());
             }
             if (mimeType != null) {
                 fileDialog.setFilenameFilter(mimeType.getFileFilter());
@@ -201,13 +216,13 @@ public final class FileChooser {
             fileDialog.setVisible(true);
 
             if (fileDialog.getFile() != null && fileDialog.getDirectory() != null) {
-                file = new File(fileDialog.getDirectory(), fileDialog.getFile());
+                selectedFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
             }
 
         } else {
             final JFileChooser fileChooser = new JFileChooser();
-            if (currentDir != null) {
-                fileChooser.setCurrentDirectory(currentDir);
+            if (preselectedDirectory != null) {
+                fileChooser.setCurrentDirectory(preselectedDirectory);
             }
 
             // select one file:
@@ -225,23 +240,35 @@ public final class FileChooser {
             final int returnVal = fileChooser.showSaveDialog(null);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                file = fileChooser.getSelectedFile();
+                selectedFile = fileChooser.getSelectedFile();
             }
         }
-        if (file != null) {
+        if (selectedFile != null) {
             if (mimeType != null) {
-                file = mimeType.checkFileExtension(file);
+                selectedFile = mimeType.checkFileExtension(selectedFile);
             }
 
             // Mac OS X already handles file overwrite confirmation:
-            if (!SystemUtils.IS_OS_MAC_OSX && file.exists()) {
-                if (!MessagePane.showConfirmFileOverwrite(file.getName())) {
+            if (!SystemUtils.IS_OS_MAC_OSX && selectedFile.exists()) {
+                if (!MessagePane.showConfirmFileOverwrite(selectedFile.getName())) {
                     StatusBar.show("overwritting cancelled.");
-                    file = null;
+                    selectedFile = null;
                 }
             }
         }
-        return file;
+        if (selectedFile != null) {
+            final String directory = selectedFile.getParent();
+            FileChooserPreferences.setCurrentDirectoryForMimeType(mimeType, directory);
+        }
+        return selectedFile;
+    }
+
+    private static File retrieveLastDirectoryForMimeType(final File givenDirectory, final MimeType mimeType) {
+        File preselectedDirectory = givenDirectory;
+        if (preselectedDirectory == null) {
+            preselectedDirectory = FileChooserPreferences.getLastDirectoryForMimeTypeAsFile(mimeType);
+        }
+        return preselectedDirectory;
     }
 
     /**

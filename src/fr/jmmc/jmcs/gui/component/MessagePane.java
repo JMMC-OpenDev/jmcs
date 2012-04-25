@@ -24,10 +24,11 @@ public final class MessagePane {
     // Constants
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(MessagePane.class.getName());
-    
+    /** Minimum width for message component of dialog frames */
+    private static final int MINIMUM_WIDTH = 450;
     /** Maximum width for message component of dialog frames */
     private static final int MAXIMUM_WIDTH = 600;
-    /** Maximum heigth for message component of dialog frames */
+    /** Maximum height for message component of dialog frames */
     private static final int MAXIMUM_HEIGHT = 600;
     /** Margin trick used to get better layout */
     private static final int MARGIN = 35;
@@ -145,7 +146,7 @@ public final class MessagePane {
      *          <code>QUESTION_MESSAGE</code>,
      *			or <code>PLAIN_MESSAGE</code>
      */
-    private static void showMessageDialog(final String message, final String title, final int messageType) {        
+    private static void showMessageDialog(final String message, final String title, final int messageType) {
         // ensure window is visible (not iconified):
         App.showFrameToFront();
 
@@ -303,12 +304,12 @@ public final class MessagePane {
      */
     public static boolean showConfirmKillHub() {
         final String applicationName = App.getSharedApplicationDataModel().getProgramName();
-        final String message = "Quitting '" 
-                + applicationName 
+        final String message = "Quitting '"
+                + applicationName
                 + "' will also terminate the shared SAMP hub,\npotentially preventing other applications interoperability until\nanother hub is started elsewhere.\n\n Proceed with quitting nevertheless ?";
-        
+
         // ensure window is visible (not iconified):
-        App.showFrameToFront();        
+        App.showFrameToFront();
 
         // Ask the user if he wants to kill hub
         final int result = JOptionPane.showOptionDialog(getApplicationFrame(),
@@ -369,36 +370,35 @@ public final class MessagePane {
     private static JFrame getApplicationFrame() {
         return App.getFrame();
     }
-    
-    
+
     /** 
      * Return the smallest component that would display given message in a dialog frame. 
      * If the message is too big, one limited size scrollpane is used for display.
      * @param message string that will be wrapped if too long
      * @return the component which can be given to JOptionPane methods.
      */
-    private static Component getMessageComponent(String message){
+    private static Component getMessageComponent(String message) {
         final JTextArea textArea = new JTextArea(message);
 
         // Sizing
         // add MARGIN to the textArea to avoid scrollPane borders when the size is near to the limit
-        final int textAreaWidth = textArea.getMinimumSize().width+MARGIN;
-        final int textAreaHeight = textArea.getMinimumSize().height+MARGIN;         
+        final int textAreaWidth = textArea.getMinimumSize().width + MARGIN;
+        final int textAreaHeight = textArea.getMinimumSize().height;
         final int finalHeight = Math.min(textAreaHeight, MAXIMUM_HEIGHT);
-        final int finalWidth = Math.min(textAreaWidth, MAXIMUM_WIDTH);
+        final int finalWidth = Math.max(MINIMUM_WIDTH, Math.min(textAreaWidth, MAXIMUM_WIDTH));
         final Dimension dims = new Dimension(finalWidth, finalHeight);
         final JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setMaximumSize(dims);
         scrollPane.setPreferredSize(dims);
-        
+
         // Show scrollpane only when needed        
         final boolean textAreaBackgroundShouldBeOpaque = (textAreaWidth > finalWidth) || (textAreaHeight > finalHeight);
         textArea.setOpaque(textAreaBackgroundShouldBeOpaque);
         scrollPane.setOpaque(textAreaBackgroundShouldBeOpaque);
-        scrollPane.getViewport().setOpaque(textAreaBackgroundShouldBeOpaque);        
+        scrollPane.getViewport().setOpaque(textAreaBackgroundShouldBeOpaque);
         if (!textAreaBackgroundShouldBeOpaque) {
             scrollPane.setBorder(null);
-        }       
+        }
 
         textArea.setEditable(false);
         textArea.setWrapStyleWord(true);

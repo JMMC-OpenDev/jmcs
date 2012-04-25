@@ -385,7 +385,7 @@ public final class MessagePane {
         final int textAreaWidth = textArea.getMinimumSize().width+MARGIN;
         final int textAreaHeight = textArea.getMinimumSize().height+MARGIN;         
         final int finalHeight = Math.min(textAreaHeight, MAXIMUM_HEIGHT);
-        final int finalWidth = Math.min(textAreaHeight, MAXIMUM_WIDTH);
+        final int finalWidth = Math.min(textAreaWidth, MAXIMUM_WIDTH);
         final Dimension dims = new Dimension(finalWidth, finalHeight);
         final JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setMaximumSize(dims);

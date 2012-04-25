@@ -168,7 +168,7 @@ public final class FileUtils {
         }
         return null;
     }
-    
+
     /**
      * Get the extension of a file in lower case
      *
@@ -195,7 +195,7 @@ public final class FileUtils {
             final int end = fileName.length() - 1;
             int from = end;
             int nDot = 0;
-            
+
             for (;;) {
                 int i = fileName.lastIndexOf('.', from);
 
@@ -206,7 +206,7 @@ public final class FileUtils {
                     if (nDot == nDots) {
                         return fileName.substring(i + 1).toLowerCase();
                     }
-                    
+
                 } else {
                     break;
                 }
@@ -228,11 +228,23 @@ public final class FileUtils {
     public static URL getResource(final String classpathLocation) throws IllegalStateException {
         _logger.debug("getResource : {}", classpathLocation);
 
+        if (classpathLocation == null) {
+            throw new IllegalStateException("Invalid 'null' value for classpathLocation.");
+        }
+
+        final String fixedPath;
+        if (classpathLocation.startsWith("/")) {
+            fixedPath = classpathLocation.substring(1);
+            _logger.warn("Given classpath had to be fixed : {}", classpathLocation);
+        } else {
+            fixedPath = classpathLocation;
+        }
+
         // use the class loader resource resolver
-        final URL url = FileUtils.class.getClassLoader().getResource(classpathLocation);
+        final URL url = FileUtils.class.getClassLoader().getResource(fixedPath);
 
         if (url == null) {
-            throw new IllegalStateException("Unable to find the file in the classpath : " + classpathLocation);
+            throw new IllegalStateException("Unable to find the file in the classpath : " + fixedPath);
         }
 
         return url;

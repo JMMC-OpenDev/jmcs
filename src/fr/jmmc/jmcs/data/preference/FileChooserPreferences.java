@@ -19,14 +19,9 @@ public final class FileChooserPreferences extends Preferences {
     private static FileChooserPreferences _singleton = null;
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(FileChooserPreferences.class.getName());
-    /* Preferences */
-    /** Store the filename of the ASPRO file preference file */
-    public static final String PREFERENCES_FILENAME = "fr.jmmc.aspro.file.properties";
 
     /**
      * Private constructor that must be empty.
-     *
-     * @param notify flag to enable/disable observer notifications
      */
     private FileChooserPreferences() {
         super(false); // No update notifications

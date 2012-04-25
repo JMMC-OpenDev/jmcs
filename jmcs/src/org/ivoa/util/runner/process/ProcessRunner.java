@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.ivoa.util.FileUtils;
 import org.ivoa.util.LogUtil;
 import org.ivoa.util.concurrent.ThreadExecutors;
@@ -28,6 +30,10 @@ public final class ProcessRunner {
     public final static int STATUS_NORMAL = 0;
     /** interrupted process status */
     public final static int STATUS_INTERRUPTED = -100;
+    /** flag to use timeout when waiting on process stream close */
+    public final static boolean USE_TIMEOUT = true;
+    /** wait timeout on std streams (5 seconds)  */
+    public final static long STREAM_TIMEOUT = 5l;
 
     /**
      * Forbidden constructor
@@ -88,7 +94,7 @@ public final class ProcessRunner {
 
                 logger.debug("ProcessRunner.execute : waitFor process to end ...");
 
-                // todo use timeout to stop waiting ...
+                // todo use timeout to stop waiting (workaround: use cancel(true) to interrupt current thread)...
                 status = process.waitFor();
 
                 // calls thread.join to be sure that other threads finish before leaving from here :
@@ -97,11 +103,19 @@ public final class ProcessRunner {
 
                 logger.debug("ProcessRunner.execute : join output Redirect ...");
 
-                outputFuture.get();
+                if (USE_TIMEOUT) {
+                    outputFuture.get(STREAM_TIMEOUT, TimeUnit.SECONDS);
+                } else {
+                    outputFuture.get();
+                }
 
                 logger.debug("ProcessRunner.execute : join error Redirect ...");
 
-                errorFuture.get();
+                if (USE_TIMEOUT) {
+                    errorFuture.get(STREAM_TIMEOUT, TimeUnit.SECONDS);
+                } else {
+                    errorFuture.get();
+                }
 
             } catch (CancellationException ce) {
                 logger.error("ProcessRunner.run : execution failure :", ce);
@@ -109,6 +123,8 @@ public final class ProcessRunner {
                 logger.error("ProcessRunner.run : execution failure :", ee);
             } catch (IllegalStateException ise) {
                 logger.error("ProcessRunner.execute : illegal state failure :", ise);
+            } catch (TimeoutException te) {
+                logger.debug("ProcessRunner.execute : stream timeout failure :", te);
             } catch (InterruptedException ie) {
                 // occurs when the threadpool shutdowns or interrupts the task (future.cancel) :
                 logger.debug("ProcessRunner.execute : interrupted failure :", ie);

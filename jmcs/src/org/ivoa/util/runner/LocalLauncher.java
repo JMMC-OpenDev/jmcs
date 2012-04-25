@@ -52,11 +52,10 @@ public final class LocalLauncher {
     public static final int ILLEGAL_STATE_ERROR_CODE = -1000;
     /** limit of lines in ring buffer */
     public final static int MAX_LINES = 100;
-    //~ Members ----------------------------------------------------------------------------------------------------------
     /** last total logged */
-    private int lastTotal = -1;
+    private static int lastTotal = -1;
     /** last live logged */
-    private int lastLive = -1;
+    private static int lastLive = -1;
 
     //~ Constructors -----------------------------------------------------------------------------------------------------
     /**
@@ -83,6 +82,9 @@ public final class LocalLauncher {
      * @see ThreadExecutors#stopExecutors()
      */
     public static void shutdown() {
+        // dump stats before shutdown:
+        dumpStats();
+
         logger.debug("LocalLauncher.shutdown: enter");
 
         ThreadExecutors.stopExecutors();
@@ -171,7 +173,7 @@ public final class LocalLauncher {
     /**
      * Logs the Launcher statistics
      */
-    public void handle() {
+    public static void dumpStats() {
         final int live = JOBS_LIVE.get();
         final int total = JOBS_TOTAL.get();
 
@@ -181,7 +183,7 @@ public final class LocalLauncher {
             lastTotal = total;
 
             if (logger.isInfoEnabled()) {
-                logger.info("LocalLauncher: Live jobs: {} / Total jobs created: {}", live, total);
+                logger.info("LocalLauncher: Live Jobs: {} / Total Jobs: {}", live, total);
             }
         }
     }

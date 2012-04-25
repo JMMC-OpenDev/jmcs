@@ -8,14 +8,16 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * List the mime types that are used by multiples applications using jmcs.
- * It is also acceptable to define here the mimetypes specific to one
+ * List the mime types that are used by multiples applications using jMCS.
+ * It is also acceptable to define here the mime types specific to one
  * application.
  * 
  * @author Guillaume MELLA, Laurent BOURGES.
  */
 public enum MimeType {
 
+    /** MimeType associated to SearchCal calibrator list */
+    SEARCHCAL_CALIBRATORLIST("application/x-searchcal+votable+xml", "SearchCal Calibrator List", "scvot"),
     /** MimeType associated to Observation settings */
     ASPRO_OBSERVATION("application/x-aspro+xml", "Aspro Observation Settings", "asprox"),
     /** MimeType associated to xml LITpro settings */
@@ -30,36 +32,51 @@ public enum MimeType {
     PDF("application/pdf", "Portable Document Format", "pdf"),
     /** MimeType associated to VEGA Star Lists */
     STAR_LIST("text/plain", "Star Lists", "txt"),
+    /** MimeType associated to Character-Separated Values format */
+    CSV("text/csv", "CSV", "txt"),
+    /** MimeType associated to HTML format */
+    HTML("text/html", "HTML", "html"),
     /** MimeType associated to Text files */
     TEXT_PLAIN("text/plain", "Text files", "txt");
 
     /**
      * Custom constructor
-     * @param name mime type name
-     * @param description short description
+     * @param mimeType mime type name
+     * @param name short description
      * @param extensions accepted extensions
      */
-    private MimeType(final String name, final String description, final String... extensions) {
-        this.name = name;
-        this.description = description + ' ' + Arrays.toString(extensions);
-        this.extensions = Arrays.asList(extensions);
-        FileFilterRepository.getInstance().put(name, extensions, this.description);
+    private MimeType(final String mimeType, final String name, final String... extensions) {
+        _mimeType = mimeType;
+        _name = name;
+        _fullDescription = name + ' ' + Arrays.toString(extensions);
+        _extensions = Arrays.asList(extensions);
+        FileFilterRepository.getInstance().put(mimeType, extensions, this._fullDescription);
     }
 
     /* members */
     /** mime-type */
-    private final String name;
-    /** short mime-type description */
-    private final String description;
+    private final String _mimeType;
+    /** mime-type name */
+    private final String _name;
+    /** full mime-type description */
+    private final String _fullDescription;
     /** list of accepted extensions */
-    private final List<String> extensions;
+    private final List<String> _extensions;
+
+    /**
+     * Return the mime-type name
+     * @return mime-type name
+     */
+    public String getName() {
+        return _name;
+    }
 
     /**
      * Return the short mime-type description
      * @return short mime-type description
      */
     public String getDescription() {
-        return description;
+        return _fullDescription;
     }
 
     /**
@@ -67,7 +84,7 @@ public enum MimeType {
      * @return accepted extensions as list
      */
     public List<String> getExtensions() {
-        return extensions;
+        return _extensions;
     }
 
     /** 
@@ -75,18 +92,18 @@ public enum MimeType {
      * @return first accepted extension
      */
     public String getExtension() {
-        if (extensions.isEmpty()) {
+        if (_extensions.isEmpty()) {
             return null;
         }
-        return extensions.get(0);
+        return _extensions.get(0);
     }
 
     /**
      * Return the mime-type
      * @return mime-type
      */
-    public String getName() {
-        return name;
+    public String getMimeType() {
+        return _mimeType;
     }
 
     /**

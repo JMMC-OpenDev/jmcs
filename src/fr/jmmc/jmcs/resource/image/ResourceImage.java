@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
 public enum ResourceImage {
 
     STATUS_HISTORY("/fr/jmmc/jmcs/resource/script-start.png"), // http://www.iconseeker.com/search-icon/aspnet/script-start.html### by http://www.aspneticons.com/ (Creative Commons Attribution 3.0 License)
-    HELP("/fr/jmmc/jmcs/resource/help.png"),
+    HELP_ICON("/fr/jmmc/jmcs/resource/help.png"),
     JMMC_FAVICON("/fr/jmmc/jmcs/resource/favicon.png"),
     WARNING_ICON("/fr/jmmc/aspro/gui/icons/dialog-warning.png");
     /** the preferenced value identifying token */

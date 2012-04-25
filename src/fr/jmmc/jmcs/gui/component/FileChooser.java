@@ -26,6 +26,17 @@ public final class FileChooser {
     private static final Logger _logger = LoggerFactory.getLogger(FileChooser.class.getName());
     /** apple specific property to force awt FileDialog work on directories only */
     public final static String MAC_FILE_DIALOG_DIRECTORY = "apple.awt.fileDialogForDirectories";
+    /** apple specific property to consider packages (app or pkg) as file (avoid navigation) */
+    public final static String MAC_TREAT_PACKAGES_AS_FILES = "apple.awt.use-file-dialog-packages";
+    /** use native file chooser i.e. awt.FileDialog (Mac OS X) */
+    private final static boolean USE_DIALOG_FOR_FILE_CHOOSER = SystemUtils.IS_OS_MAC_OSX;
+
+    static {
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            // initialize Mac OS X properties:
+            System.setProperty(MAC_TREAT_PACKAGES_AS_FILES, "true");
+        }
+    }
 
     /**
      * Show the directory chooser using following properties:
@@ -47,11 +58,13 @@ public final class FileChooser {
             // force the file dialog to use directories only:
             System.setProperty(MAC_FILE_DIALOG_DIRECTORY, "true");
 
-            // waits for dialog inputs:
-            fileDialog.setVisible(true);
-
-            // restore system property:
-            System.setProperty(MAC_FILE_DIALOG_DIRECTORY, "false");
+            try {
+                // waits for dialog inputs:
+                fileDialog.setVisible(true);
+            } finally {
+                // restore system property:
+                System.setProperty(MAC_FILE_DIALOG_DIRECTORY, "false");
+            }
 
             // note: this avoid to choose the root folder '/':
             if (fileDialog.getFile() != null && fileDialog.getDirectory() != null) {
@@ -102,8 +115,7 @@ public final class FileChooser {
     public static File showOpenFileChooser(final String title, final File currentDir, final MimeType mimeType, final String defaultFileName) {
         File file = null;
 
-        // If running under Mac OS X
-        if (SystemUtils.IS_OS_MAC_OSX) {
+        if (USE_DIALOG_FOR_FILE_CHOOSER) {
             final FileDialog fileDialog = new FileDialog((Frame) null, title, FileDialog.LOAD);
             if (currentDir != null) {
                 fileDialog.setDirectory(currentDir.getAbsolutePath());
@@ -177,8 +189,7 @@ public final class FileChooser {
     public static File showSaveFileChooser(final String title, final File currentDir, final MimeType mimeType, final String defaultFileName) {
         File file = null;
 
-        // If running under Mac OS X
-        if (SystemUtils.IS_OS_MAC_OSX) {
+        if (USE_DIALOG_FOR_FILE_CHOOSER) {
             final FileDialog fileDialog = new FileDialog((Frame) null, title, FileDialog.SAVE);
             if (currentDir != null) {
                 fileDialog.setDirectory(currentDir.getAbsolutePath());
@@ -226,6 +237,7 @@ public final class FileChooser {
                 file = mimeType.checkFileExtension(file);
             }
 
+            // Mac OS X already handles file overwrite confirmation:
             if (!SystemUtils.IS_OS_MAC_OSX && file.exists()) {
                 if (!MessagePane.showConfirmFileOverwrite(file.getName())) {
                     StatusBar.show("overwritting cancelled.");

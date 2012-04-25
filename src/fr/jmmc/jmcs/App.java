@@ -23,7 +23,6 @@ import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.resource.image.ResourceImage;
 import fr.jmmc.jmcs.util.FileUtils;
-import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
@@ -1317,9 +1316,8 @@ public abstract class App {
 
             // Set Icon only if not under Mac OS X
             if (!SystemUtils.IS_OS_MAC_OSX) {
-                final String helpIconPath = ResourceImage.HELP.path();
-                final ImageIcon imageIcon = ImageUtils.loadResourceIcon(helpIconPath);
-                putValue(SMALL_ICON, imageIcon);
+                final ImageIcon helpIcon = ResourceImage.HELP.icon();
+                putValue(SMALL_ICON, helpIcon);
             }
         }
 

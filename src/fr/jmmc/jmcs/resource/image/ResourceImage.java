@@ -3,32 +3,35 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.resource.image;
 
+import fr.jmmc.jmcs.util.ImageUtils;
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author Sylvain LAFRASSE
  */
 public enum ResourceImage {
 
-    STATUS_HISTORY("/fr/jmmc/jmcs/resource/script-start.png"),
+    STATUS_HISTORY("/fr/jmmc/jmcs/resource/script-start.png"), // http://www.iconseeker.com/search-icon/aspnet/script-start.html### by http://www.aspneticons.com/ (Creative Commons Attribution 3.0 License)
     HELP("/fr/jmmc/jmcs/resource/help.png"),
     JMMC_FAVICON("/fr/jmmc/jmcs/resource/favicon.png"),
     WARNING_ICON("/fr/jmmc/aspro/gui/icons/dialog-warning.png");
     /** the preferenced value identifying token */
-    private final String _path;
+    private final ImageIcon _icon;
 
     /**
      * Constructor
      * @param path the preferenced value identifying token
      */
-    ResourceImage(String path) {
-        _path = path;
+    private ResourceImage(String path) {
+        _icon = ImageUtils.loadResourceIcon(path);
     }
 
     /**
-     * @return the preferenced value identifying token
+     * @return the resource image icon
      */
-    public String path() {
-        return _path;
+    public ImageIcon icon() {
+        return _icon;
     }
 
     /**

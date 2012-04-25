@@ -72,9 +72,7 @@ public class StatusBar extends JPanel {
         textStatusBar.setBorder(leftBorder);
 
         // Create status history button
-        // http://www.iconseeker.com/search-icon/aspnet/script-start.html### by http://www.aspneticons.com/ (Creative Commons Attribution 3.0 License)
-        final String historyIconPath = ResourceImage.STATUS_HISTORY.path();
-        final ImageIcon historyIcon = ImageUtils.loadResourceIcon(historyIconPath);
+        final ImageIcon historyIcon = ResourceImage.STATUS_HISTORY.icon();
         final JButton historyButton = new JButton(historyIcon);
         final Border historyBorder = new EmptyBorder(0, 4, 4, 0);
         historyButton.setBorder(historyBorder);

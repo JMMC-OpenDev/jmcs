@@ -26,17 +26,8 @@ public final class FileChooser {
     private static final Logger _logger = LoggerFactory.getLogger(FileChooser.class.getName());
     /** apple specific property to force awt FileDialog work on directories only */
     public final static String MAC_FILE_DIALOG_DIRECTORY = "apple.awt.fileDialogForDirectories";
-    /** apple specific property to consider packages (app or pkg) as file (avoid navigation) */
-    public final static String MAC_TREAT_PACKAGES_AS_FILES = "apple.awt.use-file-dialog-packages";
     /** use native file chooser i.e. awt.FileDialog (Mac OS X) */
     private final static boolean USE_DIALOG_FOR_FILE_CHOOSER = SystemUtils.IS_OS_MAC_OSX;
-
-    static {
-        if (SystemUtils.IS_OS_MAC_OSX) {
-            // initialize Mac OS X properties:
-            System.setProperty(MAC_TREAT_PACKAGES_AS_FILES, "true");
-        }
-    }
 
     /**
      * Show the directory chooser using following properties:
@@ -159,18 +150,23 @@ public final class FileChooser {
             }
         }
         if (file != null) {
-            // check if file exists :
-            if (!file.exists()) {
-                _logger.warn("Selected file does not exist: {}", file);
+            // Mac OS X can return application packages:
+            if (SystemUtils.IS_OS_MAC_OSX && file.isDirectory()) {
+                _logger.warn("Selected file is an application package: {}", file);
+                file = null;
+            } else {
+                if (!file.exists()) {
+                    _logger.warn("Selected file does not exist: {}", file);
 
-                if (mimeType == null) {
-                    file = null;
-                } else if (FileUtils.getExtension(file) == null) {
-                    // try using the same file name with extension :
-                    file = mimeType.checkFileExtension(file);
-                    // check again if that file exists :
-                    if (!file.exists()) {
+                    if (mimeType == null) {
                         file = null;
+                    } else if (FileUtils.getExtension(file) == null) {
+                        // try using the same file name with extension :
+                        file = mimeType.checkFileExtension(file);
+                        // check again if that file exists :
+                        if (!file.exists()) {
+                            file = null;
+                        }
                     }
                 }
             }

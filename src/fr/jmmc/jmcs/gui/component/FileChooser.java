@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
+import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.MimeType;
@@ -43,7 +44,7 @@ public final class FileChooser {
 
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
-            final FileDialog fileDialog = new FileDialog((Frame) null, title);
+            final FileDialog fileDialog = new FileDialog(App.getFrame(), title);
             if (preselectedDirectory != null) {
                 fileDialog.setDirectory(preselectedDirectory.getParent());
                 fileDialog.setFile(preselectedDirectory.getName());
@@ -74,7 +75,7 @@ public final class FileChooser {
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fileChooser.setDialogTitle(title);
 
-            final int returnVal = fileChooser.showSaveDialog(null);
+            final int returnVal = fileChooser.showSaveDialog(App.getFrame());
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 selectedDirectory = fileChooser.getSelectedFile();
@@ -116,7 +117,7 @@ public final class FileChooser {
         File selectedFile = null;
 
         if (USE_DIALOG_FOR_FILE_CHOOSER) {
-            final FileDialog fileDialog = new FileDialog((Frame) null, title, FileDialog.LOAD);
+            final FileDialog fileDialog = new FileDialog(App.getFrame(), title, FileDialog.LOAD);
             if (preselectedDirectory != null) {
                 fileDialog.setDirectory(preselectedDirectory.getAbsolutePath());
             }
@@ -152,7 +153,7 @@ public final class FileChooser {
 
             fileChooser.setDialogTitle(title);
 
-            final int returnVal = fileChooser.showOpenDialog(null);
+            final int returnVal = fileChooser.showOpenDialog(App.getFrame());
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 selectedFile = fileChooser.getSelectedFile();
@@ -201,7 +202,7 @@ public final class FileChooser {
         File selectedFile = null;
 
         if (USE_DIALOG_FOR_FILE_CHOOSER) {
-            final FileDialog fileDialog = new FileDialog((Frame) null, title, FileDialog.SAVE);
+            final FileDialog fileDialog = new FileDialog(App.getFrame(), title, FileDialog.SAVE);
             if (preselectedDirectory != null) {
                 fileDialog.setDirectory(preselectedDirectory.getAbsolutePath());
             }
@@ -237,7 +238,7 @@ public final class FileChooser {
 
             fileChooser.setDialogTitle(title);
 
-            final int returnVal = fileChooser.showSaveDialog(null);
+            final int returnVal = fileChooser.showSaveDialog(App.getFrame());
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 selectedFile = fileChooser.getSelectedFile();

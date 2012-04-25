@@ -12,21 +12,20 @@ import javax.swing.ImageIcon;
  */
 public enum ResourceImage {
 
-    JMMC_FAVICON("/fr/jmmc/jmcs/resource/favicon.png"),
-    STATUS_HISTORY("/fr/jmmc/jmcs/resource/script-start.png"), // http://www.iconseeker.com/search-icon/aspnet/script-start.html### by http://www.aspneticons.com/ (Creative Commons Attribution 3.0 License)
-    HELP_ICON("/fr/jmmc/jmcs/resource/help.png"),
-    WARNING_ICON("/fr/jmmc/aspro/gui/icons/dialog-warning.png"),
-    UP_ARROW("/fr/jmmc/jmcs/resource/uparrow.png"),
-    DOWN_ARROW("/fr/jmmc/jmcs/resource/downarrow.png");
-    /** the preferenced value identifying token */
+    JMMC_FAVICON("jmmc_favicon.png"),
+    STATUS_HISTORY("script_start.png"), // http://www.iconseeker.com/search-icon/aspnet/script-start.html### by http://www.aspneticons.com/ (Creative Commons Attribution 3.0 License)
+    HELP_ICON("help_icon.png"),
+    WARNING_ICON("warning_icon.png"),
+    UP_ARROW("up_arrow.png"),
+    DOWN_ARROW("down_arrow.png");
+    /** Common resource directory containing icon files */
+    private final static String IMAGE_RESOURCE_COMMON_PATH = "/fr/jmmc/jmcs/resource/image/";
+    /** Loaded icon resource */
     private final ImageIcon _icon;
 
-    /**
-     * Constructor
-     * @param path the preferenced value identifying token
-     */
-    private ResourceImage(String path) {
-        _icon = ImageUtils.loadResourceIcon(path);
+    /** Constructor */
+    private ResourceImage(String iconName) {
+        _icon = ImageUtils.loadResourceIcon(IMAGE_RESOURCE_COMMON_PATH + iconName);
     }
 
     /**
@@ -42,7 +41,7 @@ public enum ResourceImage {
      */
     public static void main(String[] args) {
         for (ResourceImage rsc : ResourceImage.values()) {
-            System.out.println("Resource '" + rsc.name() + "' = ['" + rsc + "'].");
+            System.out.println("Resource '" + rsc.name() + "' -> '" + rsc.icon() + "'.");
         }
     }
 }

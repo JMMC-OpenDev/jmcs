@@ -3,8 +3,8 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
-import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -22,12 +22,15 @@ import org.slf4j.LoggerFactory;
 public final class MessagePane {
 
     // Constants
-    private static final int FIXED_WIDTH = 450;
-    private static final int MINIMUM_HEIGHT = 600;
-    private static final int MARGIN = 35;
-
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(MessagePane.class.getName());
+    
+    /** Maximum width for message component of dialog frames */
+    private static final int MAXIMUM_WIDTH = 600;
+    /** Maximum heigth for message component of dialog frames */
+    private static final int MAXIMUM_HEIGHT = 600;
+    /** Margin trick used to get better layout */
+    private static final int MARGIN = 35;
     /** default title for error messages */
     private final static String TITLE_ERROR = "Error";
     /** default title for warning messages */
@@ -142,37 +145,11 @@ public final class MessagePane {
      *          <code>QUESTION_MESSAGE</code>,
      *			or <code>PLAIN_MESSAGE</code>
      */
-    private static void showMessageDialog(final String message, final String title, final int messageType) {
-
-        final JTextArea textArea = new JTextArea(message);
-
-        // Sizing
-        final int textAreaWidth = textArea.getMinimumSize().width;
-        // add MARGIN to the textArea to avoid scrollPane borders when the size is near to the limit
-        final int textAreaHeight = textArea.getMinimumSize().height+MARGIN;         
-        final int finalHeight = Math.min(textAreaHeight, MINIMUM_HEIGHT);
-        final Dimension dims = new Dimension(FIXED_WIDTH, finalHeight);
-        final JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setMaximumSize(dims);
-        scrollPane.setPreferredSize(dims);
-        
-        // Show scrollpane only when needed        
-        final boolean textAreaBackgroundShouldBeOpaque = (textAreaWidth > FIXED_WIDTH) || (textAreaHeight > finalHeight);
-        textArea.setOpaque(textAreaBackgroundShouldBeOpaque);
-        scrollPane.setOpaque(textAreaBackgroundShouldBeOpaque);
-        scrollPane.getViewport().setOpaque(textAreaBackgroundShouldBeOpaque);        
-        if (!textAreaBackgroundShouldBeOpaque) {
-            scrollPane.setBorder(null);
-        }       
-
-        textArea.setEditable(false);
-        textArea.setWrapStyleWord(true);
-        textArea.setLineWrap(true);
-
+    private static void showMessageDialog(final String message, final String title, final int messageType) {        
         // ensure window is visible (not iconified):
         App.showFrameToFront();
 
-        JOptionPane.showMessageDialog(getApplicationFrame(), scrollPane, title, messageType);
+        JOptionPane.showMessageDialog(getApplicationFrame(), getMessageComponent(message), title, messageType);
     }
 
     // --- WARNING MESSAGES ---------------------------------------------------------
@@ -225,7 +202,7 @@ public final class MessagePane {
         // ensure window is visible (not iconified):
         App.showFrameToFront();
 
-        final int result = JOptionPane.showOptionDialog(getApplicationFrame(), message,
+        final int result = JOptionPane.showOptionDialog(getApplicationFrame(), getMessageComponent(message),
                 null, JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE, null, FILE_OVERWRITE_OPTIONS, FILE_OVERWRITE_OPTIONS[0]);
 
@@ -248,7 +225,7 @@ public final class MessagePane {
         // ensure window is visible (not iconified):
         App.showFrameToFront();
 
-        final int result = JOptionPane.showOptionDialog(getApplicationFrame(), message,
+        final int result = JOptionPane.showOptionDialog(getApplicationFrame(), getMessageComponent(message),
                 null, JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE, null, DIRECTORY_CREATE_OPTIONS, DIRECTORY_CREATE_OPTIONS[0]);
 
@@ -284,6 +261,9 @@ public final class MessagePane {
      * @return true if the user wants the file replaced, false otherwise.
      */
     public static ConfirmSaveChanges showConfirmSaveChanges(final String beforeMessage) {
+        final String message = "Do you want to save changes to this document before "
+                + beforeMessage
+                + "?\nIf you don't save, your changes will be definitively lost.\n\n";
 
         // ensure window is visible (not iconified):
         App.showFrameToFront();
@@ -291,7 +271,7 @@ public final class MessagePane {
         // If the data are NOT saved, handle it before loosing any results !!!
         // Ask the user if he wants to save modifications
         final int result = JOptionPane.showOptionDialog(getApplicationFrame(),
-                "Do you want to save changes to this document before " + beforeMessage + "?\nIf you don't save, your changes will be definitively lost.\n\n",
+                getMessageComponent(message),
                 null, JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE, null, SAVE_CHANGES_OPTIONS, SAVE_CHANGES_OPTIONS[0]);
 
@@ -322,15 +302,17 @@ public final class MessagePane {
      * @return true if the user wants the quit nevertheless, false otherwise.
      */
     public static boolean showConfirmKillHub() {
-
-        // ensure window is visible (not iconified):
-        App.showFrameToFront();
-
         final String applicationName = App.getSharedApplicationDataModel().getProgramName();
+        final String message = "Quitting '" 
+                + applicationName 
+                + "' will also terminate the shared SAMP hub,\npotentially preventing other applications interoperability until\nanother hub is started elsewhere.\n\n Proceed with quitting nevertheless ?";
+        
+        // ensure window is visible (not iconified):
+        App.showFrameToFront();        
 
         // Ask the user if he wants to kill hub
         final int result = JOptionPane.showOptionDialog(getApplicationFrame(),
-                "Quitting '" + applicationName + "' will also terminate the shared SAMP hub,\npotentially preventing other applications interoperability until\nanother hub is started elsewhere.\n\n Proceed with quitting nevertheless ?",
+                getMessageComponent(message),
                 null, JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE, null, KILL_HUB_OPTIONS, KILL_HUB_OPTIONS[0]);
 
@@ -361,7 +343,7 @@ public final class MessagePane {
         // ensure window is visible (not iconified):
         App.showFrameToFront();
 
-        final int answer = JOptionPane.showConfirmDialog(getParent(parentComponent), message);
+        final int answer = JOptionPane.showConfirmDialog(getParent(parentComponent), getMessageComponent(message));
 
         return answer == JOptionPane.YES_OPTION;
     }
@@ -386,6 +368,43 @@ public final class MessagePane {
      */
     private static JFrame getApplicationFrame() {
         return App.getFrame();
+    }
+    
+    
+    /** 
+     * Return the smallest component that would display given message in a dialog frame. 
+     * If the message is too big, one limited size scrollpane is used for display.
+     * @param message string that will be wrapped if too long
+     * @return the component which can be given to JOptionPane methods.
+     */
+    private static Component getMessageComponent(String message){
+        final JTextArea textArea = new JTextArea(message);
+
+        // Sizing
+        // add MARGIN to the textArea to avoid scrollPane borders when the size is near to the limit
+        final int textAreaWidth = textArea.getMinimumSize().width+MARGIN;
+        final int textAreaHeight = textArea.getMinimumSize().height+MARGIN;         
+        final int finalHeight = Math.min(textAreaHeight, MAXIMUM_HEIGHT);
+        final int finalWidth = Math.min(textAreaHeight, MAXIMUM_WIDTH);
+        final Dimension dims = new Dimension(finalWidth, finalHeight);
+        final JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setMaximumSize(dims);
+        scrollPane.setPreferredSize(dims);
+        
+        // Show scrollpane only when needed        
+        final boolean textAreaBackgroundShouldBeOpaque = (textAreaWidth > finalWidth) || (textAreaHeight > finalHeight);
+        textArea.setOpaque(textAreaBackgroundShouldBeOpaque);
+        scrollPane.setOpaque(textAreaBackgroundShouldBeOpaque);
+        scrollPane.getViewport().setOpaque(textAreaBackgroundShouldBeOpaque);        
+        if (!textAreaBackgroundShouldBeOpaque) {
+            scrollPane.setBorder(null);
+        }       
+
+        textArea.setEditable(false);
+        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+
+        return scrollPane;
     }
 
     public static void main(String[] args) {

@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 public final class MessagePane {
 
     // Constants
-    private static final int FIXED_WIDTH = 600;
-    private static final int MINIMUM_HEIGHT = 600;    
+    private static final int FIXED_WIDTH = 450;
+    private static final int MINIMUM_HEIGHT = 600;
     private static final int MARGIN = 35;
 
     /** Logger */

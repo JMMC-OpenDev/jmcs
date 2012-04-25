@@ -148,7 +148,8 @@ public final class MessagePane {
 
         // Sizing
         final int textAreaWidth = textArea.getMinimumSize().width;
-        final int textAreaHeight = (int) (textArea.getMinimumSize().height+MARGIN); 
+        // add MARGIN to the textArea to avoid scrollPane borders when the size is near to the limit
+        final int textAreaHeight = textArea.getMinimumSize().height+MARGIN;         
         final int finalHeight = Math.min(textAreaHeight, MINIMUM_HEIGHT);
         final Dimension dims = new Dimension(FIXED_WIDTH, finalHeight);
         final JScrollPane scrollPane = new JScrollPane(textArea);

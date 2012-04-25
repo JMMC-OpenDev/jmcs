@@ -20,6 +20,7 @@
     <ClasspathPart type="bin-class">{JMCS_LIB}jaxb-impl.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}jcl-over-slf4j-1.6.4.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}jhall.jar</ClasspathPart>
+    <ClasspathPart type="bin-class">{JMCS_LIB}jide-oss-3.3.7.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}jsamp-1.3-2.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}jsr173_1.0_api.jar</ClasspathPart>
     <ClasspathPart type="bin-class">{JMCS_LIB}jul-to-slf4j-1.6.4.jar</ClasspathPart>

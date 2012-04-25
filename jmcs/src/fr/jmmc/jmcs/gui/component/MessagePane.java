@@ -22,8 +22,10 @@ import org.slf4j.LoggerFactory;
 public final class MessagePane {
 
     // Constants
-    private static final int FIXED_WIDTH = 400;
-    private static final int MINIMUM_HEIGHT = 70;
+    private static final int FIXED_WIDTH = 600;
+    private static final int MINIMUM_HEIGHT = 600;    
+    private static final int MARGIN = 35;
+
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(MessagePane.class.getName());
     /** default title for error messages */
@@ -146,21 +148,21 @@ public final class MessagePane {
 
         // Sizing
         final int textAreaWidth = textArea.getMinimumSize().width;
-        final int textAreaHeight = textArea.getMinimumSize().height;
+        final int textAreaHeight = (int) (textArea.getMinimumSize().height+MARGIN); 
         final int finalHeight = Math.min(textAreaHeight, MINIMUM_HEIGHT);
         final Dimension dims = new Dimension(FIXED_WIDTH, finalHeight);
         final JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setMaximumSize(dims);
         scrollPane.setPreferredSize(dims);
-
-        // Show scrollpane only when needed
+        
+        // Show scrollpane only when needed        
         final boolean textAreaBackgroundShouldBeOpaque = (textAreaWidth > FIXED_WIDTH) || (textAreaHeight > finalHeight);
         textArea.setOpaque(textAreaBackgroundShouldBeOpaque);
         scrollPane.setOpaque(textAreaBackgroundShouldBeOpaque);
-        scrollPane.getViewport().setOpaque(textAreaBackgroundShouldBeOpaque);
+        scrollPane.getViewport().setOpaque(textAreaBackgroundShouldBeOpaque);        
         if (!textAreaBackgroundShouldBeOpaque) {
             scrollPane.setBorder(null);
-        }
+        }       
 
         textArea.setEditable(false);
         textArea.setWrapStyleWord(true);

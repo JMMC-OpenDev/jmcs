@@ -90,7 +90,8 @@ public final class GenericFileFilter extends FileFilter implements FilenameFilte
             if (!currentFile.isFile()) {
                 _logger.trace("Accepting non-regular file '{}'.", fileName);
 
-                return true; // Accept it to ensure navigation through directory and so
+                // Accept it to ensure navigation through directory and so
+                return true; 
             }
 
             // If the file has no extension

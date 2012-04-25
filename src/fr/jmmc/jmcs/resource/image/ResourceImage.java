@@ -12,10 +12,12 @@ import javax.swing.ImageIcon;
  */
 public enum ResourceImage {
 
+    JMMC_FAVICON("/fr/jmmc/jmcs/resource/favicon.png"),
     STATUS_HISTORY("/fr/jmmc/jmcs/resource/script-start.png"), // http://www.iconseeker.com/search-icon/aspnet/script-start.html### by http://www.aspneticons.com/ (Creative Commons Attribution 3.0 License)
     HELP_ICON("/fr/jmmc/jmcs/resource/help.png"),
-    JMMC_FAVICON("/fr/jmmc/jmcs/resource/favicon.png"),
-    WARNING_ICON("/fr/jmmc/aspro/gui/icons/dialog-warning.png");
+    WARNING_ICON("/fr/jmmc/aspro/gui/icons/dialog-warning.png"),
+    UP_ARROW("/fr/jmmc/jmcs/resource/uparrow.png"),
+    DOWN_ARROW("/fr/jmmc/jmcs/resource/downarrow.png");
     /** the preferenced value identifying token */
     private final ImageIcon _icon;
 

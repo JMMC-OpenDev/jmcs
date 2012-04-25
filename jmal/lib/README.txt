@@ -15,7 +15,3 @@ Runtime Libraries (JNLP) are described in the following files :
 -rw-r--r--. 1 bourgesl laogsite 581945  7 sept.  2011 colt.jar
 -rw-r--r--. 1 bourgesl laogsite  34234  7 sept.  2011 sptype.jar
 
-
-Deprecated libraries to be removed ASAP (all JMMC applications must be updated in production before removal):
--rw-r--r--. 1 bourgesl laogsite 988514 26 févr.  2011 commons-math-2.2.jar
-

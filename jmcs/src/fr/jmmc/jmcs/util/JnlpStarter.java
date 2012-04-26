@@ -85,6 +85,22 @@ public final class JnlpStarter {
         return jobContext.getId();
     }
 
+    /** Start Java WebStart viewer */
+    public static void launchJavaWebStartViewer() {
+
+        _logger.info("launch 'javaws -viewer'");
+
+        // create the execution context without log file:
+        final RootContext jobContext = LocalLauncher.prepareMainJob(APP_NAME, USER_NAME, FileUtils.getTempDirPath(), null);
+
+        // command line: 'javaws -viewer'
+        LocalLauncher.prepareChildJob(jobContext, TASK_NAME, new String[]{JAVAWS_CMD, "-viewer"});
+
+        // puts the job in the job queue :
+        // can throw IllegalStateException if job not queued :
+        LocalLauncher.startJob(jobContext, new EmptyJobListener());
+    }
+
     /**
      * Return the flag to execute javaws with -verbose option
      * @return flag to execute javaws with -verbose option

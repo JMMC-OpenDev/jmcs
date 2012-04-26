@@ -19,7 +19,7 @@ public enum ResourceImage {
     UP_ARROW("up_arrow.png"),
     DOWN_ARROW("down_arrow.png");
     /** Common resource directory containing icon files */
-    private final static String IMAGE_RESOURCE_COMMON_PATH = "/fr/jmmc/jmcs/resource/image/";
+    private final static String IMAGE_RESOURCE_COMMON_PATH = "fr/jmmc/jmcs/resource/image/";
     /** Loaded icon resource */
     private final ImageIcon _icon;
 

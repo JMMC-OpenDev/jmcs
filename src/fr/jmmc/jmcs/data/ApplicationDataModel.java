@@ -148,7 +148,7 @@ public class ApplicationDataModel {
                 _releaseNotesLink = _applicationDataModel.getReleaselink();
             }
         } else { // If no 'company' data, assume we are in the JMMC context
-            _companyLogoFileName = "/fr/jmmc/jmcs/resource/image/jmmc_logo.png";
+            _companyLogoFileName = "fr/jmmc/jmcs/resource/image/jmmc_logo.png";
             _mainWebPageURL = "http://www.jmmc.fr/";
             _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
             _userSupportUrl = "http://www.jmmc.fr/support.htm";

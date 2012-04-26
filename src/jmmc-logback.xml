@@ -56,6 +56,9 @@
     <logger name="org.apache.commons.httpclient" level="INFO"/>
     <logger name="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager" level="INFO"/>
     <logger name="httpclient" level="INFO"/>
+    
+    <!-- JIDE -->
+    <logger name="com.jidesoft" level="INFO"/>
 
 
     <!-- disable JDK loggers -->
@@ -81,7 +84,7 @@
     <!-- Root Logger -->
     <!-- Note: level must be INFO in production to avoid performance issues with JUL -->
     <!-- <root level="DEBUG"> -->
-    <root level="TRACE">
+    <root level="INFO">
         <appender-ref ref="APPLOG" />
         <appender-ref ref="STDOUT" />
     </root>

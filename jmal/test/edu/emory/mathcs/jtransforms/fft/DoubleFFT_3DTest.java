@@ -42,9 +42,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D;
-import edu.emory.mathcs.jtransforms.fft.DoubleFFT_2D;
-import edu.emory.mathcs.jtransforms.fft.DoubleFFT_3D;
 import edu.emory.mathcs.utils.ConcurrencyUtils;
 
 /**

@@ -34,6 +34,7 @@
 
 package edu.emory.mathcs.jtransforms.fft;
 
+import edu.emory.mathcs.jtransforms.fft.FloatFFT_1D;
 import java.util.concurrent.Future;
 
 import edu.emory.mathcs.utils.ConcurrencyUtils;

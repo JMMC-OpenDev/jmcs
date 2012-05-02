@@ -37,7 +37,9 @@ public enum MimeType {
     /** MimeType associated to HTML format */
     HTML("text/html", "HTML", "html"),
     /** MimeType associated to Text files */
-    TEXT_PLAIN("text/plain", "Text files", "txt");
+    PLAIN_TEXT("text/plain", "Text files", "txt"),
+    /** MimeType associated to URL */
+    URL("text/plain", "URL", "url");
 
     /**
      * Custom constructor
@@ -130,5 +132,21 @@ public enum MimeType {
             return new File(file.getParentFile(), fileNamePart + '.' + getExtension());
         }
         return file;
+    }
+
+    @Override
+    public String toString() {
+        return _mimeType + ", matching " + _fullDescription + " file extension(s).";
+    }
+
+    /**
+     * For test and debug purpose only.
+     * @param args unused
+     */
+    public static void main(String[] args) {
+        // For each catalog in the enum
+        for (MimeType mimeType : MimeType.values()) {
+            System.out.println("MimeType '" + mimeType._name + "' = '" + mimeType.toString() + "'.");
+        }
     }
 }

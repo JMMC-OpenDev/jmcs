@@ -15,6 +15,8 @@ public enum ResourceImage {
     JMMC_FAVICON("jmmc_favicon.png"),
     STATUS_HISTORY("script_start.png"), // http://www.iconseeker.com/search-icon/aspnet/script-start.html### by http://www.aspneticons.com/ (Creative Commons Attribution 3.0 License)
     HELP_ICON("help_icon.png"),
+    INFO_ICON("info_icon.png"),
+    DISABLED_INFO_ICON("disabled_info_icon.png"),
     WARNING_ICON("warning_icon.png"),
     UP_ARROW("up_arrow.png"),
     DOWN_ARROW("down_arrow.png");

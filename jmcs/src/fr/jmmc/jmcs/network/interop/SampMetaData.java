@@ -30,6 +30,8 @@ public enum SampMetaData {
     JNLP_URL("x-samp.jnlp.url", "JNLP", MimeType.URL),
     /** Get the application beta JNLP URL */
     JNLP_BETA_URL("x-samp.jnlp.beta.url", "Beta JNLP", MimeType.URL),
+    /** Get the web application URL */
+    WEBAPP_URL("x-samp.webapp.url", "Web App", MimeType.URL),
     /** Get the application home page URL */
     HOMEPAGE_URL("x-samp.homepage.url", "Homepage", MimeType.URL),
     /** Get the application release notes URL */

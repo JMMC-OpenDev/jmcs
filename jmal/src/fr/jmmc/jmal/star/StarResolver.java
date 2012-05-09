@@ -9,16 +9,10 @@ import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import fr.jmmc.jmcs.util.UrlUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-
 import java.text.ParseException;
-
-import java.util.Observable;
-import java.util.Observer;
-import java.util.StringTokenizer;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +25,10 @@ public final class StarResolver {
 
     /** Logger - register on the current class to collect local logs */
     private static final Logger _logger = LoggerFactory.getLogger(StarResolver.class.getName());
-    /** Simbad main URL */
-    public static final String _simbadBaseURL = "http://simbad.u-strasbg.fr/simbad/sim-script?script=";
+    /** The collection of cds mirrors (inited into getMirrors())*/
+    public static HashMap<String, String> _simbadMirrors = null;
+    /** Simbad main URL (selected using setSimbadMirror())*/
+    public static String _simbadBaseURL = null;
     /** comma separator */
     public static final String SEPARATOR_COMMA = ",";
     /** semicolon separator */
@@ -87,6 +83,43 @@ public final class StarResolver {
 
         // Launch query :
         _resolveStarThread.start();
+    }
+
+    /**
+     * Get the list of available mirrors.
+     * @return one set of available mirror names.
+     */
+    public static Set<String> getSimbadMirrors() {
+        if (_simbadMirrors == null) {
+            _simbadMirrors = new HashMap<String, String>();
+            _simbadMirrors.put("SIMBAD Strasbourg FR", "http://simbad.u-strasbg.fr/simbad/sim-script?script=");
+            _simbadMirrors.put("SIMBAD Harvard US", "http://simbad.harvard.edu/simbad/sim-script?script=");
+        }
+
+        return _simbadMirrors.keySet();
+    }
+
+    /**
+     * Choose one mirror giving one name choosen from available ones.
+     * 
+     * @param mirrorName value choosen from getSimbadMirrors(). 
+     * @return the url associated to the give name.
+     */
+    public static String setSimbadMirror(String mirrorName) {
+        _simbadBaseURL = _simbadMirrors.get(mirrorName);
+        // prevent bad cases for bad mirror names
+        if (_simbadBaseURL == null) {
+            _simbadBaseURL = _simbadMirrors.values().iterator().next();
+        }
+        return _simbadBaseURL;
+    }
+
+    private static String getSimbadUrl() {
+        if (_simbadBaseURL == null) {
+            setSimbadMirror(getSimbadMirrors().iterator().next());
+        }
+
+        return _simbadBaseURL;
     }
 
     /**
@@ -212,7 +245,7 @@ public final class StarResolver {
             try {
                 // Forge the URL int UTF8 unicode charset
                 final String encodedScript = UrlUtils.encode(simbadScript);
-                final String simbadURL = _simbadBaseURL + encodedScript;
+                final String simbadURL = getSimbadUrl() + encodedScript;
 
                 _logger.debug("Querying CDS Simbad at {}", simbadURL);
 
@@ -258,9 +291,9 @@ public final class StarResolver {
             if (_result.startsWith("::error")) {
                 // sample error (name not found):
                 /*
-                ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                 
-                [3] Identifier not found in the database : NAME TEST
+                 [3] Identifier not found in the database : NAME TEST
                  */
                 // try to get error message:
                 String errorMessage = null;

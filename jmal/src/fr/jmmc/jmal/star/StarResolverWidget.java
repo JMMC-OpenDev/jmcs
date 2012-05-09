@@ -9,24 +9,29 @@ import fr.jmmc.jmcs.gui.component.SearchField;
 import fr.jmmc.jmcs.gui.component.StatusBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
-
+import java.util.Set;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 /**
  * Store informations relative to a star.
  * 
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
-public class StarResolverWidget extends SearchField implements Observer {
+public class StarResolverWidget extends SearchField implements Observer, MouseListener {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Container to store retrieved star properties */
     private final Star _star;
+    /** Menu to choose simbad mirror */
+    private javax.swing.JPopupMenu mirrorPopupMenu = null;
 
     /**
      * Creates a new StarResolverWidget object.
@@ -65,6 +70,9 @@ public class StarResolverWidget extends SearchField implements Observer {
                 }
             }
         });
+
+        // to support popup menu
+        this.addMouseListener(this);
     }
 
     /**
@@ -98,13 +106,67 @@ public class StarResolverWidget extends SearchField implements Observer {
 
                 StatusBar.show("CDS Simbad star resolution failed.");
                 break;
-                
+
             default:
                 return;
         }
 
         // Enable search field after request processing done :
         setEnabled(true);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        checkPopupMenu(e);
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        checkPopupMenu(e);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        checkPopupMenu(e);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        checkPopupMenu(e);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        checkPopupMenu(e);
+    }
+
+    private void checkPopupMenu(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            // init mirrorPopup menu on first display
+            if (mirrorPopupMenu == null) {
+                mirrorPopupMenu = new JPopupMenu();
+                // Add title 
+                JMenuItem menuItem = new JMenuItem("Choose Simbad Location:");
+                menuItem.setEnabled(false);
+                mirrorPopupMenu.add(menuItem);
+                // And populate with StarResolver mirrors
+                Set<String> mirrors = StarResolver.getSimbadMirrors();
+                for (final String mirror : mirrors) {
+                    menuItem = new JMenuItem(mirror);
+                    menuItem.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            StarResolver.setSimbadMirror(mirror);
+                        }
+                    });
+                    mirrorPopupMenu.add(menuItem);
+                }
+            }
+
+            mirrorPopupMenu.validate();
+            mirrorPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+        }
     }
 
     /**

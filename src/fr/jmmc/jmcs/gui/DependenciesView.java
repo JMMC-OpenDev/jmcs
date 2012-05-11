@@ -48,7 +48,8 @@ public class DependenciesView {
         // Get jMCS data
         final ApplicationDataModel data = App.getJMcsApplicationDataModel();
         final String jMcsName = data.getProgramName();
-        final String jmmcLogoURL = getClass().getResource(data.getCompanyLogoResourcePath()).toString();
+        final String jmmcLogoResourcePath = data.getCompanyLogoResourcePath();
+        final String jmmcLogoURL = FileUtils.getResource(jmmcLogoResourcePath).toString();
         final String jmmcUrl = data.getMainWebPageURL();
         final String jmmcName = data.getShortCompanyName();
         final String jmmcLongName = data.getLegalCompanyName();

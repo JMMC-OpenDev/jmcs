@@ -190,7 +190,7 @@ function getProjectDesc()
             echo "oiTools/${version}/oitools ASPRO2/${version}/aspro" ;;
         AppLauncher )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs "
-            echo AppLauncher/${version}/{smpins,smptest,smprsc,smprun} ;;
+            echo AppLauncher/${version}/{smptest,smprsc,smprun} ;;
         LITpro ) 
             echo -n "${JMMC_SVNROOT} "
             echo -n MCS/${version}/{jmcs,jmal}" "

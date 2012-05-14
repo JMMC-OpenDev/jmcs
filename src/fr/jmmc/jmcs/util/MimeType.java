@@ -20,8 +20,8 @@ public enum MimeType {
     SEARCHCAL_CALIBRATORLIST("application/x-searchcal+votable+xml", "SearchCal Calibrator List", "scvot"),
     /** MimeType associated to Observation settings */
     ASPRO_OBSERVATION("application/x-aspro+xml", "Aspro Observation Settings", "asprox"),
-    /** MimeType associated to xml LITpro settings */
-    LITPRO_SETTINGS("application/vnd.jmmc.litpro+xml", "LITpro xml Settings", "litprox", "xml"),
+    /** MimeType associated to XML LITpro settings */
+    LITPRO_SETTINGS("application/vnd.jmmc.litpro+xml", "LITpro XML Settings", "litprox", "xml"),
     /** MimeType associated to P2PP Observing blocks */
     OBX("application/obx", "Observing Blocks", "obx"),
     /** MimeType associated to OIFITS format */

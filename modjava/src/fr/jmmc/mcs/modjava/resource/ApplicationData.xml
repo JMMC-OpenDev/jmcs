@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ApplicationData link="http://www.myProgram.com/">
+<ApplicationData link="http://www.myProgram.com/" faqlink="http://www.jmmc.fr/AppLauncher/faq" rsslink="http://www.jmmc.fr/applauncher/applauncher.rss" releaselink="http://www.jmmc.fr/applauncher/releasenotes.htm">
     <company>
 <!--
         <short_name>JMMC</short_name>

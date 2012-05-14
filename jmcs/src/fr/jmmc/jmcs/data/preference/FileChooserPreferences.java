@@ -56,9 +56,8 @@ public final class FileChooserPreferences extends Preferences {
 
         final String defaultDirectory = System.getProperty("user.home");
 
-        final MimeType[] values = MimeType.values();
-        for (MimeType mimeType : values) {
-            setDefaultPreference(mimeType.toString(), defaultDirectory);
+        for (MimeType mimeType : MimeType.values()) {
+            setDefaultPreference(mimeType.getId(), defaultDirectory);
         }
     }
 
@@ -107,7 +106,7 @@ public final class FileChooserPreferences extends Preferences {
      * @return last directory used or user home
      */
     public static String getLastDirectoryForMimeTypeAsPath(final MimeType mimeType) {
-        return getInstance().getPreference(mimeType.toString());
+        return getInstance().getPreference(mimeType.getId());
     }
 
     /**
@@ -120,7 +119,7 @@ public final class FileChooserPreferences extends Preferences {
             final String oldPath = getLastDirectoryForMimeTypeAsPath(mimeType);
             if (!path.equals(oldPath)) {
                 try {
-                    getInstance().setPreference(mimeType.toString(), path);
+                    getInstance().setPreference(mimeType.getId(), path);
                     getInstance().saveToFile();
                 } catch (PreferencesException pe) {
                     logger.warn("Saving FilePreferences failure:", pe);

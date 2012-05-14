@@ -5,57 +5,51 @@ package fr.jmmc.jmcs.util;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * List the mime types that are used by multiples applications using jMCS.
- * It is also acceptable to define here the mime types specific to one
+ * Mime type registry that are used by multiples applications using jMCS.
+ * It is also possible to register the mime types specific to one
  * application.
  * 
- * @author Guillaume MELLA, Laurent BOURGES.
+ * @author Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
-public enum MimeType {
+public final class MimeType {
 
+    /** Mime type registry keyed by identifier ordered by insertion order */
+    private final static Map<String, MimeType> _registry = new LinkedHashMap<String, MimeType>();
+
+    /* Predefined Mime types */
     /** MimeType associated to SearchCal calibrator list */
-    SEARCHCAL_CALIBRATORLIST("application/x-searchcal+votable+xml", "SearchCal Calibrator List", "scvot"),
+    public final static MimeType SEARCHCAL_CALIBRATORLIST = MimeType.add("SEARCHCAL_CALIBRATORLIST", "application/x-searchcal+votable+xml", "SearchCal Calibrator List", "scvot");
     /** MimeType associated to Observation settings */
-    ASPRO_OBSERVATION("application/x-aspro+xml", "Aspro Observation Settings", "asprox"),
+    public final static MimeType ASPRO_OBSERVATION = MimeType.add("ASPRO_OBSERVATION", "application/x-aspro+xml", "Aspro Observation Settings", "asprox");
     /** MimeType associated to XML LITpro settings */
-    LITPRO_SETTINGS("application/vnd.jmmc.litpro+xml", "LITpro XML Settings", "litprox", "xml"),
+    public final static MimeType LITPRO_SETTINGS = MimeType.add("LITPRO_SETTINGS", "application/vnd.jmmc.litpro+xml", "LITpro XML Settings", "litprox", "xml");
     /** MimeType associated to P2PP Observing blocks */
-    OBX("application/obx", "Observing Blocks", "obx"),
+    public final static MimeType OBX = MimeType.add("OBX", "application/obx", "Observing Blocks", "obx");
     /** MimeType associated to OIFITS format */
-    OIFITS("application/oifits", "Optical Interferometry FITS", "fits", "oifits"),
+    public final static MimeType OIFITS = MimeType.add("OIFITS", "application/oifits", "Optical Interferometry FITS", "fits", "oifits");
     /** MimeType associated to FITS format */
-    FITS_IMAGE("application/fits", "FITS Image", "fits", "fits.gz"),
+    public final static MimeType FITS_IMAGE = MimeType.add("FITS_IMAGE", "application/fits", "FITS Image", "fits", "fits.gz");
     /** MimeType associated to PDF documents */
-    PDF("application/pdf", "Portable Document Format", "pdf"),
+    public final static MimeType PDF = MimeType.add("PDF", "application/pdf", "Portable Document Format", "pdf");
     /** MimeType associated to VEGA Star Lists */
-    STAR_LIST("text/plain", "Star Lists", "txt"),
+    public final static MimeType STAR_LIST = MimeType.add("STAR_LIST", "text/plain", "Star Lists", "txt");
     /** MimeType associated to Character-Separated Values format */
-    CSV("text/csv", "CSV", "txt"),
+    public final static MimeType CSV = MimeType.add("CSV", "text/csv", "CSV", "txt");
     /** MimeType associated to HTML format */
-    HTML("text/html", "HTML", "html"),
+    public final static MimeType HTML = MimeType.add("HTML", "text/html", "HTML", "html");
     /** MimeType associated to Text files */
-    PLAIN_TEXT("text/plain", "Text files", "txt"),
+    public final static MimeType PLAIN_TEXT = MimeType.add("PLAIN_TEXT", "text/plain", "Text files", "txt");
     /** MimeType associated to URL */
-    URL("text/plain", "URL", "url");
-
-    /**
-     * Custom constructor
-     * @param mimeType mime type name
-     * @param name short description
-     * @param extensions accepted extensions
-     */
-    private MimeType(final String mimeType, final String name, final String... extensions) {
-        _mimeType = mimeType;
-        _name = name;
-        _fullDescription = name + ' ' + Arrays.toString(extensions);
-        _extensions = Arrays.asList(extensions);
-        FileFilterRepository.getInstance().put(mimeType, extensions, this._fullDescription);
-    }
+    public final static MimeType URL = MimeType.add("URL", "text/plain", "URL", "url");
 
     /* members */
+    /** mime-type identifier */
+    private final String _id;
     /** mime-type */
     private final String _mimeType;
     /** mime-type name */
@@ -66,7 +60,76 @@ public enum MimeType {
     private final List<String> _extensions;
 
     /**
-     * Return the mime-type name
+     * Factory pattern: add this mime type in the Mime type registry
+     * @param identifier mime type identifier like "PLAIN_TEXT"
+     * @param mimeType mime type as string like "text/plain"
+     * @param name short description like "Text files"
+     * @param extensions accepted extensions "txt"
+     * @return new mime type
+     * @throws IllegalArgumentException if the mime type is already present
+     */
+    public static MimeType add(final String identifier, final String mimeType, final String name, final String... extensions) {
+        if (_registry.containsKey(identifier)) {
+            throw new IllegalArgumentException("MimeType[" + identifier + "] already registered !");
+        }
+
+        final MimeType mimeTypeEntry = new MimeType(identifier, mimeType, name, extensions);
+        _registry.put(identifier, mimeTypeEntry);
+        FileFilterRepository.getInstance().put(identifier, extensions, mimeTypeEntry.getDescription());
+
+        return mimeTypeEntry;
+    }
+
+    /**
+     * @return the mime type associated to the given mime type identifier
+     * @param identifier mime type identifier
+     * @throws IllegalArgumentException if the mime type is NOT present
+     */
+    public static MimeType get(final String identifier) {
+        final MimeType mimeTypeEntry = _registry.get(identifier);
+
+        if (mimeTypeEntry == null) {
+            throw new IllegalArgumentException("MimeType[" + identifier + "] not registered !");
+        }
+
+        return mimeTypeEntry;
+    }
+
+    /**
+     * @return registered mime types as array
+     */
+    public static MimeType[] values() {
+        final int len = _registry.size();
+
+        final MimeType[] values = new MimeType[len];
+        _registry.values().toArray(values);
+
+        return values;
+    }
+
+    /**
+     * Private constructor
+     * @param identifier mime type identifier
+     * @param mimeType mime type name
+     * @param name short description
+     * @param extensions accepted extensions
+     */
+    private MimeType(final String identifier, final String mimeType, final String name, final String... extensions) {
+        _id = identifier;
+        _mimeType = mimeType;
+        _name = name;
+        _fullDescription = name + ' ' + Arrays.toString(extensions);
+        _extensions = Arrays.asList(extensions);
+    }
+
+    /**
+     * @return mime-type identifier
+     */
+    public String getId() {
+        return _id;
+    }
+
+    /**
      * @return mime-type name
      */
     public String getName() {
@@ -74,7 +137,6 @@ public enum MimeType {
     }
 
     /**
-     * Return the short mime-type description
      * @return short mime-type description
      */
     public String getDescription() {
@@ -82,7 +144,6 @@ public enum MimeType {
     }
 
     /**
-     * Return all accepted extensions
      * @return accepted extensions as list
      */
     public List<String> getExtensions() {
@@ -90,7 +151,6 @@ public enum MimeType {
     }
 
     /** 
-     * Return the first accepted extension
      * @return first accepted extension
      */
     public String getExtension() {
@@ -101,7 +161,6 @@ public enum MimeType {
     }
 
     /**
-     * Return the mime-type
      * @return mime-type
      */
     public String getMimeType() {
@@ -109,12 +168,10 @@ public enum MimeType {
     }
 
     /**
-     * Return the last registered file filter for the given mime type.
-     *
      * @return the retrieved registered file filter.
      */
     public GenericFileFilter getFileFilter() {
-        return FileFilterRepository.get(this);
+        return FileFilterRepository.get(getId());
     }
 
     /**
@@ -136,7 +193,7 @@ public enum MimeType {
 
     @Override
     public String toString() {
-        return _mimeType + ", matching " + _fullDescription + " file extension(s).";
+        return _mimeType + ", matching " + _fullDescription + " file extension(s)";
     }
 
     /**
@@ -146,7 +203,7 @@ public enum MimeType {
     public static void main(String[] args) {
         // For each catalog in the enum
         for (MimeType mimeType : MimeType.values()) {
-            System.out.println("MimeType '" + mimeType._name + "' = '" + mimeType.toString() + "'.");
+            System.out.println("MimeType '" + mimeType.getName() + "' = '" + mimeType.toString() + "'.");
         }
     }
 }

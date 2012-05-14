@@ -21,11 +21,8 @@ public final class FileFilterRepository {
     private static final Logger _logger = LoggerFactory.getLogger(FileFilterRepository.class.getName());
     /** Singleton instance */
     private static FileFilterRepository _instance = null;
-    /**
-     * Hashtable to associate string keys like
-     * "application-x/scvot-file" to FileFilterRepository instances.
-     */
-    private static final HashMap<String, GenericFileFilter> _repository = new HashMap<String, GenericFileFilter>(16);
+    /** Hashtable to associate mime type identifier keys to FileFilterRepository instances */
+    private static final HashMap<Object, GenericFileFilter> _repository = new HashMap<Object, GenericFileFilter>(16);
 
     /** Hidden constructor */
     private FileFilterRepository() {
@@ -50,13 +47,13 @@ public final class FileFilterRepository {
     /**
      * Register a file filter in the repository.
      *
-     * @param mimeType the mime type of the file, like "application-x/scvot-file".
+     * @param mimeType the mime type identifier of the file.
      * @param fileExtension the file extensions associated to the mime type.
      * @param description the humanly readable description for the mime type.
      *
      * @return the previous registered file filter, null otherwise.
      */
-    public GenericFileFilter put(final String mimeType, final String fileExtension, final String description) {
+    public GenericFileFilter put(final Object mimeType, final String fileExtension, final String description) {
         if (_logger.isDebugEnabled()) {
             _logger.debug("FileFilterRepository - put(mimeType = '{}', fileExtension = '{}', description = '{}')",
                     new Object[]{mimeType, fileExtension, description});
@@ -68,13 +65,13 @@ public final class FileFilterRepository {
     /**
      * Register a file filter in the repository.
      *
-     * @param mimeType the mime type of the file, like "application-x/scvot-file".
+     * @param mimeType the mime type identifier of the file.
      * @param fileExtensions an array of file extensions associated to the mime type.
      * @param description the humanly readable description for the mime type.
      *
      * @return the previous registered file filter, null otherwise.
      */
-    public GenericFileFilter put(final String mimeType, final String[] fileExtensions, final String description) {
+    public GenericFileFilter put(final Object mimeType, final String[] fileExtensions, final String description) {
         if (_logger.isDebugEnabled()) {
             _logger.debug("FileFilterRepository - put(mimeType = '{}', fileExtensions[] = '{}', description = '{}')",
                     new Object[]{mimeType, Arrays.toString(fileExtensions), description});
@@ -101,11 +98,11 @@ public final class FileFilterRepository {
     /**
      * Return the previously registered file filter for the given mime type.
      *
-     * @param mimeType the mime type of the file filter, like "application-x/scvot-file".
+     * @param mimeType the mime type identifier of the file.
      *
      * @return the retrieved registered file filter, null otherwise.
      */
-    public static GenericFileFilter get(final String mimeType) {
+    public static GenericFileFilter get(final Object mimeType) {
         final GenericFileFilter retrievedFilter = _repository.get(mimeType);
 
         if (retrievedFilter == null) {
@@ -115,17 +112,6 @@ public final class FileFilterRepository {
         }
 
         return retrievedFilter;
-    }
-
-    /**
-     * Return the previously registered file filter for the given mime type as enum.
-     *
-     * @param mimeType MimeType enum value
-     *
-     * @return the retrieved registered file filter, null otherwise.
-     */
-    public static GenericFileFilter get(final MimeType mimeType) {
-        return get(mimeType.getMimeType());
     }
 
     /**

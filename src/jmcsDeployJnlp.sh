@@ -313,16 +313,19 @@ EOF
             <xsl:variable name="changeSet" select=".//change[not(@type) or starts-with(@type,'CHANGE')] "/>
             <xsl:variable name="bugfixSet" select=".//change[starts-with(@type,'BUG')]"/>
             <xsl:if test="\$featureSet">
-              <li>Features:</li>
-              <ul><xsl:apply-templates select="\$featureSet"/></ul>
+              <li>Features:
+                <ul><xsl:apply-templates select="\$featureSet"/></ul>
+              </li>
             </xsl:if>
             <xsl:if test="\$changeSet">
-              <li>Changes:</li>
-              <ul><xsl:apply-templates select="\$changeSet"/></ul>
+              <li>Changes:
+                <ul><xsl:apply-templates select="\$changeSet"/></ul>
+              </li>
             </xsl:if>
             <xsl:if test="\$bugfixSet">
-              <li>Bug fixes:</li>
-              <ul><xsl:apply-templates select="\$bugfixSet"/></ul>
+              <li>Bug fixes:
+                <ul><xsl:apply-templates select="\$bugfixSet"/></ul>
+              </li>
             </xsl:if>
             </ul>
             <xsl:value-of select="']]>'" disable-output-escaping="yes"/>

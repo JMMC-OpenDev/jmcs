@@ -57,7 +57,9 @@ public final class SampManager {
     public static synchronized SampManager getInstance() {
         // DO NOT MODIFY !!!
         if (_instance == null) {
-            // _logger.error("SampManager getInstance()", new Throwable());
+            if (false) {
+                _logger.error("SampManager getInstance()", new Throwable());
+            }
             _instance = new SampManager();
         }
 
@@ -197,7 +199,6 @@ public final class SampManager {
             meta.put("affiliation.support", userSupportUrl);
         }
 
-        final String lowerCaseApplicationName = applicationName.toLowerCase();
         String authors = applicationDataModel.getAuthors();
         if (authors != null) {
             meta.put(SampMetaData.AUTHORS.id(), "Brought to you by " + authors);

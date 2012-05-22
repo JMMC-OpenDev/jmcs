@@ -717,11 +717,11 @@ public abstract class App {
                 // Initialize SampManager as needed by MainMenuBar:
                 SampManager.getInstance();
 
-                // Perform defered action initialization (SAMP-related)
-                _registrar.performDeferedInitialization();
-
-                // declare SAMP message handlers now as the application is almost ready:
+                // declare SAMP message handlers first:
                 declareInteroperability();
+
+                // Perform defered action initialization (SAMP-related actions)
+                _registrar.performDeferedInitialization();
 
                 // If running under Mac OS X
                 if (SystemUtils.IS_OS_MAC_OSX) {

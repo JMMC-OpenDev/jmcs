@@ -86,6 +86,19 @@ public final class MCSExceptionHandler {
     }
 
     /**
+     * Execute the exception handler with the given throwable
+     * @param th throwable (exception, error)
+     */
+    public static void runExceptionHandler(final Throwable th) {
+        final Thread.UncaughtExceptionHandler handler = getExceptionHandler();
+        if (handler != null) {
+            handler.uncaughtException(Thread.currentThread(), th);
+        } else {
+            _logger.debug("No UncaughtExceptionHandler defined !");
+        }
+    }
+
+    /**
      * Return the exception handler singleton
      * @return exception handler singleton or null if undefined
      */
@@ -190,7 +203,35 @@ public final class MCSExceptionHandler {
         if (e instanceof ThreadDeath) {
             return true;
         }
+        // ignore java.lang.ArrayIndexOutOfBoundsException: 1
+        // from apple.awt.CWindow.displayChanged(CWindow.java:924):
+        if (e instanceof ArrayIndexOutOfBoundsException) {
+            final StackTraceElement lastStack = getLastStackElement(e);
+            if (lastStack != null) {
+                if ("apple.awt.CWindow".equalsIgnoreCase(lastStack.getClassName())
+                        && "displayChanged".equalsIgnoreCase(lastStack.getMethodName())) {
+
+                    // log it anyway:
+                    _logger.info("Ignored apple exception: ", e);
+
+                    return true;
+                }
+            }
+        }
         return false;
+    }
+
+    /**
+     * Return the last stack element or null if undefined
+     * @param e exception to get its stack traces
+     * @return last stack element or null if undefined
+     */
+    private static StackTraceElement getLastStackElement(final Throwable e) {
+        final StackTraceElement[] stackElements = e.getStackTrace();
+        if (stackElements.length > 0) {
+            return stackElements[0];
+        }
+        return null;
     }
 
     /**

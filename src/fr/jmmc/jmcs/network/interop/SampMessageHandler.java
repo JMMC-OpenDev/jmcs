@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.network.interop;
 
+import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.Map;
 import org.astrogrid.samp.Message;
 import org.astrogrid.samp.client.AbstractMessageHandler;
@@ -29,9 +30,9 @@ public abstract class SampMessageHandler extends AbstractMessageHandler {
      */
     public SampMessageHandler(final String mType) {
         super(mType);
-
+        
         _mType = mType;
-
+        
         SampManager.registerCapability(this);
     }
 
@@ -67,9 +68,16 @@ public abstract class SampMessageHandler extends AbstractMessageHandler {
     public final Map<?, ?> processCall(final HubConnection connection, final String senderId, final Message message) throws SampException {
 
         // TODO: handle SampException to display any error message or at least in status bar ...
+        try {
+            this.processMessage(senderId, message);
+            
+        } catch (SampException se) {
+            throw se;
+        } catch (Throwable th) {
+            // TODO: only runtime exception ?
+            MCSExceptionHandler.runExceptionHandler(th);
+        }
         
-        this.processMessage(senderId, message);
-
         return null;
     }
 

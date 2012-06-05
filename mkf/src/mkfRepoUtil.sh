@@ -29,7 +29,7 @@ SCRIPTNAME=$(basename $0)
 # Print usage 
 function printUsage ()
 {
-    echo -e "Usage: $SCRIPTNAME [-h] [-v version] [-d outputDir] <info<.versions>|checkout|export|update|tag> <PROJECT> [... <PROJECT_N>]"
+    echo -e "Usage: $SCRIPTNAME [-h] [-v version] [-d outputDir] <info<.versions>|checkout|export|install|update|tag> <PROJECT> [... <PROJECT_N>]"
     echo -e "\t-h\tprint this help.";
     echo -e "\t-n\tdisplay svn command which is performed when this option is not set.";
     echo -e "\t-v <version>\tuse given version (default is development one) when retrieving sources or tagging.";
@@ -39,9 +39,9 @@ function printUsage ()
     echo -e "\t   info.versions : list versions present handled by the source code management.";
     echo -e "\t   checkout      : retrieve the modules of given projects.";
     echo -e "\t   export        : retrieve the modules of given projects without versionning files (packaging cases).";
+    echo -e "\t   install       : install the modules of given projects with tag given by -v option.";
     echo -e "\t   update        : update the modules of given projects.";
     echo -e "\t   tag           : tag the modules of given projects with tag given by -v option.";
-    echo -e "\t   install       : install the modules of given projects with tag given by -v option.";
     echo -e "\tPROJECTS :";
     echo -e "\t   ${supportedModules}";
     exit 1

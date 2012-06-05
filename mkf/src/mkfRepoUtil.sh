@@ -185,22 +185,17 @@ function getProjectDesc()
         AMBER  ) 
             echo "${JMMC_SVNROOT} AMBER/${version}/amdlib" ;;
         ASPRO2 )
-            echo -n "${JMMC_SVNROOT} "
-            echo -n MCS/${version}/{jmcs,jmal}" "
-            echo "oiTools/${version}/oitools ASPRO2/${version}/aspro" ;;
+            echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal oiTools/${version}/oitools ASPRO2/${version}/aspro" ;;
         AppLauncher )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs "
             echo AppLauncher/${version}/{smptest,smprsc,smprun} ;;
         LITpro ) 
-            echo -n "${JMMC_SVNROOT} "
-            echo -n MCS/${version}/{jmcs,jmal}" "
-            echo "oiTools/${version}/oitools LITpro/${version}/mfgui" ;;
+            echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal oiTools/${version}/oitools LITpro/${version}/mfgui" ;;
         MCS )
             echo -n "${JMMC_SVNROOT} "
             echo MCS/${version}/{mkf,mcscfg,tat,ctoo,mcs,log,err,misc,thrd,timlog,mth,fnd,misco,env,cmd,msg,sdb,evh,gwt,jmcs,jmal,modc,modcpp,modsh,modjava,testgui} ;;
         SearchCal ) 
-            echo -n "${JMMC_SVNROOT} "
-            echo -n MCS/${version}/{jmcs,jmal}" "
+            echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
             echo SearchCal/${version}/{simcli,alx,vobs,sclsvr,sclws,sclgui} ;;
         WISARD )
             echo "${JMMC_SVNROOT} WISARD/${version}/wisard" ;;

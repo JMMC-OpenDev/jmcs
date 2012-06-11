@@ -25,9 +25,9 @@ public final class StarResolver {
 
     /** Logger - register on the current class to collect local logs */
     private static final Logger _logger = LoggerFactory.getLogger(StarResolver.class.getName());
-    /** The collection of cds mirrors (inited into getMirrors())*/
+    /** The collection of CDS mirrors (initialized into getMirrors())*/
     public static HashMap<String, String> _simbadMirrors = null;
-    /** Simbad main URL (selected using setSimbadMirror())*/
+    /** SIMBADSIMBAD main URL (selected using setSimbadMirror())*/
     public static String _simbadBaseURL = null;
     /** comma separator */
     public static final String SEPARATOR_COMMA = ",";
@@ -46,13 +46,13 @@ public final class StarResolver {
      * incomplete data in case an error occurs during CDS querying
      */
     private final Star _newStarModel = new Star();
-    /** The thread executing the CDS Simbad query and parsing */
+    /** The thread executing the CDS SIMBAD query and parsing */
     private ResolveStarThread _resolveStarThread = null;
 
     /**
      * Constructor.
      *
-     * @param name the name of the satr to resolve.
+     * @param name the name of the star to resolve.
      * @param star the star to fulfill.
      */
     public StarResolver(final String name, final Star star) {
@@ -61,7 +61,7 @@ public final class StarResolver {
     }
 
     /**
-     * Asynchronously query CDS Simbad to retrieve a given star information according to its name.
+     * Asynchronously query CDS SIMBAD to retrieve a given star information according to its name.
      */
     public void resolve() {
         _logger.trace("StarResolver.resolve");
@@ -100,10 +100,10 @@ public final class StarResolver {
     }
 
     /**
-     * Choose one mirror giving one name choosen from available ones.
+     * Choose one mirror giving one name chosen from available ones.
      * 
-     * @param mirrorName value choosen from getSimbadMirrors(). 
-     * @return the url associated to the give name.
+     * @param mirrorName value chosen from getSimbadMirrors(). 
+     * @return the URL associated to the give name.
      */
     public static String setSimbadMirror(String mirrorName) {
         _simbadBaseURL = _simbadMirrors.get(mirrorName);
@@ -166,7 +166,7 @@ public final class StarResolver {
         }
 
         /**
-         * Set an error message from CDS Simbad query execution, and notify
+         * Set an error message from CDS SIMBAD query execution, and notify
          * registered observers.
          * @param message the error message to store.
          */
@@ -175,7 +175,7 @@ public final class StarResolver {
         }
 
         /**
-         * Set an error message from CDS Simbad query execution, and notify
+         * Set an error message from CDS SIMBAD query execution, and notify
          * registered observers.
          * @param message the error message to store.
          * @param exception exception (optional)
@@ -276,7 +276,7 @@ public final class StarResolver {
         }
 
         /**
-         * Parse Simbad response
+         * Parse SIMBAD response
          */
         public void parseResult() {
             _logger.trace("ResolveStarThread.parseResult");
@@ -346,7 +346,7 @@ public final class StarResolver {
                 final String radialVelocity = lineTokenizer.nextToken();
                 parseRadialVelocity(radialVelocity);
 
-                // Eigth line should contain simbad identifiers, separated by ','
+                // Eigth line should contain SIMBAD identifiers, separated by ','
                 final String identifiers = lineTokenizer.nextToken();
                 parseIdentifiers(identifiers);
 
@@ -382,8 +382,8 @@ public final class StarResolver {
 
         /**
          * Parse star RA / DEC coordinates
-         * @param coordinates simbad RA / DEC coordinates
-         * @throws ParseException if parsing simbad RA/DEC failed
+         * @param coordinates SIMBAD RA / DEC coordinates
+         * @throws ParseException if parsing SIMBAD RA/DEC failed
          * @throws NumberFormatException if parsing number(s) failed
          */
         private void parseCoordinates(final String coordinates) throws ParseException, NumberFormatException {
@@ -422,7 +422,7 @@ public final class StarResolver {
 
         /**
          * Parse object types
-         * @param objectTypes simbad object types
+         * @param objectTypes SIMBAD object types
          */
         private void parseObjectTypes(final String objectTypes) {
             _logger.debug("Object Types contains '{}'.", objectTypes);
@@ -432,7 +432,7 @@ public final class StarResolver {
 
         /**
          * Parse magnitudes
-         * @param fluxes simbad fluxes
+         * @param fluxes SIMBAD fluxes
          * @throws NumberFormatException if parsing number(s) failed
          */
         private void parseFluxes(final String fluxes) throws NumberFormatException {
@@ -486,7 +486,7 @@ public final class StarResolver {
 
         /**
          * Parse optional parallax
-         * @param parallax simbad parallax
+         * @param parallax SIMBAD parallax
          * @throws NumberFormatException if parsing number(s) failed
          */
         private void parseParallax(final String parallax) throws NumberFormatException {
@@ -515,7 +515,7 @@ public final class StarResolver {
 
         /**
          * Parse spectral types
-         * @param spectralTypes simbad spectral types
+         * @param spectralTypes SIMBAD spectral types
          */
         private void parseSpectralTypes(final String spectralTypes) {
             _logger.debug("Spectral Types contains '{}'.", spectralTypes);
@@ -525,7 +525,7 @@ public final class StarResolver {
 
         /**
          * Parse optional radial velocity
-         * @param radialVelocity Simbad radial velocity
+         * @param radialVelocity SIMBAD radial velocity
          * @throws NumberFormatException if parsing number(s) failed
          */
         private void parseRadialVelocity(final String radialVelocity) throws NumberFormatException {
@@ -556,7 +556,7 @@ public final class StarResolver {
 
         /**
          * Parse optional identifiers
-         * @param identifiers simbad identifiers
+         * @param identifiers SIMBAD identifiers
          */
         private void parseIdentifiers(final String identifiers) {
             _logger.debug("Identifiers contain '{}'.", identifiers);
@@ -605,7 +605,7 @@ public final class StarResolver {
         /**
          * Returns the next token from this string tokenizer.
          *
-         * @return     the next token from this string tokenizer.
+         * @return the next token from this string tokenizer.
          */
         public String nextToken() {
             String result = null;

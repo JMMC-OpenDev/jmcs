@@ -3,30 +3,17 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.swing.BorderFactory;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 import org.apache.commons.lang.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A text field for search/filter interfaces. The extra functionality includes
@@ -46,28 +33,34 @@ public class SearchField extends JTextField {
     private static final long serialVersionUID = 1;
     /** Logger */
     protected static final Logger _logger = LoggerFactory.getLogger(SearchField.class.getName());
+    /** Mac flag, true if running on a Mac OS X computer, false otherwise */
+    private static final boolean MACOSX_RUNTIME = SystemUtils.IS_OS_MAC_OSX;
     /** The border that draws the magnifying glass and the cancel cross */
-    private static final Border CANCEL_BORDER = new CancelBorder();
-    /** Store wether notifications should be sent every time a key is pressed */
-    private boolean sendsNotificationForEachKeystroke = false;
-    /** Store wether a text should be drawn when nothing else in textfield */
-    private boolean showingPlaceholderText = false;
-    /** store wether the cancel cross is currently clicked */
-    private boolean armed = false;
-    /** the text displayed when nothing in */
-    private final String placeholderText;
-    /** previous entered text */
-    private String previousText = "";
+    private static final Border CANCEL_BORDER = new RightBorder();
+    /** Store whether notifications should be sent every time a key is pressed */
+    private boolean _sendsNotificationForEachKeystroke = false;
+    /** Store whether a text should be drawn when nothing else in text field */
+    private boolean _showingPlaceholderText = false;
+    /** Store whether the cancel cross is currently clicked */
+    private boolean _armed = false;
+    /** Store the text displayed when nothing in */
+    private final String _placeholderText;
+    /** Store the previous entered text */
+    private String _previousText = "";
+    /** Store the pop up men for options */
+    private JPopupMenu _optionsPopupMenu = null;
 
     /**
-     * Creates a new SearchField object.
+     * Creates a new SearchField object with options.
      *
      * @param placeholderText the text displayed when nothing in.
+     * @param options the pop up men for options, null if none.
      */
-    public SearchField(final String placeholderText) {
+    public SearchField(final String placeholderText, JPopupMenu options) {
         super(8); // 8 characters wide by default
 
-        this.placeholderText = placeholderText;
+        _placeholderText = placeholderText;
+        _optionsPopupMenu = options;
 
         addFocusListener(new PlaceholderText());
         initBorder();
@@ -75,10 +68,19 @@ public class SearchField extends JTextField {
     }
 
     /**
+     * Creates a new SearchField object.
+     *
+     * @param placeholderText the text displayed when nothing in.
+     */
+    public SearchField(final String placeholderText) {
+        this(placeholderText, null);
+    }
+
+    /**
      * Creates a new SearchField object with a default "Search" place holder.
      */
     public SearchField() {
-        this("Search");
+        this("Search", null);
     }
 
     /**
@@ -86,7 +88,7 @@ public class SearchField extends JTextField {
      */
     private void initBorder() {
         // On Mac OS X, simply use the OS specific search textfield widget
-        if (SystemUtils.IS_OS_MAC_OSX) {
+        if (MACOSX_RUNTIME) {
             // http://developer.apple.com/mac/library/technotes/tn2007/tn2196.html#//apple_ref/doc/uid/DTS10004439
             putClientProperty("JTextField.variant", "search");
             putClientProperty("JTextField.FindAction",
@@ -102,9 +104,12 @@ public class SearchField extends JTextField {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            cancel();
+                            handleRightBorderClick();
                         }
                     });
+            if (_optionsPopupMenu != null) {
+                putClientProperty("JTextField.Search.FindPopup", _optionsPopupMenu);
+            }
 
             return;
         }
@@ -116,7 +121,7 @@ public class SearchField extends JTextField {
 
         setBorder(new CompoundBorder(getBorder(), CANCEL_BORDER));
 
-        final MouseInputListener mouseInputListener = new CancelListener();
+        final MouseInputListener mouseInputListener = new RightListener();
         addMouseListener(mouseInputListener);
         addMouseMotionListener(mouseInputListener);
 
@@ -126,14 +131,14 @@ public class SearchField extends JTextField {
     }
 
     /**
-     * Draw the dedicated custom rounded textfield.
+     * Draw the dedicated custom rounded text field.
      *
      * @param g the graphical context to draw in.
      */
     @Override
     protected void paintComponent(final Graphics g) {
         // On anything but Mac OS X
-        if (!SystemUtils.IS_OS_MAC_OSX) {
+        if (!MACOSX_RUNTIME) {
             int width = getWidth();
             int height = getHeight();
 
@@ -145,8 +150,7 @@ public class SearchField extends JTextField {
             g.fillRoundRect(0, -1, width, height, height, height);
 
             g.setColor(getBackground());
-            g.fillRoundRect(1, 1, width - 2, height - 2, height - 2, height
-                    - 2);
+            g.fillRoundRect(1, 1, width - 2, height - 2, height - 2, height - 2);
 
             g.setColor(Color.LIGHT_GRAY);
             g.drawLine(10, 1, width - 10, 1);
@@ -157,7 +161,7 @@ public class SearchField extends JTextField {
     }
 
     /**
-     * Follow keystrokes to notify listeners accordinaly.
+     * Follow keystrokes to notify listeners.
      */
     private void initKeyListener() {
         addKeyListener(new KeyAdapter() {
@@ -165,8 +169,8 @@ public class SearchField extends JTextField {
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    cancel();
-                } else if (sendsNotificationForEachKeystroke) {
+                    handleRightBorderClick();
+                } else if (_sendsNotificationForEachKeystroke) {
                     maybeNotify();
                 }
             }
@@ -176,8 +180,16 @@ public class SearchField extends JTextField {
     /**
      * Reset SearchField content and notify listeners.
      */
-    private void cancel() {
-        setText("");
+    private void handleRightBorderClick() {
+        // Field is empty
+        if (_showingPlaceholderText || getText().length() == 0) {
+            if (_optionsPopupMenu != null) {
+                _optionsPopupMenu.validate();
+                _optionsPopupMenu.show(this, getWidth() - 20, getHeight() - 5);
+            }
+        } else { // Field is NOT empty
+            setText("");
+        }
         postActionEvent();
     }
 
@@ -185,7 +197,7 @@ public class SearchField extends JTextField {
      * Sets the text of this <code>TextComponent</code>
      * to the specified text.
      *
-     * This overrides the default behaviour to tell the placeholder to use this new text value
+     * This overrides the default behavior to tell the placeholder to use this new text value
      *
      * @param txt the new text to be set
      */
@@ -193,8 +205,8 @@ public class SearchField extends JTextField {
     public void setText(final String txt) {
         super.setText(txt);
 
-        if (!this.placeholderText.equals(txt)) {
-            this.previousText = txt;
+        if (!_placeholderText.equals(txt)) {
+            _previousText = txt;
         }
     }
 
@@ -208,7 +220,7 @@ public class SearchField extends JTextField {
     public final String getRealText() {
         final String txt = super.getText();
 
-        if (this.placeholderText.equals(txt)) {
+        if (_placeholderText.equals(txt)) {
             return "";
         }
         return txt;
@@ -218,7 +230,7 @@ public class SearchField extends JTextField {
      * Trap notifications when showing place holder.
      */
     private void maybeNotify() {
-        if (showingPlaceholderText) {
+        if (_showingPlaceholderText) {
             return;
         }
 
@@ -226,18 +238,18 @@ public class SearchField extends JTextField {
     }
 
     /**
-     * Store wether notifications should be sent for each key pressed.
+     * Store whether notifications should be sent for each key pressed.
      *
      * @param eachKeystroke true to notify any key pressed, false otherwise.
      */
     public void setSendsNotificationForEachKeystroke(final boolean eachKeystroke) {
-        this.sendsNotificationForEachKeystroke = eachKeystroke;
+        _sendsNotificationForEachKeystroke = eachKeystroke;
     }
 
     /**
      * Draws the cancel button (a gray circle with a white cross) and the magnifying glass icon.
      */
-    private final static class CancelBorder extends EmptyBorder {
+    private final static class RightBorder extends EmptyBorder {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
@@ -247,7 +259,7 @@ public class SearchField extends JTextField {
         /**
          * Constructor
          */
-        CancelBorder() {
+        RightBorder() {
             super(0, 0, 0, 8);
         }
 
@@ -278,25 +290,38 @@ public class SearchField extends JTextField {
             g.drawLine(downX, downY, upX, upY);
             g.drawLine(downX + 1, downY, upX, upY);
 
-            if (field.showingPlaceholderText || field.getText().length() == 0) {
-                // Don't draw the cancel cross
-                return;
+            // if empty, draw the popup arrow
+            if (field._showingPlaceholderText || field.getText().length() == 0) {
+
+                // If options are available
+                if (field._optionsPopupMenu != null) {
+                    // Draw shadded arrow
+                    g.setColor(Color.DARK_GRAY);
+                    final int xOrigin = x + width + 1;
+                    final int yOrigin = y + height - 7;
+                    final int size = 4;
+                    final int[] xPoints = {xOrigin - size, xOrigin + size, xOrigin};
+                    final int[] yPoints = {yOrigin - size, yOrigin - size, yOrigin + size};
+                    g.fillPolygon(xPoints, yPoints, 3);
+                }
+
+            } else { // if NOT empty, draw the cancel cross
+
+                // Draw shaded disk
+                final int circleL = 14;
+                final int circleX = (x + width) - circleL + 9;
+                final int circleY = y + ((height - 1 - circleL) / 2) + 1;
+                g.setColor(field._armed ? Color.GRAY : DISARMED_GRAY);
+                g.fillOval(circleX, circleY, circleL, circleL);
+
+                // Draw white cross
+                final int lineL = circleL - 8;
+                final int lineX = circleX + 4;
+                final int lineY = circleY + 4;
+                g.setColor(backgroundColor);
+                g.drawLine(lineX, lineY, lineX + lineL, lineY + lineL);
+                g.drawLine(lineX, lineY + lineL, lineX + lineL, lineY);
             }
-
-            // Draw shaded disk
-            final int circleL = 14;
-            final int circleX = (x + width) - circleL + 9;
-            final int circleY = y + ((height - 1 - circleL) / 2);
-            g.setColor(field.armed ? Color.GRAY : DISARMED_GRAY);
-            g.fillOval(circleX, circleY, circleL, circleL);
-
-            // Draw white cross
-            final int lineL = circleL - 8;
-            final int lineX = circleX + 4;
-            final int lineY = circleY + 4;
-            g.setColor(backgroundColor);
-            g.drawLine(lineX, lineY, lineX + lineL, lineY + lineL);
-            g.drawLine(lineX, lineY + lineL, lineX + lineL, lineY);
         }
     }
 
@@ -304,7 +329,7 @@ public class SearchField extends JTextField {
      * Handles a click on the cancel button by clearing the text and notifying
      * any ActionListeners.
      */
-    private final class CancelListener extends MouseInputAdapter {
+    private final class RightListener extends MouseInputAdapter {
 
         /**
          * Return true if the mouse is over the cancel button
@@ -347,8 +372,8 @@ public class SearchField extends JTextField {
 
         @Override
         public void mouseReleased(final MouseEvent me) {
-            if (armed) {
-                cancel();
+            if (_armed) {
+                handleRightBorderClick();
             }
 
             disarm();
@@ -359,7 +384,8 @@ public class SearchField extends JTextField {
          * @param me mouse event
          */
         private void arm(final MouseEvent me) {
-            armed = (isOverButton(me) && SwingUtilities.isLeftMouseButton(me));
+
+            _armed = (isOverButton(me) && SwingUtilities.isLeftMouseButton(me));
             repaint();
         }
 
@@ -367,7 +393,7 @@ public class SearchField extends JTextField {
          * Disable the arm flag and repaint
          */
         private void disarm() {
-            armed = false;
+            _armed = false;
             repaint();
         }
     }
@@ -380,7 +406,7 @@ public class SearchField extends JTextField {
     private final class PlaceholderText implements FocusListener {
 
         /** color used when the field has the focus */
-        private Color previousColor;
+        private Color _previousColor;
 
         /**
          * Constructor
@@ -392,23 +418,44 @@ public class SearchField extends JTextField {
 
         @Override
         public void focusGained(final FocusEvent fe) {
-            setForeground(this.previousColor);
-            setText(previousText);
-            showingPlaceholderText = false;
+            setForeground(_previousColor);
+            setText(_previousText);
+            _showingPlaceholderText = false;
         }
 
         @Override
         public void focusLost(final FocusEvent fe) {
-            previousText = getRealText();
-            this.previousColor = getForeground();
+            _previousText = getRealText();
+            _previousColor = getForeground();
 
             // if the field is empty :
-            if (previousText.length() == 0) {
-                showingPlaceholderText = true;
+            if (_previousText.length() == 0) {
+                _showingPlaceholderText = true;
                 setForeground(Color.GRAY);
-                setText(placeholderText);
+                setText(_placeholderText);
             }
         }
+    }
+
+    /**
+     * Main - for StarResolverWidget demonstration and test only.
+     * @param args unused
+     */
+    public static void main(final String[] args) {
+        // GUI initialization
+        final JFrame frame = new JFrame();
+        frame.setTitle("SearchField Demo");
+
+        // Force to exit when the frame closes :
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        final JPanel panel = new JPanel();
+        panel.add(new SearchField());
+
+        frame.getContentPane().add(panel);
+
+        frame.pack();
+        frame.setVisible(true);
     }
 }
 /*___oOo___*/

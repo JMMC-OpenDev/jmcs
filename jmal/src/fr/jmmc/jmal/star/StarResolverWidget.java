@@ -1,6 +1,6 @@
-/*******************************************************************************
+/** *****************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- ******************************************************************************/
+ ***************************************************************************** */
 package fr.jmmc.jmal.star;
 
 import fr.jmmc.jmcs.App;
@@ -19,7 +19,7 @@ import javax.swing.JPopupMenu;
 
 /**
  * Store informations relative to a star.
- * 
+ *
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class StarResolverWidget extends SearchField implements Observer {
@@ -29,26 +29,26 @@ public class StarResolverWidget extends SearchField implements Observer {
     /** Container to store retrieved star properties */
     private final Star _star;
     /** Menu to choose SIMBAD mirror */
-    private static JPopupMenu _mirrorPopupMenu;
+    private final static JPopupMenu _mirrorPopupMenu;
 
     // Static initialization
     static {
         // init mirrorPopup menu on first display
         _mirrorPopupMenu = new JPopupMenu();
-        // Add title 
+
+        // Add title
         JMenuItem menuItem = new JMenuItem("Choose Simbad Location:");
         menuItem.setEnabled(false);
         _mirrorPopupMenu.add(menuItem);
+
         // And populate with StarResolver mirrors
-        Set<String> mirrors = StarResolver.getSimbadMirrors();
+        final Set<String> mirrors = StarResolver.getSimbadMirrors();
         for (final String mirror : mirrors) {
             menuItem = new JMenuItem(mirror);
             menuItem.addActionListener(new ActionListener() {
-
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     StarResolver.setSimbadMirror(mirror);
-                    System.out.println("mirror = " + mirror);
                 }
             });
             _mirrorPopupMenu.add(menuItem);
@@ -74,7 +74,6 @@ public class StarResolverWidget extends SearchField implements Observer {
         _star.addObserver(this);
 
         addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(final ActionEvent e) {
                 final String starName = e.getActionCommand().trim();
@@ -121,7 +120,7 @@ public class StarResolverWidget extends SearchField implements Observer {
             case QUERY_ERROR:
                 final String errorMessage = _star.consumeCDSimbadErrorMessage();
                 if (errorMessage != null) {
-                    MessagePane.showErrorMessage("CDS Simbad problem :\n" + errorMessage);
+                    MessagePane.showErrorMessage(errorMessage, "CDS Simbad problem");
                 }
 
                 StatusBar.show("CDS Simbad star resolution failed.");
@@ -150,7 +149,6 @@ public class StarResolverWidget extends SearchField implements Observer {
         // Resolver initialization
         final Star star = new Star();
         star.addObserver(new Observer() {
-
             @Override
             public void update(Observable o, Object arg) {
                 _logger.info("Star changed:\n{}", star);

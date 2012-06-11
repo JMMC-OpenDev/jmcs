@@ -1,8 +1,9 @@
-/*******************************************************************************
+/** *****************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- ******************************************************************************/
+ ***************************************************************************** */
 package fr.jmmc.jmal.star;
 
+import fr.jmmc.jmcs.gui.component.StatusBar;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
@@ -11,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.*;
 import org.slf4j.Logger;
@@ -18,17 +20,17 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Store informations relative to a star.
- * 
+ *
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class StarResolver {
 
     /** Logger - register on the current class to collect local logs */
     private static final Logger _logger = LoggerFactory.getLogger(StarResolver.class.getName());
-    /** The collection of CDS mirrors (initialized into getMirrors())*/
-    public static HashMap<String, String> _simbadMirrors = null;
-    /** SIMBADSIMBAD main URL (selected using setSimbadMirror())*/
-    public static String _simbadBaseURL = null;
+    /** The collection of CDS mirrors (initialized into getMirrors()) */
+    private static final Map<String, String> _simbadMirrors;
+    /** SIMBAD selected mirror (selected using setSimbadMirror()) */
+    private static String _simbadMirror = null;
     /** comma separator */
     public static final String SEPARATOR_COMMA = ",";
     /** semicolon separator */
@@ -36,6 +38,11 @@ public final class StarResolver {
     /** HTTP response encoding use UTF-8 */
     private static final String HTTP_ENCODING = "UTF-8";
 
+    static {
+        _simbadMirrors = new LinkedHashMap<String, String>(4);
+        _simbadMirrors.put("SIMBAD Strasbourg FR", "http://simbad.u-strasbg.frBAD/simbad/sim-script?script=");
+        _simbadMirrors.put("SIMBAD Harvard US", "http://simbad.harvard.edu/simbad/sim-script?script=");
+    }
     /* members */
     /** The sought star name */
     private final String _starName;
@@ -90,36 +97,59 @@ public final class StarResolver {
      * @return one set of available mirror names.
      */
     public static Set<String> getSimbadMirrors() {
-        if (_simbadMirrors == null) {
-            _simbadMirrors = new HashMap<String, String>();
-            _simbadMirrors.put("SIMBAD Strasbourg FR", "http://simbad.u-strasbg.fr/simbad/sim-script?script=");
-            _simbadMirrors.put("SIMBAD Harvard US", "http://simbad.harvard.edu/simbad/sim-script?script=");
-        }
-
         return _simbadMirrors.keySet();
     }
 
     /**
-     * Choose one mirror giving one name chosen from available ones.
-     * 
-     * @param mirrorName value chosen from getSimbadMirrors(). 
-     * @return the URL associated to the give name.
+     * Return the current Simbad mirror
+     * @return Simbad mirror name
      */
-    public static String setSimbadMirror(String mirrorName) {
-        _simbadBaseURL = _simbadMirrors.get(mirrorName);
-        // prevent bad cases for bad mirror names
-        if (_simbadBaseURL == null) {
-            _simbadBaseURL = _simbadMirrors.values().iterator().next();
+    public static String getSimbadMirror() {
+        if (_simbadMirror == null) {
+            setSimbadMirror(getSimbadMirrors().iterator().next());
         }
-        return _simbadBaseURL;
+        return _simbadMirror;
     }
 
-    private static String getSimbadUrl() {
-        if (_simbadBaseURL == null) {
+    /**
+     * Return the Simbad url from the current mirror or the first one
+     * @return Simbad url
+     */
+    public static String getSimbadUrl() {
+        if (_simbadMirror == null) {
             setSimbadMirror(getSimbadMirrors().iterator().next());
         }
 
-        return _simbadBaseURL;
+        return _simbadMirrors.get(_simbadMirror);
+    }
+
+    /**
+     * Choose one mirror giving its name chosen from available ones.
+     * @param mirrorName value chosen from getSimbadMirrors().
+     */
+    public static void setSimbadMirror(final String mirrorName) {
+        // prevent bad cases for bad mirror names
+        if (_simbadMirrors.get(mirrorName) == null) {
+            _simbadMirror = getSimbadMirrors().iterator().next();
+        } else {
+            _simbadMirror = mirrorName;
+        }
+    }
+
+    /**
+     * Return the next Simbad Mirror which url is not in the failed URL Set
+     * @param failedUrl failed URL(s)
+     * @return next Simbad Mirror or null if none is still available
+     */
+    private static String getNextSimbadMirror(final Set<String> failedUrl) {
+        for (Map.Entry<String, String> e : _simbadMirrors.entrySet()) {
+            if (!failedUrl.contains(e.getValue())) {
+                // change mirror:
+                setSimbadMirror(e.getKey());
+                return _simbadMirror;
+            }
+        }
+        return null;
     }
 
     /**
@@ -131,10 +161,9 @@ public final class StarResolver {
         final String starName = args[0];
         final Star star = new Star();
         star.addObserver(new Observer() {
-
             @Override
             public void update(Observable o, Object arg) {
-                // Outpout results
+                // Output results
                 System.out.println("Star '" + starName + "' contains:\n" + star);
             }
         });
@@ -171,7 +200,7 @@ public final class StarResolver {
          * @param message the error message to store.
          */
         private void raiseCDSimbadErrorMessage(final String message) {
-            raiseCDSimbadErrorMessage(message, null);
+            raiseCDSimbadErrorMessage(message, (Exception) null);
         }
 
         /**
@@ -184,7 +213,7 @@ public final class StarResolver {
             _error = true;
 
             if (exception != null) {
-                String msg = message + " : " + exception.getMessage();
+                String msg = message + " :\n" + getExceptionMessage(exception);
 
                 // avoid too long messages:
                 if (msg.length() > 128) {
@@ -194,6 +223,43 @@ public final class StarResolver {
             } else {
                 _starModel.raiseCDSimbadErrorMessage(message);
             }
+        }
+
+        /**
+         * Set an error message from CDS SIMBAD query execution, and notify registered observers.
+         * @param message the error message to store.
+         * @param messages exception list (optional)
+         */
+        private void raiseCDSimbadErrorMessage(final String message, final List<String> messages) {
+            _error = true;
+
+            if (messages != null && !messages.isEmpty()) {
+                String msg = message + " :";
+
+                for (String m : messages) {
+                    // avoid too long messages:
+                    if (m.length() > 128) {
+                        m = m.substring(0, 128);
+                    }
+                    msg += "\n" + m;
+                }
+
+                _starModel.raiseCDSimbadErrorMessage(msg);
+            } else {
+                _starModel.raiseCDSimbadErrorMessage(message);
+            }
+        }
+
+        /**
+         * Format specific exception messages
+         * @param e exception
+         * @return user message for the given exception
+         */
+        private String getExceptionMessage(final Exception e) {
+            if (e instanceof UnknownHostException) {
+                return "Unknown host [" + e.getMessage() + "]";
+            }
+            return e.getMessage();
         }
 
         /**
@@ -240,38 +306,76 @@ public final class StarResolver {
 
             _logger.trace("CDS Simbad script :\n{}", simbadScript);
 
-            // Try to get star data from CDS
+            // Forge the URL in UTF8 unicode charset
+            final String encodedScript = UrlUtils.encode(simbadScript);
+
+            // Use prefered Simbad mirror:
+            String simbadMirror = getSimbadMirror();
+            String simbadURL;
+
+            final Set<String> failedUrl = new HashSet<String>(4);
+            List<String> ioMessages = null;
+            InputStream inputStream = null;
             BufferedReader bufferedReader = null;
-            try {
-                // Forge the URL int UTF8 unicode charset
-                final String encodedScript = UrlUtils.encode(simbadScript);
-                final String simbadURL = getSimbadUrl() + encodedScript;
 
-                _logger.debug("Querying CDS Simbad at {}", simbadURL);
+            // retry other mirrors:
+            while (simbadMirror != null) {
+                // Try to get star data from CDS
+                simbadURL = getSimbadUrl();
+                try {
+                    final String simbadQuery = simbadURL + encodedScript;
 
-                // Launch the network query
-                final InputStream inputStream = UrlUtils.parseURL(simbadURL).openStream();
+                    _logger.debug("Querying CDS Simbad: {}", simbadQuery);
 
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream, HTTP_ENCODING));
+                    // Launch the network query
+                    inputStream = UrlUtils.parseURL(simbadQuery).openStream();
+                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream, HTTP_ENCODING));
 
-                // Read incoming data line by line
-                String currentLine = null;
+                    // Read incoming data line by line
+                    String currentLine;
 
-                // reset buffer :
-                sb.setLength(0);
+                    // reset buffer :
+                    sb.setLength(0);
 
-                while ((currentLine = bufferedReader.readLine()) != null) {
-                    sb.append(currentLine).append('\n');
+                    while ((currentLine = bufferedReader.readLine()) != null) {
+                        sb.append(currentLine).append('\n');
+                    }
+
+                    _result = sb.toString();
+
+                    _logger.trace("CDS Simbad raw result :\n{}", _result);
+
+                } catch (IOException ioe) {
+                    _logger.info("Simbad connection failed: {}", getExceptionMessage(ioe));
+
+                    if (ioMessages == null) {
+                        ioMessages = new ArrayList<String>(4);
+                    }
+                    ioMessages.add("[" + simbadMirror + "] " + getExceptionMessage(ioe));
+
+                    failedUrl.add(simbadURL);
+
+                    // get another simbad mirror:
+                    simbadMirror = getNextSimbadMirror(failedUrl);
+
+                    if (simbadMirror != null) {
+                        _logger.info("Trying another Simbad mirror [{}]", simbadMirror);
+
+                        StatusBar.show("Simbad connection failed: trying another mirror [" + simbadMirror + "] ...");
+                    } else {
+                        // no more mirror to use (probably bad network settings):
+                        ioMessages.add("\nPlease check your network connection !");
+
+                        raiseCDSimbadErrorMessage("Simbad connection failed", ioMessages);
+                    }
+
+                } finally {
+                    if (bufferedReader != null) {
+                        FileUtils.closeFile(bufferedReader);
+                    } else {
+                        FileUtils.closeStream(inputStream);
+                    }
                 }
-
-                _result = sb.toString();
-
-                _logger.trace("CDS Simbad raw result :\n{}", _result);
-
-            } catch (IOException ioe) {
-                raiseCDSimbadErrorMessage("CDS connection failed", ioe);
-            } finally {
-                FileUtils.closeFile(bufferedReader);
             }
         }
 
@@ -292,7 +396,7 @@ public final class StarResolver {
                 // sample error (name not found):
                 /*
                  ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                
+
                  [3] Identifier not found in the database : NAME TEST
                  */
                 // try to get error message:
@@ -363,7 +467,6 @@ public final class StarResolver {
 
                 // Use EDT to ensure only 1 thread (EDT) updates the model and handles the notification :
                 SwingUtils.invokeEDT(new Runnable() {
-
                     @Override
                     public void run() {
                         _starModel.copy(_newStarModel);
@@ -603,8 +706,6 @@ public final class StarResolver {
         }
 
         /**
-         * Returns the next token from this string tokenizer.
-         *
          * @return the next token from this string tokenizer.
          */
         public String nextToken() {

@@ -9,8 +9,6 @@ import fr.jmmc.jmcs.gui.component.SearchField;
 import fr.jmmc.jmcs.gui.component.StatusBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -24,14 +22,38 @@ import javax.swing.JPopupMenu;
  * 
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
-public class StarResolverWidget extends SearchField implements Observer, MouseListener {
+public class StarResolverWidget extends SearchField implements Observer {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Container to store retrieved star properties */
     private final Star _star;
-    /** Menu to choose simbad mirror */
-    private javax.swing.JPopupMenu mirrorPopupMenu = null;
+    /** Menu to choose SIMBAD mirror */
+    private static JPopupMenu _mirrorPopupMenu;
+
+    // Static initialization
+    static {
+        // init mirrorPopup menu on first display
+        _mirrorPopupMenu = new JPopupMenu();
+        // Add title 
+        JMenuItem menuItem = new JMenuItem("Choose Simbad Location:");
+        menuItem.setEnabled(false);
+        _mirrorPopupMenu.add(menuItem);
+        // And populate with StarResolver mirrors
+        Set<String> mirrors = StarResolver.getSimbadMirrors();
+        for (final String mirror : mirrors) {
+            menuItem = new JMenuItem(mirror);
+            menuItem.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    StarResolver.setSimbadMirror(mirror);
+                    System.out.println("mirror = " + mirror);
+                }
+            });
+            _mirrorPopupMenu.add(menuItem);
+        }
+    }
 
     /**
      * Creates a new StarResolverWidget object.
@@ -46,7 +68,7 @@ public class StarResolverWidget extends SearchField implements Observer, MouseLi
      * @param star star model
      */
     public StarResolverWidget(final Star star) {
-        super("Simbad");
+        super("Simbad", _mirrorPopupMenu);
 
         _star = star;
         _star.addObserver(this);
@@ -70,9 +92,6 @@ public class StarResolverWidget extends SearchField implements Observer, MouseLi
                 }
             }
         });
-
-        // to support popup menu
-        this.addMouseListener(this);
     }
 
     /**
@@ -86,6 +105,7 @@ public class StarResolverWidget extends SearchField implements Observer, MouseLi
     /**
      * Automatically called on attached Star changes.
      */
+    @Override
     public final void update(final Observable o, final Object arg) {
         Star.Notification notification = Star.Notification.UNKNOWN;
 
@@ -113,60 +133,6 @@ public class StarResolverWidget extends SearchField implements Observer, MouseLi
 
         // Enable search field after request processing done :
         setEnabled(true);
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        checkPopupMenu(e);
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        checkPopupMenu(e);
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        checkPopupMenu(e);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        checkPopupMenu(e);
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        checkPopupMenu(e);
-    }
-
-    private void checkPopupMenu(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            // init mirrorPopup menu on first display
-            if (mirrorPopupMenu == null) {
-                mirrorPopupMenu = new JPopupMenu();
-                // Add title 
-                JMenuItem menuItem = new JMenuItem("Choose Simbad Location:");
-                menuItem.setEnabled(false);
-                mirrorPopupMenu.add(menuItem);
-                // And populate with StarResolver mirrors
-                Set<String> mirrors = StarResolver.getSimbadMirrors();
-                for (final String mirror : mirrors) {
-                    menuItem = new JMenuItem(mirror);
-                    menuItem.addActionListener(new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            StarResolver.setSimbadMirror(mirror);
-                        }
-                    });
-                    mirrorPopupMenu.add(menuItem);
-                }
-            }
-
-            mirrorPopupMenu.validate();
-            mirrorPopupMenu.show(e.getComponent(), e.getX(), e.getY());
-        }
     }
 
     /**

@@ -345,6 +345,9 @@ public final class StarResolver {
 
                     _logger.trace("CDS Simbad raw result :\n{}", _result);
 
+                    // exit from loop:
+                    simbadMirror = null;
+
                 } catch (IOException ioe) {
                     _logger.info("Simbad connection failed: {}", getExceptionMessage(ioe));
 

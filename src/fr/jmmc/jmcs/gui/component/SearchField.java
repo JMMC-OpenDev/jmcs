@@ -3,10 +3,31 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.Border;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.RoundRectangle2D;
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputAdapter;
@@ -24,7 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @todo : add a menu of recent searches.
  * @todo : make recent searches persistent.
- * 
+ *
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class SearchField extends JTextField {
@@ -33,22 +54,36 @@ public class SearchField extends JTextField {
     private static final long serialVersionUID = 1;
     /** Logger */
     protected static final Logger _logger = LoggerFactory.getLogger(SearchField.class.getName());
+    /** disarm color */
+    private static final Color DISARMED_GRAY = new Color(0.7f, 0.7f, 0.7f);
     /** Mac flag, true if running on a Mac OS X computer, false otherwise */
     private static final boolean MACOSX_RUNTIME = SystemUtils.IS_OS_MAC_OSX;
-    /** The border that draws the magnifying glass and the cancel cross */
-    private static final Border CANCEL_BORDER = new RightBorder();
+    /** debug flag to draw border area */
+    private static final boolean DEBUG_AREA = false;
+
+    /* members */
     /** Store whether notifications should be sent every time a key is pressed */
     private boolean _sendsNotificationForEachKeystroke = false;
     /** Store whether a text should be drawn when nothing else in text field */
     private boolean _showingPlaceholderText = false;
-    /** Store whether the cancel cross is currently clicked */
-    private boolean _armed = false;
     /** Store the text displayed when nothing in */
     private final String _placeholderText;
     /** Store the previous entered text */
     private String _previousText = "";
+    /** Store shape object representing the search button area */
+    private Shape _searchButtonShape = null;
+    /** Store whether the mouse is over the cancel cross */
+    private boolean _armedCancelButton = false;
+    /** Store optional shape object representing the cancel button area */
+    private Shape _cancelButtonShape = null;
+    /** Store whether the mouse is over the options button */
+    private boolean _armedOptionsButton = false;
+    /** Store optional shape object representing the options button area */
+    private Shape _optionsButtonShape = null;
     /** Store the pop up men for options */
     private JPopupMenu _optionsPopupMenu = null;
+    /** Store the rounded rectangle area of this search field */
+    private Shape _roundedInnerArea = null;
 
     /**
      * Creates a new SearchField object with options.
@@ -93,7 +128,6 @@ public class SearchField extends JTextField {
             putClientProperty("JTextField.variant", "search");
             putClientProperty("JTextField.FindAction",
                     new ActionListener() {
-
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             postActionEvent();
@@ -101,10 +135,9 @@ public class SearchField extends JTextField {
                     });
             putClientProperty("JTextField.CancelAction",
                     new ActionListener() {
-
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            handleRightBorderClick();
+                            handleCancelEdit();
                         }
                     });
             if (_optionsPopupMenu != null) {
@@ -116,12 +149,16 @@ public class SearchField extends JTextField {
 
         // Fallback for platforms other than Mac OS X
 
-        // Add an empty border around to compensate for rounded corners
-        setBorder(BorderFactory.createEmptyBorder(4, 22, 4, 14));
+        // Add the border that draws the magnifying glass and the cancel cross:
+        final int left = 30;
+        final int right = 22;
+        if (DEBUG_AREA) {
+            setBorder(new CompoundBorder(BorderFactory.createMatteBorder(4, left, 4, right, Color.YELLOW), new ButtonBorder()));
+        } else {
+            setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(4, left, 4, right), new ButtonBorder()));
+        }
 
-        setBorder(new CompoundBorder(getBorder(), CANCEL_BORDER));
-
-        final MouseInputListener mouseInputListener = new RightListener();
+        final MouseInputListener mouseInputListener = new ButtonBorderMouseListener();
         addMouseListener(mouseInputListener);
         addMouseMotionListener(mouseInputListener);
 
@@ -133,31 +170,49 @@ public class SearchField extends JTextField {
     /**
      * Draw the dedicated custom rounded text field.
      *
-     * @param g the graphical context to draw in.
+     * @param g2 the graphical context to draw in.
      */
     @Override
-    protected void paintComponent(final Graphics g) {
+    protected void paintComponent(final Graphics g2) {
         // On anything but Mac OS X
         if (!MACOSX_RUNTIME) {
-            int width = getWidth();
-            int height = getHeight();
+            final int width = getWidth();
+            final int height = getHeight();
+
+            final Graphics2D g2d = (Graphics2D) g2;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            final Color savedColor = g2d.getColor();
 
             // Paint a rounded rectangle in the background surrounded by a black line.
-            g.setColor(Color.LIGHT_GRAY);
-            g.fillRoundRect(0, 0, width, height, height, height);
+            final RoundRectangle2D outerArea = new RoundRectangle2D.Double(0d, 0d, width, height, height, height);
+            g2d.setColor(Color.LIGHT_GRAY);
+            g2d.fill(outerArea);
 
-            g.setColor(Color.GRAY);
-            g.fillRoundRect(0, -1, width, height, height, height);
+            g2d.setColor(Color.GRAY);
+            g2d.fillRoundRect(0, -1, width, height, height, height);
 
-            g.setColor(getBackground());
-            g.fillRoundRect(1, 1, width - 2, height - 2, height - 2, height - 2);
+            // inner area (text field):
+            final RoundRectangle2D innerArea = new RoundRectangle2D.Double(1d, 1d, width - 2d, height - 2d, height - 2d, height - 2d);
+            g2d.setColor(getBackground());
+            g2d.fill(innerArea);
 
-            g.setColor(Color.LIGHT_GRAY);
-            g.drawLine(10, 1, width - 10, 1);
+            // define clip for the following line only:
+            g2.setClip(outerArea);
+
+            g2d.setColor(Color.GRAY);
+            g2d.drawLine(0, 1, width, 1);
+
+            // define clip as smaller rounded rectangle (GTK and nimbus LAF):
+            _roundedInnerArea = new RoundRectangle2D.Double(3d, 3d, width - 6d, height - 6d, height - 6d, height - 6d);
+            g2.setClip(_roundedInnerArea);
+
+            // restore g2d state:
+            g2d.setColor(savedColor);
         }
 
         // Now call the superclass behavior to paint the foreground.
-        super.paintComponent(g);
+        super.paintComponent(g2);
     }
 
     /**
@@ -165,11 +220,10 @@ public class SearchField extends JTextField {
      */
     private void initKeyListener() {
         addKeyListener(new KeyAdapter() {
-
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    handleRightBorderClick();
+                    handleCancelEdit();
                 } else if (_sendsNotificationForEachKeystroke) {
                     maybeNotify();
                 }
@@ -180,17 +234,23 @@ public class SearchField extends JTextField {
     /**
      * Reset SearchField content and notify listeners.
      */
-    private void handleRightBorderClick() {
-        // Field is empty
-        if (_showingPlaceholderText || getText().length() == 0) {
-            if (_optionsPopupMenu != null) {
-                _optionsPopupMenu.validate();
-                _optionsPopupMenu.show(this, getWidth() - 20, getHeight() - 5);
-            }
-        } else { // Field is NOT empty
+    private void handleCancelEdit() {
+        if (!_showingPlaceholderText && getText().length() != 0) {
+            // Field is NOT empty
             setText("");
         }
         postActionEvent();
+    }
+
+    /**
+     * Display Options.
+     * @param me mouse event to define menu location
+     */
+    private void handleShowOptions(final MouseEvent me) {
+        if (_optionsPopupMenu != null) {
+            _optionsPopupMenu.validate();
+            _optionsPopupMenu.show(this, me.getX() + 5, me.getY() + 10);
+        }
     }
 
     /**
@@ -247,81 +307,125 @@ public class SearchField extends JTextField {
     }
 
     /**
-     * Draws the cancel button (a gray circle with a white cross) and the magnifying glass icon.
+     * Draws the cancel button (a gray circle with a white cross) and the magnifying glass icon ...
      */
-    private final static class RightBorder extends EmptyBorder {
+    private final class ButtonBorder extends EmptyBorder {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
-        /** disarm color */
-        private static final Color DISARMED_GRAY = new Color(0.7f, 0.7f, 0.7f);
+        /** debug flag to draw shapes */
+        private static final boolean DEBUG_SHAPES = false;
 
         /**
          * Constructor
          */
-        RightBorder() {
-            super(0, 0, 0, 8);
+        ButtonBorder() {
+            super(0, 0, 0, 0);
         }
 
+        /**
+         * Paint this border
+         */
         @Override
-        public void paintBorder(final Component c, final Graphics oldGraphics,
+        public void paintBorder(final Component c, final Graphics g2,
                 final int x, final int y, final int width, final int height) {
+
             final SearchField field = (SearchField) c;
+            final Graphics2D g2d = (Graphics2D) g2;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            final Color savedColor = g2d.getColor();
+            if (DEBUG_SHAPES) {
+                g2d.setColor(Color.BLUE);
+                g2d.draw(new Rectangle(x, y, width, height));
+            }
             final Color backgroundColor = field.getBackground();
-            final Graphics2D g = (Graphics2D) oldGraphics;
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Draw magnifying glass lens
-            final int diskL = 9;
-            final int diskX = x - diskL - 6;
+            // left = x = 30
+
+            // Draw magnifying glass lens:
+            final int diskL = 10;
+            final int diskX = x - diskL - 15;
             final int diskY = y + ((height - 1 - diskL) / 2);
-            g.setColor(Color.DARK_GRAY);
-            g.fillOval(diskX, diskY, diskL, diskL);
-            g.setColor(backgroundColor);
-            g.fillOval(diskX + 2, diskY + 2, diskL - 4, diskL - 4);
+            g2d.setColor(Color.DARK_GRAY);
+            g2d.fillOval(diskX, diskY, diskL, diskL);
+            g2d.setColor(backgroundColor);
+            g2d.fillOval(diskX + 2, diskY + 2, diskL - 4, diskL - 4);
 
-            // Draw magnifying glass handle
+            // Draw magnifying glass handle:
             final int downX = (diskX + diskL) - 3;
             final int downY = (diskY + diskL) - 3;
             final int upX = downX + 4;
             final int upY = downY + 4;
-            g.setColor(Color.DARK_GRAY);
-            g.drawLine(downX, downY, upX, upY);
-            g.drawLine(downX, downY, upX, upY);
-            g.drawLine(downX + 1, downY, upX, upY);
+            g2d.setColor(Color.DARK_GRAY);
+            g2d.drawLine(downX, downY, upX, upY);
+            g2d.drawLine(downX, downY, upX, upY);
+            g2d.drawLine(downX + 1, downY, upX, upY);
 
-            // if empty, draw the popup arrow
-            if (field._showingPlaceholderText || field.getText().length() == 0) {
+            // draw the popup arrow if options are available
+            if (_optionsPopupMenu != null) {
+                // Draw shaded arrow
+                g2d.setColor(_armedOptionsButton ? DISARMED_GRAY : Color.GRAY);
 
-                // If options are available
-                if (field._optionsPopupMenu != null) {
-                    // Draw shadded arrow
-                    g.setColor(Color.DARK_GRAY);
-                    final int xOrigin = x + width + 1;
-                    final int yOrigin = y + height - 7;
-                    final int size = 4;
-                    final int[] xPoints = {xOrigin - size, xOrigin + size, xOrigin};
-                    final int[] yPoints = {yOrigin - size, yOrigin - size, yOrigin + size};
-                    g.fillPolygon(xPoints, yPoints, 3);
+                final int size = 4;
+
+                final int xOrigin = diskX + diskL + 3 + size;
+                final int yOrigin = y + height / 2 + 1;
+                final int[] xPoints = {xOrigin - size, xOrigin + size, xOrigin};
+                final int[] yPoints = {yOrigin - size, yOrigin - size, yOrigin + size};
+                g2d.fillPolygon(xPoints, yPoints, 3);
+
+                // add 1 pixel margin:
+                _searchButtonShape = null;
+                _optionsButtonShape = new Rectangle(diskX - 1, diskY - 1, diskL + 2 + 2 * size + 2, diskL + 2);
+                if (DEBUG_SHAPES) {
+                    g2d.setColor(Color.RED);
+                    g2d.draw(_optionsButtonShape);
                 }
+            } else {
+                // add 1 pixel margin:
+                _searchButtonShape = new Rectangle(diskX - 1, diskY - 1, diskL + 2, diskL + 2);
+                if (DEBUG_SHAPES) {
+                    g2d.setColor(Color.RED);
+                    g2d.draw(_searchButtonShape);
+                }
+                _optionsButtonShape = null;
+            }
 
-            } else { // if NOT empty, draw the cancel cross
+            if (!_showingPlaceholderText && getText().length() != 0) {
+                // if NOT empty, draw the cancel cross
+
+                // right = x + width = 22
 
                 // Draw shaded disk
                 final int circleL = 14;
-                final int circleX = (x + width) - circleL + 9;
-                final int circleY = y + ((height - 1 - circleL) / 2) + 1;
-                g.setColor(field._armed ? Color.GRAY : DISARMED_GRAY);
-                g.fillOval(circleX, circleY, circleL, circleL);
+                final int circleX = (x + width) + (22 - 5) - circleL;
+                final int circleY = y + ((height - circleL) / 2);
+
+                _cancelButtonShape = new Ellipse2D.Double(circleX, circleY, circleL, circleL);
+                g2d.setColor(_armedCancelButton ? Color.GRAY : DISARMED_GRAY);
+                g2d.fill(_cancelButtonShape);
+
+                if (DEBUG_SHAPES) {
+                    g2d.setColor(Color.RED);
+                    g2d.draw(_cancelButtonShape);
+                }
 
                 // Draw white cross
                 final int lineL = circleL - 8;
                 final int lineX = circleX + 4;
                 final int lineY = circleY + 4;
-                g.setColor(backgroundColor);
-                g.drawLine(lineX, lineY, lineX + lineL, lineY + lineL);
-                g.drawLine(lineX, lineY + lineL, lineX + lineL, lineY);
+                g2d.setColor(backgroundColor);
+                g2d.drawLine(lineX, lineY, lineX + lineL, lineY + lineL);
+                g2d.drawLine(lineX, lineY + lineL, lineX + lineL, lineY);
+
+            } else {
+                // reset area:
+                _cancelButtonShape = null;
             }
+
+            // restore g2d state:
+            g2d.setColor(savedColor);
         }
     }
 
@@ -329,71 +433,106 @@ public class SearchField extends JTextField {
      * Handles a click on the cancel button by clearing the text and notifying
      * any ActionListeners.
      */
-    private final class RightListener extends MouseInputAdapter {
+    private final class ButtonBorderMouseListener extends MouseInputAdapter {
 
         /**
-         * Return true if the mouse is over the cancel button
+         * Return true if the mouse is over the cancel or options button
          * @param me mouse event
-         * @return true if the mouse is over the cancel button
+         * @return true if any armed flag changed
          */
-        private boolean isOverButton(final MouseEvent me) {
+        private boolean isOverButtons(final MouseEvent me) {
+            boolean changed = false;
             // If the button is down, we might be outside the component
             // without having had mouseExited invoked.
-            if (!contains(me.getPoint())) {
-                return false;
+            if (!_roundedInnerArea.contains(me.getPoint())) {
+                changed = _armedCancelButton || _armedOptionsButton;
+                // reset:
+                _armedCancelButton = false;
+                _armedOptionsButton = false;
+                setCursor(Cursor.getDefaultCursor());
+                return changed;
             }
 
-            // In lieu of proper hit-testing for the circle, check that
-            // the mouse is somewhere in the border.
-            final Rectangle innerArea = SwingUtilities.calculateInnerArea(SearchField.this, null);
+            // check if the mouse is over the search button:
+            boolean armedSearchButton = false;
+            if (_searchButtonShape != null) {
+                armedSearchButton = _searchButtonShape.contains(me.getPoint());
+            }
 
-            return (!innerArea.contains(me.getPoint()));
+            // check if the mouse is over the cancel button:
+            if (_cancelButtonShape != null) {
+                final boolean armed = _cancelButtonShape.contains(me.getPoint());
+
+                if (armed != _armedCancelButton) {
+                    _armedCancelButton = armed;
+                    changed = true;
+                }
+            }
+
+            // check if the mouse is over the options button:
+            if (_optionsButtonShape != null) {
+                final boolean armed = _optionsButtonShape.contains(me.getPoint());
+
+                if (armed != _armedOptionsButton) {
+                    _armedOptionsButton = armed;
+                    changed = true;
+                }
+            }
+
+            setCursor((armedSearchButton || _armedCancelButton || _armedOptionsButton)
+                    ? Cursor.getDefaultCursor() : Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+
+            return changed;
+        }
+
+        /**
+         * Handle mouse event i.e. test mouse over buttons (arm) and repaint if needed
+         * @param me mouse event
+         */
+        private void handleMouseEvent(final MouseEvent me) {
+            if (isOverButtons(me)) {
+                repaint();
+            }
+        }
+
+        @Override
+        public void mouseMoved(final MouseEvent me) {
+            handleMouseEvent(me);
         }
 
         @Override
         public void mouseDragged(final MouseEvent me) {
-            arm(me);
+            handleMouseEvent(me);
         }
 
         @Override
         public void mouseEntered(final MouseEvent me) {
-            arm(me);
+            handleMouseEvent(me);
         }
 
         @Override
         public void mouseExited(final MouseEvent me) {
-            disarm();
+            handleMouseEvent(me);
         }
 
         @Override
         public void mousePressed(final MouseEvent me) {
-            arm(me);
+            handleMouseEvent(me);
         }
 
         @Override
         public void mouseReleased(final MouseEvent me) {
-            if (_armed) {
-                handleRightBorderClick();
+            isOverButtons(me);
+
+            // enable actions only if the text field is enabled:
+            if (SwingUtilities.isLeftMouseButton(me) && isEnabled()) {
+                if (_armedCancelButton) {
+                    handleCancelEdit();
+                }
+                if (_armedOptionsButton) {
+                    handleShowOptions(me);
+                }
             }
-
-            disarm();
-        }
-
-        /**
-         * Enable the arm flag and repaint
-         * @param me mouse event
-         */
-        private void arm(final MouseEvent me) {
-
-            _armed = (isOverButton(me) && SwingUtilities.isLeftMouseButton(me));
-            repaint();
-        }
-
-        /**
-         * Disable the arm flag and repaint
-         */
-        private void disarm() {
-            _armed = false;
             repaint();
         }
     }
@@ -442,6 +581,9 @@ public class SearchField extends JTextField {
      * @param args unused
      */
     public static void main(final String[] args) {
+
+        final boolean testOptions = true;
+
         // GUI initialization
         final JFrame frame = new JFrame();
         frame.setTitle("SearchField Demo");
@@ -449,8 +591,34 @@ public class SearchField extends JTextField {
         // Force to exit when the frame closes :
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        final JPanel panel = new JPanel();
-        panel.add(new SearchField());
+        final JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+        final SearchField searchField;
+        if (testOptions) {
+            final JPopupMenu optionsMenu = new JPopupMenu();
+
+            // Add title
+            JMenuItem menuItem = new JMenuItem("Choose Search Option:");
+            menuItem.setEnabled(false);
+            optionsMenu.add(menuItem);
+
+            // And populate the options:
+            menuItem = new JMenuItem("Test option");
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    System.out.println("e = " + e);
+                }
+            });
+
+            optionsMenu.add(menuItem);
+
+            searchField = new SearchField("placeHolder", optionsMenu);
+        } else {
+            searchField = new SearchField("placeHolder");
+        }
+        panel.add(searchField, BorderLayout.CENTER);
 
         frame.getContentPane().add(panel);
 

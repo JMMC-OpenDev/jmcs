@@ -235,11 +235,13 @@ public class SearchField extends JTextField {
      * Reset SearchField content and notify listeners.
      */
     private void handleCancelEdit() {
-        if (!_showingPlaceholderText && getText().length() != 0) {
-            // Field is NOT empty
-            setText("");
+        if (isEnabled()) {
+            if (!_showingPlaceholderText && getText().length() != 0) {
+                // Field is NOT empty
+                setText("");
+            }
+            postActionEvent();
         }
-        postActionEvent();
     }
 
     /**

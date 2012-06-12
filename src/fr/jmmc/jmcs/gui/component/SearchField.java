@@ -91,7 +91,7 @@ public class SearchField extends JTextField {
      * @param placeholderText the text displayed when nothing in.
      * @param options the pop up men for options, null if none.
      */
-    public SearchField(final String placeholderText, JPopupMenu options) {
+    public SearchField(final String placeholderText, final JPopupMenu options) {
         super(8); // 8 characters wide by default
 
         _placeholderText = placeholderText;
@@ -248,7 +248,8 @@ public class SearchField extends JTextField {
      */
     private void handleShowOptions(final MouseEvent me) {
         if (_optionsPopupMenu != null) {
-            _optionsPopupMenu.validate();
+            // revalidate / repaint (support LAF change) because this component is created elsewhere:
+            SwingUtilities.updateComponentTreeUI(_optionsPopupMenu);
             _optionsPopupMenu.show(this, me.getX() + 5, me.getY() + 10);
         }
     }

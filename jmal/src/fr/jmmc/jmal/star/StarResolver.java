@@ -40,7 +40,7 @@ public final class StarResolver {
 
     static {
         _simbadMirrors = new LinkedHashMap<String, String>(4);
-        _simbadMirrors.put("SIMBAD Strasbourg FR", "http://simbad.u-strasbg.frBAD/simbad/sim-script?script=");
+        _simbadMirrors.put("SIMBAD Strasbourg FR", "http://simbad.u-strasbg.fr/simbad/sim-script?script=");
         _simbadMirrors.put("SIMBAD Harvard US", "http://simbad.harvard.edu/simbad/sim-script?script=");
     }
     /* members */

@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
+import com.jidesoft.plaf.LookAndFeelFactory;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.model.Menu;
@@ -333,6 +334,9 @@ public class MainMenuBar extends JMenuBar {
                         final LookAndFeel newLaf = (LookAndFeel) IntrospectionUtils.getInstance(className);
 
                         UIManager.setLookAndFeel(newLaf);
+
+                        // To ensure the use of TriStateCheckBoxes in the Jide CheckBoxTree
+                        LookAndFeelFactory.installJideExtension();
 
                         final Frame mainFrame = App.getFrame();
 

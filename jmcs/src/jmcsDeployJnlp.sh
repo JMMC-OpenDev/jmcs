@@ -97,39 +97,24 @@ createXsltFiles()
     </xsl:element>
     </xsl:variable>
     <xsl:variable name="oldPubDate">
+    <xsl:if test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
     <xsl:element name="pubDate">
-    <xsl:choose>
-    <xsl:when test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
-    <xsl:copy-of select="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate"/>
-    </xsl:when><xsl:otherwise>
-    <xsl:value-of select="concat(date:day-abbreviation(), ', ',
-    format-number(date:day-in-month(), '00'), ' ',
-    date:month-abbreviation(), ' ',
-    date:year(), ' ',
-    format-number(date:hour-in-day(), '00'), ':',
-    format-number(date:minute-in-hour(), '00'), ':',
-    format-number(date:second-in-minute(), '00'), ' GMT')"/>
-    </xsl:otherwise>
-    </xsl:choose>
+    <xsl:value-of select="exslt:node-set(\$releasenotes)//release[@version=\$version]//pubDate[string-length(text())>4]/text()"/>
     </xsl:element>
+    </xsl:if>
     </xsl:variable>
 
 
     <xsl:element name="{name()}">
     <xsl:apply-templates select="./@*"/>
     <xsl:choose>
-    <xsl:when test="\$prereleases=\$oldprereleases">
+    <xsl:when test="pubDate">
+    <xsl:message> release <xsl:value-of select="\$version"/> keep pubDate comming from applicationData.xml</xsl:message>
+    </xsl:when>
+    <xsl:when test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
     <xsl:message>release <xsl:value-of select="\$version"/> keep old pubDate (<xsl:value-of select="\$oldPubDate"/>)</xsl:message>
     <xsl:copy-of select="\$oldPubDate"/>
     </xsl:when>
-<!--    <xsl:when test="set:difference(\$oldprereleases, \$prereleases)">
-    <xsl:message>prerelease detect</xsl:message>
-    </xsl:when>
-    <xsl:when test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
-    <xsl:message><xsl:copy-of select="set:difference(\$prereleases, \$oldprereleases)"/></xsl:message>
-    <xsl:message>release <xsl:value-of select="\$version"/> keep same pubDate</xsl:message>
-    </xsl:when>
-    -->
     <xsl:otherwise>
     <xsl:message>release <xsl:value-of select="\$version"/> get new pubDate (<xsl:value-of select="\$pubDate"/>)</xsl:message>
     <xsl:copy-of select="\$pubDate"/>
@@ -313,19 +298,16 @@ EOF
             <xsl:variable name="changeSet" select=".//change[not(@type) or starts-with(@type,'CHANGE')] "/>
             <xsl:variable name="bugfixSet" select=".//change[starts-with(@type,'BUG')]"/>
             <xsl:if test="\$featureSet">
-              <li>Features:
-                <ul><xsl:apply-templates select="\$featureSet"/></ul>
-              </li>
+              <li>Features:</li>
+              <ul><xsl:apply-templates select="\$featureSet"/></ul>
             </xsl:if>
             <xsl:if test="\$changeSet">
-              <li>Changes:
-                <ul><xsl:apply-templates select="\$changeSet"/></ul>
-              </li>
+              <li>Changes:</li>
+              <ul><xsl:apply-templates select="\$changeSet"/></ul>
             </xsl:if>
             <xsl:if test="\$bugfixSet">
-              <li>Bug fixes:
-                <ul><xsl:apply-templates select="\$bugfixSet"/></ul>
-              </li>
+              <li>Bug fixes:</li>
+              <ul><xsl:apply-templates select="\$bugfixSet"/></ul>
             </xsl:if>
             </ul>
             <xsl:value-of select="']]>'" disable-output-escaping="yes"/>
@@ -588,17 +570,21 @@ createAppJar()
         fi
     done
 
-                for jarpath in  $(find $APP_WEBROOT -name '*.jar') $extJars
-                    do
+    for jarpath in  $(find $APP_WEBROOT -name '*.jar') $extJars
+    do
         shllibEchoDebug " Add '$jarpath' content into tmpbigjar"
         jar xf $jarpath
-        #  cat META-INF/MANIFEST.MF | awk '{if ( match($1,"Name: *") == 1 )p=1; if( length($1) == 0 ){p=0; print} ; if (p==1)print ;}' >> $BIGMANIFEST
-        rm -rf META-INF
+
+        #  remove any MANIFEST or other file from library but not service providers (services folder):
+        find META-INF -mindepth 1 ! -wholename "META-INF/service*" -delete
     done
 
     # remove old META-INF of previous jar if any and build new MANIFEST file
     # only main class is included from jnlp because MANIFEST can't handle arguments
-    rm -rf META-INF
+       
+    # remove any MANIFEST or other file from library but not service providers (services folder):
+    find META-INF -mindepth 1 ! -wholename "META-INF/service*" -delete
+
     MAINCLASS=$(xml sel -t -v "//application-desc/@main-class"  $APP_WEBROOT/$JNLPFILE)
     cd ..
 
@@ -622,6 +608,8 @@ createAppJar()
     rm MANIFEST.MF
     echo "    done"
     rm -rf tmpbigjar
+
+# TODO: handle Ctrl-C during jar commands ...
 }
 
 createHtmlAcknowledgement()
@@ -855,6 +843,8 @@ createAppJar
 createHtmlIndex
 createCreditFile
 createHtmlAcknowledgement
+
+# TODO: handle failure during arr jar creation (control-c) or any other failure before deploying web app !!
 
 echo "Installing application into '$REAL_APP_WEBROOT' directory..." 
 if [ -e "$REAL_APP_WEBROOT" ]

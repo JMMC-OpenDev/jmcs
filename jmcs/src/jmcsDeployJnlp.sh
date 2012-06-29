@@ -97,39 +97,25 @@ createXsltFiles()
     </xsl:element>
     </xsl:variable>
     <xsl:variable name="oldPubDate">
+    <xsl:if test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
     <xsl:element name="pubDate">
-    <xsl:choose>
-    <xsl:when test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
-    <xsl:copy-of select="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate"/>
-    </xsl:when><xsl:otherwise>
-    <xsl:value-of select="concat(date:day-abbreviation(), ', ',
-    format-number(date:day-in-month(), '00'), ' ',
-    date:month-abbreviation(), ' ',
-    date:year(), ' ',
-    format-number(date:hour-in-day(), '00'), ':',
-    format-number(date:minute-in-hour(), '00'), ':',
-    format-number(date:second-in-minute(), '00'), ' GMT')"/>
-    </xsl:otherwise>
-    </xsl:choose>
+    <xsl:value-of select="exslt:node-set(\$releasenotes)//release[@version=\$version]//pubDate[string-length(text())>4]/text()"/>
     </xsl:element>
+    <xsl:message>old release <xsl:value-of select="\$version"/> detected</xsl:message>
+    </xsl:if>
     </xsl:variable>
 
 
     <xsl:element name="{name()}">
     <xsl:apply-templates select="./@*"/>
     <xsl:choose>
-    <xsl:when test="\$prereleases=\$oldprereleases">
+    <xsl:when test="pubDate">
+    <xsl:message> release <xsl:value-of select="\$version"/> keep pubDate comming from applicationData.xml</xsl:message>
+    </xsl:when>
+    <xsl:when test="\$oldPubDate">
     <xsl:message>release <xsl:value-of select="\$version"/> keep old pubDate (<xsl:value-of select="\$oldPubDate"/>)</xsl:message>
     <xsl:copy-of select="\$oldPubDate"/>
     </xsl:when>
-<!--    <xsl:when test="set:difference(\$oldprereleases, \$prereleases)">
-    <xsl:message>prerelease detect</xsl:message>
-    </xsl:when>
-    <xsl:when test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
-    <xsl:message><xsl:copy-of select="set:difference(\$prereleases, \$oldprereleases)"/></xsl:message>
-    <xsl:message>release <xsl:value-of select="\$version"/> keep same pubDate</xsl:message>
-    </xsl:when>
-    -->
     <xsl:otherwise>
     <xsl:message>release <xsl:value-of select="\$version"/> get new pubDate (<xsl:value-of select="\$pubDate"/>)</xsl:message>
     <xsl:copy-of select="\$pubDate"/>

@@ -101,7 +101,6 @@ createXsltFiles()
     <xsl:element name="pubDate">
     <xsl:value-of select="exslt:node-set(\$releasenotes)//release[@version=\$version]//pubDate[string-length(text())>4]/text()"/>
     </xsl:element>
-    <xsl:message>old release <xsl:value-of select="\$version"/> detected</xsl:message>
     </xsl:if>
     </xsl:variable>
 
@@ -112,7 +111,7 @@ createXsltFiles()
     <xsl:when test="pubDate">
     <xsl:message> release <xsl:value-of select="\$version"/> keep pubDate comming from applicationData.xml</xsl:message>
     </xsl:when>
-    <xsl:when test="\$oldPubDate">
+    <xsl:when test="exslt:node-set(\$releasenotes)//release[@version=\$version]/pubDate">
     <xsl:message>release <xsl:value-of select="\$version"/> keep old pubDate (<xsl:value-of select="\$oldPubDate"/>)</xsl:message>
     <xsl:copy-of select="\$oldPubDate"/>
     </xsl:when>

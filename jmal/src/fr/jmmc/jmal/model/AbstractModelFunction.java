@@ -159,10 +159,17 @@ public abstract class AbstractModelFunction<T extends PunctFunction> implements 
     public static void compute(final PunctFunction function, final double[] ufreq, final double[] vfreq,
                                final int nVis, final MutableComplex[] vis, final MutableComplex modelVis) {
         // Compute :
+        final double x = function.getX();
+        final double y = function.getY();
+        final boolean zero = function.isZero();
+
+        double u, v;
+
         for (int i = 0; i < nVis; i++) {
-            Functions.shift(ufreq[i], vfreq[i], function.isZero(), function.getX(), function.getY(),
-                    function.computeWeight(ufreq[i], vfreq[i]),
-                    modelVis);
+            u = ufreq[i];
+            v = vfreq[i];
+
+            Functions.shift(u, v, zero, x, y, function.computeWeight(u, v), modelVis);
 
             // mutable complex:
             vis[i].add(modelVis);

@@ -43,7 +43,9 @@ public final class Functions {
      * @param value value to shift
      * @param output complex Fourier transform value
      */
-    public static void shift(final double ufreq, final double vfreq, final boolean zero, final double x, final double y, final double value, final MutableComplex output) {
+    public static void shift(final double ufreq, final double vfreq,
+                             final boolean zero, final double x, final double y,
+                             final double value, final MutableComplex output) {
         if (zero) {
             // update output complex instance (mutable):
             output.updateComplex(value, 0d);
@@ -155,7 +157,8 @@ public final class Functions {
      * @return new spatial frequency UFREQ
      */
     public static double transformU(final double ufreq, final double vfreq,
-                                    final double anamorphoseRatio, final double cosBeta, final double sinBeta) {
+                                    final double anamorphoseRatio,
+                                    final double cosBeta, final double sinBeta) {
 
         return ufreq * cosBeta * anamorphoseRatio + vfreq * sinBeta * anamorphoseRatio;
     }

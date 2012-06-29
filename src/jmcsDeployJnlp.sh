@@ -588,17 +588,24 @@ createAppJar()
         fi
     done
 
-                for jarpath in  $(find $APP_WEBROOT -name '*.jar') $extJars
-                    do
+    for jarpath in  $(find $APP_WEBROOT -name '*.jar') $extJars
+    do
         shllibEchoDebug " Add '$jarpath' content into tmpbigjar"
         jar xf $jarpath
         #  cat META-INF/MANIFEST.MF | awk '{if ( match($1,"Name: *") == 1 )p=1; if( length($1) == 0 ){p=0; print} ; if (p==1)print ;}' >> $BIGMANIFEST
-        rm -rf META-INF
+
+        # remove any MANIFEST or other file from library but not service providers (services folder):
+        rm -rf META-INF/maven
+        rm -f META-INF/*    
     done
 
     # remove old META-INF of previous jar if any and build new MANIFEST file
     # only main class is included from jnlp because MANIFEST can't handle arguments
-    rm -rf META-INF
+       
+    # remove any MANIFEST or other file from library but not service providers (services folder):
+    rm -rf META-INF/maven
+    rm -f META-INF/*
+
     MAINCLASS=$(xml sel -t -v "//application-desc/@main-class"  $APP_WEBROOT/$JNLPFILE)
     cd ..
 
@@ -622,6 +629,8 @@ createAppJar()
     rm MANIFEST.MF
     echo "    done"
     rm -rf tmpbigjar
+
+# TODO: handle Ctrl-C during jar commands ...
 }
 
 createHtmlAcknowledgement()
@@ -855,6 +864,8 @@ createAppJar
 createHtmlIndex
 createCreditFile
 createHtmlAcknowledgement
+
+# TODO: handle failure during arr jar creation (control-c) or any other failure before deploying web app !!
 
 echo "Installing application into '$REAL_APP_WEBROOT' directory..." 
 if [ -e "$REAL_APP_WEBROOT" ]

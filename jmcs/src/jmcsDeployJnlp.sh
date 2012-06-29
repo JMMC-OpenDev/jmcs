@@ -575,12 +575,13 @@ createAppJar()
         shllibEchoDebug " Add '$jarpath' content into tmpbigjar"
         jar xf $jarpath
         #  cat META-INF/MANIFEST.MF | awk '{if ( match($1,"Name: *") == 1 )p=1; if( length($1) == 0 ){p=0; print} ; if (p==1)print ;}' >> $BIGMANIFEST
-        rm -rf META-INF
+        find META-INF -mindepth 1 ! -wholename "META-INF/service*" -delete
     done
 
     # remove old META-INF of previous jar if any and build new MANIFEST file
     # only main class is included from jnlp because MANIFEST can't handle arguments
-    rm -rf META-INF
+    find META-INF -mindepth 1 ! -wholename "META-INF/service*" -delete
+
     MAINCLASS=$(xml sel -t -v "//application-desc/@main-class"  $APP_WEBROOT/$JNLPFILE)
     cd ..
 

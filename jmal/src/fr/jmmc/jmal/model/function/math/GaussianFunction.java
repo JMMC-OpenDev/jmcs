@@ -26,12 +26,12 @@ public class GaussianFunction extends DiskFunction {
      */
     @Override
     public double computeWeight(final double ufreq, final double vfreq) {
-        if (axisRatio != 1d) {
+        if (isStreched) {
             // transform UV coordinates :
-            final double t_ufreq = Functions.transformU(ufreq, vfreq, axisRatio, cosBeta, sinBeta);
-            final double t_vfreq = Functions.transformV(ufreq, vfreq, cosBeta, sinBeta);
-
-            return Functions.computeGaussian(t_ufreq, t_vfreq, flux_weight, diameter);
+            return Functions.computeGaussian(
+                    Functions.transformU(ufreq, vfreq, axisRatio, cosBeta, sinBeta),
+                    Functions.transformV(ufreq, vfreq, cosBeta, sinBeta),
+                    flux_weight, diameter);
         }
         return Functions.computeGaussian(ufreq, vfreq, flux_weight, diameter);
     }

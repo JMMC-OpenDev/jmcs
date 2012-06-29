@@ -14,6 +14,8 @@ package fr.jmmc.jmal.model.function.math;
  */
 public class DiskFunction extends CircleFunction {
 
+    /** flag indicating that this function is streched (i.e. axis ratio != 1) */
+    protected boolean isStreched = false;
     /**
      * Axis ratio :
      * For the elongated model, the axis ratio = major axis / minor axis.
@@ -50,6 +52,7 @@ public class DiskFunction extends CircleFunction {
      */
     public final void setAxisRatio(final double axisRatio) {
         this.axisRatio = axisRatio;
+        this.isStreched = (axisRatio != 1d);
     }
 
     /**
@@ -75,12 +78,12 @@ public class DiskFunction extends CircleFunction {
      */
     @Override
     public double computeWeight(final double ufreq, final double vfreq) {
-        if (axisRatio != 1d) {
+        if (isStreched) {
             // transform UV coordinates :
-            final double t_ufreq = Functions.transformU(ufreq, vfreq, axisRatio, cosBeta, sinBeta);
-            final double t_vfreq = Functions.transformV(ufreq, vfreq, cosBeta, sinBeta);
-
-            return Functions.computeDisk(t_ufreq, t_vfreq, flux_weight, diameter);
+            return Functions.computeDisk(
+                    Functions.transformU(ufreq, vfreq, axisRatio, cosBeta, sinBeta),
+                    Functions.transformV(ufreq, vfreq, cosBeta, sinBeta),
+                    flux_weight, diameter);
         }
 
         return Functions.computeDisk(ufreq, vfreq, flux_weight, diameter);

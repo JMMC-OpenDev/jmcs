@@ -32,6 +32,8 @@ public enum SampMetaData {
     JNLP_BETA_URL("x-samp.jnlp.beta.url", "Beta JNLP", MimeType.URL),
     /** Get the web application URL */
     WEBAPP_URL("x-samp.webapp.url", "Web App", MimeType.URL),
+    /** Get the CLI application path */
+    CLI_PATH("x-samp.cli.path", "Command-line Path", MimeType.PLAIN_TEXT),
     /** Get the application home page URL */
     HOMEPAGE_URL("x-samp.homepage.url", "Homepage", MimeType.URL),
     /** Get the application release notes URL */

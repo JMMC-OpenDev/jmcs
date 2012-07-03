@@ -7,6 +7,9 @@ import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -350,6 +353,41 @@ public final class MessagePane {
     }
 
     /**
+     * Show an input message (with title) returning a string (using EDT if needed)
+     *
+     * @param message message to display
+     * @param title window title to use
+     *
+     * @return the string given by the user, or null otherwise.
+     */
+    public static String showInputMessage(final String message, final String title) {
+
+        FutureTask<String> future = new FutureTask<String>(
+                new Callable<String>() {
+
+                    @Override
+                    public String call() {
+                        // ensure window is visible (not iconified):
+                        App.showFrameToFront();
+                        return JOptionPane.showInputDialog(getApplicationFrame(), getMessageComponent(message), title, JOptionPane.INFORMATION_MESSAGE);
+                    }
+                });
+
+        SwingUtils.invokeEDT(future);
+
+        String receivedValue = null;
+        try {
+            receivedValue = future.get();
+        } catch (InterruptedException ex) {
+            _logger.error("Could not read user input", ex);
+        } catch (ExecutionException ex) {
+            _logger.error("Could not read user input", ex);
+        }
+
+        return receivedValue;
+    }
+
+    /**
      * Return a parent component / owner for a dialog window
      * @param com component argument
      * @return given component argument or the application frame if the given component is null
@@ -373,7 +411,7 @@ public final class MessagePane {
 
     /** 
      * Return the smallest component that would display given message in a dialog frame. 
-     * If the message is too big, one limited size scrollpane is used for display.
+     * If the message is too big, one limited size scroll pane is used for display.
      * @param message string that will be wrapped if too long
      * @return the component which can be given to JOptionPane methods.
      */
@@ -408,6 +446,9 @@ public final class MessagePane {
     }
 
     public static void main(String[] args) {
+
+        final String showInputMessage = showInputMessage("message", "title");
+        System.out.println("showInputMessage = '" + showInputMessage + "'.");
 
         String message = "";
 

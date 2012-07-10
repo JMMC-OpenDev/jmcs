@@ -41,7 +41,7 @@ import javax.xml.bind.Unmarshaller;
  *
  * This class uses <b>Castor</b> classes to access to these informations
  * and provides the good getters for each field of the XML file.
- * 
+ *
  * @author Guillaume MELLA, Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class ApplicationDataModel {
@@ -81,7 +81,7 @@ public class ApplicationDataModel {
     /** Release Notes URL */
     private String _releaseNotesLink = null;
 
-    /** 
+    /**
      * Public constructor
      * @param dataModelURL location of the file to load
      * @throws IllegalStateException if the given URL can not be loaded
@@ -101,11 +101,11 @@ public class ApplicationDataModel {
 
         _feedbackReportHeaderMessage = "<html><body>"
                 + "<center>"
-                + "<big>Welcome to '" + programName + "' Feedback Report</big><br/>"
-                + "We are eager to get your feedback, questions or comments !<br/>"
-                + "So please do not hesitate to use this form.<br/>"
+                + "<big>Welcome to '" + programName + "' Feedback Report</big><br>"
+                + "We are eager to get your feedback, questions or comments !<br>"
+                + "So please do not hesitate to use this form.<br>"
                 + "</center>"
-                + "<br/><br/>"
+                + "<br><br>"
                 + "Moreover, we encourage you to provide us with your e-mail address, so we can :"
                 + "<ul>"
                 + "<li>keep you up to date on the status of your request;</li>"
@@ -258,7 +258,7 @@ public class ApplicationDataModel {
     }
 
     /**
-    
+
      * @return the application main web page URL from the "link" field in the XML file
      */
     public String getLinkValue() {
@@ -271,7 +271,7 @@ public class ApplicationDataModel {
     }
 
     /**
-    
+
      * @return the application release notes URL if any, null otherwise.
      */
     public String getReleaseNotesLinkValue() {

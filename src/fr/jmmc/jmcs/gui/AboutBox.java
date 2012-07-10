@@ -267,7 +267,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         final String jMcsUrl = data.getLinkValue();
         final String jMcsDescription = data.getTextValue();
         generatedHtml.append("<a href='").append(jMcsUrl).append("'>").append(jMcsName).append("</a>");
-        generatedHtml.append(" : <i>").append(jMcsDescription).append("</i><br/>");
+        generatedHtml.append(" : <i>").append(jMcsDescription).append("</i><br>");
 
         // Generate a HTML string with each package informations
         final List<String> packagesInfo = _applicationDataModel.getPackagesInfo();
@@ -285,7 +285,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
                 generatedHtml.append("<a href='").append(link).append("'>").append(name).append("</a>");
             }
 
-            generatedHtml.append(" : <i>").append(description).append("</i><br/>");
+            generatedHtml.append(" : <i>").append(description).append("</i><br>");
         }
 
         generatedHtml.append("</body></html>");

@@ -247,13 +247,13 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
         // HTML generation
         final StringBuilder generatedHtml = new StringBuilder(4096);
-        generatedHtml.append("<html><head></head><body>");
+        generatedHtml.append("<html><body>");
 
         final String authors = _applicationDataModel.getAuthors();
         if ((authors != null) && (authors.length() > 0)) {
-            generatedHtml.append("Brought to you by ").append(authors).append(".<BR><BR>");
+            generatedHtml.append("Brought to you by ").append(authors).append(".<br><br>");
         }
-        generatedHtml.append("<I>If this software was helpful for your study or research work, please include the mandatory acknowledgment (available from the Help menu) in your publications.</I><BR><BR>");
+        generatedHtml.append("<i>If this software was helpful for your study or research work, please include the mandatory acknowledgment (available from the Help menu) in your publications.</i><br><br>");
 
         // Get the Text value
         final String textValue = _applicationDataModel.getTextValue();
@@ -329,7 +329,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         final String link = _applicationDataModel.getLinkValue();
         final String linkHTML = "<a href='" + link + "'>" + link + "</a>";
 
-        _linkLabel.setText("<html><head></head><body><center>" + linkHTML
+        _linkLabel.setText("<html><body><center>" + linkHTML
                 + "</center></body></html>");
 
         _logger.debug("All the link label properties have been initialized");

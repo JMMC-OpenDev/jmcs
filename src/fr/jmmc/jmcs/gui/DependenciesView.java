@@ -56,10 +56,10 @@ public class DependenciesView {
         final String jMcsUrl = data.getLinkValue();
 
         // Compose jMCS header
-        final StringBuilder generatedHtml = new StringBuilder(4096);
-        generatedHtml.append("<html><head></head><body>");
+        final StringBuilder generatedHtml = new StringBuilder(65 * 1024);
+        generatedHtml.append("<html><body>");
         generatedHtml.append("<center><b>").append(jMcsName).append(" Acknowledgments</b></center><br>");
-        generatedHtml.append("<center><a href='").append(jmmcUrl).append("'><img src='").append(jmmcLogoURL).append("'/></a></center><br><br>");
+        generatedHtml.append("<center><a href='").append(jmmcUrl).append("'><img src='").append(jmmcLogoURL).append("'></a></center><br><br>");
         generatedHtml.append("<i>").append(App.getSharedApplicationDataModel().getProgramName()).append("</i>");
         generatedHtml.append(" make extensive use of the <a href = '").append(jMcsUrl).append("'>").append(jMcsName).append("</a> provided by the ").append(jmmcLongName).append(" (").append(jmmcName).append(").<br><br>");
         generatedHtml.append(jMcsName).append(" dependencies include:<br>");
@@ -105,7 +105,7 @@ public class DependenciesView {
             final String licenseFilename = currentLicense.getKey();
 
             // Compose license title (with anchor)
-            generatedHtml.append("<br><a name='#").append(licenseFilename).append("'/><hr/><center><b>").append(licenseName).append("</b></center><hr/>");
+            generatedHtml.append("<br><a name='#").append(licenseFilename).append("'></a><hr><center><b>").append(licenseName).append("</b></center><hr>");
 
             // Try to load license content
             final String licenseResourcePath = JMCS_LICENSE_CONTENT_FILE_PATH + licenseFilename;

@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
+import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.network.BrowserLauncher;
@@ -12,7 +13,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Create resizable, best-sized window able to display either plain text or HTML.
- * 
+ *
  * @author Sylvain LAFRASE
  */
 public class ResizableTextViewFactory {
@@ -51,7 +51,7 @@ public class ResizableTextViewFactory {
 
             @Override
             public void run() {
-                final JDialog dialog = new JDialog((JDialog) null, title, modal);
+                final JDialog dialog = new JDialog(App.getFrame(), title, modal);
                 final JEditorPane editorPane = startLayout(dialog);
                 finishLayout(editorPane, dialog, text, modal);
             }
@@ -69,7 +69,7 @@ public class ResizableTextViewFactory {
 
             @Override
             public void run() {
-                final JDialog dialog = new JDialog((JDialog) null, title, modal);
+                final JDialog dialog = new JDialog(App.getFrame(), title, modal);
                 final JEditorPane editorPane = startLayout(dialog);
 
                 editorPane.setContentType("text/html");

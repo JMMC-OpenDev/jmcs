@@ -64,7 +64,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
  * <b>ApplicationDataModel</b> class. It's a class which has got getters
  * in order to do that and which has been written to abstract the way
  * to access to these informations.
- * 
+ *
  * @author Brice COLUCCI, Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public abstract class App {
@@ -92,7 +92,7 @@ public abstract class App {
             // create one dummy context to let configurator execute correctly:
             configurator.setContext(loggerContext);
 
-            // Call context.reset() to clear any previous configuration, e.g. default 
+            // Call context.reset() to clear any previous configuration, e.g. default
             // configuration. For multi-step configuration, omit calling context.reset().
             loggerContext.reset();
 
@@ -124,13 +124,12 @@ public abstract class App {
         JmmcLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("fr.jmmc");
         JmmcLogger.info("Application log created and used by the feedback report. Current level is {}.", JmmcLogger.getEffectiveLevel());
 
+        // Define swing settings (laf, locale...) before any Swing usage if not called at the first line of the main method:
+        SwingSettings.setup();
+
         // Define default network settings:
         // note: settings must be set before using any URLConnection (loadApplicationData)
         NetworkSettings.defineDefaults();
-
-        // Try to define swing settings (laf, locale...) again if
-        // next line was not present at the first line of the main method.
-        SwingSettings.setup();
     }
     /** application data file i.e. "ApplicationData.xml" */
     public final static String APPLICATION_DATA_FILE = "ApplicationData.xml";
@@ -334,7 +333,6 @@ public abstract class App {
      */
     public static Action aboutBoxAction() {
         return new AbstractAction("About...") {
-
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
 
@@ -374,7 +372,6 @@ public abstract class App {
      */
     public static Action feedbackReportAction(final Exception ex) {
         return new AbstractAction("Report Feedback to " + App.getSharedApplicationDataModel().getShortCompanyName() + "...") {
-
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
 
@@ -418,7 +415,7 @@ public abstract class App {
 
     /**
      * Return the action dedicated to display hot news
-     * @return action dedicated to display hot news 
+     * @return action dedicated to display hot news
      */
     public static Action showHotNewsAction() {
         return _showHotNewsAction;
@@ -434,7 +431,7 @@ public abstract class App {
 
     /**
      * Return the action dedicated to display FAQ
-     * @return action dedicated to display FAQ 
+     * @return action dedicated to display FAQ
      */
     public static Action showFaqAction() {
         return _showFaqAction;
@@ -577,20 +574,20 @@ public abstract class App {
      * Initialize application objects
      *
      * The actions which are present in menubar must be instantiated in this method.
-     * 
+     *
      * @param args command line arguments
      */
     protected abstract void init(String[] args);
 
-    /** 
-     * Prepare interoperability (SAMP message handlers) 
+    /**
+     * Prepare interoperability (SAMP message handlers)
      */
     protected void declareInteroperability() {
         _logger.debug("Default App.declareInteroperability() handler called.");
     }
 
-    /** 
-     * Execute application body 
+    /**
+     * Execute application body
      */
     protected abstract void execute();
 
@@ -682,7 +679,7 @@ public abstract class App {
         _avoidSystemExit = flag;
     }
 
-    /** 
+    /**
      * Describe the life cycle of the application
      */
     protected final void run() {
@@ -691,7 +688,6 @@ public abstract class App {
             // Using invokeAndWait to be in sync with this thread :
             // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
             SwingUtils.invokeAndWaitEDT(new Runnable() {
-
                 /**
                  * Initializes Splash Screen in EDT
                  */
@@ -708,7 +704,6 @@ public abstract class App {
         // Using invokeAndWait to be in sync with this thread :
         // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
         SwingUtils.invokeAndWaitEDT(new Runnable() {
-
             /**
              * Initializes swing components in EDT
              */
@@ -754,7 +749,6 @@ public abstract class App {
         // If any file argument exists, open that file using the registered open action :
         if (_fileArgument != null) {
             SwingUtils.invokeLaterEDT(new Runnable() {
-
                 /**
                  * Open the file using EDT :
                  */
@@ -768,7 +762,6 @@ public abstract class App {
         }
 
         SwingUtils.invokeLaterEDT(new Runnable() {
-
             /**
              * Display warning if OpenJDK detected:
              */
@@ -833,7 +826,6 @@ public abstract class App {
      */
     public static Action logGuiAction() {
         return new AbstractAction("Show Log Console") {
-
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
 
@@ -984,7 +976,7 @@ public abstract class App {
     /**
      * Get URL from resource filename located in the class loader using the following path:
      * $package(appClass)$/resource/fileName
-     * 
+     *
      * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
      * fr/jmmc/jmcs/resource/$fileName$
      *
@@ -1003,7 +995,7 @@ public abstract class App {
     /**
      * Get URL from resource filename located in the class loader using the following path:
      * $package(appClass)$/resource/fileName
-     * 
+     *
      * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
      * fr/jmmc/jmcs/resource/$fileName$
      *

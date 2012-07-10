@@ -58,11 +58,11 @@ public class DependenciesView {
         // Compose jMCS header
         final StringBuilder generatedHtml = new StringBuilder(4096);
         generatedHtml.append("<html><head></head><body>");
-        generatedHtml.append("<center><b>").append(jMcsName).append(" Acknowledgments</b></center><br/>");
-        generatedHtml.append("<center><a href='").append(jmmcUrl).append("'><img src='").append(jmmcLogoURL).append("'/></a></center><br/><br/>");
+        generatedHtml.append("<center><b>").append(jMcsName).append(" Acknowledgments</b></center><br>");
+        generatedHtml.append("<center><a href='").append(jmmcUrl).append("'><img src='").append(jmmcLogoURL).append("'/></a></center><br><br>");
         generatedHtml.append("<i>").append(App.getSharedApplicationDataModel().getProgramName()).append("</i>");
-        generatedHtml.append(" make extensive use of the <a href = '").append(jMcsUrl).append("'>").append(jMcsName).append("</a> provided by the ").append(jmmcLongName).append(" (").append(jmmcName).append(").<br/><br/>");
-        generatedHtml.append(jMcsName).append(" dependencies include:<br/>");
+        generatedHtml.append(" make extensive use of the <a href = '").append(jMcsUrl).append("'>").append(jMcsName).append("</a> provided by the ").append(jmmcLongName).append(" (").append(jmmcName).append(").<br><br>");
+        generatedHtml.append(jMcsName).append(" dependencies include:<br>");
 
         // Compose each package informations
         for (Package dependency : data.getPackages()) {
@@ -94,8 +94,8 @@ public class DependenciesView {
             } else {
                 generatedHtml.append("<a href='").append(link).append("'>").append(name).append("</a>");
             }
-            generatedHtml.append(":<br/><i>").append(description).append("</i><br/>");
-            generatedHtml.append("(composed of ").append(jars).append(", distirbuted under <a href='#").append(file).append("'>").append(licenseName).append(" license</a>)<br/><br/>");
+            generatedHtml.append(":<br><i>").append(description).append("</i><br>");
+            generatedHtml.append("(composed of ").append(jars).append(", distirbuted under <a href='#").append(file).append("'>").append(licenseName).append(" license</a>)<br><br>");
         }
 
         // Add every license at the bottom of the pane
@@ -105,7 +105,7 @@ public class DependenciesView {
             final String licenseFilename = currentLicense.getKey();
 
             // Compose license title (with anchor)
-            generatedHtml.append("<br/><a name='#").append(licenseFilename).append("'/><hr/><center><b>").append(licenseName).append("</b></center><hr/>");
+            generatedHtml.append("<br><a name='#").append(licenseFilename).append("'/><hr/><center><b>").append(licenseName).append("</b></center><hr/>");
 
             // Try to load license content
             final String licenseResourcePath = JMCS_LICENSE_CONTENT_FILE_PATH + licenseFilename;
@@ -114,7 +114,7 @@ public class DependenciesView {
                 generatedHtml.append("<pre>").append(licenseText).append("</pre>");
             } catch (IllegalStateException ise) {
                 _logger.error("Could not load '{}' resource.", licenseResourcePath, ise);
-                generatedHtml.append("<i>License file unavailable at the moment.</i><br/>");
+                generatedHtml.append("<i>License file unavailable at the moment.</i><br>");
             }
         }
         generatedHtml.append("</body></html>");

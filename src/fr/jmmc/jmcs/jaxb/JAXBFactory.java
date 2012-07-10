@@ -102,7 +102,7 @@ public final class JAXBFactory {
         // Define the system property to define which JAXB implementation to use :
         System.setProperty(JAXB_CONTEXT_FACTORY, JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
 
-        logger.info("JAXB implementation: {}", System.getProperty(JAXB_CONTEXT_FACTORY));
+        logger.debug("JAXB implementation: {}", System.getProperty(JAXB_CONTEXT_FACTORY));
 
         try {
             // create a JAXBContext capable of handling classes generated into
@@ -157,7 +157,7 @@ public final class JAXBFactory {
         try {
             // create an Unmarshaller
             m = getJAXBContext().createMarshaller();
-            
+
             m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         } catch (JAXBException je) {

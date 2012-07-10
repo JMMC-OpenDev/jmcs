@@ -14,15 +14,15 @@ import org.apache.commons.lang.SystemUtils;
 
 /**
  * This class gather swing related properties settings for our applications.
- * 
+ *
  * This code is called in the App instanciation, but you are strongly invited
- * to place following code at the first lines of the main method in your 
+ * to place following code at the first lines of the main method in your
  * applications:
  *
  * <code>SwingSettings.defineDefaults</code>
  *
  * Copied and adapted from voparis code.
- * 
+ *
  * @author Laurent BOURGES, Guillaume MELLA.
  */
 public class SwingSettings {
@@ -46,12 +46,14 @@ public class SwingSettings {
             return;
         }
 
+        setSystemProps();
         setMandatory();
         setSwingDefaults();
-        setSystemProps();
 
         // Install exception handlers :
         MCSExceptionHandler.installSwingHandler();
+
+        logger.info("Swing settings set.");
 
         alreadyDone = true;
     }

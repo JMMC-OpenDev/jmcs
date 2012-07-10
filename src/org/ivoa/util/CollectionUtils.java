@@ -56,6 +56,21 @@ public final class CollectionUtils {
      * @param c collection
      * @return string
      */
+    public static String toString(final Object[] o) {
+        return (o != null) ? toString(java.util.Arrays.asList(o), LINE_SEPARATOR, BEGIN_SEPARATOR, END_SEPARATOR) : "";
+    }
+
+    /**
+     * toString method for a Collection instance Format : <code><br/>
+     * {<br/>
+     * value<br/>
+     * ...<br/>
+     * }
+     * </code>
+     * 
+     * @param c collection
+     * @return string
+     */
     public static String toString(final Collection<?> c) {
         return (c != null) ? toString(c, LINE_SEPARATOR, BEGIN_SEPARATOR, END_SEPARATOR) : "";
     }

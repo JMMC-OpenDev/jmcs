@@ -22,7 +22,7 @@ public enum Band {
     /** R (Visible) */
     R("R", 0.6625d, 0.10651d, -1.65d, 0.65d),
     /** I (Near Infrared) */
-    I("I", 0.869625d, 0.31176, -1.94d, 0.75d),
+    I("I", 0.869625d, 0.31176d, -1.94d, 0.75d),
     /** J (Near Infrared) */
     J("J", 1.2365d, 0.426d, -2.5d, 0.77d),
     /** H (Near Infrared) */
@@ -30,13 +30,13 @@ public enum Band {
     /** K (Near Infrared) */
     K("K", 2.365625d, 0.912d, -3.4d, 0.93d),
     /** L (Near Infrared) */
-    L("L", 3.45875d, 1.2785, -4.15d, 0.972d),
+    L("L", 3.45875d, 1.2785d, -4.15d, 0.972d),
     /** M (Mid Infrared) */
     M("M", 6.4035d, 4.615d, -4.69d, 0.985d),
     /** N (Mid Infrared) */
     N("N", 11.63d, 5.842d, -5.91d, 0.996d),
     /** Q (Mid Infrared) */
-    Q("Q", 16.575d, 4.05, -7.17d, 0.999d);
+    Q("Q", 16.575d, 4.05d, -7.17d, 0.999d);
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(Band.class.getName());
 

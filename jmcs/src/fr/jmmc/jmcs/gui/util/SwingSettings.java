@@ -77,7 +77,6 @@ public class SwingSettings {
      * Change locale of swing and Tooltip related.
      */
     private static void setSwingDefaults() {
-
         // Force Locale for Swing Components :
         JComponent.setDefaultLocale(Locale.US);
 
@@ -95,12 +94,10 @@ public class SwingSettings {
      * @see fr.jmmc.mcs.gui.OSXAdapter
      */
     protected static void setSystemProps() {
-
         // force anti aliasing :
-        final String version = System.getProperty("java.version");
-        if (version.startsWith("1.5")) {
+        if (SystemUtils.IS_JAVA_1_5) {
             System.setProperty("swing.aatext", "true");
-        } else if (version.startsWith("1.6")) {
+        } else if (SystemUtils.IS_JAVA_1_6) {
             final String old = System.getProperty("awt.useSystemAAFontSettings");
             if (old == null) {
                 System.setProperty("awt.useSystemAAFontSettings", "on");
@@ -113,6 +110,5 @@ public class SwingSettings {
 
             logger.debug("use screen menu bar in look and feel");
         }
-
     }
 }

@@ -108,7 +108,7 @@ public class StarResolverWidget extends SearchField implements Observer {
     public final void update(final Observable o, final Object arg) {
         Star.Notification notification = Star.Notification.UNKNOWN;
 
-        if (arg != null) {
+        if (arg != null && arg instanceof Star.Notification) {
             notification = (Star.Notification) arg;
         }
 

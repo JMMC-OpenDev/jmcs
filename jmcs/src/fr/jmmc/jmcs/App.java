@@ -38,6 +38,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -122,7 +123,7 @@ public abstract class App {
 
         // Get the jmmc logger to be able to set its level in interpretArguments()
         JmmcLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("fr.jmmc");
-        JmmcLogger.info("Application log created and used by the feedback report. Current level is {}.", JmmcLogger.getEffectiveLevel());
+        JmmcLogger.info("Application log created at {}. Current level is {}.", new Date(), JmmcLogger.getEffectiveLevel());
 
         // Define swing settings (laf, locale...) before any Swing usage if not called at the first line of the main method:
         SwingSettings.setup();

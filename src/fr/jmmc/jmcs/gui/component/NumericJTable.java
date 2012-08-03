@@ -6,7 +6,11 @@ package fr.jmmc.jmcs.gui.component;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.awt.Color;
 import java.awt.Component;
-import javax.swing.*;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComponent;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.JTextComponent;
@@ -51,7 +55,6 @@ public class NumericJTable extends javax.swing.JTable {
         if (c instanceof JTextComponent) {
             /* use invokeLater because of mouse events default behavior (caret ...) */
             SwingUtils.invokeLaterEDT(new Runnable() {
-
                 @Override
                 public void run() {
                     ((JTextComponent) c).selectAll();
@@ -66,9 +69,15 @@ public class NumericJTable extends javax.swing.JTable {
      */
     static class DoubleEditor extends DefaultCellEditor {
 
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+        /** Double value (can be null) */
         private Double value;
 
-        public DoubleEditor() {
+        /**
+         * Double editor constructor
+         */
+        DoubleEditor() {
             super(new JTextField());
             ((JTextField) getComponent()).setHorizontalAlignment(JTextField.RIGHT);
         }
@@ -106,7 +115,7 @@ public class NumericJTable extends javax.swing.JTable {
 
             try {
                 value = new Double(s);
-            } catch (Exception e) {
+            } catch (NumberFormatException nfe) {
                 ((JComponent) getComponent()).setBorder(new LineBorder(Color.red));
                 return false;
             }

@@ -38,7 +38,7 @@ public abstract class GenericJTree<E> extends JTree {
     public GenericJTree(final Class<E> classType) {
         super(new DefaultMutableTreeNode("GenericJTree"), false);
 
-        this.classType = classType;
+        this.classType = (classType == Object.class) ? null : classType;
 
         // single tree selection :
         this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);

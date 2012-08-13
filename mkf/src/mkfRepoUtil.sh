@@ -23,17 +23,17 @@
 # main default repository url
 JMMC_SVNROOT=https://svn.jmmc.fr/jmmc-sw
 IPAG_SVNROOT=https://forge.osug.fr/svn/ipag-sw
-
 SCRIPTNAME=$(basename $0)
 
 # Print usage 
 function printUsage ()
 {
-    echo -e "Usage: $SCRIPTNAME [-h] [-v version] [-d outputDir] <info<.versions>|checkout|export|install|update|tag> <PROJECT> [... <PROJECT_N>]"
+    echo -e "Usage: $SCRIPTNAME  [-d outputDir] [-h] [-n] [-m] [-v version] <info<.versions>|checkout|export|install|update|tag> <PROJECT> [... <PROJECT_N>]"
+    echo -e "\t-d <directory>\tset working area for modules (default is current dir).";
     echo -e "\t-h\tprint this help.";
     echo -e "\t-n\tdisplay svn command which is performed when this option is not set.";
+    echo -e "\t-m \tdo not generate documentation from code.";
     echo -e "\t-v <version>\tuse given version (default is development one) when retrieving sources or tagging.";
-    echo -e "\t-d <directory>\tset working area for modules (default is current dir).";
     echo -e "\tACTIONS  :";
     echo -e "\t   info          : list modules of given projects.";
     echo -e "\t   info.versions : list versions present handled by the source code management.";
@@ -43,7 +43,7 @@ function printUsage ()
     echo -e "\t   update        : update the modules of given projects.";
     echo -e "\t   tag           : tag the modules of given projects with tag given by -v option.";
     echo -e "\tPROJECTS :";
-    echo -e "\t   ${supportedModules}";
+    echo -e "\t   ${supportedProjects}";
     exit 1
 }
 
@@ -146,7 +146,7 @@ function installModules()
         echo -n " - installing '${moduleName}' from '${repos_path}' ... "
         ${SVN_COMMAND} checkout "${repos_path}"
         module_src_path="${moduleName}/src"
-        (cd "${module_src_path}" ; make clean all man install)
+        (cd "${module_src_path}" ; make clean all ${DO_MAN_DURING_INSTALL} install)
         echo "DONE."
     done
     echo "Installation finished."
@@ -175,7 +175,7 @@ function tagModules(){
 # This function contains the description of the svn repository and modules for a given project and version
 # it returns on the output the svnroot followed by the list of modules paths
 # TODO complete with full project list if they require to be packed or handled automatically by scripts
-supportedModules="AMBER AppLauncher ASPRO2 LITpro MCS SearchCal WISARD YOCO "
+supportedProjects="AMBER AppLauncher ASPRO2 LITpro MCS Oitools SearchCal WISARD YOCO "
 function getProjectDesc()
 {
     project="${1}"
@@ -194,6 +194,9 @@ function getProjectDesc()
         MCS )
             echo -n "${JMMC_SVNROOT} "
             echo MCS/${version}/{mkf,mcscfg,tat,ctoo,mcs,log,err,misc,thrd,timlog,mth,fnd,misco,env,cmd,msg,sdb,evh,gwt,jmcs,jmal,modc,modcpp,modsh,modjava,testgui} ;;
+        Oitools )
+            echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
+            echo  oiTools/${version}/{oitools,oiexplorer-core,oiexplorer};;
         SearchCal ) 
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
             echo SearchCal/${version}/{simcli,alx,vobs,sclsvr,sclws,sclgui} ;;
@@ -211,24 +214,29 @@ function getProjectDesc()
 # - development version 
 # - output directory
 # - svn command 
+# - installation target 
+
 version="trunk";
 outputDir="$PWD"
 SVN_COMMAND="svn"
 tagPrefix="tags/"
+DO_MAN_DURING_INSTALL="man"
 
 # Parse command-line parameters
-while getopts "hnv:d:" option
+while getopts "d:hnmv:" option
     # : after option shows it will have an argument passed with it.
 do
     case $option in
-        h ) 
-            printUsage ;;
-        v ) 
-            version="${tagPrefix}${OPTARG}";;
         d ) 
             outputDir="${OPTARG}";;
+        h ) 
+            printUsage ;;
         n )
             SVN_COMMAND="echo svn";;
+        m )
+            DO_MAN_DURING_INSTALL="";;
+        v ) 
+            version="${tagPrefix}${OPTARG}";;
         * ) # Unknown option
             echo "Invalid option -- $option"
             printUsage ;;
@@ -264,7 +272,7 @@ do
     if [ -z "$modules" ]
     then 
         echo "ERROR: Project '${project}' is not supported"
-        echo "Supported projects are : ${supportedModules}"
+        echo "Supported projects are : ${supportedProjects}"
         exit 1
     fi
 

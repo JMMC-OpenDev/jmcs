@@ -31,7 +31,7 @@ public final class MimeType {
     /** MimeType associated to P2PP Observing blocks */
     public final static MimeType OBX = MimeType.add("OBX", "application/obx", "Observing Blocks", "obx");
     /** MimeType associated to OIFITS format */
-    public final static MimeType OIFITS = MimeType.add("OIFITS", "application/oifits", "Optical Interferometry FITS", "fits", "oifits");
+    public final static MimeType OIFITS = MimeType.add("OIFITS", "application/oifits", "Optical Interferometry FITS", "fits", "fits.gz", "oifits", "oifits.gz");
     /** MimeType associated to FITS format */
     public final static MimeType FITS_IMAGE = MimeType.add("FITS_IMAGE", "application/fits", "FITS Image", "fits", "fits.gz");
     /** MimeType associated to PDF documents */

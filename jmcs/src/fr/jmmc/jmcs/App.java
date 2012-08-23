@@ -885,12 +885,17 @@ public abstract class App {
     /**
      * Tell if the application is an alpha version or not.
      * This flag is given searching one 'a' in the program version number.
+     * If one b is present the version is considered beta.
      *
      * @return true if it is a alpha, false otherwise.
      */
     public static boolean isAlphaVersion() {
         if (_applicationDataModel != null) {
-            return _applicationDataModel.getProgramVersion().contains("a");
+            final String v = _applicationDataModel.getProgramVersion();
+            if (v.contains("b")) {
+                return false;
+            }
+            return v.contains("a");
         }
         return false;
     }

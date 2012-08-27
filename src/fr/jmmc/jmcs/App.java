@@ -684,6 +684,15 @@ public abstract class App {
      * Describe the life cycle of the application
      */
     protected final void run() {
+
+        // If running under Mac OS X
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            // Set application name :
+            // system properties must be set before using any Swing component:
+            // Hope nothing as already been done...
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", _applicationDataModel.getProgramName());
+        }
+
         // Show splash screen if we have to
         if (_showSplashScreen) {
             // Using invokeAndWait to be in sync with this thread :
@@ -718,14 +727,6 @@ public abstract class App {
 
                 // Perform defered action initialization (SAMP-related actions)
                 _registrar.performDeferedInitialization();
-
-                // If running under Mac OS X
-                if (SystemUtils.IS_OS_MAC_OSX) {
-                    // Set application name :
-                    // system properties must be set before using any Swing component:
-                    // Hope nothing as already been done...
-                    System.setProperty("com.apple.mrj.application.apple.menu.about.name", _applicationDataModel.getProgramName());
-                }
 
                 // Define the jframe associated to the application which will get the JmenuBar
                 final JFrame frame = getFrame();
@@ -775,7 +776,7 @@ public abstract class App {
                 if (jvmName != null && jvmName.toLowerCase().contains("openjdk")) {
                     String message = "The application is running on the OpenJDK JVM (Java Virtual Machine)\n"
                             + "which has known bugs (Swing look and feel, fonts, pdf issues ...) \n"
-                            + "on several linux distributions.\n"
+                            + "on several Linux distributions.\n"
                             + "Please update OpenJDK packages if possible.\n\n"
                             + "JMMC recommends Sun Java Runtime Environments:\n"
                             + "http://java.sun.com/javase/downloads/\n\n"
@@ -1339,11 +1340,6 @@ public abstract class App {
     public final void macOSXRegistration(final JFrame frame) {
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
-
-            // Set application name :
-            // system properties must be set before using any Swing component:
-            // Hope nothing as already been done...
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", _applicationDataModel.getProgramName());
 
             // Set the menu bar under Mac OS X
             System.setProperty("apple.laf.useScreenMenuBar", "true");

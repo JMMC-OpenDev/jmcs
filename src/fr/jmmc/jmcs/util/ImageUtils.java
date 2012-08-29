@@ -5,9 +5,9 @@ package fr.jmmc.jmcs.util;
 
 import java.awt.Image;
 import java.net.URL;
+import javax.swing.ImageIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.swing.ImageIcon;
 
 /**
  * Several Image utility methods
@@ -18,6 +18,11 @@ public final class ImageUtils {
 
     /** Class logger */
     private static final Logger _logger = LoggerFactory.getLogger(ImageUtils.class.getName());
+    
+    /* members */
+    
+    /** Loading error message template */
+    private static final String CAN_T_LOAD_ICON_MSG="Could not load icon '{}'.";
 
     /**
      * Forbidden constructor
@@ -38,15 +43,19 @@ public final class ImageUtils {
         // TODO : Maybe cache previously loaded icon
 
         if (url == null) {
-            _logger.debug("No icon resource found for url '{}'.", url);
+            _logger.debug(CAN_T_LOAD_ICON_MSG, url);
             return null;
         }
 
         URL imageUrl;
         try {
             imageUrl = FileUtils.getResource(url);
-        } catch (IllegalStateException e) {
-            _logger.info("Could not load icon '{}'.", url);
+        } catch (IllegalStateException e) {            
+            if(url.length()==0){
+                _logger.debug(CAN_T_LOAD_ICON_MSG, url);
+            }else{
+                _logger.info(CAN_T_LOAD_ICON_MSG, url);
+            }
             return null;
         }
 
@@ -58,7 +67,7 @@ public final class ImageUtils {
             // Forge icon resource path
             imageIcon = new ImageIcon(imageUrl);
         } catch (IllegalStateException ise) {
-            _logger.warn("Could not find '{}' embedded icon.", imageUrl);
+            _logger.warn(CAN_T_LOAD_ICON_MSG, imageUrl);
         }
         return imageIcon;
     }

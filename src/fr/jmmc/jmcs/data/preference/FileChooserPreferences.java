@@ -46,6 +46,14 @@ public final class FileChooserPreferences extends Preferences {
     }
 
     /**
+     * Return the default directory (user home)
+     * @return default directory (user home)
+     */
+    private static String getDefaultDirectory() {
+        return System.getProperty("user.home");
+    }
+
+    /**
      * Define the default directory as user home directory for all known mime types.
      *
      * @throws PreferencesException if any preference value has a unsupported class type
@@ -54,7 +62,7 @@ public final class FileChooserPreferences extends Preferences {
     protected void setDefaultPreferences() throws PreferencesException {
         logger.debug("FilePreferences.setDefaultPreferences");
 
-        final String defaultDirectory = System.getProperty("user.home");
+        final String defaultDirectory = getDefaultDirectory();
 
         for (MimeType mimeType : MimeType.values()) {
             setDefaultPreference(mimeType.getId(), defaultDirectory);
@@ -106,6 +114,9 @@ public final class FileChooserPreferences extends Preferences {
      * @return last directory used or user home
      */
     public static String getLastDirectoryForMimeTypeAsPath(final MimeType mimeType) {
+        if (mimeType == null) {
+            return getDefaultDirectory();
+        }
         return getInstance().getPreference(mimeType.getId());
     }
 
@@ -115,7 +126,7 @@ public final class FileChooserPreferences extends Preferences {
      * @param path file path to an existing directory
      */
     public static void setCurrentDirectoryForMimeType(final MimeType mimeType, final String path) {
-        if (path != null) {
+        if (mimeType != null && path != null) {
             final String oldPath = getLastDirectoryForMimeTypeAsPath(mimeType);
             if (!path.equals(oldPath)) {
                 try {

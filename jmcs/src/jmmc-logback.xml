@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!-- debug controls the logback configuration logs -->
+<configuration debug="false" scan="false" scanPeriod="30 seconds" > 
+
+    <!-- reset java.util.logging configuration -->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+
+    <!-- Appenders -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are  by default assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{60} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="APPLOG" class="fr.jmmc.jmcs.util.logging.ByteArrayOutputStreamAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{60} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STATUSLOG" class="fr.jmmc.jmcs.util.logging.ByteArrayOutputStreamAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
+        </encoder>
+    </appender>
+  
+
+    <!-- Loggers -->
+  
+    <!-- JMMC -->
+    <logger name="fr.jmmc" level="INFO"/>
+
+    <!-- JMMC status -->
+    <logger name="fr.jmmc.jmcs.status" level="INFO" additivity="false">
+        <appender-ref ref="STATUSLOG" />
+    </logger>
+    
+  
+    <!-- include application specific configuration -->
+    <include resource="jmmc-app-logback.xml"/>
+  
+    <!-- org.ivoa Local job runner -->
+    <logger name="org.ivoa" level="INFO"/>
+  
+
+    <!-- JSamp -->
+    <logger name="org.astrogrid.samp" level="WARN"/>
+    <logger name="org.astrogrid.samp.client" level="WARN"/>
+  
+    <!-- apache http client -->
+    <logger name="org.apache.commons.httpclient" level="INFO"/>
+    <logger name="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager" level="INFO"/>
+    <logger name="httpclient" level="INFO"/>
+    
+    <!-- JIDE -->
+    <logger name="com.jidesoft" level="INFO"/>
+
+
+    <!-- disable JDK loggers -->
+    <!-- AWT / Swing -->
+    <logger name="java.awt" level="INFO"/>
+    <logger name="javax.swing" level="INFO"/>
+
+    <logger name="sun.awt" level="INFO"/>
+    <logger name="sun.java2d" level="INFO"/>
+
+    <!-- JAXB -->
+    <logger name="javax.xml" level="INFO"/>
+    <logger name="com.sun.xml" level="INFO"/>
+  
+    <!-- network -->
+    <logger name="sun.net.www" level="INFO"/>
+  
+  
+    <!-- disable logback -->
+    <logger name="ch.qos.logback" level="INFO"/>
+
+
+    <!-- Root Logger -->
+    <!-- Note: level must be INFO in production to avoid performance issues with JUL -->
+    <!-- <root level="DEBUG"> -->
+    <root level="INFO">
+        <appender-ref ref="APPLOG" />
+        <appender-ref ref="STDOUT" />
+    </root>
+  
+</configuration>

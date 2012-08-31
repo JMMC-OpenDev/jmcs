@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.text.Normalizer;
 import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -620,6 +621,29 @@ public final class FileUtils {
             return tmpFile.toURI().toString();
         } catch (IOException ioe) {
             throw new IllegalStateException("Unable to save file '" + tmpFile + "' for URL '" + url + "'.", ioe);
+        }
+    }
+
+    /**
+     * Remove accents from characters and replace wild chars with '_'.
+     * @param fileName the string to clean up
+     * @return cleaned up file name
+     */
+    public static String cleanupFileName(final String fileName) {
+        // Remove accent from characters (if any)
+        String normalized = Normalizer.normalize(fileName, Normalizer.Form.NFD);
+        final String removed = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+        // Replace wild characters with '_'
+        final String cleaned = removed.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
+        return cleaned;
+    }
+
+    public static void main(String[] args) {
+        String[] table = {"aZeRtY/uiop", "This>is some(string,with $invalid*-chars).jpg", "aáeéiíoóöőuúüű AÁEÉIÍOÓÖŐUÚÜŰ-_*$€{}\\[]"};
+        for (String string : table) {
+            final String cleanupFileName = cleanupFileName(string);
+            System.out.println("cleanupFileName(" + string + ") = " + cleanupFileName);
         }
     }
 }

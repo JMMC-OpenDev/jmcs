@@ -30,7 +30,7 @@ public class JAXBUtils {
      */
     private JAXBUtils() {
     }
-    
+
     /**
      * Load on object from url.
      * @param inputUrl File to load
@@ -41,10 +41,10 @@ public class JAXBUtils {
      * @throws IllegalStateException if an unexpected exception occured
      * @throws XmlBindException if a JAXBException was caught while creating an unmarshaller
      */
-    public static Object loadObject(URL inputUrl, JAXBFactory jbf) throws IOException, IllegalStateException, XmlBindException {
+    public static Object loadObject(final URL inputUrl, final JAXBFactory jbf) throws IOException, IllegalStateException, XmlBindException {
         Object result = null;
 
-        logger.warn("JAXBUtils.loadObject() from url : {}", inputUrl);
+        logger.debug("JAXBUtils.loadObject() from url : {}", inputUrl);
 
         try {
             result = jbf.createUnMarshaller().unmarshal(new BufferedInputStream(inputUrl.openStream()));
@@ -65,8 +65,10 @@ public class JAXBUtils {
      * @throws IllegalStateException if an unexpected exception occured
      * @throws XmlBindException if a JAXBException was caught while creating an unmarshaller
      */
-    public static Object loadObject(final File inputFile, JAXBFactory jbf)
+    public static Object loadObject(final File inputFile, final JAXBFactory jbf)
             throws IOException, IllegalStateException, XmlBindException {
+
+        logger.debug("JAXBUtils.loadObject() from file : {}", inputFile);
 
         Object result = null;
         try {
@@ -98,7 +100,7 @@ public class JAXBUtils {
      * @throws IllegalStateException if an unexpected exception occured
      * @throws XmlBindException if a JAXBException was caught while creating an unmarshaller
      */
-    protected static Object loadObject(final Reader reader, JAXBFactory jbf)
+    protected static Object loadObject(final Reader reader, final JAXBFactory jbf)
             throws IOException, IllegalStateException, XmlBindException {
 
         Object result = null;
@@ -130,7 +132,7 @@ public class JAXBUtils {
      * @throws IllegalStateException if an unexpected exception occured
      * @throws XmlBindException if a JAXBException was caught while creating an marshaller
      */
-    public static void saveObject(final File outputFile, final Object object, JAXBFactory jbf)
+    public static void saveObject(final File outputFile, final Object object, final JAXBFactory jbf)
             throws IOException, IllegalStateException {
         try {
 
@@ -183,5 +185,5 @@ public class JAXBUtils {
             throw new IllegalArgumentException("The loaded file does not correspond to a valid file", je);
         }
         throw new IllegalStateException(message, je);
-    }    
+    }
 }

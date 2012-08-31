@@ -636,11 +636,16 @@ public final class FileUtils {
 
         // Replace wild characters with '_'
         final String cleaned = removed.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
+
+        if (!cleaned.matches(fileName)) {
+            //_logger.warn("Had to clean up file name (was {}, became {}).", fileName, cleaned);
+        }
+
         return cleaned;
     }
 
     public static void main(String[] args) {
-        String[] table = {"aZeRtY/uiop", "This>is some(string,with $invalid*-chars).jpg", "aáeéiíoóöőuúüű AÁEÉIÍOÓÖŐUÚÜŰ-_*$€{}\\[]"};
+        String[] table = {"aZeRtY/uiop", "This>is some(string,with $invalid*-chars).jpg", "aáeéiíoóöőuúüű AÁEÉIÍOÓÖŐUÚÜŰ-_*$€\\[]"};
         for (String string : table) {
             final String cleanupFileName = cleanupFileName(string);
             System.out.println("cleanupFileName(" + string + ") = " + cleanupFileName);

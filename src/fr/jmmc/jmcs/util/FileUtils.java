@@ -638,7 +638,7 @@ public final class FileUtils {
         final String cleaned = removed.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
 
         if (!cleaned.matches(fileName)) {
-            _logger.warn("Had to clean up file name (was {}, became {}).", fileName, cleaned);
+            _logger.warn("Had to clean up file name (was '{}', became '{}').", fileName, cleaned);
         }
 
         return cleaned;

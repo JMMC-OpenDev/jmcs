@@ -22,7 +22,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.channels.FileChannel;
-import java.text.Normalizer;
 import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -630,9 +629,8 @@ public final class FileUtils {
      * @return cleaned up file name
      */
     public static String cleanupFileName(final String fileName) {
-        // Remove accent from characters (if any)
-        String normalized = Normalizer.normalize(fileName, Normalizer.Form.NFD);
-        final String removed = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        // Remove accent from characters (if any)        
+        final String removed = fileName.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
         // Replace wild characters with '_'
         final String cleaned = removed.replaceAll("[^a-zA-Z0-9-_\\.]", "_");

@@ -137,8 +137,8 @@ then
     then
         XSLTFILE=$(miscLocateFile jmcsLatexIndex2HsTOC.xsl)
         mv $DOCTOC $DOCTOC.bac
-        xsltproc -o $DOCTOC --stringparam directory "$DIRNAME" $XSLTFILE $INDEXFILE 
-        xsltproc --stringparam directory "$DIRNAME" $XSLTFILE $INDEXFILE 
+        xsltproc --nonet -o $DOCTOC --stringparam directory "$DIRNAME" $XSLTFILE $INDEXFILE 
+        xsltproc --nonet --stringparam directory "$DIRNAME" $XSLTFILE $INDEXFILE 
 
     fi
 else

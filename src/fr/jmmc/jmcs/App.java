@@ -769,23 +769,44 @@ public abstract class App {
              */
             @Override
             public void run() {
+
                 final String jvmName = System.getProperty("java.vm.name");
                 final String jvmVendor = System.getProperty("java.vm.vendor");
                 final String jvmVersion = System.getProperty("java.vm.version");
+                final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
 
+                boolean shouldWarn = false;
+                String message = "<HTML><BODY>";
                 if (jvmName != null && jvmName.toLowerCase().contains("openjdk")) {
-                    String message = "The application is running on the OpenJDK JVM (Java Virtual Machine)\n"
-                            + "which has known bugs (Swing look and feel, fonts, pdf issues ...) \n"
-                            + "on several Linux distributions.\n"
-                            + "Please update OpenJDK packages if possible.\n\n"
-                            + "JMMC recommends Sun Java Runtime Environments:\n"
-                            + "http://java.sun.com/javase/downloads/\n\n"
-                            + "JVM Information:\n"
-                            + "java.vm.name    = '" + jvmName + "'\n"
-                            + "java.vm.vendor  = '" + jvmVendor + "'\n"
-                            + "java.vm.version = '" + jvmVersion + "'";
+                    shouldWarn = true;
+                    message += "<FONT COLOR='RED'>WARNING</FONT> : ";
+                    message += "Your Java Virtual Machine is an OpenJDK JVM, which has known bugs (SWING look and feel, fonts, PDF issues...) on several Linux distributions."
+                            + "<BR/><BR/>";
+                }
 
-                    MessagePane.showWarning(message);
+                if (SystemUtils.IS_JAVA_1_5) {
+                    shouldWarn = true;
+                    message += "<FONT COLOR='RED'>WARNING</FONT> : ";
+                    message += "Your Java Virtual Machine is of version 1.5, which has several limitations and is not maintained anymore security-wise."
+                            + "<BR/><BR/>";
+                }
+
+                if (shouldWarn) {
+                    message += "<BR/>"
+                            + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version 1.6 or newer, available at:"
+                            + "<BR/><BR/>"
+                            + "<CENTER><A HREF='http://java.sun.com/javase/downloads/'>http://java.sun.com/javase/downloads/</A></CENTER>"
+                            + "<BR/><BR/>"
+                            + "<I>Your current JVM Information :</I><BR/>"
+                            + "<TT>"
+                            + "java.vm.name = '" + jvmName + "'<BR/>"
+                            + "java.vm.vendor = '" + jvmVendor + "'<BR/>"
+                            + "java.vm.version = '" + jvmVersion + "'<BR/>"
+                            + "Java Home :<BR/>'" + jvmHome + "'"
+                            + "</TT>";
+                    message += "</BODY></HTML>";
+
+                    ResizableTextViewFactory.createHtmlWindow(message, "Deprecated Java environment detected !", true);
                 }
             }
         });

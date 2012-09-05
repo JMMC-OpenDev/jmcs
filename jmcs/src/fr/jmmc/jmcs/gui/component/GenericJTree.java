@@ -162,7 +162,7 @@ public abstract class GenericJTree<E> extends JTree {
      * @return tree node or null
      */
     public static DefaultMutableTreeNode findTreeNode(final DefaultMutableTreeNode node, final Object userObject) {
-        if (node.getUserObject() == userObject) {
+        if (node.getUserObject() == userObject || node.getUserObject().equals(userObject)) {
             return node;
         }
 

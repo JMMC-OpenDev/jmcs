@@ -778,6 +778,7 @@ public abstract class App {
                 boolean shouldWarn = false;
                 String message = "<HTML><BODY>";
                 if (jvmName != null && jvmName.toLowerCase().contains("openjdk")) {
+                    _logger.warn("Detected OpenJDK runtime environment.");
                     shouldWarn = true;
                     message += "<FONT COLOR='RED'>WARNING</FONT> : ";
                     message += "Your Java Virtual Machine is an OpenJDK JVM, which has known bugs (SWING look and feel, fonts, PDF issues...) on several Linux distributions."
@@ -785,6 +786,7 @@ public abstract class App {
                 }
 
                 if (SystemUtils.IS_JAVA_1_5) {
+                    _logger.warn("Detected JDK 1.5 runtime environment.");
                     shouldWarn = true;
                     message += "<FONT COLOR='RED'>WARNING</FONT> : ";
                     message += "Your Java Virtual Machine is of version 1.5, which has several limitations and is not maintained anymore security-wise."

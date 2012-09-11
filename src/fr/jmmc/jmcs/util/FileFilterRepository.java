@@ -56,7 +56,7 @@ public final class FileFilterRepository {
     public GenericFileFilter put(final Object mimeType, final String fileExtension, final String description) {
         if (_logger.isDebugEnabled()) {
             _logger.debug("FileFilterRepository - put(mimeType = '{}', fileExtension = '{}', description = '{}')",
-                    new Object[]{mimeType, fileExtension, description});
+                    mimeType, fileExtension, description);
         }
 
         return put(mimeType, new String[]{fileExtension}, description);
@@ -74,7 +74,7 @@ public final class FileFilterRepository {
     public GenericFileFilter put(final Object mimeType, final String[] fileExtensions, final String description) {
         if (_logger.isDebugEnabled()) {
             _logger.debug("FileFilterRepository - put(mimeType = '{}', fileExtensions[] = '{}', description = '{}')",
-                    new Object[]{mimeType, Arrays.toString(fileExtensions), description});
+                    mimeType, Arrays.toString(fileExtensions), description);
         }
 
         final GenericFileFilter filter = new GenericFileFilter(fileExtensions, description);
@@ -88,7 +88,7 @@ public final class FileFilterRepository {
         } else {
             if (_logger.isDebugEnabled()) {
                 _logger.debug("Registered '{}' mimeType associated with file extensions '{}' ({}) succesfully.",
-                        new Object[]{mimeType, Arrays.toString(fileExtensions), description});
+                        mimeType, Arrays.toString(fileExtensions), description);
             }
         }
 

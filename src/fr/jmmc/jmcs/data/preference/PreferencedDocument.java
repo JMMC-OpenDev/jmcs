@@ -208,7 +208,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
         }
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Setting '{}' from {} to {}", new Object[]{_preferenceProperty, currentValue, nextValue});
+            _logger.debug("Setting '{}' from {} to {}", _preferenceProperty, currentValue, nextValue);
         }
         setMyText(nextValue);
     }

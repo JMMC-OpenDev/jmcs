@@ -194,7 +194,7 @@ public final class IntrospectionUtils {
             try {
                 return clazz.getMethod(methodName, parameters);
             } catch (NoSuchMethodException nsme) {
-                _logger.warn("Cannot find method '{}' of class '{}'", new Object[]{methodName, clazz, nsme});
+                _logger.warn("Cannot find method '{}' of class '{}'", methodName, clazz, nsme);
             }
         }
 

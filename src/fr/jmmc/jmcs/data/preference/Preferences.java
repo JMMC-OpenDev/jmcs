@@ -891,7 +891,7 @@ public abstract class Preferences extends Observable {
 
             if (_logger.isDebugEnabled()) {
                 _logger.debug("Renaming ['{}' , '{}'] to ['{} , '{}'].",
-                        new Object[]{previousName, (value + orderToken), newName, (value + orderToken)});
+                        previousName, (value + orderToken), newName, (value + orderToken));
             }
         } catch (PreferencesException pe) {
             _logger.warn("Could not store preference '{}' : ", newName, pe);
@@ -947,7 +947,7 @@ public abstract class Preferences extends Observable {
 
                     if (_logger.isDebugEnabled()) {
                         _logger.debug("Re-ordering preference '{}' from index '{}' to index '{}'.",
-                                new Object[]{orderedPreferenceName, preferenceIndex, destinationIndex});
+                                orderedPreferenceName, preferenceIndex, destinationIndex);
                     }
 
                     setPreferenceOrder(orderedPreferenceName, destinationIndex);
@@ -979,7 +979,7 @@ public abstract class Preferences extends Observable {
 
         // Search for the token and replace it
         if (_logger.isTraceEnabled()) {
-            _logger.trace("Replacing '{}' with '{}' in '{}'.", new Object[]{searchedToken, replacingToken, preferencePath});
+            _logger.trace("Replacing '{}' with '{}' in '{}'.", searchedToken, replacingToken, preferencePath);
         }
 
         final String newPreferenceValue = originalPreferenceValue.replaceAll(searchedToken, replacingToken).trim(); // Trim any spare spaces

@@ -147,7 +147,7 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
 
             if (_logger.isDebugEnabled()) {
                 _logger.debug("Set checkbox '{}' to '{}' (was '{}').",
-                        new Object[]{currentCheckBoxName, currentPreferenceState, currentCheckBoxState});
+                        currentCheckBoxName, currentPreferenceState, currentCheckBoxState);
             }
             currentCheckBox.setSelected(currentPreferenceState);
         }

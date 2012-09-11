@@ -179,7 +179,7 @@ public final class EditableRhoThetaParameter implements Editable {
         final double y = paramY.getValue();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("getValue[{}] [x,y] = [{}, {}]", new Object[]{type, x, y});
+            logger.debug("getValue[{}] [x,y] = [{}, {}]", type, x, y);
         }
 
         double value = 0d;
@@ -213,7 +213,7 @@ public final class EditableRhoThetaParameter implements Editable {
         final double y = paramY.getValue();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("setValue[{}] [x,y] = [{}, {}]", new Object[]{type, x, y});
+            logger.debug("setValue[{}] [x,y] = [{}, {}]", type, x, y);
         }
 
         double x2 = 0d;
@@ -238,7 +238,7 @@ public final class EditableRhoThetaParameter implements Editable {
         paramY.setValue(y2);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("setValue[{}] [x2,y2] = [{}, {}]", new Object[]{type, x2, y2});
+            logger.debug("setValue[{}] [x2,y2] = [{}, {}]", type, x2, y2);
         }
     }
 

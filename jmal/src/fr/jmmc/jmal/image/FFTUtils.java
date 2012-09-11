@@ -58,7 +58,7 @@ public final class FFTUtils {
 
         if (logger.isDebugEnabled()) {
             logger.debug("computeFFT: image size = {} - FFT size = {} - output size = {}",
-                    new Object[]{inputSize, fftSize, outputSize});
+                    inputSize, fftSize, outputSize);
         }
 
         // FFT sub size must be larger than input image:
@@ -66,7 +66,7 @@ public final class FFTUtils {
 
         if (logger.isInfoEnabled()) {
             logger.info("computeFFT: FFT size = {} - sub size = {} - input size = {}",
-                    new Object[]{fftSize, fftSubSize, inputSize});
+                    fftSize, fftSubSize, inputSize);
         }
 
         long start = System.nanoTime();
@@ -173,7 +173,6 @@ public final class FFTUtils {
             final int n0 = i;
 
             jobs[i] = new Runnable() {
-
                 @Override
                 public void run() {
                     // random instance dedicated to this thread:

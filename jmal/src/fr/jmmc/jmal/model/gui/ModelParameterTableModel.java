@@ -441,8 +441,8 @@ public final class ModelParameterTableModel extends AbstractTableModel {
         if (parameter != null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("setValueAt: parameter {} old: {} new: {} ({})",
-                        new Object[]{parameter.getName(), getValueAt(rowIndex, columnIndex), aValue,
-                                     ((aValue != null) ? aValue.getClass() : "")});
+                        parameter.getName(), getValueAt(rowIndex, columnIndex), aValue,
+                                     ((aValue != null) ? aValue.getClass() : ""));
             }
             boolean modified = false;
 

@@ -85,7 +85,7 @@ public final class LD2UD {
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("LimbdarkenedCorrectionFactor of star with sptype = {} in band {} is {}",
-                    new Object[]{sptype, requestedUD, result});
+                    sptype, requestedUD, result);
         }
         return result;
     }
@@ -97,7 +97,7 @@ public final class LD2UD {
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("LimbdarkenedCorrectionFactor of star with teff = {} and logg = {} in band {} is {}",
-                    new Object[]{teff, logg, requestedUD, result});
+                    teff, logg, requestedUD, result);
         }
         return result;
     }
@@ -231,7 +231,7 @@ public final class LD2UD {
                 if (teff < currentTeff && teff >= prevTeff) {
                     if (_logger.isDebugEnabled()) {
                         _logger.debug("first index  = {}, second index was {} where teff = {}",
-                                new Object[]{firstGroupIndex, secondGroupIndex, currentTeff});
+                                firstGroupIndex, secondGroupIndex, currentTeff);
                     }
 
                     if (teff >= (currentTeff + prevTeff) / 2d) {
@@ -277,7 +277,7 @@ public final class LD2UD {
         }
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Coeff for teff = {} and logg = {} is {}", new Object[]{teff, logg, result});
+            _logger.debug("Coeff for teff = {} and logg = {} is {}", teff, logg, result);
         }
         return result;
     }

@@ -96,7 +96,7 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
             try {
                 _preferences.setPreference(_preferenceName, isSelected);
             } catch (PreferencesException pe) {
-                _logger.warn("Cannot set preference '{}' to '{}'.", new Object[]{_preferenceName, isSelected, pe});
+                _logger.warn("Cannot set preference '{}' to '{}'.", _preferenceName, isSelected, pe);
             }
         }
     }
@@ -118,7 +118,7 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
 
             _preferences.setPreference(_preferenceName, isSelected);
         } catch (PreferencesException pe) {
-            _logger.warn("Cannot set preference '{}' to '{}'.", new Object[]{_preferenceName, isSelected, pe});
+            _logger.warn("Cannot set preference '{}' to '{}'.", _preferenceName, isSelected, pe);
         }
     }
 }

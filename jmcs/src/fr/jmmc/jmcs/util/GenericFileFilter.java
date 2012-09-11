@@ -66,7 +66,7 @@ public final class GenericFileFilter extends FileFilter implements FilenameFilte
 
             if (_logger.isTraceEnabled()) {
                 _logger.trace("GenericFileFilter(...) - Added fileExtensions[{}]/{}] = '{}'.",
-                        new Object[]{(i + 1), nbOfFileExtensions, fileExtension});
+                        (i + 1), nbOfFileExtensions, fileExtension);
             }
         }
 

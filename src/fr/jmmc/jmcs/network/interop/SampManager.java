@@ -441,7 +441,7 @@ public final class SampManager {
 
         if (_logger.isInfoEnabled()) {
             _logger.info("Sent '{}' SAMP message to '{}' client ({} ms)",
-                    new Object[]{mType, recipient, 1e-6d * (System.nanoTime() - start)});
+                    mType, recipient, 1e-6d * (System.nanoTime() - start));
         }
     }
 

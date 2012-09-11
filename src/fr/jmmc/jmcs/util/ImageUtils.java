@@ -111,7 +111,7 @@ public final class ImageUtils {
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("Scaling image from {} x {} to {} x {}.",
-                    new Object[]{iconWidth, iconHeight, newWidth, newHeight});
+                    iconWidth, iconHeight, newWidth, newHeight);
         }
 
         final Image image = imageIcon.getImage();

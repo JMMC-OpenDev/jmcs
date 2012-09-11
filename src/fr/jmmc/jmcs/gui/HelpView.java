@@ -105,7 +105,7 @@ public class HelpView {
         } catch (Exception ex) {
             // skip complex case
             _logger.error("Problem during helpset creation (url='{}', classloader={})",
-                    new Object[]{url, _instance.getClass().getClassLoader(), ex});
+                    url, _instance.getClass().getClassLoader(), ex);
 
             return false;
         }

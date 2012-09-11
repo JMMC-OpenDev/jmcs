@@ -181,7 +181,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
             menu.add(individualMenuItem);
 
             if (_logger.isTraceEnabled()) {
-                _logger.trace("Added '{}' ({}) menu entry for capability '{}'.", new Object[]{clientName, clientId, _mType});
+                _logger.trace("Added '{}' ({}) menu entry for capability '{}'.", clientName, clientId, _mType);
             }
         }
     }

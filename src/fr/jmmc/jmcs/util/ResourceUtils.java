@@ -166,7 +166,7 @@ public abstract class ResourceUtils {
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("keyString['{}'] = '{}' -> accelerator = '{}'.",
-                    new Object[]{actionName, keyString, accelerator});
+                    actionName, keyString, accelerator);
         }
 
         return accelerator;

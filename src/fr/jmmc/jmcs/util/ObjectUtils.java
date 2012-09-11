@@ -6,6 +6,7 @@ package fr.jmmc.jmcs.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The fr.jmmc.jmcs.util.ObjectUtils class is related to Object handling (equals, clone, copy, toString variants)
@@ -79,9 +80,8 @@ public final class ObjectUtils {
      * @param sb string builder to append to
      * @param full true to get complete information; false to get main information (shorter)
      * @param o any object (may implement ToStringable) 
-     * @param <K> ToStringable type
      */
-    public static <K extends ToStringable> void toString(final StringBuilder sb, final boolean full, final Object o) {
+    public static void toString(final StringBuilder sb, final boolean full, final Object o) {
         if (o == null) {
             sb.append("null");
         } else if (o instanceof ToStringable) {
@@ -92,21 +92,20 @@ public final class ObjectUtils {
     }
 
     /**
-     * toString(collection) implementation using ToStringable interface
+     * toString(collection) implementation using ToStringable interface if possible
      * @param sb string builder to append to
      * @param full true to get complete information; false to get main information (shorter)
-     * @param collection collection of ToStringable instances to represent
-     * @param <K> ToStringable type
+     * @param collection collection of any objects to represent
      */
-    public static <K extends ToStringable> void toString(final StringBuilder sb, final boolean full, final java.util.Collection<K> collection) {
+    public static void toString(final StringBuilder sb, final boolean full, final Collection<?> collection) {
         if (collection == null) {
             sb.append("null");
         } else if (collection.isEmpty()) {
             sb.append("[]");
         } else {
             sb.append('[');
-            for (K item : collection) {
-                item.toString(sb, full);
+            for (Object o : collection) {
+                toString(sb, full, o);
                 sb.append(", ");
             }
             sb.setLength(sb.length() - 2);
@@ -114,6 +113,31 @@ public final class ObjectUtils {
         }
     }
 
+    /**
+     * toString(map) implementation using ToStringable interface if possible
+     * @param sb string builder to append to
+     * @param full true to get complete information; false to get main information (shorter)
+     * @param map collection of any objects to represent
+     */
+    public static void toString(final StringBuilder sb, final boolean full, final Map<?, ?> map) {
+        if (map == null) {
+            sb.append("null");
+        } else if (map.isEmpty()) {
+            sb.append("[]");
+        } else {
+            sb.append('[');
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                toString(sb, full, entry.getKey());
+                sb.append(" = ");
+                toString(sb, full, entry.getValue());
+                sb.append(", ");
+            }
+            sb.setLength(sb.length() - 2);
+            sb.append(']');
+        }
+    }
+
+    /* identity string helper methods */
     /**
      * Return the string representation "<simple class name>#<hashCode>"
      * @param o any object

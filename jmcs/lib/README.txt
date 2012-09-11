@@ -21,15 +21,15 @@ Runtime Libraries (JNLP) are described in the following files :
 -rw-r--r--. 1 bourgesl laogsite   56709 27 avril  2011 java-getopt-1.0.13.jar
 -rw-r--r--. 1 bourgesl laogsite  105134 27 avril  2011 jaxb-api.jar
 -rw-r--r--. 1 bourgesl laogsite  890168 27 avril  2011 jaxb-impl.jar
--rw-r--r--. 1 bourgesl laogsite   17308 31 oct.  23:44 jcl-over-slf4j-1.6.4.jar
+-rw-r--r--. 1 bourgesl laogsite   17308 31 oct.  23:44 jcl-over-slf4j-1.7.0.jar
 -rw-r--r--. 1 bourgesl laogsite  562814 13 sept. 15:08 jhall.jar
 -rw-r--r--@  1 lafrasse  3021   1,4M 28 mar 00:08 jide-oss-3.3.7.jar
 -rw-r--r--. 1 bourgesl laogsite  686801 15 sept. 09:15 jsamp-1.3.jar
 -rw-r--r--. 1 bourgesl laogsite   45539 27 avril  2011 jsr173_1.0_api.jar
--rw-r--r--. 1 bourgesl laogsite    4868 31 oct.  23:44 jul-to-slf4j-1.6.4.jar
--rw-r--r--. 1 bourgesl laogsite  246707  1 nov.  18:16 logback-classic-1.0.0.jar
--rw-r--r--. 1 bourgesl laogsite  327912  1 nov.  18:15 logback-core-1.0.0.jar
--rw-r--r--. 1 bourgesl laogsite   25962 31 oct.  23:44 slf4j-api-1.6.4.jar
+-rw-r--r--. 1 bourgesl laogsite    4868 31 oct.  23:44 jul-to-slf4j-1.7.0.jar
+-rw-r--r--. 1 bourgesl laogsite  246707  1 nov.  18:16 logback-classic-1.0.7.jar
+-rw-r--r--. 1 bourgesl laogsite  327912  1 nov.  18:15 logback-core-1.0.7.jar
+-rw-r--r--. 1 bourgesl laogsite   25962 31 oct.  23:44 slf4j-api-1.7.0.jar
 -rw-r--r--. 1 bourgesl laogsite   12852 27 avril  2011 swing-worker-1.2.jar
 
 

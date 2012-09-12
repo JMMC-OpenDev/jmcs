@@ -36,7 +36,7 @@
     <logger name="fr.jmmc" level="INFO"/>
 
     <!-- JMMC status -->
-    <logger name="fr.jmmc.jmcs.status" level="INFO" additivity="false">
+    <logger name="fr.jmmc.jmcs.status" level="INFO" additivity="true">
         <appender-ref ref="STATUSLOG" />
     </logger>
     

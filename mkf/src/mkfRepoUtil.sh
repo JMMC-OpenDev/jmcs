@@ -32,7 +32,7 @@ function printUsage ()
     echo -e "\t-d <directory>\tset working area for modules (default is current dir).";
     echo -e "\t-h\tprint this help.";
     echo -e "\t-n\tdisplay svn command which is performed when this option is not set.";
-    echo -e "\t-m \tdo not generate documentation from code.";
+    echo -e "\t-m \tgenerate documentation from code.";
     echo -e "\t-v <version>\tuse given version (default is development one) when retrieving sources or tagging.";
     echo -e "\tACTIONS  :";
     echo -e "\t   info          : list modules of given projects.";
@@ -146,7 +146,7 @@ function installModules()
         echo -n " - installing '${moduleName}' from '${repos_path}' ... "
         ${SVN_COMMAND} checkout "${repos_path}"
         module_src_path="${moduleName}/src"
-        (cd "${module_src_path}" ; make clean all ${DO_MAN_DURING_INSTALL} install)
+        (cd "${module_src_path}" ; make clean all ${MAN_CMD_DURING_INSTALL} install)
         echo "DONE."
     done
     echo "Installation finished."
@@ -181,11 +181,14 @@ function getProjectDesc()
     project="${1}"
     version="${2}"
 
+    # Warning use shell {} for expasion but don't include them into quoted string
     case "${project}" in
         AMBER  ) 
             echo "${JMMC_SVNROOT} AMBER/${version}/amdlib" ;;
         ASPRO2 )
-            echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal oiTools/${version}/oitools ASPRO2/${version}/aspro" ;;
+            echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal"
+            echo  oiTools/${version}/{oitools,oiexplorer-core}
+            echo "ASPRO2/${version}/aspro" ;;
         AppLauncher )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs "
             echo AppLauncher/${version}/{smptest,smprsc,smprun} ;;
@@ -220,7 +223,7 @@ version="trunk";
 outputDir="$PWD"
 SVN_COMMAND="svn"
 tagPrefix="tags/"
-DO_MAN_DURING_INSTALL="man"
+MAN_CMD_DURING_INSTALL=""
 
 # Parse command-line parameters
 while getopts "d:hnmv:" option
@@ -234,7 +237,7 @@ do
         n )
             SVN_COMMAND="echo svn";;
         m )
-            DO_MAN_DURING_INSTALL="";;
+            MAN_CMD_DURING_INSTALL="man";;
         v ) 
             version="${tagPrefix}${OPTARG}";;
         * ) # Unknown option

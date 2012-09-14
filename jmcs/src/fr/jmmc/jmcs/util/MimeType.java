@@ -28,6 +28,8 @@ public final class MimeType {
     public final static MimeType ASPRO_OBSERVATION = MimeType.add("ASPRO_OBSERVATION", "application/x-aspro+xml", "Aspro Observation Settings", "asprox");
     /** MimeType associated to XML LITpro settings */
     public final static MimeType LITPRO_SETTINGS = MimeType.add("LITPRO_SETTINGS", "application/vnd.jmmc.litpro+xml", "LITpro XML Settings", "litprox", "xml");
+    /** MimeType associated to Oifits explorer collection */
+    public final static MimeType OIFITS_EXPLORER_COLLECTION = MimeType.add("OIFITS_EXPLORER_COLLECTION", "application/x-oifits-explorer+xml", "OIFits Explorer Collection", "oixp");
     /** MimeType associated to P2PP Observing blocks */
     public final static MimeType OBX = MimeType.add("OBX", "application/obx", "Observing Blocks", "obx");
     /** MimeType associated to OIFITS format */

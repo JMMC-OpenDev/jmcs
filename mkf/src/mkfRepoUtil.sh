@@ -28,12 +28,13 @@ SCRIPTNAME=$(basename $0)
 # Print usage 
 function printUsage ()
 {
-    echo -e "Usage: $SCRIPTNAME  [-d outputDir] [-h] [-n] [-m] [-v version] <info<.versions>|checkout|export|install|update|tag> <PROJECT> [... <PROJECT_N>]"
+    echo -e "Usage: $SCRIPTNAME  [-d outputDir] [-h] [-n] [-m] [-v version] [-r revision] <info<.versions>|checkout|export|install|update|tag> <PROJECT> [... <PROJECT_N>]"
     echo -e "\t-d <directory>\tset working area for modules (default is current dir).";
     echo -e "\t-h\tprint this help.";
     echo -e "\t-n\tdisplay svn command which is performed when this option is not set.";
     echo -e "\t-m \tgenerate documentation from code.";
     echo -e "\t-v <version>\tuse given version (default is development one) when retrieving sources or tagging.";
+    echo -e "\t-r <revision>\tuse given revision (default is the last one HEAD) when retrieving sources or tagging.";
     echo -e "\tACTIONS  :";
     echo -e "\t   info          : list modules of given projects.";
     echo -e "\t   info.versions : list versions present handled by the source code management.";
@@ -79,11 +80,12 @@ function getModules ()
         fi
         case "${svnOptions}" in 
             update)
-                CMD="$CMD ${moduleName}" ;;
+                MODULE_PATH="${moduleName}" ;;
             *)
-                CMD="$CMD ${prjSvnroot}/${module}" ;;
+                MODULE_PATH="${prjSvnroot}/${module}${revision}" ;;
         esac
-        echo " '${prjSvnroot}/${module}' ..."
+        CMD="$CMD $MODULE_PATH" 
+        echo " '$MODULE_PATH' ..."
     done
 
     # export/checkout in current dir
@@ -109,7 +111,7 @@ function displayProjectVersions()
 {
     prjSvnroot="$1"
     project="$2"
-    svnTags=$(${SVN_COMMAND} list $prjSvnroot/$project/tags)
+    svnTags=$(${SVN_COMMAND} list ${revisionOption} $prjSvnroot/$project/tags)
     echo $svnTags | sed "s@/@@g"
 }
 
@@ -144,7 +146,7 @@ function installModules()
         moduleName=${module##*/}
         repos_path="${prjSvnroot}/${module}"
         echo -n " - installing '${moduleName}' from '${repos_path}' ... "
-        ${SVN_COMMAND} checkout "${repos_path}"
+        ${SVN_COMMAND} checkout ${revisionOption} "${repos_path}"
         module_src_path="${moduleName}/src"
         (cd "${module_src_path}" ; make clean all ${MAN_CMD_DURING_INSTALL} install)
         echo "DONE."
@@ -169,7 +171,7 @@ function tagModules(){
           echo "ERROR module $prjSvnroot/$module already present remove first if you want to overwrite"
           return 1
         fi
-        ${SVN_COMMAND} copy --parents -m "Automatically tagged ${project} in version ${version/$tagPrefix/} ($SCRIPTNAME)" "$prjSvnroot/$trunkModule" "$prjSvnroot/$module"
+        ${SVN_COMMAND} copy --parents -m "Automatically tagged ${project} in version ${version/$tagPrefix/} from trunk${revision}  ($SCRIPTNAME)" "$prjSvnroot/$trunkModule${revision}" "$prjSvnroot/$module"
     done
 }
 # This function contains the description of the svn repository and modules for a given project and version
@@ -215,18 +217,20 @@ function getProjectDesc()
 
 # Set default value for 
 # - development version 
+# - svn revision 
 # - output directory
 # - svn command 
 # - installation target 
-
 version="trunk";
+revision="";
+revisionOption="";
 outputDir="$PWD"
 SVN_COMMAND="svn"
 tagPrefix="tags/"
 MAN_CMD_DURING_INSTALL=""
 
 # Parse command-line parameters
-while getopts "d:hnmv:" option
+while getopts "d:hnmv:r:" option
     # : after option shows it will have an argument passed with it.
 do
     case $option in
@@ -240,11 +244,15 @@ do
             MAN_CMD_DURING_INSTALL="man";;
         v ) 
             version="${tagPrefix}${OPTARG}";;
+        r ) 
+            revisionOption="-r ${OPTARG}"
+            revision="@${OPTARG}";;
         * ) # Unknown option
             echo "Invalid option -- $option"
             printUsage ;;
     esac
 done
+
 let SHIFTOPTIND=$OPTIND-1
 shift $SHIFTOPTIND
 if [ $# -lt 2 ]

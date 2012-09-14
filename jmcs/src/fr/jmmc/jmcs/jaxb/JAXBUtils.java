@@ -72,16 +72,9 @@ public class JAXBUtils {
 
         Object result = null;
         try {
-
-            final long start = System.nanoTime();
-
             final Unmarshaller u = jbf.createUnMarshaller();
 
             result = u.unmarshal(inputFile);
-
-            if (logger.isInfoEnabled()) {
-                logger.info("unmarshall : duration = {} ms.", 1e-6d * (System.nanoTime() - start));
-            }
 
         } catch (JAXBException je) {
             handleException("Load failure on " + inputFile, je);
@@ -105,16 +98,9 @@ public class JAXBUtils {
 
         Object result = null;
         try {
-
-            final long start = System.nanoTime();
-
             final Unmarshaller u = jbf.createUnMarshaller();
 
             result = u.unmarshal(reader);
-
-            if (logger.isInfoEnabled()) {
-                logger.info("unmarshall : duration = {} ms.", 1e-6d * (System.nanoTime() - start));
-            }
 
         } catch (JAXBException je) {
             handleException("Load failure on " + reader, je);
@@ -130,19 +116,11 @@ public class JAXBUtils {
      *
      * @throws IOException if an I/O exception occured
      * @throws IllegalStateException if an unexpected exception occured
-     * @throws XmlBindException if a JAXBException was caught while creating an marshaller
      */
     public static void saveObject(final File outputFile, final Object object, final JAXBFactory jbf)
             throws IOException, IllegalStateException {
         try {
-
-            final long start = System.nanoTime();
-
             jbf.createMarshaller().marshal(object, outputFile);
-
-            if (logger.isInfoEnabled()) {
-                logger.info("marshall : duration = {} ms.", 1e-6d * (System.nanoTime() - start));
-            }
 
         } catch (JAXBException je) {
             handleException("Save failure on " + outputFile, je);

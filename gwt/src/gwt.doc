@@ -1,0 +1,46 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage Graphical User Interface module.
+
+\bdesc
+This module aims to provide a GUI feature to your programs.
+
+\ddesc
+It uses a C++ API to build a inner representation of your GUI panels. The
+display is assumed by a remote java process that interprets XML document on
+the fly. The connection is handled on a TCP/IP socket. You can find much more information about the java gui
+in the ( not yet standardized ) XmlBasedGui cvs module.
+
+\ex
+This code makes appear a simple window with few widgets.
+\code
+// will be updated
+\endcode
+
+<h2> Widget's status </h2>
+
+<h3> Running widgets </h3>
+<ul>
+<li> Buttons - gwtBUTTON </li>
+<li> Checkboxes - gwtCHECKBOX </li>
+<li> Multichoice menu - gwtCHOICE </li>
+<li> Windows - gwtWINDOW </li>
+<li> Separator - gwtSEPARATOR </li>
+<li> Subpanel - gwtSUBPANEL </li>
+<li> Tables - gwtTABLE </li>
+<li> Textareas - gwtTEXTAREA </li>
+<li> Textfields - gwtTEXTFIELD </li>
+</ul>
+
+<h3> Comming widgets </h3>
+<ul>
+<li> Menus - gwtMENU gwtMENUITEM </li>
+<li> Labels - gwtLABEL </li>
+<li> Slider - gwtSLIDER </li>
+</ul>
+
+\n
+ */

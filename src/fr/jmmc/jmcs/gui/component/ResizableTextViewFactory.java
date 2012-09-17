@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import org.slf4j.Logger;
@@ -48,7 +49,6 @@ public class ResizableTextViewFactory {
      */
     public static void createTextWindow(final String text, final String title, final boolean modal) {
         SwingUtils.invokeAndWaitEDT(new Runnable() {
-
             @Override
             public void run() {
                 final JDialog dialog = new JDialog(App.getFrame(), title, modal);
@@ -66,7 +66,6 @@ public class ResizableTextViewFactory {
      */
     public static void createHtmlWindow(final String html, final String title, final boolean modal) {
         SwingUtils.invokeAndWaitEDT(new Runnable() {
-
             @Override
             public void run() {
                 final JDialog dialog = new JDialog(App.getFrame(), title, modal);
@@ -74,7 +73,6 @@ public class ResizableTextViewFactory {
 
                 editorPane.setContentType("text/html");
                 editorPane.addHyperlinkListener(new HyperlinkListener() {
-
                     @Override
                     public void hyperlinkUpdate(HyperlinkEvent event) {
                         // When a link is clicked
@@ -139,7 +137,6 @@ public class ResizableTextViewFactory {
         if (modal) {
             final JButton button = new JButton("OK");
             button.addActionListener(new ActionListener() {
-
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     // Close window when button is pressed
@@ -148,6 +145,13 @@ public class ResizableTextViewFactory {
                 }
             });
             contentPane.add(button, BorderLayout.SOUTH);
+            // Set as default button with focus activated
+            dialog.getRootPane().setDefaultButton(button);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    button.requestFocusInWindow();
+                }
+            });
         }
 
         // Sizing

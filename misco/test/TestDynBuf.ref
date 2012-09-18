@@ -1,0 +1,1371 @@
+---------------------------------------------------------
+buffer.AppendBytes(NULL, 0) SUCCEED
+
+buffer.AppendBytes('hello buffer', 12) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '12'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'hello buffer'
+}
+buffer.AppendBytes(' ... :)', 7) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '19'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'hello buffer ... :)'
+}
+buffer.AppendBytes(' !!!', 4) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '23'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'hello buffer ... :) !!!'
+}
+---------------------------------------------------------
+buffer.GetByteAt(NULL, 0) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.089709 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.089613 - misc miscoTestDynBuf  miscDynBuf.c:173 4 S 'position' parameter outside of the Dynamic Buffer range.
+
+
+buffer.GetByteAt(0) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.090705 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.090688 - misc miscoTestDynBuf  miscDynBuf.c:173 4 S 'position' parameter outside of the Dynamic Buffer range.
+
+
+buffer.GetByteAt(1) = 'h' SUCCEED
+
+buffer.GetByteAt(7) = 'b' SUCCEED
+
+buffer.GetByteAt(23) = '!' SUCCEED
+
+buffer.GetByteAt(24) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.091704 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.091688 - misc miscoTestDynBuf  miscDynBuf.c:173 4 S 'position' parameter outside of the Dynamic Buffer range.
+
+
+---------------------------------------------------------
+buffer.GetBytesFromTo(0, 4) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.092768 - miscDynBuf.c:209 - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.092749 - misc miscoTestDynBuf  miscDynBuf.c:209 4 S 'from' parameter outside of the Dynamic Buffer range.
+
+
+buffer.GetBytesFromTo(NULL, 1, 12) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.093738 - miscDynBuf.c:647 - ERROR: 1 S Received a NULL value for parameter 'bytes'.
+ERROR: 2011-08-31T21:15:56.093721 - misc miscoTestDynBuf  miscDynBuf.c:647 1 S Received a NULL value for parameter 'bytes'.
+
+
+buffer.GetBytesFromTo(1, 12) = 'hello buffer' SUCCEED
+
+buffer.GetBytesFromTo(7, 16) = 'buffer ...' SUCCEED
+
+buffer.GetBytesFromTo(6, 6) = ' ' SUCCEED
+
+buffer.GetBytesFromTo(18, 23) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.094745 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+ERROR: 2011-08-31T21:15:56.094728 - misc miscoTestDynBuf  miscDynBuf.c:223 5 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+
+
+buffer.GetBytesFromTo(18, 23) = ':) !!!' SUCCEED
+
+buffer.GetBytesFromTo(18, 24) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.095725 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.095708 - misc miscoTestDynBuf  miscDynBuf.c:216 4 S 'to' parameter outside of the Dynamic Buffer range.
+
+
+---------------------------------------------------------
+buffer.ReplaceByteAt(0) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.096710 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.096693 - misc miscoTestDynBuf  miscDynBuf.c:173 4 S 'position' parameter outside of the Dynamic Buffer range.
+
+
+buffer.ReplaceByteAt(1) = 'H' SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '23'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Hello buffer ... :) !!!'
+}
+
+buffer.ReplaceByteAt(7) = 'B' SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '23'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Hello Buffer ... :) !!!'
+}
+
+buffer.ReplaceByteAt(13) = ''' SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '23'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Hello Buffer'... :) !!!'
+}
+
+buffer.ReplaceByteAt(23) = '@' SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '23'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Hello Buffer'... :) !!@'
+}
+
+buffer.ReplaceByteAt(24) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.098018 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.098001 - misc miscoTestDynBuf  miscDynBuf.c:173 4 S 'position' parameter outside of the Dynamic Buffer range.
+
+
+---------------------------------------------------------
+buffer.InsertBytesAt(NULL, 0, 0) SUCCEED
+
+buffer.InsertBytesAt(NULL, 0, 1) SUCCEED
+
+buffer.InsertBytesAt('Encore un '', 0, 1) SUCCEED
+
+buffer.InsertBytesAt('Encore un '', 11, 1) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '34'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Encore un 'Hello Buffer'... :) !!@'
+}
+
+buffer.InsertBytesAt('misc', 0, 18) SUCCEED
+
+buffer.InsertBytesAt('misc', 4, 18) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '38'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Encore un 'Hello miscBuffer'... :) !!@'
+}
+
+buffer.InsertBytesAt('~~~', 0, 38) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '38'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Encore un 'Hello miscBuffer'... :) !!@'
+}
+
+buffer.InsertBytesAt('~~~', 3, 38) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '41'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Encore un 'Hello miscBuffer'... :) !!~~~@'
+}
+
+buffer.InsertBytesAt('~~~', 3, 42) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.099148 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.099130 - misc miscoTestDynBuf  miscDynBuf.c:173 4 S 'position' parameter outside of the Dynamic Buffer range.
+
+
+---------------------------------------------------------
+buffer.ReplaceBytesFromTo(NULL, 0, 0, 9) SUCCEED
+
+buffer.ReplaceBytesFromTo('Toujours ce', 11, 1, 9) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '43'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Toujours ce 'Hello miscBuffer'... :) !!~~~@'
+}
+
+buffer.ReplaceBytesFromTo('X', 0, 42, 40) SUCCEED
+
+buffer.ReplaceBytesFromTo('X', 0, 40, 42) SUCCEED
+
+buffer.ReplaceBytesFromTo('X', 1, 40, 40) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '43'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Toujours ce 'Hello miscBuffer'... :) !!X~~@'
+}
+
+buffer.ReplaceBytesFromTo(' !', 3, 31, 43) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '33'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Toujours ce 'Hello miscBuffer' !'
+}
+
+buffer.ReplaceBytesFromTo(' !', 3, 31, 34) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.100246 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.100231 - misc miscoTestDynBuf  miscDynBuf.c:216 4 S 'to' parameter outside of the Dynamic Buffer range.
+
+
+---------------------------------------------------------
+buffer.DeleteBytesFromTo(0, 13) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.101236 - miscDynBuf.c:209 - ERROR: 1 S 'from' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.101220 - misc miscoTestDynBuf  miscDynBuf.c:209 4 S 'from' parameter outside of the Dynamic Buffer range.
+
+
+buffer.DeleteBytesFromTo(1, 13) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '20'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Hello miscBuffer' !'
+}
+
+buffer.DeleteBytesFromTo(10, 7) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.102241 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+ERROR: 2011-08-31T21:15:56.102225 - misc miscoTestDynBuf  miscDynBuf.c:223 5 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+
+
+buffer.DeleteBytesFromTo(7, 10) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '16'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Hello Buffer' !'
+}
+
+buffer.DeleteBytesFromTo(13, 13) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '15'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Hello Buffer !'
+}
+
+buffer.DeleteBytesFromTo(13, 14) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '13'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Hello Buffer'
+}
+
+buffer.DeleteBytesFromTo(12, 14) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.103311 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.103295 - misc miscoTestDynBuf  miscDynBuf.c:216 4 S 'to' parameter outside of the Dynamic Buffer range.
+
+
+---------------------------------------------------------
+buffer.Strip() SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '13'
+  allocatedBytes = '13'
+  commentPattern = ''
+  dynBuf         = 'Hello Buffer'
+}
+
+---------------------------------------------------------
+buffer.Reset() SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '0'
+  allocatedBytes = '13'
+  commentPattern = ''
+  dynBuf         = '(null)'
+}
+
+---------------------------------------------------------
+buffer.AppendString(NULL) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.104350 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+ERROR: 2011-08-31T21:15:56.104334 - misc miscoTestDynBuf  miscDynBuf.c:242 1 S Received a NULL value for parameter 'str'.
+
+
+buffer.AppendString('hello dynStr') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '13'
+  allocatedBytes = '13'
+  commentPattern = ''
+  dynBuf         = 'hello dynStr'
+}
+buffer.AppendString(' ... :)') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '20'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'hello dynStr ... :)'
+}
+buffer.AppendString(' !!!') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '24'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'hello dynStr ... :) !!!'
+}
+---------------------------------------------------------
+buffer.InsertStringAt(NULL, 0) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.105410 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+ERROR: 2011-08-31T21:15:56.105393 - misc miscoTestDynBuf  miscDynBuf.c:242 1 S Received a NULL value for parameter 'str'.
+
+
+buffer.InsertStringAt(NULL, 1) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.106370 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+ERROR: 2011-08-31T21:15:56.106354 - misc miscoTestDynBuf  miscDynBuf.c:242 1 S Received a NULL value for parameter 'str'.
+
+
+buffer.InsertStringAt('Encore un '', 1) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '35'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Encore un 'hello dynStr ... :) !!!'
+}
+
+buffer.InsertStringAt('misc', 18) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '39'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Encore un 'hello miscdynStr ... :) !!!'
+}
+
+buffer.InsertStringAt('~~~', 39) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '42'
+  allocatedBytes = '512'
+  commentPattern = ''
+  dynBuf         = 'Encore un 'hello miscdynStr ... :) !!!~~~'
+}
+
+buffer.InsertStringAt('~~~', 43) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.107435 - miscDynBuf.c:173 - ERROR: 1 S 'position' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.107418 - misc miscoTestDynBuf  miscDynBuf.c:173 4 S 'position' parameter outside of the Dynamic Buffer range.
+
+
+---------------------------------------------------------
+buffer.ReplaceStringFromTo(NULL, 0, 9) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.108404 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+ERROR: 2011-08-31T21:15:56.108389 - misc miscoTestDynBuf  miscDynBuf.c:242 1 S Received a NULL value for parameter 'str'.
+
+
+buffer.ReplaceStringFromTo('Toujours ce, 1, 9) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '44'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Toujours ce 'hello miscdynStr ... :) !!!~~~'
+}
+
+buffer.ReplaceStringFromTo(' !, 42, 40) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.109439 - miscDynBuf.c:223 - ERROR: 1 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+ERROR: 2011-08-31T21:15:56.109424 - misc miscoTestDynBuf  miscDynBuf.c:223 5 S Received bad 'from' and 'to' parameters ('to' lower than 'from').
+
+
+buffer.ReplaceStringFromTo(' !, 40, 42) SUCCEED
+
+buffer.ReplaceStringFromTo(' !, 31, 43) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '33'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Toujours ce 'hello miscdynStr  !'
+}
+
+buffer.ReplaceStringFromTo(' !, 31, 34) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.110448 - miscDynBuf.c:216 - ERROR: 1 S 'to' parameter outside of the Dynamic Buffer range.
+ERROR: 2011-08-31T21:15:56.110433 - misc miscoTestDynBuf  miscDynBuf.c:216 4 S 'to' parameter outside of the Dynamic Buffer range.
+
+
+---------------------------------------------------------
+buffer.SetCommentPattern('#') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '33'
+  allocatedBytes = '896'
+  commentPattern = '#'
+  dynBuf         = 'Toujours ce 'hello miscdynStr  !'
+}
+------------------
+buffer.SetCommentPattern('//') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '33'
+  allocatedBytes = '896'
+  commentPattern = '//'
+  dynBuf         = 'Toujours ce 'hello miscdynStr  !'
+}
+------------------
+buffer.SetCommentPattern('/**') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '33'
+  allocatedBytes = '896'
+  commentPattern = '/**'
+  dynBuf         = 'Toujours ce 'hello miscdynStr  !'
+}
+------------------
+buffer.SetCommentPattern(';--;') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '33'
+  allocatedBytes = '896'
+  commentPattern = ';--'
+  dynBuf         = 'Toujours ce 'hello miscdynStr  !'
+}
+------------------
+buffer.SetCommentPattern(NULL) SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '33'
+  allocatedBytes = '896'
+  commentPattern = ''
+  dynBuf         = 'Toujours ce 'hello miscdynStr  !'
+}
+---------------------------------------------------------
+buffer.LoadFile('../doc/') FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.111607 - miscDynBuf.c:1112 - ERROR: 1 S Could not read '../doc/' file : 'Is a directory'.
+ERROR: 2011-08-31T21:15:56.111591 - misc miscoTestDynBuf  miscDynBuf.c:1112 15 S Could not read '../doc/' file : 'Is a directory'.
+
+miscoDYN_BUF =
+{
+  storedBytes    = '0'
+  allocatedBytes = '4992'
+  commentPattern = ''
+  dynBuf         = '(null)'
+}
+buffer.LoadFile('../doc/moduleDescription.xml') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '792'
+  allocatedBytes = '8736'
+  commentPattern = ''
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+'
+}
+---------------------------------------------------------
+------------------
+skipFlag = 'WITHOUT Comment Skiping' | commentPattern = ''
+buffer.GetNextLine() = '<?xml version="1.0" encoding="UTF-8"?>'
+buffer.GetNextLine() = '<!--'
+buffer.GetNextLine() = '********************************************************************************'
+buffer.GetNextLine() = '* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.'
+buffer.GetNextLine() = '********************************************************************************'
+buffer.GetNextLine() = ' NAME'
+buffer.GetNextLine() = ' moduleDescription.xml - Give module informations'
+buffer.GetNextLine() = ' '
+buffer.GetNextLine() = ' DESCRIPTION'
+buffer.GetNextLine() = ' moduleDescription.xml gives informations about: '
+buffer.GetNextLine() = ' - the module description'
+buffer.GetNextLine() = ' - the module responsible'
+buffer.GetNextLine() = ' - the package whom belongs to this module'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = ' EXAMPLES'
+buffer.GetNextLine() = '    <module name="dummymod">'
+buffer.GetNextLine() = '        <desc>Dummy module description</desc>'
+buffer.GetNextLine() = '        <resp>FirstName LastName</resp>'
+buffer.GetNextLine() = '        <package>MCS</package>'
+buffer.GetNextLine() = '    </module>'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = '-->'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = '<module name="misco">'
+buffer.GetNextLine() = '   <desc>Miscellaneous C++ classes</desc>'
+buffer.GetNextLine() = '   <resp>Sylvain LAFRASSE</resp>'
+buffer.GetNextLine() = '   <package>MCS</package>'
+buffer.GetNextLine() = '</module>'
+------------------
+skipFlag = 'WITHOUT Comment Skiping' | commentPattern = '*'
+buffer.GetNextLine() = '<?xml version="1.0" encoding="UTF-8"?>'
+buffer.GetNextLine() = '<!--'
+buffer.GetNextLine() = '********************************************************************************'
+buffer.GetNextLine() = '* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.'
+buffer.GetNextLine() = '********************************************************************************'
+buffer.GetNextLine() = ' NAME'
+buffer.GetNextLine() = ' moduleDescription.xml - Give module informations'
+buffer.GetNextLine() = ' '
+buffer.GetNextLine() = ' DESCRIPTION'
+buffer.GetNextLine() = ' moduleDescription.xml gives informations about: '
+buffer.GetNextLine() = ' - the module description'
+buffer.GetNextLine() = ' - the module responsible'
+buffer.GetNextLine() = ' - the package whom belongs to this module'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = ' EXAMPLES'
+buffer.GetNextLine() = '    <module name="dummymod">'
+buffer.GetNextLine() = '        <desc>Dummy module description</desc>'
+buffer.GetNextLine() = '        <resp>FirstName LastName</resp>'
+buffer.GetNextLine() = '        <package>MCS</package>'
+buffer.GetNextLine() = '    </module>'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = '-->'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = '<module name="misco">'
+buffer.GetNextLine() = '   <desc>Miscellaneous C++ classes</desc>'
+buffer.GetNextLine() = '   <resp>Sylvain LAFRASSE</resp>'
+buffer.GetNextLine() = '   <package>MCS</package>'
+buffer.GetNextLine() = '</module>'
+------------------
+skipFlag = 'WITH Comment Skiping' | commentPattern = ''
+buffer.GetNextLine() = '<?xml version="1.0" encoding="UTF-8"?>'
+buffer.GetNextLine() = '<!--'
+buffer.GetNextLine() = '********************************************************************************'
+buffer.GetNextLine() = '* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.'
+buffer.GetNextLine() = '********************************************************************************'
+buffer.GetNextLine() = ' NAME'
+buffer.GetNextLine() = ' moduleDescription.xml - Give module informations'
+buffer.GetNextLine() = ' '
+buffer.GetNextLine() = ' DESCRIPTION'
+buffer.GetNextLine() = ' moduleDescription.xml gives informations about: '
+buffer.GetNextLine() = ' - the module description'
+buffer.GetNextLine() = ' - the module responsible'
+buffer.GetNextLine() = ' - the package whom belongs to this module'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = ' EXAMPLES'
+buffer.GetNextLine() = '    <module name="dummymod">'
+buffer.GetNextLine() = '        <desc>Dummy module description</desc>'
+buffer.GetNextLine() = '        <resp>FirstName LastName</resp>'
+buffer.GetNextLine() = '        <package>MCS</package>'
+buffer.GetNextLine() = '    </module>'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = '-->'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = '<module name="misco">'
+buffer.GetNextLine() = '   <desc>Miscellaneous C++ classes</desc>'
+buffer.GetNextLine() = '   <resp>Sylvain LAFRASSE</resp>'
+buffer.GetNextLine() = '   <package>MCS</package>'
+buffer.GetNextLine() = '</module>'
+------------------
+skipFlag = 'WITH Comment Skiping' | commentPattern = '*'
+buffer.GetNextLine() = '<?xml version="1.0" encoding="UTF-8"?>'
+buffer.GetNextLine() = '<!--'
+buffer.GetNextLine() = ' NAME'
+buffer.GetNextLine() = ' moduleDescription.xml - Give module informations'
+buffer.GetNextLine() = ' '
+buffer.GetNextLine() = ' DESCRIPTION'
+buffer.GetNextLine() = ' moduleDescription.xml gives informations about: '
+buffer.GetNextLine() = ' - the module description'
+buffer.GetNextLine() = ' - the module responsible'
+buffer.GetNextLine() = ' - the package whom belongs to this module'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = ' EXAMPLES'
+buffer.GetNextLine() = '    <module name="dummymod">'
+buffer.GetNextLine() = '        <desc>Dummy module description</desc>'
+buffer.GetNextLine() = '        <resp>FirstName LastName</resp>'
+buffer.GetNextLine() = '        <package>MCS</package>'
+buffer.GetNextLine() = '    </module>'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = '-->'
+buffer.GetNextLine() = ''
+buffer.GetNextLine() = '<module name="misco">'
+buffer.GetNextLine() = '   <desc>Miscellaneous C++ classes</desc>'
+buffer.GetNextLine() = '   <resp>Sylvain LAFRASSE</resp>'
+buffer.GetNextLine() = '   <package>MCS</package>'
+buffer.GetNextLine() = '</module>'
+
+---------------------------------------------------------
+------------------
+commentPattern = ''
+------------------
+commentPattern = '*'
+buffer.GetNextCommentLine() = '********************************************************************************'
+buffer.GetNextCommentLine() = '* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.'
+buffer.GetNextCommentLine() = '********************************************************************************'
+
+---------------------------------------------------------
+buffer.AppendLine(NULL, 0) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.113207 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+ERROR: 2011-08-31T21:15:56.113191 - misc miscoTestDynBuf  miscDynBuf.c:242 1 S Received a NULL value for parameter 'str'.
+
+------------------
+buffer.AppendLine('Test de miscAppendLine() !') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '819'
+  allocatedBytes = '8736'
+  commentPattern = '*'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !'
+}
+---------------------------------------------------------
+commentPattern = ''
+buffer.AppendCommentLine(NULL, 0) FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.114203 - miscDynBuf.c:242 - ERROR: 1 S Received a NULL value for parameter 'str'.
+ERROR: 2011-08-31T21:15:56.114188 - misc miscoTestDynBuf  miscDynBuf.c:242 1 S Received a NULL value for parameter 'str'.
+
+------------------
+commentPattern = ''
+buffer.AppendCommentLine('Test de miscAppendCommentLine() !') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '853'
+  allocatedBytes = '8736'
+  commentPattern = ''
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !
+Test de miscAppendCommentLine() !'
+}
+------------------
+commentPattern = '#'
+buffer.AppendCommentLine('Test de miscAppendCommentLine() !') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '888'
+  allocatedBytes = '8736'
+  commentPattern = '#'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !
+Test de miscAppendCommentLine() !
+#Test de miscAppendCommentLine() !'
+}
+------------------
+commentPattern = ' /*'
+buffer.AppendCommentLine('Test de miscAppendCommentLine() !') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '925'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !
+Test de miscAppendCommentLine() !
+#Test de miscAppendCommentLine() !
+ /*Test de miscAppendCommentLine() !'
+}
+---------------------------------------------------------
+buffer.SavePartInFile(0, '../tmp/0.txt') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '925'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !
+Test de miscAppendCommentLine() !
+#Test de miscAppendCommentLine() !
+ /*Test de miscAppendCommentLine() !'
+}
+buffer.SavePartInFile(10, '../tmp/10.txt') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '925'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !
+Test de miscAppendCommentLine() !
+#Test de miscAppendCommentLine() !
+ /*Test de miscAppendCommentLine() !'
+}
+---------------------------------------------------------
+buffer.SaveInFile('../tmp/') FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.115485 - miscDynBuf.c:1168 - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
+ERROR: 2011-08-31T21:15:56.115468 - misc miscoTestDynBuf  miscDynBuf.c:1168 21 S Could not save '../tmp/' file : 'Is a directory'.
+
+miscoDYN_BUF =
+{
+  storedBytes    = '925'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !
+Test de miscAppendCommentLine() !
+#Test de miscAppendCommentLine() !
+ /*Test de miscAppendCommentLine() !'
+}
+buffer.SaveInFile('../tmp/test.txt') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '925'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !
+Test de miscAppendCommentLine() !
+#Test de miscAppendCommentLine() !
+ /*Test de miscAppendCommentLine() !'
+}
+---------------------------------------------------------
+buffer.SaveInASCIIFile('../tmp/') FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.116586 - miscDynBuf.c:1168 - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
+ERROR: 2011-08-31T21:15:56.116570 - misc miscoTestDynBuf  miscDynBuf.c:1168 21 S Could not save '../tmp/' file : 'Is a directory'.
+
+miscoDYN_BUF =
+{
+  storedBytes    = '925'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !
+Test de miscAppendCommentLine() !
+#Test de miscAppendCommentLine() !
+ /*Test de miscAppendCommentLine() !'
+}
+buffer.SaveInASCIIFile('../tmp/testASCII.txt') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '925'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="misco">
+   <desc>Miscellaneous C++ classes</desc>
+   <resp>Sylvain LAFRASSE</resp>
+   <package>MCS</package>
+</module>
+Test de miscAppendLine() !
+Test de miscAppendCommentLine() !
+#Test de miscAppendCommentLine() !
+ /*Test de miscAppendCommentLine() !'
+}
+---------------------------------------------------------
+sh: toto: command not found
+buffer.ExecuteCommand('toto') FAILEDmiscoTestDynBuf -   misc - Error - 2011-08-31T21:15:56.120674 - miscDynBuf.c:1039 - ERROR: 1 S 'toto' command exited with status '127' : please use command's manpage for detailed information.
+ERROR: 2011-08-31T21:15:56.120651 - misc miscoTestDynBuf  miscDynBuf.c:1039 33 S 'toto' command exited with status '127' : please use command's manpage for detailed information.
+
+miscoDYN_BUF =
+{
+  storedBytes    = '1'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = ''
+}
+buffer.ExecuteCommand('echo "toto"') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '6'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = 'toto
+'
+}
+buffer.ExecuteCommand('echo $PATH') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '535'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = '/home/users/bourgesl/apps/jdk-latest/bin:/home/users/bourgesl/apps/jdk-latest/bin:/usr/kerberos/bin:/home/soft/shared/jdk1.5//bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/bin:/home/soft/local/gildas/gildas-exe/x86_64-redhat-gfortran/libexec:/usr/local/bin:/bin:/usr/bin:/home/soft/shared/jalopy-console-0.1-1.5rc3:/home/soft/shared/stilts:/home/soft/shared/gasgano-2.2.7/bin:/home/soft/local/JmmcTools/:/home/soft/shared/bin/:../bin:/home/users/bourgesl/INTROOT/bin:/home/MCS/DEVELOPMENT/bin:/home/users/bourgesl/bin
+'
+}
+buffer.ExecuteCommand('pwd') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '41'
+  allocatedBytes = '8736'
+  commentPattern = ' /*'
+  dynBuf         = '/home/users/bourgesl/dev/MCS/misco/test
+'
+}
+buffer.ExecuteCommand('/usr/bin/curl --max-time 30 -s -L "http://www.apple.com"') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '9617'
+  allocatedBytes = '15288'
+  commentPattern = ' /*'
+  dynBuf         = '<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="Author" content="Apple Inc." />
+	<meta name="viewport" content="width=1024" />
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7, IE=9" />
+	<link id="globalheader-stylesheet" rel="stylesheet" href="http://images.apple.com/global/nav/styles/navigation.css" type="text/css" />
+
+	<title>Apple</title>
+	<meta name="omni_page" content="Apple - Index/Tab" />
+	<meta name="Keywords" content="Apple" />
+	<meta name="Description" content="Apple designs and creates iPod and iTunes, Mac laptop and desktop computers, the OS X operating system, and the revolutionary iPhone and iPad." />
+	<script type="text/javascript">
+		var gomez = { gs:new Date().getTime(), acctId:'C2C738', pgId:'Home Page', grpId:'' };
+	</script>
+	<link rel="home" href="http://www.apple.com/" />
+	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://images.apple.com/main/rss/hotnews/hotnews.rss" />
+	<link rel="index" href="http://www.apple.com/sitemap/" />
+	<script src="http://images.apple.com/global/scripts/lib/prototype.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://images.apple.com/global/scripts/lib/scriptaculous.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://images.apple.com/global/scripts/browserdetect.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://images.apple.com/global/scripts/apple_core.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://images.apple.com/global/scripts/search_decorator.js" type="text/javascript" charset="utf-8"></script>
+
+	<script type="text/javascript" src="http://images.apple.com/global/scripts/promomanager.js"></script>
+	<script src="http://images.apple.com/v/home/c/scripts/ticker.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://images.apple.com/v/home/c/scripts/promotracker.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://images.apple.com/v/home/c/scripts/promos.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="http://images.apple.com/global/styles/base.css" type="text/css" />
+	<link rel="stylesheet" href="http://images.apple.com/v/home/c/styles/home.css" type="text/css" />
+	<link rel="stylesheet" href="http://images.apple.com/v/home/c/styles/c.css" type="text/css" />
+</head>
+<body id="home" class="keynote">
+	<script type="text/javascript">
+	var searchSection = 'global';
+	var searchCountry = 'us';
+</script>
+<script src="http://images.apple.com/global/nav/scripts/globalnav.js" type="text/javascript" charset="utf-8"></script>
+<nav id="globalheader" class="apple">
+	<!--googleoff: all-->
+	<ul id="globalnav" role="navigation">
+		<li id="gn-apple"><a href="/"><span>Apple</span></a></li>
+		<li id="gn-store"><a href="http://store.apple.com/"><span>Store</span></a></li>
+		<li id="gn-mac"><a href="/mac/"><span>Mac</span></a></li>
+		<li id="gn-ipod"><a href="/ipod/"><span>iPod</span></a></li>
+		<li id="gn-iphone"><a href="/iphone/"><span>iPhone</span></a></li>
+		<li id="gn-ipad"><a href="/ipad/"><span>iPad</span></a></li>
+		<li id="gn-itunes"><a href="/itunes/"><span>iTunes</span></a></li>
+		<li id="gn-support" class="gn-last"><a href="/support/"><span>Support</span></a></li>
+	</ul>
+	<!--googleon: all-->
+	<div id="globalsearch">
+		<form action="/search/" method="post" class="search" id="g-search"><div class="sp-label">
+			<label for="sp-searchtext">Search</label>
+			<input type="text" name="q" id="sp-searchtext" accesskey="s" />
+		</div></form>
+		<div id="sp-magnify"><div class="magnify-searchmode"></div><div class="magnify"></div></div>
+		<div id="sp-results"></div>
+	</div>
+</nav>
+<script type="text/javascript">
+	AC.GlobalNav.Instance = new AC.GlobalNav();
+</script>
+
+	<div id="top">
+<!-- SiteCatalyst code version: H.8. Copyright 1997-2006 Omniture, Inc. -->
+
+
+	
+
+
+
+
+	
+
+
+<script type="text/javascript">
+/* RSID: */
+
+var s_account="appleglobal,applehome"
+
+</script>
+
+
+<script type="text/javascript" src="http://images.apple.com/metrics/scripts/s_code_h.js"></script>
+
+
+
+<script type="text/javascript">
+
+s.pageName=AC.Tracking.pageName()+" (us)";
+s.channel="www.us.homepage"
+
+
+if(AC&&AC.Storage){
+	s.prop25=AC.Storage.getItem('s_nav');
+	AC.Storage.removeItem('s_nav')
+}
+Event.onDOMReady(function() {
+	function trackNav(link,loc) {
+		link.observe('mousedown',function(){
+			if(AC&&AC.Storage){
+				AC.Storage.setItem('s_nav',loc,'0');
+			}
+		});
+	}
+	$$('#globalheader a').each(function(link){
+		trackNav(link,'global nav');
+	});
+	$$('#productheader a').each(function(link){
+		trackNav(link,'product nav');
+	});
+	$$('#billboard a').each(function(link){
+		trackNav(link,'hero');
+	});
+	$$('.promos a').each(function(link){
+		trackNav(link,'promos');
+	});
+});
+
+
+/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+var s_code=s.t();if(s_code)document.write(s_code)</script>
+<!-- End SiteCatalyst code version: H.8. -->
+</div>
+	<div id="main">
+		<div id="content">
+			<div id="billboard">
+				<article id="macbookair" class="billboard content fancy promoset-1">
+					<a href="/macbookair/" class="block hero trackH">
+						<h1><img src="http://images.apple.com/home/images/hero_macbookair.png" alt="The new faster, MacBook Air. The ultimate everyday notebook. Now up to 2.5x faster, featuring highspeed Thunderbolt I/O and OS X Lion." width="902" height="586" /></h1>
+					</a>
+				</article><!--/macbookair-->
+				<article id="lion" class="billboard content fancy promoset-1">
+					<a href="/macosx/" class="block hero trackH">
+						<h1><img src="http://images.apple.com/home/images/hero_lion.png" alt="OS X Lion. The new king of the desktop. Available now from the Mac App Store for just $29.99" width="933" height="570" /></h1>
+					</a>
+				</article><!--/lion-->
+			</div><!--/billboard-->
+
+			<aside id="headlines">
+				<div id="ticker"><p><a href="/hotnews/" id="ticker-headline">Hot News Headlines</a> <a href="/hotnews/" id="news-link">Mac App Store Downloads Top One Million in First Day.</a></p></div>
+				<a href="/hotnews/feeds/ticker.rss" id="ticker-rss-link"></a>
+			</aside>
+
+			<aside class="promos">
+				<ul class="promos">
+					<li class="promoset-2-container">
+						<a class="trackP promoset-2 promoset-2-lion" href="/macosx/"><img src="http://images.apple.com/home/images/promo_lion.png" alt="OS X Lion. Available Now. Download it today from the Mac App Store." width="231" height="149" /></a>
+						<a class="trackP promoset-2 promoset-2-macbookair" href="/macbookair/"><img src="http://images.apple.com/home/images/promo_macbookair.png" alt="The new, faster MacBook Air. Now up to 2.5x faster and featuring high-speed Thunderbolt I/O." width="231" height="149" /></a>
+					</li>
+					
+					<li>
+						<a class="trackP" href="/ipad/#we-will-always"><img src="http://images.apple.com/home/images/promo_ipadtvad.png" alt="Watch the new iPad TV ad." width="231" height="149" /></a>
+					</li>
+					<li>
+						<a class="trackP" href="/icloud/"><img src="http://images.apple.com/home/images/promo_icloud.png" alt="iCloud. Coming this fall. iCloud stores your content and wirelessly pushes it to all your devices." width="231" height="149" /></a>
+					</li>
+					<li class="bts2011">
+						<a class="trackP" href="http://store.apple.com/us/browse/campaigns/back_to_school?aid=www-naus-bts2011-0526-14"><img src="http://images.apple.com/home/images/promo_bts2011.png" width="237" height="155" alt="Buy a Mac for college and get $100 to spend on the Mac App Store. Terms apply." /></a>
+					</li>
+				</ul><!--/promos-->
+			</aside><!--/promos-->
+		</div><!--/content-->
+
+		<footer id="homefooter">
+			<div id="links">
+				<p class="left">Shop the <a href="/store/">Apple Online Store</a> (1-800-MY-APPLE), visit an <a href="/retail/">Apple Retail Store</a>, or find a <a href="/buy/">reseller</a>.</p>
+				<ul class="piped right">
+					<li><a href="/sitemap/" class="first">Site Map</a></li>
+					<li><a href="/hotnews/">Hot News</a></li>
+					<li><a href="/rss/">RSS Feeds</a></li>
+					<li><a href="/pr/">Media Info</a></li>
+					<li><a href="/environment/">Environment</a></li>
+					<li><a href="/jobs/">Job Opportunities</a></li>
+					<li><a href="/contact/">Contact Us</a></li>
+				</ul>
+			</div><!--/links-->
+
+			<div class="sosumi">
+                <p class="copyright">Copyright © 2011 Apple Inc. All rights reserved.</p>
+				<ul class="piped">
+					<li><a href="/legal/" class="first">Terms of Use</a></li>
+					<li><a href="/legal/privacy/">Privacy Policy</a></li>
+				</ul>
+				<div id="worldwide">
+					<a href="/choose-your-country/">
+						<img src="http://images.apple.com/home/elements/worldwide_us.png" alt="United States of America" height="22" width="22" />
+						<span class="more">Choose your country or region</span>
+					</a>
+				</div>
+			</div><!--/sosumi-->
+		</footer><!--/homefooter-->
+	</div><!--/main-->
+
+	<!-- Start of DoubleClick Spotlight Tag: Please do not remove-->
+	<!-- Creation Date:11/19/07 -->
+	<script type="text/javascript">
+		var axel = Math.random()+"";
+		var a = axel * 10000000000000;
+		document.write('<iframe src="http://fls.doubleclick.net/activityi;src=1566767;type=apple663;cat=apple249;ord='+ a + '?" width=1 height=1 frameborder=0><\/iframe>');
+	</script>
+	<noscript>
+	<iframe src="http://fls.doubleclick.net/activityi;src=1566767;type=apple663;cat=apple249;ord=1?" width=1 height=1 frameborder=0></iframe>
+	</noscript>
+	<!-- End of DoubleClick Spotlight Tag: Please do not remove-->
+</body>
+</html>
+'
+}
+buffer.ExecuteCommand('/usr/bin/curl --max-time 30 -s -L "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*"') SUCCEED
+miscoDYN_BUF =
+{
+  storedBytes    = '6074'
+  allocatedBytes = '15288'
+  commentPattern = ' /*'
+  dynBuf         = '<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.2" >
+ <DESCRIPTION>
+   VizieR Astronomical Server vizier.u-strasbg.fr 	2011-08-31T21:15:59 [V1.80]
+   (replaces the 'Astrores' format originally described at
+    http://vizier.u-strasbg.fr/doc/astrores.htx)
+   In case of problem, please report to:	question@simbad.u-strasbg.fr
+ </DESCRIPTION>
+<!-- VOTable description at http://www.ivoa.net/Documents/latest/VOT.html -->
+
+<DEFINITIONS>
+  <COOSYS ID="J2000" system="eq_FK5" equinox="J2000"/>
+</DEFINITIONS>
+
+<INFO ID="Ref" name="-ref" value="VOTx1503"/>
+<INFO ID="MaxTuples" name="-out.max" value="100"/>
+
+<!--
+Execution Reports
+ -->
+<INFO ID="Target" name="-c" value="344.412708-29.622250,bm=3391.000000/1200."/>
+
+<RESOURCE ID="yCat_1280" name="I/280B">
+  <DESCRIPTION>All-sky Compiled Catalogue of 2.5 million stars (Kharchenko+ 2009)</DESCRIPTION>
+  <COOSYS ID="J2000_1991.250" system="eq_FK5" equinox="J2000" epoch="1991.250"/>
+  <TABLE ID="I_280B_ascc" name="I/280B/ascc">
+    <DESCRIPTION>ASCC-2.5 V3: All-sky Compiled Catalogue of 2.5 million stars, 3rd version</DESCRIPTION>
+    <!-- RowName:  ${ASCC} -->
+    <!-- Definitions of GROUPs and FIELDs -->
+    <FIELD name="_RAJ2000" ucd="pos.eq.ra;meta.main" ref="J2000" datatype="char" arraysize="12" unit="&quot;h:m:s&quot;"><!-- ucd="POS_EQ_RA_MAIN" -->
+      <DESCRIPTION>Right ascension (FK5) Equinox=J2000.0 Epoch=J2000.000, proper motions taken into account  (computed by VizieR, not part of the original data)</DESCRIPTION>
+    </FIELD>
+    <FIELD name="_DEJ2000" ucd="pos.eq.dec;meta.main" ref="J2000" datatype="char" arraysize="12" unit="&quot;d:m:s&quot;"><!-- ucd="POS_EQ_DEC_MAIN" -->
+      <DESCRIPTION>Declination (FK5) Equinox=J2000.0 Epoch=J2000.000, proper motions taken into account  (computed by VizieR, not part of the original data)</DESCRIPTION>
+    </FIELD>
+    <FIELD name="pmDE" ucd="pos.pm;pos.eq.dec" ref="J2000_1991.250" datatype="double" width="8" precision="2" unit="mas/yr"><!-- ucd="POS_EQ_PMDEC" -->
+      <DESCRIPTION>Proper Motion in Declination</DESCRIPTION>
+    </FIELD>
+    <FIELD name="pmRA" ucd="pos.pm;pos.eq.ra" ref="J2000_1991.250" datatype="double" width="8" precision="2" unit="mas/yr"><!-- ucd="POS_EQ_PMRA" -->
+      <DESCRIPTION>Proper Motion in RA*cos(DE)</DESCRIPTION>
+    </FIELD>
+    <FIELD name="Plx" ucd="pos.parallax.trig" datatype="float" width="7" precision="2" unit="mas"><!-- ucd="POS_PARLX_TRIG" -->
+      <DESCRIPTION>? Trigonometric parallax</DESCRIPTION>
+      <VALUES null=" " />
+    </FIELD>
+    <FIELD name="e_Plx" ucd="stat.error;pos.parallax" datatype="float" width="6" precision="2" unit="mas"><!-- ucd="ERROR" -->
+      <DESCRIPTION>? Standard error in Plx</DESCRIPTION>
+      <VALUES null=" " />
+    </FIELD>
+    <FIELD name="SpType" ucd="src.spType" datatype="char" arraysize="20*"><!-- ucd="SPECT_TYPE_MK" -->
+      <DESCRIPTION>Spectral type in MK or HD system</DESCRIPTION>
+    </FIELD>
+    <FIELD name="Bmag" ucd="phot.mag;em.opt.B" datatype="float" width="6" precision="3" unit="mag"><!-- ucd="PHOT_JHN_B" -->
+      <DESCRIPTION>? B magnitude in Johnson system</DESCRIPTION>
+      <VALUES null=" " />
+    </FIELD>
+    <FIELD name="Vmag" ucd="phot.mag;em.opt.V" datatype="float" width="6" precision="3" unit="mag"><!-- ucd="PHOT_JHN_V" -->
+      <DESCRIPTION>? V magnitude in Johnson system</DESCRIPTION>
+      <VALUES null=" " />
+    </FIELD>
+    <FIELD name="v1" ucd="meta.code;src.var" datatype="char" arraysize="1"><!-- ucd="CODE_VARIAB" -->
+      <DESCRIPTION>[GN ] Known variability from GCVS/NSV</DESCRIPTION>
+    </FIELD>
+    <FIELD name="v2" ucd="meta.code;src.var" datatype="char" arraysize="1"><!-- ucd="CODE_VARIAB" -->
+      <DESCRIPTION>[UVW ] Variability from Tycho-1</DESCRIPTION>
+    </FIELD>
+    <FIELD name="v3" ucd="meta.code;src.var" datatype="char" arraysize="1"><!-- ucd="VAR_CLASS" -->
+      <DESCRIPTION>[CDMPRU ] Variability type</DESCRIPTION>
+    </FIELD>
+    <FIELD name="d5" ucd="meta.code.multip" datatype="char" arraysize="1"><!-- ucd="CODE_MULT_FLAG" -->
+      <DESCRIPTION>[CGOVX ] Double/Multiple Systems flag</DESCRIPTION>
+    </FIELD>
+    <FIELD name="HIP" ucd="meta.id" datatype="int" width="6"><!-- ucd="ID_ALTERNATIVE" -->
+      <DESCRIPTION>? Hipparcos number</DESCRIPTION>
+      <VALUES null=" " />
+    </FIELD>
+    <FIELD name="HD" ucd="meta.id" datatype="int" width="6"><!-- ucd="ID_ALTERNATIVE" -->
+      <DESCRIPTION>? HD number</DESCRIPTION>
+      <VALUES null=" " />
+    </FIELD>
+    <FIELD name="DM" ucd="meta.id" datatype="int" width="8"><!-- ucd="ID_ALTERNATIVE" -->
+      <DESCRIPTION>? DM number</DESCRIPTION>
+      <VALUES null=" " />
+    </FIELD>
+    <FIELD name="TYC1" ucd="meta.id" datatype="short" width="4"><!-- ucd="ID_ALTERNATIVE" -->
+      <DESCRIPTION>? TYC1 number from Tycho-2</DESCRIPTION>
+      <VALUES null=" " />
+    </FIELD>
+<DATA><CSV headlines="3"><![CDATA[
+_RAJ2000	_DEJ2000	pmDE	pmRA	Plx	e_Plx	SpType	Bmag	Vmag	v1	v2	v3	d5	HIP	HD	DM	TYC1
+"h:m:s"	"d:m:s"	mas/yr	mas/yr	mas	mas	 	mag	mag	 	 	 	 	 	 	 	
+------------	------------	--------	--------	-------	------	--------------------	------	------	-	-	-	-	------	------	--------	----
+22 57 39.049	-29 37 20.05	 -164.19	  332.39	 129.49	  0.92	A3V                 	 1.383	 1.212	N	V	 	G	113368	216956	-3019370	6977
+23 09 26.797	-21 10 20.67	   31.61	   55.91	  13.47	  0.93	K1III               	 4.919	 3.678	 	W	 	 	114341	218594	-2106368	6401
+23 22 58.227	-20 06 02.08	  -96.00	 -120.31	  20.21	  0.72	K0III               	 5.051	 3.954	 	 	 	 	115438	220321	-2006587	6402
+21 53 55.728	-37 21 53.50	  -15.80	  100.48	  16.37	  0.75	B8III               	 2.921	 3.003	 	 	 	G	108085	207971	-3714536	7494
+21 26 40.027	-22 24 40.80	   18.80	   -0.51	   8.36	  0.88	G4Ibp...            	 4.745	 3.742	 	W	C	 	105881	204075	-2300442	6372
+00 43 35.372	-17 59 11.78	   32.75	  233.55	  34.11	  0.81	K0III               	 3.069	 2.036	N	W	U	 	  3419	  4128	-1800115	5847
+]]></CSV></DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>
+'
+}
+---------------------------------------------------------
+                      THAT'S ALL FOLKS ;)                
+---------------------------------------------------------

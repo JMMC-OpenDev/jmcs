@@ -447,11 +447,11 @@ public final class MessagePane {
 
     public static void main(String[] args) {
 
-        final String applicationName = "TarTanPion";
+        final String applicationName = "SAOImage DS9";
         final String title = "Please give '" + applicationName + "' command-line path ?";
-        String message = "AppLauncher tries to start the native '" + applicationName + "' application.\n"
+        String message = "AppLauncher tries to start the '" + applicationName + "' native application.\n"
                 + "As it is a user-installed application, AppLauncher does not know where to find it.\n\n"
-                + "Please enter the command-line path to launch it hereafter :";
+                + "Please enter a straight command-line to launch it (arguments not supported) :";
         final String showInputMessage = showInputMessage(message, title);
         System.out.println("showInputMessage = '" + showInputMessage + "'.");
 

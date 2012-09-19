@@ -41,10 +41,16 @@ public class ColorModels {
     public static final int NB_COLORS = 240;
     /** force zero surroundings to be black */
     public final static boolean FORCE_ZERO = true;
-    /**
-     * Default color model
-     */
-    public final static String DEFAULT_COLOR_MODEL = "Earth";
+    /** Color model Gray */
+    public final static String COLOR_MODEL_GRAY = "Gray";
+    /** Color model Earth */
+    public final static String COLOR_MODEL_EARTH = "Earth";
+    /** Color model Rainbow */
+    public final static String COLOR_MODEL_RAINBOW = "Rainbow";
+    /** Color model RainbowAlpha */
+    public final static String COLOR_MODEL_RAINBOW_ALPHA = "RainbowAlpha";
+    /** Default color model (Earth) */
+    public final static String DEFAULT_COLOR_MODEL = COLOR_MODEL_EARTH;
     /**
      * Color model names
      */
@@ -97,9 +103,11 @@ public class ColorModels {
         // hard coded color models :
         addColorModel(DEFAULT_COLOR_MODEL, getEarthColorModel());
 
-        addColorModel("Gray", getGrayColorModel(MAX_COLORS));
+        addColorModel(COLOR_MODEL_GRAY, getGrayColorModel(MAX_COLORS));
 
-        addColorModel("Rainbow", getRainbowColorModel());
+        addColorModel(COLOR_MODEL_RAINBOW, getRainbowColorModel());
+
+        addColorModel(COLOR_MODEL_RAINBOW_ALPHA, getRainbowColorModelAlpha(0.8f));
 
         // color models from lut files :
         IndexColorModel colorModel;
@@ -1613,6 +1621,27 @@ public class ColorModels {
         b[239] = (byte) 201;
 
         return new IndexColorModel(8, NB_COLORS, r, g, b);
+    }
+
+    /** 
+     * Returns one 'rainbow' color model with given opacity 
+     * @param alpha opacity 
+     */
+    private static IndexColorModel getRainbowColorModelAlpha(final float alpha) {
+        final IndexColorModel rainbow = getRainbowColorModel();
+
+        final byte[] r = new byte[NB_COLORS];
+        final byte[] g = new byte[NB_COLORS];
+        final byte[] b = new byte[NB_COLORS];
+        final byte[] a = new byte[NB_COLORS];
+
+        rainbow.getReds(r);
+        rainbow.getGreens(g);
+        rainbow.getBlues(b);
+
+        Arrays.fill(a, (byte) Math.round(255 * alpha));
+
+        return new IndexColorModel(8, NB_COLORS, r, g, b, a);
     }
 
     /** Returns one gray color model */

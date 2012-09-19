@@ -35,15 +35,14 @@ public final class ComponentResizeAdapter extends ComponentAdapter {
     public void componentResized(final ComponentEvent e) {
         final Component c = e.getComponent();
         final Dimension d = c.getSize();
-        int w = d.width;
-        if (w < dim.width) {
-            w = dim.width;
-        }
-        int h = d.height;
-        if (h < dim.height) {
-            h = dim.height;
-        }
+        final int w = d.width;
+        final int h = d.height;
 
-        c.setSize(w, h);
+        final int nw = (w < dim.width) ? dim.width : w;
+        final int nh = (h < dim.height) ? dim.height : h;
+
+        if (nw != w || nh != h) {
+            c.setSize(nw, nh);
+        }
     }
 }

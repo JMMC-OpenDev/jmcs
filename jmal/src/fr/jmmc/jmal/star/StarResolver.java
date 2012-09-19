@@ -42,6 +42,8 @@ public final class StarResolver {
         _simbadMirrors = new LinkedHashMap<String, String>(4);
         _simbadMirrors.put("SIMBAD Strasbourg FR", "http://simbad.u-strasbg.fr/simbad/sim-script?script=");
         _simbadMirrors.put("SIMBAD Harvard US", "http://simbad.harvard.edu/simbad/sim-script?script=");
+        _simbadMirrors.put("SIMBAD Strasbourg FR [IP]", "http://130.79.128.4/simbad/sim-script?script=");
+        _simbadMirrors.put("SIMBAD Harvard US [IP]", "http://131.142.185.22/simbad/sim-script?script=");
     }
     /* members */
     /** The sought star name */
@@ -328,6 +330,7 @@ public final class StarResolver {
                     _logger.debug("Querying CDS Simbad: {}", simbadQuery);
 
                     // Launch the network query
+                    // TODO: use HTTP CLIENT !!
                     inputStream = UrlUtils.parseURL(simbadQuery).openStream();
                     bufferedReader = new BufferedReader(new InputStreamReader(inputStream, HTTP_ENCODING));
 

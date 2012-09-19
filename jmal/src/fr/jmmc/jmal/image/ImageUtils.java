@@ -436,7 +436,7 @@ public final class ImageUtils {
      *
      * @param colorModel color model
      * @param iMaxColor index of the highest color
-     * @param value data value to convert between 0.0 and 255.0
+     * @param value data value to convert between 0.0 and colorModel.getMapSize() - 1 (128 or 240 or 255...)
      * @param alphaMask alpha mask (0 - 255) << 24
      * @return RGB color
      */

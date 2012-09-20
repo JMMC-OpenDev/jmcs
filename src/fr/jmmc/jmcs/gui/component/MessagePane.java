@@ -111,25 +111,31 @@ public final class MessagePane {
             _logger.error("A problem occured: {}", message);
         }
 
-        // try to get cause if possible
-        final String cause;
-        if (th != null && th.getCause() != null && th.getCause().getMessage() != null) {
-            cause = "\n" + "Cause : " + th.getCause().getMessage();
-        } else {
-            cause = "";
-        }
-
         final String msg;
         if (th != null && th.getMessage() != null) {
+
+            // try to get cause if possible
+            String cause = "";
+
+            Throwable thCause = th.getCause();
+
+            // process all nested exceptions:
+            while (thCause != null) {
+                if (thCause.getMessage() != null) {
+                    cause += "\n\nCause: " + thCause.getMessage();
+                }
+
+                thCause = thCause.getCause();
+            }
+
             /* Add exception name to improve given information e.g. ArrayOutOfBound just returned a number as message...*/
-            msg = message + "\n\n" + "Explanation (" + th.getClass().getName() + "): " + th.getMessage() + cause;
+            msg = message + "\n\nExplanation (" + th.getClass().getName() + "): " + th.getMessage() + cause + "\n\n";
         } else {
             msg = message;
         }
 
         // display the message within EDT :
         SwingUtils.invokeEDT(new Runnable() {
-
             @Override
             public void run() {
                 showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
@@ -364,7 +370,6 @@ public final class MessagePane {
 
         FutureTask<String> future = new FutureTask<String>(
                 new Callable<String>() {
-
                     @Override
                     public String call() {
                         // ensure window is visible (not iconified):

@@ -149,14 +149,23 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         });
 
         if (_exception != null) {
-            String msg = ((_exception.getMessage() != null) ? _exception.getMessage() : "no message");
+            final String msg = ((_exception.getMessage() != null) ? _exception.getMessage() : "no message");
+            
+            // try to get cause if possible
             String cause = "";
-            if (_exception.getCause() != null && _exception.getCause().getMessage() != null) {
-                cause = "\n" + _exception.getCause().getMessage();
+
+            Throwable thCause = _exception.getCause();
+
+            // process all nested exceptions:
+            while (thCause != null) {
+                if (thCause.getMessage() != null) {
+                    cause += "\n\nCause: " + thCause.getMessage();
+                }
+
+                thCause = thCause.getCause();
             }
 
-            descriptionTextArea.append("Following exception occured:\n"
-                    + msg + cause + "\n\n--\n");
+            descriptionTextArea.append("Following exception occured:\n" + msg + cause + "\n\n--\n");
 
             _logger.error("An exception was given to the feedback report: ", _exception);
         }

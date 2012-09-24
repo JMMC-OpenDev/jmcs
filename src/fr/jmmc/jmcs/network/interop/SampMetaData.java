@@ -21,11 +21,17 @@ public enum SampMetaData {
     DESCRIPTION_TEXT("samp.description.text", "Description", MimeType.PLAIN_TEXT),
     /** A description of the application, in HTML */
     DESCRIPTION_HTML("samp.description.html", "Description", MimeType.HTML),
-    /** The URL of an icon in png, gif or jpeg format */
+    /** The URL of an icon in PNG, GIF or JPG format */
     ICON_URL("samp.icon.url", "Icon", MimeType.URL),
     /** The URL of a documentation web page */
     DOCUMENTATION_URL("samp.documentation.url", "Documentation", MimeType.URL),
     // Extended SAMP meta data identifiers
+    /** Get the application affiliation name */
+    AFFILIATION_NAME("x-samp.affiliation.name", "Affiliation", MimeType.PLAIN_TEXT),
+    /** Get the application affiliation URL */
+    AFFILIATION_URL("x-samp.affiliation.url", "Affiliation URL", MimeType.URL),
+    /** Get the application affiliation contact */
+    AFFILIATION_CONTACT("x-samp.affiliation.contact", "Affiliation Contact", MimeType.URL),
     /** Get the application JNLP URL */
     JNLP_URL("x-samp.jnlp.url", "JNLP", MimeType.URL),
     /** Get the application beta JNLP URL */

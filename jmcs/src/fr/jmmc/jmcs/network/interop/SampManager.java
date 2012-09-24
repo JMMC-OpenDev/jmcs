@@ -185,9 +185,9 @@ public final class SampManager {
         // meta.setIconUrl("http://apps.jmmc.fr/~sclws/SearchCal/AppIcon.png");
 
         // Non-standard meatadata
-        meta.put("affiliation.name", applicationDataModel.getShortCompanyName() + " (" + applicationDataModel.getLegalCompanyName() + ")");
+        meta.put(SampMetaData.AFFILIATION_NAME.id(), applicationDataModel.getShortCompanyName() + " (" + applicationDataModel.getLegalCompanyName() + ")");
 
-        meta.put("affiliation.url", applicationDataModel.getMainWebPageURL());
+        meta.put(SampMetaData.AFFILIATION_URL.id(), applicationDataModel.getMainWebPageURL());
 
         final String jnlpUrl = applicationDataModel.getJnlpUrl();
         if (jnlpUrl != null) {
@@ -196,7 +196,7 @@ public final class SampManager {
 
         final String userSupportUrl = applicationDataModel.getUserSupportURL();
         if (userSupportUrl != null) {
-            meta.put("affiliation.support", userSupportUrl);
+            meta.put(SampMetaData.AFFILIATION_CONTACT.id(), userSupportUrl);
         }
 
         String authors = applicationDataModel.getAuthors();

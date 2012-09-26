@@ -657,7 +657,10 @@ createHtmlIndex()
     -e "p" -o "- OR -" -b \
     -e "p" -e "a" -a "href" -o "$JARFILE" -b -o "Download JAR " -b \
     -o "of application and run following command:" -b \
-    -e "p" -e "pre" -o "java -jar $JARFILE " \
+    -e "p" -e "pre" -o "java " \
+    -i "//j2se/@initial-heap-size" -v "concat('-Xms',//j2se/@initial-heap-size,' ')" -b \
+    -i "//j2se/@max-heap-size" -v "concat('-Xmx',//j2se/@max-heap-size,' ')" -b \
+    -o "-jar $JARFILE " \
     -m "//application-desc/argument" -o "&quot;" -v "." -o "&quot; " -b -b -b \
     -i "//j2se" \
     -e "h4" -o "List of supported Java 2 SE Runtime Environment (JRE) versions:" -b \

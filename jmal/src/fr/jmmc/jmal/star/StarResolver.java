@@ -7,6 +7,7 @@ import fr.jmmc.jmcs.gui.component.StatusBar;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
+import fr.jmmc.jmcs.util.StringUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +15,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Set;
+import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -409,7 +418,7 @@ public final class StarResolver {
                 String errorMessage = null;
                 final int pos = _result.indexOf('\n');
                 if (pos != -1) {
-                    errorMessage = _result.substring(pos + 1).replaceAll("\\s+", " ").trim();
+                    errorMessage = StringUtils.removeRedundantWhiteSpaces(_result.substring(pos + 1)).trim();
                 }
 
                 raiseCDSimbadErrorMessage("Querying script execution failed for star '" + _starName + "' "
@@ -674,7 +683,7 @@ public final class StarResolver {
 
             if (ids.length() > 0) {
                 // remove redundant space characters :
-                ids = ids.replaceAll("[ ]+", " ");
+                ids = StringUtils.removeRedundantWhiteSpaces(ids);
             }
 
             if (ids.length() > 0) {

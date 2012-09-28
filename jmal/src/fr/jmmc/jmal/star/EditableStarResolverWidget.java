@@ -7,15 +7,14 @@ import fr.jmmc.jmal.ALX;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.StatusBar;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Observable;
 import java.util.Observer;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -108,7 +107,7 @@ public final class EditableStarResolverWidget extends StarResolverWidget {
      */
     private void parseCoordinates(final String input) throws IllegalArgumentException {
         // first remove redundant white space :
-        final String coords = input.replaceAll("\\s+", " ");
+        final String coords = StringUtils.removeRedundantWhiteSpaces(input);
 
         // Split the input String at the first occurence of the ' ' char :
         final int pos = coords.indexOf(' ');

@@ -28,7 +28,7 @@ SCRIPTNAME=$(basename $0)
 # Print usage 
 function printUsage ()
 {
-    echo -e "Usage: $SCRIPTNAME  [-d outputDir] [-h] [-n] [-m] [-v version] [-r revision] <info<.versions>|checkout|export|install|update|tag> <PROJECT> [... <PROJECT_N>]"
+    echo -e "Usage: $SCRIPTNAME  [-d outputDir] [-h] [-n] [-m] [-v version] [-r revision] <info<.versions>|checkout|export|install|package|update|tag> <PROJECT> [... <PROJECT_N>]"
     echo -e "\t-d <directory>\tset working area for modules (default is current dir).";
     echo -e "\t-h\tprint this help.";
     echo -e "\t-n\tdisplay svn command which is performed when this option is not set.";
@@ -41,6 +41,7 @@ function printUsage ()
     echo -e "\t   checkout      : retrieve the modules of given projects.";
     echo -e "\t   export        : retrieve the modules of given projects without versionning files (packaging cases).";
     echo -e "\t   install       : install the modules of given projects with tag given by -v option.";
+    echo -e "\t   package       : package the modules of given projects with tag given by -v option.";
     echo -e "\t   update        : update the modules of given projects.";
     echo -e "\t   tag           : tag the modules of given projects with tag given by -v option.";
     echo -e "\tPROJECTS :";
@@ -155,6 +156,44 @@ function installModules()
     echo
 }
 
+
+function packageProject()
+{
+    prjSvnroot="$1"
+    project="$2"
+    userTag="${3/_/.}"
+    version=${userTag##*V}
+    shift 3
+    modules="$*"
+    package_path="${project}/PACKAGE/"
+    echo "'${project}' project will be packaged in '${package_path}':"
+    mkdir -p "${package_path}"
+    cd "${package_path}"
+    for module in $modules ; do
+        moduleName=${module##*/}
+        repos_path="${prjSvnroot}/${module}"
+        echo -n " - export '${moduleName}' from '${repos_path}' ... "
+        rm -rf "${moduleName}" &/dev/null
+        ${SVN_COMMAND} export ${revisionOption} "${repos_path}" > /dev/null
+        echo "DONE."
+    done
+    if [ $project == "WISARD" ]
+    then 
+        echo "Update doc and remove test directories"
+        rm -rf wisard/doc/* wisard/test &> /dev/null
+        cd wisard/doc
+        echo "TODO wget http://www.jmmc.fr/doc/approved/JMMC-PRE-2500-0001.pdf"
+        cd -
+        VERSIONED_DIR="wisard-$version"
+        mv wisard "$VERSIONED_DIR"
+        tar czf "$VERSIONED_DIR".tgz $VERSIONED_DIR
+        rm -rf $VERSIONED_DIR
+        echo "Built archive: $PWD/$VERSIONED_DIR.tgz"
+    fi
+    echo "Package finished."
+    echo
+}
+
 function tagModules(){
     prjSvnroot="$1"
     project="$2"
@@ -215,6 +254,55 @@ function getProjectDesc()
 }
 
 
+# This function returns the text description (following the twiki syntax) of
+# every supported programs
+function listProjects (){
+    echo "|*Name*|*Identifier*|*Installation account*|*Tag Prefix*|"
+    for p in $supportedProjects
+    do
+        echo -n "| $p | "
+        getProjectName "$p"
+        echo -n " | "
+        getProjectInstallationAccount "$p"
+        echo -n " | "
+        getProjectTagPrefix "$p"
+        echo " |"
+    done
+}
+
+function getProjectName(){
+    project="${1}"
+        case "$project" in
+        AMBER )  echo -n "Amber DRS" ;;
+        MCS ) echo -n "Mariotti Common Software" ;;
+        Oitools ) echo -n "OifitsExplorer" ;;
+        *) echo -n "$project" ;;
+    esac 
+}
+
+function getProjectInstallationAccount(){
+    project="${1}"
+        case "$project" in
+        AppLauncher )  echo -n "~smprun" ;;
+        SearchCal )  echo -n "~sclws" ;;
+        WISARD | YOCO )  echo -n "N.A." ;;
+        *) echo -n "~swmgr" ;;
+    esac 
+}
+
+function getProjectTagPrefix(){
+    project="${1}"
+    versionSuffix=_Vx_y_z
+        case "$project" in
+        AppLauncher) echo -n "AL${versionSuffix}" ;;
+        SearchCal) echo -n "SC${versionSuffix}" ;;
+        MCS) echo -n "mmmyyyy" ;;
+        ASPRO2 | LITpro ) echo -n "$(echo $project | tr [a-z] [A-Z] |tr -d [:digit:])"${versionSuffix} ;;
+        *) echo -n "${project}${versionSuffix}" ;;
+    esac 
+}
+
+
 # Set default value for 
 # - development version 
 # - svn revision 
@@ -255,15 +343,26 @@ done
 
 let SHIFTOPTIND=$OPTIND-1
 shift $SHIFTOPTIND
-if [ $# -lt 2 ]
+let NB_ARGS=$#
+
+userAction=$1
+shift 1
+userProjects=$*
+
+# handle actions that do not require one project
+if [ "$userAction" == "list" ]
+then
+  listProjects
+  exit 0
+fi
+# handle actions that requires a project
+if [ $NB_ARGS -lt 2 ]
 then
     echo "ERROR: Missing action or project"
     printUsage 
     exit 1
 fi
-userAction=$1
-shift 1
-userProjects=$*
+
 
 # move to output dir
 mkdir -p "$outputDir" &> /dev/null
@@ -302,6 +401,8 @@ do
 		    displayModules "${prjSvnroot}" "${project}" "${modules}" ;;
 		info.versions )
 		    displayProjectVersions "${prjSvnroot}" "${project}" ;;
+		package )
+		    packageProject "${prjSvnroot}" "${project}" "${version}" "${modules}" ;;
 		*)
 		    echo "ERROR: Action '$userAction' not supported"
 		    printUsage ;;

@@ -51,11 +51,11 @@ function printUsage ()
 
 function getModules ()
 {
-    prjSvnroot="$1"
-    svnOptions="$2"
-    project="$3"
-    shift 3
+    svnOptions="$1"
+    project="$2"
+    shift 2
     modules=$*
+    prjSvnroot=$(getProjectSvnBaseUrl $project)
 
     case "${svnOptions}" in 
         update)
@@ -110,35 +110,47 @@ function getModules ()
 
 function displayProjectVersions()
 {
-    prjSvnroot="$1"
-    project="$2"
-    svnTags=$(${SVN_COMMAND} list ${revisionOption} $prjSvnroot/$project/tags)
-    echo $svnTags | sed "s@/@@g"
+    project="$1"
+    prjSvnroot=$(getProjectSvnBaseUrl $1)
+    svnTags=$(${SVN_COMMAND} list ${revisionOption} $prjSvnroot/$(getProjectSvnDir $project)/tags)
+    
+    ALLTAGS=$(echo $svnTags | sed "s@/@@g")
+    TAGPREFIX=$(getProjectTagPrefix $project)
+    VERSIONPREFIX=${TAGPREFIX%%_V*}
+    if [ -n "$VERSIONPREFIX" ] 
+    then
+      TAGS=$(for t in $ALLTAGS ; do echo -n $t |grep "${VERSIONPREFIX}_" ; done)
+      echo -n $TAGS
+    else
+    echo $ALLTAGS
+    fi
+    
 }
 
 function displayModules()
 {
-    prjSvnroot="$1"
-    project="$2"
-    shift 2
+    project="$1"
+    shift 1
     modules=$*
-    echo "'${project}' project get following modules ($modules):"
+    prjSvnroot="$(getProjectSvnBaseUrl $project)"
+
+    echo "'${project}' project get following modules :"
     for module in $modules ; do
         moduleName=${module##*/}
         echo " - ${moduleName} ( ${prjSvnroot}/${module} )"
     done
-    supportedTags=$(displayProjectVersions $prjSvnroot $project)
+    supportedTags=$(displayProjectVersions $project)
     echo "  ( Supported versions: $supportedTags )" | sed "s@/@@g"
     echo
 }
 
 function installModules()
 {
-    prjSvnroot="$1"
-    project="$2"
-    userTag="$3"
-    shift 3
+    project="$1"
+    userTag="$2"
+    shift 2
     modules="$*"
+    prjSvnroot=$(getProjectSvnBaseUrl $project)
     version_path="${project}/${userTag}"
     echo "'${project}' project will be installed in '${version_path}':"
     mkdir -p "${version_path}"
@@ -159,11 +171,10 @@ function installModules()
 
 function packageProject()
 {
-    prjSvnroot="$1"
-    project="$2"
-    userTag="${3/_/.}"
+    project="$1"
+    userTag="${2/_/.}"
     version=${userTag##*V}
-    shift 3
+    shift 2
     modules="$*"
     package_path="${project}/PACKAGE/"
     echo "'${project}' project will be packaged in '${package_path}':"
@@ -195,17 +206,17 @@ function packageProject()
 }
 
 function tagModules(){
-    prjSvnroot="$1"
-    project="$2"
-    userTag="$3"
-    shift 3
+    project="$1"
+    userTag="$2"
+    shift 2
     modules="$*"
+    prjSvnroot=$(getProjectSvnBaseUrl $project)
     echo "Tagging following modules for '${project}' project :"
     for module in $modules
     do
         echo " '${prjSvnroot}/${module}' ..."
         trunkModule="${module/$userTag/trunk}"
-        if svn info "$prjSvnroot/$module" &> /dev/null
+        if ${SVN_COMMAND} info "$prjSvnroot/$module" &> /dev/null
         then
           echo "ERROR module $prjSvnroot/$module already present remove first if you want to overwrite"
           return 1
@@ -216,7 +227,7 @@ function tagModules(){
 # This function contains the description of the svn repository and modules for a given project and version
 # it returns on the output the svnroot followed by the list of modules paths
 # TODO complete with full project list if they require to be packed or handled automatically by scripts
-supportedProjects="AMBER AppLauncher ASPRO2 LITpro MCS Oitools SearchCal WISARD YOCO "
+supportedProjects="AMBER AppLauncher ASPRO2 LITpro MCS OIFitsExplorer SearchCal WISARD YOCO "
 function getProjectDesc()
 {
     project="${1}"
@@ -238,7 +249,7 @@ function getProjectDesc()
         MCS )
             echo -n "${JMMC_SVNROOT} "
             echo MCS/${version}/{mkf,mcscfg,tat,ctoo,mcs,log,err,misc,thrd,timlog,mth,fnd,misco,env,cmd,msg,sdb,evh,gwt,jmcs,jmal,modc,modcpp,modsh,modjava,testgui} ;;
-        Oitools )
+        OIFitsExplorer )
             echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
             echo  oiTools/${version}/{oitools,oiexplorer-core,oiexplorer};;
         SearchCal ) 
@@ -253,6 +264,16 @@ function getProjectDesc()
     esac
 }
 
+getProjectSvnBaseUrl(){
+    project="${1}";
+    version="${2}";
+    if [ -z "$version" ] ; then version="trunk" ; fi
+    prjElements=( $(getProjectDesc "${project}" "${version}") )
+    prjSvnroot=${prjElements[*]:0:1}
+    echo $prjSvnroot
+}
+
+
 
 # This function returns the text description (following the twiki syntax) of
 # every supported programs
@@ -265,27 +286,35 @@ function listProjects (){
         echo -n " | $p | "
         getProjectInstallationAccount "$p"
         echo -n " | "
-        echo -n "[[${JMMC_SVNROOT}/$project/tags][$(getProjectTagPrefix "$p")]]"
+        echo -n "[[$(getProjectSvnBaseUrl "$p")/$(getProjectSvnDir "$p")/tags][$(getProjectTagPrefix "$p")]]"
         echo " |"
     done
 }
 
-function getProjectName(){
-    project="${1}"
-        case "$project" in
-        AMBER )  echo -n "Amber DRS" ;;
-        MCS ) echo -n "Mariotti Common Software" ;;
-        Oitools ) echo -n "OIFitsExplorer" ;;
+# returns the svn top level dir that host the main project material
+function getProjectSvnDir(){
+    project="${1}";
+    case "$project" in
+        OIFitsExplorer )  echo -n "oiTools" ;;
         *) echo -n "$project" ;;
     esac 
 }
 
+
+function getProjectName(){
+    project="${1}"
+    case "$project" in
+        AMBER )  echo -n "Amber DRS" ;;
+        MCS ) echo -n "Mariotti Common Software" ;;
+        *) echo -n "$project" ;;
+    esac 
+}
 function getProjectInstallationAccount(){
     project="${1}"
-        case "$project" in
+    case "$project" in
         AppLauncher )  echo -n "~smprun" ;;
         SearchCal )  echo -n "~sclws" ;;
-        WISARD | YOCO )  echo -n "N.A." ;;
+        WISARD | YOCO | AMBER )  echo -n "N.A." ;;
         *) echo -n "~swmgr" ;;
     esac 
 }
@@ -293,7 +322,7 @@ function getProjectInstallationAccount(){
 function getProjectTagPrefix(){
     project="${1}"
     versionSuffix=_Vx_y_z
-        case "$project" in
+    case "$project" in
         AppLauncher) echo -n "AL${versionSuffix}" ;;
         SearchCal) echo -n "SC${versionSuffix}" ;;
         MCS) echo -n "mmmyyyy" ;;
@@ -377,7 +406,6 @@ do
     # Retrieve svnroot and module list for given project 
     # return error if no module is found
     prjElements=( $(getProjectDesc "${project}" "${version}") )
-    prjSvnroot=${prjElements[*]:0:1}
     modules=${prjElements[*]:1}
     if [ -z "$modules" ]
     then 
@@ -388,21 +416,21 @@ do
 
     case "$userAction" in
         checkout )
-		    getModules "${prjSvnroot}" checkout "${project}" "${modules}" ;;
+		    getModules  checkout "${project}" "${modules}" ;;
 		export )
-		    getModules "${prjSvnroot}" export "${project}" "${modules}" ;;
+		    getModules  export "${project}" "${modules}" ;;
 		update )
-		    getModules "${prjSvnroot}" update "${project}" "${modules}" ;;
+		    getModules update "${project}" "${modules}" ;;
 		tag )
-		    tagModules "${prjSvnroot}" "${project}" "${version}" "${modules}" ;;
+		    tagModules "${project}" "${version}" "${modules}" ;;
 		install )
-		    installModules "${prjSvnroot}" "${project}" "${version}" "${modules}" ;;
+		    installModules  "${project}" "${version}" "${modules}" ;;
 		info )
-		    displayModules "${prjSvnroot}" "${project}" "${modules}" ;;
+		    displayModules "${project}" "${modules}" ;;
 		info.versions )
-		    displayProjectVersions "${prjSvnroot}" "${project}" ;;
+		    displayProjectVersions "${project}" ;;
 		package )
-		    packageProject "${prjSvnroot}" "${project}" "${version}" "${modules}" ;;
+		    packageProject "${project}" "${version}" "${modules}" ;;
 		*)
 		    echo "ERROR: Action '$userAction' not supported"
 		    printUsage ;;

@@ -260,9 +260,9 @@ function listProjects (){
     echo "|*Name*|*Identifier*|*Installation account*|*Tag Prefix*|"
     for p in $supportedProjects
     do
-        echo -n "| $p | "
+        echo -n "| "
         getProjectName "$p"
-        echo -n " | "
+        echo -n " | $p | "
         getProjectInstallationAccount "$p"
         echo -n " | "
         getProjectTagPrefix "$p"
@@ -275,7 +275,7 @@ function getProjectName(){
         case "$project" in
         AMBER )  echo -n "Amber DRS" ;;
         MCS ) echo -n "Mariotti Common Software" ;;
-        Oitools ) echo -n "OifitsExplorer" ;;
+        Oitools ) echo -n "OIFitsExplorer" ;;
         *) echo -n "$project" ;;
     esac 
 }

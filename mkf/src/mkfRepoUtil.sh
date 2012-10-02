@@ -265,7 +265,7 @@ function listProjects (){
         echo -n " | $p | "
         getProjectInstallationAccount "$p"
         echo -n " | "
-        getProjectTagPrefix "$p"
+        echo -n "[[${JMMC_SVNROOT}/$project/tags][$(getProjectTagPrefix "$p")]]"
         echo " |"
     done
 }

@@ -999,7 +999,7 @@ public abstract class App {
      *
      * @return resource file URL
      */
-    public URL getURLFromResourceFilename(final String fileName) {
+    public final URL getURLFromResourceFilename(final String fileName) {
         return getURLFromResourceFilename(getClass(), fileName);
     }
 
@@ -1035,6 +1035,51 @@ public abstract class App {
      * @return resource file URL
      */
     private static URL getURLFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
+        final String filePath = getPathFromResourceFilename(appClass, fileName);
+
+        if (filePath == null) {
+            return null;
+        }
+
+        _logger.debug("filePath = '{}'.", filePath);
+
+        // resolve file path:
+        final URL fileURL = appClass.getClassLoader().getResource(filePath);
+
+        if (fileURL == null) {
+            _logger.warn("Cannot find resource from '{}' file.", filePath);
+            return null;
+        }
+        _logger.debug("fileURL = '{}'.", fileURL);
+
+        return UrlUtils.fixJarURL(fileURL);
+    }
+
+    /**
+     * Get Path from resource filename located in the following path:
+     * $package(this App class)$/resource/fileName
+     *
+     * @param fileName name of searched file.
+     *
+     * @return resource path
+     */
+    public final String getPathFromResourceFilename(final String fileName) {
+        return getPathFromResourceFilename(getClass(), fileName);
+    }
+
+    /**
+     * Get Path from resource filename located in the class loader using the following path:
+     * $package(appClass)$/resource/fileName
+     *
+     * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
+     * fr/jmmc/jmcs/resource/$fileName$
+     *
+     * @param appClass any App class or subclass
+     * @param fileName name of searched file.
+     *
+     * @return resource path
+     */
+    private static String getPathFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
         if (appClass == null) {
             return null;
         }
@@ -1052,16 +1097,7 @@ public abstract class App {
 
         _logger.debug("filePath = '{}'.", filePath);
 
-        // resolve file path:
-        final URL fileURL = appClass.getClassLoader().getResource(filePath);
-
-        if (fileURL == null) {
-            _logger.warn("Cannot find resource from '{}' file.", filePath);
-            return null;
-        }
-        _logger.debug("fileURL = '{}'.", fileURL);
-
-        return UrlUtils.fixJarURL(fileURL);
+        return filePath;
     }
 
     /** Action to correctly handle file opening. */

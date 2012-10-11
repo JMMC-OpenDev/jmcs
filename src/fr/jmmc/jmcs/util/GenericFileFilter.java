@@ -83,15 +83,40 @@ public final class GenericFileFilter extends FileFilter implements FilenameFilte
      */
     @Override
     public boolean accept(final File currentFile) {
+        return checkExtensions(currentFile, true);
+    }
+
+    /**
+     * Tests if a specified file should be included in a file list.
+     *
+     * @param   dir    the directory in which the file was found.
+     * @param   name   the name of the file.
+     * @return  <code>true</code> if and only if the name should be
+     * included in the file list; <code>false</code> otherwise.
+     */
+    @Override
+    public boolean accept(final File dir, final String name) {
+        return accept(new File(dir, name));
+    }
+
+    /**
+     * Return whether the given file is accepted by this filter, or not.
+     *
+     * @param currentFile the file to test
+     * @param checkRead true to check if the given file exists and is really a file (not directory or ...)
+     *
+     * @return true if file is accepted, false otherwise.
+     */
+    public boolean checkExtensions(final File currentFile, final boolean checkRead) {
         if (currentFile != null) {
             final String fileName = currentFile.getName();
 
             // If current file is not regular (e.g directory, links, ...)
-            if (!currentFile.isFile()) {
+            if (checkRead && !currentFile.isFile()) {
                 _logger.trace("Accepting non-regular file '{}'.", fileName);
 
                 // Accept it to ensure navigation through directory and so
-                return true; 
+                return true;
             }
 
             // If the file has no extension
@@ -130,19 +155,6 @@ public final class GenericFileFilter extends FileFilter implements FilenameFilte
         }
 
         return false;
-    }
-
-    /**
-     * Tests if a specified file should be included in a file list.
-     *
-     * @param   dir    the directory in which the file was found.
-     * @param   name   the name of the file.
-     * @return  <code>true</code> if and only if the name should be
-     * included in the file list; <code>false</code> otherwise.
-     */
-    @Override
-    public boolean accept(final File dir, final String name) {
-        return accept(new File(dir, name));
     }
 
     /**

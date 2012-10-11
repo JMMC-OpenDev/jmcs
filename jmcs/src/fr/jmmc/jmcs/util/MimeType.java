@@ -23,7 +23,7 @@ public final class MimeType {
 
     /* Predefined Mime types */
     /** MimeType associated to SearchCal calibrator list */
-    public final static MimeType SEARCHCAL_CALIBRATORLIST = MimeType.add("SEARCHCAL_CALIBRATORLIST", "application/x-searchcal+votable+xml", "SearchCal Calibrator List", "scvot");
+    public final static MimeType SEARCHCAL_CALIBRATORLIST = MimeType.add("SEARCHCAL_CALIBRATORLIST", "application/x-searchcal+votable+xml", "SearchCal Calibrator List", "scvot.gz", "scvot");
     /** MimeType associated to Observation settings */
     public final static MimeType ASPRO_OBSERVATION = MimeType.add("ASPRO_OBSERVATION", "application/x-aspro+xml", "Aspro Observation Settings", "asprox");
     /** MimeType associated to XML LITpro settings */
@@ -183,9 +183,8 @@ public final class MimeType {
      * @return given file or new file with the first accepted extension
      */
     public File checkFileExtension(final File file) {
-        final String ext = FileUtils.getExtension(file);
-
-        if (ext == null || !getExtensions().contains(ext)) {
+        // Use GenericFileFilter that supports multiple extensions (with dot):
+        if (!FileFilterRepository.get(getId()).checkExtensions(file, false)) {
             // add or replace current extension by the first accepted extension:
             final String fileNamePart = FileUtils.getFileNameWithoutExtension(file);
             return new File(file.getParentFile(), fileNamePart + '.' + getExtension());

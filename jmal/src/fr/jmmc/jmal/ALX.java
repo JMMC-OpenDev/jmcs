@@ -337,7 +337,7 @@ public final class ALX {
      *
      * @param rawSpectralType the spectral type to analyze.
      *
-     * @return a Vector of String containing found luminosity classes (if any).
+     * @return a List of String containing found luminosity classes (if any).
      */
     public static List<String> luminosityClasses(final String rawSpectralType) {
 

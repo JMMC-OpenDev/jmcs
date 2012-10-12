@@ -26,13 +26,13 @@ public final class FileUtils extends LogSupport {
     //~ Constants --------------------------------------------------------------------------------------------------------
 
     /**
-     * default read buffer capacity : DEFAULT_READ_BUFFER_SIZE = 16K
+     * default read buffer capacity : DEFAULT_READ_BUFFER_SIZE = 8K
      */
-    private static final int DEFAULT_READ_BUFFER_SIZE = 16 * 1024;
+    private static final int DEFAULT_READ_BUFFER_SIZE = 8 * 1024;
     /**
-     * default write buffer capacity : DEFAULT_WRITE_BUFFER_SIZE = 16K
+     * default write buffer capacity : DEFAULT_WRITE_BUFFER_SIZE = 8K
      */
-    private static final int DEFAULT_WRITE_BUFFER_SIZE = 16 * 1024;
+    private static final int DEFAULT_WRITE_BUFFER_SIZE = 8 * 1024;
     /**
      * File encoding use UTF-8
      */
@@ -215,10 +215,6 @@ public final class FileUtils extends LogSupport {
             // Should define UTF-8 encoding for cross platform compatibility 
             // but we must stay compatible with existing files (windows vs unix)
             return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)), bufferSize);
-            /*
-             * return new BufferedWriter(new OutputStreamWriter(new
-             * FileOutputStream(file), FILE_ENCODING), bufferSize);
-             */
         } catch (final IOException ioe) {
             logger.error("FileUtils.openFile : io failure : ", ioe);
         }

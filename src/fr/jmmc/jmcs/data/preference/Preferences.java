@@ -388,9 +388,9 @@ public abstract class Preferences extends Observable {
         // Loading preference file
         _logger.info("Loading '{}' preference file.", _fullFilepath);
 
-        FileInputStream inputFile = null;
+        InputStream inputFile = null;
         try {
-            inputFile = new FileInputStream(_fullFilepath);
+            inputFile = new BufferedInputStream(new FileInputStream(_fullFilepath));
         } catch (FileNotFoundException fnfe) {
             _logger.warn("Cannot load '{}' preference file: ", _fullFilepath, fnfe.getMessage());
         }
@@ -444,9 +444,9 @@ public abstract class Preferences extends Observable {
         setPreference(JMCS_STRUCTURE_VERSION_NUMBER_ID, getJmcsStructureVersionNumber());
         setPreference(PREFERENCES_VERSION_NUMBER_ID, getPreferencesVersionNumber());
 
-        FileOutputStream outputFile = null;
+        OutputStream outputFile = null;
         try {
-            outputFile = new FileOutputStream(_fullFilepath);
+            outputFile = new BufferedOutputStream(new FileOutputStream(_fullFilepath));
 
             _logger.info("Saving '{}' preference file.", _fullFilepath);
 

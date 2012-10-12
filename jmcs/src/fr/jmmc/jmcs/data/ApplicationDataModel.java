@@ -365,7 +365,7 @@ public class ApplicationDataModel {
      */
     public List<String> getPackagesInfo() {
 
-        // TODO: API: use objects not Vector<string>
+        // TODO: API: use objects not List<string>
         Dependences dependences = _applicationDataModel.getDependences();
 
         final List<String> packagesInfo = new ArrayList<String>();

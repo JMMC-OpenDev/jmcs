@@ -5,13 +5,15 @@ package fr.jmmc.jmcs.gui.action;
 
 import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.data.preference.PreferencesException;
-import java.awt.event.*;
-
-import java.util.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.AbstractButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
 
 /**
  * RegisteredAction class customized to be bound to a preferenced boolean.
@@ -30,7 +32,7 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
     /** Name of the bound preference */
     private String _preferenceName;
     /** List of buttons bound to this action */
-    private Vector<AbstractButton> _boundButtons;
+    private List<AbstractButton> _boundButtons;
 
     /**
      * Constructor.
@@ -47,7 +49,7 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
             Object preferenceName) {
         super(classPath, fieldName, actionName);
 
-        _boundButtons = new Vector<AbstractButton>();
+        _boundButtons = new ArrayList<AbstractButton>();
 
         _preferenceName = preferenceName.toString();
 

@@ -263,7 +263,7 @@ public final class FileUtils {
         final URL url = getResource(classpathLocation);
 
         try {
-            return readStream(url.openStream(), DEFAULT_BUFFER_CAPACITY);
+            return readStream(new BufferedInputStream(url.openStream()), DEFAULT_BUFFER_CAPACITY);
         } catch (IOException ioe) {
             // Unexpected exception :
             throw new IllegalStateException("unable to read file : " + classpathLocation, ioe);
@@ -447,11 +447,11 @@ public final class FileUtils {
      * @throws FileNotFoundException if input file is not found
      */
     public static void saveStream(final InputStream in, final File dst) throws IOException, FileNotFoundException {
-        final OutputStream out = new BufferedOutputStream(new FileOutputStream(dst));
+        final OutputStream out = new BufferedOutputStream(new FileOutputStream(dst), 64 * 1024);
 
         // Transfer bytes from in to out
         try {
-            final byte[] buf = new byte[65536];
+            final byte[] buf = new byte[64 * 1024];
 
             int len;
             while ((len = in.read(buf)) > 0) {
@@ -473,11 +473,11 @@ public final class FileUtils {
      */
     public static void zip(final File src, final File dst) throws IOException, FileNotFoundException {
         final InputStream in = new BufferedInputStream(new FileInputStream(src));
-        final OutputStream out = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(dst)));
+        final OutputStream out = new GZIPOutputStream(new FileOutputStream(dst), 64 * 1024);
 
         // Transfer bytes from in to out
         try {
-            final byte[] buf = new byte[65536];
+            final byte[] buf = new byte[8 * 1024];
 
             int len;
             while ((len = in.read(buf)) > 0) {
@@ -616,7 +616,7 @@ public final class FileUtils {
         final File tmpFile = getTempFile(filenameFromResourcePath(fullResourceFilePath));
 
         try {
-            saveStream(url.openStream(), tmpFile);
+            saveStream(new BufferedInputStream(url.openStream()), tmpFile);
             return tmpFile.toURI().toString();
         } catch (IOException ioe) {
             throw new IllegalStateException("Unable to save file '" + tmpFile + "' for URL '" + url + "'.", ioe);

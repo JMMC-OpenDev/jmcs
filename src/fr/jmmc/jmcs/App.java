@@ -11,7 +11,12 @@ import ch.qos.logback.core.util.StatusPrinter;
 import com.apple.eawt.QuitResponse;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
-import fr.jmmc.jmcs.gui.*;
+import fr.jmmc.jmcs.gui.AboutBox;
+import fr.jmmc.jmcs.gui.DependenciesView;
+import fr.jmmc.jmcs.gui.FeedbackReport;
+import fr.jmmc.jmcs.gui.HelpView;
+import fr.jmmc.jmcs.gui.MainMenuBar;
+import fr.jmmc.jmcs.gui.SplashScreen;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.component.MessagePane;
@@ -208,7 +213,7 @@ public abstract class App {
      */
     protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed) {
         // Start application with splashscreen
-        this(args, waitBeforeExecution, true, CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN));
+        this(args, waitBeforeExecution, exitWhenClosed, CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN));
     }
 
     /**

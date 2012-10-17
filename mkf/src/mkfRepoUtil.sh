@@ -177,6 +177,7 @@ function packageProject()
     shift 2
     modules="$*"
     package_path="${project}/PACKAGE/"
+    prjSvnroot=$(getProjectSvnBaseUrl $project)
     echo "'${project}' project will be packaged in '${package_path}':"
     mkdir -p "${package_path}"
     cd "${package_path}"
@@ -184,7 +185,7 @@ function packageProject()
         moduleName=${module##*/}
         repos_path="${prjSvnroot}/${module}"
         echo -n " - export '${moduleName}' from '${repos_path}' ... "
-        rm -rf "${moduleName}" &/dev/null
+        rm -rf "${moduleName}" &> /dev/null
         ${SVN_COMMAND} export ${revisionOption} "${repos_path}" > /dev/null
         echo "DONE."
     done

@@ -168,7 +168,6 @@ function installModules()
     echo
 }
 
-
 function packageProject()
 {
     project="$1"
@@ -178,32 +177,47 @@ function packageProject()
     modules="$*"
     package_path="${project}/PACKAGE/"
     prjSvnroot=$(getProjectSvnBaseUrl $project)
-    echo "'${project}' project will be packaged in '${package_path}':"
     mkdir -p "${package_path}"
+    echo "Packaging '$project' ..."
+    MYOLDPWD="$PWD"
     cd "${package_path}"
     for module in $modules ; do
         moduleName=${module##*/}
         repos_path="${prjSvnroot}/${module}"
-        echo -n " - export '${moduleName}' from '${repos_path}' ... "
+        echo -n " - export '${moduleName}' from '${repos_path}' ..."
         rm -rf "${moduleName}" &> /dev/null
         ${SVN_COMMAND} export ${revisionOption} "${repos_path}" > /dev/null
         echo "DONE."
     done
-    if [ $project == "WISARD" ]
-    then 
-        echo "Update doc and remove test directories"
-        rm -rf wisard/doc/* wisard/test &> /dev/null
-        cd wisard/doc
-        echo "TODO wget http://www.jmmc.fr/doc/approved/JMMC-PRE-2500-0001.pdf"
-        cd -
-        VERSIONED_DIR="wisard-$version"
-        mv wisard "$VERSIONED_DIR"
-        tar czf "$VERSIONED_DIR".tgz $VERSIONED_DIR
-        rm -rf $VERSIONED_DIR
-        echo "Built archive: $PWD/$VERSIONED_DIR.tgz"
-    fi
+    packageProjectHook
     echo "Package finished."
     echo
+    cd "$MYOLDPWD" 
+}
+
+function packageProjectHook()
+{
+    # now we are in then $project/PACKAGE dir where modules have been exported
+    echo " - apply last packaging steps..."
+    if [ $project == "WISARD" ] ; then 
+        echo "     Remove optimpack sources"
+        rm -rf wisard/optimpack &>/dev/null
+        echo "     Update doc and remove test directories"
+        rm -rf wisard/doc/* wisard/test &> /dev/null
+        cd wisard/doc
+        echo "    - TODO wget http://www.jmmc.fr/doc/approved/JMMC-PRE-2500-0001.pdf"
+        cd ../..
+        DIRNAME=wisard
+    else
+        cd ..
+        DIRNAME=PACKAGE
+    fi
+       
+    VERSIONED_DIR="$project-$version"
+    mv "$DIRNAME" "$VERSIONED_DIR"
+    tar czf "$VERSIONED_DIR".tgz $VERSIONED_DIR
+    rm -rf $VERSIONED_DIR
+    echo "Built archive: $PWD/$VERSIONED_DIR.tgz"
 }
 
 function tagModules(){

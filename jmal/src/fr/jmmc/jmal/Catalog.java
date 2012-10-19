@@ -147,7 +147,7 @@ public enum Catalog {
      * @return the sought catalog, null otherwise.
      */
     public static Catalog catalogFromReference(String reference) {
-        return (reference == null ? null : NastyTrick._catalogs.get(reference));
+        return (reference == null) ? null : NastyTrick._catalogs.get(reference);
     }
 
     public String toString() {

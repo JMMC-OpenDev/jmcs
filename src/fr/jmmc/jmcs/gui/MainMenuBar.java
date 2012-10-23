@@ -12,6 +12,7 @@ import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
+import fr.jmmc.jmcs.gui.action.RecentlyOpenedFilesManager;
 import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
 import fr.jmmc.jmcs.util.UrlUtils;
 
@@ -81,6 +82,8 @@ public class MainMenuBar extends JMenuBar {
     private final ActionRegistrar _registrar;
     /** Proxy to the application data model */
     private ApplicationDataModel _applicationDataModel = null;
+    /** Remember the File:Open component */
+    private JComponent _openComponent = null;
 
     /**
      * Instantiate all defaults menus, plus application-specific ones.
@@ -180,7 +183,14 @@ public class MainMenuBar extends JMenuBar {
 
                 // Add each component
                 for (Component currentComponent : components) {
+
                     fileMenu.add(currentComponent);
+
+                    // If we are on the "Open" action
+                    if ((_openComponent != null) && (currentComponent.equals(_openComponent))) {
+                        // Add the synthetised "Open recent" sub-menu
+                        fileMenu.add(RecentlyOpenedFilesManager.getMenu());
+                    }
                 }
 
                 if (!_isRunningUnderMacOSX) {
@@ -318,7 +328,6 @@ public class MainMenuBar extends JMenuBar {
         final JMenu lafMenu = new JMenu("Look & Feel");
 
         final ActionListener lafActionListener = new ActionListener() {
-
             /**
              * Invoked when an action occurs.
              */
@@ -518,13 +527,18 @@ public class MainMenuBar extends JMenuBar {
 
         // Get action
         AbstractAction action = null;
-
+        boolean isOpenMenuItem = false;
         if (hasClasspath && hasAction) {
-            action = _registrar.get(menu.getClasspath(), menu.getAction());
 
+            action = _registrar.get(menu.getClasspath(), menu.getAction());
             if (action == null) {
-                // Open a feeback report if an action is not found:
+                // Open a feeback report if an action is not found
                 throw new IllegalStateException("Action [" + menu.getClasspath() + "," + menu.getAction() + "] not found !");
+            }
+
+            // If the current action is the one dedicated to file opening
+            if (action.equals(_registrar.getOpenAction())) {
+                isOpenMenuItem = true; // Flag it
             }
         }
 
@@ -573,6 +587,11 @@ public class MainMenuBar extends JMenuBar {
         {
             _logger.debug("Component is a JMenuItem.");
             item = new JMenuItem(action);
+
+            // If the current component is the one dedicated to file opening
+            if (isOpenMenuItem) {
+                _openComponent = item; // Remember it
+            }
         }
 
         // If the menu object has its own name

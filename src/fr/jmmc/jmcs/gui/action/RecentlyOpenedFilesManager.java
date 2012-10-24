@@ -3,11 +3,11 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.action;
 
+import fr.jmmc.jmcs.collection.FixedSizeLinkedHashMap;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
@@ -28,9 +28,10 @@ public class RecentlyOpenedFilesManager {
     private static volatile RecentlyOpenedFilesManager _instance = null;
     /** Hook to the "Open Recent" sub-menu */
     private static volatile JMenu _menu = null;
-    /** JMenu to Action relations */
-    private static final Map<String, String> _files = Collections.synchronizedMap(new LinkedHashMap<String, String>(8));
+    /* JMenu to Action relations */
     private static volatile ActionRegistrar _registrar = null;
+    private static final int MAXIMUM_HISTORY_ENTRIES = 10;
+    private static final Map<String, String> _files = Collections.synchronizedMap(new FixedSizeLinkedHashMap<String, String>(MAXIMUM_HISTORY_ENTRIES));
 
     /**
      * Return the singleton instance
@@ -132,8 +133,6 @@ public class RecentlyOpenedFilesManager {
 
         addCleanAction();
         _menu.setEnabled(true);
-
-        // TODO : Handle list size limit ?
 
         flushRecentFileListToSharedPrefrence();
     }

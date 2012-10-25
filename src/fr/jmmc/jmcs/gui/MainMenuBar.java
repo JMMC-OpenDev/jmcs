@@ -12,7 +12,7 @@ import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
-import fr.jmmc.jmcs.gui.action.RecentlyOpenedFilesManager;
+import fr.jmmc.jmcs.gui.action.RecentFilesManager;
 import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
 import fr.jmmc.jmcs.util.UrlUtils;
 
@@ -189,7 +189,7 @@ public class MainMenuBar extends JMenuBar {
                     // If we are on the "Open" action
                     if ((_openComponent != null) && (currentComponent.equals(_openComponent))) {
                         // Add the synthetised "Open recent" sub-menu
-                        fileMenu.add(RecentlyOpenedFilesManager.getMenu());
+                        fileMenu.add(RecentFilesManager.getMenu());
                     }
                 }
 

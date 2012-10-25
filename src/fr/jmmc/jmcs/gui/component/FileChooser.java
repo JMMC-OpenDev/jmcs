@@ -5,7 +5,7 @@ package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
-import fr.jmmc.jmcs.gui.action.RecentlyOpenedFilesManager;
+import fr.jmmc.jmcs.gui.action.RecentFilesManager;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.MimeType;
 import java.awt.FileDialog;
@@ -245,7 +245,7 @@ public final class FileChooser {
         
         // Add each file to the recently opened file list
         for (File file : selectedFiles) {
-            RecentlyOpenedFilesManager.addFile(file);
+            RecentFilesManager.addFile(file);
         }
 
         return selectedFiles;

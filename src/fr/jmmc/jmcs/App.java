@@ -1401,7 +1401,7 @@ public abstract class App {
      *
      * @param frame application frame
      */
-    public final void macOSXRegistration(final JFrame frame) {
+    private void macOSXRegistration(final JFrame frame) {
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
 

@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.gui.action;
 
 import fr.jmmc.jmcs.collection.FixedSizeLinkedHashMap;
+import fr.jmmc.jmcs.data.preference.Preferences;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class RecentFilesManager {
     private static volatile JMenu _menu = null;
     /* JMenu to Action relations */
     private static volatile ActionRegistrar _registrar = null;
+    private static volatile Preferences _preferences = null;
     private static final int MAXIMUM_HISTORY_ENTRIES = 10;
     private static final Map<String, String> _files = Collections.synchronizedMap(new FixedSizeLinkedHashMap<String, String>(MAXIMUM_HISTORY_ENTRIES));
 
@@ -53,8 +55,11 @@ public class RecentFilesManager {
      * Hidden constructor
      */
     protected RecentFilesManager() {
-        _registrar = ActionRegistrar.getInstance();
         // @TODO : the same for shared prefs.
+        _registrar = ActionRegistrar.getInstance();
+        _menu = new JMenu("Open Recent");
+        populateMenuFromSharedPreferences();
+        addCleanAction();
     }
 
     /**
@@ -64,17 +69,12 @@ public class RecentFilesManager {
     public static synchronized JMenu getMenu() {
 
         getInstance();
-
-        _menu = new JMenu("Open Recent");
-        populateMenuFromSharedPreferences();
-        addCleanAction();
-
         return _menu;
     }
 
     // @TODO : Handle MimeTypes !!!
     /**
-     * @TODO : Add a "Clear" item at end below a separator
+     * Add a "Clear" item at end below a separator
      */
     private static void addCleanAction() {
 

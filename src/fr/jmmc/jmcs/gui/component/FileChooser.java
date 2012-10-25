@@ -241,11 +241,11 @@ public final class FileChooser {
 
         if (selectedFiles != null) {
             updateDirectoryForMimeType(mimeType, selectedFiles[0].getParent());
-        }
-        
-        // Add each file to the recently opened file list
-        for (File file : selectedFiles) {
-            RecentFilesManager.addFile(file);
+
+            // Add each file to the recently opened file list
+            for (File file : selectedFiles) {
+                RecentFilesManager.addFile(file);
+            }
         }
 
         return selectedFiles;

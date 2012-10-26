@@ -3,17 +3,13 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
-import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.FileUtils;
-import org.apache.commons.lang.SystemUtils;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-
 import java.io.*;
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -23,9 +19,10 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Properties;
 import java.util.Vector;
+import javax.swing.Action;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.swing.Action;
 
 /**
  * This is the mother class to manage preferences (aka user defaults).
@@ -36,11 +33,11 @@ import javax.swing.Action;
  * Preferences are stored in key-value pairs. Keys are actually Object instances,
  * but their toString() representation is always used internally to identify each
  * value. SO WE STRONGLY ADVISE OU TO USE RAW STRINGS AS IDENTIFIERS.
- * We had to use this workaround in order to handle use of Enum as key repository
+ * We had to use this workaround in order to handle use of enumeration as key repository
  * (so you don't have to explicitely call toSting() on each call requiring a key),
  * while still handling direct String key use.
  *
- * If your singleton is instanciated in App.init(), you can use the following actions
+ * If your singleton is instantiated in App.init(), you can use the following actions
  * to save preferences to file or restore preferences that get default values:
  * &lt;menu label="Preferences"&gt;
  *  &lt;menu label="Save to file" classpath="fr.jmmc.jmcs.data.preference.Preferences" action="savePreferences"/&gt;
@@ -116,7 +113,7 @@ public abstract class Preferences extends Observable {
 
         loadFromFile();
 
-        // parent class name must be given to register one action per inherited Preference class
+        // Parent class name must be given to register one action per inherited Preference class
         _savePreferences = new SavePrefAction(this.getClass().getName());
         _restoreDefaultPreferences = new RestoreDefaultPrefAction(this.getClass().getName());
     }

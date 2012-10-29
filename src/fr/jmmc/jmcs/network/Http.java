@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.network;
 
+import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.util.FileUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -14,15 +15,14 @@ import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  This utility class is dedicated to gather code associated to HTTP domain.
@@ -230,8 +230,7 @@ public final class Http {
      */
     public static boolean download(final URI uri, final File outputFile, final boolean useDedicatedClient) throws IOException {
 
-        return download(uri, useDedicatedClient, new StreamProcessor() {
-
+        return download(uri, useDedicatedClient, null, new StreamProcessor() {
             /**
              * Process the given input stream and CLOSE it anyway (try/finally)
              * @param in input stream to process
@@ -258,7 +257,7 @@ public final class Http {
 
         final StringStreamProcessor stringProcessor = new StringStreamProcessor();
 
-        if (download(uri, useDedicatedClient, stringProcessor)) {
+        if (download(uri, useDedicatedClient, null, stringProcessor)) {
             return stringProcessor.getResult();
         }
 
@@ -298,13 +297,20 @@ public final class Http {
      * @return true if successful
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
-    private static boolean download(final URI uri, final boolean useDedicatedClient,
+    private static boolean download(final URI uri, final boolean useDedicatedClient, Credentials credentials,
             final StreamProcessor resultProcessor) throws IOException {
 
         // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
         final HttpClient client = (useDedicatedClient) ? Http.getHttpClient(uri, false) : Http.getHttpClient();
         final GetMethod method = new GetMethod(uri.toString());
-        logger.debug("HTTP client and GET method have been created");
+
+        // when present, add the credential to the client 
+        if (credentials != null) {
+            HttpState state = client.getState();
+            state.setCredentials(AuthScope.ANY, credentials);
+        }
+
+        logger.info("HTTP client and GET method have been created doAuthentication=" + method.getDoAuthentication());
 
         try {
             // Send HTTP GET query:
@@ -313,15 +319,39 @@ public final class Http {
 
             // If everything went fine
             if (resultCode == 200) {
+
                 // Get response
                 final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
                 resultProcessor.process(in);
 
                 return true;
+
+            } else if (resultCode == 401) {
+
+                // Request user/login password and try again with given credential
+                HttpCredentialForm credentialForm = new HttpCredentialForm(method);
+                credentialForm.setVisible(true);
+                Credentials c = credentialForm.getCredentials();
+                
+                // if user gives one login/password, try again with the new credential
+                if (c != null) {
+                    return download(uri, useDedicatedClient, credentialForm.getCredentials(), resultProcessor);
+                }
+                MessagePane.showWarning("Sorry, your file '" + uri + "' can't be retrieved properly\nresult code :" + resultCode + "\n status :" + method.getStatusText(), "Remote file can't be dowloaded");
+                logger.warn("download didn't succeed, result code : " + resultCode + ", status : " + method.getStatusText());
+
+            } else {
+
+                MessagePane.showWarning("Sorry, your file '" + uri + "' can't be retrieved properly\nError code :" + resultCode + "\nStatus :" + method.getStatusText(), "Remote file can't be dowloaded");
+                logger.warn("download didn't succeed, result code : " + resultCode + ", status : " + method.getStatusText());
+
             }
+
         } finally {
+
             // Release the connection.
             method.releaseConnection();
+
         }
 
         return false;

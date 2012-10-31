@@ -4,7 +4,6 @@
 package fr.jmmc.jmcs.gui.action;
 
 import fr.jmmc.jmcs.collection.FixedSizeLinkedHashMap;
-import fr.jmmc.jmcs.data.preference.Preferences;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -20,27 +19,31 @@ import org.slf4j.LoggerFactory;
 /**
  * RecentFilesManager singleton class.
  * 
- * @author Sylvain LAFRASSE.
+ * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
-public class RecentFilesManager {
+public final class RecentFilesManager {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(RecentFilesManager.class.getName());
+    /** flag to enable/disable the recent file management */
+    public static final boolean ENABLE_FILE_HISTORY = false;
+    /** max number of entries */
+    private static final int MAXIMUM_HISTORY_ENTRIES = 10;
     /** Singleton instance */
     private static volatile RecentFilesManager _instance = null;
+    /* members */
+    /** action registrar reference */
+    private final ActionRegistrar _registrar;
     /** Hook to the "Open Recent" sub-menu */
-    private static volatile JMenu _menu = null;
-    /* JMenu to Action relations */
-    private static volatile ActionRegistrar _registrar = null;
-    private static volatile Preferences _preferences = null;
-    private static final int MAXIMUM_HISTORY_ENTRIES = 10;
-    private static final Map<String, String> _files = Collections.synchronizedMap(new FixedSizeLinkedHashMap<String, String>(MAXIMUM_HISTORY_ENTRIES));
+    private final JMenu _menu;
+    /** thread safe recent file names keyed by file paths */
+    private final Map<String, String> _files = Collections.synchronizedMap(new FixedSizeLinkedHashMap<String, String>(MAXIMUM_HISTORY_ENTRIES));
 
     /**
      * Return the singleton instance
      * @return singleton instance
      */
-    private static synchronized RecentFilesManager getInstance() {
+    public static synchronized RecentFilesManager getInstance() {
         // DO NOT MODIFY !!!
         if (_instance == null) {
             _instance = new RecentFilesManager();
@@ -63,12 +66,13 @@ public class RecentFilesManager {
     }
 
     /**
-     * Link SampManager instance to the "Open Recent" sub-menu
-     * @param menu "Open Recent" sub-menu container
+     * Link RecentFilesManager menu to the "Open Recent" sub-menu
+     * @return menu "Open Recent" sub-menu container
      */
-    public static synchronized JMenu getMenu() {
-
-        getInstance();
+    public JMenu getMenu() {
+        if (!RecentFilesManager.ENABLE_FILE_HISTORY) {
+            return null;
+        }
         return _menu;
     }
 
@@ -76,9 +80,12 @@ public class RecentFilesManager {
     /**
      * Add a "Clear" item at end below a separator
      */
-    private static void addCleanAction() {
+    private void addCleanAction() {
 
         final AbstractAction cleanAction = new AbstractAction("Clear History") {
+            /** default serial UID for Serializable interface */
+            private static final long serialVersionUID = 1;
+
             @Override
             public void actionPerformed(ActionEvent ae) {
                 _menu.removeAll();
@@ -94,7 +101,7 @@ public class RecentFilesManager {
     /**
      * @TODO : grab recent files from shared preference
      */
-    private static void populateMenuFromSharedPreferences() {
+    private void populateMenuFromSharedPreferences() {
         /*
          addFile("/tmp/toto", "toto");
          addFile("/tmp/titi", "titi");
@@ -109,8 +116,14 @@ public class RecentFilesManager {
         }
     }
 
-    public static synchronized void addFile(final File file) {
-        getInstance();
+    /**
+     * TODO
+     * @param file 
+     */
+    public synchronized void addFile(final File file) {
+        if (!RecentFilesManager.ENABLE_FILE_HISTORY) {
+            return;
+        }
 
         // Check parameter validity
         if (!file.canRead()) {
@@ -119,7 +132,7 @@ public class RecentFilesManager {
         }
 
         // Check file path
-        String path = null;
+        String path;
         try {
             path = file.getCanonicalPath();
         } catch (IOException ex) {
@@ -148,6 +161,9 @@ public class RecentFilesManager {
             final String currentName = _files.get(currentPath);
 
             final AbstractAction currentAction = new AbstractAction(currentName) {
+                /** default serial UID for Serializable interface */
+                private static final long serialVersionUID = 1;
+
                 @Override
                 public void actionPerformed(ActionEvent ae) {
                     _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, currentPath));

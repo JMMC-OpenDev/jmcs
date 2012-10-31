@@ -8,20 +8,30 @@ import java.util.Map;
 
 /**
  * Fixed size linked hash map, automatically removing eldest entry.
+ * 
+ * @param <K> the type of keys maintained by this map
+ * @param <V> the type of mapped values
  *
  * @author Sylvain LAFRASSE
  */
-public class FixedSizeLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
+public final class FixedSizeLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
 
-    private int _size = 0;
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
+    /** maximum map size */
+    private final int _maxSize;
 
-    public FixedSizeLinkedHashMap(int size) {
-        super(size);
-        _size = size;
+    /**
+     * Public constructor 
+     * @param maxSize maximum map size
+     */
+    public FixedSizeLinkedHashMap(final int maxSize) {
+        super(maxSize);
+        _maxSize = maxSize;
     }
 
     @Override
-    protected boolean removeEldestEntry(Map.Entry eldest) {
-        return size() > _size;
+    protected boolean removeEldestEntry(final Map.Entry<K, V> eldest) {
+        return size() > _maxSize;
     }
 }

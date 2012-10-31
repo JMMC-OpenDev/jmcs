@@ -4,35 +4,26 @@
 package fr.jmmc.jmcs.gui;
 
 import com.jidesoft.plaf.LookAndFeelFactory;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.data.model.Menu;
 import fr.jmmc.jmcs.data.model.Menubar;
-import fr.jmmc.jmcs.util.IntrospectionUtils;
-import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
-import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.RecentFilesManager;
 import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
+import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
+import fr.jmmc.jmcs.network.interop.SampManager;
+import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
-
-import org.apache.commons.lang.SystemUtils;
-
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -50,6 +41,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultEditorKit;
+import org.apache.commons.lang.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class which extends from JMenuBar, generates all menus from the
@@ -188,8 +182,12 @@ public class MainMenuBar extends JMenuBar {
 
                     // If we are on the "Open" action
                     if ((_openComponent != null) && (currentComponent.equals(_openComponent))) {
-                        // Add the synthetised "Open recent" sub-menu
-                        fileMenu.add(RecentFilesManager.getMenu());
+                        final JMenu openRecentMenu = RecentFilesManager.getInstance().getMenu();
+
+                        if (openRecentMenu != null) {
+                            // Add the synthetised "Open recent" sub-menu
+                            fileMenu.add(openRecentMenu);
+                        }
                     }
                 }
 

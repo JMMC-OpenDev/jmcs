@@ -7,9 +7,18 @@ import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.StatusBar;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -31,6 +40,8 @@ import org.slf4j.LoggerFactory;
 /**
  * SampManager singleton class.
  * 
+ * Note: JSamp 1.3.3 required
+ * 
  * @author Sylvain LAFRASSE, Laurent BOURGES, Guillaume MELLA.
  */
 public final class SampManager {
@@ -47,8 +58,6 @@ public final class SampManager {
     /* members */
     /** GUI hub connector */
     private final GuiHubConnector _connector;
-    /** Store whether we started our own hub instance or used an external on already running */
-    private static Hub _internalHub = null;
 
     /**
      * Return the singleton instance
@@ -57,9 +66,6 @@ public final class SampManager {
     public static synchronized SampManager getInstance() {
         // DO NOT MODIFY !!!
         if (_instance == null) {
-            if (false) {
-                _logger.error("SampManager getInstance()", new Throwable());
-            }
             _instance = new SampManager();
         }
 
@@ -88,7 +94,7 @@ public final class SampManager {
         }
 
         // If we did not launch the hub ourself
-        if ((_internalHub == null) || (!_internalHub.getHubService().isHubRunning())) {
+        if (getRunningHub() != null) {
             _logger.info("Application has not launched the SAMP hub internally, letting application quits.");
             // Let the hub die without prompting confirmation
             return true;
@@ -116,7 +122,6 @@ public final class SampManager {
         if (_instance != null) {
             _instance.shutdownNow();
             _instance = null;
-            _internalHub = null;
         }
     }
 
@@ -144,7 +149,7 @@ public final class SampManager {
         if (!_connector.isConnected()) {
             // Try to start an internal SAMP hub if none available (JNLP do not support external hub) :
             try {
-                _internalHub = Hub.runHub(getInternalHubMode());
+                Hub.runHub(getInternalHubMode());
             } catch (IOException ioe) {
                 _logger.debug("unable to start internal hub (probably another hub is already running)", ioe);
             }
@@ -165,6 +170,12 @@ public final class SampManager {
         _connector.declareSubscriptions(_connector.computeSubscriptions());
     }
 
+    /**
+     * Create a new Samp Metadata instance using the given application name and its application data model instance
+     * @param applicationName application name
+     * @param applicationDataModel application data model instance
+     * @return new Samp Metadata instance
+     */
     private Metadata forgeSampMetaDataFromApplicationDataModel(final String applicationName, final ApplicationDataModel applicationDataModel) {
 
         final Metadata meta = new Metadata();
@@ -236,7 +247,9 @@ public final class SampManager {
         // however if it is not called explicitly, any open connection will unregister itself
         // on object finalisation or JVM termination, as long as the JVM shuts down cleanly.
 
+        // Disconnect from hub:
         _connector.setActive(false);
+
         _logger.info("SAMP Hub connection closed.");
     }
 
@@ -249,6 +262,21 @@ public final class SampManager {
     }
 
     /* --- STATIC METHODS --------------------------------------------------- */
+    /**
+     * Return the first running Hub or null
+     * @return first running Hub or null
+     */
+    private static Hub getRunningHub() {
+        final Hub[] hubs = Hub.getRunningHubs();
+
+        // TODO: should test its profiles (standard ...) to check if it is a normal Hub ???
+        if (hubs.length > 0) {
+            // use first one only:
+            return hubs[0];
+        }
+        return null;
+    }
+
     /**
      * Return the hub service mode for the internal Hub (CLIENT_GUI if system tray is supported)
      * @return hub mode
@@ -317,7 +345,7 @@ public final class SampManager {
      * @return monitor window action
      */
     public static Action createShowMonitorAction() {
-        return getGuiHubConnector().createShowMonitorAction();
+        return new HubMonitorAction();
     }
 
     /**
@@ -373,12 +401,20 @@ public final class SampManager {
     }
 
     /**
+     * Return the client map known by the hub
+     * @return client map
+     */
+    public static Map<?, ?> getClientMap() {
+        return getGuiHubConnector().getClientMap();
+    }
+
+    /**
      * Return the client corresponding to the given client Id known by the hub
      * @param clientId client id
      * @return client or null
      */
     public static Client getClient(final String clientId) {
-        return (Client) getGuiHubConnector().getClientMap().get(clientId);
+        return (Client) getClientMap().get(clientId);
     }
 
     /**
@@ -409,14 +445,14 @@ public final class SampManager {
 
     /**
      * Return the list of id for a given SAMP client name
-     * @param name client
-     * @return id list
+     * @param name client name
+     * @return list of id
      */
     public static List<String> getClientIdsForName(final String name) {
-        final List<String> clientIdList = new ArrayList<String>();
-        final Map clientMap = getGuiHubConnector().getClientMap();
-        for (Iterator it = clientMap.keySet().iterator(); it.hasNext();) {
-            Client client = (Client) clientMap.get(it.next());
+        final List<String> clientIdList = new ArrayList<String>(1);
+
+        for (Iterator<?> it = getClientMap().values().iterator(); it.hasNext();) {
+            final Client client = (Client) it.next();
             if (client.getMetadata().getName().matches(name)) {
                 clientIdList.add(client.getId());
             }
@@ -481,6 +517,57 @@ public final class SampManager {
             final GuiHubConnector connector = (GuiHubConnector) e.getSource();
 
             _logger.info("SAMP Hub connection status : {}", ((connector.isConnected()) ? "registered" : "unregistered"));
+        }
+    }
+
+    /**
+     * Action subclass for popping up a monitor or the hub window.
+     */
+    private static class HubMonitorAction extends AbstractAction {
+
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1L;
+        /* members */
+        /** client monitor action */
+        private final Action clientMonitorAction;
+
+        /**
+         * Constructor.
+         */
+        HubMonitorAction() {
+            super("Show Hub Status");
+            putValue(SHORT_DESCRIPTION, "Display a window showing client applications registered with the SAMP hub");
+
+            this.clientMonitorAction = getGuiHubConnector().createShowMonitorAction();
+        }
+
+        /**
+         * Display Hub window
+         * @param ae action event
+         */
+        public void actionPerformed(final ActionEvent ae) {
+            final Hub hub = getRunningHub();
+
+            boolean show = false;
+            if (hub != null) {
+                final JFrame hubWindow = hub.getWindow();
+
+                if (hubWindow != null) {
+                    // ensure window is visible (not iconified):
+                    if (hubWindow.getState() == Frame.ICONIFIED) {
+                        hubWindow.setState(Frame.NORMAL);
+                    }
+
+                    // force the frame to be visible and bring it to front
+                    hubWindow.setVisible(true);
+                    hubWindow.toFront();
+
+                    show = true;
+                }
+            }
+            if (!show) {
+                this.clientMonitorAction.actionPerformed(ae);
+            }
         }
     }
 }

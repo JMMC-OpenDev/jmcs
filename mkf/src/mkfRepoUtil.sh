@@ -161,8 +161,14 @@ function installModules()
         echo -n " - installing '${moduleName}' from '${repos_path}' ... "
         ${SVN_COMMAND} checkout ${revisionOption} "${repos_path}"
         module_src_path="${moduleName}/src"
-        (cd "${module_src_path}" ; make clean all ${MAN_CMD_DURING_INSTALL} install)
-        echo "DONE."
+        if ! make -C "${module_src_path}" clean all ${MAN_CMD_DURING_INSTALL} install
+        then
+            echo "Module $moduleName has not been installed properly"
+            echo "ABORTING installation of $project"
+            return 1
+        else
+            echo "DONE."
+        fi
     done
     echo "Installation finished."
     echo

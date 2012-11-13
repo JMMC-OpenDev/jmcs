@@ -19,6 +19,24 @@ SCRIPTROOT=$(cd ..; pwd)/
 # define command root
 COMMANDROOT=$(pwd)
 
+_abort()
+{
+    RETVALUE=$1
+    echo "Abording"
+    exit $RETVALUE
+}
+
+# this function must be called in the next following functions to trap signal
+# and abort processing
+_installTrap()
+{
+  shllibEchoDebug "Install trap to abort process in case of errors"
+  trap _abort 0 1 2 5 15
+  #sleep 2 # optional pause to debug
+}
+
+trap _abort 0 1 2 5 15
+
 _usage()
 {
     echo
@@ -46,6 +64,7 @@ _usage()
 
 createXsltFiles()
 {
+    _installTrap
     cat > setDateOfReleases.xsl <<EOF
     <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:exslt="http://exslt.org/common"
@@ -373,6 +392,7 @@ copyJnlpAndRelated()
     local destDir=$2
     local destCodeBase=$3
 
+    _installTrap 
     shllibEchoDebug "Copy '$LONGGIVENJNLP' into '$destDir'"
     mkdir -p $destDir 2> /dev/null
     if ! cp $LONGGIVENJNLP $destDir
@@ -545,6 +565,7 @@ done
 # This function signs each jar and make a big jar file to build final APPNAME.jar file
 createAppJar()
 {
+    _installTrap
     echo "Creating '$APPNAME.jar' ... "
     # BIGMANIFEST file will content of previous entries
     #BIGMANIFEST=$APP_WEBROOT/BIG_MANIFEST.MF
@@ -614,6 +635,7 @@ createAppJar()
 
 createHtmlAcknowledgement()
 {
+    _installTrap
     APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
     if [ -f "$APPLICATION_DATA_XML" ]
     then
@@ -635,6 +657,7 @@ createHtmlAcknowledgement()
 
 createHtmlIndex()
 {
+    _installTrap
     OUTPUTFILE=index.htm
     echo "Creating '$OUTPUTFILE' ... "
     cd $APP_WEBROOT
@@ -685,6 +708,7 @@ createHtmlIndex()
 # class of jnlp file...
 createReleaseFiles()
 {
+    _installTrap 
     APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
     cd $APP_WEBROOT
     createXsltFiles
@@ -728,6 +752,7 @@ createReleaseFiles()
 # class of jnlp file...
 createCreditFile()
 {
+    _installTrap
     APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
     OUTPUTFILE=credits.htm
     echo "Creating '$OUTPUTFILE' ... "
@@ -840,12 +865,12 @@ mkdir "$APP_WEBROOT"
 trap "cleanup" 0 1 2 5 15
 
 # Do really interresting job...
-createReleaseFiles
+createReleaseFiles || exit $?
 copyJnlpAndRelated $JNLPFILE $APP_WEBROOT $APP_CODEBASE || exit $?
-createAppJar
-createHtmlIndex
-createCreditFile
-createHtmlAcknowledgement
+createAppJar || exit $?
+createHtmlIndex || exit $?
+createCreditFile || exit $?
+createHtmlAcknowledgement || exit $?
 
 # TODO: handle failure during arr jar creation (control-c) or any other failure before deploying web app !!
 

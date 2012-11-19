@@ -43,7 +43,11 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -155,8 +159,6 @@ public abstract class App {
     private static AboutBox _aboutBox = null;
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
-    /** Arguments */
-    private static String[] _args;
     /** If it's true, exit the application after the exit method */
     private static boolean _exitApplicationWhenClosed = true;
     /** Quit handling action */
@@ -181,6 +183,10 @@ public abstract class App {
     private boolean _showSplashScreen = true;
     /** Splash screen */
     private SplashScreen _splashScreen = null;
+    /** command line argument meta data */
+    private final List<LongOpt> _longOpts = new ArrayList<LongOpt>();
+    /** temporary store the command line arguments (long opt = value) */
+    private Map<String, String> _cliArguments = null;
     /** temporary store the file name argument for the open action */
     private String _fileArgument = null;
 
@@ -234,7 +240,6 @@ public abstract class App {
             _quitAction = new QuitAction(classPath, "_quitAction");
 
             // Attributes affectations
-            _args = args;
             _exitApplicationWhenClosed = exitWhenClosed;
 
             // Check in common preferences whether startup splashscreen should be shown or not
@@ -444,11 +449,43 @@ public abstract class App {
     }
 
     /**
+     * Return command line arguments
+     * @return command line arguments 
+     */
+    protected final Map<String, String> getCommandLineArguments() {
+        return _cliArguments;
+    }
+
+    /**
+     * To be overriden by child classes to add custom command line argument(s) using:
+     * @see  #addCustomCommandLineArgument(java.lang.String, boolean)
+     */
+    protected void addCustomCommandLineArguments() {
+        // noop
+    }
+
+    /** 
+     * To be overriden by child classes to show custom command line argument help 
+     */
+    protected void showCustomArgumentsHelp() {
+        // noop
+    }
+
+    /**
+     * Add custom command line argument
+     * @param name option name
+     * @param hasArgument true if an argument is required; false otherwise 
+     */
+    protected final void addCustomCommandLineArgument(final String name, final boolean hasArgument) {
+        _longOpts.add(new LongOpt(name, (hasArgument) ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, 'c')); // 'c' means custom
+    }
+
+    /**
      * Interpret command line arguments
      *
      * @param args arguments
      */
-    private final void interpretArguments(String[] args) {
+    private final void interpretArguments(final String[] args) {
         // List received arguments
         if (_logger.isDebugEnabled()) {
             for (int i = 0; i < args.length; i++) {
@@ -461,19 +498,24 @@ public abstract class App {
             return;
         }
 
-        // Array for long arguments (help & version)
-        final LongOpt[] longopts = new LongOpt[]{
-            new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
-            new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1),
-            new LongOpt("loggui", LongOpt.NO_ARGUMENT, null, 2),
-            new LongOpt("open", LongOpt.REQUIRED_ARGUMENT, null, 3)
-        };
+        // Define default arguments (help & version):
+        _longOpts.clear();
+        _longOpts.add(new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'));
+        _longOpts.add(new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1));
+        _longOpts.add(new LongOpt("loggui", LongOpt.NO_ARGUMENT, null, 2));
+        _longOpts.add(new LongOpt("open", LongOpt.REQUIRED_ARGUMENT, null, 3));
+
+        // Application needs custom arguments:
+        addCustomCommandLineArguments();
+
+        final LongOpt[] longOptArray = new LongOpt[_longOpts.size()];
+        _longOpts.toArray(longOptArray);
 
         // Instantiate the getopt object
-        final Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(), args, "hv:", longopts, true);
+        final Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(), args, "hv:", longOptArray, true);
 
         int c; // argument key
-        String arg = null; // argument value
+        String arg; // argument value
 
         // While there is a argument key
         while ((c = getOpt.getopt()) != -1) {
@@ -537,6 +579,14 @@ public abstract class App {
                     showArgumentsHelp();
                     break;
 
+                case 'c':
+                    // custom argument case:
+                    if (_cliArguments == null) {
+                        _cliArguments = new LinkedHashMap<String, String>();
+                    }
+                    _cliArguments.put(_longOpts.get(getOpt.getLongind()).getName(), (getOpt.getOptarg() != null) ? getOpt.getOptarg() : "");
+                    break;
+
                 default:
                     System.out.println("Unknow command");
 
@@ -550,27 +600,20 @@ public abstract class App {
     }
 
     /** Show command arguments help */
-    public static void showArgumentsHelp() {
-        System.out.println(
-                "------------- Arguments help --------------------------------------------");
-        System.out.println(
-                "| Key          Value           Description                              |");
-        System.out.println(
-                "|-----------------------------------------------------------------------|");
-        System.out.println(
-                "| [-h]                         Show the options help                    |");
-        System.out.println(
-                "| [-loggui]                    Show the logging tool                    |");
-        System.out.println(
-                "| [-v]         [0|1|2|3|4|5]   Define console logging level             |");
-        System.out.println(
-                "| [-version]                   Show application name and version        |");
-        System.out.println(
-                "| [-h|-help]                   Show arguments help                      |");
-        System.out.println(
-                "-------------------------------------------------------------------------");
-        System.out.println(
-                "LEVEL : O=OFF, 1=SEVERE, 2=WARNING, 3=INFO, 4=FINE, 5=ALL\n");
+    protected final void showArgumentsHelp() {
+        System.out.println("------------- Arguments help --------------------------------------------");
+        System.out.println("| Key          Value           Description                              |");
+        System.out.println("|-----------------------------------------------------------------------|");
+        System.out.println("| [-h]                         Show the options help                    |");
+        System.out.println("| [-loggui]                    Show the logging tool                    |");
+        System.out.println("| [-v]         [0|1|2|3|4|5]   Define console logging level             |");
+        System.out.println("| [-version]                   Show application name and version        |");
+        System.out.println("| [-h|-help]                   Show arguments help                      |");
+        System.out.println("|-----------------------------------------------------------------------|");
+
+        showCustomArgumentsHelp();
+
+        System.out.println("LEVEL : 0=OFF, 1=SEVERE, 2=WARNING, 3=INFO, 4=FINE, 5=ALL\n");
 
         // Exit the application
         App.exit(0);
@@ -580,10 +623,8 @@ public abstract class App {
      * Initialize application objects
      *
      * The actions which are present in menubar must be instantiated in this method.
-     *
-     * @param args command line arguments
      */
-    protected abstract void init(String[] args);
+    protected abstract void init();
 
     /**
      * Prepare interoperability (SAMP message handlers)
@@ -714,7 +755,7 @@ public abstract class App {
         }
 
         // Delegate initialization to daughter class through abstract init() call
-        init(_args);
+        init();
 
         // Using invokeAndWait to be in sync with this thread :
         // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs

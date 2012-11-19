@@ -14,7 +14,7 @@ import java.util.Hashtable;
  */
 public enum Catalog {
 
-    ASCC_2_5("I/280", "ASCC-2.5", "All-sky Compiled Catalogue of 2.5 million stars"),
+    ASCC_2_5("I/280", "I/280B", "ASCC-2.5", "All-sky Compiled Catalogue of 2.5 million stars"),
     USNO_B("I/284", "USNO-B", "The USNO-B1.0 Catalog"),
     CIO("II/225/catalog", "CIO", "Catalog of Infrared Observations, Edition 5"),
     JP11("II/7A/catalog", "JP11", "UBVRIJKLMNH Photoelectric Catalogue"),
@@ -22,14 +22,16 @@ public enum Catalog {
     BSC("V/50/catalog", "BSC", "Bright Star Catalogue, 5th Revised Ed."),
     Merand("J/A+A/433/1155", "Merand", "Calibrator stars for 200m baseline interferometry"),
     DENIS("B/denis", "DENIS", "The DENIS database"),
-    J_K_DENIS("J/A+A/413/1037", "J-K DENIS", "J-K DENIS photometry of bright southern stars"),
+    J_K_DENIS("J/A+A/413/1037", "J/A+A/413/1037/table1", "J-K DENIS", "J-K DENIS photometry of bright southern stars"),
     HIC("I/196/main", "HIC", "Hipparcos Input Catalogue, Version 2"),
     LBSI("J/A+A/393/183/catalog", "LBSI", "Catalogue of calibrator stars for LBSI"),
     MIDI("MIDI", "MIDI", "Photometric observations and angular size estimates of mid infrared interferometric calibration sources"),
     SBSC("V/36B/bsc4s", "SBSC", "The Supplement to the Bright Star Catalogue"),
     SB9("B/sb9/main", "SB9", "SB9: 9th Catalogue of Spectroscopic Binary Orbits"),
     WDS("B/wds/wds", "WDS", "The Washington Visual Double Star Catalog"),
-    AKARI("II/297/irc", "AKARI", "AKARI/IRC mid-IR all-sky Survey (ISAS/JAXA, 2010)");
+    AKARI("II/297/irc", "AKARI", "AKARI/IRC mid-IR all-sky Survey (ISAS/JAXA, 2010)"),
+    HIP2("I/311/hip2", "HIP2", "Hipparcos, the New Reduction (van Leeuwen, 2007)");
+    /* members */
     /** Store the catalog CDS 'cryptic' reference */
     private final String _reference;
     /** Store the catalog CDS 'human-readable' name */
@@ -40,6 +42,10 @@ public enum Catalog {
     public static final String UNKNOWN = "Unknown";
 
     Catalog(String reference, String title, String description) {
+        this(reference, null, title, description);
+    }
+
+    Catalog(String reference, String alias, String title, String description) {
         _reference = (reference == null ? UNKNOWN : reference);
         addCatalog(_reference);
 
@@ -48,6 +54,12 @@ public enum Catalog {
 
         _description = (description == null ? UNKNOWN : description);
         addDescription(_reference, _description);
+
+        if (alias != null) {
+            addCatalog(alias);
+            addTitle(alias, _title);
+            addDescription(alias, _title);
+        }
     }
 
     private void addTitle(String reference, String title) {

@@ -598,9 +598,9 @@ public abstract class Preferences extends Observable {
                 }
             }
             final String prefStringValue = sb.toString();
-            
+
             _logger.debug("{} = {}", preferenceNameString, prefStringValue);
-            
+
             properties.setProperty(preferenceNameString, prefStringValue);
 
         } // Otherwise we don't know how to handle the given object type
@@ -1022,10 +1022,11 @@ public abstract class Preferences extends Observable {
      * @param prefix 
      * @return Enumeration a string enumeration of preference names
      */
-    final public Enumeration<String> getPreferences(Object prefix) {
-        int size = 0;
-        Enumeration<?> e = _currentProperties.propertyNames();
+    final public Enumeration<String> getPreferences(final Object prefix) {
         final List<String> shuffledProperties = new ArrayList<String>();
+
+        int size = 0;
+        final Enumeration<?> e = _currentProperties.propertyNames();
 
         // Count the number of properties for the given index and store them
         while (e.hasMoreElements()) {
@@ -1037,30 +1038,47 @@ public abstract class Preferences extends Observable {
             }
         }
 
-        final String[] orderedProperties = new String[size];
-        Iterator<String> shuffledPropertiesIterator = shuffledProperties.iterator();
+        String[] orderedProperties = new String[size];
+
+        int nError = 0;
 
         // Order the stored properties if needed
-        while (shuffledPropertiesIterator.hasNext()) {
-            String propertyName = shuffledPropertiesIterator.next();
-
-            int propertyOrder = getPreferenceOrder(propertyName);
+        for (String propertyName : shuffledProperties) {
+            final int propertyOrder = getPreferenceOrder(propertyName);
 
             // If the property is ordered
-            if (propertyOrder > -1) {
-                // Store it at the right position
-                orderedProperties[propertyOrder] = propertyName;
+            if (propertyOrder != -1) {
+                // Check that no overlapping occurs:
+                if (orderedProperties[propertyOrder] != null) {
+                    nError++;
+
+                    _logger.warn("Incorrect Property Order [{}]: current value is '{}' - new value is '{}'",
+                            propertyOrder, orderedProperties[propertyOrder], propertyName);
+                } else {
+                    // Store it at the right position
+                    orderedProperties[propertyOrder] = propertyName;
+                }
             } else {
                 // Break and return the shuffled enumeration
                 return Collections.enumeration(shuffledProperties);
             }
         }
 
-        // Get an enumaration by converting the array -> List -> Vector -> Enumeration
-        final Vector<String> orderedVector = new Vector<String>(Arrays.asList(orderedProperties));
-        final Enumeration<String> orderedEnumeration = orderedVector.elements();
+        // Fix nulls (overlap):
+        if (nError != 0) {
+            final String[] fixedProperties = new String[size - nError];
 
-        return orderedEnumeration;
+            int i = 0;
+            for (String propertyName : orderedProperties) {
+                if (propertyName != null) {
+                    fixedProperties[i++] = propertyName;
+                }
+            }
+            orderedProperties = fixedProperties;
+        }
+
+        // Get an enumeration by converting the array -> List -> Enumeration
+        return Collections.enumeration(Arrays.asList(orderedProperties));
     }
 
     /**
@@ -1108,7 +1126,6 @@ public abstract class Preferences extends Observable {
 
             // Use EDT to ensure that Swing component(s) is updated by EDT :
             SwingUtils.invokeEDT(new Runnable() {
-
                 @Override
                 public void run() {
                     // Notify all preferences listener of maybe new values coming from file.

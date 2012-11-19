@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.gui.task;
 
 import fr.jmmc.jmcs.gui.FeedbackReport;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,20 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
 
         // Cancel other observability task and execute this new task :
         TaskSwingWorkerExecutor.executeTask(this);
+    }
+
+    /**
+     * Schedules this {@code TaskSwingWorker} for execution using EDT.
+     * 
+     * Note: this will block EDT so UI refresh can not happen meanwhile:
+     * only applicable for very short task or to block EDT as wanted
+     */
+    public final void executeTaskInEDT() {
+        // increment running worker :
+        TaskSwingWorkerExecutor.incRunningWorkerCounter();
+
+        // Just execute this new task with EDT (synchronously) :
+        SwingUtils.invokeEDT(this);
     }
 
     /**

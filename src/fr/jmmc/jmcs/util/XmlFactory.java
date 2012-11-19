@@ -158,7 +158,25 @@ public final class XmlFactory {
     public static String transform(final String xmlSource, final String xslFilePath)
             throws IllegalStateException, IllegalArgumentException {
 
-        return transform(xmlSource, xslFilePath, true);
+        return transform(xmlSource, xslFilePath, null, true);
+    }
+
+    /**
+     * Process xslt on xml document with parameters (using xslt cache)
+     *
+     * @param xmlSource XML content to transform
+     * @param xslFilePath XSL file to use (XSLT)
+     * @param params parameters for transformation
+     *
+     * @return result document as string
+     *
+     * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
+     * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or IO failure
+     */
+    public static String transform(final String xmlSource, final String xslFilePath, Map<String, Object> params)
+            throws IllegalStateException, IllegalArgumentException {
+
+        return transform(xmlSource, xslFilePath, params, true);
     }
 
     /**
@@ -179,7 +197,31 @@ public final class XmlFactory {
 
         final StringWriter out = new StringWriter(DEFAULT_BUFFER_SIZE);
 
-        transform(xmlSource, xslFilePath, doCacheXsl, out);
+        transform(xmlSource, xslFilePath, null, doCacheXsl, out);
+
+        return out.toString();
+    }
+
+    /**
+     * Process xslt on xml document with parameters
+     *
+     * @param xmlSource XML content to transform
+     * @param xslFilePath XSL file to use (XSLT)
+     * @param params optional parameters for transformation
+     * @param doCacheXsl true indicates that XSLT can be keep in permanent cache for reuse (avoid a lot of wasted time
+     *        (compiling xslt) for many transformations)
+     *
+     * @return result document as string
+     *
+     * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
+     * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or IO failure
+     */
+    public static String transform(final String xmlSource, final String xslFilePath, Map<String, Object> params, final boolean doCacheXsl)
+            throws IllegalStateException, IllegalArgumentException {
+
+        final StringWriter out = new StringWriter(DEFAULT_BUFFER_SIZE);
+
+        transform(xmlSource, xslFilePath, params, doCacheXsl, out);
 
         return out.toString();
     }
@@ -198,7 +240,25 @@ public final class XmlFactory {
             final OutputStream resultStream)
             throws IllegalStateException, IllegalArgumentException {
 
-        transform(new StreamSource(sourceStream), xslFilePath, true, new StreamResult(resultStream));
+        transform(new StreamSource(sourceStream), xslFilePath, null, true, new StreamResult(resultStream));
+    }
+
+    /**
+     * Process xslt on xml document with parameters (using xslt cache)
+     *
+     * @param sourceStream XML source to transform as stream
+     * @param xslFilePath XSL file to use (XSLT)
+     * @param params optional parameters for transformation 
+     * @param resultStream transform result as stream
+     *
+     * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
+     * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or I/O exception occurs while reading XSLT
+     */
+    public static void transform(final InputStream sourceStream, final String xslFilePath, Map<String, Object> params,
+            final OutputStream resultStream)
+            throws IllegalStateException, IllegalArgumentException {
+
+        transform(new StreamSource(sourceStream), xslFilePath, params, true, new StreamResult(resultStream));
     }
 
     /**
@@ -217,7 +277,27 @@ public final class XmlFactory {
             final OutputStream resultStream, final boolean doCacheXsl)
             throws IllegalStateException, IllegalArgumentException {
 
-        transform(new StreamSource(sourceStream), xslFilePath, doCacheXsl, new StreamResult(resultStream));
+        transform(new StreamSource(sourceStream), xslFilePath, null, doCacheXsl, new StreamResult(resultStream));
+    }
+
+    /**
+     * Process xslt on xml document  with parameters
+     *
+     * @param sourceStream XML source to transform as stream
+     * @param xslFilePath XSL file to use (XSLT)
+     * @param params optional parameters for transformation
+     * @param doCacheXsl true indicates that XSLT can be keep in permanent cache for reuse (avoid a lot of wasted time
+     *        (compiling xslt) for many transformations)
+     * @param resultStream transform result as stream
+     *
+     * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
+     * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or I/O exception occurs while reading XSLT
+     */
+    public static void transform(final InputStream sourceStream, final String xslFilePath, Map<String, Object> params,
+            final OutputStream resultStream, final boolean doCacheXsl)
+            throws IllegalStateException, IllegalArgumentException {
+
+        transform(new StreamSource(sourceStream), xslFilePath, params, doCacheXsl, new StreamResult(resultStream));
     }
 
     /**
@@ -225,6 +305,7 @@ public final class XmlFactory {
      *
      * @param xmlSource XML content to transform
      * @param xslFilePath XSL file to use (XSLT)
+     * @param params optional parameters for transformation 
      * @param doCacheXsl true indicates that XSLT can be keep in permanent cache for reuse (avoid a lot of wasted time
      *        (compiling xslt) for many transformations)
      * @param out buffer (should be cleared before method invocation)
@@ -232,7 +313,7 @@ public final class XmlFactory {
      * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
      * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or I/O exception occurs while reading XSLT
      */
-    private static void transform(final String xmlSource, final String xslFilePath,
+    private static void transform(final String xmlSource, final String xslFilePath, Map<String, Object> params,
             final boolean doCacheXsl, final Writer out)
             throws IllegalStateException, IllegalArgumentException {
 
@@ -247,6 +328,9 @@ public final class XmlFactory {
                 tf = newTransformer(resolveXSLTPath(xslFilePath));
             }
 
+            // Handle params
+            addParams(tf, params);
+
             logger.debug("XmlFactory.transform : XML Source : {}", xmlSource);
 
             asString(tf, new StreamSource(new StringReader(xmlSource)), out);
@@ -260,6 +344,7 @@ public final class XmlFactory {
      *
      * @param source XML source to transform
      * @param xslFilePath XSL file to use (XSLT)
+     * @param params optional parameters for transformation 
      * @param doCacheXsl true indicates that XSLT can be keep in permanent cache for reuse (avoid a lot of wasted time
      *        (compiling xslt) for many transformations)
      * @param result transform result
@@ -267,7 +352,7 @@ public final class XmlFactory {
      * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
      * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or I/O exception occurs while reading XSLT
      */
-    private static void transform(final Source source, final String xslFilePath,
+    private static void transform(final Source source, final String xslFilePath, Map<String, Object> params,
             final boolean doCacheXsl, final Result result)
             throws IllegalStateException, IllegalArgumentException {
 
@@ -281,6 +366,9 @@ public final class XmlFactory {
             } else {
                 tf = newTransformer(resolveXSLTPath(xslFilePath));
             }
+
+            // Handle params
+            addParams(tf, params);
 
             logger.debug("XmlFactory.transform : XML Source : {}", source);
 
@@ -377,6 +465,20 @@ public final class XmlFactory {
             transformer.transform(source, new StreamResult(out));
         } catch (TransformerException te) {
             throw new IllegalArgumentException("XmlFactory.asString : transformer failure :", te);
+        }
+    }
+
+    /**
+     * Add parameters to the transformer if any
+     * @param transformer the transformer
+     * @param params the optional parameter map     
+     */
+    private static void addParams(Transformer transformer, Map<String, Object> params) {
+        if(params==null){
+            return;
+        }
+        for (String paramName : params.keySet()) {
+            transformer.setParameter(paramName, params.get(paramName));
         }
     }
 }

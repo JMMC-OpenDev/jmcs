@@ -50,9 +50,8 @@ public class Main extends App {
 
     /** Initialize application objects */
     @Override
-    protected void init(String[] args) {
+    protected void init() {
         _logger.warning("Initialize application objects");
-        _logger.info(args.length + " arguments have been taken");
 
         _actions = new Actions();
 

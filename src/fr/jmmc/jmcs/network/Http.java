@@ -340,11 +340,9 @@ public final class Http {
                 MessagePane.showWarning("Sorry, your file '" + uri + "' can't be retrieved properly\nresult code :" + resultCode + "\n status :" + method.getStatusText(), "Remote file can't be dowloaded");
                 logger.warn("download didn't succeed, result code : " + resultCode + ", status : " + method.getStatusText());
 
-            } else {
-
-                MessagePane.showWarning("Sorry, your file '" + uri + "' can't be retrieved properly\nError code :" + resultCode + "\nStatus :" + method.getStatusText(), "Remote file can't be dowloaded");
+            } else {                
                 logger.warn("download didn't succeed, result code : " + resultCode + ", status : " + method.getStatusText());
-
+                return false;                
             }
 
         } finally {

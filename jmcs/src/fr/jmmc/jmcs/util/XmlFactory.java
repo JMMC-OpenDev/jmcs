@@ -173,7 +173,7 @@ public final class XmlFactory {
      * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
      * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or IO failure
      */
-    public static String transform(final String xmlSource, final String xslFilePath, Map<String, Object> params)
+    public static String transform(final String xmlSource, final String xslFilePath, final Map<String, Object> params)
             throws IllegalStateException, IllegalArgumentException {
 
         return transform(xmlSource, xslFilePath, params, true);
@@ -216,7 +216,7 @@ public final class XmlFactory {
      * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
      * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or IO failure
      */
-    public static String transform(final String xmlSource, final String xslFilePath, Map<String, Object> params, final boolean doCacheXsl)
+    public static String transform(final String xmlSource, final String xslFilePath, final Map<String, Object> params, final boolean doCacheXsl)
             throws IllegalStateException, IllegalArgumentException {
 
         final StringWriter out = new StringWriter(DEFAULT_BUFFER_SIZE);
@@ -254,7 +254,7 @@ public final class XmlFactory {
      * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
      * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or I/O exception occurs while reading XSLT
      */
-    public static void transform(final InputStream sourceStream, final String xslFilePath, Map<String, Object> params,
+    public static void transform(final InputStream sourceStream, final String xslFilePath, final Map<String, Object> params,
             final OutputStream resultStream)
             throws IllegalStateException, IllegalArgumentException {
 
@@ -293,7 +293,7 @@ public final class XmlFactory {
      * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
      * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or I/O exception occurs while reading XSLT
      */
-    public static void transform(final InputStream sourceStream, final String xslFilePath, Map<String, Object> params,
+    public static void transform(final InputStream sourceStream, final String xslFilePath, final Map<String, Object> params,
             final OutputStream resultStream, final boolean doCacheXsl)
             throws IllegalStateException, IllegalArgumentException {
 
@@ -313,7 +313,7 @@ public final class XmlFactory {
      * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
      * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or I/O exception occurs while reading XSLT
      */
-    private static void transform(final String xmlSource, final String xslFilePath, Map<String, Object> params,
+    private static void transform(final String xmlSource, final String xslFilePath, final Map<String, Object> params,
             final boolean doCacheXsl, final Writer out)
             throws IllegalStateException, IllegalArgumentException {
 
@@ -352,7 +352,7 @@ public final class XmlFactory {
      * @throws IllegalStateException if TransformerFactory initialization failed or template creation failed or transformer creation failed
      * @throws IllegalArgumentException if transformation failure or the xsl file path is empty or I/O exception occurs while reading XSLT
      */
-    private static void transform(final Source source, final String xslFilePath, Map<String, Object> params,
+    private static void transform(final Source source, final String xslFilePath, final Map<String, Object> params,
             final boolean doCacheXsl, final Result result)
             throws IllegalStateException, IllegalArgumentException {
 
@@ -473,12 +473,11 @@ public final class XmlFactory {
      * @param transformer the transformer
      * @param params the optional parameter map     
      */
-    private static void addParams(Transformer transformer, Map<String, Object> params) {
-        if(params==null){
-            return;
-        }
-        for (String paramName : params.keySet()) {
-            transformer.setParameter(paramName, params.get(paramName));
+    private static void addParams(final Transformer transformer, final Map<String, Object> params) {
+        if (params != null) {
+            for (Map.Entry<String, Object> paramEntry : params.entrySet()) {
+                transformer.setParameter(paramEntry.getKey(), paramEntry.getValue());
+            }
         }
     }
 }

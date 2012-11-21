@@ -84,7 +84,6 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
                 && App.getSharedApplicationDataModel().getFeedbackReportFormURL() != null) {
             // Create Gui using EDT:
             SwingUtils.invokeEDT(new Runnable() {
-
                 @Override
                 public void run() {
                     new FeedbackReport(modal, exception);
@@ -139,7 +138,6 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         WindowUtils.centerOnMainScreen(this);
 
         cancelButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(final ActionEvent evt) {
                 // Just use dispose() as it is overriden to :
@@ -150,7 +148,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         if (_exception != null) {
             final String msg = ((_exception.getMessage() != null) ? _exception.getMessage() : "no message");
-            
+
             // try to get cause if possible
             String cause = "";
 
@@ -210,7 +208,6 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
             // Use Timer to wait 2s before closing this dialog :
             final Timer timer = new Timer(2000, new ActionListener() {
-
                 /**
                  * Handle the timer call
                  * @param ae action event
@@ -303,7 +300,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         // Check if the exception is not null
         if (_exception != null) {
-            final StringWriter stringWriter = new StringWriter();
+            final StringWriter stringWriter = new StringWriter(2048); // 2K buffer
             _exception.printStackTrace(new PrintWriter(stringWriter));
             exceptionTrace = stringWriter.toString();
         }

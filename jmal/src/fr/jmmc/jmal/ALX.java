@@ -38,6 +38,8 @@ public final class ALX {
     public static final double ARCSEC = 1.0d;
     /** Specify the value of one arcsecond in degrees */
     public static final double ARCSEC_IN_DEGREES = (1.0d / 3600.0d);
+    /** Specify the value of one arcsecond in degrees */
+    public static final double DEG_IN_ARCSEC = 3600.0d;
     /** Specify the value of one milli arcsecond in degrees */
     public static final double MILLI_ARCSEC_IN_DEGREES = ARCSEC_IN_DEGREES / 1000d;
     /** Sun surface gravity  = 4.378 cm s-2 (AQ, 340/14 SUN) */

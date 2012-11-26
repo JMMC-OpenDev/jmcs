@@ -5,7 +5,6 @@ package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
-import fr.jmmc.jmcs.gui.action.RecentFilesManager;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.MimeType;
 import java.awt.FileDialog;
@@ -241,13 +240,6 @@ public final class FileChooser {
 
         if (selectedFiles != null) {
             updateDirectoryForMimeType(mimeType, selectedFiles[0].getParent());
-
-            final RecentFilesManager rfm = RecentFilesManager.getInstance();
-
-            // Add each file to the recently opened file list
-            for (File file : selectedFiles) {
-                rfm.addFile(file);
-            }
         }
 
         return selectedFiles;

@@ -4,10 +4,13 @@
 package fr.jmmc.jmcs.gui.action;
 
 import fr.jmmc.jmcs.collection.FixedSizeLinkedHashMap;
+import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
@@ -25,32 +28,29 @@ public final class RecentFilesManager {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(RecentFilesManager.class.getName());
-    /** flag to enable/disable the recent file management */
-    public static final boolean ENABLE_FILE_HISTORY = false;
-    /** max number of entries */
+    /** Maximum number of recent files by MIME type */
     private static final int MAXIMUM_HISTORY_ENTRIES = 10;
     /** Singleton instance */
     private static volatile RecentFilesManager _instance = null;
-    /* members */
-    /** action registrar reference */
+    // Members
+    /** Action registrar reference */
     private final ActionRegistrar _registrar;
     /** Hook to the "Open Recent" sub-menu */
     private final JMenu _menu;
-    /** thread safe recent file names keyed by file paths */
-    private final Map<String, String> _files = Collections.synchronizedMap(new FixedSizeLinkedHashMap<String, String>(MAXIMUM_HISTORY_ENTRIES));
+    /** thread safe recent file repository */
+    private final Map<String, String> _repository = Collections.synchronizedMap(new FixedSizeLinkedHashMap<String, String>(MAXIMUM_HISTORY_ENTRIES));
 
     /**
      * Return the singleton instance
      * @return singleton instance
      */
-    public static synchronized RecentFilesManager getInstance() {
+    protected static synchronized RecentFilesManager getInstance() {
         // DO NOT MODIFY !!!
         if (_instance == null) {
             _instance = new RecentFilesManager();
         }
 
         return _instance;
-
         // DO NOT MODIFY !!!
     }
 
@@ -58,25 +58,97 @@ public final class RecentFilesManager {
      * Hidden constructor
      */
     protected RecentFilesManager() {
-        // @TODO : the same for shared prefs.
         _registrar = ActionRegistrar.getInstance();
         _menu = new JMenu("Open Recent");
-        populateMenuFromSharedPreferences();
-        addCleanAction();
+        populateMenuFromPreferences();
     }
 
     /**
      * Link RecentFilesManager menu to the "Open Recent" sub-menu
-     * @return menu "Open Recent" sub-menu container
+     * @return "Open Recent" sub-menu container
      */
-    public JMenu getMenu() {
-        if (!RecentFilesManager.ENABLE_FILE_HISTORY) {
-            return null;
-        }
-        return _menu;
+    public static JMenu getMenu() {
+        return getInstance()._menu;
     }
 
-    // @TODO : Handle MimeTypes !!!
+    /**
+     * Add the given recent file for MIME type.
+     * @param mimeType
+     * @param file 
+     */
+    public static synchronized void addFile(final File file) {
+        
+        getInstance();
+        if (_instance.storeFile(file)) {
+            return;
+        }
+
+        _instance.refreshMenu();
+        _instance.flushRecentFileListToPrefrences();
+    }
+
+    private synchronized boolean storeFile(final File file) {
+
+        // Check parameter validity
+        if (!file.canRead()) {
+            _logger.warn("Could not read file " + file);
+            return true;
+        }
+
+        // Check file path
+        String path;
+        try {
+            path = file.getCanonicalPath();
+        } catch (IOException ex) {
+            _logger.warn("Could not resolve file path", ex);
+            return true;
+        }
+
+        if ((path == null) || (path.length() == 0)) {
+            _logger.warn("Could not resolve empty file path");
+            return true;
+        }
+
+        // Check file name
+        String name = file.getName();
+        if ((name == null) || (name.length() == 0)) { // If no name found
+            name = path; // Use path instead
+        }
+
+        // Store file
+        _repository.put(path, name);
+        return false;
+    }
+
+    private void refreshMenu() {
+
+        // Clean, then re-fill sub-menu
+        _menu.removeAll();
+        _menu.setEnabled(false);
+
+        // For each registered files
+        for (final String currentPath : _repository.keySet()) {
+
+            // Create an action to open it
+            final String currentName = _repository.get(currentPath);
+            final AbstractAction currentAction = new AbstractAction(currentName) {
+                /** default serial UID for Serializable interface */
+                private static final long serialVersionUID = 1;
+
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, currentPath));
+                }
+            };
+            _menu.add(new JMenuItem(currentAction));
+        }
+
+        if (_menu.getItemCount() > 0) {
+            addCleanAction();
+            _menu.setEnabled(true);
+        }
+    }
+
     /**
      * Add a "Clear" item at end below a separator
      */
@@ -88,9 +160,10 @@ public final class RecentFilesManager {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
+                _repository.clear();
                 _menu.removeAll();
-                _files.clear();
                 _menu.setEnabled(false);
+                // TODO : clean pref too !!!
             }
         };
 
@@ -99,89 +172,36 @@ public final class RecentFilesManager {
     }
 
     /**
-     * @TODO : grab recent files from shared preference
+     * Grab recent files from shared preference.
      */
-    private void populateMenuFromSharedPreferences() {
-        /*
-         addFile("/tmp/toto", "toto");
-         addFile("/tmp/titi", "titi");
-         addFile("/tmp/tata", "tata");
-         addFile("/tmp/tutu", "tutu");
-         addFile("/Users/lafrasse/test.scvot", "test.scvot");
-         */
-        // If no recent files registered at all
-        if (_files.isEmpty()) {
-            // Make the "Open Recent" sub-menu disabled
-            _menu.setEnabled(false);
+    private void populateMenuFromPreferences() {
+
+        final List<String> recentFilePaths = FileChooserPreferences.getRecentFilePaths();
+        if (recentFilePaths == null) {
+            _logger.warn("No recent file path found.");
+            return;
         }
+
+        for (String path : recentFilePaths) {
+            storeFile(new File(path));
+        }
+
+        refreshMenu();
     }
 
     /**
-     * TODO
-     * @param file 
+     * Flush file list to shared preference.
      */
-    public synchronized void addFile(final File file) {
-        if (!RecentFilesManager.ENABLE_FILE_HISTORY) {
+    private void flushRecentFileListToPrefrences() {
+
+        // Create list of paths
+        if ((_repository == null) || (_repository.size() == 0)) {
+            _logger.debug("Could not get recent file paths.");
             return;
         }
+        List<String> pathsList = new ArrayList<String>(_repository.keySet());
 
-        // Check parameter validity
-        if (!file.canRead()) {
-            _logger.warn("Could not read file " + file);
-            return;
-        }
-
-        // Check file path
-        String path;
-        try {
-            path = file.getCanonicalPath();
-        } catch (IOException ex) {
-            _logger.warn("Could not resolve file path", ex);
-            return;
-        }
-        if ((path == null) || (path.length() == 0)) {
-            _logger.warn("Could not resolve empty file path");
-            return;
-        }
-
-        // Check file name
-        String name = file.getName();
-        // If no name found
-        if ((name == null) || (name.length() == 0)) {
-            name = path; // Use path instead
-        }
-
-        // Store new recent file
-        _files.put(path, name);
-
-        // Clean, then re-fill sub-menu
-        _menu.removeAll();
-        for (final String currentPath : _files.keySet()) {
-
-            final String currentName = _files.get(currentPath);
-
-            final AbstractAction currentAction = new AbstractAction(currentName) {
-                /** default serial UID for Serializable interface */
-                private static final long serialVersionUID = 1;
-
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, currentPath));
-                }
-            };
-
-            _menu.add(new JMenuItem(currentAction));
-        }
-
-        addCleanAction();
-        _menu.setEnabled(true);
-
-        flushRecentFileListToSharedPrefrence();
-    }
-
-    /**
-     * @TODO : Flush file list to shared preference
-     */
-    private static void flushRecentFileListToSharedPrefrence() {
+        // Put this to prefs
+        FileChooserPreferences.setRecentFilePaths(pathsList);
     }
 }

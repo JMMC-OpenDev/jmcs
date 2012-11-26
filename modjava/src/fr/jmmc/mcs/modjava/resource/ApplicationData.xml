@@ -23,6 +23,18 @@
         <package name="SAX" description="SAX is the Simple API for XML, originally a Java-only API. SAX was the first widely adopted API for XML in Java, and is a 'de facto' standard." link="http://www.saxproject.org/"/>
     </dependences>
     <menubar>
+        <menu label="File">
+            <menu label="Open..." classpath="fr.jmmc.mcs.modjava.Main" action="_openAction" accelerator="O"/>
+            <menu label="Import" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" icon="/fr/jmmc/mcs/modjava/import.png"/>
+            <menu label="Export" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1"/>
+        </menu>
+        <menu label="Edit">
+            <menu label="Import"/>
+            <menu label="Export">
+                <menu label="As file"/>
+                <menu label="As text"/>
+            </menu>
+        </menu>
         <menu label="Preferences">
             <menu label="Save to file" classpath="fr.jmmc.mcs.modjava.Preferences" action="savePreferences"/>
             <menu label="Set default values" classpath="fr.jmmc.mcs.modjava.Preferences" action="restorePreferences"/>
@@ -58,17 +70,6 @@
         <menu label="Help">
             <menu label="How to bla" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1"/>
             <menu label="Don't know" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" checkbox="true"/>
-        </menu>
-        <menu label="File">
-            <menu label="Import" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" icon="/fr/jmmc/mcs/modjava/import.png"/>
-            <menu label="Export" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1"/>
-        </menu>
-        <menu label="Edit">
-            <menu label="Import"/>
-            <menu label="Export">
-                <menu label="As file"/>
-                <menu label="As text"/>
-            </menu>
         </menu>
     </menubar>
     <releasenotes>

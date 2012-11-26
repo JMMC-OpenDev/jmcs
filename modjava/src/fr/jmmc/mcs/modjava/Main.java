@@ -4,11 +4,15 @@
 package fr.jmmc.mcs.modjava;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.gui.action.RecentFilesManager;
+import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.component.DismissableMessagePane;
+import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.network.interop.SampCapability;
 import fr.jmmc.jmcs.network.interop.SampMessageHandler;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -37,6 +41,7 @@ public class Main extends App {
     /** Button to launch helpview window */
     private JButton _helpViewButton = null;
     /** Actions class */
+    public RegisteredAction _openAction;
     Actions _actions = null;
     /** Test button */
     private JButton _testDismissableMessagePane = null;
@@ -54,8 +59,9 @@ public class Main extends App {
         _logger.warning("Initialize application objects");
 
         _actions = new Actions();
+        _openAction = openAction();
 
-        // .. buttons
+        // Buttons
         _aboutBoxButton = new JButton(aboutBoxAction());
         _feedbackReportButton = new JButton(feedbackReportAction());
         _helpViewButton = new JButton(openHelpFrame());
@@ -84,10 +90,11 @@ public class Main extends App {
 
         // Show the frame
         getFrame().setVisible(true);
+        RecentFilesManager.addFile(new File("/Users/lafrasse/test.scvot"));
 
         try {
             SampMessageHandler handler = new SampMessageHandler("stuff.do") {
-
+                @Override
                 public void processMessage(String senderId, Message msg) {
                     // do stuff
                     System.out.println("\tReceived 'stuff.do' message from '" + senderId + "' : '" + msg + "'.");
@@ -96,15 +103,13 @@ public class Main extends App {
                     Map result = new HashMap();
                     result.put("name", name);
                     result.put("x", SampUtils.encodeFloat(3.141159));
-                    return;
                 }
             };
             handler = new SampMessageHandler(SampCapability.LOAD_VO_TABLE) {
-
+                @Override
                 public void processMessage(String senderId, Message msg) {
                     // do stuff
                     System.out.println("\tReceived 'LOAD_VO_TABLE' message from '" + senderId + "' : '" + msg + "'.");
-                    return;
                 }
             };
         } catch (Exception ex) {
@@ -128,6 +133,7 @@ public class Main extends App {
         return new AbstractAction("Open Help Frame") {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 // Instantiate help JFrame
                 JFrame helpFrame = new JFrame("- Help frame -");
@@ -154,12 +160,29 @@ public class Main extends App {
         return new AbstractAction("Show dismissable message pane") {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 DismissableMessagePane.show(
                         "Try to show a test message\n which can be deactivated by user!!",
                         Preferences.getInstance(), "msgTest");
             }
         };
+    }
+
+    /** Open file action
+     * @return
+     */
+    private RegisteredAction openAction() {
+        RegisteredAction temp = new RegisteredAction("fr.jmmc.mcs.modjava.Main", "_openAction") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                MessagePane.showMessage("test !");
+            }
+        };
+        temp.flagAsOpenAction();
+        return temp;
     }
 
     /**

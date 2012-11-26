@@ -3,35 +3,32 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.gui.component.MessagePane;
-import fr.jmmc.jmcs.gui.util.WindowUtils;
-import fr.jmmc.jmcs.gui.util.SwingUtils;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.gui.task.JmcsTaskRegistry;
-import fr.jmmc.jmcs.gui.task.TaskSwingWorker;
+import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
-import fr.jmmc.jmcs.network.Http;
 import fr.jmmc.jmcs.data.preference.PreferencedDocument;
 import fr.jmmc.jmcs.data.preference.Preferences;
+import fr.jmmc.jmcs.gui.component.MessagePane;
+import fr.jmmc.jmcs.gui.task.JmcsTaskRegistry;
+import fr.jmmc.jmcs.gui.task.TaskSwingWorker;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
+import fr.jmmc.jmcs.network.Http;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.DefaultComboBoxModel;
-
 import javax.swing.JFrame;
 import javax.swing.Timer;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class opens a new feedback report window. It uses the model
@@ -48,10 +45,12 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(FeedbackReport.class.getName());
     /** Feedback report type definition array */
+    private static final String BUG_REPORT = "Bug Report";
+    private static final String DOCUMENTATION_TYPO = "Documentation Typo";
+    private static final String EVOLUTION_REQUEST = "Evolution Request";
+    private static final String SUPPORT_REQUEST = "Support Request";
     private static final String[] _feedbackTypes = new String[]{
-        "Bug Report", "Documentation Typo", "Evolution Request",
-        "Support Request"
-    };
+        BUG_REPORT, DOCUMENTATION_TYPO, EVOLUTION_REQUEST, SUPPORT_REQUEST};
 
     /**
      * Show a new FeedbackReport object (not modal).
@@ -147,6 +146,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         });
 
         if (_exception != null) {
+            _feedbackTypeDataModel.setSelectedItem(BUG_REPORT);
             final String msg = ((_exception.getMessage() != null) ? _exception.getMessage() : "no message");
 
             // try to get cause if possible
@@ -166,6 +166,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             descriptionTextArea.append("Following exception occured:\n" + msg + cause + "\n\n--\n");
 
             _logger.error("An exception was given to the feedback report: ", _exception);
+        } else {
+            _feedbackTypeDataModel.setSelectedItem(EVOLUTION_REQUEST);
         }
 
         // Listen to key event to ensure

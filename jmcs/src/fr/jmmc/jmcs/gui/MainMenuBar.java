@@ -182,7 +182,7 @@ public class MainMenuBar extends JMenuBar {
 
                     // If we are on the "Open" action
                     if ((_openComponent != null) && (currentComponent.equals(_openComponent))) {
-                        final JMenu openRecentMenu = RecentFilesManager.getInstance().getMenu();
+                        final JMenu openRecentMenu = RecentFilesManager.getMenu();
 
                         if (openRecentMenu != null) {
                             // Add the synthetised "Open recent" sub-menu

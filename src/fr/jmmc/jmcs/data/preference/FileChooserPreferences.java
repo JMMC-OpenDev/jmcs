@@ -4,13 +4,19 @@
 package fr.jmmc.jmcs.data.preference;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.util.MimeType;
 import java.io.File;
+import java.util.List;
+import org.ivoa.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class gathers user preferences related to local folders in FileChooser
+ * This class gathers :
+ * - user preferences related to local folders in FileChooser;
+ * - recently used file paths.
+ *
  * @author Laurent BOURGES, Sylvain LAFRASSE
  */
 public final class FileChooserPreferences extends Preferences {
@@ -18,7 +24,13 @@ public final class FileChooserPreferences extends Preferences {
     /** Singleton instance */
     private static FileChooserPreferences _singleton = null;
     /** Logger */
-    private static final Logger logger = LoggerFactory.getLogger(FileChooserPreferences.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(FileChooserPreferences.class.getName());
+    /** File name prefix */
+    private static final String FILENAME_PREFIX = "fr.jmmc.jmcs.filechooser.";
+    /** File name suffix */
+    private static final String FILENAME_SUFFIX = ".properties";
+    /** Recent file prefix */
+    private static final String RECENT_FILE_PREFIX = "recent_files.";
 
     /**
      * Private constructor that must be empty.
@@ -36,7 +48,7 @@ public final class FileChooserPreferences extends Preferences {
         // Build new reference if singleton does not already exist
         // or return previous reference
         if (_singleton == null) {
-            logger.debug("FilePreferences.getInstance()");
+            _logger.debug("FilePreferences.getInstance()");
             // disable notifications:
             _singleton = new FileChooserPreferences();
             // enable future notifications:
@@ -60,7 +72,7 @@ public final class FileChooserPreferences extends Preferences {
      */
     @Override
     protected void setDefaultPreferences() throws PreferencesException {
-        logger.debug("FilePreferences.setDefaultPreferences");
+        _logger.debug("FilePreferences.setDefaultPreferences");
 
         final String defaultDirectory = getDefaultDirectory();
 
@@ -77,12 +89,11 @@ public final class FileChooserPreferences extends Preferences {
     @Override
     protected String getPreferenceFilename() {
 
-        final String shortCompanyName = App.getSharedApplicationDataModel().getShortCompanyName();
-        final String programName = App.getSharedApplicationDataModel().getProgramName();
-        final String prefix = "fr.jmmc.jmcs.filechooser.";
+        final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        final String shortCompanyName = applicationDataModel.getShortCompanyName();
+        final String programName = applicationDataModel.getProgramName();
 
-        String preferenceFileName = prefix + shortCompanyName + "." + programName + ".properties";
-
+        String preferenceFileName = FILENAME_PREFIX + shortCompanyName + "." + programName + FILENAME_SUFFIX;
         preferenceFileName = preferenceFileName.replace(" ", "");
         preferenceFileName = preferenceFileName.toLowerCase();
 
@@ -90,8 +101,6 @@ public final class FileChooserPreferences extends Preferences {
     }
 
     /**
-     *  Return preference version number.
-     *
      * @return preference version number.
      */
     @Override
@@ -100,18 +109,16 @@ public final class FileChooserPreferences extends Preferences {
     }
 
     /**
-     * Return the last directory used for files having this mime type. By default = user home
-     * @param mimeType mime type to look for
-     * @return last directory used or user home as File
+     * @return the last directory used for files having this MIME type (by default, user home).
+     * @param mimeType MIME type to look for
      */
     public static File getLastDirectoryForMimeTypeAsFile(final MimeType mimeType) {
         return new File(getLastDirectoryForMimeTypeAsPath(mimeType));
     }
 
     /**
-     * Return the last directory used for files having this mime type. By default = user home
-     * @param mimeType mime type to look for
-     * @return last directory used or user home
+     * @return the last directory used for files having this MIME type (by default, user home).
+     * @param mimeType MIME type to look for
      */
     public static String getLastDirectoryForMimeTypeAsPath(final MimeType mimeType) {
         if (mimeType == null) {
@@ -121,7 +128,7 @@ public final class FileChooserPreferences extends Preferences {
     }
 
     /**
-     * Define the last directory used for files having this mime type
+     * Define the last directory used for files having this MIME type.
      * @param mimeType mime type to look for
      * @param path file path to an existing directory
      */
@@ -133,9 +140,55 @@ public final class FileChooserPreferences extends Preferences {
                     getInstance().setPreference(mimeType.getId(), path);
                     getInstance().saveToFile();
                 } catch (PreferencesException pe) {
-                    logger.warn("Saving FilePreferences failure:", pe);
+                    _logger.warn("Saving FilePreferences failure:", pe);
                 }
             }
+        }
+    }
+
+    /**
+     * @return the recent file list, or null if none found.
+     */
+    public static List<String> getRecentFilePaths() {
+
+        // Try to read paths list from preference
+        List<String> paths = null;
+        try {
+            paths = getInstance().getPreferenceAsStringList(RECENT_FILE_PREFIX);
+        } catch (MissingPreferenceException ex) {
+            _logger.error("No recent files found.", ex);
+            return null;
+        } catch (PreferencesException ex) {
+            _logger.error("Could not read preference for recent files", ex);
+            return null;
+        }
+
+        if ((paths == null) || (paths.size() == 0)) {
+            _logger.info("No recent files stored.");
+            return null;
+        }
+
+        // Deserialize paths to recent file list
+        _logger.info("Found recent files '" + CollectionUtils.toString(paths) + "'.");
+        return paths;
+    }
+
+    /**
+     * @param paths path list to store in preferences
+     */
+    public static void setRecentFilePaths(List<String> paths) {
+
+        if ((paths == null) || (paths.size() == 0)) {
+            _logger.error("Null recent file list received");
+            return;
+        }
+
+        // Try to store paths list to preference
+        try {
+            getInstance().setPreference(RECENT_FILE_PREFIX, paths);
+            getInstance().saveToFile();
+        } catch (PreferencesException ex) {
+            _logger.error("Could not store recent file list in preference", ex);
         }
     }
 
@@ -147,7 +200,7 @@ public final class FileChooserPreferences extends Preferences {
         try {
             FileChooserPreferences.getInstance().saveToFile();
         } catch (PreferencesException pe) {
-            logger.error("property failure : ", pe);
+            _logger.error("property failure : ", pe);
         }
     }
 }

@@ -51,7 +51,7 @@ public class PreferencesView extends JFrame implements ActionListener {
         super("Preferences");
 
         // Check arguments validity
-        if ((preferences == null) || (panels == null) || (panels.size() == 0)) {
+        if ((preferences == null) || (panels == null) || (panels.isEmpty())) {
             throw new IllegalArgumentException();
         }
 

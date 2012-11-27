@@ -9,6 +9,7 @@ package fr.jmmc.jmcs.util;
  */
 public final class StringUtils {
 
+    // TODO: use Pattern.compile to compile regexp once for all:
     /** empty String constant '' */
     public final static String STRING_EMPTY = "";
     /** String constant containing 1 space character ' ' */

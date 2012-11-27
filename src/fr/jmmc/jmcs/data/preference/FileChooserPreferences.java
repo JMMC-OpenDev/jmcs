@@ -7,6 +7,7 @@ import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.util.MimeType;
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import org.ivoa.util.CollectionUtils;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public final class FileChooserPreferences extends Preferences {
      *
      * @return the singleton instance
      */
-    protected synchronized static FileChooserPreferences getInstance() {
+    synchronized static FileChooserPreferences getInstance() {
         // Build new reference if singleton does not already exist
         // or return previous reference
         if (_singleton == null) {
@@ -79,6 +80,9 @@ public final class FileChooserPreferences extends Preferences {
         for (MimeType mimeType : MimeType.values()) {
             setDefaultPreference(mimeType.getId(), defaultDirectory);
         }
+
+        final List<String> emptyList = Collections.emptyList();
+        setDefaultPreference(RECENT_FILE_PREFIX, emptyList);
     }
 
     /**
@@ -163,7 +167,7 @@ public final class FileChooserPreferences extends Preferences {
             return null;
         }
 
-        if ((paths == null) || (paths.size() == 0)) {
+        if ((paths == null) || (paths.isEmpty())) {
             _logger.info("No recent files stored.");
             return null;
         }
@@ -178,7 +182,7 @@ public final class FileChooserPreferences extends Preferences {
      */
     public static void setRecentFilePaths(List<String> paths) {
 
-        if ((paths == null) || (paths.size() == 0)) {
+        if ((paths == null) || (paths.isEmpty())) {
             _logger.error("Null recent file list received");
             return;
         }

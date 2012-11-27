@@ -36,7 +36,7 @@ public final class RecentFilesManager {
     /** Action registrar reference */
     private final ActionRegistrar _registrar;
     /** Hook to the "Open Recent" sub-menu */
-    private final JMenu _menu;
+    final JMenu _menu;
     /** thread safe recent file repository */
     private final Map<String, String> _repository = Collections.synchronizedMap(new FixedSizeLinkedHashMap<String, String>(MAXIMUM_HISTORY_ENTRIES));
 
@@ -44,7 +44,7 @@ public final class RecentFilesManager {
      * Return the singleton instance
      * @return singleton instance
      */
-    protected static synchronized RecentFilesManager getInstance() {
+    static synchronized RecentFilesManager getInstance() {
         // DO NOT MODIFY !!!
         if (_instance == null) {
             _instance = new RecentFilesManager();
@@ -73,21 +73,19 @@ public final class RecentFilesManager {
 
     /**
      * Add the given recent file for MIME type.
-     * @param mimeType
      * @param file 
      */
-    public static synchronized void addFile(final File file) {
-        
-        getInstance();
-        if (_instance.storeFile(file)) {
+    public static void addFile(final File file) {
+        final RecentFilesManager rfm = getInstance();
+        if (rfm.storeFile(file)) {
             return;
         }
 
-        _instance.refreshMenu();
-        _instance.flushRecentFileListToPrefrences();
+        rfm.refreshMenu();
+        rfm.flushRecentFileListToPrefrences();
     }
 
-    private synchronized boolean storeFile(final File file) {
+    private boolean storeFile(final File file) {
 
         // Check parameter validity
         if (!file.canRead()) {
@@ -193,13 +191,12 @@ public final class RecentFilesManager {
      * Flush file list to shared preference.
      */
     private void flushRecentFileListToPrefrences() {
-
         // Create list of paths
-        if ((_repository == null) || (_repository.size() == 0)) {
+        if ((_repository == null) || (_repository.isEmpty())) {
             _logger.debug("Could not get recent file paths.");
             return;
         }
-        List<String> pathsList = new ArrayList<String>(_repository.keySet());
+        final List<String> pathsList = new ArrayList<String>(_repository.keySet());
 
         // Put this to prefs
         FileChooserPreferences.setRecentFilePaths(pathsList);

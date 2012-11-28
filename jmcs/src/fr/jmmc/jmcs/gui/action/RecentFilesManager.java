@@ -22,7 +22,9 @@ import org.slf4j.LoggerFactory;
 /**
  * RecentFilesManager singleton class.
  * 
- * @author Sylvain LAFRASSE, Laurent BOURGES.
+ * RecentFilesManager.addFile() must be called by application to feed the Recent File menu entry.
+ * 
+ * @author Sylvain LAFRASSE, Laurent BOURGES, Guillaume MELLA.
  */
 public final class RecentFilesManager {
 
@@ -77,7 +79,7 @@ public final class RecentFilesManager {
      */
     public static void addFile(final File file) {
         final RecentFilesManager rfm = getInstance();
-        if (rfm.storeFile(file)) {
+        if (!rfm.storeFile(file)) {
             return;
         }
 
@@ -85,26 +87,31 @@ public final class RecentFilesManager {
         rfm.flushRecentFileListToPrefrences();
     }
 
-    private boolean storeFile(final File file) {
-
+    /**
+     * Store the given file in the recent file repository.
+     * @param file file to be added in the file repository
+     * @return  true if operation succedeed else false.
+     */
+    private boolean storeFile(final File file) {        
+        
         // Check parameter validity
-        if (!file.canRead()) {
-            _logger.warn("Could not read file " + file);
-            return true;
+        if (file==null || !file.canRead()) {
+            _logger.warn("Could not read file '{}'", file);
+            return false;
         }
-
+        
         // Check file path
         String path;
         try {
             path = file.getCanonicalPath();
         } catch (IOException ex) {
-            _logger.warn("Could not resolve file path", ex);
-            return true;
+            _logger.warn("Could not resolve file path of file '{}'",file, ex);
+            return false;
         }
 
         if ((path == null) || (path.length() == 0)) {
-            _logger.warn("Could not resolve empty file path");
-            return true;
+            _logger.warn("Could not resolve empty file path of file '{}'", file);
+            return false;
         }
 
         // Check file name
@@ -115,9 +122,12 @@ public final class RecentFilesManager {
 
         // Store file
         _repository.put(path, name);
-        return false;
+        return true;
     }
 
+    /**
+     * Refresh content of "Open Recent" File menu entry.
+     */
     private void refreshMenu() {
 
         // Clean, then re-fill sub-menu

@@ -75,16 +75,19 @@ public final class RecentFilesManager {
 
     /**
      * Add the given recent file for MIME type.
-     * @param file 
+     * @param file file object or null
      */
     public static void addFile(final File file) {
-        final RecentFilesManager rfm = getInstance();
-        if (!rfm.storeFile(file)) {
-            return;
-        }
+        if (file != null) {
+            final RecentFilesManager rfm = getInstance();
 
-        rfm.refreshMenu();
-        rfm.flushRecentFileListToPrefrences();
+            if (!rfm.storeFile(file)) {
+                return;
+            }
+
+            rfm.refreshMenu();
+            rfm.flushRecentFileListToPrefrences();
+        }
     }
 
     /**
@@ -92,20 +95,19 @@ public final class RecentFilesManager {
      * @param file file to be added in the file repository
      * @return  true if operation succedeed else false.
      */
-    private boolean storeFile(final File file) {        
-        
+    private boolean storeFile(final File file) {
         // Check parameter validity
-        if (file==null || !file.canRead()) {
+        if (file == null || !file.canRead()) {
             _logger.warn("Could not read file '{}'", file);
             return false;
         }
-        
+
         // Check file path
         String path;
         try {
             path = file.getCanonicalPath();
         } catch (IOException ex) {
-            _logger.warn("Could not resolve file path of file '{}'",file, ex);
+            _logger.warn("Could not resolve file path of file '{}'", file, ex);
             return false;
         }
 

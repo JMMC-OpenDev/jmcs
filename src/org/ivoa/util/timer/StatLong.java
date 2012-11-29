@@ -1,5 +1,8 @@
 package org.ivoa.util.timer;
 
+import fr.jmmc.jmcs.util.NumberUtils;
+import fr.jmmc.jmcs.util.ToStringable;
+
 /**
  * Utility Class to store statistics : accumulated, average, accumulated delta,
  * stddev
@@ -8,7 +11,7 @@ package org.ivoa.util.timer;
  *
  * @author Laurent BOURGES (voparis), Gerard LEMSON (mpe).
  */
-public final class StatLong {
+public final class StatLong implements ToStringable {
     // ~ Constants
     // --------------------------------------------------------------------------------------------------------
 
@@ -76,7 +79,7 @@ public final class StatLong {
     /**
      * reset values
      */
-    public final void reset() {
+    public void reset() {
         this.counter = 0;
         this.acc = 0d;
         this.average = 0d;
@@ -93,7 +96,7 @@ public final class StatLong {
      *
      * @param stat statistics to add in this instance
      */
-    public final void add(final StatLong stat) {
+    public void add(final StatLong stat) {
         this.counter += stat.getCounter();
         this.acc += stat.getAccumulator();
         this.average = this.acc / this.counter;
@@ -114,7 +117,7 @@ public final class StatLong {
      *
      * @param value integer value to add in statistics
      */
-    public final void add(final int value) {
+    public void add(final int value) {
         add((double) value);
     }
 
@@ -123,7 +126,7 @@ public final class StatLong {
      *
      * @param value long value to add in statistics
      */
-    public final void add(final long value) {
+    public void add(final long value) {
         add((double) value);
     }
 
@@ -132,7 +135,7 @@ public final class StatLong {
      *
      * @param value double value to add in statistics
      */
-    public final void add(final double value) {
+    public void add(final double value) {
         if (value < this.min) {
             this.min = value;
         }
@@ -170,7 +173,7 @@ public final class StatLong {
      *
      * @return occurence counter
      */
-    public final int getCounter() {
+    public int getCounter() {
         return counter;
     }
 
@@ -179,7 +182,7 @@ public final class StatLong {
      *
      * @return accumulator value
      */
-    public final double getAccumulator() {
+    public double getAccumulator() {
         return this.acc;
     }
 
@@ -188,7 +191,7 @@ public final class StatLong {
      *
      * @return high occurence counter
      */
-    public final int getCounterHigh() {
+    public int getCounterHigh() {
         return counterHigh;
     }
 
@@ -197,7 +200,7 @@ public final class StatLong {
      *
      * @return delta accumulator value
      */
-    public final double getDeltaAccumulatorHigh() {
+    public double getDeltaAccumulatorHigh() {
         return this.accDeltaHigh;
     }
 
@@ -206,7 +209,7 @@ public final class StatLong {
      *
      * @return low occurence counter
      */
-    public final int getCounterLow() {
+    public int getCounterLow() {
         return counterLow;
     }
 
@@ -215,7 +218,7 @@ public final class StatLong {
      *
      * @return delta accumulator value
      */
-    public final double getDeltaAccumulatorLow() {
+    public double getDeltaAccumulatorLow() {
         return this.accDeltaLow;
     }
 
@@ -224,7 +227,7 @@ public final class StatLong {
      *
      * @return average value
      */
-    public final double getAverage() {
+    public double getAverage() {
         return this.average;
     }
 
@@ -233,7 +236,7 @@ public final class StatLong {
      *
      * @return minimum value
      */
-    public final double getMin() {
+    public double getMin() {
         return this.min;
     }
 
@@ -242,7 +245,7 @@ public final class StatLong {
      *
      * @return maximum value
      */
-    public final double getMax() {
+    public double getMax() {
         return this.max;
     }
 
@@ -251,7 +254,7 @@ public final class StatLong {
      *
      * @return standard deviation
      */
-    public final double getStdDev() {
+    public double getStdDev() {
         double stddev = 0d;
         if (this.counter >= THRESHOLD_STDDEV) {
             stddev = Math.sqrt((this.accDeltaHigh + this.accDeltaLow) / (this.counter - THRESHOLD_STDDEV_N));
@@ -265,7 +268,7 @@ public final class StatLong {
      *
      * @return standard deviation
      */
-    public final double getStdDevHigh() {
+    public double getStdDevHigh() {
         double stddev = 0d;
         if (this.counterHigh >= THRESHOLD_STDDEV) {
             stddev = Math.sqrt(this.accDeltaHigh / (this.counterHigh - THRESHOLD_STDDEV_N));
@@ -279,7 +282,7 @@ public final class StatLong {
      *
      * @return standard deviation
      */
-    public final double getStdDevLow() {
+    public double getStdDevLow() {
         double stddev = 0d;
         if (this.counterLow >= THRESHOLD_STDDEV) {
             stddev = Math.sqrt(this.accDeltaLow / (this.counterLow - THRESHOLD_STDDEV_N));
@@ -289,37 +292,37 @@ public final class StatLong {
     }
 
     /**
-     * Return a string representation
-     * @param detailed true to get full statistics
-     * @return string representation
+     * toString() implementation using string builder
+     * 
+     * Note: to be overriden in child classes to append their fields
+     * 
+     * @param sb string builder to append to
+     * @param full true to get complete information; false to get main information (shorter)
      */
-    public final String toString(final boolean detailed) {
-        String res = "";
-        if (detailed && getCounter() > 0) {
-            // TODO : use StringBuilder
-            res = "{"
-                    + "num = " + getCounter() + " : "
-                    + "min = " + adjustValue(getMin()) + ", "
-                    + "avg = " + adjustValue(getAverage()) + ", "
-                    + "max = " + adjustValue(getMax()) + ", "
-                    + "acc = " + adjustValue(getAccumulator()) + ", "
-                    + "std = " + adjustValue(getStdDev())
-                    + " [" + (getCounterLow() + getCounterHigh()) + "] "
-                    + "std low  = " + adjustValue(getStdDevLow())
-                    + " [" + (getCounterLow()) + "] "
-                    + "std high = " + adjustValue(getStdDevHigh())
-                    + " [" + (getCounterHigh()) + "] "
-                    + "}";
-        }
-        return res;
-    }
+    public void toString(final StringBuilder sb, final boolean full) {
+        sb.append("{num = ").append(counter);
+        sb.append(" :\tmin = ").append(NumberUtils.trimTo5Digits(min));
+        sb.append(",\tavg = ").append(NumberUtils.trimTo5Digits(average));
+        sb.append(",\tmax = ").append(NumberUtils.trimTo5Digits(max));
 
-    /**
-     * Format the given double value to keep only 3 decimal digits
-     * @param value value to adjust
-     * @return double value with only 3 decimal digits
-     */
-    public final static double adjustValue(final double value) {
-        return ((long) (1e5d * value)) / 1e5d;
+        if (full) {
+            sb.append(",\tacc = ").append(NumberUtils.trimTo5Digits(acc));
+
+            double v = getStdDev();
+            if (v != 0d) {
+                sb.append(",\tstd = ").append(NumberUtils.trimTo5Digits(v));
+            }
+            v = getStdDevLow();
+            if (v != 0d) {
+                sb.append(",\tstd low = ").append(NumberUtils.trimTo5Digits(v));
+                sb.append(" [").append(counterLow).append(']');
+            }
+            v = getStdDevHigh();
+            if (v != 0d) {
+                sb.append(",\tstd high = ").append(NumberUtils.trimTo5Digits(v));
+                sb.append(" [").append(counterHigh).append(']');
+            }
+        }
+        sb.append('}');
     }
 }

@@ -3,6 +3,8 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import java.util.regex.Pattern;
+
 /**
  * This class provides several helper methods related to String handling
  * @author bourgesl
@@ -19,13 +21,13 @@ public final class StringUtils {
     /** String constant containing 1 minus sign character '-' */
     public final static String STRING_MINUS_SIGN = "-";
     /** regexp expression to match white spaces (1..n) */
-    public final static String REGEXP_WHITE_SPACE_MULTIPLE = "\\s+";
+    private final static Pattern PATTERN_WHITE_SPACE_MULTIPLE = Pattern.compile("\\s+");
     /** regular expression used to match characters different than alpha/numeric/+/- (1..n) */
-    public static final String REGEXP_NON_ALPHA_NUM = "[^a-zA-Z_\\+\\-0-9]+";
+    private final static Pattern PATTERN_NON_ALPHA_NUM = Pattern.compile("[^a-zA-Z_\\+\\-0-9]+");
     /** regexp expression to match carriage return */
-    public final static String REGEXP_CR = "\n";
+    private final static Pattern PATTERN_CR = Pattern.compile("\n");
     /** regexp expression to match tags */
-    public final static String REGEXP_TAGS = "\\<.*?\\>";
+    private final static Pattern PATTERN_TAGS = Pattern.compile("\\<.*?\\>");
 
     /**
      * Forbidden constructor
@@ -108,7 +110,7 @@ public final class StringUtils {
      * @return string value
      */
     public static String replaceWhiteSpaces(final String value, final String replaceBy) {
-        return value.replaceAll(REGEXP_WHITE_SPACE_MULTIPLE, replaceBy);
+        return PATTERN_WHITE_SPACE_MULTIPLE.matcher(value).replaceAll(replaceBy);
     }
 
     /* --- common alpha numeric helper methods ------------------------------ */
@@ -137,7 +139,7 @@ public final class StringUtils {
      * @return string value
      */
     public static String replaceNonAlphaNumericChars(final String value, final String replaceBy) {
-        return value.replaceAll(REGEXP_NON_ALPHA_NUM, replaceBy);
+        return PATTERN_NON_ALPHA_NUM.matcher(value).replaceAll(replaceBy);
     }
     /* --- common helper methods ------------------------------ */
 
@@ -148,7 +150,7 @@ public final class StringUtils {
      * @return string value
      */
     public static String replaceCR(final String value, final String replaceBy) {
-        return value.replaceAll(REGEXP_CR, replaceBy);
+        return PATTERN_CR.matcher(value).replaceAll(replaceBy);
     }
 
     /**
@@ -157,6 +159,6 @@ public final class StringUtils {
      * @return string value
      */
     public static String removeTags(final String value) {
-        return value.replaceAll(REGEXP_TAGS, STRING_EMPTY);
+        return PATTERN_TAGS.matcher(value).replaceAll(STRING_EMPTY);
     }
 }

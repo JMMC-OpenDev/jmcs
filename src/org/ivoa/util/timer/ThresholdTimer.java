@@ -1,5 +1,7 @@
 package org.ivoa.util.timer;
 
+import fr.jmmc.jmcs.util.NumberUtils;
+
 /**
  * Special Timer with a threshold to separate low & high values
  *
@@ -48,7 +50,7 @@ public final class ThresholdTimer extends AbstractTimer {
      * @param time value to add in statistics
      */
     @Override
-    public final void add(final double time) {
+    public void add(final double time) {
         this.usage++;
         if (time > threshold) {
             high.add(time);
@@ -62,7 +64,7 @@ public final class ThresholdTimer extends AbstractTimer {
      *
      * @return Timer instance for the high values
      */
-    public final Timer getTimerHigh() {
+    public Timer getTimerHigh() {
         return high;
     }
 
@@ -71,7 +73,7 @@ public final class ThresholdTimer extends AbstractTimer {
      *
      * @return Timer instance for the low values
      */
-    public final Timer getTimerLow() {
+    public Timer getTimerLow() {
         return low;
     }
 
@@ -81,20 +83,27 @@ public final class ThresholdTimer extends AbstractTimer {
      * @return time statistics
      */
     @Override
-    public final StatLong getTimeStatistics() {
+    public StatLong getTimeStatistics() {
         return this.getTimerHigh().getTimeStatistics();
     }
 
     /**
-     * Return a string representation
-     *
-     * @return string representation
+     * toString() implementation using string builder
+     * 
+     * Note: to be overriden in child classes to append their fields
+     * 
+     * @param sb string builder to append to
+     * @param full true to get complete information; false to get main information (shorter)
      */
     @Override
-    public final String toString() {
-        return super.toString() + "(threshold = " + StatLong.adjustValue(threshold) + " " + getUnit() + ") {\n  "
-                + "Low  : " + getTimerLow().toString() + "\n  "
-                + "High : " + getTimerHigh().toString() + "\n}";
+    public void toString(final StringBuilder sb, final boolean full) {
+        super.toString(sb, full);
+
+        sb.append("(threshold = ").append(NumberUtils.trimTo5Digits(threshold)).append(' ').append(getUnit()).append(") {\n  Low  : ");
+        low.toString(sb, full);
+        sb.append("\n  High : ");
+        high.toString(sb, full);
+        sb.append("\n}");
     }
 }
 // ~ End of file

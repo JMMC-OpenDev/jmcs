@@ -1,5 +1,6 @@
 package org.ivoa.util.timer;
 
+import fr.jmmc.jmcs.util.NumberUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,8 +86,8 @@ public final class TimerFactory {
         }
 
         if (WARMUP_DIAGNOSTICS && logger.isWarnEnabled()) {
-            logger.warn("TimerFactory : global nanoseconds  statistics : {}", globalStatNs.toString(true));
-            logger.warn("TimerFactory : global milliseconds statistics : {}", globalStatMs.toString(true));
+            logger.warn("TimerFactory : global nanoseconds  statistics : {}", globalStatNs.toString());
+            logger.warn("TimerFactory : global milliseconds statistics : {}", globalStatMs.toString());
         }
 
         double delta;
@@ -130,8 +131,8 @@ public final class TimerFactory {
         final long stop = System.nanoTime();
 
         if (logger.isWarnEnabled()) {
-            logger.warn("TimerFactory : nanoseconds  calibration correction : {}", StatLong.adjustValue(CALIBRATION_NANO_SECONDS));
-            logger.warn("TimerFactory : milliseconds calibration correction : {}", StatLong.adjustValue(CALIBRATION_MILLI_SECONDS));
+            logger.warn("TimerFactory : nanoseconds  calibration correction : {}", NumberUtils.trimTo5Digits(CALIBRATION_NANO_SECONDS));
+            logger.warn("TimerFactory : milliseconds calibration correction : {}", NumberUtils.trimTo5Digits(CALIBRATION_MILLI_SECONDS));
             logger.warn("TimerFactory : calibration time (ms) : {}", TimerFactory.elapsedMilliSeconds(start, stop));
         }
 
@@ -193,7 +194,7 @@ public final class TimerFactory {
     /**
      * Clean up that class
      */
-    public static final void onExit() {
+    public static void onExit() {
         // force GC :
         resetTimers();
         timerList = null;
@@ -208,8 +209,8 @@ public final class TimerFactory {
      * @param now t1
      * @return (t1 - t0) in milliseconds
      */
-    public static final double elapsedMilliSeconds(final long start, final long now) {
-        return CONVERT_NS_INTO_MS * (now - start) - CALIBRATION_MILLI_SECONDS;
+    public static double elapsedMilliSeconds(final long start, final long now) {
+        return NumberUtils.trimTo5Digits(CONVERT_NS_INTO_MS * (now - start) - CALIBRATION_MILLI_SECONDS);
     }
 
     /**
@@ -220,8 +221,8 @@ public final class TimerFactory {
      * @param now t1
      * @return (t1 - t0) in nanoseconds
      */
-    public static final double elapsedNanoSeconds(final long start, final long now) {
-        return (now - start) - CALIBRATION_NANO_SECONDS;
+    public static double elapsedNanoSeconds(final long start, final long now) {
+        return NumberUtils.trimTo5Digits((now - start) - CALIBRATION_NANO_SECONDS);
     }
 
     /**
@@ -232,7 +233,7 @@ public final class TimerFactory {
      * @param category a string representing the kind of operation
      * @return timer instance
      */
-    public static final AbstractTimer getTimer(final String category) {
+    public static AbstractTimer getTimer(final String category) {
         return getTimer(category, UNIT.ms, THRESHOLD);
     }
 
@@ -246,7 +247,7 @@ public final class TimerFactory {
      * @param unit MILLI_SECONDS or NANO_SECONDS
      * @return timer instance
      */
-    public static final AbstractTimer getTimer(final String category, final UNIT unit) {
+    public static AbstractTimer getTimer(final String category, final UNIT unit) {
         return getTimer(category, unit, THRESHOLD);
     }
 
@@ -258,7 +259,7 @@ public final class TimerFactory {
      * @param unit MILLI_SECONDS or NANO_SECONDS
      * @return timer instance
      */
-    public static final AbstractTimer getSimpleTimer(final String category, final UNIT unit) {
+    public static AbstractTimer getSimpleTimer(final String category, final UNIT unit) {
         return getTimer(category, unit, 0d);
     }
 
@@ -271,7 +272,7 @@ public final class TimerFactory {
      * @param unit MILLI_SECONDS or NANO_SECONDS
      * @return timer instance
      */
-    public static final AbstractTimer getTimer(final String category, final UNIT unit, final double th) {
+    public static AbstractTimer getTimer(final String category, final UNIT unit, final double th) {
         AbstractTimer timer = timerMap.get(category);
 
         if (timer == null) {
@@ -301,7 +302,7 @@ public final class TimerFactory {
      *
      * @return string representation for all timer instances
      */
-    public static final String dumpTimers() {
+    public static String dumpTimers() {
         String res;
 
         synchronized (lock) {
@@ -310,7 +311,8 @@ public final class TimerFactory {
             } else {
                 final StringBuilder sb = new StringBuilder(1024);
                 for (final AbstractTimer timer : timerList) {
-                    sb.append("\n").append(timer.toString());
+                    sb.append("\n");
+                    timer.toString(sb, true);
                 }
                 res = sb.toString();
             }
@@ -321,7 +323,7 @@ public final class TimerFactory {
     /**
      * Reset all timer instances
      */
-    public static final void resetTimers() {
+    public static void resetTimers() {
         synchronized (lock) {
             timerMap.clear();
             timerList.clear();
@@ -334,7 +336,7 @@ public final class TimerFactory {
      *
      * @return true if there is no existing timer
      */
-    public static final boolean isEmpty() {
+    public static boolean isEmpty() {
         return timerList.isEmpty();
     }
 }

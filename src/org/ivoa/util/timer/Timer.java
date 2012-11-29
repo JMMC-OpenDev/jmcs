@@ -1,11 +1,13 @@
 package org.ivoa.util.timer;
 
+import fr.jmmc.jmcs.util.ToStringable;
+
 /**
  * This class contains statistics for time metrics
  *
  * @author Laurent BOURGES (voparis), Gerard LEMSON (mpe).
  */
-public final class Timer extends AbstractTimer {
+public final class Timer extends AbstractTimer implements ToStringable {
     // ~ Members
     // ----------------------------------------------------------------------------------------------------------
 
@@ -34,7 +36,7 @@ public final class Timer extends AbstractTimer {
      * @param time value to add in statistics
      */
     @Override
-    public final void add(final double time) {
+    public void add(final double time) {
         this.usage++;
         monitorTime.add(time);
     }
@@ -45,24 +47,25 @@ public final class Timer extends AbstractTimer {
      * @return time statistics
      */
     @Override
-    public final StatLong getTimeStatistics() {
+    public StatLong getTimeStatistics() {
         return this.monitorTime;
     }
 
     /**
-     * Return a string representation
-     *
-     * @return string representation
+     * toString() implementation using string builder
+     * 
+     * Note: to be overriden in child classes to append their fields
+     * 
+     * @param sb string builder to append to
+     * @param full true to get complete information; false to get main information (shorter)
      */
     @Override
-    public final String toString() {
-        String res = super.toString();
+    public void toString(final StringBuilder sb, final boolean full) {
+        super.toString(sb, full);
 
-        final StatLong stat = getTimeStatistics();
-        if (stat.getCounter() > 0) {
-            res += stat.toString(true);
+        if (monitorTime.getCounter() != 0) {
+            monitorTime.toString(sb, full);
         }
-        return res;
     }
 }
 // ~ End of file

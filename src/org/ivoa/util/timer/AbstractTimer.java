@@ -102,8 +102,22 @@ public abstract class AbstractTimer {
      * @return string representation
      */
     @Override
-    public String toString() {
-        return "Timer [" + getCategory() + " - " + getUnit() + "] [" + getUsage() + "] ";
+    public final String toString() {
+        final StringBuilder sb = new StringBuilder(128);
+        toString(sb, true);
+        return sb.toString();
+    }
+
+    /**
+     * toString() implementation using string builder
+     * 
+     * Note: to be overriden in child classes to append their fields
+     * 
+     * @param sb string builder to append to
+     * @param full true to get complete information; false to get main information (shorter)
+     */
+    public void toString(final StringBuilder sb, final boolean full) {
+        sb.append("Timer [").append(category).append(" - ").append(unit).append("] [").append(usage).append("]\t");
     }
 }
 // ~ End of file

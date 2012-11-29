@@ -3,6 +3,10 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+
 /**
  * This class handles double number comparisons with absolute error and number helper methods
  * http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
@@ -15,12 +19,93 @@ public final class NumberUtils {
      * Smallest positive number used in double comparisons (rounding).
      */
     public final static double EPSILON = 1e-6d;
+    /** default formatter */
+    private final static NumberFormat fmtDef = NumberFormat.getInstance();
+    /** scientific formatter */
+    private final static NumberFormat fmtScience = new DecimalFormat("0.0##E0");
+    /** formatter string buffer argument */
+    private final static StringBuffer fmtBuffer = new StringBuffer(32);
+    /** ignore formatter position argument */
+    private final static FieldPosition ignorePosition = new FieldPosition(0);
 
     /**
      * Private constructor
      */
     private NumberUtils() {
         super();
+    }
+
+    /**
+     * Adjust the given double value to keep only 3 decimal digits
+     * @param value value to adjust
+     * @return double value with only 3 decimal digits
+     */
+    public static double trimTo3Digits(final double value) {
+        return ((long) (1e3d * value)) / 1e3d;
+    }
+
+    /**
+     * Adjust the given double value to keep only 5 decimal digits
+     * @param value value to adjust
+     * @return double value with only 5 decimal digits
+     */
+    public static double trimTo5Digits(final double value) {
+        return ((long) (1e5d * value)) / 1e5d;
+    }
+
+    /**
+     * Format the given double value using custom formaters:
+     * - '0'     if abs(val) < 1e-9
+     * - 0.000   if 1e-3 < abs(val) < 1e6
+     * - 0.0##E0 else
+     * 
+     * Note: this method is not thread safe (synchronization must be performed by callers)
+     * 
+     * @param val double value
+     * @return formatted value
+     */
+    public static String format(final double val) {
+        final double abs = Math.abs(val);
+
+        if (abs < 1e-9d) {
+            // means zero:
+            return "0";
+        }
+
+        if (abs < 1e-3d || abs > 1e6d) {
+            return format(fmtScience, val);
+        }
+        return format(fmtDef, val);
+    }
+
+    /**
+     * Format the given double value using given formater
+     * 
+     * Note: this method is not thread safe (synchronization must be performed by callers)
+     * 
+     * @param fmt formatter to use
+     * @param val double value
+     * @return formatted value
+     */
+    public static String format(final NumberFormat fmt, final double val) {
+        // reset shared buffer:
+        fmtBuffer.setLength(0);
+
+        return format(fmt, fmtBuffer, val).toString();
+    }
+
+    /**
+     * Format the given double value using given formater and append into the given string buffer
+     * 
+     * Note: this method is thread safe
+     * 
+     * @param fmt formatter to use
+     * @param sb string buffer to append to
+     * @param val double value
+     * @return formatted value
+     */
+    public static StringBuffer format(final NumberFormat fmt, final StringBuffer sb, final double val) {
+        return fmt.format(val, sb, ignorePosition);
     }
 
     /**

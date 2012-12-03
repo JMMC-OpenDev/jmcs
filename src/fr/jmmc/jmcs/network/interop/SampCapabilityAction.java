@@ -3,13 +3,11 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.network.interop;
 
+import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.component.StatusBar;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
-import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import java.awt.event.ActionEvent;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -18,6 +16,8 @@ import javax.swing.event.ListDataListener;
 import org.astrogrid.samp.Client;
 import org.astrogrid.samp.client.SampException;
 import org.astrogrid.samp.gui.SubscribedClientListModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic action dedicated to SAMP capability handling.
@@ -28,10 +28,12 @@ import org.astrogrid.samp.gui.SubscribedClientListModel;
  */
 public abstract class SampCapabilityAction extends RegisteredAction {
 
-    /** Logger */
-    private static final Logger _logger = LoggerFactory.getLogger(SampCapabilityAction.class.getName());
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
+    /** Logger */
+    private static final Logger _logger = LoggerFactory.getLogger(SampCapabilityAction.class.getName());
+    /** flag to enable/disable broadcast action */
+    public final static boolean BROADCAST_ENABLED = false;
     /** label for broadcast to all */
     private final static String BROADCAST_MENU_LABEL = "All Applications";
 
@@ -75,7 +77,6 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
         // Monitor any modification to the capable clients list
         _capableClients.addListDataListener(new ListDataListener() {
-
             @Override
             public void contentsChanged(final ListDataEvent e) {
                 updateMenuAndActionAfterSubscribedClientChange();
@@ -159,14 +160,16 @@ public abstract class SampCapabilityAction extends RegisteredAction {
         // Otherwise, enable menu (if needed)
         setEnabled(_couldBeEnabled);
 
-        // Add generic "All" entry to broadcast message to all capable clients at once
-        final JMenuItem broadcastMenuItem = new JMenuItem(this);
-        broadcastMenuItem.setText(BROADCAST_MENU_LABEL);
-        menu.add(broadcastMenuItem);
+        if (BROADCAST_ENABLED) {
+            // Add generic "All" entry to broadcast message to all capable clients at once
+            final JMenuItem broadcastMenuItem = new JMenuItem(this);
+            broadcastMenuItem.setText(BROADCAST_MENU_LABEL);
+            menu.add(broadcastMenuItem);
 
-        _logger.trace("Added '{}' broadcast menu entry for capability '{}'.", BROADCAST_MENU_LABEL, _mType);
+            _logger.trace("Added '{}' broadcast menu entry for capability '{}'.", BROADCAST_MENU_LABEL, _mType);
 
-        menu.addSeparator();
+            menu.addSeparator();
+        }
 
         // Add each individual client
         for (int i = 0; i < nbOfClients; i++) {

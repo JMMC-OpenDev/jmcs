@@ -94,7 +94,7 @@ public final class SampManager {
         }
 
         // If we did not launch the hub ourself
-        if (getRunningHub() != null) {
+        if (getRunningHub() == null) {
             _logger.info("Application has not launched the SAMP hub internally, letting application quits.");
             // Let the hub die without prompting confirmation
             return true;

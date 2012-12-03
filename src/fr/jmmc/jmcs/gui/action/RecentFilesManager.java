@@ -34,9 +34,11 @@ public final class RecentFilesManager {
     private static final int MAXIMUM_HISTORY_ENTRIES = 10;
     /** Singleton instance */
     private static volatile RecentFilesManager _instance = null;
-    // Members
+    /* Members */
     /** Action registrar reference */
     private final ActionRegistrar _registrar;
+    /** flag to enable or disable this feature */
+    boolean _enabled = true;
     /** Hook to the "Open Recent" sub-menu */
     final JMenu _menu;
     /** thread safe recent file repository */
@@ -66,11 +68,23 @@ public final class RecentFilesManager {
     }
 
     /**
+     * Enables or disables this feature
+     * @param enabled false to disable
+     */
+    public static void setEnabled(final boolean enabled) {
+        getInstance()._enabled = enabled;
+    }
+
+    /**
      * Link RecentFilesManager menu to the "Open Recent" sub-menu
      * @return "Open Recent" sub-menu container
      */
     public static JMenu getMenu() {
-        return getInstance()._menu;
+        final RecentFilesManager rfm = getInstance();
+        if (rfm.isEnabled()) {
+            return rfm._menu;
+        }
+        return null;
     }
 
     /**
@@ -80,14 +94,23 @@ public final class RecentFilesManager {
     public static void addFile(final File file) {
         if (file != null) {
             final RecentFilesManager rfm = getInstance();
+            if (rfm.isEnabled()) {
+                if (!rfm.storeFile(file)) {
+                    return;
+                }
 
-            if (!rfm.storeFile(file)) {
-                return;
+                rfm.refreshMenu();
+                rfm.flushRecentFileListToPrefrences();
             }
-
-            rfm.refreshMenu();
-            rfm.flushRecentFileListToPrefrences();
         }
+    }
+
+    /**
+     * Return flag to enable or disable this feature
+     * @return true if enabled; false otherwise
+     */
+    public boolean isEnabled() {
+        return _enabled;
     }
 
     /**

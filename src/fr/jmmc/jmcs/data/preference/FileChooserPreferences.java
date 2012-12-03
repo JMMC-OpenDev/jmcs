@@ -94,8 +94,8 @@ public final class FileChooserPreferences extends Preferences {
     protected String getPreferenceFilename() {
 
         final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
-        final String shortCompanyName = applicationDataModel.getShortCompanyName();
-        final String programName = applicationDataModel.getProgramName();
+        final String shortCompanyName = (applicationDataModel != null) ? applicationDataModel.getShortCompanyName() : "";
+        final String programName = (applicationDataModel != null) ? applicationDataModel.getProgramName() : "";
 
         String preferenceFileName = FILENAME_PREFIX + shortCompanyName + "." + programName + FILENAME_SUFFIX;
         preferenceFileName = preferenceFileName.replace(" ", "");
@@ -156,7 +156,7 @@ public final class FileChooserPreferences extends Preferences {
     public static List<String> getRecentFilePaths() {
 
         // Try to read paths list from preference
-        List<String> paths = null;
+        List<String> paths;
         try {
             paths = getInstance().getPreferenceAsStringList(RECENT_FILE_PREFIX);
         } catch (MissingPreferenceException ex) {

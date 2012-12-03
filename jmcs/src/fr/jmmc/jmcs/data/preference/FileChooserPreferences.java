@@ -173,7 +173,8 @@ public final class FileChooserPreferences extends Preferences {
         }
 
         // Deserialize paths to recent file list
-        _logger.info("Found recent files '" + CollectionUtils.toString(paths) + "'.");
+        _logger.info("Found recent files '{}'.", CollectionUtils.toString(paths));
+
         return paths;
     }
 

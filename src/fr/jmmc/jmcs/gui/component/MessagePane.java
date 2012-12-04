@@ -315,7 +315,7 @@ public final class MessagePane {
         final String applicationName = App.getSharedApplicationDataModel().getProgramName();
         final String message = "Quitting '"
                 + applicationName
-                + "' will also terminate the shared SAMP hub,\npotentially preventing other applications interoperability until\nanother hub is started elsewhere.\n\n Proceed with quitting nevertheless ?";
+                + "' will also terminate the shared SAMP hub,\npotentially preventing other applications interoperability until\nanother hub is started elsewhere.\n\nProceed with quitting nevertheless ?";
 
         // ensure window is visible (not iconified):
         App.showFrameToFront();

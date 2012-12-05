@@ -692,13 +692,15 @@ public abstract class App {
         // Close all HTTP connections (http client)
         MultiThreadedHttpConnectionManager.shutdownAll();
 
-        // Show timer statistics if any available:
-        if (!TimerFactory.isEmpty()) {
-            if (_logger.isInfoEnabled()) {
-                _logger.info("Timer statistics: {}", TimerFactory.dumpTimers());
-            }
-            TimerFactory.resetTimers();
-        }
+        /*        
+         // Show timer statistics if any available (dev only):
+         if (!TimerFactory.isEmpty()) {
+         if (_logger.isInfoEnabled()) {
+         _logger.info("Timer statistics: {}", TimerFactory.dumpTimers());
+         }
+         TimerFactory.resetTimers();
+         }
+         */
     }
 
     /**

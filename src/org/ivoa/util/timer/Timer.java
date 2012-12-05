@@ -37,8 +37,10 @@ public final class Timer extends AbstractTimer implements ToStringable {
      */
     @Override
     public void add(final double time) {
-        this.usage++;
-        monitorTime.add(time);
+        if (time > 0d) {
+            this.usage++;
+            monitorTime.add(time);
+        }
     }
 
     /**

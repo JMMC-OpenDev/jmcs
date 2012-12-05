@@ -51,11 +51,13 @@ public final class ThresholdTimer extends AbstractTimer {
      */
     @Override
     public void add(final double time) {
-        this.usage++;
-        if (time > threshold) {
-            high.add(time);
-        } else {
-            low.add(time);
+        if (time > 0d) {
+            this.usage++;
+            if (time > threshold) {
+                high.add(time);
+            } else {
+                low.add(time);
+            }
         }
     }
 

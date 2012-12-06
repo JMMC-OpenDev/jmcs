@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
@@ -37,8 +38,8 @@ public final class RecentFilesManager {
     /* Members */
     /** Action registrar reference */
     private final ActionRegistrar _registrar;
-    /** flag to enable or disable this feature */
-    boolean _enabled = true;
+    /** Flag to enable or disable this feature */
+    private boolean _enabled = true;
     /** Hook to the "Open Recent" sub-menu */
     final JMenu _menu;
     /** thread safe recent file repository */
@@ -76,6 +77,14 @@ public final class RecentFilesManager {
     }
 
     /**
+     * Return flag to enable or disable this feature
+     * @return true if enabled; false otherwise
+     */
+    public boolean isEnabled() {
+        return _enabled;
+    }
+
+    /**
      * Link RecentFilesManager menu to the "Open Recent" sub-menu
      * @return "Open Recent" sub-menu container
      */
@@ -92,35 +101,31 @@ public final class RecentFilesManager {
      * @param file file object or null
      */
     public static void addFile(final File file) {
-        if (file != null) {
-            final RecentFilesManager rfm = getInstance();
-            if (rfm.isEnabled()) {
-                if (!rfm.storeFile(file)) {
-                    return;
-                }
-
-                rfm.refreshMenu();
-                rfm.flushRecentFileListToPrefrences();
-            }
+        if (file == null) {
+            return;
         }
-    }
 
-    /**
-     * Return flag to enable or disable this feature
-     * @return true if enabled; false otherwise
-     */
-    public boolean isEnabled() {
-        return _enabled;
+        final RecentFilesManager rfm = getInstance();
+        if (!rfm.isEnabled()) {
+            return;
+        }
+
+        if (!rfm.storeFile(file)) {
+            return;
+        }
+
+        rfm.refreshMenu();
+        rfm.flushRecentFileListToPrefrences();
     }
 
     /**
      * Store the given file in the recent file repository.
      * @param file file to be added in the file repository
-     * @return  true if operation succedeed else false.
+     * @return  true if operation succeeded else false.
      */
     private boolean storeFile(final File file) {
         // Check parameter validity
-        if (file == null || !file.canRead()) {
+        if ((file == null) || (!file.canRead())) {
             _logger.warn("Could not read file '{}'", file);
             return false;
         }
@@ -145,7 +150,8 @@ public final class RecentFilesManager {
             name = path; // Use path instead
         }
 
-        // Store file
+        // Store file (at first position if already referenced)
+        _repository.remove(path);
         _repository.put(path, name);
         return true;
     }
@@ -160,10 +166,15 @@ public final class RecentFilesManager {
         _menu.setEnabled(false);
 
         // For each registered files
-        for (final String currentPath : _repository.keySet()) {
+        ListIterator<Map.Entry<String, String>> iter = new ArrayList(_repository.entrySet()).listIterator(_repository.size());
+        while (iter.hasPrevious()) {
+
+            Map.Entry<String, String> entry = iter.previous();
+            final String currentName = entry.getValue();
+            final String currentPath = entry.getKey();
 
             // Create an action to open it
-            final String currentName = _repository.get(currentPath);
+            //final String currentName = _repository.get(currentPath);
             final AbstractAction currentAction = new AbstractAction(currentName) {
                 /** default serial UID for Serializable interface */
                 private static final long serialVersionUID = 1;

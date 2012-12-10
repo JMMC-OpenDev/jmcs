@@ -217,13 +217,39 @@ public final class NumberUtils {
     }
 
     /**
+     * Returns an {@code Integer} object holding the
+     * value of the specified {@code String}. The argument is
+     * interpreted as representing a signed decimal integer, exactly
+     * as if the argument were given to the {@link
+     * #parseInt(java.lang.String)} method. The result is an
+     * {@code Integer} object that represents the integer value
+     * specified by the string.
+     *
+     * <p>In other words, this method returns an {@code Integer}
+     * object equal to the value of:
+     *
+     * <blockquote>
+     *  {@code new Integer(Integer.parseInt(s))}
+     * </blockquote>
+     *
+     * @param      s   the string to be parsed.
+     * @return     an {@code Integer} object holding the value
+     *             represented by the string argument.
+     * @exception  NumberFormatException  if the string cannot be parsed
+     *             as an integer.
+     */
+    public static Integer valueOf(final String s) throws NumberFormatException {
+        return IntegerCache.get(Integer.parseInt(s, 10));
+    }
+
+    /**
      * Integer Cache to support the object identity semantics of autoboxing for values between
      * -128 and HIGH value (inclusive).
      */
     private static final class IntegerCache {
 
         /** lower value */
-        static final int low = -128;
+        static final int low = -1024;
         /** higher value */
         static final int high = 128 * 1024;
         /** Integer cache */

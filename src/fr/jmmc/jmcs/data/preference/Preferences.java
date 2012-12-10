@@ -6,6 +6,7 @@ package fr.jmmc.jmcs.data.preference;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.NumberUtils;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.*;
@@ -691,7 +692,7 @@ public abstract class Preferences extends Observable {
             // If an order token was found
             if (orderString != null) {
                 // Convert the String in an int
-                Integer orderInteger = Integer.valueOf(orderString);
+                Integer orderInteger = NumberUtils.valueOf(orderString);
                 result = orderInteger.intValue();
             }
 
@@ -823,7 +824,7 @@ public abstract class Preferences extends Observable {
         if (value == null) {
             return 0;
         }
-        return Integer.valueOf(value).intValue();
+        return NumberUtils.valueOf(value).intValue();
     }
 
     /**

@@ -3,7 +3,15 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Paint;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.TexturePaint;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import org.slf4j.Logger;
@@ -18,11 +26,9 @@ public final class ImageUtils {
 
     /** Class logger */
     private static final Logger _logger = LoggerFactory.getLogger(ImageUtils.class.getName());
-    
     /* members */
-    
     /** Loading error message template */
-    private static final String CAN_T_LOAD_ICON_MSG="Could not load icon '{}'.";
+    private static final String CAN_T_LOAD_ICON_MSG = "Could not load icon '{}'.";
 
     /**
      * Forbidden constructor
@@ -50,10 +56,10 @@ public final class ImageUtils {
         URL imageUrl;
         try {
             imageUrl = FileUtils.getResource(url);
-        } catch (IllegalStateException e) {            
-            if(url.length()==0){
+        } catch (IllegalStateException e) {
+            if (url.length() == 0) {
                 _logger.debug(CAN_T_LOAD_ICON_MSG, url);
-            }else{
+            } else {
                 _logger.info(CAN_T_LOAD_ICON_MSG, url);
             }
             return null;
@@ -117,5 +123,37 @@ public final class ImageUtils {
         final Image image = imageIcon.getImage();
         final Image scaledImage = image.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
         return new ImageIcon(scaledImage);
+    }
+
+    /**
+     * Create a cross hatched texture
+     * @param size internal image size (height = width)
+     * @param backgroundColor background color
+     * @param stripeColor line color
+     * @param stroke line stroke
+     * @return cross hatched texture paint
+     */
+    public static Paint createHatchedTexturePaint(final int size, final Color backgroundColor, final Color stripeColor, final Stroke stroke) {
+
+        // create buffered image (alpha):
+        final BufferedImage bufferedImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+
+        final Graphics2D g2d = bufferedImage.createGraphics();
+
+        // LBO: use antialiasing:
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+        g2d.setColor(backgroundColor);
+        g2d.fillRect(0, 0, size, size);
+
+        g2d.setStroke(stroke);
+        g2d.setColor(stripeColor);
+        g2d.drawLine(0, 0, size, size);
+        g2d.drawLine(0, size, size, 0);
+
+        g2d.dispose();
+
+        return new TexturePaint(bufferedImage, new Rectangle(0, 0, size, size));
     }
 }

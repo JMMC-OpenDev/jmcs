@@ -4,8 +4,8 @@
 package fr.jmmc.jmal.model;
 
 import fr.jmmc.jmal.complex.MutableComplex;
-import fr.jmmc.jmal.image.ImageUtils;
 import fr.jmmc.jmal.image.ColorScale;
+import fr.jmmc.jmal.image.ImageUtils;
 import fr.jmmc.jmal.image.job.ImageMinMaxJob;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmal.util.ThreadLocalRandom;
@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 public final class ModelUVMapService {
 
     /** standard visibility amplitude range [0;1] used by linear color scale */
-    public final static float[] RANGE_AMPLITUDE_LINEAR = new float[]{0f, 1f};
+    public final static Float[] RANGE_AMPLITUDE_LINEAR = new Float[]{0f, 1f};
     /** standard visibility amplitude range [0;1] used by logarithmic color scale */
-    public final static float[] RANGE_AMPLITUDE_LOGARITHMIC = new float[]{9e-2f, 1f};
+    public final static Float[] RANGE_AMPLITUDE_LOGARITHMIC = new Float[]{9e-2f, 1f};
     /** standard visibility phase range [-PI;PI] */
-    public final static float[] RANGE_PHASE = new float[]{(float) -Math.PI, (float) Math.PI};
+    public final static Float[] RANGE_PHASE = new Float[]{(float) -Math.PI, (float) Math.PI};
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(ModelUVMapService.class.getName());
     /** threshold to use parallel jobs (65535 UV points) */
@@ -213,7 +213,7 @@ public final class ModelUVMapService {
         }
 
 
-        // 3 - Extract the amplitude/phase to get the uv map :
+        // 3 - Extract the amplitude/phase/square amplitude to get the uv map :
 
         // data as float [rows][cols]:
         final float[][] data = convert(imageSize, visData, mode, noiseService);
@@ -245,8 +245,8 @@ public final class ModelUVMapService {
      * @param colorModel color model to use
      * @param colorScale color scaling method
      * @param dataSize number of rows and columns of the model image data
-     * @param visData complex visibility data
-     * @param imgData model image data (amplitude or phase)
+     * @param data amplitude/phase/square amplitude data
+     * @param imgData model image data (amplitude/phase/square amplitude)
      * @param uvMapRect concrete UV frequency area in rad-1
      * @param noiseService optional noise service to compute noisy complex visibilities before computing amplitude or phase
      * @return UVMapData
@@ -262,52 +262,53 @@ public final class ModelUVMapService {
                                          final IndexColorModel colorModel,
                                          final ColorScale colorScale,
                                          final int dataSize,
-                                         final float[][] visData,
+                                         final float[][] data,
                                          final float[][] imgData,
                                          final Rectangle2D.Double uvMapRect,
                                          final VisNoiseService noiseService) {
 
-        final boolean doNoise = (noiseService != null && noiseService.isEnabled());
+        // ignore zero values if log color scale:
+        final ImageMinMaxJob minMaxJob = new ImageMinMaxJob(imgData, dataSize, dataSize, (colorScale == ColorScale.LOGARITHMIC));
+
+        minMaxJob.forkAndJoin();
+
+        final float dataMin = minMaxJob.getMin();
+        final float dataMax = minMaxJob.getMax();
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("ImageMinMaxJob min: {} - max: {}", dataMin, dataMax);
+        }
 
         // Get the image with the given color model :
         final ColorScale usedColorScale;
 
         // min - max range used by color conversion:
-        final float[] stdRange;
+        final Float[] stdRange;
         switch (mode) {
             case SQUARE:
             case AMP:
                 usedColorScale = colorScale;
 
                 if (refMin == null || refMax == null) {
-                    // update min/max ignoring zero:
-                    if (colorScale == ColorScale.LOGARITHMIC || doNoise) {
-                        // ignore zero values:
-                        final ImageMinMaxJob minMaxJob = new ImageMinMaxJob(imgData, dataSize, dataSize, true);
+                    if ((colorScale == ColorScale.LOGARITHMIC || (noiseService != null && noiseService.isEnabled()))
+                            && dataMin != dataMax && !Float.isInfinite(dataMin) && !Float.isInfinite(dataMax)) {
 
-                        minMaxJob.forkAndJoin();
+                        final Float[] defStdRange = (colorScale == ColorScale.LOGARITHMIC) ? RANGE_AMPLITUDE_LOGARITHMIC : RANGE_AMPLITUDE_LINEAR;
 
-                        float dataMin = minMaxJob.getMin();
-                        float dataMax = minMaxJob.getMax();
+                        float stdMin = dataMin;
+                        float stdMax = dataMax;
 
-                        if (logger.isInfoEnabled()) {
-                            logger.info("ImageMinMaxJob min: {} - max: {}", dataMin, dataMax);
+                        // force min to 0.1 at least to have log scale ticks displayed:
+                        if (stdMin > defStdRange[0].floatValue()) {
+                            stdMin = defStdRange[0].floatValue();
+                        }
+                        // force max to 1 because dataMax can be 0.99999:
+                        if (stdMax < defStdRange[1].floatValue()) {
+                            stdMax = defStdRange[1].floatValue();
                         }
 
-                        if (dataMin != dataMax && !Float.isInfinite(dataMin) && !Float.isInfinite(dataMax)) {
-                            final float[] defStdRange = (colorScale == ColorScale.LOGARITHMIC) ? RANGE_AMPLITUDE_LOGARITHMIC : RANGE_AMPLITUDE_LINEAR;
-                            // force min to 0.1 at least to have log scale ticks displayed:
-                            if (dataMin > defStdRange[0]) {
-                                dataMin = defStdRange[0];
-                            }
-                            // force max to 1 because dataMax can be 0.99999:
-                            if (dataMax < defStdRange[1]) {
-                                dataMax = defStdRange[1];
-                            }
-
-                            stdRange = new float[]{dataMin, dataMax};
-                            break;
-                        }
+                        stdRange = new Float[]{stdMin, stdMax};
+                        break;
                     }
                 }
                 stdRange = (colorScale == ColorScale.LOGARITHMIC) ? RANGE_AMPLITUDE_LOGARITHMIC : RANGE_AMPLITUDE_LINEAR;
@@ -321,19 +322,19 @@ public final class ModelUVMapService {
         }
 
         // use the given reference extrema to make the value to color conversion :
-        final float min = (refMin != null) ? refMin.floatValue() : stdRange[0];
-        final float max = (refMax != null) ? refMax.floatValue() : stdRange[1];
+        final Float min = (refMin != null) ? refMin : stdRange[0];
+        final Float max = (refMax != null) ? refMax : stdRange[1];
 
         if (logger.isDebugEnabled()) {
             logger.debug("value range in [{}, {}]", min, max);
         }
 
         // throws InterruptedJobException if the current thread is interrupted (cancelled):
-        final BufferedImage uvMap = ImageUtils.createImage(dataSize, dataSize, imgData, min, max, colorModel, usedColorScale);
+        final BufferedImage uvMap = ImageUtils.createImage(dataSize, dataSize, imgData, min.floatValue(), max.floatValue(), colorModel, usedColorScale);
 
         // provide results :;
-        return new UVMapData(uvRect, mode, imageSize, colorModel, usedColorScale,
-                Float.valueOf(min), Float.valueOf(max), visData, uvMap, dataSize, uvMapRect, noiseService);
+        return new UVMapData(uvRect, mode, imageSize, colorModel, usedColorScale, min, max, Float.valueOf(dataMin), Float.valueOf(dataMax),
+                data, uvMap, dataSize, uvMapRect, noiseService);
     }
 
     /**
@@ -515,7 +516,6 @@ public final class ModelUVMapService {
             final int jobIndex = i;
 
             jobs[i] = new Runnable() {
-
                 @Override
                 public void run() {
                     // random instance dedicated to this thread:

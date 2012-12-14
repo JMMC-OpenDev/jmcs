@@ -34,12 +34,16 @@ public final class UVMapData {
     private int targetVersion = -1;
 
     /* outputs */
-    /** minimum value (amplitude or phase) */
+    /** minimum value (standard range) */
     private final Float min;
-    /** maximum value (amplitude or phase) */
+    /** maximum value (standard range) */
     private final Float max;
+    /** minimum value in data set */
+    private final Float dataMin;
+    /** maximum value in data set */
+    private final Float dataMax;
     /** Model complex visiblities */
-    private final float[][] visData;
+    private final float[][] data;
     /** uv map image (amplitude or phase) */
     private final BufferedImage uvMap;
     /** concrete number of pixels for both width and height of the generated image (may be different than imageSize) */
@@ -54,9 +58,11 @@ public final class UVMapData {
      * @param imageSize expected number of pixels for both width and height of the generated image
      * @param colorModel color model to use
      * @param colorScale color scaling method
-     * @param min visibility minimum value (amplitude or phase)
-     * @param max visibility maximum value (amplitude or phase)
-     * @param visData Model complex visiblities
+     * @param min minimum value (standard range) 
+     * @param max maximum value (standard range)
+     * @param dataMin minimum value in data set 
+     * @param dataMax maximum value in data set
+     * @param data amplitude/phase/square amplitude data
      * @param uvMap uv map image
      * @param uvMapSize concrete number of pixels for both width and height of the generated image
      * @param uvMapRect concrete UV frequency area in rad-1
@@ -66,7 +72,8 @@ public final class UVMapData {
                      final ImageMode mode, final int imageSize,
                      final IndexColorModel colorModel, final ColorScale colorScale,
                      final Float min, final Float max,
-                     final float[][] visData, final BufferedImage uvMap,
+                     final Float dataMin, final Float dataMax,
+                     final float[][] data, final BufferedImage uvMap,
                      final int uvMapSize, final Rectangle.Double uvMapRect,
                      final VisNoiseService noiseService) {
         this.uvRect = uvRect;
@@ -76,7 +83,9 @@ public final class UVMapData {
         this.colorScale = colorScale;
         this.min = min;
         this.max = max;
-        this.visData = visData;
+        this.dataMin = dataMin;
+        this.dataMax = dataMax;
+        this.data = data;
         this.uvMap = uvMap;
         this.uvMapSize = uvMapSize;
         this.uvMapRect = uvMapRect;
@@ -148,27 +157,43 @@ public final class UVMapData {
     }
 
     /**
-     * Return the visibility minimum value (amplitude or phase)
-     * @return visibility minimum value (amplitude or phase)
+     * Return the minimum value (standard range)
+     * @return minimum value (standard range)
      */
     public Float getMin() {
         return min;
     }
 
     /**
-     * Return the visibility maximum value (amplitude or phase)
-     * @return visibility maximum value (amplitude or phase)
+     * Return the maximum value (standard range)
+     * @return maximum value (standard range)
      */
     public Float getMax() {
         return max;
     }
 
     /**
-     * Return the Model complex visiblities
-     * @return Model complex visiblities
+     * Return the minimum value in data set
+     * @return minimum value in data set
      */
-    public float[][] getVisData() {
-        return visData;
+    public Float getDataMin() {
+        return dataMin;
+    }
+
+    /**
+     * Return the maximum value in data set
+     * @return maximum value in data set
+     */
+    public Float getDataMax() {
+        return dataMax;
+    }
+
+    /**
+     * Return the amplitude/phase/square amplitude data
+     * @return amplitude/phase/square amplitude data
+     */
+    public float[][] getData() {
+        return data;
     }
 
     /**

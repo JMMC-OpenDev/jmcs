@@ -93,12 +93,14 @@ public final class ImageFlipJob extends AbstractImageJob<Void> {
     protected void processValue(final int col, final int row, final float value) {
         if (_flipX) {
             final int lastCol = _lastIdx - col;
-            _array2D[row][col] = _array2D[row][lastCol];
-            _array2D[row][lastCol] = value;
+            final float[] aRow = _array2D[row];
+            aRow[col] = aRow[lastCol];
+            aRow[lastCol] = value;
         } else {
             final int lastRow = _lastIdx - row;
-            _array2D[row][col] = _array2D[lastRow][col];
-            _array2D[lastRow][col] = value;
+            final float[] aLastRow = _array2D[lastRow];
+            _array2D[row][col] = aLastRow[col];
+            aLastRow[col] = value;
         }
     }
 }

@@ -69,10 +69,12 @@ public class ModelComputeContext {
      * @return complex visiblity array
      */
     public final MutableComplex[] resetAndGetVis() {
+        final MutableComplex[] v = vis;
+
         // reset visibilities to (0,0):
         for (int i = this.freqCount - 1; i >= 0; i--) {
-            vis[i].updateComplex(0d, 0d);
+            v[i].updateComplex(0d, 0d);
         }
-        return vis;
+        return v;
     }
 }

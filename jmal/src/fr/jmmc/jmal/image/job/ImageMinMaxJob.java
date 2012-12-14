@@ -79,20 +79,21 @@ public final class ImageMinMaxJob extends AbstractImageJob<MinMaxResult> {
      */
     @Override
     protected void merge(final List<MinMaxResult> partialResults) {
+        final MinMaxResult result = _result;
 
         for (MinMaxResult partial : partialResults) {
             // nData:
-            _result._nData += partial._nData;
+            result._nData += partial._nData;
             // min:
-            if (partial._min < _result._min) {
-                _result._min = partial._min;
+            if (partial._min < result._min) {
+                result._min = partial._min;
             }
             // max:
-            if (partial._max > _result._max) {
-                _result._max = partial._max;
+            if (partial._max > result._max) {
+                result._max = partial._max;
             }
             // sum:
-            _result._sum += partial._sum;
+            result._sum += partial._sum;
         }
     }
 
@@ -107,18 +108,19 @@ public final class ImageMinMaxJob extends AbstractImageJob<MinMaxResult> {
         if (_excludeZero && value == 0f) {
             return;
         }
+        final MinMaxResult result = _result;
         // nData:
-        _result._nData++;
+        result._nData++;
         // min:
-        if (value < _result._min) {
-            _result._min = value;
+        if (value < result._min) {
+            result._min = value;
         }
         // max:
-        if (value > _result._max) {
-            _result._max = value;
+        if (value > result._max) {
+            result._max = value;
         }
         // sum:
-        _result._sum += value;
+        result._sum += value;
     }
 
     /**

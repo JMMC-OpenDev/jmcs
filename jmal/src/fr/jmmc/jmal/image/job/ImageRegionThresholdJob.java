@@ -71,21 +71,23 @@ public final class ImageRegionThresholdJob extends AbstractImageJob<BoundaryResu
      */
     @Override
     protected void merge(final List<BoundaryResult> partialResults) {
+        final BoundaryResult result = _result;
+
         for (BoundaryResult partial : partialResults) {
 
             // column boundaries:
-            if ((partial._columnLowerIndex != UNDEFINED_LOWER_INDEX) && (partial._columnLowerIndex < _result._columnLowerIndex)) {
-                _result._columnLowerIndex = partial._columnLowerIndex;
+            if ((partial._columnLowerIndex != UNDEFINED_LOWER_INDEX) && (partial._columnLowerIndex < result._columnLowerIndex)) {
+                result._columnLowerIndex = partial._columnLowerIndex;
             }
-            if ((partial._columnUpperIndex != UNDEFINED_UPPER_INDEX) && (partial._columnUpperIndex > _result._columnUpperIndex)) {
-                _result._columnUpperIndex = partial._columnUpperIndex;
+            if ((partial._columnUpperIndex != UNDEFINED_UPPER_INDEX) && (partial._columnUpperIndex > result._columnUpperIndex)) {
+                result._columnUpperIndex = partial._columnUpperIndex;
             }
             // row boundaries:
-            if ((partial._rowLowerIndex != UNDEFINED_LOWER_INDEX) && (partial._rowLowerIndex < _result._rowLowerIndex)) {
-                _result._rowLowerIndex = partial._rowLowerIndex;
+            if ((partial._rowLowerIndex != UNDEFINED_LOWER_INDEX) && (partial._rowLowerIndex < result._rowLowerIndex)) {
+                result._rowLowerIndex = partial._rowLowerIndex;
             }
-            if ((partial._rowUpperIndex != UNDEFINED_UPPER_INDEX) && (partial._rowUpperIndex > _result._rowUpperIndex)) {
-                _result._rowUpperIndex = partial._rowUpperIndex;
+            if ((partial._rowUpperIndex != UNDEFINED_UPPER_INDEX) && (partial._rowUpperIndex > result._rowUpperIndex)) {
+                result._rowUpperIndex = partial._rowUpperIndex;
             }
         }
     }
@@ -99,19 +101,21 @@ public final class ImageRegionThresholdJob extends AbstractImageJob<BoundaryResu
     @Override
     protected void processValue(final int col, final int row, final float value) {
         if (value != 0f && value >= _threshold) {
+            final BoundaryResult result = _result;
+
             // column boundaries:
-            if (col < _result._columnLowerIndex) {
-                _result._columnLowerIndex = col;
+            if (col < result._columnLowerIndex) {
+                result._columnLowerIndex = col;
             }
-            if (col > _result._columnUpperIndex) {
-                _result._columnUpperIndex = col;
+            if (col > result._columnUpperIndex) {
+                result._columnUpperIndex = col;
             }
             // row boundaries:
-            if (row < _result._rowLowerIndex) {
-                _result._rowLowerIndex = row;
+            if (row < result._rowLowerIndex) {
+                result._rowLowerIndex = row;
             }
-            if (row > _result._rowUpperIndex) {
-                _result._rowUpperIndex = row;
+            if (row > result._rowUpperIndex) {
+                result._rowUpperIndex = row;
             }
         }
     }

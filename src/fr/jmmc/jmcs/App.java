@@ -54,7 +54,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
-import org.ivoa.util.timer.TimerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -691,16 +690,6 @@ public abstract class App {
 
         // Close all HTTP connections (http client)
         MultiThreadedHttpConnectionManager.shutdownAll();
-
-        /*        
-         // Show timer statistics if any available (dev only):
-         if (!TimerFactory.isEmpty()) {
-         if (_logger.isInfoEnabled()) {
-         _logger.info("Timer statistics: {}", TimerFactory.dumpTimers());
-         }
-         TimerFactory.resetTimers();
-         }
-         */
     }
 
     /**

@@ -156,24 +156,24 @@ public final class FileChooserPreferences extends Preferences {
     public static List<String> getRecentFilePaths() {
 
         // Try to read paths list from preference
-        List<String> paths;
+        List<String> paths = null;
         try {
             paths = getInstance().getPreferenceAsStringList(RECENT_FILE_PREFIX);
-        } catch (MissingPreferenceException ex) {
-            _logger.error("No recent files found.", ex);
-            return null;
-        } catch (PreferencesException ex) {
-            _logger.error("Could not read preference for recent files", ex);
-            return null;
+        } catch (MissingPreferenceException mpe) {
+            _logger.error("No recent files found.", mpe);
+        } catch (PreferencesException pe) {
+            _logger.error("Could not read preference for recent files", pe);
         }
 
         if ((paths == null) || (paths.isEmpty())) {
-            _logger.info("No recent files stored.");
+            _logger.debug("No recent files stored.");
             return null;
         }
 
         // Deserialize paths to recent file list
-        _logger.info("Found recent files '{}'.", CollectionUtils.toString(paths));
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Found recent files '{}'.", CollectionUtils.toString(paths));
+        }
 
         return paths;
     }
@@ -181,9 +181,8 @@ public final class FileChooserPreferences extends Preferences {
     /**
      * @param paths path list to store in preferences
      */
-    public static void setRecentFilePaths(List<String> paths) {
-
-        if ((paths == null) || (paths.isEmpty())) {
+    public static void setRecentFilePaths(final List<String> paths) {
+        if (paths == null) {
             _logger.error("Null recent file list received");
             return;
         }
@@ -192,8 +191,8 @@ public final class FileChooserPreferences extends Preferences {
         try {
             getInstance().setPreference(RECENT_FILE_PREFIX, paths);
             getInstance().saveToFile();
-        } catch (PreferencesException ex) {
-            _logger.error("Could not store recent file list in preference", ex);
+        } catch (PreferencesException pe) {
+            _logger.error("Could not store recent file list in preference", pe);
         }
     }
 

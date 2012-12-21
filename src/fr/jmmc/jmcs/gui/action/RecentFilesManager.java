@@ -39,7 +39,7 @@ public final class RecentFilesManager {
     /** Action registrar reference */
     private final ActionRegistrar _registrar;
     /** Flag to enable or disable this feature */
-    private boolean _enabled = true;
+    boolean _enabled = true;
     /** Hook to the "Open Recent" sub-menu */
     final JMenu _menu;
     /** thread safe recent file repository */
@@ -115,7 +115,7 @@ public final class RecentFilesManager {
         }
 
         rfm.refreshMenu();
-        rfm.flushRecentFileListToPrefrences();
+        rfm.flushRecentFileListToPreferences();
     }
 
     /**
@@ -166,10 +166,11 @@ public final class RecentFilesManager {
         _menu.setEnabled(false);
 
         // For each registered files
-        ListIterator<Map.Entry<String, String>> iter = new ArrayList(_repository.entrySet()).listIterator(_repository.size());
+        final ListIterator<Map.Entry<String, String>> iter = new ArrayList<Map.Entry<String, String>>(_repository.entrySet()).listIterator(_repository.size());
+
         while (iter.hasPrevious()) {
 
-            Map.Entry<String, String> entry = iter.previous();
+            final Map.Entry<String, String> entry = iter.previous();
             final String currentName = entry.getValue();
             final String currentPath = entry.getKey();
 
@@ -205,9 +206,11 @@ public final class RecentFilesManager {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 _repository.clear();
+
+                flushRecentFileListToPreferences();
+
                 _menu.removeAll();
                 _menu.setEnabled(false);
-                // TODO : clean pref too !!!
             }
         };
 
@@ -236,9 +239,9 @@ public final class RecentFilesManager {
     /**
      * Flush file list to shared preference.
      */
-    private void flushRecentFileListToPrefrences() {
+    private void flushRecentFileListToPreferences() {
         // Create list of paths
-        if ((_repository == null) || (_repository.isEmpty())) {
+        if (_repository == null) {
             _logger.debug("Could not get recent file paths.");
             return;
         }

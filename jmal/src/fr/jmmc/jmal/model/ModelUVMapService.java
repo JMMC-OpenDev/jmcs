@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 public final class ModelUVMapService {
 
     /** standard visibility amplitude range [0;1] used by linear color scale */
-    public final static Float[] RANGE_AMPLITUDE_LINEAR = new Float[]{0f, 1f};
+    public final static Float[] RANGE_AMPLITUDE_LINEAR = new Float[]{Float.valueOf(0f), Float.valueOf(1f)};
     /** standard visibility amplitude range [0;1] used by logarithmic color scale */
-    public final static Float[] RANGE_AMPLITUDE_LOGARITHMIC = new Float[]{9e-2f, 1f};
-    /** standard visibility phase range [-PI;PI] */
-    public final static Float[] RANGE_PHASE = new Float[]{(float) -Math.PI, (float) Math.PI};
+    public final static Float[] RANGE_AMPLITUDE_LOGARITHMIC = new Float[]{Float.valueOf(9e-2f), Float.valueOf(1f)};
+    /** standard visibility phase range [-180°;180°] */
+    public final static Float[] RANGE_PHASE = new Float[]{Float.valueOf(-180f), Float.valueOf(180f)};
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(ModelUVMapService.class.getName());
     /** threshold to use parallel jobs (65535 UV points) */

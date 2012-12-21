@@ -89,7 +89,7 @@ public abstract class VisConverter {
                 im += VisNoiseService.gaussianNoise(threadRandom, err);
             }
 
-            return (float) ImmutableComplex.getArgument(re, im);
+            return (float) Math.toDegrees(ImmutableComplex.getArgument(re, im));
         }
     }
 
@@ -118,42 +118,20 @@ public abstract class VisConverter {
         @Override
         public float convert(double re, double im, final Random threadRandom) {
             if (this.doNoise) {
+                // use complex visibility error:
+                final double amp = ImmutableComplex.abs(re, im);
+                final double err = this.noiseService.computeVisComplexErrorValue(amp);
 
-                if (false) {
-                    // use Vis2 error:
-                    final double amp = ImmutableComplex.abs(re, im);
-                    final double err = this.noiseService.computeVis2Error(amp);
+                re += VisNoiseService.gaussianNoise(threadRandom, err);
+                im += VisNoiseService.gaussianNoise(threadRandom, err);
 
-                    final double vis2 = amp * amp;
-                    final double noisyVis2 = vis2 + VisNoiseService.gaussianNoise(threadRandom, err);
-
-                    // TODO: how to handle negative values due to noise: discard or use abs(vis2) ?
-                    if (noisyVis2 < 0d) {
-                        if (true) {
-                            return (float) Math.sqrt(-noisyVis2);
-                        } else {
-                            return 0f;
-                        }
-                    }
-
-                    // vis = SQRT(vis2):
-                    return (float) Math.sqrt(noisyVis2);
-                } else {
-                    // use complex visibility error:
-                    final double amp = ImmutableComplex.abs(re, im);
-                    final double err = this.noiseService.computeVisComplexErrorValue(amp);
-
-                    re += VisNoiseService.gaussianNoise(threadRandom, err);
-                    im += VisNoiseService.gaussianNoise(threadRandom, err);
-
-                    final double noisyAmp = ImmutableComplex.abs(re, im);
-                    // Invalid data when amp > SQRT(2) x sigma (SNR < 1) and noisy amp > amp:
-                    if (VisNoiseService.VIS_CPX_TO_VIS_AMP_ERR * err > amp && noisyAmp > amp) {
-                        // discard too noisy data:
-                        return 0f;
-                    }
-                    return (float) noisyAmp;
+                final double noisyAmp = ImmutableComplex.abs(re, im);
+                // Invalid data when amp > SQRT(2) x sigma (SNR < 1) and noisy amp > amp:
+                if (VisNoiseService.VIS_CPX_TO_VIS_AMP_ERR * err > amp && noisyAmp > amp) {
+                    // discard too noisy data:
+                    return 0f;
                 }
+                return (float) noisyAmp;
             }
 
             return (float) ImmutableComplex.abs(re, im);
@@ -193,11 +171,7 @@ public abstract class VisConverter {
 
                 // TODO: how to handle negative values due to noise: discard or use abs(vis2) ?
                 if (noisyVis2 < 0d) {
-                    if (true) {
-                        return (float) -noisyVis2;
-                    } else {
-                        return 0f;
-                    }
+                    return (float) -noisyVis2;
                 }
 
                 return (float) noisyVis2;

@@ -41,6 +41,16 @@ public final class ThreadLocalRandom extends Random {
     private static final long addend = 0xBL;
     private static final long mask = (1L << 48) - 1;
     /**
+     * The actual ThreadLocal
+     */
+    private static final ThreadLocal<ThreadLocalRandom> localRandom = new ThreadLocal<ThreadLocalRandom>() {
+        @Override
+        protected ThreadLocalRandom initialValue() {
+            return new ThreadLocalRandom();
+        }
+    };
+    /* members */
+    /**
      * The random seed. We can't use super.seed.
      */
     private long rnd;
@@ -51,27 +61,22 @@ public final class ThreadLocalRandom extends Random {
      * unintentionally impact other usages by the thread.
      */
     boolean initialized;
-    // Padding to help avoid memory contention among seed updates in
-    // different TLRs in the common case that they are located near
-    // each other.
-    private long pad0, pad1, pad2, pad3, pad4, pad5, pad6, pad7;
-    /**
-     * The actual ThreadLocal
+    /** 
+     * Padding to help avoid memory contention among seed updates in
+     * different TLRs in the common case that they are located near
+     * each other.
      */
-    private static final ThreadLocal<ThreadLocalRandom> localRandom =
-                                                        new ThreadLocal<ThreadLocalRandom>() {
-
-        @Override
-        protected ThreadLocalRandom initialValue() {
-            return new ThreadLocalRandom();
-        }
-    };
+    private final long[] padding = new long[8];
 
     /**
      * Constructor called only by localRandom.initialValue.
      */
     ThreadLocalRandom() {
         super();
+        // use padding array to avoid unused var removal (jvm optimizations)
+        for (int i = 0; i < padding.length; i++) {
+            padding[i] = i;
+        }
         initialized = true;
     }
 

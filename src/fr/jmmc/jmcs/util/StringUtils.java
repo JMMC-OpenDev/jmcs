@@ -28,6 +28,12 @@ public final class StringUtils {
     private final static Pattern PATTERN_CR = Pattern.compile("\n");
     /** regexp expression to match tags */
     private final static Pattern PATTERN_TAGS = Pattern.compile("\\<.*?\\>");
+    /** regexp expression to SGML entities */
+    private final static Pattern patternAMP = Pattern.compile("&");
+    /** regexp expression to start tag */
+    private final static Pattern patternLT = Pattern.compile("<");
+    /** regexp expression to end tag */
+    private final static Pattern patternGT = Pattern.compile(">");
 
     /**
      * Forbidden constructor
@@ -160,5 +166,17 @@ public final class StringUtils {
      */
     public static String removeTags(final String value) {
         return PATTERN_TAGS.matcher(value).replaceAll(STRING_EMPTY);
+    }
+
+    /**
+     * Encode special characters to entities
+     * @param src input string
+     * @return encoded value
+     */
+    public static String encodeTagContent(final String src) {
+        String out = patternAMP.matcher(src).replaceAll("&amp;"); // Character [&] (xml restriction)
+        out = patternLT.matcher(out).replaceAll("&lt;"); // Character [<] (xml restriction)
+        out = patternGT.matcher(out).replaceAll("&gt;"); // Character [>] (xml restriction)
+        return out;
     }
 }

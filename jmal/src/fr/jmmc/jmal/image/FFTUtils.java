@@ -12,7 +12,6 @@ import fr.jmmc.jmal.model.VisNoiseService;
 import fr.jmmc.jmal.util.ThreadLocalRandom;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import java.util.Random;
-import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -238,18 +237,8 @@ public final class FFTUtils {
             };
         }
 
-        if (nJobs > 1) {
-            // execute jobs in parallel:
-            final Future<?>[] futures = jobExecutor.fork(jobs);
-
-            logger.debug("wait for jobs to terminate ...");
-
-            jobExecutor.join("FFTUtils.convert", futures);
-
-        } else {
-            // execute the single task using the current thread:
-            jobs[0].run();
-        }
+        // execute jobs in parallel or using current thread if only one job (throws InterruptedJobException if interrupted):
+        jobExecutor.forkAndJoin("FFTUtils.convert", jobs);
 
         logger.info("convert: duration = {} ms.", 1e-6d * (System.nanoTime() - start));
 

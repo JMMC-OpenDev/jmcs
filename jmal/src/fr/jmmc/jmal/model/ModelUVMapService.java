@@ -16,7 +16,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,43 +169,22 @@ public final class ModelUVMapService {
             visData = new float[imageSize][2 * imageSize];
 
             // Should split the computation in parts ?
+            final int nJobs = ((imageSize * imageSize * normModels.size()) >= JOB_THRESHOLD) ? jobExecutor.getMaxParallelJob() : 1;
 
-            if (jobExecutor.isEnabled() && (imageSize * imageSize * normModels.size()) >= JOB_THRESHOLD) {
-                // split model image in parts for parallel threads:
+            final ComputeModelPart[] jobs = new ComputeModelPart[nJobs];
 
-                final int nJobs = jobExecutor.getMaxParallelJob();
-                final ComputeModelPart[] jobs = new ComputeModelPart[nJobs];
+            ModelFunctionComputeContext jobContext;
+            for (int i = 0; i < nJobs; i++) {
+                // clone computation contexts except for first job:
+                jobContext = (i == 0) ? context : ModelManager.cloneContext(context);
 
-                ModelFunctionComputeContext jobContext;
-                for (int i = 0; i < nJobs; i++) {
-                    // clone computation contexts except for first job:
-                    jobContext = (i == 0) ? context : ModelManager.cloneContext(context);
-
-                    // ensure last job goes until lineEnd:
-                    jobs[i] = new ComputeModelPart(jobContext, u, v, imageSize, visData, i, nJobs);
-                }
-
-                // fast interrupt :
-                if (currentThread.isInterrupted()) {
-                    throw new InterruptedJobException("ModelUVMapService.computeUVMap: interrupted");
-                }
-
-                // execute jobs in parallel:
-                final Future<?>[] futures = jobExecutor.fork(jobs);
-
-                logger.debug("wait for jobs to terminate ...");
-
-                jobExecutor.join("ModelUVMapService.computeUVMap", futures);
-
-            } else {
-                // single processor: use this thread to compute the complete model image:
-                new ComputeModelPart(context, u, v, imageSize, visData, 0, 1).run();
+                // ensure last job goes until lineEnd:
+                jobs[i] = new ComputeModelPart(jobContext, u, v, imageSize, visData, i, nJobs);
             }
 
-            // fast interrupt :
-            if (currentThread.isInterrupted()) {
-                throw new InterruptedJobException("ModelUVMapService.computeUVMap: interrupted");
-            }
+            // execute jobs in parallel or using current thread if only one job (throws InterruptedJobException if interrupted):
+            jobExecutor.forkAndJoin("ModelUVMapService.computeUVMap", jobs);
+
         } else {
             // use reference complex visibility data:
             visData = refVisData;
@@ -545,18 +523,8 @@ public final class ModelUVMapService {
             };
         }
 
-        if (nJobs > 1) {
-            // execute jobs in parallel:
-            final Future<?>[] futures = jobExecutor.fork(jobs);
-
-            logger.debug("wait for jobs to terminate ...");
-
-            jobExecutor.join("ModelUVMapService.convert", futures);
-
-        } else {
-            // execute the single task using the current thread:
-            jobs[0].run();
-        }
+        // execute jobs in parallel or using current thread if only one job (throws InterruptedJobException if interrupted):
+        jobExecutor.forkAndJoin("ModelUVMapService.convert", jobs);
 
         logger.info("convert: duration = {} ms.", 1e-6d * (System.nanoTime() - start));
 

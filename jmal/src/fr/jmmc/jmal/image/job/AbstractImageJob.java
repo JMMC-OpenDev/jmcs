@@ -7,7 +7,6 @@ import fr.jmmc.jmcs.util.concurrent.InterruptedJobException;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +91,7 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
     @SuppressWarnings("unchecked")
     public final V forkAndJoin() throws InterruptedJobException {
 
-        V result = null;
+        V result;
 
         // Start the computations :
         final long start = System.nanoTime();
@@ -111,11 +110,7 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
             }
 
             // execute jobs in parallel:
-            final Future<V>[] futures = (Future<V>[]) jobExecutor.fork(jobs);
-
-            logger.debug("wait for jobs to terminate ...");
-
-            final List<V> partialResults = (List<V>) jobExecutor.join(_jobName, futures);
+            final List<V> partialResults = (List<V>) jobExecutor.forkAndJoin(_jobName, jobs);
 
             merge(partialResults);
 
@@ -164,7 +159,7 @@ public abstract class AbstractImageJob<V> implements Callable<V> {
         final int stepInterrupt = Math.min(16, 1 + height / 16);
 
         float[] row;
-        
+
         // iterate on rows starting at jobIndex and skip jobCount rows at each iteration:
         for (int i, j = jobIndex; j < height; j += jobCount) {
             row = array2D[j];

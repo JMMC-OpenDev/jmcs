@@ -13,7 +13,6 @@ import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,35 +199,17 @@ public final class ImageUtils {
 
         // Should split the computation in parts ?
         // i.e. enough big compute task ?
+        final int nJobs = (array.length >= JOB_THRESHOLD) ? jobExecutor.getMaxParallelJob() : 1;
 
-        if (jobExecutor.isEnabled()
-                && array.length >= JOB_THRESHOLD) {
-            // split model image in parts for parallel threads:
+        final ComputeImagePart[] jobs = new ComputeImagePart[nJobs];
 
-            final int nJobs = jobExecutor.getMaxParallelJob();
-            final ComputeImagePart[] jobs = new ComputeImagePart[nJobs];
-
-            for (int i = 0; i < nJobs; i++) {
-                // ensure last job goes until lineEnd:
-                jobs[i] = new ComputeImagePart(array, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, i, nJobs);
-            }
-
-            // execute jobs in parallel:
-            final Future<?>[] futures = jobExecutor.fork(jobs);
-
-            logger.debug("wait for jobs to terminate ...");
-
-            jobExecutor.join("ImageUtils.createImage", futures);
-
-        } else {
-            // single processor: use this thread to compute the complete model image:
-            new ComputeImagePart(array, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, 0, 1).run();
+        for (int i = 0; i < nJobs; i++) {
+            // ensure last job goes until lineEnd:
+            jobs[i] = new ComputeImagePart(array, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, i, nJobs);
         }
 
-        // fast interrupt :
-        if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedJobException("ImageUtils.createImage: interrupted");
-        }
+        // execute jobs in parallel or using current thread if only one job (throws InterruptedJobException if interrupted):
+        jobExecutor.forkAndJoin("ImageUtils.createImage", jobs);
 
         if (logger.isDebugEnabled()) {
             logger.debug("compute : duration = {} ms.", 1e-6d * (System.nanoTime() - start));
@@ -345,34 +326,17 @@ public final class ImageUtils {
 
         // Should split the computation in parts ?
         // i.e. enough big compute task ?
+        final int nJobs = ((width * height) >= JOB_THRESHOLD) ? jobExecutor.getMaxParallelJob() : 1;
 
-        if (jobExecutor.isEnabled() && (width * height) >= JOB_THRESHOLD) {
-            // process image using parallel threads:
+        final ComputeImagePart[] jobs = new ComputeImagePart[nJobs];
 
-            final int nJobs = jobExecutor.getMaxParallelJob();
-            final ComputeImagePart[] jobs = new ComputeImagePart[nJobs];
-
-            for (int i = 0; i < nJobs; i++) {
-                // ensure last job goes until lineEnd:
-                jobs[i] = new ComputeImagePart(array, width, height, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, i, nJobs);
-            }
-
-            // execute jobs in parallel:
-            final Future<?>[] futures = jobExecutor.fork(jobs);
-
-            logger.debug("wait for jobs to terminate ...");
-
-            jobExecutor.join("ImageUtils.createImage", futures);
-
-        } else {
-            // single processor: use this thread to compute the complete model image:
-            new ComputeImagePart(array, width, height, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, 0, 1).run();
+        for (int i = 0; i < nJobs; i++) {
+            // ensure last job goes until lineEnd:
+            jobs[i] = new ComputeImagePart(array, width, height, scaledMin, colorModel, scalingFactor, colorScale, dataBuffer, i, nJobs);
         }
 
-        // fast interrupt :
-        if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedJobException("ImageUtils.createImage: interrupted");
-        }
+        // execute jobs in parallel or using current thread if only one job (throws InterruptedJobException if interrupted):
+        jobExecutor.forkAndJoin("ImageUtils.createImage", jobs);
 
         if (logger.isDebugEnabled()) {
             logger.debug("compute : duration = {} ms.", 1e-6d * (System.nanoTime() - start));

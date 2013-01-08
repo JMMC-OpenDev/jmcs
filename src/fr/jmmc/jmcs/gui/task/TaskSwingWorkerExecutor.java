@@ -194,13 +194,12 @@ public final class TaskSwingWorkerExecutor {
         if (DEBUG_FLAG) {
             _logger.info("cancel related tasks for = {}", task);
         }
-        // cancel any busy worker related to the given task :
-        cancel(task);
-
-        // cancel any busy worker related to any child task :
+        // cancel first any busy worker related to any child task :
         for (Task child : task.getChildTasks()) {
             cancel(child);
         }
+        // cancel any busy worker related to the given task :
+        cancel(task);
     }
 
     /**
@@ -212,6 +211,7 @@ public final class TaskSwingWorkerExecutor {
      */
     private boolean cancel(final Task task) {
         boolean cancelled = false;
+
         final AtomicReference<TaskSwingWorker<?>> workerRef = getReference(task);
         if (workerRef != null) {
             // get current worker and clear the reference :
@@ -261,7 +261,6 @@ public final class TaskSwingWorkerExecutor {
      * @param worker new worker
      */
     private void defineReference(final Task task, final TaskSwingWorker<?> worker) {
-
         final AtomicReference<TaskSwingWorker<?>> workerRef = getOrCreateReference(task);
         if (workerRef != null) {
             // check if the reference is undefined and then set the reference :
@@ -398,9 +397,7 @@ public final class TaskSwingWorkerExecutor {
      */
     private static final class SwingWorkerThreadFactory implements ThreadFactory {
 
-        /**
-         * thread count
-         */
+        /** thread count */
         private final AtomicInteger threadNumber = new AtomicInteger(1);
 
         /**

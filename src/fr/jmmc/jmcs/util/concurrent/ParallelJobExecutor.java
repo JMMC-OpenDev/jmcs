@@ -8,6 +8,7 @@ import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -30,6 +31,8 @@ public final class ParallelJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(ParallelJobExecutor.class.getName());
     /** singleton pattern */
     private static volatile ParallelJobExecutor instance = null;
+    /** The ThreadLocal storing thread indexes */
+    private static final ThreadLocal<Integer> localIndex = new ThreadLocal<Integer>();
     /* members */
     /** number of available processors */
     private final int cpuCount;
@@ -70,7 +73,7 @@ public final class ParallelJobExecutor {
         this.maxParallelJob = cpuCount;
 
         // create any the thread pool even if there is only 1 CPU:
-        final int threadCount = cpuCount; /* cpuCount * 3 / 2; */
+        final int threadCount = cpuCount;
         parallelExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount, new JobWorkerThreadFactory());
 
         // create threads now:
@@ -129,22 +132,159 @@ public final class ParallelJobExecutor {
     }
 
     /**
+     * Submit the given jobs and wait for their completion
+     * If the current thread is interrupted (cancelled), then futures are cancelled too.
+     * 
+     * @param jobName job name used when throwing an exception
+     * @param jobs callable jobs i.e. jobs that return results
+     *
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
+     */
+    public void forkAndJoin(final String jobName, final Runnable[] jobs) throws InterruptedJobException, RuntimeException {
+        forkAndJoin(jobName, jobs, true);
+    }
+
+    /**
+     * Submit the given jobs and wait for their completion
+     * If the current thread is interrupted (cancelled), then futures are cancelled too.
+     * 
+     * @param jobName job name used when throwing an exception
+     * @param jobs callable jobs i.e. jobs that return results
+     * @param useThreads flag to enable or disable thread pool usage (async)
+     *
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
+     */
+    public void forkAndJoin(final String jobName, final Runnable[] jobs, final boolean useThreads) throws InterruptedJobException, RuntimeException {
+        if (jobs == null) {
+            // illegal state ?
+            return;
+        }
+
+        final Thread currentTh = Thread.currentThread(); // local var
+
+        // fast interrupt :
+        if (currentTh.isInterrupted()) {
+            throw new InterruptedJobException(jobName + ": interrupted");
+        }
+
+        final int len = jobs.length;
+
+        if (useThreads && len > 1) {
+            // execute jobs in parallel:
+            final Future<?>[] futures = fork(jobs);
+
+            logger.debug("wait for jobs to terminate ...");
+
+            join(jobName, futures);
+
+        } else {
+            try {
+                // execute job(s) using the current thread:
+                for (int i = 0; i < len; i++) {
+                    jobs[i].run();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(jobName + ": failed:", e);
+            }
+        }
+
+        // fast interrupt :
+        if (currentTh.isInterrupted()) {
+            throw new InterruptedJobException(jobName + ": interrupted");
+        }
+    }
+
+    /**
+     * Submit the given jobs and wait for their completion
+     * If the current thread is interrupted (cancelled), then futures are cancelled too.
+     * 
+     * @param jobName job name used when throwing an exception
+     * @param jobs callable jobs i.e. jobs that return results
+     * @return results as List<Object> or null if interrupted
+     *
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
+     */
+    public List<Object> forkAndJoin(final String jobName, final Callable<?>[] jobs) throws InterruptedJobException, RuntimeException {
+        return forkAndJoin(jobName, jobs, true);
+    }
+
+    /**
+     * Submit the given jobs and wait for their completion
+     * If the current thread is interrupted (cancelled), then futures are cancelled too.
+     * 
+     * @param jobName job name used when throwing an exception
+     * @param jobs callable jobs i.e. jobs that return results
+     * @param useThreads flag to enable or disable thread pool usage (async)
+     * @return results as List<Object> or null if interrupted
+     *
+     * @throws InterruptedJobException if the current thread is interrupted (cancelled)
+     * @throws RuntimeException if any exception occured during the computation
+     */
+    public List<Object> forkAndJoin(final String jobName, final Callable<?>[] jobs, final boolean useThreads) throws InterruptedJobException, RuntimeException {
+        if (jobs == null) {
+            // illegal state ?
+            return null;
+        }
+
+        final Thread currentTh = Thread.currentThread(); // local var
+
+        // fast interrupt :
+        if (currentTh.isInterrupted()) {
+            throw new InterruptedJobException(jobName + ": interrupted");
+        }
+
+        final List<Object> results;
+        final int len = jobs.length;
+
+        if (useThreads && len > 1) {
+            // execute jobs in parallel:
+            final Future<?>[] futures = fork(jobs);
+
+            logger.debug("wait for jobs to terminate ...");
+
+            results = join(jobName, futures);
+
+        } else {
+            results = new ArrayList<Object>(len);
+            try {
+                // execute job(s) using the current thread:
+                for (int i = 0; i < len; i++) {
+                    results.add(jobs[i].call());
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(jobName + ": failed:", e);
+            }
+        }
+
+        // fast interrupt :
+        if (currentTh.isInterrupted()) {
+            throw new InterruptedJobException(jobName + ": interrupted");
+        }
+
+        return results;
+    }
+
+    /**
      * Submit the given job to immediate execution and returns its Future object to wait for or cancel job
      *
      * @param job runnable job
      * @return Future object to wait for or cancel jobs
      */
     public Future<?> fork(final Runnable job) {
-        if (job != null) {
-            // start job:
-            final Future<?> future = parallelExecutor.submit(job);
-
-            logger.debug("started job: {}", future);
-
-            return future;
+        if (job == null) {
+            // illegal state ?
+            return null;
         }
-        // illegal state ?
-        return null;
+
+        // start job:
+        final Future<?> future = parallelExecutor.submit(job);
+
+        logger.debug("started job: {}", future);
+
+        return future;
     }
 
     /**
@@ -154,22 +294,38 @@ public final class ParallelJobExecutor {
      * @return Future objects to wait for or cancel jobs
      */
     public Future<?>[] fork(final Runnable[] jobs) {
-        if (jobs != null) {
-            final int len = jobs.length;
-            final Future<?>[] futures = new Future<?>[len];
-
-            // start jobs:
-            for (int i = 0; i < len; i++) {
-                final Future<?> future = parallelExecutor.submit(jobs[i]);
-
-                logger.debug("started job: {}", future);
-
-                futures[i] = future;
-            }
-            return futures;
+        if (jobs == null) {
+            // illegal state ?
+            return null;
         }
-        // illegal state ?
-        return null;
+
+        // start jobs:
+        final boolean isLogDebug = logger.isDebugEnabled();
+
+        final int len = jobs.length;
+
+        if (isLogDebug) {
+            logger.debug("starting {} jobs ...", len, new Throwable());
+        }
+
+        final Future<?>[] futures = new Future<?>[len];
+        Future<?> future;
+
+        for (int i = 0; i < len; i++) {
+            future = parallelExecutor.submit(jobs[i]);
+
+            if (isLogDebug) {
+                logger.debug("started job: {}", future);
+            }
+
+            futures[i] = future;
+        }
+
+        if (isLogDebug) {
+            logger.debug("{} jobs started.", futures.length);
+        }
+
+        return futures;
     }
 
     /**
@@ -178,34 +334,39 @@ public final class ParallelJobExecutor {
      * @param jobs callable jobs i.e. jobs that return results
      * @return Future objects to wait for or cancel jobs
      */
-    public Future<?>[] fork(final Callable<?>[] jobs) {
-        if (jobs != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("starting {} jobs ...", jobs.length);
-            }
-            if (DEBUG_JOBS) {
-                logger.info("starting {} jobs ...", jobs.length, new Throwable());
-            }
-
-            final int len = jobs.length;
-            final Future<?>[] futures = new Future<?>[len];
-
-            // start jobs:
-            for (int i = 0; i < len; i++) {
-                final Future<?> future = parallelExecutor.submit(jobs[i]);
-
-                logger.debug("started job: {}", future);
-
-                futures[i] = future;
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug("{} jobs started.", futures.length);
-            }
-
-            return futures;
+    private Future<?>[] fork(final Callable<?>[] jobs) {
+        if (jobs == null) {
+            // illegal state ?
+            return null;
         }
-        // illegal state ?
-        return null;
+
+        // start jobs:
+        final boolean isLogDebug = logger.isDebugEnabled();
+
+        final int len = jobs.length;
+
+        if (isLogDebug) {
+            logger.debug("starting {} jobs ...", len, new Throwable());
+        }
+
+        final Future<?>[] futures = new Future<?>[len];
+        Future<?> future;
+
+        for (int i = 0; i < len; i++) {
+            future = parallelExecutor.submit(jobs[i]);
+
+            if (isLogDebug) {
+                logger.debug("started job: {}", future);
+            }
+
+            futures[i] = future;
+        }
+
+        if (isLogDebug) {
+            logger.debug("{} jobs started.", futures.length);
+        }
+
+        return futures;
     }
 
     /**
@@ -214,19 +375,24 @@ public final class ParallelJobExecutor {
      *
      * @param jobName job name used when throwing an exception
      * @param futures Future objects to wait for
-     * @return results as List<Object>
+     * @return results as List<Object> or null if interrupted
      *
      * @throws InterruptedJobException if the current thread is interrupted (cancelled)
      * @throws RuntimeException if any exception occured during the computation
      */
     public List<Object> join(final String jobName, final Future<?>[] futures) throws InterruptedJobException, RuntimeException {
+        if (futures == null) {
+            // illegal state ?
+            return null;
+        }
+
+        // join futures:
+        final boolean isLogDebug = logger.isDebugEnabled();
+
         final int len = futures.length;
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("join {} jobs ...", len);
-        }
-        if (DEBUG_JOBS) {
-            logger.info("join {} jobs ...", len, new Throwable());
+        if (isLogDebug) {
+            logger.debug("join {} jobs ...", len, new Throwable());
         }
 
         final List<Object> results = new ArrayList<Object>(len);
@@ -236,10 +402,12 @@ public final class ParallelJobExecutor {
         Future<?> future;
         try {
             // Wait on running job:
-            for (int j = 0; j < len; j++) {
-                future = futures[j];
+            for (int i = 0; i < len; i++) {
+                future = futures[i];
 
-                logger.debug("wait for job: {}", future);
+                if (isLogDebug) {
+                    logger.debug("wait for job: {}", future);
+                }
 
                 results.add(future.get());
                 done++;
@@ -247,29 +415,44 @@ public final class ParallelJobExecutor {
         } catch (ExecutionException ee) {
             doCancel = true;
             throw new RuntimeException(jobName + ": failed:", ee.getCause());
+        } catch (CancellationException ce) {
+            if (isLogDebug) {
+                logger.debug("join: task cancelled:", ce);
+            }
+            doCancel = true;
+            throw new InterruptedJobException(jobName + ": interrupted", ce);
         } catch (InterruptedException ie) {
-            logger.debug("join: waiting thread cancelled:", ie);
+            if (isLogDebug) {
+                logger.debug("join: waiting thread cancelled:", ie);
+            }
             doCancel = true;
             throw new InterruptedJobException(jobName + ": interrupted", ie);
         } finally {
             if (doCancel) {
+                logger.debug("cancel jobs:");
+
                 // Cancel and interrupt any running job:
-                for (int j = done; j < len; j++) {
-                    future = futures[j];
+                // note: in reverse order to avoid starting new jobs while cancelling them:
+                for (int i = len - 1; i >= done; i--) {
+                    future = futures[i];
 
-                    logger.debug("cancel job: {}", future);
+                    if (isLogDebug) {
+                        logger.debug("cancel job: {}", future);
+                    }
 
+                    // do interrupt thread if running:
                     future.cancel(true);
                 }
 
-                // Anyway: interrupt this thread again:
+                // Anyway: interrupt this thread again anyway:
                 Thread.currentThread().interrupt();
             }
         }
 
-        if (logger.isDebugEnabled()) {
+        if (isLogDebug) {
             logger.debug("{} jobs joined.", len);
         }
+
         return results;
     }
 
@@ -278,8 +461,8 @@ public final class ParallelJobExecutor {
      */
     private static final class JobWorkerThreadFactory implements ThreadFactory {
 
-        /** thread count */
-        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        /** thread index (starting from 0) */
+        private final AtomicInteger threadNumber = new AtomicInteger(0);
 
         /**
          * Constructs a new {@code Thread}.
@@ -290,10 +473,10 @@ public final class ParallelJobExecutor {
          */
         @Override
         public Thread newThread(final Runnable r) {
-            final StringBuilder name = new StringBuilder("JobWorker-pool-");
-            name.append(threadNumber.getAndIncrement());
 
-            final Thread thread = new Thread(r, name.toString());
+            final int threadIndex = threadNumber.getAndIncrement();
+
+            final Thread thread = new JobWorkerThread(r, threadIndex);
             if (thread.isDaemon()) {
                 thread.setDaemon(false);
             }
@@ -304,9 +487,72 @@ public final class ParallelJobExecutor {
             // define UncaughtExceptionHandler :
             MCSExceptionHandler.installThreadHandler(thread);
 
-            logger.debug("new thread: {}", thread.getName());
+            if (logger.isDebugEnabled()) {
+                logger.debug("new thread: {}", thread.getName());
+            }
 
             return thread;
         }
+    }
+
+    /**
+     * Custom Thread implementation keeping the thread index in the thread pool
+     */
+    private static final class JobWorkerThread extends Thread {
+
+        /** thread index */
+        private final Integer index;
+
+        /**
+         * Protected constructor
+         * @param target the object whose {@code run} method is invoked when this thread
+         *         is started. If {@code null}, this thread's run method is invoked.
+         * @param index thread index in the thread pool
+         */
+        JobWorkerThread(final Runnable target, final Integer index) {
+            super(target, "JobWorker-" + index);
+            this.index = index;
+        }
+
+        /**
+         * Return the thread index
+         * @return thread index
+         */
+        public Integer getIndex() {
+            return index;
+        }
+
+        @Override
+        public void run() {
+            // store the thread index in thread local:
+            localIndex.set(index);
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("thread[{}] run", index);
+            }
+            try {
+                super.run();
+            } finally {
+                // always perform cleanup:
+                localIndex.remove();
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("thread[{}] done", index);
+            }
+        }
+    }
+
+    /**
+     * Returns the current thread's index modulo number of jobs so returns an int value between [0; nJobs[
+     *
+     * @param nJobs number of parallel jobs
+     * @return the current thread's index in [0; nJobs[
+     */
+    public static int currentThreadIndex(final int nJobs) {
+        final Integer threadIndex = localIndex.get();
+        if (threadIndex == null) {
+            return 0;
+        }
+        return threadIndex.intValue() % nJobs;
     }
 }

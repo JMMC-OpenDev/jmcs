@@ -59,7 +59,7 @@ public abstract class Preferences extends Observable {
     private static final Logger _logger = LoggerFactory.getLogger(Preferences.class.getName());
     /** separator used to encode list<String> preference values */
     private static final char LIST_SEPARATOR = '|';
-    /** regexp expression used to decode list<String> preference values */
+    /** REGEXP expression used to decode list<String> preference values */
     private static final String LIST_SPLITTER = "\\|";
     /* jMCS private stuff */
     /** Hidden internal preferences prefix managed by jMCS. */
@@ -86,8 +86,8 @@ public abstract class Preferences extends Observable {
     protected final Action _savePreferences;
     /** Restore preferences that get one default value */
     protected final Action _restoreDefaultPreferences;
-    /** flag to enable/disable observer notifications */
-    private boolean notify;
+    /** Flag to enable/disable observer notifications */
+    private boolean _notify;
 
     /**
      * Creates a new Preferences object.
@@ -1150,7 +1150,7 @@ public abstract class Preferences extends Observable {
      * @return flag to enable/disable observer notifications
      */
     public final boolean isNotify() {
-        return notify;
+        return _notify;
     }
 
     /**
@@ -1158,7 +1158,7 @@ public abstract class Preferences extends Observable {
      * @param notify flag to enable/disable observer notifications
      */
     public final void setNotify(final boolean notify) {
-        this.notify = notify;
+        this._notify = notify;
     }
 
     /**

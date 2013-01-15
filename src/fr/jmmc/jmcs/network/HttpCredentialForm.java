@@ -5,8 +5,6 @@ package fr.jmmc.jmcs.network;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.util.StringUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -19,7 +17,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 public class HttpCredentialForm extends javax.swing.JDialog {
 
     /** Credential instance returned by getCredentials method */
-    Credentials credentials = null;
+    Credentials _credentials = null;
 
     /** Creates new form HttpCredentialForm */
     public HttpCredentialForm(GetMethod getMethod) {
@@ -30,7 +28,7 @@ public class HttpCredentialForm extends javax.swing.JDialog {
         setTitle(getMethod.getStatusText());
 
         // prepare info content 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("The web server requests a login/password  for the following URL :\n");
         try {
             sb.append(getMethod.getURI().toString());
@@ -45,9 +43,9 @@ public class HttpCredentialForm extends javax.swing.JDialog {
         infoTextPane.setText(sb.toString());
 
         pack();
-        this.setLocationRelativeTo(App.getFrame());
-        
-        credentials = null;
+        setLocationRelativeTo(App.getFrame());
+
+        _credentials = null;
     }
 
     /** Return the credential associated to the input fields
@@ -55,7 +53,7 @@ public class HttpCredentialForm extends javax.swing.JDialog {
      *         null if user press cancel or close the window
      */
     public Credentials getCredentials() {
-        return credentials;
+        return _credentials;
     }
 
     /** This method is called from within the constructor to
@@ -164,7 +162,7 @@ public class HttpCredentialForm extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
-        credentials = new UsernamePasswordCredentials(usernameTextField.getText(), new String(passwordField.getPassword()));
+        _credentials = new UsernamePasswordCredentials(usernameTextField.getText(), new String(passwordField.getPassword()));
         setVisible(false);
     }//GEN-LAST:event_submitButtonActionPerformed
 

@@ -6,7 +6,7 @@ package fr.jmmc.jmcs.util;
 import java.awt.Color;
 
 /**
- * Color to String encoder
+ * Color to String encoder.
  * 
  * @author Guillaume MELLA.
  */
@@ -33,8 +33,7 @@ public class ColorEncoder {
 
     /** 
      * Converts a String to an integer and returns the specified opaque Color.
-     * This method handles string formats that are used to represent octal and
-     * hexidecimal numbers.
+     * This method handles string formats that are used to represent octal and hexadecimal numbers.
      * @param c The color to encode
      * @return the encoded string for given color
      */

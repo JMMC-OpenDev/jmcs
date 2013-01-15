@@ -4,21 +4,19 @@
 package fr.jmmc.jmcs.jaxb;
 
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JAXBFactory is an utility class to configure JAXB context & properties
  *
- * @author Laurent BOURGES
+ * @author Laurent BOURGES.
  */
 public final class JAXBFactory {
-    //~ Constants --------------------------------------------------------------------------------------------------------
 
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(JAXBFactory.class.getName());
@@ -31,20 +29,19 @@ public final class JAXBFactory {
     public static final String JAXB_CONTEXT_FACTORY_IMPLEMENTATION = "com.sun.xml.bind.v2.ContextFactory";
     /** all factories */
     private static ConcurrentHashMap<String, JAXBFactory> managedInstances = new ConcurrentHashMap<String, JAXBFactory>(4);
-    //~ Members ----------------------------------------------------------------------------------------------------------
+    // Members
     /** JAXB context path : used to find a factory */
-    private final String jaxbPath;
+    private final String _jaxbPath;
     /** JAXB Context for the given JAXB context path */
-    private JAXBContext jc = null;
+    private JAXBContext _jaxbContext = null;
 
-    //~ Constructors -----------------------------------------------------------------------------------------------------
     /**
      * Creates a new JPAFactory object
      *
      * @param pJaxbPath JAXB context path
      */
     private JAXBFactory(final String pJaxbPath) {
-        this.jaxbPath = pJaxbPath;
+        _jaxbPath = pJaxbPath;
     }
 
     //~ Methods ----------------------------------------------------------------------------------------------------------
@@ -58,21 +55,21 @@ public final class JAXBFactory {
      * @throws XmlBindException if a JAXBException was caught
      */
     public static JAXBFactory getInstance(final String jaxbPath) throws XmlBindException {
-        JAXBFactory jf = managedInstances.get(jaxbPath);
+        JAXBFactory factory = managedInstances.get(jaxbPath);
 
-        if (jf == null) {
-            jf = new JAXBFactory(jaxbPath);
+        if (factory == null) {
+            factory = new JAXBFactory(jaxbPath);
 
-            jf.initialize();
+            factory.initialize();
 
-            if (jf != null) {
-                managedInstances.putIfAbsent(jaxbPath, jf);
+            if (factory != null) {
+                managedInstances.putIfAbsent(jaxbPath, factory);
                 // to be sure to return the singleton :
-                jf = managedInstances.get(jaxbPath);
+                factory = managedInstances.get(jaxbPath);
             }
         }
 
-        return jf;
+        return factory;
     }
 
     /**
@@ -82,7 +79,7 @@ public final class JAXBFactory {
      */
     private void initialize() throws XmlBindException {
         try {
-            this.jc = getContext(jaxbPath);
+            _jaxbContext = getContext(_jaxbPath);
         } catch (XmlBindException xbe) {
             logger.error("JAXBFactory.initialize : JAXB failure : ", xbe);
             throw xbe;
@@ -97,7 +94,7 @@ public final class JAXBFactory {
      * @throws XmlBindException if a JAXBException was caught
      */
     private JAXBContext getContext(final String path) throws XmlBindException {
-        JAXBContext c = null;
+        JAXBContext context = null;
 
         // Define the system property to define which JAXB implementation to use :
         System.setProperty(JAXB_CONTEXT_FACTORY, JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
@@ -107,13 +104,13 @@ public final class JAXBFactory {
         try {
             // create a JAXBContext capable of handling classes generated into
             // ivoa schema package
-            c = JAXBContext.newInstance(path);
+            context = JAXBContext.newInstance(path);
 
         } catch (JAXBException je) {
             throw new XmlBindException("JAXBFactory.getContext : Unable to create JAXBContext : " + path, je);
         }
 
-        return c;
+        return context;
     }
 
     /**
@@ -122,7 +119,7 @@ public final class JAXBFactory {
      * @return JAXB Context for the given JAXB context path
      */
     private JAXBContext getJAXBContext() {
-        return jc;
+        return _jaxbContext;
     }
 
     /**
@@ -132,17 +129,17 @@ public final class JAXBFactory {
      * @throws XmlBindException if a JAXBException was caught while creating an unmarshaller
      */
     public Unmarshaller createUnMarshaller() throws XmlBindException {
-        Unmarshaller u = null;
+        Unmarshaller unmarshaller = null;
 
         try {
             // create an Unmarshaller
-            u = getJAXBContext().createUnmarshaller();
+            unmarshaller = getJAXBContext().createUnmarshaller();
 
         } catch (JAXBException je) {
             throw new XmlBindException("JAXBFactory.createUnMarshaller : JAXB Failure", je);
         }
 
-        return u;
+        return unmarshaller;
     }
 
     /**
@@ -152,20 +149,18 @@ public final class JAXBFactory {
      * @throws XmlBindException if a JAXBException was caught while creating an marshaller
      */
     public Marshaller createMarshaller() throws XmlBindException {
-        Marshaller m = null;
+        Marshaller marshaller = null;
 
         try {
             // create an Unmarshaller
-            m = getJAXBContext().createMarshaller();
+            marshaller = getJAXBContext().createMarshaller();
 
-            m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         } catch (JAXBException je) {
             throw new XmlBindException("JAXBFactory.createMarshaller : JAXB Failure", je);
         }
 
-        return m;
+        return marshaller;
     }
 }
-//~ End of file --------------------------------------------------------------------------------------------------------
-

@@ -16,8 +16,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.text.JTextComponent;
 
 /**
- * Extends the swing jtable and fixes the default behaviour
- * to provide ergonomic scientific softwares.
+ * Extends the swing JTable and fixes the default behavior to provide ergonomic scientific softwares.
  * Most tables should use this class as custom creation code.
  * 
  * @author Guillaume MELLA, Laurent BOURGES.
@@ -28,7 +27,7 @@ public class NumericJTable extends javax.swing.JTable {
     private static final long serialVersionUID = 1;
 
     /**
-     * Overriden constructor to change default behaviour (default editor, single selection)
+     * Override constructor to change default behavior (default editor, single selection)
      */
     public NumericJTable() {
         super();
@@ -72,7 +71,7 @@ public class NumericJTable extends javax.swing.JTable {
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
         /** Double value (can be null) */
-        private Double value;
+        private Double _value;
 
         /**
          * Double editor constructor
@@ -86,7 +85,7 @@ public class NumericJTable extends javax.swing.JTable {
         public Component getTableCellEditorComponent(JTable table, Object value,
                 boolean isSelected,
                 int row, int column) {
-            this.value = null;
+            value = null;
 
             ((JComponent) getComponent()).setBorder(new LineBorder(Color.black));
 
@@ -95,26 +94,26 @@ public class NumericJTable extends javax.swing.JTable {
 
         @Override
         public Object getCellEditorValue() {
-            return value;
+            return _value;
         }
 
         @Override
         public boolean stopCellEditing() {
-            final String s = (String) super.getCellEditorValue();
+            final String str = (String) super.getCellEditorValue();
             // Here we are dealing with the case where a user
             // has deleted the string value in a cell, possibly
             // after a failed validation. Return null, so that
             // they have the option to replace the value with
             // null or use escape to restore the original.
             // For Strings, return "" for backward compatibility.
-            if ("".equals(s)) {
+            if (str.equals("")) {
                 // Fix focus lost problem:
-                value = null;
+                _value = null;
                 return super.stopCellEditing();
             }
 
             try {
-                value = new Double(s);
+                _value = new Double(str);
             } catch (NumberFormatException nfe) {
                 ((JComponent) getComponent()).setBorder(new LineBorder(Color.red));
                 return false;

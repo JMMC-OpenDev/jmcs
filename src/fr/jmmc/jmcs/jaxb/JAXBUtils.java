@@ -17,17 +17,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class used to perform generic marshalling and unmarshalling operations.
- * @author bourgesl, mella
+ * @author Launrent BOURGES, Guillaume MELLA.
  */
 public class JAXBUtils {
 
-    /* members */
+    // Members
     /** Logger */
-    private final static Logger logger = LoggerFactory.getLogger(JAXBUtils.class);
+    private final static Logger _logger = LoggerFactory.getLogger(JAXBUtils.class);
 
-    /** 
-     * Private constructor for utility class 
-     */
+    /** Private constructor for utility class */
     private JAXBUtils() {
     }
 
@@ -37,14 +35,14 @@ public class JAXBUtils {
      * @param jbf JAXBFactory
      * @return unmarshalled object
      *
-     * @throws IOException if an I/O exception occured
-     * @throws IllegalStateException if an unexpected exception occured
+     * @throws IOException if an I/O exception occurred
+     * @throws IllegalStateException if an unexpected exception occurred
      * @throws XmlBindException if a JAXBException was caught while creating an unmarshaller
      */
     public static Object loadObject(final URL inputUrl, final JAXBFactory jbf) throws IOException, IllegalStateException, XmlBindException {
         Object result = null;
 
-        logger.debug("JAXBUtils.loadObject() from url : {}", inputUrl);
+        _logger.debug("JAXBUtils.loadObject() from url : {}", inputUrl);
 
         try {
             result = jbf.createUnMarshaller().unmarshal(new BufferedInputStream(inputUrl.openStream()));
@@ -61,14 +59,14 @@ public class JAXBUtils {
      * @param jbf jaxb factory instance
      * @return unmarshalled object
      *
-     * @throws IOException if an I/O exception occured
-     * @throws IllegalStateException if an unexpected exception occured
+     * @throws IOException if an I/O exception occurred
+     * @throws IllegalStateException if an unexpected exception occurred
      * @throws XmlBindException if a JAXBException was caught while creating an unmarshaller
      */
     public static Object loadObject(final File inputFile, final JAXBFactory jbf)
             throws IOException, IllegalStateException, XmlBindException {
 
-        logger.debug("JAXBUtils.loadObject() from file : {}", inputFile);
+        _logger.debug("JAXBUtils.loadObject() from file : {}", inputFile);
 
         Object result = null;
         try {
@@ -88,9 +86,8 @@ public class JAXBUtils {
      * @param jbf jaxb factory instance
      * @return unmarshalled object
      * 
-     *
-     * @throws IOException if an I/O exception occured
-     * @throws IllegalStateException if an unexpected exception occured
+     * @throws IOException if an I/O exception occurred
+     * @throws IllegalStateException if an unexpected exception occurred
      * @throws XmlBindException if a JAXBException was caught while creating an unmarshaller
      */
     protected static Object loadObject(final Reader reader, final JAXBFactory jbf)
@@ -114,8 +111,8 @@ public class JAXBUtils {
      * @param object to marshall
      * @param jbf jaxb factory instance
      *
-     * @throws IOException if an I/O exception occured
-     * @throws IllegalStateException if an unexpected exception occured
+     * @throws IOException if an I/O exception occurred
+     * @throws IllegalStateException if an unexpected exception occurred
      */
     public static void saveObject(final File outputFile, final Object object, final JAXBFactory jbf)
             throws IOException, IllegalStateException {
@@ -133,7 +130,7 @@ public class JAXBUtils {
      * @param object to marshall
      * @param jbf jaxb factory instance
      *
-     * @throws IllegalStateException if an unexpected exception occured
+     * @throws IllegalStateException if an unexpected exception occurred
      */
     public static void saveObject(final Writer writer, final Object object, JAXBFactory jbf)
             throws IllegalStateException {
@@ -149,8 +146,8 @@ public class JAXBUtils {
      * @param message message
      * @param je jaxb exception
      * 
-     * @throws IllegalStateException if an unexpected exception occured
-     * @throws IOException if an I/O exception occured
+     * @throws IllegalStateException if an unexpected exception occurred
+     * @throws IOException if an I/O exception occurred
      */
     protected static void handleException(final String message, final JAXBException je) throws IllegalStateException, IOException {
         final Throwable cause = je.getCause();

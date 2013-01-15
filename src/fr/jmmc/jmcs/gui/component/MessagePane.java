@@ -128,7 +128,7 @@ public final class MessagePane {
                 thCause = thCause.getCause();
             }
 
-            /* Add exception name to improve given information e.g. ArrayOutOfBound just returned a number as message...*/
+            // Add exception name to improve given information e.g. ArrayOutOfBound just returned a number as message...
             msg = message + "\n\nExplanation (" + th.getClass().getName() + "): " + th.getMessage() + cause + "\n\n";
         } else {
             msg = message;
@@ -145,7 +145,7 @@ public final class MessagePane {
 
     /**
      * Show the given message.    
-     * The frame size is limited so long messages appear in a scrollpane.
+     * The frame size is limited so long messages appear in a scroll pane.
      * @param message message to display
      * @param title window title to use
      * @param messageType the type of message to be displayed:

@@ -332,7 +332,7 @@ public final class Http {
                 HttpCredentialForm credentialForm = new HttpCredentialForm(method);
                 credentialForm.setVisible(true);
                 Credentials c = credentialForm.getCredentials();
-                
+
                 // if user gives one login/password, try again with the new credential
                 if (c != null) {
                     return download(uri, useDedicatedClient, credentialForm.getCredentials(), resultProcessor);
@@ -340,9 +340,9 @@ public final class Http {
                 MessagePane.showWarning("Sorry, your file '" + uri + "' can't be retrieved properly\nresult code :" + resultCode + "\n status :" + method.getStatusText(), "Remote file can't be dowloaded");
                 logger.warn("download didn't succeed, result code : " + resultCode + ", status : " + method.getStatusText());
 
-            } else {                
+            } else {
                 logger.warn("download didn't succeed, result code : " + resultCode + ", status : " + method.getStatusText());
-                return false;                
+                return false;
             }
 
         } finally {

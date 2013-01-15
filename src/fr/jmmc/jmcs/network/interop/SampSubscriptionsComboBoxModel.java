@@ -33,7 +33,6 @@ public class SampSubscriptionsComboBoxModel extends DefaultComboBoxModel {
 
         _clientListModel = SampManager.createSubscribedClientListModel(sampCapability.mType());
         _clientListModel.addListDataListener(new ListDataListener() {
-
             @Override
             public void contentsChanged(final ListDataEvent e) {
                 _logger.trace("ListDataListener.contentsChanged");

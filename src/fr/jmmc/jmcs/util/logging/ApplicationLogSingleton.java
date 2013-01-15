@@ -17,16 +17,16 @@ import org.slf4j.Logger;
  * 
  * License: LGPL 2.1
  * 
- * @author Bourgès Laurent
+ * @author Laurent BOURGES.
  */
 public final class ApplicationLogSingleton {
 
     /** singleton instance */
-    private volatile static ApplicationLogSingleton instance = null;
+    private volatile static ApplicationLogSingleton _instance = null;
     /* loggers */
-    /** jmmc application log */
+    /** JMMC application log */
     public final static String JMMC_APP_LOG = Logger.ROOT_LOGGER_NAME;
-    /** jmmc status log */
+    /** JMMC status log */
     public final static String JMMC_STATUS_LOG = "fr.jmmc.jmcs.status";
 
     /**
@@ -34,10 +34,10 @@ public final class ApplicationLogSingleton {
      * @return singleton instance
      */
     public static synchronized ApplicationLogSingleton getInstance() {
-        if (instance == null) {
-            instance = new ApplicationLogSingleton();
+        if (_instance == null) {
+            _instance = new ApplicationLogSingleton();
         }
-        return instance;
+        return _instance;
     }
 
     /* members */

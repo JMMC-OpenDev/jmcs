@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * The fr.jmmc.jmcs.util.ObjectUtils class is related to Object handling (equals, clone, copy, toString variants)
  * 
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public final class ObjectUtils {
 

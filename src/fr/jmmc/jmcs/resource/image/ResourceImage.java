@@ -7,7 +7,7 @@ import fr.jmmc.jmcs.util.ImageUtils;
 import javax.swing.ImageIcon;
 
 /**
- *
+ * jMCS internal resource images.
  * @author Sylvain LAFRASSE
  */
 public enum ResourceImage {

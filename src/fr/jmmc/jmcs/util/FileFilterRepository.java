@@ -3,12 +3,10 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
-
 import java.util.Arrays;
 import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * FileFilterRepository singleton class.
@@ -21,7 +19,7 @@ public final class FileFilterRepository {
     private static final Logger _logger = LoggerFactory.getLogger(FileFilterRepository.class.getName());
     /** Singleton instance */
     private static FileFilterRepository _instance = null;
-    /** Hashtable to associate mime type identifier keys to FileFilterRepository instances */
+    /** HashMap to associate mime type identifier keys to FileFilterRepository instances */
     private static final HashMap<Object, GenericFileFilter> _repository = new HashMap<Object, GenericFileFilter>(16);
 
     /** Hidden constructor */
@@ -30,7 +28,7 @@ public final class FileFilterRepository {
     }
 
     /** 
-     * Return the singleton instance 
+     * Return the singleton instance.
      * @return singleton instance 
      */
     public static synchronized FileFilterRepository getInstance() {

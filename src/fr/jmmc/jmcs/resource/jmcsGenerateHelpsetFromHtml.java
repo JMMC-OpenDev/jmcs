@@ -3,18 +3,15 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.resource;
 
+import java.io.File;
 import net.sourceforge.jhelpdev.JHelpDevFrame;
 import net.sourceforge.jhelpdev.TOCEditorPanel;
 import net.sourceforge.jhelpdev.action.CreateAllAction;
 import net.sourceforge.jhelpdev.action.CreateMapAction;
 import net.sourceforge.jhelpdev.action.OpenConfigAction;
 import net.sourceforge.jhelpdev.settings.FileName;
-
-import java.io.File;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * This class is used in order to generate TOC, JHM and HS files
@@ -28,37 +25,33 @@ import org.slf4j.LoggerFactory;
  * 
  * TODO: move this class outside src folder to be not released
  */
-public class jmcsGenerateHelpsetFromHtml
-{
+public class jmcsGenerateHelpsetFromHtml {
+
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(jmcsGenerateHelpsetFromHtml.class.getName());
 
     /**
-     * Calls jhelpdev software on a HTML folder
+     * Calls JHelpDev software on a HTML folder
      *
      * @param args arg[0] : XML project main file
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         // Check if there is only one argument (the jhelpdev project main file)
-        if (args.length != 1)
-        {
+        if (args.length != 1) {
             _logger.error("No jhelpdev project main file specified ...");
             System.exit(1);
         }
 
         /* Create the jhelpdev project main file
-           to check if is it valid */
+         to check if is it valid */
         File documentation = new File(args[0]);
 
         // Does it exists?
-        if (! documentation.exists())
-        {
+        if (!documentation.exists()) {
             _logger.error("The jhelpdev project main file specified doesn't exists ...");
             System.exit(1);
         } // Is it a file?
-        else if (! documentation.isFile())
-        {
+        else if (!documentation.isFile()) {
             _logger.error("The jhelpdev project main file specified is not a file ...");
             System.exit(1);
         }
@@ -67,7 +60,7 @@ public class jmcsGenerateHelpsetFromHtml
         String className = jmcsGenerateHelpsetFromHtml.class.getName();
 
         // TODO: use EDT for Swing init / actions: see SwingUtils
-        
+
         // Launch the jhelpdev application
         JHelpDevFrame.main(new String[]{});
 
@@ -85,7 +78,7 @@ public class jmcsGenerateHelpsetFromHtml
         // Calls the jhelpdev action to create toc files
         System.out.println(className + " : Creating TOC table...");
         TOCEditorPanel.getTOCTree()
-                      .mergeTreeContents(CreateMapAction.getGeneratedRoot());
+                .mergeTreeContents(CreateMapAction.getGeneratedRoot());
 
         // Calls the jhelpdev action to generates helpset (.hs) file
         System.out.println(className + " : Creating HelpSet...");

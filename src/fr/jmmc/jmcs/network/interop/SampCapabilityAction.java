@@ -32,12 +32,11 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     private static final long serialVersionUID = 1;
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(SampCapabilityAction.class.getName());
-    /** flag to enable/disable broadcast action */
+    /** Flag to enable/disable broadcast action */
     public final static boolean BROADCAST_ENABLED = false;
-    /** label for broadcast to all */
+    /** Label for broadcast to all */
     private final static String BROADCAST_MENU_LABEL = "All Applications";
-
-    /* members */
+    // Members
     /** SAMP capability to send */
     private final SampCapability _capability;
     /** mType of SAMP capability to send */

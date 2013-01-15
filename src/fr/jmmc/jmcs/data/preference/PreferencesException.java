@@ -6,8 +6,7 @@
 package fr.jmmc.jmcs.data.preference;
 
 /**
- * PreferencesException can be thrown by the Preferences when anything went
- * wrong.
+ * PreferencesException can be thrown by Preferences if anything went wrong.
  *
  * @author Sylvain LAFRASSE.
  */

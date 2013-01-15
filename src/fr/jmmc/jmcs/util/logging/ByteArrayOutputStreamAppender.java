@@ -14,7 +14,7 @@ import java.io.OutputStream;
  * 
  * License: LGPL 2.1
  * 
- * @author Bourgès Laurent
+ * @author Laurent BOURGES.
  */
 public final class ByteArrayOutputStreamAppender extends OutputStreamAppender<ILoggingEvent> {
 
@@ -101,7 +101,7 @@ public final class ByteArrayOutputStreamAppender extends OutputStreamAppender<IL
          */
         protected synchronized byte[] toByteArray(final int from) {
             final int pos = (from < 0 || from > count) ? 0 : from;
-            return copyOfRange(this.buf, pos, this.count);
+            return copyOfRange(buf, pos, count);
         }
 
         /**

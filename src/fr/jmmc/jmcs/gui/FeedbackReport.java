@@ -311,7 +311,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     }
 
     /** Exit the application if there was a fatal error */
-    private final void exit() {
+    private void exit() {
         // If the application is not ready, exit now :
         final boolean ready = App.isReady();
 

@@ -9,17 +9,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class defines a simple task registry (add / get tasks and define child tasks for a particular task)
+ * Defines a simple task registry (add / get tasks and define child tasks for a particular task).
  * 
  * @author Guillaume MELLA, Laurent BOURGES.
  */
 public class TaskRegistry {
 
-    /** Class logger */
-    protected static final Logger logger = LoggerFactory.getLogger(TaskRegistry.class.getName());
+    /** Class _logger */
+    protected static final Logger _logger = LoggerFactory.getLogger(TaskRegistry.class.getName());
     /* members */
     /**registered tasks keyed by task name */
-    private final Map<String, Task> registeredTasks = new HashMap<String, Task>();
+    private final Map<String, Task> _registeredTasks = new HashMap<String, Task>();
 
     /**
      * Protected constructor
@@ -33,10 +33,10 @@ public class TaskRegistry {
      * @param task task to add
      */
     public final void addTask(final Task task) {
-        if (this.registeredTasks.containsKey(task.getName())) {
-            logger.warn("task already registered : {}", task);
+        if (_registeredTasks.containsKey(task.getName())) {
+            _logger.warn("task already registered : {}", task);
         }
-        this.registeredTasks.put(task.getName(), task);
+        _registeredTasks.put(task.getName(), task);
     }
 
     /**
@@ -45,7 +45,7 @@ public class TaskRegistry {
      * @return task or null if not found
      */
     public final Task getTask(final String name) {
-        return this.registeredTasks.get(name);
+        return _registeredTasks.get(name);
     }
 
     /**

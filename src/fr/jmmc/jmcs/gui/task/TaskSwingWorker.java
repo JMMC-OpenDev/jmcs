@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class extends SwingWorker backport for Java 5 to :
- * - define related task to cancel easily the task and its child tasks
+ * This class extends SwingWorker back port for Java 5 to :
+ * - define related task to cancel easily the task and its child tasks;
  * - simplify debugging / logging.
  * Requires library :
  * swing-worker-1.2.jar (org.jdesktop.swingworker.SwingWorker)
@@ -22,16 +22,15 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingWorker<T, Void> {
 
-    /** Class logger */
-    protected static final Logger logger = LoggerFactory.getLogger(TaskSwingWorker.class.getName());
+    /** Class _logger */
+    protected static final Logger _logger = LoggerFactory.getLogger(TaskSwingWorker.class.getName());
     /** flag to log debugging information */
     protected final static boolean DEBUG_FLAG = false;
-
-    /* members */
+    // members
     /** related task */
-    private final Task task;
+    private final Task _task;
     /** log prefix using the format 'SwingWorker[" + task.name + "]" + logSuffix + "@hashcode' used by debugging statements */
-    protected final String logPrefix;
+    protected final String _logPrefix;
 
     /**
      * Create a new TaskSwingWorker instance
@@ -47,8 +46,8 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
      * @param logSuffix complementary suffix for log prefix
      */
     public TaskSwingWorker(final Task task, final String logSuffix) {
-        this.task = task;
-        this.logPrefix = (DEBUG_FLAG) ? ("SwingWorker[" + task.getName() + "]" + logSuffix + "@" + Integer.toHexString(hashCode())) : "SwingWorker[" + task.getName() + "]";
+        _task = task;
+        _logPrefix = (DEBUG_FLAG) ? ("SwingWorker[" + task.getName() + "]" + logSuffix + "@" + Integer.toHexString(hashCode())) : "SwingWorker[" + task.getName() + "]";
     }
 
     /**
@@ -83,12 +82,12 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
      * @return related task
      */
     public final Task getTask() {
-        return task;
+        return _task;
     }
 
     @Override
     public final String toString() {
-        return this.logPrefix;
+        return _logPrefix;
     }
 
     /**
@@ -98,30 +97,30 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
     @Override
     public final T doInBackground() {
         if (DEBUG_FLAG) {
-            logger.info("{}.doInBackground : START", logPrefix);
+            _logger.info("{}.doInBackground : START", _logPrefix);
         }
 
         T data = null;
 
         // compute the data :
-        data = this.computeInBackground();
+        data = computeInBackground();
 
         if (isCancelled()) {
             if (DEBUG_FLAG) {
-                logger.info("{}.doInBackground : CANCELLED", logPrefix);
+                _logger.info("{}.doInBackground : CANCELLED", _logPrefix);
             }
             // no result if task was cancelled :
             data = null;
         } else {
             if (DEBUG_FLAG) {
-                logger.info("{}.doInBackground : DONE", logPrefix);
+                _logger.info("{}.doInBackground : DONE", _logPrefix);
             }
         }
         return data;
     }
 
     /**
-     * Call the refreshGUI with result if not cancelled.
+     * Call the refreshGUI with result if not canceled.
      * This code is executed by the Swing Event Dispatcher thread (EDT)
      */
     @Override
@@ -129,7 +128,7 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
         // check if the worker was cancelled :
         if (isCancelled()) {
             if (DEBUG_FLAG) {
-                logger.info("{}.done : CANCELLED", logPrefix);
+                _logger.info("{}.done : CANCELLED", _logPrefix);
             }
         } else {
             try {
@@ -138,23 +137,23 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
 
                 if (data == null) {
                     if (DEBUG_FLAG) {
-                        logger.info("{}.done : NO DATA", logPrefix);
+                        _logger.info("{}.done : NO DATA", _logPrefix);
                     }
                 } else {
                     if (DEBUG_FLAG) {
-                        logger.info("{}.done : UI START", logPrefix);
+                        _logger.info("{}.done : UI START", _logPrefix);
                     }
 
                     // refresh UI with data :
                     this.refreshUI(data);
 
                     if (DEBUG_FLAG) {
-                        logger.info("{}.done : UI DONE", logPrefix);
+                        _logger.info("{}.done : UI DONE", _logPrefix);
                     }
                 }
 
             } catch (InterruptedException ie) {
-                logger.debug("{}.done : interrupted failure :", logPrefix, ie);
+                _logger.debug("{}.done : interrupted failure :", _logPrefix, ie);
             } catch (ExecutionException ee) {
                 handleException(ee);
             }
@@ -178,7 +177,7 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
     public abstract void refreshUI(final T data);
 
     /**
-     * Handle the execution exception that occured in the compute operation : @see #computeInBackground()
+     * Handle the execution exception that occurred in the compute operation : @see #computeInBackground()
      * This default implementation opens the feedback report (modal and do not exit on close).
      *
      * @param ee execution exception

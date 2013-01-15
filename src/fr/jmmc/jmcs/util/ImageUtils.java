@@ -28,7 +28,7 @@ public final class ImageUtils {
     private static final Logger _logger = LoggerFactory.getLogger(ImageUtils.class.getName());
     /* members */
     /** Loading error message template */
-    private static final String CAN_T_LOAD_ICON_MSG = "Could not load icon '{}'.";
+    private static final String CANNOT_LOAD_ICON_MESSAGE = "Could not load icon '{}'.";
 
     /**
      * Forbidden constructor
@@ -49,7 +49,7 @@ public final class ImageUtils {
         // TODO : Maybe cache previously loaded icon
 
         if (url == null) {
-            _logger.debug(CAN_T_LOAD_ICON_MSG, url);
+            _logger.debug(CANNOT_LOAD_ICON_MESSAGE, url);
             return null;
         }
 
@@ -58,9 +58,9 @@ public final class ImageUtils {
             imageUrl = FileUtils.getResource(url);
         } catch (IllegalStateException e) {
             if (url.length() == 0) {
-                _logger.debug(CAN_T_LOAD_ICON_MSG, url);
+                _logger.debug(CANNOT_LOAD_ICON_MESSAGE, url);
             } else {
-                _logger.info(CAN_T_LOAD_ICON_MSG, url);
+                _logger.info(CANNOT_LOAD_ICON_MESSAGE, url);
             }
             return null;
         }
@@ -73,7 +73,7 @@ public final class ImageUtils {
             // Forge icon resource path
             imageIcon = new ImageIcon(imageUrl);
         } catch (IllegalStateException ise) {
-            _logger.warn(CAN_T_LOAD_ICON_MSG, imageUrl);
+            _logger.warn(CANNOT_LOAD_ICON_MESSAGE, imageUrl);
         }
         return imageIcon;
     }

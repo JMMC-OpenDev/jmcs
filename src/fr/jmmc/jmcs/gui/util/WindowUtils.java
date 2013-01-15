@@ -10,7 +10,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -52,7 +51,7 @@ public class WindowUtils {
     }
 
     /**
-     * Center the given JFrame on the main screen realestate.
+     * Center the given JFrame on the main screen real estate.
      *
      * If the JFrame is bigger than the main screen, it will be moved to the upper-left main screen corner.
      *
@@ -135,7 +134,6 @@ public class WindowUtils {
 
         // Close window on either stroke
         final ActionListener actionListener = new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 _logger.trace("Handling close window shortcut.");

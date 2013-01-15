@@ -73,10 +73,8 @@ public enum SampCapability {
     TOPCAT_LOAD_STIL("table.load.stil"),
     /** Undefined MType */
     UNKNOWN("UNKNOWN", ExclusionReason.SAMP_INTERNAL);
-
     /** Blanking value for undefined Strings (null, ...) */
     public static final String UNKNOWN_MTYPE = "UNKNOWN";
-    
     /* members */
     /** Store the SAMP 'cryptic' mType */
     private final String _mType;
@@ -199,6 +197,7 @@ public enum SampCapability {
 }
 
 enum ExclusionReason {
+
     LIKELY_BROADCASTED,
     SAMP_INTERNAL,
     NONE

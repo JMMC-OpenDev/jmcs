@@ -7,7 +7,7 @@ package fr.jmmc.jmcs.util.concurrent;
  * This runtime exception indicates that the job has been interrupted i.e. the current thread is interrupted:
  * - an InterruptedException has been caught
  * - Thread.currentThread().isInterrupted() is true
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public final class InterruptedJobException extends RuntimeException {
 

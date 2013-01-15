@@ -12,18 +12,18 @@ import org.slf4j.LoggerFactory;
  * 
  * Note: this class is only used in this package (inaccessible from outside)
  *
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 final class AppenderLogMapper {
 
     /** display name */
-    private final String displayName;
+    private final String _displayName;
     /** logger path */
-    private final String loggerPath;
+    private final String _loggerPath;
     /** logger */
-    private final org.slf4j.Logger logger;
+    private final org.slf4j.Logger _logger;
     /** Logback appender which keeps log content */
-    private final ByteArrayOutputStreamAppender logAppender;
+    private final ByteArrayOutputStreamAppender _logAppender;
 
     /**
      * Constructor
@@ -32,11 +32,11 @@ final class AppenderLogMapper {
      * @param appenderName appender name
      */
     AppenderLogMapper(final String displayName, final String loggerPath, final String appenderName) {
-        this.displayName = displayName;
-        this.loggerPath = loggerPath;
+        _displayName = displayName;
+        _loggerPath = loggerPath;
 
         // Try to get the root logger (logback):
-        ch.qos.logback.classic.Logger loggerImpl = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(this.loggerPath);
+        ch.qos.logback.classic.Logger loggerImpl = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(_loggerPath);
 
         LoggerFactory.getLogger(ApplicationLogSingleton.JMMC_STATUS_LOG);
 
@@ -45,16 +45,16 @@ final class AppenderLogMapper {
         // Check if this appender has the correct type (ByteArrayOutputStreamAppender):
         if ((appender != null) && !(appender instanceof ByteArrayOutputStreamAppender)) {
             throw new IllegalStateException("Bad class type [" + appender.getClass() + " - "
-                    + ByteArrayOutputStreamAppender.class + "expected] for appender [" + appenderName + "] attached to the " + this.loggerPath + " logger !");
+                    + ByteArrayOutputStreamAppender.class + "expected] for appender [" + appenderName + "] attached to the " + _loggerPath + " logger !");
         }
         if (appender != null) {
             // use this appender:
-            logAppender = (ByteArrayOutputStreamAppender) appender;
+            _logAppender = (ByteArrayOutputStreamAppender) appender;
         } else {
-            throw new IllegalStateException("Missing appender [" + appenderName + "] attached to the " + this.loggerPath + " logger !");
+            throw new IllegalStateException("Missing appender [" + appenderName + "] attached to the " + _loggerPath + " logger !");
         }
 
-        this.logger = loggerImpl;
+        _logger = loggerImpl;
     }
 
     /**
@@ -62,7 +62,7 @@ final class AppenderLogMapper {
      * @return display name
      */
     String getDisplayName() {
-        return displayName;
+        return _displayName;
     }
 
     /**
@@ -70,7 +70,7 @@ final class AppenderLogMapper {
      * @return logger path
      */
     String getLoggerPath() {
-        return loggerPath;
+        return _loggerPath;
     }
 
     /**
@@ -78,7 +78,7 @@ final class AppenderLogMapper {
      * @return logger
      */
     org.slf4j.Logger getLogger() {
-        return logger;
+        return _logger;
     }
 
     /**
@@ -86,6 +86,6 @@ final class AppenderLogMapper {
      * @return Logback appender which keeps log content
      */
     ByteArrayOutputStreamAppender getLogAppender() {
-        return logAppender;
+        return _logAppender;
     }
 }

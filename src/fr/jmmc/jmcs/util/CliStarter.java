@@ -3,8 +3,6 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
-import java.util.ArrayList;
-import org.ivoa.util.CollectionUtils;
 import org.ivoa.util.runner.EmptyJobListener;
 import org.ivoa.util.runner.JobListener;
 import org.ivoa.util.runner.LocalLauncher;
@@ -15,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Wrapper on http://code.google.com/p/vo-urp/ task runner.
  * 
- * @author Sylvain LAFRASSE, Laurent BOURGES
+ * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class CliStarter {
 

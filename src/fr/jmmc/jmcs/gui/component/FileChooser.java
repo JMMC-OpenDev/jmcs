@@ -25,9 +25,9 @@ public final class FileChooser {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(FileChooser.class.getName());
-    /** apple specific property to force awt FileDialog work on directories only */
+    /** Apple specific property to force AWT FileDialog work on directories only */
     public final static String MAC_FILE_DIALOG_DIRECTORY = "apple.awt.fileDialogForDirectories";
-    /** use native file chooser i.e. awt.FileDialog (Mac OS X) */
+    /** Use native file chooser i.e. AWT FileDialog (Mac OS X) */
     private final static boolean USE_DIALOG_FOR_FILE_CHOOSER = SystemUtils.IS_OS_MAC_OSX;
 
     /**

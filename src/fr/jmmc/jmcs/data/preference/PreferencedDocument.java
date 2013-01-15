@@ -3,25 +3,23 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
-import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
 import javax.swing.text.BadLocationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Associate one string to a preference entry. This class should be associated
  * to Text widgets that change a string preference. After setModel call, the
  * preference will be automatically changed according user events and UI will be
  * automatically updated according preference change. Moreover actions should be
- * associated to implement application behaviour associated to user events.
+ * associated to implement application behavior associated to user events.
  *
  * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
@@ -39,22 +37,21 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     /** Preference property */
     private final String _preferenceProperty;
     /**
-     * Tells if preference must be saved automatically or not (default) Caution:
-     * the whole preference list associated in the preference will also be saved
-     * ...
+     * Tells if preference must be saved automatically or not (default).
+     * @warning : the whole preference list associated in the preference will also be saved !
      */
-    private final boolean _autosave;
+    private final boolean _autoSave;
 
     /**
      * PreferencedButtonModel constructor
      *
      * @param preferences the preference that lists every entries
      * @param preferenceProperty the preference name
-     * @param autosave Tells if preference must be saved automatically or not
+     * @param autoSave Tells if preference must be saved automatically or not
      * (default)
      */
     private PreferencedDocument(final Preferences preferences,
-            final String preferenceProperty, final boolean autosave) {
+            final String preferenceProperty, final boolean autoSave) {
 
         // Store the Preference shared instance of the main application
         _preferences = preferences;
@@ -63,7 +60,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
         _preferenceProperty = preferenceProperty;
 
         // store beavior flag
-        _autosave = autosave;
+        _autoSave = autoSave;
 
         // Retrieve the property value and set the widget accordinaly
         setMyText(_preferences.getPreference(_preferenceProperty));
@@ -149,7 +146,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     private void setPrefValue(final String newValue) {
         try {
             _preferences.setPreference(_preferenceProperty, newValue);
-            if (_autosave) {
+            if (_autoSave) {
                 _preferences.saveToFile();
             }
         } catch (PreferencesException ex) {

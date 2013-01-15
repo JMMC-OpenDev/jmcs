@@ -7,12 +7,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-
 import java.util.Map;
 import java.util.Set;
+import javax.swing.AbstractAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.swing.AbstractAction;
 
 /**
  * ActionRegistrar singleton class.
@@ -33,11 +32,11 @@ public class ActionRegistrar {
     private static final String _quitActionKey = "quitActionKey";
     /* members */
     /**
-     * Hashtable to associate string keys like
-     * "fr.jmmc.classpath.classname:fieldname" to AbstractAction instances.
+     * HashMap to associate string keys like to AbstractAction instances:
+     * "fr.jmmc.classpath.classname:fieldname".
      */
     private final Map<String, AbstractAction> _register = Collections.synchronizedMap(new HashMap<String, AbstractAction>());
-    /** unique action keys requiring differed initialization (after application startup) */
+    /** Unique action keys requiring differed initialization (after application startup) */
     private final Set<String> _deferedInitActions = new HashSet<String>();
 
     /** Hidden constructor */
@@ -60,8 +59,7 @@ public class ActionRegistrar {
     /**
      * Register an action, its class and field name, in the registrar.
      *
-     * @param classPath the path of the class containing the field pointing to
-     * the action, in the form returned by 'getClass().getName();'.
+     * @param classPath the path of the class containing the field pointing to the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
      * @param action the action instance to register.
      *
@@ -84,11 +82,9 @@ public class ActionRegistrar {
     }
 
     /**
-     * Return the previously registered action for the given class path and
-     * field name.
+     * Return the previously registered action for the given class path and field name.
      *
-     * @param classPath the path of the class containing the field pointing to
-     * the action, in the form returned by 'getClass().getName();'.
+     * @param classPath the path of the class containing the field pointing to the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
      *
      * @return the retrieved registered action, null otherwise.
@@ -133,8 +129,7 @@ public class ActionRegistrar {
     }
 
     /**
-     * Return the previously registered action dedicated to Preference panel
-     * display handling.
+     * Return the previously registered action dedicated to Preference panel display handling.
      *
      * @return the retrieved registered action, null otherwise.
      */
@@ -154,8 +149,7 @@ public class ActionRegistrar {
     }
 
     /**
-     * Return the previously registered action dedicated to file opening sequence
-     * handling.
+     * Return the previously registered action dedicated to file opening sequence handling.
      *
      * @return the retrieved registered action, null otherwise.
      */
@@ -175,8 +169,7 @@ public class ActionRegistrar {
     }
 
     /**
-     * Return the previously registered action dedicated to Quit sequence
-     * handling.
+     * Return the previously registered action dedicated to Quit sequence handling.
      *
      * @return the retrieved registered action, null otherwise.
      */
@@ -185,10 +178,9 @@ public class ActionRegistrar {
     }
 
     /**
-     * Indicate that the given action (previoulsy registered) must be initialized after the application startup
+     * Indicate that the given action (previously registered) must be initialized after the application startup.
      *
-     * @param classPath the path of the class containing the field pointing to
-     * the action, in the form returned by 'getClass().getName();'.
+     * @param classPath the path of the class containing the field pointing to the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
      */
     protected void flagAsDeferedInitAction(final String classPath, final String fieldName) {
@@ -202,7 +194,7 @@ public class ActionRegistrar {
     }
 
     /**
-     * Perform defered initialization of such actions
+     * Perform deferred initialization of such actions.
      */
     public void performDeferedInitialization() {
         RegisteredAction action;
@@ -226,7 +218,7 @@ public class ActionRegistrar {
     }
 
     /**
-     * Dump name of all registered actions  (sorted by keys)
+     * Dump name of all registered actions (sorted by keys).
      * @return string one line per name of registered action
      */
     public String dumpRegisteredActions() {

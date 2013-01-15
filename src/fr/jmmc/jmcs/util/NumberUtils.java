@@ -8,25 +8,23 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 
 /**
- * This class handles double number comparisons with absolute error and number helper methods
+ * Handles double number comparisons with absolute error and number helper methods
  * http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
  *
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public final class NumberUtils {
 
-    /**
-     * Smallest positive number used in double comparisons (rounding).
-     */
+    /** Smallest positive number used in double comparisons (rounding). */
     public final static double EPSILON = 1e-6d;
     /** default formatter */
-    private final static NumberFormat fmtDef = NumberFormat.getInstance();
+    private final static NumberFormat _fmtDef = NumberFormat.getInstance();
     /** scientific formatter */
-    private final static NumberFormat fmtScience = new DecimalFormat("0.0##E0");
+    private final static NumberFormat _fmtScience = new DecimalFormat("0.0##E0");
     /** formatter string buffer argument */
-    private final static StringBuffer fmtBuffer = new StringBuffer(32);
+    private final static StringBuffer _fmtBuffer = new StringBuffer(32);
     /** ignore formatter position argument */
-    private final static FieldPosition ignorePosition = new FieldPosition(0);
+    private final static FieldPosition _ignorePosition = new FieldPosition(0);
 
     /**
      * Private constructor
@@ -73,9 +71,9 @@ public final class NumberUtils {
         }
 
         if (abs < 1e-3d || abs > 1e6d) {
-            return format(fmtScience, val);
+            return format(_fmtScience, val);
         }
-        return format(fmtDef, val);
+        return format(_fmtDef, val);
     }
 
     /**
@@ -89,9 +87,9 @@ public final class NumberUtils {
      */
     public static String format(final NumberFormat fmt, final double val) {
         // reset shared buffer:
-        fmtBuffer.setLength(0);
+        _fmtBuffer.setLength(0);
 
-        return format(fmt, fmtBuffer, val).toString();
+        return format(fmt, _fmtBuffer, val).toString();
     }
 
     /**
@@ -105,7 +103,7 @@ public final class NumberUtils {
      * @return formatted value
      */
     public static StringBuffer format(final NumberFormat fmt, final StringBuffer sb, final double val) {
-        return fmt.format(val, sb, ignorePosition);
+        return fmt.format(val, sb, _ignorePosition);
     }
 
     /**
@@ -243,7 +241,7 @@ public final class NumberUtils {
     }
 
     /**
-     * Integer Cache to support the object identity semantics of autoboxing for values between
+     * Integer Cache to support the object identity semantics of auto-boxing for values between
      * -128 and HIGH value (inclusive).
      */
     private static final class IntegerCache {

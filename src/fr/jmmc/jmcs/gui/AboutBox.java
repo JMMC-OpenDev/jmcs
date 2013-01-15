@@ -196,7 +196,6 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
             // Launch the default browser with the given link
             _logoLabel.addMouseListener(new MouseAdapter() {
-
                 @Override
                 public void mouseClicked(MouseEvent evt) {
                     String mainWebPageURL = _applicationDataModel.getMainWebPageURL();
@@ -210,7 +209,6 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
             // Show hand cursor when mouse is moving on logo
             _logoLabel.addMouseMotionListener(new MouseMotionAdapter() {
-
                 @Override
                 public void mouseMoved(MouseEvent evt) {
                     _logoLabel.setCursor(Cursor.getPredefinedCursor(

@@ -10,21 +10,20 @@ import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
 /**
- * Use this class  to define new Actions.
+ * Use this class to define new Actions that get data from resource file.
  * 
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
-public abstract class MCSAction extends AbstractAction {
+public abstract class ResourcedAction extends AbstractAction {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
 
     /**
-     * This constructor use the resource file to get text description and icon
-     * of action.
+     * This constructor use the resource file to get text description and icon of action.
      * @param actionName name of the action as declared in the resource file
      */
-    public MCSAction(final String actionName) {
+    public ResourcedAction(final String actionName) {
 
         // Collect action info
         String text = ResourceUtils.getActionText(actionName);

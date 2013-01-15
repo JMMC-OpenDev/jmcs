@@ -29,16 +29,16 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
     /** Class logger */
     private static final Logger _logger = LoggerFactory.getLogger(LogPanel.class.getName());
     /** double formatter for auto refresh period */
-    private final static NumberFormat df1 = new DecimalFormat("0.0");
+    private final static NumberFormat _df1 = new DecimalFormat("0.0");
 
     /* members */
     /** logger path */
-    private final String loggerPath;
+    private final String _loggerPath;
     /** log buffer byte count */
-    private int logByteCount = 0;
+    private int _logByteCount = 0;
     /* Swing components */
     /** refresh Swing timer */
-    private final Timer timerRefresh;
+    private final Timer _timerRefresh;
 
     /** 
      * Creates new form LogPanel for the application log
@@ -52,11 +52,11 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
      * @param loggerPath logger path
      */
     public LogPanel(final String loggerPath) {
-        this.loggerPath = loggerPath;
+        _loggerPath = loggerPath;
 
         // Create the autoRefresh timer before any Swing component (see button action listeners):
-        this.timerRefresh = new Timer(REFRESH_PERIOD, this);
-        this.timerRefresh.setInitialDelay(0);
+        _timerRefresh = new Timer(REFRESH_PERIOD, this);
+        _timerRefresh.setInitialDelay(0);
 
         initComponents();
 
@@ -69,19 +69,19 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
     private void postInit() {
 
         if (SystemUtils.IS_OS_MAC_OSX) {
-            this.setOpaque(false);
+            setOpaque(false);
         }
 
         // Refresh buttons listener :
-        this.jButtonRefreshLogs.addActionListener(this);
-        this.jToggleButtonAutoRefresh.addActionListener(this);
-        this.jSliderPeriod.addChangeListener(this);
+        jButtonRefreshLogs.addActionListener(this);
+        jToggleButtonAutoRefresh.addActionListener(this);
+        jSliderPeriod.addChangeListener(this);
 
         // set slider to 10 (1s):
-        this.jSliderPeriod.setValue(10);
+        jSliderPeriod.setValue(10);
 
         // start autoRefresh timer by simulating one click:
-        this.jToggleButtonAutoRefresh.doClick();
+        jToggleButtonAutoRefresh.doClick();
     }
 
     /**
@@ -100,17 +100,17 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
      */
     @Override
     public void stateChanged(final ChangeEvent ce) {
-        final int milliseconds = 100 * this.jSliderPeriod.getValue();
+        final int milliseconds = 100 * jSliderPeriod.getValue();
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("slider changed to: {} ms", milliseconds);
         }
 
         // update text value (rounded to 0.1s):
-        this.jTextFieldPeriod.setText(df1.format(0.001d * milliseconds) + " s");
+        jTextFieldPeriod.setText(_df1.format(0.001d * milliseconds) + " s");
 
         // apply new delay to the timer
-        this.timerRefresh.setDelay(milliseconds);
+        _timerRefresh.setDelay(milliseconds);
     }
 
     /**
@@ -119,14 +119,14 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
      */
     @Override
     public void actionPerformed(final ActionEvent ae) {
-        if (ae.getSource() == this.timerRefresh || ae.getSource() == this.jButtonRefreshLogs) {
+        if (ae.getSource() == _timerRefresh || ae.getSource() == jButtonRefreshLogs) {
             updateLog();
-        } else if (ae.getSource() == this.jToggleButtonAutoRefresh) {
-            final boolean autoRefresh = this.jToggleButtonAutoRefresh.isSelected();
+        } else if (ae.getSource() == jToggleButtonAutoRefresh) {
+            final boolean autoRefresh = jToggleButtonAutoRefresh.isSelected();
 
             enableAutoRefreshTimer(autoRefresh);
 
-            this.jButtonRefreshLogs.setEnabled(!autoRefresh);
+            jButtonRefreshLogs.setEnabled(!autoRefresh);
         }
     }
 
@@ -136,14 +136,14 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
      */
     private void enableAutoRefreshTimer(final boolean enable) {
         if (enable) {
-            if (!this.timerRefresh.isRunning()) {
-                _logger.debug("starting timer: {}", this.timerRefresh);
-                this.timerRefresh.start();
+            if (!_timerRefresh.isRunning()) {
+                _logger.debug("starting timer: {}", _timerRefresh);
+                _timerRefresh.start();
             }
         } else {
-            if (this.timerRefresh.isRunning()) {
-                _logger.debug("stopping timer: {}", this.timerRefresh);
-                this.timerRefresh.stop();
+            if (_timerRefresh.isRunning()) {
+                _logger.debug("stopping timer: {}", _timerRefresh);
+                _timerRefresh.stop();
             }
         }
     }
@@ -153,29 +153,29 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
      */
     private void updateLog() {
 
-        final boolean append = (this.logByteCount > 0) ? true : false;
+        final boolean append = (_logByteCount > 0) ? true : false;
 
         // Get the partial application log as string starting at the given byteCount
-        final LogOutput logOutput = ApplicationLogSingleton.getInstance().getLogOutput(this.loggerPath, this.logByteCount);
+        final LogOutput logOutput = ApplicationLogSingleton.getInstance().getLogOutput(_loggerPath, _logByteCount);
 
         // update byte count:
-        this.logByteCount = logOutput.getByteCount();
+        _logByteCount = logOutput.getByteCount();
 
         final String content = logOutput.getContent();
 
         if (content.length() > 0) {
             if (append) {
-                final Document doc = this.logTextArea.getDocument();
+                final Document doc = logTextArea.getDocument();
                 try {
                     doc.insertString(doc.getLength(), content, null);
                 } catch (BadLocationException ble) {
                     _logger.error("bad location: ", ble);
                 }
             } else {
-                this.logTextArea.setText(content);
+                logTextArea.setText(content);
             }
             // scroll to end:
-            this.logTextArea.setCaretPosition(this.logTextArea.getText().length());
+            logTextArea.setCaretPosition(logTextArea.getText().length());
         }
     }
 
@@ -241,6 +241,6 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
      * @return logger path
      */
     public String getLoggerPath() {
-        return loggerPath;
+        return _loggerPath;
     }
 }

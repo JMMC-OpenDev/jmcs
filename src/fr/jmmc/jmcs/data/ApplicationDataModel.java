@@ -7,29 +7,25 @@ import fr.jmmc.jmcs.data.model.ApplicationData;
 import fr.jmmc.jmcs.data.model.Company;
 import fr.jmmc.jmcs.data.model.Compilation;
 import fr.jmmc.jmcs.data.model.Dependences;
-import fr.jmmc.jmcs.data.model.Package;
 import fr.jmmc.jmcs.data.model.Menubar;
+import fr.jmmc.jmcs.data.model.Package;
 import fr.jmmc.jmcs.data.model.Program;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-
-
 import java.net.URL;
 import java.text.ParseException;
-
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is the link between the application
@@ -44,7 +40,7 @@ import javax.xml.bind.Unmarshaller;
  *
  * @author Guillaume MELLA, Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public class ApplicationDataModel {
+public final class ApplicationDataModel {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(ApplicationDataModel.class.getName());

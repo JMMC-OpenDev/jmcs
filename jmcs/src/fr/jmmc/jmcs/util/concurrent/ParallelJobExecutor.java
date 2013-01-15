@@ -132,6 +132,14 @@ public final class ParallelJobExecutor {
     }
 
     /**
+     * Return true if the current thread is a Job worker thread
+     * @return true if the current thread is a Job worker thread  
+     */
+    public boolean isWorkerThread() {
+        return Thread.currentThread() instanceof JobWorkerThread;
+    }
+
+    /**
      * Submit the given jobs and wait for their completion
      * If the current thread is interrupted (canceled), then futures are canceled too.
      * 
@@ -207,7 +215,7 @@ public final class ParallelJobExecutor {
      * @throws InterruptedJobException if the current thread is interrupted (canceled)
      * @throws RuntimeException if any exception occurred during the computation
      */
-    public List<Object> forkAndJoin(final String jobName, final Callable<?>[] jobs) throws InterruptedJobException, RuntimeException {
+    public List<?> forkAndJoin(final String jobName, final Callable<?>[] jobs) throws InterruptedJobException, RuntimeException {
         return forkAndJoin(jobName, jobs, true);
     }
 
@@ -223,7 +231,7 @@ public final class ParallelJobExecutor {
      * @throws InterruptedJobException if the current thread is interrupted (canceled)
      * @throws RuntimeException if any exception occurred during the computation
      */
-    public List<Object> forkAndJoin(final String jobName, final Callable<?>[] jobs, final boolean useThreads) throws InterruptedJobException, RuntimeException {
+    public List<?> forkAndJoin(final String jobName, final Callable<?>[] jobs, final boolean useThreads) throws InterruptedJobException, RuntimeException {
         if (jobs == null) {
             // illegal state ?
             return null;

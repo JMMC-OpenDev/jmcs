@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.gui.util.SwingUtils;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.DefaultCellEditor;
@@ -85,7 +86,7 @@ public class NumericJTable extends javax.swing.JTable {
         public Component getTableCellEditorComponent(JTable table, Object value,
                 boolean isSelected,
                 int row, int column) {
-            value = null;
+            _value = null;
 
             ((JComponent) getComponent()).setBorder(new LineBorder(Color.black));
 
@@ -106,7 +107,7 @@ public class NumericJTable extends javax.swing.JTable {
             // they have the option to replace the value with
             // null or use escape to restore the original.
             // For Strings, return "" for backward compatibility.
-            if (str.equals("")) {
+            if (StringUtils.isTrimmedEmpty(str)) {
                 // Fix focus lost problem:
                 _value = null;
                 return super.stopCellEditing();

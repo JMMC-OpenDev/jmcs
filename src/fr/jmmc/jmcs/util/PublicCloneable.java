@@ -5,7 +5,7 @@ package fr.jmmc.jmcs.util;
 
 /**
  * This interface declares a public Object.clone() method
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public interface PublicCloneable extends Cloneable {
 

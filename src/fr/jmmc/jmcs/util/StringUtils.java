@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 /**
  * This class provides several helper methods related to String handling
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public final class StringUtils {
 
@@ -20,20 +20,20 @@ public final class StringUtils {
     public final static String STRING_UNDERSCORE = "_";
     /** String constant containing 1 minus sign character '-' */
     public final static String STRING_MINUS_SIGN = "-";
-    /** regexp expression to match white spaces (1..n) */
+    /** RegExp expression to match white spaces (1..n) */
     private final static Pattern PATTERN_WHITE_SPACE_MULTIPLE = Pattern.compile("\\s+");
     /** regular expression used to match characters different than alpha/numeric/+/- (1..n) */
     private final static Pattern PATTERN_NON_ALPHA_NUM = Pattern.compile("[^a-zA-Z_\\+\\-0-9]+");
-    /** regexp expression to match carriage return */
+    /** RegExp expression to match carriage return */
     private final static Pattern PATTERN_CR = Pattern.compile("\n");
-    /** regexp expression to match tags */
+    /** RegExp expression to match tags */
     private final static Pattern PATTERN_TAGS = Pattern.compile("\\<.*?\\>");
-    /** regexp expression to SGML entities */
-    private final static Pattern patternAMP = Pattern.compile("&");
-    /** regexp expression to start tag */
-    private final static Pattern patternLT = Pattern.compile("<");
-    /** regexp expression to end tag */
-    private final static Pattern patternGT = Pattern.compile(">");
+    /** RegExp expression to SGML entities */
+    private final static Pattern PATTERN_AMP = Pattern.compile("&");
+    /** RegExp expression to start tag */
+    private final static Pattern PATTERN_LT = Pattern.compile("<");
+    /** RegExp expression to end tag */
+    private final static Pattern PATTERN_GT = Pattern.compile(">");
 
     /**
      * Forbidden constructor
@@ -174,9 +174,9 @@ public final class StringUtils {
      * @return encoded value
      */
     public static String encodeTagContent(final String src) {
-        String out = patternAMP.matcher(src).replaceAll("&amp;"); // Character [&] (xml restriction)
-        out = patternLT.matcher(out).replaceAll("&lt;"); // Character [<] (xml restriction)
-        out = patternGT.matcher(out).replaceAll("&gt;"); // Character [>] (xml restriction)
+        String out = PATTERN_AMP.matcher(src).replaceAll("&amp;"); // Character [&] (xml restriction)
+        out = PATTERN_LT.matcher(out).replaceAll("&lt;"); // Character [<] (xml restriction)
+        out = PATTERN_GT.matcher(out).replaceAll("&gt;"); // Character [>] (xml restriction)
         return out;
     }
 }

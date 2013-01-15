@@ -5,15 +5,13 @@ package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
-
 import java.net.URL;
 import java.util.Enumeration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class uses the JavaHelp system to show a
@@ -57,7 +55,6 @@ public class HelpView {
         }
 
         URL url = null;
-
         try {
             // Get the helpset file and create the centered help broker 
             url = HelpSet.findHelpSet(null, "documentation.hs");

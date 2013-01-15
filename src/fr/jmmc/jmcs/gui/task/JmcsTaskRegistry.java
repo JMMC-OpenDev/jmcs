@@ -4,14 +4,14 @@
 package fr.jmmc.jmcs.gui.task;
 
 /**
- * This class describes the Jmcs tasks associated with SwingWorker(s)
+ * This class describes the jMCS tasks associated with SwingWorker(s).
  * 
  * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class JmcsTaskRegistry extends TaskRegistry {
 
     /** task registry singleton */
-    private final static JmcsTaskRegistry instance;
+    private final static JmcsTaskRegistry _instance;
 
     /* JMCS tasks */
     /** feedback Report task */
@@ -22,13 +22,13 @@ public final class JmcsTaskRegistry extends TaskRegistry {
      */
     static {
         // create the task registry singleton :
-        instance = new JmcsTaskRegistry();
+        _instance = new JmcsTaskRegistry();
 
         // create tasks :
         TASK_FEEDBACK_REPORT = new Task("FeedbackReport");
 
         // register tasks :
-        instance.addTask(TASK_FEEDBACK_REPORT);
+        _instance.addTask(TASK_FEEDBACK_REPORT);
     }
 
     /**
@@ -36,7 +36,7 @@ public final class JmcsTaskRegistry extends TaskRegistry {
      * @return registry instance
      */
     public static TaskRegistry getInstance() {
-        return instance;
+        return _instance;
     }
 
     /**

@@ -3,22 +3,18 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
-import fr.jmmc.jmcs.gui.util.SwingUtils;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
-import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
+import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.resource.image.ResourceImage;
 import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
-import java.awt.event.ActionEvent;
-import org.apache.commons.lang.SystemUtils;
-
 import java.awt.Font;
-
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import org.slf4j.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -27,6 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import org.apache.commons.lang.SystemUtils;
+import org.slf4j.Logger;
 
 /**
  * A status bar that can be shared all along an application.
@@ -78,7 +76,6 @@ public class StatusBar extends JPanel {
         historyButton.setBorder(historyBorder);
         historyButton.setToolTipText("Click to view status history");
         historyButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 App.showLogConsole(ApplicationLogSingleton.JMMC_STATUS_LOG);
@@ -108,7 +105,6 @@ public class StatusBar extends JPanel {
         final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
         if (applicationDataModel != null) {
             logo.addMouseListener(new MouseAdapter() {
-
                 @Override
                 public void mouseClicked(MouseEvent evt) {
                     BrowserLauncher.openURL(applicationDataModel.getLinkValue());
@@ -124,7 +120,6 @@ public class StatusBar extends JPanel {
      */
     public static void show(final String message) {
         SwingUtils.invokeEDT(new Runnable() {
-
             /**
              * Update the status bar using EDT
              */
@@ -143,7 +138,6 @@ public class StatusBar extends JPanel {
      */
     public static void showIfPrevious(final String previous, final String message) {
         SwingUtils.invokeEDT(new Runnable() {
-
             /**
              * Update the status bar using EDT
              */

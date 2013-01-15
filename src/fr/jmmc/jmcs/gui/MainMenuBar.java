@@ -503,8 +503,7 @@ public class MainMenuBar extends JMenuBar {
      *
      * @return the instantiated JComponent according to the XML description.
      */
-    private JComponent createComponent(Menu menu,
-            boolean isMenu, ButtonGroup buttonGroup) {
+    private JComponent createComponent(Menu menu, boolean isMenu, ButtonGroup buttonGroup) {
         // Component to create
         JMenuItem item = null;
 

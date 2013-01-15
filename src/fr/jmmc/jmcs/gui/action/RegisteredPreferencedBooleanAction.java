@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * RegisteredAction class customized to be bound to a preferenced boolean.
+ * RegisteredAction class customized to be bound to a preference-ed boolean.
  * 
  * @author Sylvain LAFRASSE.
  */

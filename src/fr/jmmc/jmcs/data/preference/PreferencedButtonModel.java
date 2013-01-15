@@ -11,10 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.DefaultButtonModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.DefaultButtonModel;
 
 /**
  * Menu item with a check box representing a MCS preference boolean property
@@ -22,7 +21,7 @@ import javax.swing.DefaultButtonModel;
  * a boolean preference. After setModel call, the preference will be
  * automatically changed according user events and UI will be automatically
  * updated according preference change. Moreover actions should be associated to
- * implement application behaviour associated to user events.
+ * implement application behavior associated to user events.
  * 
  * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
@@ -86,7 +85,7 @@ public final class PreferencedButtonModel extends DefaultButtonModel
     }
 
     /**
-     * Triggerd if the button has been clicked.
+     * Triggered if the button has been clicked.
      * @param evt action event (swing)
      */
     @Override
@@ -100,13 +99,11 @@ public final class PreferencedButtonModel extends DefaultButtonModel
         if (evt.getActionCommand() != null) {
             if (evt.getActionCommand().equals("internalUpdate")) {
                 _logger.trace("This event is due to a preference update and does nothing");
-
                 return;
             }
         }
 
         _logger.trace("This event is due to a user interaction");
-
         _logger.debug("Setting preference '{}' to {}", _preferenceProperty, nextValue);
 
         try {
@@ -118,7 +115,7 @@ public final class PreferencedButtonModel extends DefaultButtonModel
     }
 
     /**
-     * Triggerd if the preference shared instance has been modified.
+     * Triggered if the preference shared instance has been modified.
      * @param o
      * @param arg  
      */

@@ -171,10 +171,10 @@ public final class SampManager {
     }
 
     /**
-     * Create a new Samp Metadata instance using the given application name and its application data model instance
+     * Create a new SAMP metadata instance using the given application name and its application data model instance
      * @param applicationName application name
      * @param applicationDataModel application data model instance
-     * @return new Samp Metadata instance
+     * @return new SAMP Metadata instance
      */
     private Metadata forgeSampMetaDataFromApplicationDataModel(final String applicationName, final ApplicationDataModel applicationDataModel) {
 
@@ -254,8 +254,8 @@ public final class SampManager {
     }
 
     /**
-     * Return the JSamp Gui hub connector providing swing actions
-     * @return JSamp Gui hub connector providing swing actions
+     * Return the JSamp GUI hub connector providing swing actions
+     * @return JSamp GUI hub connector providing swing actions
      */
     private GuiHubConnector getHubConnector() {
         return _connector;
@@ -538,13 +538,14 @@ public final class SampManager {
             super("Show Hub Status");
             putValue(SHORT_DESCRIPTION, "Display a window showing client applications registered with the SAMP hub");
 
-            this.clientMonitorAction = getGuiHubConnector().createShowMonitorAction();
+            clientMonitorAction = getGuiHubConnector().createShowMonitorAction();
         }
 
         /**
          * Display Hub window
          * @param ae action event
          */
+        @Override
         public void actionPerformed(final ActionEvent ae) {
             final Hub hub = getRunningHub();
 
@@ -566,7 +567,7 @@ public final class SampManager {
                 }
             }
             if (!show) {
-                this.clientMonitorAction.actionPerformed(ae);
+                clientMonitorAction.actionPerformed(ae);
             }
         }
     }

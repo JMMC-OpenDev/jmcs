@@ -5,12 +5,10 @@ package fr.jmmc.jmcs.util;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-
 import java.security.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,10 +144,10 @@ public class UrlUtils {
     }
 
     /**
-     * Parse the given url
-     * @param url url as string
-     * @return URL object
-     * @throws IllegalStateException if the url is malformed
+     * Parse the given URL.
+     * @param url URL as string.
+     * @return URL object.
+     * @throws IllegalStateException if the URL is malformed.
      */
     public static URL parseURL(final String url) throws IllegalStateException {
         try {

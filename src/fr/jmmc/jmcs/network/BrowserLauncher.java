@@ -9,8 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class provides a function to open a web page
- * with the default web browser of the user system.
+ * This class provides a function to open a web page with the default web browser of the user system.
  *
  * It uses <b>BrowserLauncher</b>.
  * 
@@ -80,4 +79,3 @@ public class BrowserLauncher {
         super();
     }
 }
-/*___oOo___*/

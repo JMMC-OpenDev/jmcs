@@ -12,16 +12,16 @@ public final class Task {
     /* members */
 
     /** task name */
-    private final String name;
+    private final String _name;
     /** child tasks */
-    private Task[] childTasks = new Task[0];
+    private Task[] _childTasks = new Task[0];
 
     /**
      * Protected constructor
      * @param name task name
      */
     public Task(final String name) {
-        this.name = name;
+        _name = name;
     }
 
     /**
@@ -38,7 +38,7 @@ public final class Task {
             return false;
         }
         final Task other = (Task) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+        if ((_name == null) ? (other._name != null) : !_name.equals(other._name)) {
             return false;
         }
         return true;
@@ -50,7 +50,7 @@ public final class Task {
      */
     @Override
     public int hashCode() {
-        return (this.name != null ? this.name.hashCode() : 0);
+        return (_name != null ? _name.hashCode() : 0);
     }
 
     @Override
@@ -63,7 +63,7 @@ public final class Task {
      * @return task name
      */
     public String getName() {
-        return name;
+        return _name;
     }
 
     /**
@@ -71,7 +71,7 @@ public final class Task {
      * @return child tasks
      */
     public Task[] getChildTasks() {
-        return childTasks;
+        return _childTasks;
     }
 
     /**
@@ -80,6 +80,6 @@ public final class Task {
      * @param childTasks child tasks
      */
     void setChildTasks(final Task[] childTasks) {
-        this.childTasks = childTasks;
+        _childTasks = childTasks;
     }
 }

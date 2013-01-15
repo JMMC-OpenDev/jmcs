@@ -3,17 +3,17 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.action;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Action class customized to auto-register in ActionRegistrar when created.
  * 
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
-public abstract class RegisteredAction extends MCSAction {
+public abstract class RegisteredAction extends ResourcedAction {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
@@ -25,7 +25,7 @@ public abstract class RegisteredAction extends MCSAction {
     /**
      * Constructor, that automatically register the action in RegisteredAction.
      * Action name, icon, accelerator and description is first initiated using
-     * fieldName to build a MCSAction.
+     * fieldName to build a ResourcedAction.
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
@@ -39,7 +39,7 @@ public abstract class RegisteredAction extends MCSAction {
     /**
      * Constructor, that automatically register the action in RegisteredAction.
      * Action name, icon, accelerator and description is first initiated using
-     * fieldName to build a MCSAction.
+     * fieldName to build a ResourcedAction.
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.
      * @param fieldName the name of the field pointing to the action.
@@ -64,7 +64,7 @@ public abstract class RegisteredAction extends MCSAction {
     /**
      * Constructor, that automatically register the action in RegisteredAction,
      * and assign it a name.
-     * Action name, icon, accelerator and description is first initiated following MCSAction.
+     * Action name, icon, accelerator and description is first initiated following ResourcedAction.
      * Then actionName set or overwrite action name.
      * @param classPath the path of the class containing the field pointing to
      * the action, in the form returned by 'getClass().getName();'.
@@ -81,7 +81,7 @@ public abstract class RegisteredAction extends MCSAction {
     /**
      * Constructor, that automatically register the action in RegisteredAction,
      * and assign it a name and an accelerator.
-     * Action name, icon, accelerator and description is first initiated following MCSAction.
+     * Action name, icon, accelerator and description is first initiated following ResourcedAction.
      * Then actionName and actionAccelerator set or overwrite action name and action accelerator.
      *
      * @param classPath the path of the class containing the field pointing to

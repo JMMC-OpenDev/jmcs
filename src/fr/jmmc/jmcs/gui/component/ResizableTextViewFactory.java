@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Create resizable, best-sized window able to display either plain text or HTML.
+ * Create resize-able, best-sized window able to display either plain text or HTML.
  *
  * @author Sylvain LAFRASE
  */
@@ -173,7 +173,7 @@ public class ResizableTextViewFactory {
 
     /**
      * Test code
-     * @param args unused args
+     * @param args unused arguments
      */
     public static void main(String[] args) {
 

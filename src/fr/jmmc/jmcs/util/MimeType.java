@@ -11,8 +11,7 @@ import java.util.Map;
 
 /**
  * Mime type registry that are used by multiples applications using jMCS.
- * It is also possible to register the mime types specific to one
- * application.
+ * It is also possible to register the mime types specific to one application.
  * 
  * @author Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
@@ -48,8 +47,7 @@ public final class MimeType {
     public final static MimeType PLAIN_TEXT = MimeType.add("PLAIN_TEXT", "text/plain", "Text files", "txt");
     /** MimeType associated to URL */
     public final static MimeType URL = MimeType.add("URL", "text/plain", "URL", "url");
-
-    /* members */
+    // Members
     /** mime-type identifier */
     private final String _id;
     /** mime-type */

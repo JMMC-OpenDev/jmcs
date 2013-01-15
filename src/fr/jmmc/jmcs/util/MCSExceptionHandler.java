@@ -3,9 +3,9 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
-import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.component.MessagePane;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
  *
  * JNLP issues :
  * - Thread.defaultUncaughtExceptionHandler never used
- * => do not use this default UncaughtExceptionHandler to have the same behaviour using standard java runtime
+ * => do not use this default UncaughtExceptionHandler to have the same behavior using standard java runtime
  *
  * - main thread (starting the application) use a general try/catch (throwable) and opens a JNLP error dialog
  * => do not set the UncaughtExceptionHandler to this thread
- * => Be sure to catch all exceptions in main() and use the feeback report manually
+ * => Be sure to catch all exceptions in main() and use the feedback report manually
  * 
  * @author Laurent BOURGES.
  */
@@ -30,12 +30,12 @@ public final class MCSExceptionHandler {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(MCSExceptionHandler.class.getName());
-    /** flag indicating to use the default UncaughtExceptionHandler (true for jdk 1.7.0) */
+    /** flag indicating to use the default UncaughtExceptionHandler (true for JDK 1.7.0) */
     private static final boolean USE_DEFAULT_UNCAUGHT_EXCEPTION_HANDLER = true;
     /** flag indicating to set the UncaughtExceptionHandler to the current thread (main) (false because of JNLP) */
     private static final boolean SET_HANDLER_TO_CURRENT_THREAD = false;
     /** uncaughtException handler singleton */
-    private static volatile Thread.UncaughtExceptionHandler exceptionHandler = null;
+    private static volatile Thread.UncaughtExceptionHandler _exceptionHandler = null;
 
     /**
      * Disable the security manager to be able to use System.setProperty ...
@@ -103,7 +103,7 @@ public final class MCSExceptionHandler {
      * @return exception handler singleton or null if undefined
      */
     private static Thread.UncaughtExceptionHandler getExceptionHandler() {
-        return exceptionHandler;
+        return _exceptionHandler;
     }
 
     /**
@@ -116,7 +116,7 @@ public final class MCSExceptionHandler {
      */
     private static synchronized void setExceptionHandler(final Thread.UncaughtExceptionHandler handler) {
         if (handler != null) {
-            exceptionHandler = handler;
+            _exceptionHandler = handler;
 
             applyUncaughtExceptionHandler(handler);
         }
@@ -156,7 +156,6 @@ public final class MCSExceptionHandler {
                 // Using invokeAndWait to be in sync with this thread :
                 // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
                 SwingUtils.invokeAndWaitEDT(new Runnable() {
-
                     /**
                      * Add my handler to the Event-Driven Thread.
                      */
@@ -265,7 +264,7 @@ public final class MCSExceptionHandler {
     }
 
     /**
-     * AWT exception handler useful for exceptions occuring in modal dialogs
+     * AWT exception handler useful for exceptions occurring in modal dialogs
      *
      * @param e the exception
      */
@@ -312,7 +311,6 @@ public final class MCSExceptionHandler {
         public void uncaughtException(final Thread thread, final Throwable e) {
             if (!isFilteredException(e)) {
                 SwingUtils.invokeEDT(new Runnable() {
-
                     @Override
                     public void run() {
                         showException(thread, e);

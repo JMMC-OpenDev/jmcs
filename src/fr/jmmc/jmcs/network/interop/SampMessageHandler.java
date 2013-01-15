@@ -30,9 +30,9 @@ public abstract class SampMessageHandler extends AbstractMessageHandler {
      */
     public SampMessageHandler(final String mType) {
         super(mType);
-        
+
         _mType = mType;
-        
+
         SampManager.registerCapability(this);
     }
 
@@ -62,22 +62,22 @@ public abstract class SampMessageHandler extends AbstractMessageHandler {
      * @param senderId  public ID of sender client
      * @param message  message with MType this handler is subscribed to
      * @return null (empty map)
-     * @throws SampException if any error occured while message processing
+     * @throws SampException if any error occurred while message processing
      */
     @Override
     public final Map<?, ?> processCall(final HubConnection connection, final String senderId, final Message message) throws SampException {
 
         // TODO: handle SampException to display any error message or at least in status bar ...
         try {
-            this.processMessage(senderId, message);
-            
+            processMessage(senderId, message);
+
         } catch (SampException se) {
             throw se;
         } catch (Throwable th) {
             // TODO: only runtime exception ?
             MCSExceptionHandler.runExceptionHandler(th);
         }
-        
+
         return null;
     }
 
@@ -86,7 +86,7 @@ public abstract class SampMessageHandler extends AbstractMessageHandler {
      *
      * @param senderId public ID of sender client
      * @param message message with MType this handler is subscribed to
-     * @throws SampException if any error occured while message processing
+     * @throws SampException if any error occurred while message processing
      */
     protected abstract void processMessage(final String senderId, final Message message) throws SampException;
 }

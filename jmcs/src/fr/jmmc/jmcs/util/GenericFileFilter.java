@@ -18,12 +18,12 @@ import org.slf4j.LoggerFactory;
  * Extensions are of the type "foo", which is typically found on Windows and
  * Unix boxes, but not on older Macintosh which use ResourceForks (case ignored).
  *
- * Example - create a new filter that filters out all files but gif and jpg files:
+ * Example - create a new filter that filters out all files but GIF and JPG files:
  *     GenericFileFilter filter = new GenericFileFilter(
  *                   new String{"gif", "jpg"}, "JPEG & GIF Images")
  *
  * Strongly inspired of ExampleFileFilter class from FileChooserDemo under the
- * demo/jfc directory in the JDK.
+ * demo/JFC directory in the JDK.
  *
  * @author Sylvain LAFRASSE, Laurent BOURGES, Guillaume MELLA.
  */
@@ -35,8 +35,8 @@ public final class GenericFileFilter extends FileFilter implements FilenameFilte
     private final HashMap<String, String> _fileExtensions = new HashMap<String, String>(4);
     /** Filter description */
     private final String _description;
-    /** flag to indicate that one extension contains '.' char */
-    private final boolean _extWithDot;
+    /** Flag to indicate that one extension contains '.' char */
+    private final boolean _extensionWithDot;
 
     /**
      * Creates a new GenericFileFilter object.
@@ -70,7 +70,7 @@ public final class GenericFileFilter extends FileFilter implements FilenameFilte
             }
         }
 
-        _extWithDot = hasDot;
+        _extensionWithDot = hasDot;
         _description = description;
     }
 
@@ -135,7 +135,7 @@ public final class GenericFileFilter extends FileFilter implements FilenameFilte
                 return true; // Accept it
             }
 
-            if (_extWithDot) {
+            if (_extensionWithDot) {
                 // retry with extension with dot:
                 final String fileExtWithDot = FileUtils.getExtension(fileName, 2);
 

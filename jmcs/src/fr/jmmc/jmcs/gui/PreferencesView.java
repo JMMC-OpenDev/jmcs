@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -123,7 +122,7 @@ public class PreferencesView extends JFrame implements ActionListener {
         _logger.debug("dispose: {}", this);
 
         // @TODO add deleteObserver(this) to dispose() to dereference each subview properly
-        
+
         super.dispose();
     }
 

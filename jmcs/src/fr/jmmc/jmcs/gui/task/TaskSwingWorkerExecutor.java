@@ -31,9 +31,14 @@ public final class TaskSwingWorkerExecutor {
     /** flag to log debugging information */
     private final static boolean DEBUG_FLAG = false;
     /** singleton instance */
-    private static TaskSwingWorkerExecutor instance;
+    private static TaskSwingWorkerExecutor _instance;
     /** running worker counter */
-    private final static AtomicInteger runningWorkerCounter = new AtomicInteger(0);
+    private final static AtomicInteger _runningWorkerCounter = new AtomicInteger(0);
+    // members
+    /** Single threaded thread pool */
+    private final ExecutorService _executorService;
+    /** Current (or old) worker atomic reference for all tasks */
+    private final Map<String, AtomicReference<TaskSwingWorker<?>>> _currentTaskWorkers;
 
     /**
      * Start the TaskSwingWorkerExecutor
@@ -46,13 +51,13 @@ public final class TaskSwingWorkerExecutor {
      * Shutdown the TaskSwingWorkerExecutor
      */
     public static synchronized void stop() {
-        if (instance != null) {
-            instance.shutdown();
+        if (_instance != null) {
+            _instance.shutdown();
 
             if (DEBUG_FLAG) {
-                _logger.info("stopped SwingWorkerExecutor: {}", instance);
+                _logger.info("stopped SwingWorkerExecutor: {}", _instance);
             }
-            instance = null;
+            _instance = null;
         }
     }
 
@@ -62,14 +67,14 @@ public final class TaskSwingWorkerExecutor {
      * @return TaskSwingWorkerExecutor
      */
     private static synchronized TaskSwingWorkerExecutor getInstance() {
-        if (instance == null) {
-            instance = new TaskSwingWorkerExecutor();
+        if (_instance == null) {
+            _instance = new TaskSwingWorkerExecutor();
 
             if (DEBUG_FLAG) {
-                _logger.info("created SwingWorkerExecutor: {}", instance);
+                _logger.info("created SwingWorkerExecutor: {}", _instance);
             }
         }
-        return instance;
+        return _instance;
     }
 
     /**
@@ -78,7 +83,7 @@ public final class TaskSwingWorkerExecutor {
      * @return true if there is at least one worker running
      */
     public static boolean isTaskRunning() {
-        return runningWorkerCounter.get() > 0;
+        return _runningWorkerCounter.get() > 0;
     }
 
     /**
@@ -97,7 +102,7 @@ public final class TaskSwingWorkerExecutor {
      * as it must be called from Swing EDT
      *
      * @param task task to find the current worker
-     * @return true if one task was cancelled
+     * @return true if one task was canceled
      */
     public static boolean cancelTask(final Task task) {
         return getInstance().cancel(task);
@@ -107,7 +112,7 @@ public final class TaskSwingWorkerExecutor {
      * Increment the counter of running worker
      */
     static void incRunningWorkerCounter() {
-        final int count = runningWorkerCounter.incrementAndGet();
+        final int count = _runningWorkerCounter.incrementAndGet();
 
         if (DEBUG_FLAG) {
             _logger.info("runningWorkerCounter: {}", count);
@@ -118,24 +123,12 @@ public final class TaskSwingWorkerExecutor {
      * Decrement the counter of running worker
      */
     static void decRunningWorkerCounter() {
-        final int count = runningWorkerCounter.decrementAndGet();
+        final int count = _runningWorkerCounter.decrementAndGet();
 
         if (DEBUG_FLAG) {
             _logger.info("runningWorkerCounter: {}", count);
         }
     }
-
-    /*
-     * members
-     */
-    /**
-     * Single threaded thread pool
-     */
-    private final ExecutorService executorService;
-    /**
-     * Current (or old) worker atomic reference for all tasks
-     */
-    private final Map<String, AtomicReference<TaskSwingWorker<?>>> currentTaskWorkers;
 
     /**
      * Private constructor
@@ -144,17 +137,17 @@ public final class TaskSwingWorkerExecutor {
         super();
 
         // Use an unsynchronized Map as map modifications are only made by Swing EDT (put) :
-        this.currentTaskWorkers = new HashMap<String, AtomicReference<TaskSwingWorker<?>>>(16);
+        _currentTaskWorkers = new HashMap<String, AtomicReference<TaskSwingWorker<?>>>(16);
 
         // Prepare the custom executor service with a single thread :
-        this.executorService = new SwingWorkerSingleThreadExecutor(this);
+        _executorService = new SwingWorkerSingleThreadExecutor(this);
     }
 
     /**
      * Stop all active worker threads immediately (interrupted)
      */
     private void shutdown() {
-        this.executorService.shutdownNow();
+        _executorService.shutdownNow();
     }
 
     /**
@@ -173,7 +166,7 @@ public final class TaskSwingWorkerExecutor {
         _logger.debug("execute task: {} with worker = {}", task, worker);
 
         // cancel the running worker for the task and child tasks
-        this.cancelRelatedTasks(task);
+        cancelRelatedTasks(task);
 
         // memorize the reference to the new worker before execution :
         defineReference(task, worker);
@@ -181,7 +174,7 @@ public final class TaskSwingWorkerExecutor {
         _logger.debug("execute worker = {}", worker);
 
         // finally, execute the new worker with the custom executor service :
-        this.executorService.execute(worker);
+        _executorService.execute(worker);
     }
 
     /**
@@ -207,7 +200,7 @@ public final class TaskSwingWorkerExecutor {
      * as it must be called from Swing EDT
      *
      * @param task task to find the current worker
-     * @return true if one task was cancelled
+     * @return true if one task was canceled
      */
     private boolean cancel(final Task task) {
         boolean cancelled = false;
@@ -233,7 +226,7 @@ public final class TaskSwingWorkerExecutor {
 
     /**
      * Remove the given worker from the busy workers for its task. Useful when
-     * the worker terminates its execution (cancelled or not). NOTE : This
+     * the worker terminates its execution (canceled or not). NOTE : This
      * method is invoked by the thread that executed the task.
      *
      * @param worker worker to remove
@@ -283,7 +276,7 @@ public final class TaskSwingWorkerExecutor {
      * @return atomic reference corresponding to the given task
      */
     private AtomicReference<TaskSwingWorker<?>> getReference(final Task task) {
-        return this.currentTaskWorkers.get(task.getName());
+        return _currentTaskWorkers.get(task.getName());
     }
 
     /**
@@ -297,7 +290,7 @@ public final class TaskSwingWorkerExecutor {
         AtomicReference<TaskSwingWorker<?>> workerRef = getReference(task);
         if (workerRef == null) {
             workerRef = new AtomicReference<TaskSwingWorker<?>>();
-            this.currentTaskWorkers.put(task.getName(), workerRef);
+            _currentTaskWorkers.put(task.getName(), workerRef);
         }
         return workerRef;
     }
@@ -307,13 +300,9 @@ public final class TaskSwingWorkerExecutor {
      */
     private static final class SwingWorkerSingleThreadExecutor extends ThreadPoolExecutor {
 
-        /*
-         * members
-         */
-        /**
-         * TaskSwingWorkerExecutor reference for clearWorker callback
-         */
-        private final TaskSwingWorkerExecutor executor;
+        // members
+        /** TaskSwingWorkerExecutor reference for clearWorker callback */
+        private final TaskSwingWorkerExecutor _executor;
 
         /**
          * Create a single threaded Swing Worker executor
@@ -326,10 +315,10 @@ public final class TaskSwingWorkerExecutor {
                     0L, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>(),
                     new SwingWorkerThreadFactory());
-            this.executor = executor;
+            _executor = executor;
 
             // Create the thread now :
-            this.prestartCoreThread();
+            prestartCoreThread();
         }
 
         /**
@@ -339,7 +328,7 @@ public final class TaskSwingWorkerExecutor {
          * perform logging.
          *
          * <p>This implementation does nothing, but may be customized in
-         * subclasses. Note: To properly nest multiple overridings, subclasses
+         * subclasses. Note: To properly nest multiple overriding, subclasses
          * should generally invoke <tt>super.beforeExecute</tt> at the end of
          * this method.
          *
@@ -366,7 +355,7 @@ public final class TaskSwingWorkerExecutor {
          * internal exceptions are <em>not</em> passed to this method.
          *
          * <p>This implementation does nothing, but may be customized in
-         * subclasses. Note: To properly nest multiple overridings, subclasses
+         * subclasses. Note: To properly nest multiple overriding, subclasses
          * should generally invoke <tt>super.afterExecute</tt> at the beginning
          * of this method.
          *
@@ -386,7 +375,7 @@ public final class TaskSwingWorkerExecutor {
             if (r instanceof TaskSwingWorker<?>) {
                 final TaskSwingWorker<?> worker = (TaskSwingWorker<?>) r;
                 if (!worker.isCancelled()) {
-                    this.executor.clearWorker(worker);
+                    _executor.clearWorker(worker);
                 }
             }
         }

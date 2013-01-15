@@ -8,9 +8,9 @@ import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import java.lang.reflect.Method;
 import java.util.Properties;
+import org.apache.commons.httpclient.HostConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.httpclient.HostConfiguration;
 
 /**
  * This class gathers general network settings:
@@ -24,15 +24,15 @@ import org.apache.commons.httpclient.HostConfiguration;
 public final class NetworkSettings {
 
     /** logger */
-    private final static Logger logger = LoggerFactory.getLogger(NetworkSettings.class.getName());
+    private final static Logger _logger = LoggerFactory.getLogger(NetworkSettings.class.getName());
     /* system properties */
-    /** Timeout to establish connection in millis (sun classes) */
+    /** Timeout to establish connection in milliseconds (sun classes) */
     public static final String PROPERTY_DEFAULT_CONNECT_TIMEOUT = "sun.net.client.defaultConnectTimeout";
-    /** Timeout "waiting for data" (read timeout) in millis (sun classes) */
+    /** Timeout "waiting for data" (read timeout) in milliseconds (sun classes) */
     public static final String PROPERTY_DEFAULT_READ_TIMEOUT = "sun.net.client.defaultReadTimeout";
     /** Use System Proxies */
     public static final String PROPERTY_USE_SYSTEM_PROXIES = "java.net.useSystemProxies";
-    /** Java plugin proxy list */
+    /** Java plug-in proxy list */
     public static final String PROPERTY_JAVA_PLUGIN_PROXY_LIST = "javaplugin.proxy.config.list";
     /** HTTP proxy host */
     public static final String PROPERTY_HTTP_PROXY_HOST = "http.proxyHost";
@@ -81,18 +81,18 @@ public final class NetworkSettings {
     }
 
     /**
-     * Define timeouts (http / socket)
+     * Define timeouts (HTTP / socket)
      */
     public static void defineTimeouts() {
-        logger.info("define default Connect timeout to {} ms.", DEFAULT_CONNECT_TIMEOUT);
+        _logger.info("define default Connect timeout to {} ms.", DEFAULT_CONNECT_TIMEOUT);
         System.setProperty(PROPERTY_DEFAULT_CONNECT_TIMEOUT, Integer.toString(DEFAULT_CONNECT_TIMEOUT));
 
-        logger.info("define default Read timeout to {} ms.", DEFAULT_SOCKET_READ_TIMEOUT);
+        _logger.info("define default Read timeout to {} ms.", DEFAULT_SOCKET_READ_TIMEOUT);
         System.setProperty(PROPERTY_DEFAULT_READ_TIMEOUT, Integer.toString(DEFAULT_SOCKET_READ_TIMEOUT));
     }
 
     /**
-     * Define the proxy settings for http protocol
+     * Define the proxy settings for HTTP protocol
      */
     public static void defineProxy() {
         // FIRST STEP: force JVM to use System proxies if System properties are not defined (or given by JNLP RE):
@@ -127,39 +127,39 @@ public final class NetworkSettings {
                 netProperties.put(PROPERTY_SOCKS_PROXY_PORT, value);
             }
 
-            if (!netProperties.isEmpty() && logger.isInfoEnabled()) {
-                logger.info("Java net properties:\n{}", Preferences.dumpProperties(netProperties));
+            if (!netProperties.isEmpty() && _logger.isInfoEnabled()) {
+                _logger.info("Java net properties:\n{}", Preferences.dumpProperties(netProperties));
             }
         }
 
         final String proxyList = System.getProperty(PROPERTY_JAVA_PLUGIN_PROXY_LIST);
         if (proxyList != null) {
-            logger.info("Java plugin proxy list: {}", proxyList);
+            _logger.info("Java plugin proxy list: {}", proxyList);
         }
 
         // Dump Http Proxy settings from ProxySelector:
         HostConfiguration hostConfiguration = Http.getHttpProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
-            logger.info("Found http proxy: {}:{}", hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
+            _logger.info("Found http proxy: {}:{}", hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
         }
 
         // Dump Socks Proxy settings from ProxySelector:
         hostConfiguration = Http.getSocksProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
-            logger.info("Found socks proxy: {}:{}", hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
+            _logger.info("Found socks proxy: {}:{}", hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
         }
 
         // Get Proxy settings (available at least in JNLP runtime environement):
         hostConfiguration = Http.getHttpProxyConfiguration();
 
         if (hostConfiguration.getProxyHost() != null) {
-            logger.info("Get proxy settings from Java ProxySelector.");
+            _logger.info("Get proxy settings from Java ProxySelector.");
 
             defineProxy(hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
         } else {
-            logger.info("Get proxy settings from CommonPreferences.");
+            _logger.info("Get proxy settings from CommonPreferences.");
 
             final CommonPreferences prefs = CommonPreferences.getInstance();
 
@@ -179,17 +179,17 @@ public final class NetworkSettings {
                     }
                 }
             }
-            logger.info("No http proxy defined.");
+            _logger.info("No http proxy defined.");
         }
     }
 
     /**
-     * Define the proxy settings for http protocol
+     * Define the proxy settings for HTTP protocol
      * @param proxyHost host name
      * @param proxyPort port
      */
     private static void defineProxy(final String proxyHost, final int proxyPort) {
-        logger.info("define http proxy to {}:{}", proxyHost, proxyPort);
+        _logger.info("define http proxy to {}:{}", proxyHost, proxyPort);
 
         // # http.proxyHost
         System.setProperty(PROPERTY_HTTP_PROXY_HOST, proxyHost);

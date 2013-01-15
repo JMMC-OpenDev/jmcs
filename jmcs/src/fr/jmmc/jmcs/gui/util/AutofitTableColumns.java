@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 package fr.jmmc.jmcs.gui.util;
 
 import fr.jmmc.jmcs.util.StringUtils;
@@ -17,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This utility class is useful to adjust the column width of a JTable according to its content
+ * This utility class is useful to adjust the column width of a JTable according to its content.
  * 
- * @author laurent Bourges
+ * @author Laurent Bourges.
  */
 public final class AutofitTableColumns {
 
@@ -43,7 +46,7 @@ public final class AutofitTableColumns {
 
     /**
      * Adjust columns width taking into account the content of the table and the used font with default column padding
-     * @param aTable the JTable to autoresize the columns on
+     * @param aTable the JTable to auto-resize the columns on
      * @return table width
      */
     public static int autoResizeTable(final JTable aTable) {
@@ -52,7 +55,7 @@ public final class AutofitTableColumns {
 
     /**
      * Adjust columns width taking into account the content of the table and the used font with default column padding
-     * @param aTable the JTable to autoresize the columns on
+     * @param aTable the JTable to auto-resize the columns on
      * @param useRendererText flag to use renderer text value instead of JTable cell value
      * @return table width
      */
@@ -62,7 +65,7 @@ public final class AutofitTableColumns {
 
     /**
      * Adjust header and columns width taking into account the content of the table and the used font with default column padding
-     * @param aTable the JTable to autoresize the columns on
+     * @param aTable the JTable to auto-resize the columns on
      * @param includeColumnHeaderWidth use the Column Header width as a minimum width
      * @param useRendererText flag to use renderer text value instead of JTable cell value
      * @return table width
@@ -73,7 +76,7 @@ public final class AutofitTableColumns {
 
     /**
      * Adjust header and columns width taking into account the content of the table and the used font
-     * @param aTable the JTable to autoresize the columns on
+     * @param aTable the JTable to auto-resize the columns on
      * @param includeColumnHeaderWidth use the Column Header width as a minimum width
      * @param columnPadding how many extra pixels do you want on the end of each column
      * @param useRendererText flag to use renderer text value instead of JTable cell value
@@ -138,7 +141,7 @@ public final class AutofitTableColumns {
     /**
      * Computes the maximum column width according to the content of the table column. 
      * If the table size is big, then process only some of them (1/20)
-     * @param aTable the JTable to autoresize the columns on
+     * @param aTable the JTable to auto-resize the columns on
      * @param columnNo the column number, starting at zero, to calculate the maximum width on
      * @param includeColumnHeaderWidth use the Column Header width as a minimum width
      * @param columnPadding how many extra pixels do you want on the end of each column
@@ -254,7 +257,7 @@ public final class AutofitTableColumns {
                     // Hack for double values (truncated):
                     textWidth = SwingUtilities.computeStringWidth(fontMetrics, text);
 
-                    maxWidth = max(maxWidth, textWidth);
+                    maxWidth = Math.max(maxWidth, textWidth);
 
                 } else if (comp instanceof JTextComponent) {
                     jtextComp = (JTextComponent) comp;
@@ -271,12 +274,12 @@ public final class AutofitTableColumns {
 
                     textWidth = SwingUtilities.computeStringWidth(fontMetrics, text);
 
-                    maxWidth = max(maxWidth, textWidth);
+                    maxWidth = Math.max(maxWidth, textWidth);
 
                 } else {
                     cellWidth = comp.getPreferredSize().width;
 
-                    maxWidth = max(maxWidth, cellWidth);
+                    maxWidth = Math.max(maxWidth, cellWidth);
                 }
             }
         }
@@ -287,7 +290,7 @@ public final class AutofitTableColumns {
     }
 
     /**
-     * Computes header width (takes care of html and multi line text) but limited to MAX_WIDTH_HEADER
+     * Computes header width (takes care of HTML and multi line text) but limited to MAX_WIDTH_HEADER
      * @param fontMetrics font in use
      * @param text content to analyze
      * @return largest line width
@@ -301,15 +304,5 @@ public final class AutofitTableColumns {
             maxWidth = MAX_WIDTH_HEADER;
         }
         return maxWidth;
-    }
-
-    /**
-     * Return the maximum (a, b)
-     * @param a value
-     * @param b value
-     * @return max(a,b)
-     */
-    public static int max(final int a, final int b) {
-        return (a >= b) ? a : b;
     }
 }

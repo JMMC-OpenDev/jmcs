@@ -6,7 +6,6 @@ package fr.jmmc.jmcs.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -283,7 +282,7 @@ public final class IntrospectionUtils {
     }
 
     /**
-     * Returns the execution result of the method (no-args) with the given class instance.
+     * Returns the execution result of the method (no-arguments) with the given class instance.
      *
      * @param method method to invoke.
      * @param instance class instance to use
@@ -500,4 +499,3 @@ public final class IntrospectionUtils {
         super();
     }
 }
-/*___oOo___*/

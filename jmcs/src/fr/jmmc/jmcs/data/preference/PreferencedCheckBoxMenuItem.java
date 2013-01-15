@@ -10,7 +10,7 @@ import java.util.Observer;
 import javax.swing.JCheckBoxMenuItem;
 
 /**
- * Menu item with a check box representing a MCS preference boolean property state.
+ * Menu item with a check box representing a jMCS preference boolean property state.
  * 
  * @author Sylvain LAFRASSE, Guillaume MELLA.
  */

@@ -1,8 +1,6 @@
-/**
- * *****************************************************************************
+/*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- *****************************************************************************
- */
+ ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
 import java.io.BufferedInputStream;
@@ -27,32 +25,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Several File utility methods
+ * Several File utility methods.
  *
  * @author Guillaume MELLA, Laurent BOURGES.
  */
 public final class FileUtils {
 
-    /**
-     * Class logger
-     */
+    /** Class logger */
     private static final Logger _logger = LoggerFactory.getLogger(FileUtils.class.getName());
-    /**
-     * platform dependent line separator
-     */
+    /** Platform dependent line separator */
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-    /**
-     * File encoding use UTF-8
-     */
+    /** File encoding use UTF-8 */
     public static final String FILE_ENCODING = "UTF-8";
-    /**
-     * default read buffer capacity: 8K
-     */
+    /** Default read buffer capacity: 8K */
     public static final int DEFAULT_BUFFER_CAPACITY = 8192;
 
-    /**
-     * Forbidden constructor
-     */
+    /** Forbidden constructor */
     private FileUtils() {
         // no-op
     }
@@ -217,7 +205,6 @@ public final class FileUtils {
 
     /**
      * Find a file in the current classloader (application class Loader)
-     *
      * Accepts filename like fr/jmmc/aspro/fileName.ext
      *
      * @param classpathLocation file name like fr/jmmc/aspro/fileName.ext

@@ -8,14 +8,14 @@ package fr.jmmc.jmcs.util.logging;
  * 
  * License: LGPL 2.1
  * 
- * @author Bourgès Laurent
+ * @author Laurent BOURGES.
  */
 public final class LogOutput {
 
     /** byte count */
-    private final int byteCount;
+    private final int _byteCount;
     /** log content */
-    private final String content;
+    private final String _content;
 
     /**
      * Public constructor
@@ -23,8 +23,8 @@ public final class LogOutput {
      * @param content log content
      */
     protected LogOutput(final int byteCount, final String content) {
-        this.byteCount = byteCount;
-        this.content = content;
+        _byteCount = byteCount;
+        _content = content;
     }
 
     /**
@@ -32,7 +32,7 @@ public final class LogOutput {
      * @return byte count
      */
     public int getByteCount() {
-        return byteCount;
+        return _byteCount;
     }
 
     /**
@@ -40,6 +40,6 @@ public final class LogOutput {
      * @return log content
      */
     public String getContent() {
-        return content;
+        return _content;
     }
 }

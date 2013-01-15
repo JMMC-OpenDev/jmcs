@@ -6,11 +6,11 @@ package fr.jmmc.jmcs.gui.util;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.Locale;
 import java.util.TimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.JComponent;
 import javax.swing.ToolTipManager;
 import org.apache.commons.lang.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class gather swing related properties settings for our applications.
@@ -37,8 +37,8 @@ public class SwingSettings {
     }
 
     /**
-     * Init maximum of things to get uniform application running inn the scientific context.
-     * Init are done only on the first call of this method ( which should be from a main method )
+     * Initialize maximum of things to get uniform application running inn the scientific context.
+     * Initialization are done only on the first call of this method ( which should be from a main method )
      */
     public static void setup() {
 
@@ -59,7 +59,7 @@ public class SwingSettings {
     }
 
     /**
-     * Init default locale and default timezone.
+     * Initialize default locale and default time zone.
      */
     private static void setMandatory() {
         // Set the default locale to en-US locale (for Numerical Fields "." ",")
@@ -74,7 +74,7 @@ public class SwingSettings {
     }
 
     /**
-     * Change locale of swing and Tooltip related.
+     * Change locale of SWING and ToolTip related.
      */
     private static void setSwingDefaults() {
         // Force Locale for Swing Components :
@@ -90,7 +90,7 @@ public class SwingSettings {
     }
 
     /**
-     * Defines in code some System.properties to force text antialiasing and macOS features ...
+     * Defines in code some System.properties to force text anti-aliasing and Mac OS features ...
      * @see fr.jmmc.mcs.gui.OSXAdapter
      */
     protected static void setSystemProps() {

@@ -7,7 +7,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -25,7 +24,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.LoggerFactory;
 
@@ -50,16 +48,15 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
     private static final Logger _rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     /** Class logger */
     private static final Logger _logger = (Logger) LoggerFactory.getLogger(LogbackGui.class.getName());
-    /** Single instance Gui Frame */
+    /** Single instance GUI Frame */
     private static JFrame _guiFrameSingleton = null;
-    /** Single instance Gui */
+    /** Single instance GUI */
     private static LogbackGui _guiSingleton = null;
-
-    /* members */
+    // Members
     /** current edited logger */
-    private Logger currentLogger = null;
+    private Logger _currentLogger = null;
     /** flag to enable / disable the automatic update of the logger when any swing component changes */
-    private boolean doAutoUpdateLogger = true;
+    private boolean _doAutoUpdateLogger = true;
 
     /**
      * Display the logger editor
@@ -87,7 +84,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
             // 1. Create the frame
             _guiFrameSingleton = new JFrame(frameName) {
-
                 /** default serial UID for Serializable interface */
                 private static final long serialVersionUID = 1L;
 
@@ -153,17 +149,17 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
         // add log panel automatically:
         int tabIndex = 0;
         for (AppenderLogMapper mapper : ApplicationLogSingleton.getInstance().getLogMappers()) {
-            this.jTabbedPane.insertTab(mapper.getDisplayName(), null, new LogPanel(mapper.getLoggerPath()), null, tabIndex++);
+            jTabbedPane.insertTab(mapper.getDisplayName(), null, new LogPanel(mapper.getLoggerPath()), null, tabIndex++);
         }
 
-        this.generateTree();
+        generateTree();
 
         // tree selection listener :
-        this.jTreeLoggers.addTreeSelectionListener(this);
+        jTreeLoggers.addTreeSelectionListener(this);
 
         // add property change listener to editable fields :
         // level (combo box) :
-        this.jComboBoxLevel.addActionListener(this);
+        jComboBoxLevel.addActionListener(this);
 
         // display root logger information:
         processLoggerSelection(_rootLogger);
@@ -176,7 +172,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
         _logger.debug("onDispose: {}", this);
 
         // free log panel resources (timers):
-        for (Component com : this.jTabbedPane.getComponents()) {
+        for (Component com : jTabbedPane.getComponents()) {
             if (com instanceof LogPanel) {
                 final LogPanel logPanel = (LogPanel) com;
                 logPanel.onDispose();
@@ -190,17 +186,17 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      */
     private void selectLogTab(final String loggerPath) {
         if (loggerPath != null) {
-            for (Component com : this.jTabbedPane.getComponents()) {
+            for (Component com : jTabbedPane.getComponents()) {
                 if (com instanceof LogPanel) {
                     final LogPanel logPanel = (LogPanel) com;
                     if (logPanel.getLoggerPath().equals(loggerPath)) {
-                        this.jTabbedPane.setSelectedComponent(logPanel);
+                        jTabbedPane.setSelectedComponent(logPanel);
                         return;
                     }
                 }
             }
         }
-        this.jTabbedPane.setSelectedIndex(0);
+        jTabbedPane.setSelectedIndex(0);
     }
 
     /* Tree related methods */
@@ -210,7 +206,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      */
     @SuppressWarnings("unchecked")
     private GenericJTree<Logger> getTreeLoggers() {
-        return (GenericJTree<Logger>) this.jTreeLoggers;
+        return (GenericJTree<Logger>) jTreeLoggers;
     }
 
     /**
@@ -275,7 +271,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      */
     @Override
     public void valueChanged(final TreeSelectionEvent e) {
-        final DefaultMutableTreeNode currentNode = this.getTreeLoggers().getLastSelectedNode();
+        final DefaultMutableTreeNode currentNode = getTreeLoggers().getLastSelectedNode();
 
         if (currentNode != null) {
             /* retrieve the node that was selected */
@@ -294,29 +290,29 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
     private void processLoggerSelection(final Logger logger) {
 
         // update the current Logger :
-        this.currentLogger = logger;
+        _currentLogger = logger;
 
         // disable the automatic update Logger :
-        final boolean prevAutoUpdateLogger = this.setAutoUpdateLogger(false);
+        final boolean prevAutoUpdateLogger = setAutoUpdateLogger(false);
         try {
 
             // note : setText() / setValue() methods fire a property change event :
 
             // name :
-            this.jTextFieldName.setText(logger.getName());
+            jTextFieldName.setText(logger.getName());
 
             // Level :
-            this.jComboBoxLevel.setSelectedItem((logger.getLevel() != null) ? logger.getLevel().toString() : UNDEFINED_LEVEL);
+            jComboBoxLevel.setSelectedItem((logger.getLevel() != null) ? logger.getLevel().toString() : UNDEFINED_LEVEL);
 
             // effective level :
-            this.jTextFieldEffectiveLevel.setText(logger.getEffectiveLevel().toString());
+            jTextFieldEffectiveLevel.setText(logger.getEffectiveLevel().toString());
 
             // additivity :
-            this.jRadioButtonAdditivityOn.setSelected(logger.isAdditive());
+            jRadioButtonAdditivityOn.setSelected(logger.isAdditive());
 
         } finally {
             // restore the automatic update logger :
-            this.setAutoUpdateLogger(prevAutoUpdateLogger);
+            setAutoUpdateLogger(prevAutoUpdateLogger);
         }
     }
 
@@ -326,22 +322,22 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      */
     @Override
     public void actionPerformed(final ActionEvent ae) {
-        if (ae.getSource() == this.jComboBoxLevel) {
-            if (this.doAutoUpdateLogger) {
-                if (this.currentLogger != null) {
-                    final Level level = Level.toLevel((String) this.jComboBoxLevel.getSelectedItem(), null);
+        if (ae.getSource() == jComboBoxLevel) {
+            if (_doAutoUpdateLogger) {
+                if (_currentLogger != null) {
+                    final Level level = Level.toLevel((String) jComboBoxLevel.getSelectedItem(), null);
 
                     // intercept known bug in JUL-to-SLF4J:
                     try {
-                        this.currentLogger.setLevel(level);
+                        _currentLogger.setLevel(level);
                     } catch (RuntimeException re) {
                         _logger.info("setLevel failure:", re);
                     }
 
-                    _logger.warn("Updated level for Logger [{}] to [{}]", this.currentLogger.getName(), this.currentLogger.getLevel());
+                    _logger.warn("Updated level for Logger [{}] to [{}]", _currentLogger.getName(), _currentLogger.getLevel());
 
                     // update form:
-                    processLoggerSelection(this.currentLogger);
+                    processLoggerSelection(_currentLogger);
                 }
             }
         }
@@ -367,13 +363,13 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      *
      * Typical use is as following :
      * // disable the automatic update logger :
-     * final boolean prevAutoUpdateLogger = this.setAutoUpdateLogger(false);
+     * final boolean prevAutoUpdateLogger = setAutoUpdateLogger(false);
      * try {
      *   // operations ...
      *
      * } finally {
      *   // restore the automatic update logger :
-     *   this.setAutoUpdateLogger(prevAutoUpdateLogger);
+     *   setAutoUpdateLogger(prevAutoUpdateLogger);
      * }
      *
      * @param value new value
@@ -381,10 +377,10 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      */
     private boolean setAutoUpdateLogger(final boolean value) {
         // first backup the state of the automatic update target :
-        final boolean previous = this.doAutoUpdateLogger;
+        final boolean previous = _doAutoUpdateLogger;
 
         // then change its state :
-        this.doAutoUpdateLogger = value;
+        _doAutoUpdateLogger = value;
 
         // return previous state :
         return previous;
@@ -594,12 +590,12 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
     }//GEN-LAST:event_jButtonRefreshLoggersActionPerformed
 
     private void jButtonExpandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExpandActionPerformed
-        final DefaultMutableTreeNode currentNode = getTreeLoggers().findTreeNode(this.currentLogger);
+        final DefaultMutableTreeNode currentNode = getTreeLoggers().findTreeNode(_currentLogger);
         getTreeLoggers().expandAll(new TreePath(currentNode.getPath()), true, (currentNode == getTreeLoggers().getRootNode()) ? false : true);
     }//GEN-LAST:event_jButtonExpandActionPerformed
 
     private void jButtonCollapseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCollapseActionPerformed
-        final DefaultMutableTreeNode currentNode = getTreeLoggers().findTreeNode(this.currentLogger);
+        final DefaultMutableTreeNode currentNode = getTreeLoggers().findTreeNode(_currentLogger);
         getTreeLoggers().expandAll(new TreePath(currentNode.getPath()), false, (currentNode == getTreeLoggers().getRootNode()) ? false : true);
     }//GEN-LAST:event_jButtonCollapseActionPerformed
 
@@ -636,7 +632,6 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      */
     private static JTree createLoggerJTree() {
         return new GenericJTree<Logger>(Logger.class) {
-
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
 
@@ -673,7 +668,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
         protected static final Logger logger = (Logger) LoggerFactory.getLogger(GenericJTree.class.getName());
         /* members */
         /** class corresponding to <E> generic type */
-        private final Class<E> classType;
+        private final Class<E> _classType;
 
         /**
          * Public constructor changing default values : SINGLE_TREE_SELECTION
@@ -683,10 +678,10 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
         protected GenericJTree(final Class<E> classType) {
             super(new DefaultMutableTreeNode("GenericJTree"), false);
 
-            this.classType = classType;
+            _classType = classType;
 
             // single tree selection :
-            this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+            getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         }
 
         /**
@@ -694,7 +689,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
          * @return tree model
          */
         protected final DefaultTreeModel getTreeModel() {
-            return ((DefaultTreeModel) this.getModel());
+            return ((DefaultTreeModel) getModel());
         }
 
         /**
@@ -718,13 +713,13 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
          * @param userObject user object to create the new node
          */
         protected final void addNodeAndRefresh(final DefaultMutableTreeNode parentNode, final E userObject) {
-            final DefaultMutableTreeNode newNode = this.addNode(parentNode, userObject);
+            final DefaultMutableTreeNode newNode = addNode(parentNode, userObject);
 
             // fire node structure changed :
-            this.fireNodeChanged(parentNode);
+            fireNodeChanged(parentNode);
 
             // Select the new node = model :
-            this.selectPath(new TreePath(newNode.getPath()));
+            selectPath(new TreePath(newNode.getPath()));
         }
 
         /**
@@ -734,7 +729,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
          * @param currentNode node to remove
          */
         protected final void removeNodeAndRefresh(final DefaultMutableTreeNode parentNode, final DefaultMutableTreeNode currentNode) {
-            this.removeNodeAndRefresh(parentNode, currentNode, true);
+            removeNodeAndRefresh(parentNode, currentNode, true);
         }
 
         /**
@@ -748,11 +743,11 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
             parentNode.remove(currentNode);
 
             // fire node structure changed :
-            this.fireNodeChanged(parentNode);
+            fireNodeChanged(parentNode);
 
             if (doSelectParent) {
                 // Select the parent node = target :
-                this.selectPath(new TreePath(parentNode.getPath()));
+                selectPath(new TreePath(parentNode.getPath()));
             }
         }
 
@@ -762,7 +757,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
          */
         public final void fireNodeChanged(final TreeNode node) {
             // fire node structure changed :
-            this.getTreeModel().nodeStructureChanged(node);
+            getTreeModel().nodeStructureChanged(node);
         }
 
         /**
@@ -787,7 +782,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
          * @return node or null
          */
         protected final DefaultMutableTreeNode getLastSelectedNode() {
-            return (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
+            return (DefaultMutableTreeNode) getLastSelectedPathComponent();
         }
 
         /**
@@ -839,13 +834,13 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
             // first child = target :
             final DefaultMutableTreeNode firstChild = (DefaultMutableTreeNode) rootNode.getFirstChild();
-            this.selectPath(new TreePath(firstChild.getPath()));
+            selectPath(new TreePath(firstChild.getPath()));
 
             // expand node if there is at least one child node :
             if (!firstChild.isLeaf()) {
                 final DefaultMutableTreeNode secondChild = (DefaultMutableTreeNode) firstChild.getFirstChild();
 
-                this.scrollPathToVisible(new TreePath(secondChild.getPath()));
+                scrollPathToVisible(new TreePath(secondChild.getPath()));
             }
         }
 
@@ -856,8 +851,8 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
          * @param path tree path
          */
         protected final void selectPath(final TreePath path) {
-            this.setSelectionPath(path);
-            this.scrollPathToVisible(path);
+            setSelectionPath(path);
+            scrollPathToVisible(path);
         }
 
         /**
@@ -952,13 +947,13 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
          * @return string representation of the user object
          */
         @SuppressWarnings("unchecked")
-        private final String convertObjectToString(final Object userObject) {
+        private String convertObjectToString(final Object userObject) {
             // Check first for string (root node and default tree model):
             if (userObject instanceof String) {
                 return userObject.toString();
             }
             // Check if the class type matches (exact class comparison):
-            if (this.classType == null || this.classType.isAssignableFrom(userObject.getClass())) {
+            if (_classType == null || _classType.isAssignableFrom(userObject.getClass())) {
                 return convertUserObjectToString((E) userObject);
             }
             return toString(userObject);
@@ -993,19 +988,19 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
     private static final class ComponentResizeAdapter extends ComponentAdapter {
 
         /** minimal dimension to respect */
-        private final Dimension dim;
+        private final Dimension _dim;
 
         /**
          * Constructor with a given minimal dimension
          * @param dim minimal dimension
          */
         protected ComponentResizeAdapter(final Dimension dim) {
-            this.dim = dim;
+            _dim = dim;
         }
 
         /**
          * Invoked when the component's size changes.
-         * This overriden method checks that the new size is greater than the minimal dimension
+         * This override method checks that the new size is greater than the minimal dimension
          * @param e event to process
          */
         @Override
@@ -1013,12 +1008,12 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
             final Component c = e.getComponent();
             final Dimension d = c.getSize();
             int w = d.width;
-            if (w < dim.width) {
-                w = dim.width;
+            if (w < _dim.width) {
+                w = _dim.width;
             }
             int h = d.height;
-            if (h < dim.height) {
-                h = dim.height;
+            if (h < _dim.height) {
+                h = _dim.height;
             }
 
             c.setSize(w, h);

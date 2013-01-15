@@ -59,7 +59,7 @@ public abstract class Preferences extends Observable {
     private static final Logger _logger = LoggerFactory.getLogger(Preferences.class.getName());
     /** separator used to encode list<String> preference values */
     private static final char LIST_SEPARATOR = '|';
-    /** REGEXP expression used to decode list<String> preference values */
+    /** RegExp expression used to decode list<String> preference values */
     private static final String LIST_SPLITTER = "\\|";
     /* jMCS private stuff */
     /** Hidden internal preferences prefix managed by jMCS. */

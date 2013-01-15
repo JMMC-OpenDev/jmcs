@@ -38,7 +38,7 @@ public final class JnlpStarter {
     /**
      * Launch the given Java WebStart application in background.
      * 
-     * @param jnlpUrl jnlp url to launch the Jnlp application
+     * @param jnlpUrl JNLP URL to launch the application
      * @return the job context identifier
      * @throws IllegalStateException if the job can not be submitted to the job queue
      */
@@ -49,7 +49,7 @@ public final class JnlpStarter {
     /**
      * Launch the given Java WebStart application in background.
      * 
-     * @param jnlpUrl jnlp url to launch the Jnlp application
+     * @param jnlpUrl JNLP URL to launch the application
      * @param jobListener job event listener (not null)
      * @return the job context identifier
      * @throws IllegalStateException if the job can not be submitted to the job queue
@@ -78,8 +78,7 @@ public final class JnlpStarter {
 
         LocalLauncher.prepareChildJob(jobContext, TASK_NAME, cmd);
 
-        // puts the job in the job queue :
-        // can throw IllegalStateException if job not queued :
+        // Puts the job in the job queue (can throw IllegalStateException if job not queued)
         LocalLauncher.startJob(jobContext, jobListener);
 
         return jobContext.getId();

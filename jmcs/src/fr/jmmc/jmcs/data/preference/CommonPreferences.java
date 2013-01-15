@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Singleton object which handles common preferences.
+ * Singleton object which handles jMCS common preferences.
  * 
  * @author Guillaume MELLA, Laurent BOURGES.
  */

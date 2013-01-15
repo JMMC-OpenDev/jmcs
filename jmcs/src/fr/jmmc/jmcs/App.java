@@ -79,7 +79,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
  */
 public abstract class App {
 
-    /** JMMC logback configuration file as one resource file (in classpath) */
+    /** JMMC logback configuration file as one resource file (in class path) */
     public final static String JMMC_LOGBACK_CONFIG_RESOURCE = "jmmc-logback.xml";
     /** JMMC main logger */
     public final static String JMMC_LOGGER = "fr.jmmc";
@@ -90,7 +90,7 @@ public abstract class App {
      * Static Logger initialization and Network settings
      */
     static {
-        // assume SLF4J is bound to logback in the current environment
+        // Assume SLF4J is bound to logback in the current environment
         final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         // Get our logback configuration file:
@@ -122,7 +122,7 @@ public abstract class App {
             rootLogger.removeHandler(handlers[i]);
         }
 
-        // call only once during initialization time of your application to configure JUL bridge
+        // Call only once during initialization time of your application to configure JUL bridge
         SLF4JBridgeHandler.install();
 
         // slf4j / logback initialization done
@@ -141,8 +141,6 @@ public abstract class App {
         // note: settings must be set before using any URLConnection (loadApplicationData)
         NetworkSettings.defineDefaults();
     }
-    /** application data file i.e. "ApplicationData.xml" */
-    public final static String APPLICATION_DATA_FILE = "ApplicationData.xml";
     /** Logger - register on fr.jmmc to collect all logs under this path */
     private static final Logger _logger = LoggerFactory.getLogger(App.class.getName());
     /** flag to avoid calls to System.exit() (JUnit) */
@@ -151,14 +149,16 @@ public abstract class App {
     private static App _sharedInstance;
     /** flag indicating if the application started properly and is ready (visible) */
     private static boolean _applicationReady = false;
+    /** application data file i.e. "ApplicationData.xml" */
+    private static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
     /** jMCS application data model */
-    private static ApplicationDataModel _jMcsApplicationDataModel;
+    private static ApplicationDataModel _jMCSDataModel;
     /** Shared application data model */
     private static ApplicationDataModel _applicationDataModel;
-    /** AboutBox */
-    private static AboutBox _aboutBox = null;
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
+    /** AboutBox */
+    private static AboutBox _aboutBox = null;
     /** If it's true, exit the application after the exit method */
     private static boolean _exitApplicationWhenClosed = true;
     /** Quit handling action */
@@ -233,32 +233,25 @@ public abstract class App {
      */
     protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed, boolean shouldShowSplashScreen) {
         try {
+            // Start action registry
             _registrar = ActionRegistrar.getInstance();
-
             final String classPath = getClass().getName();
             new OpenAction(classPath, "_openAction");
             _quitAction = new QuitAction(classPath, "_quitAction");
-
             // Attributes affectations
             _exitApplicationWhenClosed = exitWhenClosed;
-
             // Check in common preferences whether startup splashscreen should be shown or not
             _showSplashScreen = shouldShowSplashScreen;
-
             _logger.debug("App object instantiated and logger created.");
 
             // Set jMCS application data attribute
             loadDefaultApplicationData();
             // Set the application data attribute
             loadApplicationData();
-
             _logger.debug("Application data loaded.");
 
             // Interpret arguments
             interpretArguments(args);
-
-            // Set shared instance
-            _sharedInstance = this;
 
             // Build Acknowledgment, ShowRelease and ShowHelp Actions
             // (the creation must be done after applicationModel instanciation)
@@ -269,12 +262,14 @@ public abstract class App {
             _showHelpAction = new ShowHelpAction("fr.jmmc.mcs.gui.App", "_showHelpAction");
             _showDependenciesAction = new ShowDependenciesAction("fr.jmmc.mcs.gui.App", "_showDependenciesAction");
 
+            // Set shared instance
+            _sharedInstance = this;
+
             // If execution should not be delayed
             if (!waitBeforeExecution) {
                 // Run the application immediately
                 run();
             }
-
         } catch (Throwable th) { // main initialization
 
             // In order to see the error window
@@ -283,10 +278,8 @@ public abstract class App {
                     _splashScreen.setVisible(false);
                 }
             }
-
-            MessagePane.showErrorMessage("An error occured while initializing the application");
-
             // Show the feedback report (modal) :
+            MessagePane.showErrorMessage("An error occured while initializing the application");
             FeedbackReport.openDialog(true, th);
         }
     }
@@ -300,14 +293,14 @@ public abstract class App {
 
         if (fileURL == null) {
             // Take the defaultData XML in order to take the default menus
-            _applicationDataModel = _jMcsApplicationDataModel;
+            _applicationDataModel = _jMCSDataModel;
         } else {
             try {
                 // We reinstantiate the application data model
                 _applicationDataModel = new ApplicationDataModel(fileURL);
             } catch (IllegalStateException iae) {
                 _logger.error("Could not load application data from '{}' file.", fileURL, iae);
-                _applicationDataModel = _jMcsApplicationDataModel;
+                _applicationDataModel = _jMCSDataModel;
             }
         }
     }
@@ -327,7 +320,7 @@ public abstract class App {
         _logger.info("Loading default application data from '{}' file.", defaultXmlURL);
 
         // We reinstantiate the application data model
-        _jMcsApplicationDataModel = new ApplicationDataModel(defaultXmlURL);
+        _jMCSDataModel = new ApplicationDataModel(defaultXmlURL);
     }
 
     /**
@@ -457,7 +450,7 @@ public abstract class App {
     }
 
     /**
-     * To be overriden by child classes to add custom command line argument(s) using:
+     * To be override by child classes to add custom command line argument(s) using:
      * @see  #addCustomCommandLineArgument(java.lang.String, boolean)
      */
     protected void addCustomCommandLineArguments() {
@@ -465,7 +458,7 @@ public abstract class App {
     }
 
     /** 
-     * To be overriden by child classes to show custom command line argument help 
+     * To be override by child classes to show custom command line argument help 
      */
     protected void showCustomArgumentsHelp() {
         // noop
@@ -485,7 +478,7 @@ public abstract class App {
      *
      * @param args arguments
      */
-    private final void interpretArguments(final String[] args) {
+    private void interpretArguments(final String[] args) {
         // List received arguments
         if (_logger.isDebugEnabled()) {
             for (int i = 0; i < args.length; i++) {
@@ -936,7 +929,7 @@ public abstract class App {
      * @return jMCS ApplicationDataModel instance.
      */
     public static ApplicationDataModel getJMcsApplicationDataModel() {
-        return _jMcsApplicationDataModel;
+        return _jMCSDataModel;
     }
 
     /**
@@ -974,7 +967,7 @@ public abstract class App {
      * Define the application frame (singleton).
      *
      * TODO : workaround to let App create the frame (getFrame)...
-     * Concrete applications must be later refactored to initialize correctly the GUI using getFrame()
+     * Concrete applications must be later re-factored to initialize correctly the GUI using getFrame()
      *
      * @param frame application frame
      */
@@ -1089,15 +1082,14 @@ public abstract class App {
 
         _logger.debug("filePath = '{}'.", filePath);
 
-        // resolve file path:
+        // Resolve file path
         final URL fileURL = appClass.getClassLoader().getResource(filePath);
-
         if (fileURL == null) {
             _logger.warn("Cannot find resource from '{}' file.", filePath);
             return null;
         }
-        _logger.debug("fileURL = '{}'.", fileURL);
 
+        _logger.debug("fileURL = '{}'.", fileURL);
         return UrlUtils.fixJarURL(fileURL);
     }
 
@@ -1203,7 +1195,7 @@ public abstract class App {
         public void actionPerformed(ActionEvent evt) {
             _logger.debug("Application is about to die, should we proceed ?");
 
-            // Mac os X Quit action handler:
+            // Mac OS X Quit action handler:
             final QuitResponse response;
             if (evt != null && evt.getSource() instanceof QuitResponse) {
                 response = (QuitResponse) evt.getSource();
@@ -1252,7 +1244,9 @@ public abstract class App {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
-        /** acknowledgment content */
+        /** Data model */
+        final ApplicationDataModel _applicationData;
+        /** Acknowledgment content */
         private String _acknowledgement = null;
 
         /**
@@ -1262,15 +1256,16 @@ public abstract class App {
          * @param fieldName the name of the field pointing to the action.
          */
         AcknowledgmentAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
-            _acknowledgement = _applicationDataModel.getAcknowledgment();
 
+            super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
+            _applicationData = App.getSharedApplicationDataModel();
+            _acknowledgement = _applicationData.getAcknowledgment();
             // If the application does not provide an acknowledgement
             if (_acknowledgement == null) {
                 // Generate one instead
-                final String compagny = _applicationDataModel.getLegalCompanyName();
-                final String appName = _applicationDataModel.getProgramName();
-                final String appURL = _applicationDataModel.getLinkValue();
+                final String compagny = _applicationData.getLegalCompanyName();
+                final String appName = _applicationData.getProgramName();
+                final String appURL = _applicationData.getLinkValue();
                 _acknowledgement = "This research has made use of the " + compagny
                         + "\\texttt{" + appName
                         + "} service\n\\footnote{Available at " + appURL + "}";
@@ -1289,7 +1284,7 @@ public abstract class App {
             final String delimiter = "---------------------------------------------------------------------------\n";
             final String message = "The previous message has already been copied to your clipboard, in order to\n"
                     + "let you conveniently paste it in your related publication.";
-            final String windowTitle = _applicationDataModel.getProgramName()
+            final String windowTitle = _applicationData.getProgramName()
                     + " Acknowledgment Note";
             final String windowContent = delimiter + _acknowledgement + "\n"
                     + delimiter + "\n" + message;
@@ -1320,7 +1315,7 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(_applicationDataModel.getHotNewsRSSFeedLinkValue());
+            BrowserLauncher.openURL(App.getSharedApplicationDataModel().getHotNewsRSSFeedLinkValue());
         }
     }
 
@@ -1346,7 +1341,7 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(_applicationDataModel.getReleaseNotesLinkValue());
+            BrowserLauncher.openURL(App.getSharedApplicationDataModel().getReleaseNotesLinkValue());
         }
     }
 
@@ -1372,7 +1367,7 @@ public abstract class App {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(_applicationDataModel.getFaqLinkValue());
+            BrowserLauncher.openURL(App.getSharedApplicationDataModel().getFaqLinkValue());
         }
     }
 

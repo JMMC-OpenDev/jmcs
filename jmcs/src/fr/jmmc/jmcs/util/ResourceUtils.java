@@ -3,19 +3,16 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
-import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
-
 import org.apache.commons.lang.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Class used to get resources informations from one central point (xml file).
+ * Class used to get resources informations from one central point (XML file).
  * 
  * Applications must start to set the resource file name before any GUI construction.
  * 
@@ -127,11 +124,11 @@ public abstract class ResourceUtils {
     }
 
     /**
-     * Get the tooltip text of widget related to the common widget group.
+     * Get the tool-tip text of widget related to the common widget group.
      *
      * @param widgetName the widgetInstanceName
      *
-     * @return the tooltip text
+     * @return the tool-tip text
      */
     public static String getToolTipText(final String widgetName) {
         return getResource("widgets.widget." + widgetName + ".tooltip", true);

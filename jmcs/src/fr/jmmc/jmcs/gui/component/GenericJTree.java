@@ -4,31 +4,30 @@
 package fr.jmmc.jmcs.gui.component;
 
 import java.util.Enumeration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * This custom JTree implementation provides several utility methods to manipulate
- * DefaultMutableTreeNode and visual representation of nodes
+ * This custom JTree implementation provides several utility methods to manipulate DefaultMutableTreeNode and visual representation of nodes.
  * @param <E> type of the user object 
  *
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public abstract class GenericJTree<E> extends JTree {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
-    /** Class logger */
-    protected static final Logger logger = LoggerFactory.getLogger(GenericJTree.class.getName());
+    /** Class _logger */
+    protected static final Logger _logger = LoggerFactory.getLogger(GenericJTree.class.getName());
     /* members */
     /** class corresponding to <E> generic type */
-    private final Class<E> classType;
+    private final Class<E> _classType;
 
     /**
      * Public constructor changing default values : SINGLE_TREE_SELECTION
@@ -38,10 +37,10 @@ public abstract class GenericJTree<E> extends JTree {
     public GenericJTree(final Class<E> classType) {
         super(new DefaultMutableTreeNode("GenericJTree"), false);
 
-        this.classType = (classType == Object.class) ? null : classType;
+        _classType = (classType == Object.class) ? null : classType;
 
-        // single tree selection :
-        this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        // Single tree selection
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
 
     /**
@@ -49,7 +48,7 @@ public abstract class GenericJTree<E> extends JTree {
      * @return tree model
      */
     public final DefaultTreeModel getTreeModel() {
-        return ((DefaultTreeModel) this.getModel());
+        return ((DefaultTreeModel) getModel());
     }
 
     /**
@@ -76,10 +75,10 @@ public abstract class GenericJTree<E> extends JTree {
         final DefaultMutableTreeNode newNode = this.addNode(parentNode, userObject);
 
         // fire node structure changed :
-        this.fireNodeChanged(parentNode);
+        fireNodeChanged(parentNode);
 
         // Select the new node = model :
-        this.selectPath(new TreePath(newNode.getPath()));
+        selectPath(new TreePath(newNode.getPath()));
     }
 
     /**
@@ -89,7 +88,7 @@ public abstract class GenericJTree<E> extends JTree {
      * @param currentNode node to remove
      */
     public final void removeNodeAndRefresh(final DefaultMutableTreeNode parentNode, final DefaultMutableTreeNode currentNode) {
-        this.removeNodeAndRefresh(parentNode, currentNode, true);
+        removeNodeAndRefresh(parentNode, currentNode, true);
     }
 
     /**
@@ -103,11 +102,11 @@ public abstract class GenericJTree<E> extends JTree {
         parentNode.remove(currentNode);
 
         // fire node structure changed :
-        this.fireNodeChanged(parentNode);
+        fireNodeChanged(parentNode);
 
         if (doSelectParent) {
             // Select the parent node = target :
-            this.selectPath(new TreePath(parentNode.getPath()));
+            selectPath(new TreePath(parentNode.getPath()));
         }
     }
 
@@ -117,7 +116,7 @@ public abstract class GenericJTree<E> extends JTree {
      */
     public final void fireNodeChanged(final TreeNode node) {
         // fire node structure changed :
-        this.getTreeModel().nodeStructureChanged(node);
+        getTreeModel().nodeStructureChanged(node);
     }
 
     /**
@@ -194,7 +193,7 @@ public abstract class GenericJTree<E> extends JTree {
 
         // first child = target :
         final DefaultMutableTreeNode firstChild = (DefaultMutableTreeNode) rootNode.getFirstChild();
-        this.selectPath(new TreePath(firstChild.getPath()));
+        selectPath(new TreePath(firstChild.getPath()));
 
         // expand node if there is at least one child node :
         if (!firstChild.isLeaf()) {
@@ -254,8 +253,8 @@ public abstract class GenericJTree<E> extends JTree {
     }
 
     /**
-     * Called by the renderers to convert the specified value to
-     * text. This implementation returns <code>value.toString</code>, ignoring
+     * Called by the renderer to convert the specified value to text.
+     * This implementation returns <code>value.toString</code>, ignoring
      * all other arguments. To control the conversion, subclass this
      * method and use any of the arguments you need.
      *
@@ -288,7 +287,7 @@ public abstract class GenericJTree<E> extends JTree {
                 }
 
             } else {
-                logger.error("unsupported class type = {}", value.getClass());
+                _logger.error("unsupported class type = {}", value.getClass());
 
                 sValue = value.toString();
             }
@@ -307,13 +306,13 @@ public abstract class GenericJTree<E> extends JTree {
      * @return string representation of the user object
      */
     @SuppressWarnings("unchecked")
-    private final String convertObjectToString(final Object userObject) {
+    private String convertObjectToString(final Object userObject) {
         // Check first for string (root node and default tree model):
         if (userObject instanceof String) {
             return userObject.toString();
         }
         // Check if the class type matches (exact class comparison):
-        if (this.classType == null || this.classType.isAssignableFrom(userObject.getClass())) {
+        if (this._classType == null || this._classType.isAssignableFrom(userObject.getClass())) {
             return convertUserObjectToString((E) userObject);
         }
         return toString(userObject);
@@ -326,7 +325,7 @@ public abstract class GenericJTree<E> extends JTree {
      */
     protected final String toString(final Object userObject) {
         if (!(userObject instanceof String)) {
-            logger.warn("Unsupported class type = {}", userObject.getClass());
+            _logger.warn("Unsupported class type = {}", userObject.getClass());
         }
         // String representation :
         return userObject.toString();

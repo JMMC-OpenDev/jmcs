@@ -4,15 +4,14 @@
 package fr.jmmc.jmcs.gui.component;
 
 /**
- * This interface defines the dispose() method to free ressources or references to itself to
+ * This interface defines the dispose() method to free resources or references to itself to
  * avoid memory leak, Observer/Observable or event listener problems
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public interface Disposable {
 
-  /**
-   * Free any ressource or reference to this instance
-   */
-  public void dispose();
-
+    /**
+     * Free any resource or reference to this instance
+     */
+    public void dispose();
 }

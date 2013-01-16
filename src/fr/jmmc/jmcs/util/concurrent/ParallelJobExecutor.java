@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -74,7 +73,7 @@ public final class ParallelJobExecutor {
 
         // create any the thread pool even if there is only 1 CPU:
         final int threadCount = _cpuCount;
-        _parallelExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount, new JobWorkerThreadFactory());
+        _parallelExecutor = new FixedThreadPoolExecutor(threadCount, new JobWorkerThreadFactory());
 
         // create threads now:
         _parallelExecutor.prestartAllCoreThreads();
@@ -547,11 +546,15 @@ public final class ParallelJobExecutor {
             if (_logger.isDebugEnabled()) {
                 _logger.debug("thread[{}] done", _index);
             }
+            _logger.warn("thread[{}] done", _index);
         }
     }
 
     /**
      * Returns the current thread's index modulo number of jobs so returns an int value between [0; nJobs[
+     * 
+     * Note: this methods should always ensure thread separation ie
+     * thread indexes must be consecutive and exclusive ie only 1 thread returns the same thread index
      *
      * @param nJobs number of parallel jobs
      * @return the current thread's index in [0; nJobs[

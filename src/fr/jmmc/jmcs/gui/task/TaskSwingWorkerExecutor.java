@@ -4,14 +4,12 @@
 package fr.jmmc.jmcs.gui.task;
 
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
+import fr.jmmc.jmcs.util.concurrent.FixedThreadPoolExecutor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
@@ -298,7 +296,7 @@ public final class TaskSwingWorkerExecutor {
     /**
      * Single threaded Swing Worker executor
      */
-    private static final class SwingWorkerSingleThreadExecutor extends ThreadPoolExecutor {
+    private static final class SwingWorkerSingleThreadExecutor extends FixedThreadPoolExecutor {
 
         // members
         /** TaskSwingWorkerExecutor reference for clearWorker callback */
@@ -311,14 +309,9 @@ public final class TaskSwingWorkerExecutor {
          * callback
          */
         protected SwingWorkerSingleThreadExecutor(final TaskSwingWorkerExecutor executor) {
-            super(1, 1,
-                    0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>(),
-                    new SwingWorkerThreadFactory());
-            _executor = executor;
+            super(1, new SwingWorkerThreadFactory());
 
-            // Create the thread now :
-            prestartCoreThread();
+            _executor = executor;
         }
 
         /**
@@ -365,6 +358,9 @@ public final class TaskSwingWorkerExecutor {
          */
         @Override
         protected void afterExecute(final Runnable r, final Throwable t) {
+            // clear interrupt flag: 
+            super.afterExecute(r, t);
+
             if (DEBUG_FLAG) {
                 if (t != null) {
                     _logger.info("afterExecute: {}", r, t);

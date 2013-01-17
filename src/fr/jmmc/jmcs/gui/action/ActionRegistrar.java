@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.action;
 
+import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -232,6 +233,13 @@ public class ActionRegistrar {
             sb.append(key).append("\n");
         }
         return sb.toString();
+    }
+
+    /**
+     * Create all required internal actions.
+     */
+    public void createAllInternalActions() {
+        InternalActionFactory.populate();
     }
 }
 /*___oOo___*/

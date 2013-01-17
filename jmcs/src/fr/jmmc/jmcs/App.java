@@ -8,25 +8,19 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
-import com.apple.eawt.QuitResponse;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
-import fr.jmmc.jmcs.gui.AboutBox;
-import fr.jmmc.jmcs.gui.DependenciesView;
 import fr.jmmc.jmcs.gui.FeedbackReport;
-import fr.jmmc.jmcs.gui.HelpView;
 import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.SplashScreen;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
-import fr.jmmc.jmcs.gui.action.RegisteredAction;
+import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
-import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
-import fr.jmmc.jmcs.resource.image.ResourceImage;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
@@ -37,8 +31,6 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import java.awt.Container;
 import java.awt.Frame;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -50,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
@@ -79,12 +70,13 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
  */
 public abstract class App {
 
-    /** JMMC logback configuration file as one resource file (in class path) */
+    /** JMMC LogBack configuration file as one resource file (in class path) */
     public final static String JMMC_LOGBACK_CONFIG_RESOURCE = "jmmc-logback.xml";
     /** JMMC main logger */
     public final static String JMMC_LOGGER = "fr.jmmc";
     /** JMMC Logger to be able to set its level in interpretArguments() */
-    private final static ch.qos.logback.classic.Logger JmmcLogger;
+    private final static ch.qos.logback.classic.Logger _jmmcLogger;
+    private static final String CLASS_PATH = App.class.getName();
 
     /**
      * Static Logger initialization and Network settings
@@ -131,8 +123,8 @@ public abstract class App {
         ApplicationLogSingleton.getInstance();
 
         // Get the jmmc logger to be able to set its level in interpretArguments()
-        JmmcLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("fr.jmmc");
-        JmmcLogger.info("Application log created at {}. Current level is {}.", new Date(), JmmcLogger.getEffectiveLevel());
+        _jmmcLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("fr.jmmc");
+        _jmmcLogger.info("Application log created at {}. Current level is {}.", new Date(), _jmmcLogger.getEffectiveLevel());
 
         // Define swing settings (laf, locale...) before any Swing usage if not called at the first line of the main method:
         SwingSettings.setup();
@@ -142,7 +134,7 @@ public abstract class App {
         NetworkSettings.defineDefaults();
     }
     /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = LoggerFactory.getLogger(App.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(CLASS_PATH);
     /** flag to avoid calls to System.exit() (JUnit) */
     private static boolean _avoidSystemExit = false;
     /** Singleton reference */
@@ -157,28 +149,11 @@ public abstract class App {
     private static ApplicationDataModel _applicationDataModel;
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
-    /** AboutBox */
-    private static AboutBox _aboutBox = null;
     /** If it's true, exit the application after the exit method */
     private static boolean _exitApplicationWhenClosed = true;
-    /** Quit handling action */
-    private static QuitAction _quitAction = null;
-    /** Acknowledgment handling action */
-    private static AcknowledgmentAction _acknowledgmentAction = null;
-    /** Show help handling action */
-    private static ShowHelpAction _showHelpAction = null;
-    /** Show hot news handling action */
-    private static ShowHotNewsAction _showHotNewsAction = null;
-    /** Show release handling action */
-    private static ShowReleaseAction _showReleaseAction = null;
-    /** Show FAQ handling action */
-    private static ShowFaqAction _showFaqAction = null;
-    /** Show Dependencies action */
-    private static ShowDependenciesAction _showDependenciesAction = null;
-
-    /* members */
+    // Members
     /** Store a proxy to the shared ActionRegistrar facility */
-    private ActionRegistrar _registrar = null;
+    private ActionRegistrar _actionRegistrar = null;
     /** Show the splash screen ? */
     private boolean _showSplashScreen = true;
     /** Splash screen */
@@ -234,10 +209,7 @@ public abstract class App {
     protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed, boolean shouldShowSplashScreen) {
         try {
             // Start action registry
-            _registrar = ActionRegistrar.getInstance();
-            final String classPath = getClass().getName();
-            new OpenAction(classPath, "_openAction");
-            _quitAction = new QuitAction(classPath, "_quitAction");
+            _actionRegistrar = ActionRegistrar.getInstance();
             // Attributes affectations
             _exitApplicationWhenClosed = exitWhenClosed;
             // Check in common preferences whether startup splashscreen should be shown or not
@@ -255,12 +227,7 @@ public abstract class App {
 
             // Build Acknowledgment, ShowRelease and ShowHelp Actions
             // (the creation must be done after applicationModel instanciation)
-            _acknowledgmentAction = new AcknowledgmentAction("fr.jmmc.mcs.gui.App", "_acknowledgmentAction");
-            _showHotNewsAction = new ShowHotNewsAction("fr.jmmc.mcs.gui.App", "_showHotNewsAction");
-            _showReleaseAction = new ShowReleaseAction("fr.jmmc.mcs.gui.App", "_showReleaseAction");
-            _showFaqAction = new ShowFaqAction("fr.jmmc.mcs.gui.App", "_showFaqAction");
-            _showHelpAction = new ShowHelpAction("fr.jmmc.mcs.gui.App", "_showHelpAction");
-            _showDependenciesAction = new ShowDependenciesAction("fr.jmmc.mcs.gui.App", "_showDependenciesAction");
+            _actionRegistrar.createAllInternalActions();
 
             // Set shared instance
             _sharedInstance = this;
@@ -321,124 +288,6 @@ public abstract class App {
 
         // We reinstantiate the application data model
         _jMCSDataModel = new ApplicationDataModel(defaultXmlURL);
-    }
-
-    /**
-     * Return the action which displays and copy acknowledgment to clipboard
-     * @return action which displays and copy acknowledgment to clipboard
-     */
-    public static Action acknowledgmentAction() {
-        return _acknowledgmentAction;
-    }
-
-    /**
-     * Creates the action which open the about box window
-     * @return action which open the about box window
-     */
-    public static Action aboutBoxAction() {
-        return new AbstractAction("About...") {
-            /** default serial UID for Serializable interface */
-            private static final long serialVersionUID = 1;
-
-            /**
-             * Handle the action event
-             * @param evt action event
-             */
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                if (_applicationDataModel != null) {
-                    if (_aboutBox != null) {
-                        if (!_aboutBox.isVisible()) {
-                            _aboutBox.setVisible(true);
-                        } else {
-                            _aboutBox.toFront();
-                        }
-                    } else {
-                        _aboutBox = new AboutBox();
-                    }
-                }
-            }
-        };
-    }
-
-    /**
-     * Creates the feedback action which open the feedback window
-     * @return feedback action which open the feedback window
-     */
-    public static Action feedbackReportAction() {
-        return feedbackReportAction(null);
-    }
-
-    /**
-     * Creates the feedback action which open the feedback window
-     * @param ex exception that occurred
-     * @return feedback action which open the feedback window
-     */
-    public static Action feedbackReportAction(final Exception ex) {
-        return new AbstractAction("Report Feedback to " + App.getSharedApplicationDataModel().getShortCompanyName() + "...") {
-            /** default serial UID for Serializable interface */
-            private static final long serialVersionUID = 1;
-
-            /**
-             * Handle the action event
-             * @param evt action event
-             */
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                if (_applicationDataModel != null) {
-                    // Show the feedback report :
-                    FeedbackReport.openDialog(ex);
-                }
-            }
-        };
-    }
-
-    /**
-     * Return the action which tries to display the help
-     * @return action which tries to display the help
-     */
-    public static Action showHelpAction() {
-        return _showHelpAction;
-    }
-
-    /**
-     * Return the action which tries to display dependencies
-     * @return action which tries to display dependencies
-     */
-    public static Action showDependenciesAction() {
-        return _showDependenciesAction;
-    }
-
-    /**
-     * Return the action which tries to quit the application
-     * @return action which tries to quit the application
-     */
-    public static Action quitAction() {
-        return _quitAction;
-    }
-
-    /**
-     * Return the action dedicated to display hot news
-     * @return action dedicated to display hot news
-     */
-    public static Action showHotNewsAction() {
-        return _showHotNewsAction;
-    }
-
-    /**
-     * Return the action dedicated to display release
-     * @return action dedicated to display release
-     */
-    public static Action showReleaseAction() {
-        return _showReleaseAction;
-    }
-
-    /**
-     * Return the action dedicated to display FAQ
-     * @return action dedicated to display FAQ
-     */
-    public static Action showFaqAction() {
-        return _showFaqAction;
     }
 
     /**
@@ -550,17 +399,17 @@ public abstract class App {
                         _logger.info("Set logger level to '{}'.", arg);
 
                         if (arg.equals("0")) {
-                            JmmcLogger.setLevel(Level.OFF);
+                            _jmmcLogger.setLevel(Level.OFF);
                         } else if (arg.equals("1")) {
-                            JmmcLogger.setLevel(Level.ERROR);
+                            _jmmcLogger.setLevel(Level.ERROR);
                         } else if (arg.equals("2")) {
-                            JmmcLogger.setLevel(Level.WARN);
+                            _jmmcLogger.setLevel(Level.WARN);
                         } else if (arg.equals("3")) {
-                            JmmcLogger.setLevel(Level.INFO);
+                            _jmmcLogger.setLevel(Level.INFO);
                         } else if (arg.equals("4")) {
-                            JmmcLogger.setLevel(Level.DEBUG);
+                            _jmmcLogger.setLevel(Level.DEBUG);
                         } else if (arg.equals("5")) {
-                            JmmcLogger.setLevel(Level.ALL);
+                            _jmmcLogger.setLevel(Level.ALL);
                         } else {
                             showArgumentsHelp();
                         }
@@ -615,7 +464,7 @@ public abstract class App {
     /**
      * Initialize application objects
      *
-     * The actions which are present in menubar must be instantiated in this method.
+     * The actions which are present in menu bar must be instantiated in this method.
      */
     protected abstract void init();
 
@@ -641,16 +490,21 @@ public abstract class App {
      * The default implementation lets the application quitting without further ado.
      *
      * @warning This method should be overridden to handle quit as you intend to.
-     * In its default behavior, all changes that occurred during application life
-     * will be lost.
+     * In its default behavior, all changes that occurred during application life will be lost.
      *
-     * @return should return true if the application can exit, false otherwise
-     * to cancel exit.
+     * @return should return true if the application can exit, false otherwise to cancel exit.
      */
-    protected boolean finish() {
+    public boolean shouldFinish() {
         _logger.info("Default App.finish() handler called.");
 
         return true;
+    }
+
+    /**
+     * @return true if should exit when closed, false otherwise.
+     */
+    public boolean shouldExitWhenClosed() {
+        return _exitApplicationWhenClosed;
     }
 
     /**
@@ -720,6 +574,13 @@ public abstract class App {
     }
 
     /**
+     * Callback on exit.
+     */
+    public static void quit() {
+        InternalActionFactory.quitAction().actionPerformed(null);
+    }
+
+    /**
      * Describe the life cycle of the application
      */
     protected final void run() {
@@ -765,7 +626,7 @@ public abstract class App {
                 declareInteroperability();
 
                 // Perform defered action initialization (SAMP-related actions)
-                _registrar.performDeferedInitialization();
+                _actionRegistrar.performDeferedInitialization();
 
                 // Define the jframe associated to the application which will get the JmenuBar
                 final JFrame frame = getFrame();
@@ -795,7 +656,7 @@ public abstract class App {
                  */
                 @Override
                 public void run() {
-                    _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, _fileArgument));
+                    _actionRegistrar.getOpenAction().actionPerformed(new ActionEvent(_actionRegistrar, 0, _fileArgument));
                     // clear :
                     _fileArgument = null;
                 }
@@ -1136,298 +997,6 @@ public abstract class App {
         _logger.debug("filePath = '{}'.", filePath);
 
         return filePath;
-    }
-
-    /** Action to correctly handle file opening. */
-    protected static class OpenAction extends RegisteredAction {
-
-        /** default serial UID for Serializable interface */
-        private static final long serialVersionUID = 1;
-
-        /**
-         * Public constructor
-         * @param classPath the path of the class containing the field pointing to
-         * the action, in the form returned by 'getClass().getName();'.
-         * @param fieldName the name of the field pointing to the action.
-         */
-        OpenAction(String classPath, String fieldName) {
-            super(classPath, fieldName);
-
-            // Disabled as this default implementation does nothing
-            setEnabled(false);
-
-            flagAsOpenAction();
-        }
-
-        /**
-         * Handle the action event
-         * @param evt action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            _logger.warn("No handler for default file opening.");
-        }
-    }
-
-    /** Action to correctly handle operations before closing application. */
-    protected static class QuitAction extends RegisteredAction {
-
-        /** default serial UID for Serializable interface */
-        private static final long serialVersionUID = 1;
-
-        /**
-         * Public constructor
-         * @param classPath the path of the class containing the field pointing to
-         * the action, in the form returned by 'getClass().getName();'.
-         * @param fieldName the name of the field pointing to the action.
-         */
-        QuitAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "Quit", "ctrl Q");
-
-            flagAsQuitAction();
-        }
-
-        /**
-         * Handle the action event
-         * @param evt action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            _logger.debug("Application is about to die, should we proceed ?");
-
-            // Mac OS X Quit action handler:
-            final QuitResponse response;
-            if (evt != null && evt.getSource() instanceof QuitResponse) {
-                response = (QuitResponse) evt.getSource();
-            } else {
-                response = null;
-            }
-
-            // Check if user is OK to kill SAMP hub (if any)
-            if (!SampManager.getInstance().allowHubKilling()) {
-                _logger.debug("SAMP cancelled application kill.");
-                // Otherwise cancel quit
-
-                if (response != null) {
-                    response.cancelQuit();
-                }
-                return;
-            }
-
-            // If we are ready to finish application execution
-            if (App.getSharedInstance().finish()) {
-                _logger.debug("Application should be killed.");
-
-                // Verify if we are authorized to kill the application or not
-                if (_exitApplicationWhenClosed) {
-                    // Exit the application
-
-                    if (response != null) {
-                        response.performQuit();
-                    }
-                    App.exit(0);
-
-                } else {
-                    _logger.debug("Application left opened as required.");
-                }
-            } else {
-                _logger.debug("Application killing cancelled.");
-            }
-            if (response != null) {
-                response.cancelQuit();
-            }
-        }
-    }
-
-    /** Action to copy acknowledgment text to the clipboard. */
-    protected static class AcknowledgmentAction extends RegisteredAction {
-
-        /** default serial UID for Serializable interface */
-        private static final long serialVersionUID = 1;
-        /** Data model */
-        final ApplicationDataModel _applicationData;
-        /** Acknowledgment content */
-        private String _acknowledgement = null;
-
-        /**
-         * Public constructor
-         * @param classPath the path of the class containing the field pointing to
-         * the action, in the form returned by 'getClass().getName();'.
-         * @param fieldName the name of the field pointing to the action.
-         */
-        AcknowledgmentAction(String classPath, String fieldName) {
-
-            super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
-            _applicationData = App.getSharedApplicationDataModel();
-            _acknowledgement = _applicationData.getAcknowledgment();
-            // If the application does not provide an acknowledgement
-            if (_acknowledgement == null) {
-                // Generate one instead
-                final String compagny = _applicationData.getLegalCompanyName();
-                final String appName = _applicationData.getProgramName();
-                final String appURL = _applicationData.getLinkValue();
-                _acknowledgement = "This research has made use of the " + compagny
-                        + "\\texttt{" + appName
-                        + "} service\n\\footnote{Available at " + appURL + "}";
-            }
-        }
-
-        /**
-         * Handle the action event
-         * @param evt action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            StringSelection ss = new StringSelection(_acknowledgement);
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
-
-            final String delimiter = "---------------------------------------------------------------------------\n";
-            final String message = "The previous message has already been copied to your clipboard, in order to\n"
-                    + "let you conveniently paste it in your related publication.";
-            final String windowTitle = _applicationData.getProgramName()
-                    + " Acknowledgment Note";
-            final String windowContent = delimiter + _acknowledgement + "\n"
-                    + delimiter + "\n" + message;
-
-            ResizableTextViewFactory.createTextWindow(windowContent, windowTitle, enabled);
-        }
-    }
-
-    /** Action to show hot news RSS feed. */
-    protected static class ShowHotNewsAction extends RegisteredAction {
-
-        /** default serial UID for Serializable interface */
-        private static final long serialVersionUID = 1;
-
-        /**
-         * Public constructor
-         * @param classPath the path of the class containing the field pointing to
-         * the action, in the form returned by 'getClass().getName();'.
-         * @param fieldName the name of the field pointing to the action.
-         */
-        ShowHotNewsAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "Hot News (RSS Feed)");
-        }
-
-        /**
-         * Handle the action event
-         * @param evt action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(App.getSharedApplicationDataModel().getHotNewsRSSFeedLinkValue());
-        }
-    }
-
-    /** Action to show release. */
-    protected static class ShowReleaseAction extends RegisteredAction {
-
-        /** default serial UID for Serializable interface */
-        private static final long serialVersionUID = 1;
-
-        /**
-         * Public constructor
-         * @param classPath the path of the class containing the field pointing to
-         * the action, in the form returned by 'getClass().getName();'.
-         * @param fieldName the name of the field pointing to the action.
-         */
-        ShowReleaseAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "Release Notes");
-        }
-
-        /**
-         * Handle the action event
-         * @param evt action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(App.getSharedApplicationDataModel().getReleaseNotesLinkValue());
-        }
-    }
-
-    /** Action to show FAQ. */
-    protected static class ShowFaqAction extends RegisteredAction {
-
-        /** default serial UID for Serializable interface */
-        private static final long serialVersionUID = 1;
-
-        /**
-         * Public constructor
-         * @param classPath the path of the class containing the field pointing to
-         * the action, in the form returned by 'getClass().getName();'.
-         * @param fieldName the name of the field pointing to the action.
-         */
-        ShowFaqAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "Frequently Asked Questions");
-        }
-
-        /**
-         * Handle the action event
-         * @param evt action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(App.getSharedApplicationDataModel().getFaqLinkValue());
-        }
-    }
-
-    /** Action to show dependencies. */
-    protected static class ShowDependenciesAction extends RegisteredAction {
-
-        /** default serial UID for Serializable interface */
-        private static final long serialVersionUID = 1;
-
-        /**
-         * Public constructor
-         * @param classPath the path of the class containing the field pointing to
-         * the action, in the form returned by 'getClass().getName();'.
-         * @param fieldName the name of the field pointing to the action.
-         */
-        ShowDependenciesAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "jMCS Dependencies Copyrights");
-        }
-
-        /**
-         * Handle the action event
-         * @param evt action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            DependenciesView.display();
-        }
-    }
-
-    /** Action to show help. */
-    protected static class ShowHelpAction extends RegisteredAction {
-
-        /** default serial UID for Serializable interface */
-        private static final long serialVersionUID = 1;
-
-        /**
-         * Public constructor
-         * @param classPath the path of the class containing the field pointing to
-         * the action, in the form returned by 'getClass().getName();'.
-         * @param fieldName the name of the field pointing to the action.
-         */
-        ShowHelpAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "User Manual");
-            setEnabled(HelpView.isAvailable());
-
-            // Set Icon only if not under Mac OS X
-            if (!SystemUtils.IS_OS_MAC_OSX) {
-                final ImageIcon helpIcon = ResourceImage.HELP_ICON.icon();
-                putValue(SMALL_ICON, helpIcon);
-            }
-        }
-
-        /**
-         * Handle the action event
-         * @param evt action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            HelpView.setVisible(true);
-        }
     }
 
     /**

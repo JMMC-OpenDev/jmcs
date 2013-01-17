@@ -45,25 +45,24 @@
  */
 package fr.jmmc.jmcs.gui.util;
 
-import com.apple.eawt.Application;
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
-import com.apple.eawt.OpenFilesHandler;
 import com.apple.eawt.AppEvent.OpenFilesEvent;
-import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.AppEvent.PreferencesEvent;
-import com.apple.eawt.QuitHandler;
 import com.apple.eawt.AppEvent.QuitEvent;
+import com.apple.eawt.Application;
+import com.apple.eawt.OpenFilesHandler;
+import com.apple.eawt.PreferencesHandler;
+import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 import com.apple.eawt.QuitStrategy;
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
+import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.swing.AbstractAction;
-
-import javax.swing.JFrame;
 
 /**
  * Mac OS X adapter
@@ -100,7 +99,7 @@ public class MacOSXAdapter implements AboutHandler, PreferencesHandler, QuitHand
     @Override
     public void handleAbout(AboutEvent ae) {
         if (mainAppFrame != null) {
-            App.aboutBoxAction().actionPerformed(null);
+            InternalActionFactory.showAboutBoxAction().actionPerformed(null);
         } else {
             throw new IllegalStateException("handleAbout: MyApp instance detached from listener");
         }

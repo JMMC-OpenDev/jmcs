@@ -9,11 +9,12 @@ import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.data.model.Menu;
 import fr.jmmc.jmcs.data.model.Menubar;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
-import fr.jmmc.jmcs.util.RecentFilesManager;
 import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
+import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
+import fr.jmmc.jmcs.util.RecentFilesManager;
 import fr.jmmc.jmcs.util.UrlUtils;
 import java.awt.Component;
 import java.awt.Frame;
@@ -377,16 +378,16 @@ public class MainMenuBar extends JMenuBar {
         JMenu helpMenu = new JMenu("Help");
 
         // Add HelpView action
-        helpMenu.add(App.showHelpAction());
+        helpMenu.add(InternalActionFactory.showHelpAction());
         helpMenu.add(new JSeparator());
 
         // Add DependenciesView action
-        helpMenu.add(App.showDependenciesAction());
+        helpMenu.add(InternalActionFactory.showDependenciesAction());
         helpMenu.add(new JSeparator());
 
         // Add feedback action (if supported)
         if (_applicationDataModel.getFeedbackReportFormURL() != null) {
-            helpMenu.add(App.feedbackReportAction());
+            helpMenu.add(InternalActionFactory.showFeedbackReportAction());
         }
 
         // Add log Gui anyway:
@@ -408,7 +409,7 @@ public class MainMenuBar extends JMenuBar {
         }
 
         // Add acknowledgement action
-        helpMenu.add(App.acknowledgmentAction());
+        helpMenu.add(InternalActionFactory.showAcknowledgmentAction());
 
         final boolean isHotNewsAvailable = _applicationDataModel.getHotNewsRSSFeedLinkValue() != null;
         final boolean isReleaseNotesAvailable = _applicationDataModel.getReleaseNotesLinkValue() != null;
@@ -420,17 +421,17 @@ public class MainMenuBar extends JMenuBar {
 
         // Add hot news action
         if (isHotNewsAvailable) {
-            helpMenu.add(App.showHotNewsAction());
+            helpMenu.add(InternalActionFactory.showHotNewsAction());
         }
 
         // Add release action
         if (isReleaseNotesAvailable) {
-            helpMenu.add(App.showReleaseAction());
+            helpMenu.add(InternalActionFactory.showReleaseAction());
         }
 
         // Add FAQ action
         if (isFaqAvailable) {
-            helpMenu.add(App.showFaqAction());
+            helpMenu.add(InternalActionFactory.showFaqAction());
         }
 
         if (!_isRunningUnderMacOSX) {
@@ -438,7 +439,7 @@ public class MainMenuBar extends JMenuBar {
                 helpMenu.add(new JSeparator());
             }
             // Add aboutbox action
-            helpMenu.add(App.aboutBoxAction());
+            helpMenu.add(InternalActionFactory.showAboutBoxAction());
         }
 
         // Add menu to menubar

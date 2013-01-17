@@ -4,7 +4,7 @@
 package fr.jmmc.mcs.modjava;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.gui.action.RecentFilesManager;
+import fr.jmmc.jmcs.util.RecentFilesManager;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.component.DismissableMessagePane;
 import fr.jmmc.jmcs.gui.component.MessagePane;

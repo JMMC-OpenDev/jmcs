@@ -9,7 +9,7 @@ import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.data.model.Menu;
 import fr.jmmc.jmcs.data.model.Menubar;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
-import fr.jmmc.jmcs.gui.action.RecentFilesManager;
+import fr.jmmc.jmcs.util.RecentFilesManager;
 import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;

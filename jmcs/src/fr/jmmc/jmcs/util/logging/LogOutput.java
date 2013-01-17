@@ -6,8 +6,6 @@ package fr.jmmc.jmcs.util.logging;
 /**
  * This simple class is a container for both String and byte count
  * 
- * License: LGPL 2.1
- * 
  * @author Laurent BOURGES.
  */
 public final class LogOutput {

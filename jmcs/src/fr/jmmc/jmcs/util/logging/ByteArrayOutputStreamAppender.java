@@ -12,8 +12,6 @@ import java.io.OutputStream;
  * ByteArrayOutputStreamAppender is a custom OutputStreamAppender that stores log events into a memory byte buffer.
  * It provides the method getLogOutput(from) to get the buffer content as a LogOutput (String)
  * 
- * License: LGPL 2.1
- * 
  * @author Laurent BOURGES.
  */
 public final class ByteArrayOutputStreamAppender extends OutputStreamAppender<ILoggingEvent> {

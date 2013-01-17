@@ -15,8 +15,6 @@ import org.slf4j.Logger;
  * Usage:
  * Call ApplicationLogSingleton.getInstance() during your application startup
  * 
- * License: LGPL 2.1
- * 
  * @author Laurent BOURGES.
  */
 public final class ApplicationLogSingleton {

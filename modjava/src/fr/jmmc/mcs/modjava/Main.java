@@ -4,12 +4,13 @@
 package fr.jmmc.mcs.modjava;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.util.RecentFilesManager;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
+import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.gui.component.DismissableMessagePane;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.network.interop.SampCapability;
 import fr.jmmc.jmcs.network.interop.SampMessageHandler;
+import fr.jmmc.jmcs.util.RecentFilesManager;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -62,8 +63,8 @@ public class Main extends App {
         _openAction = openAction();
 
         // Buttons
-        _aboutBoxButton = new JButton(aboutBoxAction());
-        _feedbackReportButton = new JButton(feedbackReportAction());
+        _aboutBoxButton = new JButton(InternalActionFactory.showAboutBoxAction());
+        _feedbackReportButton = new JButton(InternalActionFactory.showFeedbackReportAction());
         _helpViewButton = new JButton(openHelpFrame());
         _testDismissableMessagePane = new JButton(dismissableMessagePaneAction());
 
@@ -119,7 +120,7 @@ public class Main extends App {
 
     /** Execute operations before closing application */
     @Override
-    protected boolean finish() {
+    public boolean shouldFinish() {
         _logger.warning("Execute operations before closing application");
 
         // Quit application
@@ -139,8 +140,7 @@ public class Main extends App {
                 JFrame helpFrame = new JFrame("- Help frame -");
 
                 // Add buttons to panel
-                helpFrame.getContentPane().add(new JButton(showHelpAction()),
-                        BorderLayout.NORTH);
+                helpFrame.getContentPane().add(new JButton(InternalActionFactory.showHelpAction()), BorderLayout.NORTH);
                 helpFrame.getContentPane().add(new JButton("CENTER"), BorderLayout.CENTER);
                 helpFrame.getContentPane().add(new JButton("WEST"), BorderLayout.WEST);
                 helpFrame.getContentPane().add(new JButton("SOUTH"), BorderLayout.SOUTH);

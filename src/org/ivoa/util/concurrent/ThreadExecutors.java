@@ -161,11 +161,18 @@ public final class ThreadExecutors extends LogSupport {
     }
 
     /**
+     * @return true if the running flag is true
+     */
+    public static boolean isRunning() {
+        return RUNNING;
+    }
+
+    /**
      * Check if the running flag is true
      * @throws IllegalStateException if running is false
      */
     private static void checkRunning() {
-        if (!RUNNING) {
+        if (!isRunning()) {
             throw new IllegalStateException("ThreadExecutors is stopped !");
         }
     }
@@ -280,6 +287,7 @@ public final class ThreadExecutors extends LogSupport {
      * @throws IllegalStateException if this task cannot be accepted for execution.
      */
     public void execute(final Runnable job) {
+        checkRunning();
         if (logger.isDebugEnabled()) {
             logger.debug("ThreadExecutors.execute : execute job in pool: {} = {}", getPoolName(), job);
         }
@@ -300,6 +308,7 @@ public final class ThreadExecutors extends LogSupport {
      * @throws IllegalStateException if task cannot be scheduled for execution
      */
     public Future<?> submit(final Runnable job) {
+        checkRunning();
         if (logger.isDebugEnabled()) {
             logger.debug("ThreadExecutors.submit : submit job in pool: {} = {}", getPoolName(), job);
         }
@@ -321,6 +330,7 @@ public final class ThreadExecutors extends LogSupport {
      * @throws IllegalStateException if task cannot be scheduled for execution
      */
     public <T> Future<T> submit(final Callable<T> job) {
+        checkRunning();
         if (logger.isDebugEnabled()) {
             logger.debug("ThreadExecutors.submit : submit job in pool: {} = {}", getPoolName(), job);
         }
@@ -340,6 +350,8 @@ public final class ThreadExecutors extends LogSupport {
         if (logger.isDebugEnabled()) {
             logger.debug("ThreadExecutors.stop : starting shutdown: {}", getPoolName());
         }
+
+        logger.warn("ThreadExecutors.stop : starting shutdown: {}", getPoolName());
         getExecutor().shutdown();
 
         boolean terminated = false;

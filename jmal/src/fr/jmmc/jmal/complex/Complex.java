@@ -11,7 +11,6 @@ public interface Complex {
 
     /** flag to enable or disable NaN / Infinity checks */
     public boolean CHECK_NAN_INF = false;
-
     /** The square root of -1. A number representing "0.0 + 1.0i" */
     public Complex I = new ImmutableComplex(0.0d, 1.0d); // immutable complex for safety
     /** A complex number representing "NaN + NaNi" */
@@ -50,6 +49,24 @@ public interface Complex {
      * <code>rhs</code> is null
      */
     public Complex add(final Complex rhs);
+
+    /**
+     * Return the sum of this complex number and the given complex number. <p> Uses the definitional formula
+     * <pre>
+     * (a + bi) + (c + di) = (a+c) + (b+d)i
+     * </pre></p> <p> If either this or
+     * <code>rhs</code> has a NaN value in either part,
+     * {@link #NaN} is returned; otherwise Inifinite and NaN values are returned in the parts of the result according to
+     * the rules for
+     * {@link java.lang.Double} arithmetic.</p>
+     *
+     * @param re the real part to add
+     * @param im the imaginary part to add
+     * @return the complex number sum
+     * @throws NullPointerException if
+     * <code>rhs</code> is null
+     */
+    public Complex add(final double re, final double im);
 
     /**
      * Return the conjugate of this complex number. The conjugate of "A + Bi" is "A - Bi". <p>

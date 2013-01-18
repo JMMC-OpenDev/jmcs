@@ -151,6 +151,30 @@ public final class MutableComplex implements Complex {
     }
 
     /**
+     * Return the sum of this complex number and the given complex number. <p> Uses the definitional formula
+     * <pre>
+     * (a + bi) + (c + di) = (a+c) + (b+d)i
+     * </pre></p> <p> If either this or
+     * <code>rhs</code> has a NaN value in either part,
+     * {@link #NaN} is returned; otherwise Inifinite and NaN values are returned in the parts of the result according to
+     * the rules for
+     * {@link java.lang.Double} arithmetic.</p>
+     *
+     * @param re the real part to add
+     * @param im the imaginary part to add
+     * @return the complex number sum
+     * @throws NullPointerException if
+     * <code>rhs</code> is null
+     */
+    @Override
+    public Complex add(final double re, final double im) {
+//        return updateOrCreateComplex(real + re, imaginary + im);
+        this.real += re;
+        this.imaginary += im;
+        return this;
+    }
+
+    /**
      * Return the conjugate of this complex number. The conjugate of "A + Bi" is "A - Bi". <p>
      * {@link #NaN} is returned if either the real or imaginary part of this Complex number equals
      * <code>Double.NaN</code>.</p> <p> If the imaginary part is infinite, and the real part is not NaN, the returned

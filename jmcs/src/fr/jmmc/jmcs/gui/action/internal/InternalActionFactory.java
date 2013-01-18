@@ -513,9 +513,13 @@ public class InternalActionFactory {
                     // Exit the application
 
                     if (response != null) {
-                        response.performQuit();
+                        App.setAvoidSystemExit(true);
                     }
                     App.exit(0);
+
+                    if (response != null) {
+                        response.performQuit();
+                    }
 
                 } else {
                     _logger.debug("Application left opened as required.");

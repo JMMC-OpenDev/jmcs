@@ -4,12 +4,11 @@
 package fest.common;
 
 import fr.jmmc.jmcs.App;
-import java.awt.Component;
+import fr.jmmc.jmcs.gui.component.MessagePane;
 import java.awt.Frame;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.logging.Level;
-import org.fest.swing.core.AbstractComponentMatcher;
 import org.fest.swing.core.ComponentFoundCondition;
 import org.fest.swing.core.EmergencyAbortListener;
 import org.fest.swing.core.matcher.FrameMatcher;
@@ -47,6 +46,8 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
     @BeforeClass
     public static void onSetUpOnce() {
 
+        MessagePane.showWarning("Please do not touch the mouse while FEST tests run !\n\nHaut les mains ^_^");
+
         // Use main thread to start Jmcs application using subclass.main() :
         if (App.getSharedInstance() == null) {
 
@@ -76,10 +77,9 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
                      * Checks if the condition has been satisfied.
                      * @return <code>true</code> if the condition has been satisfied, otherwise <code>false</code>.
                      */
+                    @Override
                     public boolean test() {
-
                         return App.isReady();
-
                     }
                 });
 

@@ -135,7 +135,7 @@ public final class MessagePane {
         }
 
         // display the message within EDT :
-        SwingUtils.invokeEDT(new Runnable() {
+        SwingUtils.invokeAndWaitEDT(new Runnable() {
             @Override
             public void run() {
                 showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
@@ -156,10 +156,17 @@ public final class MessagePane {
      *			or <code>PLAIN_MESSAGE</code>
      */
     private static void showMessageDialog(final String message, final String title, final int messageType) {
-        // ensure window is visible (not iconified):
-        App.showFrameToFront();
 
-        JOptionPane.showMessageDialog(getApplicationFrame(), getMessageComponent(message), title, messageType);
+        // display the message within EDT :
+        SwingUtils.invokeAndWaitEDT(new Runnable() {
+            @Override
+            public void run() {
+                // ensure window is visible (not iconified):
+                App.showFrameToFront();
+
+                JOptionPane.showMessageDialog(getApplicationFrame(), getMessageComponent(message), title, messageType);
+            }
+        });
     }
 
     // --- WARNING MESSAGES ---------------------------------------------------------
@@ -378,7 +385,7 @@ public final class MessagePane {
                     }
                 });
 
-        SwingUtils.invokeEDT(future);
+        SwingUtils.invokeAndWaitEDT(future);
 
         String receivedValue = null;
         try {

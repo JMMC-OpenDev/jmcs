@@ -546,7 +546,6 @@ public final class ParallelJobExecutor {
             if (_logger.isDebugEnabled()) {
                 _logger.debug("thread[{}] done", _index);
             }
-            _logger.warn("thread[{}] done", _index);
         }
     }
 

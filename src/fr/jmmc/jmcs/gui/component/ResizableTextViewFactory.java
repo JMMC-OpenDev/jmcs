@@ -65,39 +65,34 @@ public class ResizableTextViewFactory {
      * @param modal true to make the window modal, false otherwise.
      */
     public static void createHtmlWindow(final String html, final String title, final boolean modal) {
-        SwingUtils.invokeAndWaitEDT(new Runnable() {
+        final JDialog dialog = new JDialog(App.getFrame(), title, modal);
+        final JEditorPane editorPane = startLayout(dialog);
+
+        editorPane.setContentType("text/html");
+        editorPane.addHyperlinkListener(new HyperlinkListener() {
             @Override
-            public void run() {
-                final JDialog dialog = new JDialog(App.getFrame(), title, modal);
-                final JEditorPane editorPane = startLayout(dialog);
+            public void hyperlinkUpdate(HyperlinkEvent event) {
+                // When a link is clicked
+                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
 
-                editorPane.setContentType("text/html");
-                editorPane.addHyperlinkListener(new HyperlinkListener() {
-                    @Override
-                    public void hyperlinkUpdate(HyperlinkEvent event) {
-                        // When a link is clicked
-                        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    // Get the clicked URL
+                    final URL url = event.getURL();
 
-                            // Get the clicked URL
-                            final URL url = event.getURL();
-
-                            // If it is valid
-                            if (url != null) {
-                                // Get it in the good format
-                                final String clickedURL = url.toExternalForm();
-                                // Open the url in web browser
-                                BrowserLauncher.openURL(clickedURL);
-                            } else { // Assume it was an anchor
-                                String anchor = event.getDescription();
-                                editorPane.scrollToReference(anchor);
-                            }
-                        }
+                    // If it is valid
+                    if (url != null) {
+                        // Get it in the good format
+                        final String clickedURL = url.toExternalForm();
+                        // Open the url in web browser
+                        BrowserLauncher.openURL(clickedURL);
+                    } else { // Assume it was an anchor
+                        String anchor = event.getDescription();
+                        editorPane.scrollToReference(anchor);
                     }
-                });
-
-                finishLayout(editorPane, dialog, html, modal);
+                }
             }
         });
+
+        finishLayout(editorPane, dialog, html, modal);
     }
 
     /**

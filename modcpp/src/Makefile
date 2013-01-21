@@ -31,7 +31,7 @@ EXECUTABLES_L   =
 # <brief description of xxxxx program>
 modcppMain_OBJECTS   = modcppMain
 modcppMain_LDFLAGS   = $(MCSSTD_LIBLIST) -lstdc++
-modcppMain_LIBS      = mcs log err modcpp
+modcppMain_LIBS      = modcpp err log mcs
 
 #
 # special compilation flags for single c sources

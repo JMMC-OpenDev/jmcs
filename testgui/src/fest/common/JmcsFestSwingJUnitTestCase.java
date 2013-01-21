@@ -157,7 +157,7 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
         // IMPORTANT: note the call to 'robot()'
         // we must use the Robot from FestSwingCustomTestCaseTemplate
 
-        final FrameMatcher matcher = FrameMatcher.withTitle(title);
+        final FrameMatcher matcher = FrameMatcher.withTitle(title).andShowing();
 
         final String description = "frame to be found using matcher " + matcher;
 

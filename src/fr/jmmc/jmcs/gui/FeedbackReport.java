@@ -14,6 +14,7 @@ import fr.jmmc.jmcs.gui.task.TaskSwingWorker;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.network.Http;
+import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -560,7 +561,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      * @return application log
      */
     private String getApplicationLog() {
-        final String logOutput = App.getLogOutput().getContent();
+        final String logOutput = ApplicationLogSingleton.getInstance().getLogOutput().getContent();
 
         _logger.debug("logOutput length = {}", logOutput.length());
 

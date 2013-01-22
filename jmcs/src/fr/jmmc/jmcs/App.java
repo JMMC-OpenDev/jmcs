@@ -148,7 +148,7 @@ public abstract class App {
         _logger.debug("App object instantiated and logger created.");
     }
 
-    void start() {
+    final void start() {
         // Set jMCS application data attribute
         loadDefaultApplicationData();
         // Set the application data attribute
@@ -499,7 +499,7 @@ public abstract class App {
     /**
      * Describe the life cycle of the application
      */
-    protected final void run() {
+    final void run() {
 
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {

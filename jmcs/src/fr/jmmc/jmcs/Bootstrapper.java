@@ -96,14 +96,14 @@ public final class Bootstrapper {
         final ch.qos.logback.classic.Logger jmmcLogger = getJmmcLogger();
         jmmcLogger.info("Application log created at {}. Current level is {}.", new Date(), jmmcLogger.getEffectiveLevel());
 
-        jmmcLogger.info("Application bootstrap done.");
-
         // Define swing settings (laf, locale...) before any Swing usage if not called at the first line of the main method:
         SwingSettings.setup();
 
         // Define default network settings:
         // note: settings must be set before using any URLConnection (loadApplicationData)
         NetworkSettings.defineDefaults();
+
+        jmmcLogger.info("Application bootstrap done.");
 
         // set reentrance flag
         _staticBootstrapDone = true;

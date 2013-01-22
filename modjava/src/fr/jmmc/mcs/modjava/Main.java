@@ -4,6 +4,7 @@
 package fr.jmmc.mcs.modjava;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.gui.component.DismissableMessagePane;
@@ -191,7 +192,7 @@ public class Main extends App {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        new Main(args);
+        Bootstrapper.launch(new Main(args));
     }
 }
 /*___oOo___*/

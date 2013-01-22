@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.util;
 
+import com.jidesoft.plaf.LookAndFeelFactory;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class gather swing related properties settings for our applications.
  *
- * This code is called in the App instanciation, but you are strongly invited
+ * This code is called during App initialization, but you are strongly invited
  * to place following code at the first lines of the main method in your
  * applications:
  *
@@ -49,6 +50,7 @@ public class SwingSettings {
         setSystemProps();
         setMandatory();
         setSwingDefaults();
+        installJideLAFExtensions();
 
         // Install exception handlers :
         MCSExceptionHandler.installSwingHandler();
@@ -110,5 +112,15 @@ public class SwingSettings {
 
             logger.debug("use screen menu bar in look and feel");
         }
+    }
+
+    private static void installJideLAFExtensions() {
+        // To ensure the use of TriStateCheckBoxes in the Jide CheckBoxTree
+        SwingUtils.invokeAndWaitEDT(new Runnable() {
+            @Override
+            public void run() {
+                LookAndFeelFactory.installJideExtension();
+            }
+        });
     }
 }

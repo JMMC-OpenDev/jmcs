@@ -4,50 +4,37 @@
 package fr.jmmc.jmcs;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.util.StatusPrinter;
 import fr.jmmc.jmcs.data.ApplicationDataModel;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
-import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.SplashScreen;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
-import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
-import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
-import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
-import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
-import fr.jmmc.jmcs.util.UrlUtils;
+import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
-import fr.jmmc.jmcs.util.logging.LogOutput;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JFrame;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * This class represents an application. In order to use
@@ -70,79 +57,16 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
  */
 public abstract class App {
 
-    /** JMMC LogBack configuration file as one resource file (in class path) */
-    public final static String JMMC_LOGBACK_CONFIG_RESOURCE = "jmmc-logback.xml";
-    /** JMMC main logger */
-    public final static String JMMC_LOGGER = "fr.jmmc";
-    /** JMMC Logger to be able to set its level in interpretArguments() */
-    private final static ch.qos.logback.classic.Logger _jmmcLogger;
-    private static final String CLASS_PATH = App.class.getName();
-
-    /**
-     * Static Logger initialization and Network settings
-     */
-    static {
-        // Assume SLF4J is bound to logback in the current environment
-        final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-
-        // Get our logback configuration file:
-        // throws an IllegalStateException if the file is not found
-        final URL logConf = FileUtils.getResource(JMMC_LOGBACK_CONFIG_RESOURCE);
-
-        try {
-            final JoranConfigurator configurator = new JoranConfigurator();
-            // create one dummy context to let configurator execute correctly:
-            configurator.setContext(loggerContext);
-
-            // Call context.reset() to clear any previous configuration, e.g. default
-            // configuration. For multi-step configuration, omit calling context.reset().
-            loggerContext.reset();
-
-            configurator.doConfigure(logConf.openStream());
-
-        } catch (IOException ioe) {
-            throw new IllegalStateException("IO Exception occured", ioe);
-        } catch (JoranException je) {
-            // StatusPrinter will handle this
-            StatusPrinter.printInCaseOfErrorsOrWarnings((LoggerContext) LoggerFactory.getILoggerFactory());
-        }
-
-        // Remote existing handlers from java.util.logging (JUL) root logger (useful in netbeans)
-        final java.util.logging.Logger rootLogger = java.util.logging.LogManager.getLogManager().getLogger("");
-        final java.util.logging.Handler[] handlers = rootLogger.getHandlers();
-        for (int i = 0, len = handlers.length; i < len; i++) {
-            rootLogger.removeHandler(handlers[i]);
-        }
-
-        // Call only once during initialization time of your application to configure JUL bridge
-        SLF4JBridgeHandler.install();
-
-        // slf4j / logback initialization done
-
-        // Start the application log singleton:
-        ApplicationLogSingleton.getInstance();
-
-        // Get the jmmc logger to be able to set its level in interpretArguments()
-        _jmmcLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("fr.jmmc");
-        _jmmcLogger.info("Application log created at {}. Current level is {}.", new Date(), _jmmcLogger.getEffectiveLevel());
-
-        // Define swing settings (laf, locale...) before any Swing usage if not called at the first line of the main method:
-        SwingSettings.setup();
-
-        // Define default network settings:
-        // note: settings must be set before using any URLConnection (loadApplicationData)
-        NetworkSettings.defineDefaults();
-    }
-    /** Logger - register on fr.jmmc to collect all logs under this path */
-    private static final Logger _logger = LoggerFactory.getLogger(CLASS_PATH);
+    /** Class Logger */
+    private static final Logger _logger = LoggerFactory.getLogger(App.class.getName());
+    /** application data file i.e. "ApplicationData.xml" */
+    private static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
     /** flag to avoid calls to System.exit() (JUnit) */
     private static boolean _avoidSystemExit = false;
     /** Singleton reference */
     private static App _sharedInstance;
     /** flag indicating if the application started properly and is ready (visible) */
     private static boolean _applicationReady = false;
-    /** application data file i.e. "ApplicationData.xml" */
-    private static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
     /** jMCS application data model */
     private static ApplicationDataModel _jMCSDataModel;
     /** Shared application data model */
@@ -153,17 +77,26 @@ public abstract class App {
     private static boolean _exitApplicationWhenClosed = true;
     // Members
     /** Store a proxy to the shared ActionRegistrar facility */
-    private ActionRegistrar _actionRegistrar = null;
+    private final ActionRegistrar _actionRegistrar = ActionRegistrar.getInstance();
     /** Show the splash screen ? */
     private boolean _showSplashScreen = true;
     /** Splash screen */
     private SplashScreen _splashScreen = null;
-    /** command line argument meta data */
+    /** Command-line argument meta data */
     private final List<LongOpt> _longOpts = new ArrayList<LongOpt>();
-    /** temporary store the command line arguments (long opt = value) */
+    /** Temporary store the command line arguments (long opt = value) */
     private Map<String, String> _cliArguments = null;
-    /** temporary store the file name argument for the open action */
+    /** Temporary store the file name argument for the open action */
     private String _fileArgument = null;
+    /**  */
+    protected final String[] _args;
+
+    /**
+     * Static Logger initialization and Network settings
+     */
+    static {
+        Bootstrapper.bootstrap();
+    }
 
     /**
      * Creates a new App object
@@ -207,48 +140,30 @@ public abstract class App {
      * @param shouldShowSplashScreen show startup splash screen if true, nothing otherwise
      */
     protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed, boolean shouldShowSplashScreen) {
-        try {
-            // Start action registry
-            _actionRegistrar = ActionRegistrar.getInstance();
-            // Attributes affectations
-            _exitApplicationWhenClosed = exitWhenClosed;
-            // Check in common preferences whether startup splashscreen should be shown or not
-            _showSplashScreen = shouldShowSplashScreen;
-            _logger.debug("App object instantiated and logger created.");
+        _args = args;
+        // Attributes affectations
+        _exitApplicationWhenClosed = exitWhenClosed;
+        // Check in common preferences whether startup splashscreen should be shown or not
+        _showSplashScreen = shouldShowSplashScreen;
+        _logger.debug("App object instantiated and logger created.");
+    }
 
-            // Set jMCS application data attribute
-            loadDefaultApplicationData();
-            // Set the application data attribute
-            loadApplicationData();
-            _logger.debug("Application data loaded.");
+    void start() {
+        // Set jMCS application data attribute
+        loadDefaultApplicationData();
+        // Set the application data attribute
+        loadApplicationData();
+        _logger.debug("Application data loaded.");
 
-            // Interpret arguments
-            interpretArguments(args);
+        // Interpret arguments
+        interpretArguments(_args);
 
-            // Build Acknowledgment, ShowRelease and ShowHelp Actions
-            // (the creation must be done after applicationModel instanciation)
-            _actionRegistrar.createAllInternalActions();
+        // Build Acknowledgment, ShowRelease and ShowHelp Actions
+        // (the creation must be done after applicationModel instanciation)
+        _actionRegistrar.createAllInternalActions();
 
-            // Set shared instance
-            _sharedInstance = this;
-
-            // If execution should not be delayed
-            if (!waitBeforeExecution) {
-                // Run the application immediately
-                run();
-            }
-        } catch (Throwable th) { // main initialization
-
-            // In order to see the error window
-            if (_splashScreen != null) {
-                if (_splashScreen.isVisible()) {
-                    _splashScreen.setVisible(false);
-                }
-            }
-            // Show the feedback report (modal) :
-            MessagePane.showErrorMessage("An error occured while initializing the application");
-            FeedbackReport.openDialog(true, th);
-        }
+        // Set shared instance
+        _sharedInstance = this;
     }
 
     /**
@@ -256,7 +171,7 @@ public abstract class App {
      * Otherwise, uses the default ApplicationData.xml.
      */
     private void loadApplicationData() {
-        final URL fileURL = getURLFromResourceFilename(this, APPLICATION_DATA_FILE);
+        final URL fileURL = ResourceUtils.getURLFromResourceFilename(this.getClass(), APPLICATION_DATA_FILE);
 
         if (fileURL == null) {
             // Take the defaultData XML in order to take the default menus
@@ -278,7 +193,7 @@ public abstract class App {
      */
     private void loadDefaultApplicationData() throws IllegalStateException {
 
-        final URL defaultXmlURL = getURLFromResourceFilename(App.class, APPLICATION_DATA_FILE);
+        final URL defaultXmlURL = ResourceUtils.getURLFromResourceFilename(App.class, APPLICATION_DATA_FILE);
 
         if (defaultXmlURL == null) {
             throw new IllegalStateException("Cannot load default application data.");
@@ -398,18 +313,19 @@ public abstract class App {
                     if (arg != null) {
                         _logger.info("Set logger level to '{}'.", arg);
 
+                        final ch.qos.logback.classic.Logger jmmcLogger = Bootstrapper.getJmmcLogger();
                         if (arg.equals("0")) {
-                            _jmmcLogger.setLevel(Level.OFF);
+                            jmmcLogger.setLevel(Level.OFF);
                         } else if (arg.equals("1")) {
-                            _jmmcLogger.setLevel(Level.ERROR);
+                            jmmcLogger.setLevel(Level.ERROR);
                         } else if (arg.equals("2")) {
-                            _jmmcLogger.setLevel(Level.WARN);
+                            jmmcLogger.setLevel(Level.WARN);
                         } else if (arg.equals("3")) {
-                            _jmmcLogger.setLevel(Level.INFO);
+                            jmmcLogger.setLevel(Level.INFO);
                         } else if (arg.equals("4")) {
-                            _jmmcLogger.setLevel(Level.DEBUG);
+                            jmmcLogger.setLevel(Level.DEBUG);
                         } else if (arg.equals("5")) {
-                            _jmmcLogger.setLevel(Level.ALL);
+                            jmmcLogger.setLevel(Level.ALL);
                         } else {
                             showArgumentsHelp();
                         }
@@ -719,15 +635,7 @@ public abstract class App {
      * @return true if there is a file name argument for the open action
      */
     protected final boolean hasFileArgument() {
-        return this._fileArgument != null;
-    }
-
-    /**
-     * Return the complete application log as string (THREAD SAFE)
-     * @return complete application log as string
-     */
-    public static LogOutput getLogOutput() {
-        return ApplicationLogSingleton.getInstance().getLogOutput();
+        return _fileArgument != null;
     }
 
     /**
@@ -745,29 +653,8 @@ public abstract class App {
         LogbackGui.showWindow(App.getFrame(), _applicationDataModel.getProgramName() + " Log Console", loggerPath);
     }
 
-    /**
-     * Creates the logGui action which open the LogbackGui window
-     * @return logGui action which open the LogbackGui window
-     */
-    public static Action logGuiAction() {
-        return new AbstractAction("Show Log Console") {
-            /** default serial UID for Serializable interface */
-            private static final long serialVersionUID = 1;
-
-            /**
-             * Handle the action event
-             * @param evt action event
-             */
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                // Show the LogbackGui:
-                showLogConsole();
-            }
-        };
-    }
-
     /** Show the splash screen */
-    private void showSplashScreen() {
+    void showSplashScreen() {
         if (_applicationDataModel != null) {
             _logger.debug("Show splash screen");
 
@@ -776,6 +663,18 @@ public abstract class App {
 
             // Show the splash screen :
             _splashScreen.display();
+        }
+    }
+
+    /** Show the splash screen */
+    void hideSplashScreen() {
+        // In order to see the error window
+        if (_splashScreen != null) {
+            if (_splashScreen.isVisible()) {
+                _splashScreen.setVisible(false);
+            }
+            // cleanup (helps GC):
+            _splashScreen = null;
         }
     }
 
@@ -825,18 +724,6 @@ public abstract class App {
     }
 
     /**
-     * Define the application frame (singleton).
-     *
-     * TODO : workaround to let App create the frame (getFrame)...
-     * Concrete applications must be later re-factored to initialize correctly the GUI using getFrame()
-     *
-     * @param frame application frame
-     */
-    public static void setFrame(final JFrame frame) {
-        _applicationFrame = frame;
-    }
-
-    /**
      * Return the application frame (singleton)
      *
      * @return application frame
@@ -846,6 +733,31 @@ public abstract class App {
             _applicationFrame = new JFrame();
         }
         return _applicationFrame;
+    }
+
+    /**
+     * Define the application frame (singleton).
+     *
+     * TODO : workaround to let App create the frame (getFrame)...
+     * Concrete applications must be later re-factored to initialize correctly the GUI using getFrame()
+     *
+     * @param frame application frame
+     */
+    public static void setFrame(final JFrame frame) {
+        _applicationFrame = frame;
+
+        // previous adapter manages the windowClosing(event) :
+        _applicationFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        // Properly quit the application when main window close button is clicked
+        _applicationFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                // Callback on exit
+                App.quit();
+            }
+        });
+
     }
 
     /**
@@ -889,114 +801,6 @@ public abstract class App {
      */
     public static boolean isReady() {
         return _applicationReady;
-    }
-
-    /**
-     * Get URL from resource filename located in the following path:
-     * $package(this App class)$/resource/fileName
-     *
-     * @param fileName name of searched file.
-     *
-     * @return resource file URL
-     */
-    public final URL getURLFromResourceFilename(final String fileName) {
-        return getURLFromResourceFilename(getClass(), fileName);
-    }
-
-    /**
-     * Get URL from resource filename located in the class loader using the following path:
-     * $package(appClass)$/resource/fileName
-     *
-     * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
-     * fr/jmmc/jmcs/resource/$fileName$
-     *
-     * @param app any App instance
-     * @param fileName name of searched file.
-     *
-     * @return resource file URL
-     */
-    public static URL getURLFromResourceFilename(final App app, final String fileName) {
-        if (app == null) {
-            return null;
-        }
-        return getURLFromResourceFilename(app.getClass(), fileName);
-    }
-
-    /**
-     * Get URL from resource filename located in the class loader using the following path:
-     * $package(appClass)$/resource/fileName
-     *
-     * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
-     * fr/jmmc/jmcs/resource/$fileName$
-     *
-     * @param appClass any App class or subclass
-     * @param fileName name of searched file.
-     *
-     * @return resource file URL
-     */
-    private static URL getURLFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
-        final String filePath = getPathFromResourceFilename(appClass, fileName);
-
-        if (filePath == null) {
-            return null;
-        }
-
-        _logger.debug("filePath = '{}'.", filePath);
-
-        // Resolve file path
-        final URL fileURL = appClass.getClassLoader().getResource(filePath);
-        if (fileURL == null) {
-            _logger.warn("Cannot find resource from '{}' file.", filePath);
-            return null;
-        }
-
-        _logger.debug("fileURL = '{}'.", fileURL);
-        return UrlUtils.fixJarURL(fileURL);
-    }
-
-    /**
-     * Get Path from resource filename located in the following path:
-     * $package(this App class)$/resource/fileName
-     *
-     * @param fileName name of searched file.
-     *
-     * @return resource path
-     */
-    public final String getPathFromResourceFilename(final String fileName) {
-        return getPathFromResourceFilename(getClass(), fileName);
-    }
-
-    /**
-     * Get Path from resource filename located in the class loader using the following path:
-     * $package(appClass)$/resource/fileName
-     *
-     * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
-     * fr/jmmc/jmcs/resource/$fileName$
-     *
-     * @param appClass any App class or subclass
-     * @param fileName name of searched file.
-     *
-     * @return resource path
-     */
-    private static String getPathFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
-        if (appClass == null) {
-            return null;
-        }
-
-        // Its package
-        final Package p = appClass.getPackage();
-
-        // the package name
-        final String packageName = p.getName();
-
-        // Replace '.' by '/' of package name
-        final String packagePath = packageName.replace(".", "/");
-
-        final String filePath = packagePath + "/resource/" + fileName;
-
-        _logger.debug("filePath = '{}'.", filePath);
-
-        return filePath;
     }
 
     /**

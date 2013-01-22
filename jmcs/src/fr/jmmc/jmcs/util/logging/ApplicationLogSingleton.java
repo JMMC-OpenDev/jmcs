@@ -37,10 +37,9 @@ public final class ApplicationLogSingleton {
         }
         return _instance;
     }
-
-    /* members */
-    /** mappers collection keyed by logger path */
-    private final Map<String, AppenderLogMapper> mappers = new LinkedHashMap<String, AppenderLogMapper>(8);
+    // Members
+    /** Mapper collection keyed by logger path */
+    private final Map<String, AppenderLogMapper> _mappers = new LinkedHashMap<String, AppenderLogMapper>(8);
 
     /**
      * Private constructor that gets one ByteArrayOutputStreamAppender:
@@ -123,7 +122,7 @@ public final class ApplicationLogSingleton {
      * @param appenderName appender name
      */
     public void addLogMapper(final String displayName, final String loggerPath, final String appenderName) {
-        mappers.put(loggerPath, new AppenderLogMapper(displayName, loggerPath, appenderName));
+        _mappers.put(loggerPath, new AppenderLogMapper(displayName, loggerPath, appenderName));
     }
 
     /**
@@ -131,7 +130,7 @@ public final class ApplicationLogSingleton {
      * @return collection of Log mappers
      */
     Collection<AppenderLogMapper> getLogMappers() {
-        return mappers.values();
+        return _mappers.values();
     }
 
     /**
@@ -141,7 +140,7 @@ public final class ApplicationLogSingleton {
      * @throws IllegalStateException if the logger path is not present in the mappers collection
      */
     private AppenderLogMapper getLogMapper(final String loggerPath) throws IllegalStateException {
-        final AppenderLogMapper mapper = mappers.get(loggerPath);
+        final AppenderLogMapper mapper = _mappers.get(loggerPath);
         if (mapper == null) {
             throw new IllegalStateException("Unsupported logger [" + loggerPath + "]");
         }

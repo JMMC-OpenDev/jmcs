@@ -3,6 +3,8 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import fr.jmmc.jmcs.App;
+import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
@@ -22,11 +24,11 @@ public abstract class ResourceUtils {
 
     /** the logger facility */
     protected static final Logger _logger = LoggerFactory.getLogger(ResourceUtils.class.getName());
-    /** resource filename  that must be overloaded by subclasses */
+    /** Resource filename, that must be overloaded by subclasses */
     private static String _resourceName = "fr/jmmc/jmcs/resource/Resources";
-    /** cached resource bundle */
+    /** Cached resource bundle */
     private static ResourceBundle _resources = null;
-    /** flag to indicate that the resource bundle is resolved */
+    /** Flag to indicate whether the resource bundle is resolved or not */
     private static boolean _resolved = false;
     /** Store whether the execution platform is a Mac or not */
     private static boolean MAC_OS_X = SystemUtils.IS_OS_MAC_OSX;
@@ -52,8 +54,8 @@ public abstract class ResourceUtils {
      *
      * @return the content of the resource or null indicating error
      */
-    public static String getResource(final String resourceName) {
-        return getResource(resourceName, false);
+    public static String getResourceProperty(final String resourceName) {
+        return getResourceProperty(resourceName, false);
     }
 
     /**
@@ -64,7 +66,7 @@ public abstract class ResourceUtils {
      *
      * @return the content of the resource or null indicating error
      */
-    public static String getResource(final String resourceKey, final boolean quietIfNotFound) {
+    public static String getResourceProperty(final String resourceKey, final boolean quietIfNotFound) {
         if (_resources == null) {
 
             if (!_resolved) {
@@ -109,7 +111,7 @@ public abstract class ResourceUtils {
      * @return the associated text
      */
     public static String getActionText(final String actionName) {
-        return getResource("actions.action." + actionName + ".text", true);
+        return getResourceProperty("actions.action." + actionName + ".text", true);
     }
 
     /**
@@ -120,7 +122,7 @@ public abstract class ResourceUtils {
      * @return the associated description
      */
     public static String getActionDescription(final String actionName) {
-        return getResource("actions.action." + actionName + ".description", true);
+        return getResourceProperty("actions.action." + actionName + ".description", true);
     }
 
     /**
@@ -131,7 +133,7 @@ public abstract class ResourceUtils {
      * @return the tool-tip text
      */
     public static String getToolTipText(final String widgetName) {
-        return getResource("widgets.widget." + widgetName + ".tooltip", true);
+        return getResourceProperty("widgets.widget." + widgetName + ".tooltip", true);
     }
 
     /**
@@ -143,7 +145,7 @@ public abstract class ResourceUtils {
      */
     public static KeyStroke getActionAccelerator(final String actionName) {
         // Get the accelerator string description from the Resource.properties file
-        String keyString = getResource("actions.action." + actionName + ".accelerator", true);
+        String keyString = getResourceProperty("actions.action." + actionName + ".accelerator", true);
 
         if (keyString == null) {
             return null;
@@ -178,8 +180,71 @@ public abstract class ResourceUtils {
      */
     public static ImageIcon getActionIcon(final String actionName) {
         // Get back the icon image path
-        String iconPath = getResource("actions.action." + actionName + ".icon", true);
+        String iconPath = getResourceProperty("actions.action." + actionName + ".icon", true);
         return ImageUtils.loadResourceIcon(iconPath);
+    }
+
+    /**
+     * Get Path from resource filename located in the following path:
+     * $package(this App class)$/resource/fileName
+     *
+     * @param fileName name of searched file.
+     *
+     * @return resource path
+     */
+    public static String getPathFromResourceFilename(final String fileName) {
+        return getPathFromResourceFilename(App.getSharedInstance().getClass(), fileName);
+    }
+
+    /**
+     * Get URL from resource filename located in the class loader using the following path:
+     * $package(appClass)$/resource/fileName
+     *
+     * For example: getURLFromResourceFilename(App.class, fileName) uses the path:
+     * fr/jmmc/jmcs/resource/$fileName$
+     *
+     * @param appClass any App class or subclass
+     * @param fileName name of searched file.
+     *
+     * @return resource file URL, or null.
+     */
+    public static URL getURLFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
+        final String filePath = getPathFromResourceFilename(appClass, fileName);
+        if (filePath == null) {
+            return null;
+        }
+        _logger.debug("filePath = '{}'.", filePath);
+        final URL fileURL = appClass.getClassLoader().getResource(filePath);
+        if (fileURL == null) {
+            _logger.warn("Cannot find resource from '{}' file.", filePath);
+            return null;
+        }
+        _logger.debug("fileURL = '{}'.", fileURL);
+        return UrlUtils.fixJarURL(fileURL);
+    }
+
+    /**
+     * Get Path from resource filename located in the class loader using the following path:
+     * $package(appClass)$/resource/fileName
+     *
+     * For example: getPathFromResourceFilename(App.class, fileName) uses the path:
+     * fr/jmmc/jmcs/resource/$fileName$
+     *
+     * @param appClass any App class or subclass
+     * @param fileName name of searched file.
+     *
+     * @return resource path, or null.
+     */
+    private static String getPathFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
+        if (appClass == null) {
+            return null;
+        }
+        final Package p = appClass.getPackage();
+        final String packageName = p.getName();
+        final String packagePath = packageName.replace(".", "/");
+        final String filePath = packagePath + "/resource/" + fileName;
+        _logger.debug("filePath = '{}'.", filePath);
+        return filePath;
     }
 
     /**

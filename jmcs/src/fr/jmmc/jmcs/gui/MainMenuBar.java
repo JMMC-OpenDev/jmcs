@@ -391,7 +391,7 @@ public class MainMenuBar extends JMenuBar {
         }
 
         // Add log Gui anyway:
-        helpMenu.add(App.logGuiAction());
+        helpMenu.add(InternalActionFactory.showLogGuiAction());
         helpMenu.add(new JSeparator());
 
         // Get help menu from table

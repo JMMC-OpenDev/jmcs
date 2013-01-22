@@ -52,6 +52,8 @@ public class InternalActionFactory {
     private static ShowFaqAction _showFaqAction = null;
     /** Show Dependencies action */
     private static ShowDependenciesAction _showDependenciesAction = null;
+    /** Show log GUI action */
+    private static ShowLogGuiAction _showLogGuiAction = null;
     /** default Open handling action */
     private static DefaultOpenAction _defaultOpenAction = null;
     /** Quit handling action */
@@ -67,6 +69,7 @@ public class InternalActionFactory {
         _showFaqAction = new ShowFaqAction(CLASS_PATH, "_showFaqAction");
         _showHelpAction = new ShowHelpAction(CLASS_PATH, "_showHelpAction");
         _showDependenciesAction = new ShowDependenciesAction(CLASS_PATH, "_showDependenciesAction");
+        _showLogGuiAction = new ShowLogGuiAction(CLASS_PATH, "_showLogGuiAction");
         _defaultOpenAction = new DefaultOpenAction(CLASS_PATH, "_defaultOpenAction");
         _quitAction = new QuitAction(CLASS_PATH, "_quitAction");
     }
@@ -152,6 +155,14 @@ public class InternalActionFactory {
      */
     public static Action showFaqAction() {
         return getInstance()._showFaqAction;
+    }
+
+    /**
+     * Return the action dedicated to display log GUI
+     * @return action dedicated to display log GUI
+     */
+    public static Action showLogGuiAction() {
+        return getInstance()._showLogGuiAction;
     }
 
     /**
@@ -424,6 +435,32 @@ public class InternalActionFactory {
         @Override
         public void actionPerformed(ActionEvent evt) {
             HelpView.setVisible(true);
+        }
+    }
+
+    /** Action to show log GUI. */
+    protected static class ShowLogGuiAction extends RegisteredAction {
+
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+
+        /**
+         * Public constructor
+         * @param classPath the path of the class containing the field pointing to
+         * the action, in the form returned by 'getClass().getName();'.
+         * @param fieldName the name of the field pointing to the action.
+         */
+        ShowLogGuiAction(String classPath, String fieldName) {
+            super(classPath, fieldName, "Show Log Console");
+        }
+
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            App.showLogConsole();
         }
     }
 

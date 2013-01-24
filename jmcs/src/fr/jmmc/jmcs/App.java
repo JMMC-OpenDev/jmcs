@@ -606,31 +606,6 @@ public abstract class App {
     }
 
     /**
-     * Tell if the application is a beta version or not.
-     * This flag is given searching one 'b' in the program version number.
-     *
-     * @return true if it is a beta, false otherwise.
-     */
-    public static boolean isBetaVersion() {
-        return ApplicationDescription.getInstance().getProgramVersion().contains("b");
-    }
-
-    /**
-     * Tell if the application is an alpha version or not.
-     * This flag is given searching one 'a' in the program version number.
-     * If one b is present the version is considered beta.
-     *
-     * @return true if it is a alpha, false otherwise.
-     */
-    public static boolean isAlphaVersion() {
-        final String v = ApplicationDescription.getInstance().getProgramVersion();
-        if (v.contains("b")) {
-            return false;
-        }
-        return v.contains("a");
-    }
-
-    /**
      * Return the application frame (singleton)
      *
      * @return application frame

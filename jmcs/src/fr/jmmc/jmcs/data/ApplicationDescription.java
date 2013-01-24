@@ -115,6 +115,29 @@ public final class ApplicationDescription {
         }
     }
 
+    /**
+     * Tell if the application is an alpha version or not.
+     * This flag is given searching one 'a' in the program version number.
+     * If one b is present the version is considered beta.
+     *
+     * @return true if it is a alpha, false otherwise.
+     */
+    public static boolean isAlphaVersion() {
+        if (isBetaVersion()) {
+            return false;
+        }
+        return getInstance().getProgramVersion().contains("a");
+    }
+
+    /**
+     * Tell if the application is a beta version or not.
+     * This flag is given searching one 'b' in the program version number.
+     *
+     * @return true if it is a beta, false otherwise.
+     */
+    public static boolean isBetaVersion() {
+        return getInstance().getProgramVersion().contains("b");
+    }
     // Members
     /** internal JAXB Factory */
     private final JAXBFactory _jf;

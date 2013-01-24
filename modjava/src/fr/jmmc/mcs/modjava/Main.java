@@ -121,7 +121,7 @@ public class Main extends App {
 
     /** Execute operations before closing application */
     @Override
-    public boolean shouldFinish() {
+    public boolean canBeTerminatedNow() {
         _logger.warning("Execute operations before closing application");
 
         // Quit application

@@ -5,7 +5,7 @@ package fr.jmmc.jmcs.gui.action.internal;
 
 import com.apple.eawt.QuitResponse;
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.AboutBox;
 import fr.jmmc.jmcs.gui.DependenciesView;
 import fr.jmmc.jmcs.gui.FeedbackReport;
@@ -179,7 +179,7 @@ public class InternalActionFactory {
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
         /** Data model */
-        final ApplicationDataModel _applicationData;
+        final ApplicationDescription _applicationData;
         /** AboutBox */
         private static AboutBox _aboutBox = null;
 
@@ -192,7 +192,7 @@ public class InternalActionFactory {
         ShowAboutBoxAction(String classPath, String fieldName) {
 
             super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
-            _applicationData = App.getSharedApplicationDataModel();
+            _applicationData = ApplicationDescription.getInstance();
         }
 
         /**
@@ -221,7 +221,7 @@ public class InternalActionFactory {
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
         /** Data model */
-        final ApplicationDataModel _applicationData;
+        final ApplicationDescription _applicationData;
         /** Acknowledgment content */
         private String _acknowledgement = null;
 
@@ -234,7 +234,7 @@ public class InternalActionFactory {
         ShowAcknowledgmentAction(String classPath, String fieldName) {
 
             super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
-            _applicationData = App.getSharedApplicationDataModel();
+            _applicationData = ApplicationDescription.getInstance();
             _acknowledgement = _applicationData.getAcknowledgment();
             // If the application does not provide an acknowledgement
             if (_acknowledgement == null) {
@@ -275,7 +275,7 @@ public class InternalActionFactory {
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
         /** Data model */
-        final ApplicationDataModel _applicationData;
+        final ApplicationDescription _applicationData;
 
         /**
          * Public constructor
@@ -284,8 +284,8 @@ public class InternalActionFactory {
          * @param fieldName the name of the field pointing to the action.
          */
         ShowFeedbackReportAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "Report Feedback to " + App.getSharedApplicationDataModel().getShortCompanyName() + "...");
-            _applicationData = App.getSharedApplicationDataModel();
+            super(classPath, fieldName, "Report Feedback to " + ApplicationDescription.getInstance().getShortCompanyName() + "...");
+            _applicationData = ApplicationDescription.getInstance();
         }
 
         /**
@@ -323,7 +323,7 @@ public class InternalActionFactory {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(App.getSharedApplicationDataModel().getHotNewsRSSFeedLinkValue());
+            BrowserLauncher.openURL(ApplicationDescription.getInstance().getHotNewsRSSFeedLinkValue());
         }
     }
 
@@ -349,7 +349,7 @@ public class InternalActionFactory {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(App.getSharedApplicationDataModel().getReleaseNotesLinkValue());
+            BrowserLauncher.openURL(ApplicationDescription.getInstance().getReleaseNotesLinkValue());
         }
     }
 
@@ -375,7 +375,7 @@ public class InternalActionFactory {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(App.getSharedApplicationDataModel().getFaqLinkValue());
+            BrowserLauncher.openURL(ApplicationDescription.getInstance().getFaqLinkValue());
         }
     }
 

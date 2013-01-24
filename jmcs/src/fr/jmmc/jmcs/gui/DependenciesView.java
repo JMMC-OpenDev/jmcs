@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.data.model.Package;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.util.FileUtils;
@@ -46,7 +46,7 @@ public class DependenciesView {
         HashMap<String, String> licenseContent = new HashMap<String, String>();
 
         // Get jMCS data
-        final ApplicationDataModel data = App.getJMcsApplicationDataModel();
+        final ApplicationDescription data = ApplicationDescription.getJmcsInstance();
         final String jMcsName = data.getProgramName();
         final String jmmcLogoResourcePath = data.getCompanyLogoResourcePath();
         final String jmmcLogoURL = FileUtils.getResource(jmmcLogoResourcePath).toString();
@@ -60,7 +60,7 @@ public class DependenciesView {
         generatedHtml.append("<html><body>");
         generatedHtml.append("<center><b>").append(jMcsName).append(" Acknowledgments</b></center><br>");
         generatedHtml.append("<center><a href='").append(jmmcUrl).append("'><img src='").append(jmmcLogoURL).append("'></a></center><br><br>");
-        generatedHtml.append("<i>").append(App.getSharedApplicationDataModel().getProgramName()).append("</i>");
+        generatedHtml.append("<i>").append(ApplicationDescription.getInstance().getProgramName()).append("</i>");
         generatedHtml.append(" make extensive use of the <a href = '").append(jMcsUrl).append("'>").append(jMcsName).append("</a> provided by the ").append(jmmcLongName).append(" (").append(jmmcName).append(").<br><br>");
         generatedHtml.append(jMcsName).append(" dependencies include:<br>");
 

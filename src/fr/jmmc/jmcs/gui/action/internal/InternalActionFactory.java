@@ -540,9 +540,9 @@ public class InternalActionFactory {
                 return;
             }
 
-            // If we are ready to shouldFinish application execution
+            // If we are ready to canBeTerminatedNow application execution
             final App app = App.getSharedInstance();
-            if (app.shouldFinish()) {
+            if (app.canBeTerminatedNow()) {
                 _logger.debug("Application should be killed.");
 
                 // Verify if we are authorized to kill the application or not

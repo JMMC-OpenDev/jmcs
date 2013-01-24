@@ -15,6 +15,8 @@ import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.resource.image.ResourceImage;
+import fr.jmmc.jmcs.util.logging.LoggingService;
+import fr.jmmc.jmcs.util.logging.LogbackGui;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -460,7 +462,7 @@ public class InternalActionFactory {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            App.showLogConsole();
+            LogbackGui.showLogConsole();
         }
     }
 

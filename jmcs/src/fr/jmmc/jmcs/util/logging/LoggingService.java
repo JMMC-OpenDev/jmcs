@@ -10,18 +10,17 @@ import org.slf4j.Logger;
 
 /**
  * This class keeps into memory the full application log using the logback root logger 
- * and a custom appender to store log messages into one ByteBuffer (memory)
+ * and a custom appender to store log messages into one ByteBuffer (memory).
  * 
- * Usage:
- * Call ApplicationLogSingleton.getInstance() during your application startup
+ * Usage: automatically initialized by the Bootstrapper
  * 
- * @author Laurent BOURGES.
+ * @author Laurent BOURGES, Sylvain LAFRASSE.
  */
-public final class ApplicationLogSingleton {
+public final class LoggingService {
 
-    /** singleton instance */
-    private volatile static ApplicationLogSingleton _instance = null;
-    /* loggers */
+    /** Singleton instance */
+    private volatile static LoggingService _instance = null;
+    // Loggers
     /** JMMC application log */
     public final static String JMMC_APP_LOG = Logger.ROOT_LOGGER_NAME;
     /** JMMC status log */
@@ -31,9 +30,9 @@ public final class ApplicationLogSingleton {
      * Get the singleton instance or create a new one if needed
      * @return singleton instance
      */
-    public static synchronized ApplicationLogSingleton getInstance() {
+    public static synchronized LoggingService getInstance() {
         if (_instance == null) {
-            _instance = new ApplicationLogSingleton();
+            _instance = new LoggingService();
         }
         return _instance;
     }
@@ -71,7 +70,7 @@ public final class ApplicationLogSingleton {
      * 
      * - created here and attached to the root logger
      */
-    private ApplicationLogSingleton() {
+    private LoggingService() {
         super();
 
         // define Log Mappers:

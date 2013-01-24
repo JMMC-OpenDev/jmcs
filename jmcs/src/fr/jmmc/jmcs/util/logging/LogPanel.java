@@ -44,7 +44,7 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
      * Creates new form LogPanel for the application log
      */
     public LogPanel() {
-        this(ApplicationLogSingleton.JMMC_APP_LOG);
+        this(LoggingService.JMMC_APP_LOG);
     }
 
     /** 
@@ -156,7 +156,7 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
         final boolean append = (_logByteCount > 0) ? true : false;
 
         // Get the partial application log as string starting at the given byteCount
-        final LogOutput logOutput = ApplicationLogSingleton.getInstance().getLogOutput(_loggerPath, _logByteCount);
+        final LogOutput logOutput = LoggingService.getInstance().getLogOutput(_loggerPath, _logByteCount);
 
         // update byte count:
         _logByteCount = logOutput.getByteCount();

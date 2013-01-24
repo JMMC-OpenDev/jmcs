@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
-import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.HelpView;
 import fr.jmmc.jmcs.resource.image.ResourceImage;
@@ -44,8 +44,8 @@ public class ShowHelpAction extends AbstractAction {
             _helpID = HelpView.getHelpID(label);
 
             // If no helpID found, then show one feedback report and disable action
-            if (_helpID == null && (!_alreadyShown || App.isBetaVersion())) {
-                if (App.isBetaVersion()) {
+            if (_helpID == null && (!_alreadyShown || ApplicationDescription.isBetaVersion())) {
+                if (ApplicationDescription.isBetaVersion()) {
                     // Show the feedback report :
                     FeedbackReport.openDialog(new Exception(
                             "Documentation problem:\nNo helpID found for label '"
@@ -60,7 +60,6 @@ public class ShowHelpAction extends AbstractAction {
                 }
                 setEnabled(false);
                 _alreadyShown = true;
-                return;
             }
         }
     }

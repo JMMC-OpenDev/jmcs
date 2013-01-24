@@ -14,7 +14,6 @@ import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
-import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
@@ -241,7 +240,7 @@ public abstract class App {
 
                 // Display the LogGUI panel
                 case 2:
-                    showLogConsole();
+                    LogbackGui.showLogConsole();
                     break;
 
                 // Open the given file
@@ -581,21 +580,6 @@ public abstract class App {
      */
     protected final boolean hasFileArgument() {
         return _fileArgument != null;
-    }
-
-    /**
-     * Show the logging utility and displays the application log
-     */
-    public static void showLogConsole() {
-        showLogConsole(ApplicationLogSingleton.JMMC_APP_LOG);
-    }
-
-    /**
-     * Show the logging utility and displays the log corresponding to the given logger path
-     * @param loggerPath logger path
-     */
-    public static void showLogConsole(final String loggerPath) {
-        LogbackGui.showWindow(App.getFrame(), ApplicationDescription.getInstance().getProgramName() + " Log Console", loggerPath);
     }
 
     /** Show the splash screen */

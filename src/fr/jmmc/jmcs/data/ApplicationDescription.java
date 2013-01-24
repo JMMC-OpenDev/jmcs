@@ -3,6 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data;
 
+import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.model.ApplicationData;
 import fr.jmmc.jmcs.data.model.Company;
 import fr.jmmc.jmcs.data.model.Compilation;
@@ -12,6 +13,7 @@ import fr.jmmc.jmcs.data.model.Package;
 import fr.jmmc.jmcs.data.model.Program;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
+import fr.jmmc.jmcs.util.ResourceUtils;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -40,18 +42,84 @@ import org.slf4j.LoggerFactory;
  *
  * @author Guillaume MELLA, Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public final class ApplicationDataModel {
+public final class ApplicationDescription {
 
     /** Logger */
-    private static final Logger _logger = LoggerFactory.getLogger(ApplicationDataModel.class.getName());
-    /** package name for JAXB generated code */
-    private final static String APP_DATA_MODEL_JAXB_PATH = "fr.jmmc.jmcs.data.model";
+    private static final Logger _logger = LoggerFactory.getLogger(ApplicationDescription.class.getName());
+    /** Package name for JAXB generated code */
+    private static final String APP_DATA_MODEL_JAXB_PATH = "fr.jmmc.jmcs.data.model";
+    /** Application data file i.e. "ApplicationData.xml" */
+    private static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
+    /** Shared application data model */
+    private static ApplicationDescription _appDataModel = null;
+    /** jMCS application data model */
+    private static ApplicationDescription _defaultDataModel = null;
 
-    /* members */
+    /**
+     * @return ApplicationDescription instance.
+     */
+    public static void init() {
+        getJmcsInstance();
+        getInstance();
+    }
+
+    /**
+     * @return jMCS ApplicationDescription instance.
+     */
+    public static ApplicationDescription getJmcsInstance() {
+        if (_defaultDataModel == null) {
+            loadDefaultData();
+        }
+        return _defaultDataModel;
+    }
+
+    /**
+     * @return ApplicationDescription instance.
+     */
+    public static ApplicationDescription getInstance() {
+        if (_appDataModel == null) {
+            loadApplicationData();
+        }
+        return _appDataModel;
+    }
+
+    /**
+     * Load the default ApplicationData.xml
+     * @throws IllegalStateException if the default ApplicationData.xml can not be loaded
+     */
+    private static void loadDefaultData() throws IllegalStateException {
+        final URL defaultXmlURL = ResourceUtils.getURLFromResourceFilename(App.class, APPLICATION_DATA_FILE);
+        if (defaultXmlURL == null) {
+            throw new IllegalStateException("Cannot load default application data.");
+        }
+        _logger.info("Loading default application data from '{}' file.", defaultXmlURL);
+        _defaultDataModel = new ApplicationDescription(defaultXmlURL);
+    }
+
+    /**
+     * Load application data if ApplicationData.xml exists into the module.
+     * Otherwise, uses the default ApplicationData.xml.
+     */
+    private static void loadApplicationData() {
+        final Class<? extends App> appClass = App.getSharedInstance().getClass();
+        final URL fileURL = ResourceUtils.getURLFromResourceFilename(appClass, APPLICATION_DATA_FILE);
+        if (fileURL == null) {
+            _appDataModel = getJmcsInstance();
+        } else {
+            try {
+                _appDataModel = new ApplicationDescription(fileURL);
+            } catch (IllegalStateException iae) {
+                _logger.error("Could not load application data from '{}' file.", fileURL, iae);
+                _appDataModel = getJmcsInstance();
+            }
+        }
+    }
+
+    // Members
     /** internal JAXB Factory */
-    private final JAXBFactory jf;
+    private final JAXBFactory _jf;
     /** The JAVA class which JAXB has generated with the XSD file */
-    private ApplicationData _applicationDataModel = null;
+    private ApplicationData _applicationData = null;
     /** The JAVA class which JAXB has generated with the XSD file */
     private Company _company = null;
     /** Logo file name */
@@ -60,9 +128,9 @@ public final class ApplicationDataModel {
     private String _mainWebPageURL = null;
     /** URL of the PHP script that handles Feedback reports */
     private String _phpScriptURL = null;
-    /** feedback report window header message in HTML format */
+    /** Feedback report window header message in HTML format */
     private String _feedbackReportHeaderMessage = null;
-    /** authors list */
+    /** Authors list */
     private String _authors = null;
     /** Used throughout all jMCS GUI */
     private String _shortCompanyName = null;
@@ -82,16 +150,16 @@ public final class ApplicationDataModel {
      * @param dataModelURL location of the file to load
      * @throws IllegalStateException if the given URL can not be loaded
      */
-    public ApplicationDataModel(final URL dataModelURL) throws IllegalStateException {
+    private ApplicationDescription(final URL dataModelURL) throws IllegalStateException {
         _logger.debug("Loading Application data model from {}", dataModelURL);
 
         // Start JAXB
-        jf = JAXBFactory.getInstance(APP_DATA_MODEL_JAXB_PATH);
+        _jf = JAXBFactory.getInstance(APP_DATA_MODEL_JAXB_PATH);
 
-        _logger.debug("JAXBFactory: {}", jf);
+        _logger.debug("JAXBFactory: {}", _jf);
 
         // Load application data
-        _applicationDataModel = loadData(dataModelURL);
+        _applicationData = loadData(dataModelURL);
 
         final String programName = getProgramName();
 
@@ -112,8 +180,8 @@ public final class ApplicationDataModel {
 
 
         // Use company meta data (if any)
-        if (_applicationDataModel.isSetCompany()) {
-            _company = _applicationDataModel.getCompany();
+        if (_applicationData.isSetCompany()) {
+            _company = _applicationData.getCompany();
 
             // Mandatory data
             _shortCompanyName = _company.getShortName();
@@ -125,8 +193,8 @@ public final class ApplicationDataModel {
             if (_company.isSetLegalName()) {
                 _legalCompanyName = _company.getLegalName();
             }
-            if (_applicationDataModel.isSetAuthors()) {
-                _authors = _applicationDataModel.getAuthors();
+            if (_applicationData.isSetAuthors()) {
+                _authors = _applicationData.getAuthors();
             }
             if (_company.isSetFeedbackFormUrl()) {
                 _phpScriptURL = _company.getFeedbackFormUrl();
@@ -134,14 +202,14 @@ public final class ApplicationDataModel {
             if (_company.isSetUserSupportUrl()) {
                 _userSupportUrl = _company.getUserSupportUrl();
             }
-            if (_applicationDataModel.isSetFaqlink()) {
-                _faqLink = _applicationDataModel.getFaqlink();
+            if (_applicationData.isSetFaqlink()) {
+                _faqLink = _applicationData.getFaqlink();
             }
-            if (_applicationDataModel.isSetRsslink()) {
-                _hotNewsRSSFeedLink = _applicationDataModel.getRsslink();
+            if (_applicationData.isSetRsslink()) {
+                _hotNewsRSSFeedLink = _applicationData.getRsslink();
             }
-            if (_applicationDataModel.isSetReleasenotes()) {
-                _releaseNotesLink = _applicationDataModel.getReleaselink();
+            if (_applicationData.isSetReleasenotes()) {
+                _releaseNotesLink = _applicationData.getReleaselink();
             }
         } else { // If no 'company' data, assume we are in the JMMC context
             _companyLogoFileName = "fr/jmmc/jmcs/resource/image/jmmc_logo.png";
@@ -164,7 +232,7 @@ public final class ApplicationDataModel {
 
         // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
         try {
-            final Unmarshaller u = jf.createUnMarshaller();
+            final Unmarshaller u = _jf.createUnMarshaller();
             return (ApplicationData) u.unmarshal(new BufferedInputStream(dataModelURL.openStream()));
         } catch (IOException ioe) {
             throw new IllegalStateException("Load failure on " + dataModelURL, ioe);
@@ -177,13 +245,13 @@ public final class ApplicationDataModel {
      * @return the value of the "Acknowledgment" field from the XML file  if any, null otherwise.
      */
     public String getAcknowledgment() {
-        if (_applicationDataModel.getAcknowledgment() == null) {
+        if (_applicationData.getAcknowledgment() == null) {
             _logger.debug("_applicationDataCastorModel.getAcknowledgment() is null");
 
             return null;
         }
 
-        return _applicationDataModel.getAcknowledgment();
+        return _applicationData.getAcknowledgment();
     }
 
     /**
@@ -224,7 +292,7 @@ public final class ApplicationDataModel {
         String programName = "Unknown";
 
         // Get program
-        program = _applicationDataModel.getProgram();
+        program = _applicationData.getProgram();
 
         if (program != null) {
             programName = program.getName();
@@ -243,7 +311,7 @@ public final class ApplicationDataModel {
         String programVersion = "?.?";
 
         // Get program
-        program = _applicationDataModel.getProgram();
+        program = _applicationData.getProgram();
 
         if (program != null) {
             programVersion = program.getVersion();
@@ -260,7 +328,7 @@ public final class ApplicationDataModel {
     public String getLinkValue() {
         String mainWebPageURL = _mainWebPageURL;
 
-        mainWebPageURL = _applicationDataModel.getLink();
+        mainWebPageURL = _applicationData.getLink();
         _logger.debug("MainWebPageURL: {}", mainWebPageURL);
 
         return mainWebPageURL;
@@ -302,7 +370,7 @@ public final class ApplicationDataModel {
         String compilationDate = "Unknown";
 
         // Get compilation
-        compilation = _applicationDataModel.getCompilation();
+        compilation = _applicationData.getCompilation();
 
         if (compilation != null) {
             compilationDate = compilation.getDate();
@@ -320,7 +388,7 @@ public final class ApplicationDataModel {
         String compilationCompilator = "Unknown";
 
         // Get compilation
-        compilation = _applicationDataModel.getCompilation();
+        compilation = _applicationData.getCompilation();
 
         if (compilation != null) {
             compilationCompilator = compilation.getCompiler();
@@ -335,7 +403,7 @@ public final class ApplicationDataModel {
      * @return the application description used in the AboutBox
      */
     public String getTextValue() {
-        String text = _applicationDataModel.getText();
+        String text = _applicationData.getText();
         _logger.debug("Text value: {}", text);
 
         return text;
@@ -352,7 +420,7 @@ public final class ApplicationDataModel {
      * @return list of dependency packages.
      */
     public List<Package> getPackages() {
-        return _applicationDataModel.getDependences().getPackages();
+        return _applicationData.getDependences().getPackages();
     }
 
     /**
@@ -362,7 +430,7 @@ public final class ApplicationDataModel {
     public List<String> getPackagesInfo() {
 
         // TODO: API: use objects not List<string>
-        Dependences dependences = _applicationDataModel.getDependences();
+        Dependences dependences = _applicationData.getDependences();
 
         final List<String> packagesInfo = new ArrayList<String>();
 
@@ -408,7 +476,7 @@ public final class ApplicationDataModel {
      * @return menu bar from XML description
      */
     public Menubar getMenubar() {
-        return _applicationDataModel.getMenubar();
+        return _applicationData.getMenubar();
     }
 
     /**
@@ -436,18 +504,18 @@ public final class ApplicationDataModel {
      * @return SAMP description if any, null otherwise.
      */
     public String getSampDescription() {
-        return _applicationDataModel.getSampdescription();
+        return _applicationData.getSampdescription();
     }
 
     /**
      * @return Application documentation URL if any, null otherwise.
      */
     public String getDocumetationUrl() {
-        return _applicationDataModel.getDocumentationlink();
+        return _applicationData.getDocumentationlink();
     }
 
     public String getJnlpUrl() {
-        return _applicationDataModel.getJnlp();
+        return _applicationData.getJnlp();
     }
 }
 /*___oOo___*/

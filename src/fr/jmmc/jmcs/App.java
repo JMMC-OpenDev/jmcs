@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs;
 
 import ch.qos.logback.classic.Level;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.SplashScreen;
@@ -14,7 +14,6 @@ import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
-import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import gnu.getopt.Getopt;
@@ -25,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * folder of jMCS, the feedback report etc...
  *
  * To access to the XML informations, this class uses
- * <b>ApplicationDataModel</b> class. It's a class which has got getters
+ * <b>ApplicationDescription</b> class. It's a class which has got getters
  * in order to do that and which has been written to abstract the way
  * to access to these informations.
  *
@@ -59,18 +57,12 @@ public abstract class App {
 
     /** Class Logger */
     private static final Logger _logger = LoggerFactory.getLogger(App.class.getName());
-    /** application data file i.e. "ApplicationData.xml" */
-    private static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
     /** flag to avoid calls to System.exit() (JUnit) */
     private static boolean _avoidSystemExit = false;
     /** Singleton reference */
     private static App _sharedInstance;
     /** flag indicating if the application started properly and is ready (visible) */
     private static boolean _applicationReady = false;
-    /** jMCS application data model */
-    private static ApplicationDataModel _jMCSDataModel;
-    /** Shared application data model */
-    private static ApplicationDataModel _applicationDataModel;
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
     /** If it's true, exit the application after the exit method */
@@ -145,64 +137,18 @@ public abstract class App {
         _exitApplicationWhenClosed = exitWhenClosed;
         // Check in common preferences whether startup splashscreen should be shown or not
         _showSplashScreen = shouldShowSplashScreen;
+        // Set shared instance
+        _sharedInstance = this;
         _logger.debug("App object instantiated and logger created.");
     }
 
     final void start() {
-        // Set jMCS application data attribute
-        loadDefaultApplicationData();
-        // Set the application data attribute
-        loadApplicationData();
-        _logger.debug("Application data loaded.");
-
         // Interpret arguments
         interpretArguments(_args);
 
         // Build Acknowledgment, ShowRelease and ShowHelp Actions
         // (the creation must be done after applicationModel instanciation)
         _actionRegistrar.createAllInternalActions();
-
-        // Set shared instance
-        _sharedInstance = this;
-    }
-
-    /**
-     * Load application data if ApplicationData.xml exists into the module.
-     * Otherwise, uses the default ApplicationData.xml.
-     */
-    private void loadApplicationData() {
-        final URL fileURL = ResourceUtils.getURLFromResourceFilename(this.getClass(), APPLICATION_DATA_FILE);
-
-        if (fileURL == null) {
-            // Take the defaultData XML in order to take the default menus
-            _applicationDataModel = _jMCSDataModel;
-        } else {
-            try {
-                // We reinstantiate the application data model
-                _applicationDataModel = new ApplicationDataModel(fileURL);
-            } catch (IllegalStateException iae) {
-                _logger.error("Could not load application data from '{}' file.", fileURL, iae);
-                _applicationDataModel = _jMCSDataModel;
-            }
-        }
-    }
-
-    /**
-     * Load the default ApplicationData.xml
-     * @throws IllegalStateException if the default ApplicationData.xml can not be loaded
-     */
-    private void loadDefaultApplicationData() throws IllegalStateException {
-
-        final URL defaultXmlURL = ResourceUtils.getURLFromResourceFilename(App.class, APPLICATION_DATA_FILE);
-
-        if (defaultXmlURL == null) {
-            throw new IllegalStateException("Cannot load default application data.");
-        }
-
-        _logger.info("Loading default application data from '{}' file.", defaultXmlURL);
-
-        // We reinstantiate the application data model
-        _jMCSDataModel = new ApplicationDataModel(defaultXmlURL);
     }
 
     /**
@@ -269,7 +215,7 @@ public abstract class App {
         _longOpts.toArray(longOptArray);
 
         // Instantiate the getopt object
-        final Getopt getOpt = new Getopt(_applicationDataModel.getProgramName(), args, "hv:", longOptArray, true);
+        final Getopt getOpt = new Getopt(ApplicationDescription.getInstance().getProgramName(), args, "hv:", longOptArray, true);
 
         int c; // argument key
         String arg; // argument value
@@ -287,7 +233,7 @@ public abstract class App {
                 // Show the name and the version of the program
                 case 1:
                     // Show the application name on the shell
-                    System.out.println(_applicationDataModel.getProgramName() + " v" + _applicationDataModel.getProgramVersion());
+                    System.out.println(ApplicationDescription.getInstance().getProgramName() + " v" + ApplicationDescription.getInstance().getProgramVersion());
 
                     // Exit the application
                     App.exit(0);
@@ -505,7 +451,7 @@ public abstract class App {
             // Set application name :
             // system properties must be set before using any Swing component:
             // Hope nothing as already been done...
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", _applicationDataModel.getProgramName());
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", ApplicationDescription.getInstance().getProgramName());
         }
 
         // Show splash screen if we have to
@@ -649,20 +595,18 @@ public abstract class App {
      * @param loggerPath logger path
      */
     public static void showLogConsole(final String loggerPath) {
-        LogbackGui.showWindow(App.getFrame(), _applicationDataModel.getProgramName() + " Log Console", loggerPath);
+        LogbackGui.showWindow(App.getFrame(), ApplicationDescription.getInstance().getProgramName() + " Log Console", loggerPath);
     }
 
     /** Show the splash screen */
     void showSplashScreen() {
-        if (_applicationDataModel != null) {
-            _logger.debug("Show splash screen");
+        _logger.debug("Show splash screen");
 
-            // Instantiate the splash screen :
-            _splashScreen = new SplashScreen();
+        // Instantiate the splash screen :
+        _splashScreen = new SplashScreen();
 
-            // Show the splash screen :
-            _splashScreen.display();
-        }
+        // Show the splash screen :
+        _splashScreen.display();
     }
 
     /** Show the splash screen */
@@ -678,30 +622,13 @@ public abstract class App {
     }
 
     /**
-     * @return ApplicationDataModel instance.
-     */
-    public static ApplicationDataModel getSharedApplicationDataModel() {
-        return _applicationDataModel;
-    }
-
-    /**
-     * @return jMCS ApplicationDataModel instance.
-     */
-    public static ApplicationDataModel getJMcsApplicationDataModel() {
-        return _jMCSDataModel;
-    }
-
-    /**
      * Tell if the application is a beta version or not.
      * This flag is given searching one 'b' in the program version number.
      *
      * @return true if it is a beta, false otherwise.
      */
     public static boolean isBetaVersion() {
-        if (_applicationDataModel != null) {
-            return _applicationDataModel.getProgramVersion().contains("b");
-        }
-        return false;
+        return ApplicationDescription.getInstance().getProgramVersion().contains("b");
     }
 
     /**
@@ -712,14 +639,11 @@ public abstract class App {
      * @return true if it is a alpha, false otherwise.
      */
     public static boolean isAlphaVersion() {
-        if (_applicationDataModel != null) {
-            final String v = _applicationDataModel.getProgramVersion();
-            if (v.contains("b")) {
-                return false;
-            }
-            return v.contains("a");
+        final String v = ApplicationDescription.getInstance().getProgramVersion();
+        if (v.contains("b")) {
+            return false;
         }
-        return false;
+        return v.contains("a");
     }
 
     /**

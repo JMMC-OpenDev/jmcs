@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.PreferencedDocument;
 import fr.jmmc.jmcs.data.preference.Preferences;
@@ -80,8 +80,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void openDialog(final boolean modal, final Throwable exception) {
         // Fallback if no application data:
-        if (App.getSharedApplicationDataModel() != null
-                && App.getSharedApplicationDataModel().getFeedbackReportFormURL() != null) {
+        if (ApplicationDescription.getInstance() != null
+                && ApplicationDescription.getInstance().getFeedbackReportFormURL() != null) {
             // Create Gui using EDT:
             SwingUtils.invokeEDT(new Runnable() {
                 @Override
@@ -182,7 +182,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         // and update ui
         keyReleased(null);
 
-        final String headerMessage = App.getSharedApplicationDataModel().getFeedbackReportHeaderMessage();
+        final String headerMessage = ApplicationDescription.getInstance().getFeedbackReportHeaderMessage();
         headerLabel.setText(headerMessage);
 
         typeComboBox.setModel(_feedbackTypeDataModel);
@@ -663,13 +663,13 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             // Create an HTTP client to send report information to our PHP script
             final HttpClient client = Http.getHttpClient(false);
 
-            final String feedbackReportUrl = App.getSharedApplicationDataModel().getFeedbackReportFormURL();
+            final String feedbackReportUrl = ApplicationDescription.getInstance().getFeedbackReportFormURL();
             final PostMethod method = new PostMethod(feedbackReportUrl);
 
             try {
                 _logger.debug("Http client and post method have been created");
 
-                final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+                final ApplicationDescription applicationDataModel = ApplicationDescription.getInstance();
 
                 String applicationName;
                 String applicationVersion;

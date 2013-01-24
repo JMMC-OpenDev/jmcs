@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.util.ImageUtils;
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * saved into the <b>App</b> module in order to avoid important bugs.
  *
  * To access to the XML informations, this class uses
- * <b>ApplicationDataModel</b> class. It's a class which has got getters
+ * <b>ApplicationDescription</b> class. It's a class which has got getters
  * in order to do that and which has been written to abstract the way
  * to access to these informations.
  *
@@ -40,7 +40,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1L;
     /** Model of the about box */
-    private ApplicationDataModel _applicationDataModel = null;
+    private ApplicationDescription _applicationDataModel = null;
     /** Logo label */
     private JLabel _logoLabel = new JLabel();
     /** Copyright label */
@@ -107,7 +107,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     private JSplitPane _descriptionSplit = new JSplitPane();
 
     /**
-     * Load the application information from ApplicationDataModel and display
+     * Load the application information from ApplicationDescription and display
      * its content in the window.
      */
     public AboutBox() {
@@ -115,7 +115,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     }
 
     /**
-     * Load the application information from ApplicationDataModel and display
+     * Load the application information from ApplicationDescription and display
      * its content in the window.
      * Set the parent frame.
      *
@@ -126,7 +126,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     }
 
     /**
-     * Load the application information from ApplicationDataModel and display
+     * Load the application information from ApplicationDescription and display
      * its content in the window.
      * Set the parent frame and specify if this dialog is modal or not.
      *
@@ -137,7 +137,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         super(frame, modal);
 
         // Get application data model
-        ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        ApplicationDescription applicationDataModel = ApplicationDescription.getInstance();
 
         if (applicationDataModel != null) {
             _applicationDataModel = applicationDataModel;
@@ -260,7 +260,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         }
 
         generatedHtml.append("<i>Dependencies</i>:<br>");
-        final ApplicationDataModel data = App.getJMcsApplicationDataModel();
+        final ApplicationDescription data = ApplicationDescription.getJmcsInstance();
         final String jMcsName = data.getProgramName();
         final String jMcsUrl = data.getLinkValue();
         final String jMcsDescription = data.getTextValue();

@@ -5,7 +5,7 @@ package fr.jmmc.jmcs.gui;
 
 import com.jidesoft.plaf.LookAndFeelFactory;
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.data.model.Menu;
 import fr.jmmc.jmcs.data.model.Menubar;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  * In all cases, it generates default menus.
  *
- * To access to the XML informations, this class uses <b>ApplicationDataModel</b>
+ * To access to the XML informations, this class uses <b>ApplicationDescription</b>
  * class. It's a class which has got getters in order to do that and which has
  * been written to abstract the way to access to these informations.
  * 
@@ -76,7 +76,7 @@ public class MainMenuBar extends JMenuBar {
     /** Store a proxy to the shared ActionRegistrar facility */
     private final ActionRegistrar _registrar;
     /** Proxy to the application data model */
-    private ApplicationDataModel _applicationDataModel = null;
+    private ApplicationDescription _applicationDataModel = null;
     /** Remember the File:Open component */
     private JComponent _openComponent = null;
 
@@ -89,7 +89,7 @@ public class MainMenuBar extends JMenuBar {
         _registrar = ActionRegistrar.getInstance();
 
         // Get the application data model
-        _applicationDataModel = App.getSharedApplicationDataModel();
+        _applicationDataModel = ApplicationDescription.getInstance();
 
         // Contains the name of the others menus
         List<String> otherMenus = new ArrayList<String>();

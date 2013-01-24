@@ -397,22 +397,21 @@ public abstract class App {
     protected abstract void execute();
 
     /**
-     * Hook to handle operations before closing application.
+     * Hook to return whether the application can be terminated or not.
      *
      * This method is automatically triggered when the application "Quit" menu
      * has been used. Thus, you have a chance to do things like saves before the
      * application really quits.
      *
-     * The default implementation lets the application quitting without further ado.
+     * The default implementation lets the application silently quit without further ado.
      *
      * @warning This method should be overridden to handle quit as you intend to.
      * In its default behavior, all changes that occurred during application life will be lost.
      *
-     * @return should return true if the application can exit, false otherwise to cancel exit.
+     * @return should return true if the application can exit, or false to cancel exit.
      */
-    public boolean shouldFinish() {
-        _logger.info("Default App.finish() handler called.");
-
+    public boolean canBeTerminatedNow() {
+        _logger.info("Default App.canBeTerminatedNow() handler called.");
         return true;
     }
 

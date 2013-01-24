@@ -3,13 +3,13 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.resource.image.ResourceImage;
 import fr.jmmc.jmcs.util.ImageUtils;
-import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
+import fr.jmmc.jmcs.util.logging.LoggingService;
+import fr.jmmc.jmcs.util.logging.LogbackGui;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,7 +36,7 @@ public class StatusBar extends JPanel {
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
-    private static final Logger _statusLogger = ApplicationLogSingleton.getInstance().getLogger(ApplicationLogSingleton.JMMC_STATUS_LOG);
+    private static final Logger _statusLogger = LoggingService.getInstance().getLogger(LoggingService.JMMC_STATUS_LOG);
     /** Status label */
     private static final JLabel _statusLabel = new JLabel();
 
@@ -78,7 +78,7 @@ public class StatusBar extends JPanel {
         historyButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                App.showLogConsole(ApplicationLogSingleton.JMMC_STATUS_LOG);
+                LogbackGui.showLogConsoleForLogger(LoggingService.JMMC_STATUS_LOG);
             }
         });
 

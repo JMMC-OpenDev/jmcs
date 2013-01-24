@@ -6,6 +6,8 @@ package fr.jmmc.jmcs.util.logging;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -36,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * 
  * License: LGPL 2.1
  * 
- * @author Bourgès Laurent
+ * @author Laurent BOURGES.
  */
 public final class LogbackGui extends javax.swing.JPanel implements TreeSelectionListener, ActionListener {
 
@@ -52,11 +54,21 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
     private static JFrame _guiFrameSingleton = null;
     /** Single instance GUI */
     private static LogbackGui _guiSingleton = null;
-    // Members
-    /** current edited logger */
-    private Logger _currentLogger = null;
-    /** flag to enable / disable the automatic update of the logger when any swing component changes */
-    private boolean _doAutoUpdateLogger = true;
+
+    /**
+     * Show the logging utility and displays the application log
+     */
+    public static void showLogConsole() {
+        showLogConsoleForLogger(LoggingService.JMMC_APP_LOG);
+    }
+
+    /**
+     * Show the logging utility and displays the log corresponding to the given logger path
+     * @param loggerPath logger path
+     */
+    public static void showLogConsoleForLogger(final String loggerPath) {
+        showWindow(App.getFrame(), ApplicationDescription.getInstance().getProgramName() + " Log Console", loggerPath);
+    }
 
     /**
      * Display the logger editor
@@ -129,6 +141,11 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
         // Select the log tab:
         _guiSingleton.selectLogTab(loggerPath);
     }
+    // Members
+    /** current edited logger */
+    private Logger _currentLogger = null;
+    /** flag to enable / disable the automatic update of the logger when any swing component changes */
+    private boolean _doAutoUpdateLogger = true;
 
     /** Creates new form LogbackGui */
     private LogbackGui() {
@@ -148,7 +165,7 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         // add log panel automatically:
         int tabIndex = 0;
-        for (AppenderLogMapper mapper : ApplicationLogSingleton.getInstance().getLogMappers()) {
+        for (AppenderLogMapper mapper : LoggingService.getInstance().getLogMappers()) {
             jTabbedPane.insertTab(mapper.getDisplayName(), null, new LogPanel(mapper.getLoggerPath()), null, tabIndex++);
         }
 

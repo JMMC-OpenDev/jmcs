@@ -38,7 +38,7 @@ final class AppenderLogMapper {
         // Try to get the root logger (logback):
         ch.qos.logback.classic.Logger loggerImpl = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(_loggerPath);
 
-        LoggerFactory.getLogger(ApplicationLogSingleton.JMMC_STATUS_LOG);
+        LoggerFactory.getLogger(LoggingService.JMMC_STATUS_LOG);
 
         // Get the root logger's appender 'APPLOG':
         final Appender<ILoggingEvent> appender = loggerImpl.getAppender(appenderName);

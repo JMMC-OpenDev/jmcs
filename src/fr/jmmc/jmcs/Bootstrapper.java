@@ -14,7 +14,7 @@ import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.util.FileUtils;
-import fr.jmmc.jmcs.util.logging.ApplicationLogSingleton;
+import fr.jmmc.jmcs.util.logging.LoggingService;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
@@ -93,7 +93,7 @@ public final class Bootstrapper {
         // slf4j / logback initialization done
 
         // Start the application log singleton:
-        ApplicationLogSingleton.getInstance();
+        LoggingService.getInstance();
 
         // Get the jmmc logger:
         final ch.qos.logback.classic.Logger jmmcLogger = getJmmcLogger();

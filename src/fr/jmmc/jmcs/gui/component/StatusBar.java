@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.resource.image.ResourceImage;
@@ -54,7 +54,7 @@ public class StatusBar extends JPanel {
         final Border leftBorder = new EmptyBorder(0, 0, 4, 0);
 
         // Create logo
-        final String logoURL = App.getSharedApplicationDataModel().getCompanyLogoResourcePath();
+        final String logoURL = ApplicationDescription.getInstance().getCompanyLogoResourcePath();
         final ImageIcon imageIcon = ImageUtils.loadResourceIcon(logoURL);
         final ImageIcon scaledImageIcon = ImageUtils.getScaledImageIcon(imageIcon, 17, 0);
         final JLabel logo = new JLabel();
@@ -102,7 +102,7 @@ public class StatusBar extends JPanel {
         add(hBox);
 
         // Get application data model to launch the default browser with the given link
-        final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        final ApplicationDescription applicationDataModel = ApplicationDescription.getInstance();
         if (applicationDataModel != null) {
             logo.addMouseListener(new MouseAdapter() {
                 @Override

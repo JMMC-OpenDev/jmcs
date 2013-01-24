@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.gui.util.WindowUtils;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.util.ImageUtils;
 import java.awt.BorderLayout;
@@ -32,7 +32,7 @@ import javax.swing.Timer;
  * saved into the <b>App</b> module in order to avoid important bugs.
  *
  * To access to the XML informations, this class uses
- * <b>ApplicationDataModel</b> class. It's a class which has got getters
+ * <b>ApplicationDescription</b> class. It's a class which has got getters
  * in order to do that and which has been written to abstract the way
  * to access to these informations.
  * 
@@ -47,7 +47,7 @@ public class SplashScreen extends JFrame {
 
     /* members */
     /** Splash screen has got the same model than about box */
-    private final ApplicationDataModel _applicationDataModel;
+    private final ApplicationDescription _applicationDataModel;
     /** Logo label */
     private final JLabel _logoLabel = new JLabel();
     /** Panel */
@@ -61,7 +61,7 @@ public class SplashScreen extends JFrame {
      * Creates a new SplashScreen object.
      */
     public SplashScreen() {
-        _applicationDataModel = App.getSharedApplicationDataModel();
+        _applicationDataModel = ApplicationDescription.getInstance();
     }
 
     /**

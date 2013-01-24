@@ -8,6 +8,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
@@ -33,6 +34,8 @@ public final class Bootstrapper {
     public final static String JMMC_LOGGER = "fr.jmmc";
     /** Flag to avoid reentrance in launch sequence */
     private static boolean _staticBootstrapDone = false;
+    /** Class Logger */
+    private static final org.slf4j.Logger _logger = LoggerFactory.getLogger(Bootstrapper.class.getName());
 
     /**
      * Static Logger initialization and Network settings
@@ -116,6 +119,10 @@ public final class Bootstrapper {
 
         final long start = System.nanoTime();
         final Logger jmmcLogger = getJmmcLogger();
+
+        // Load jMCS and application data models
+        ApplicationDescription.init();
+        _logger.debug("Application data loaded.");
 
         try {
             app.start();

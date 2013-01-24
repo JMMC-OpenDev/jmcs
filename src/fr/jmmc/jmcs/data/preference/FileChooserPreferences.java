@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.data.preference;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.util.MimeType;
 import java.io.File;
 import java.util.Collections;
@@ -93,7 +93,7 @@ public final class FileChooserPreferences extends Preferences {
     @Override
     protected String getPreferenceFilename() {
 
-        final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        final ApplicationDescription applicationDataModel = ApplicationDescription.getInstance();
         final String shortCompanyName = (applicationDataModel != null) ? applicationDataModel.getShortCompanyName() : "";
         final String programName = (applicationDataModel != null) ? applicationDataModel.getProgramName() : "";
 

@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -319,7 +320,7 @@ public final class MessagePane {
      * @return true if the user wants the quit nevertheless, false otherwise.
      */
     public static boolean showConfirmKillHub() {
-        final String applicationName = App.getSharedApplicationDataModel().getProgramName();
+        final String applicationName = ApplicationDescription.getInstance().getProgramName();
         final String message = "Quitting '"
                 + applicationName
                 + "' will also terminate the shared SAMP hub,\npotentially preventing other applications interoperability until\nanother hub is started elsewhere.\n\nProceed with quitting nevertheless ?";

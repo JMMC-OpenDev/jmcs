@@ -101,7 +101,7 @@ public final class ApplicationDescription {
      * Otherwise, uses the default ApplicationData.xml.
      */
     private static void loadApplicationData() {
-        final Class<? extends App> appClass = App.getSharedInstance().getClass();
+        final Class<? extends App> appClass = App.getInstance().getClass();
         final URL fileURL = ResourceUtils.getURLFromResourceFilename(appClass, APPLICATION_DATA_FILE);
         if (fileURL == null) {
             _appDataModel = getJmcsInstance();

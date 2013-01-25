@@ -543,7 +543,7 @@ public class InternalActionFactory {
             }
 
             // If we are ready to canBeTerminatedNow application execution
-            final App app = App.getSharedInstance();
+            final App app = App.getInstance();
             if (app.canBeTerminatedNow()) {
                 _logger.debug("Application should be killed.");
 

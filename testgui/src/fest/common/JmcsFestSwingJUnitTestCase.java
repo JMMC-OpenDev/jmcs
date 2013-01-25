@@ -49,7 +49,7 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
         MessagePane.showWarning("Please do not touch the mouse while FEST tests run !\n\nHaut les mains ^_^");
 
         // Use main thread to start Jmcs application using subclass.main() :
-        if (App.getSharedInstance() == null) {
+        if (App.getInstance() == null) {
 
             // disable use of System.exit() :
             App.setAvoidSystemExit(true);
@@ -90,10 +90,10 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
             }
 
             if (logger.isLoggable(Level.INFO)) {
-                logger.info("onSetUpOnce : started application = " + App.getSharedInstance());
+                logger.info("onSetUpOnce : started application = " + App.getInstance());
             }
 
-            if (App.getSharedInstance() == null) {
+            if (App.getInstance() == null) {
                 throw new RuntimeException("unable to start application : " + JmcsApplicationSetup.applicationClass);
             }
         }
@@ -105,7 +105,7 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
      */
     @AfterClass
     public static void onTearDownOnce() {
-        final App app = App.getSharedInstance();
+        final App app = App.getInstance();
         if (app != null) {
             if (logger.isLoggable(Level.INFO)) {
                 logger.info("onTearDownOnce : exit application = " + app);
@@ -120,7 +120,7 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
      * @return application
      */
     protected static App getApplication() {
-        return App.getSharedInstance();
+        return App.getInstance();
     }
 
     /**

@@ -102,7 +102,7 @@ public abstract class App {
     /** Creates a new App object, with possibility to delay execution
      *
      * @param args command-line arguments
-     * @param waitBeforeExecution if true, do not launch run() automatically
+     * @param waitBeforeExecution if true, do not launch ___internalRun() automatically
      */
     protected App(String[] args, boolean waitBeforeExecution) {
         this(args, waitBeforeExecution, true);
@@ -113,7 +113,7 @@ public abstract class App {
      * stopped when the exit method is called
      *
      * @param args command-line arguments
-     * @param waitBeforeExecution if true, do not launch run() automatically
+     * @param waitBeforeExecution if true, do not launch ___internalRun() automatically
      * @param exitWhenClosed if true, the application will close when exit method is called
      */
     protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed) {
@@ -126,7 +126,7 @@ public abstract class App {
      * stopped when the exit method is called
      *
      * @param args command-line arguments
-     * @param waitBeforeExecution if true, do not launch run() automatically
+     * @param waitBeforeExecution if true, do not launch ___internalRun() automatically
      * @param exitWhenClosed if true, the application will close when exit method is called
      * @param shouldShowSplashScreen show startup splash screen if true, nothing otherwise
      */
@@ -136,12 +136,16 @@ public abstract class App {
         _exitApplicationWhenClosed = exitWhenClosed;
         // Check in common preferences whether startup splashscreen should be shown or not
         _showSplashScreen = shouldShowSplashScreen;
-        // Set shared instance
-        _instance = this;
+
         _logger.debug("App object instantiated and logger created.");
     }
 
-    final void start() {
+    final void ___internalSingletonInitialization() {
+        // Set shared instance
+        _instance = this;
+    }
+
+    final void ___internalStart() {
         // Interpret arguments
         interpretArguments(_args);
 
@@ -303,7 +307,7 @@ public abstract class App {
     }
 
     /** Show command arguments help */
-    protected final void showArgumentsHelp() {
+    private void showArgumentsHelp() {
         System.out.println("------------- Arguments help --------------------------------------------");
         System.out.println("| Key          Value           Description                              |");
         System.out.println("|-----------------------------------------------------------------------|");
@@ -323,11 +327,16 @@ public abstract class App {
     }
 
     /**
-     * Initialize application objects
+     * Initialize services before the GUI
+     */
+    protected abstract void initServices();
+
+    /**
+     * Initialize user interface in EDT.
      *
      * The actions which are present in menu bar must be instantiated in this method.
      */
-    protected abstract void init();
+    protected abstract void setupGui();
 
     /**
      * Prepare interoperability (SAMP message handlers)
@@ -443,7 +452,9 @@ public abstract class App {
     /**
      * Describe the life cycle of the application
      */
-    final void run() {
+    final void ___internalRun() {
+
+        initServices();
 
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
@@ -463,44 +474,32 @@ public abstract class App {
                  */
                 @Override
                 public void run() {
-                    showSplashScreen();
+                    ___internalShowSplashScreen();
+
+                    // Delegate initialization to daughter class through abstract setupGui() call
+                    setupGui();
+
+                    // Initialize SampManager as needed by MainMenuBar:
+                    SampManager.getInstance();
+                    // declare SAMP message handlers first:
+                    declareInteroperability();
+                    // Perform defered action initialization (SAMP-related actions)
+                    _actionRegistrar.performDeferedInitialization();
+
+                    // Define the jframe associated to the application which will get the JmenuBar
+                    final JFrame frame = getFrame();
+
+                    // Use OSXAdapter on the frame
+                    macOSXRegistration(frame);
+
+                    // create menus including the Interop menu (SAMP required)
+                    frame.setJMenuBar(new MainMenuBar());
+
+                    // Set application frame common properties
+                    frame.pack();
                 }
             });
         }
-
-        // Delegate initialization to daughter class through abstract init() call
-        init();
-
-        // Using invokeAndWait to be in sync with this thread :
-        // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
-        SwingUtils.invokeAndWaitEDT(new Runnable() {
-            /**
-             * Initializes swing components in EDT
-             */
-            @Override
-            public void run() {
-                // Initialize SampManager as needed by MainMenuBar:
-                SampManager.getInstance();
-
-                // declare SAMP message handlers first:
-                declareInteroperability();
-
-                // Perform defered action initialization (SAMP-related actions)
-                _actionRegistrar.performDeferedInitialization();
-
-                // Define the jframe associated to the application which will get the JmenuBar
-                final JFrame frame = getFrame();
-
-                // Use OSXAdapter on the frame
-                macOSXRegistration(frame);
-
-                // create menus including the Interop menu (SAMP required)
-                frame.setJMenuBar(new MainMenuBar());
-
-                // Set application frame common properties
-                frame.pack();
-            }
-        });
 
         // Delegate execution to daughter class through abstract execute() call
         execute();
@@ -527,7 +526,7 @@ public abstract class App {
     }
 
     /** Show the splash screen */
-    void showSplashScreen() {
+    final void ___internalShowSplashScreen() {
         _logger.debug("Show splash screen");
 
         // Instantiate the splash screen :
@@ -538,7 +537,7 @@ public abstract class App {
     }
 
     /** Show the splash screen */
-    void hideSplashScreen() {
+    final void ___internalHideSplashScreen() {
         // In order to see the error window
         if (_splashScreen != null) {
             if (_splashScreen.isVisible()) {

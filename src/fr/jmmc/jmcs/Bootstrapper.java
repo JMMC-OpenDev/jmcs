@@ -117,6 +117,8 @@ public final class Bootstrapper {
 
         boolean launchDone = false;
 
+        app.___internalSingletonInitialization();
+
         final long start = System.nanoTime();
         final Logger jmmcLogger = getJmmcLogger();
 
@@ -125,12 +127,12 @@ public final class Bootstrapper {
         _logger.debug("Application data loaded.");
 
         try {
-            app.start();
-            app.run();
+            app.___internalStart();
+            app.___internalRun();
             launchDone = true;
         } catch (Throwable th) {
             // Show the feedback report (modal)
-            app.hideSplashScreen();
+            app.___internalHideSplashScreen();
             MessagePane.showErrorMessage("An error occured while initializing the application");
             FeedbackReport.openDialog(true, th);
         } finally {

@@ -7,7 +7,6 @@ import cds.astro.Sptype;
 import fr.jmmc.jmal.star.Star;
 import fr.jmmc.jmal.star.Star.Property;
 import java.text.DecimalFormat;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;

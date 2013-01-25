@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.network.interop;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.ApplicationDataModel;
+import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.StatusBar;
 import java.awt.Frame;
@@ -80,7 +80,7 @@ public final class SampManager {
     public synchronized boolean allowHubKilling() {
 
         // If the application wants to bypass SAMP hub killing warning message
-        if (App.getSharedInstance().shouldSilentlyKillSampHubOnQuit()) {
+        if (App.getInstance().shouldSilentlyKillSampHubOnQuit()) {
             // Let the hub die without prompting confirmation
             return true;
         }
@@ -136,7 +136,7 @@ public final class SampManager {
         _connector = new GuiHubConnector(profile);
 
         // Build application metadata
-        final ApplicationDataModel applicationDataModel = App.getSharedApplicationDataModel();
+        final ApplicationDescription applicationDataModel = ApplicationDescription.getInstance();
         final String applicationName = applicationDataModel.getProgramName();
         Metadata metaData = forgeSampMetaDataFromApplicationDataModel(applicationName, applicationDataModel);
         _connector.declareMetadata(metaData);
@@ -176,7 +176,7 @@ public final class SampManager {
      * @param applicationDataModel application data model instance
      * @return new SAMP Metadata instance
      */
-    private Metadata forgeSampMetaDataFromApplicationDataModel(final String applicationName, final ApplicationDataModel applicationDataModel) {
+    private Metadata forgeSampMetaDataFromApplicationDataModel(final String applicationName, final ApplicationDescription applicationDataModel) {
 
         final Metadata meta = new Metadata();
 

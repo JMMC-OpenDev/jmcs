@@ -464,42 +464,42 @@ public abstract class App {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", ApplicationDescription.getInstance().getProgramName());
         }
 
-        // Show splash screen if we have to
-        if (_showSplashScreen) {
-            // Using invokeAndWait to be in sync with this thread :
-            // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
-            SwingUtils.invokeAndWaitEDT(new Runnable() {
-                /**
-                 * Initializes Splash Screen in EDT
-                 */
-                @Override
-                public void run() {
+        // Using invokeAndWait to be in sync with this thread :
+        // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
+        SwingUtils.invokeAndWaitEDT(new Runnable() {
+            /**
+             * Initializes Splash Screen in EDT
+             */
+            @Override
+            public void run() {
+                // Show splash screen if we have to
+                if (_showSplashScreen) {
                     ___internalShowSplashScreen();
-
-                    // Delegate initialization to daughter class through abstract setupGui() call
-                    setupGui();
-
-                    // Initialize SampManager as needed by MainMenuBar:
-                    SampManager.getInstance();
-                    // declare SAMP message handlers first:
-                    declareInteroperability();
-                    // Perform defered action initialization (SAMP-related actions)
-                    _actionRegistrar.performDeferedInitialization();
-
-                    // Define the jframe associated to the application which will get the JmenuBar
-                    final JFrame frame = getFrame();
-
-                    // Use OSXAdapter on the frame
-                    macOSXRegistration(frame);
-
-                    // create menus including the Interop menu (SAMP required)
-                    frame.setJMenuBar(new MainMenuBar());
-
-                    // Set application frame common properties
-                    frame.pack();
                 }
-            });
-        }
+
+                // Delegate initialization to daughter class through abstract setupGui() call
+                setupGui();
+
+                // Initialize SampManager as needed by MainMenuBar:
+                SampManager.getInstance();
+                // declare SAMP message handlers first:
+                declareInteroperability();
+                // Perform defered action initialization (SAMP-related actions)
+                _actionRegistrar.performDeferedInitialization();
+
+                // Define the jframe associated to the application which will get the JmenuBar
+                final JFrame frame = getFrame();
+
+                // Use OSXAdapter on the frame
+                macOSXRegistration(frame);
+
+                // create menus including the Interop menu (SAMP required)
+                frame.setJMenuBar(new MainMenuBar());
+
+                // Set application frame common properties
+                frame.pack();
+            }
+        });
 
         // Delegate execution to daughter class through abstract execute() call
         execute();

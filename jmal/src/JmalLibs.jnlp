@@ -15,9 +15,6 @@
 
     <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
     <jar href="@SHARED@/sptype.jar"/>
-
-    <!-- Model computations (bessel functions) -->
-    <jar href="@SHARED@/colt.jar"/>
   </resources>
   <component-desc/>
 </jnlp>

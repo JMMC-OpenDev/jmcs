@@ -97,8 +97,10 @@ JARFILES        = jmal
 
 #
 # <brief description of jjjfff jar files>
-jmal_DIRS     = edu \
-                fr
+jmal_DIRS     = cern \
+                edu \
+                fr \
+                net
 
 jmal_EXTRAS   = fr/jmmc/jmal/image/lut/*.lut \
                 fr/jmmc/jmal/resource/ApplicationData.xml

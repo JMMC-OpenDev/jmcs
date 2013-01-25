@@ -40,7 +40,7 @@ public class Main extends App {
     private JButton _aboutBoxButton = null;
     /** Button to launch feedback report window */
     private JButton _feedbackReportButton = null;
-    /** Button to launch helpview window */
+    /** Button to launch help view window */
     private JButton _helpViewButton = null;
     /** Actions class */
     public RegisteredAction _openAction;
@@ -55,9 +55,19 @@ public class Main extends App {
         super(args, false, true);
     }
 
+    @Override
+    protected void initServices() {
+        // Set others preferences
+        try {
+            Preferences.getInstance().setPreference("MAIN", "main");
+        } catch (Exception ex) {
+            _logger.log(Level.WARNING, "Failed setting preference.", ex);
+        }
+    }
+
     /** Initialize application objects */
     @Override
-    protected void init() {
+    protected void setupGui() {
         _logger.warning("Initialize application objects");
 
         _actions = new Actions();
@@ -76,13 +86,6 @@ public class Main extends App {
         getFramePanel().add(_aboutBoxButton, BorderLayout.NORTH);
         getFramePanel().add(_feedbackReportButton, BorderLayout.CENTER);
         getFramePanel().add(_testDismissableMessagePane, BorderLayout.SOUTH);
-
-        // Set others preferences
-        try {
-            Preferences.getInstance().setPreference("MAIN", "maim");
-        } catch (Exception ex) {
-            _logger.log(Level.WARNING, "Failed setting preference.", ex);
-        }
     }
 
     /** Execute application body */
@@ -128,9 +131,7 @@ public class Main extends App {
         return true;
     }
 
-    /** Open help view action
-     * @return
-     */
+    /** Open help view action */
     private Action openHelpFrame() {
         return new AbstractAction("Open Help Frame") {
             private static final long serialVersionUID = 1L;
@@ -154,9 +155,7 @@ public class Main extends App {
         };
     }
 
-    /** Open help view action
-     * @return
-     */
+    /** action */
     private Action dismissableMessagePaneAction() {
         return new AbstractAction("Show dismissable message pane") {
             private static final long serialVersionUID = 1L;
@@ -170,9 +169,7 @@ public class Main extends App {
         };
     }
 
-    /** Open file action
-     * @return
-     */
+    /** Open file action */
     private RegisteredAction openAction() {
         RegisteredAction temp = new RegisteredAction("fr.jmmc.mcs.modjava.Main", "_openAction") {
             private static final long serialVersionUID = 1L;

@@ -147,7 +147,10 @@ public final class MutableComplex implements Complex {
      */
     @Override
     public Complex add(final Complex rhs) {
-        return updateOrCreateComplex(real + rhs.getReal(), imaginary + rhs.getImaginary());
+//        return updateOrCreateComplex(real + rhs.getReal(), imaginary + rhs.getImaginary());
+        this.real += rhs.getReal();
+        this.imaginary += rhs.getImaginary();
+        return this;
     }
 
     /**

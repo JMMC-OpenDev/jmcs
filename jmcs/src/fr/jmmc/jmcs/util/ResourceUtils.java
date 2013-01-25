@@ -193,7 +193,7 @@ public abstract class ResourceUtils {
      * @return resource path
      */
     public static String getPathFromResourceFilename(final String fileName) {
-        return getPathFromResourceFilename(App.getSharedInstance().getClass(), fileName);
+        return getPathFromResourceFilename(App.getInstance().getClass(), fileName);
     }
 
     /**

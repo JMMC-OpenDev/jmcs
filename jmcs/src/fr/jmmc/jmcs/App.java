@@ -59,7 +59,7 @@ public abstract class App {
     /** flag to avoid calls to System.exit() (JUnit) */
     private static boolean _avoidSystemExit = false;
     /** Singleton reference */
-    private static App _sharedInstance;
+    private static App _instance;
     /** flag indicating if the application started properly and is ready (visible) */
     private static boolean _applicationReady = false;
     /** Main frame of the application (singleton) */
@@ -137,7 +137,7 @@ public abstract class App {
         // Check in common preferences whether startup splashscreen should be shown or not
         _showSplashScreen = shouldShowSplashScreen;
         // Set shared instance
-        _sharedInstance = this;
+        _instance = this;
         _logger.debug("App object instantiated and logger created.");
     }
 
@@ -409,13 +409,13 @@ public abstract class App {
         _logger.info("Killing the application.");
 
         try {
-            final App application = App.getSharedInstance();
+            final App application = App.getInstance();
 
             if (application != null) {
                 application.cleanup();
             }
         } finally {
-            _sharedInstance = null;
+            _instance = null;
             _applicationFrame = null;
 
             if (!_avoidSystemExit) {
@@ -672,8 +672,8 @@ public abstract class App {
      *
      * @return shared instance
      */
-    public static App getSharedInstance() {
-        return _sharedInstance;
+    public static App getInstance() {
+        return _instance;
     }
 
     /**

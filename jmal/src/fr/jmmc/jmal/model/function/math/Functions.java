@@ -5,6 +5,7 @@ package fr.jmmc.jmal.model.function.math;
 
 import cern.jet.math.Bessel;
 import fr.jmmc.jmal.complex.MutableComplex;
+import net.jodk.lang.FastMath;
 
 /**
  * @author Laurent BOURGES.
@@ -60,7 +61,7 @@ public final class Functions {
             final double phase = TWO_PI_MAS2RAD * (x * ufreq + y * vfreq);
             // update output complex instance (mutable):
             if (USE_FAST_MATH) {
-                output.updateComplex(value * net.jodk.lang.FastMath.cos(phase), -value * net.jodk.lang.FastMath.sin(phase));
+                output.updateComplex(value * FastMath.cos(phase), -value * FastMath.sin(phase));
             } else {
                 output.updateComplex(value * Math.cos(phase), -value * Math.sin(phase));
             }

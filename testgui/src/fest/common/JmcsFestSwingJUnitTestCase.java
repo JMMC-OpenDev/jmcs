@@ -21,7 +21,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /**
- * This class extends FestSwingCustomJUnitTestCase to start / stop one Jmcs application
+ * This class extends FestSwingCustomJUnitTestCase to start / stop one jMCS application
  * @author bourgesl
  */
 public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {

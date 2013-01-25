@@ -59,7 +59,7 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
 
         // Check arguments validity
         if ((preferences == null) || (booleanPreferencesHashMap == null) || (booleanPreferencesHashMap.size() < 1)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid parameter received");
         }
 
         // Decipher message availability

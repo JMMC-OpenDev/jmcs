@@ -523,63 +523,7 @@ public abstract class App {
             });
         }
 
-        SwingUtils.invokeLaterEDT(new Runnable() {
-            /**
-             * Display warning if OpenJDK detected:
-             */
-            @Override
-            public void run() {
-
-                final String jvmName = System.getProperty("java.vm.name");
-                final String jvmVendor = System.getProperty("java.vm.vendor");
-                final String jvmVersion = System.getProperty("java.vm.version");
-                final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
-
-                boolean shouldWarn = false;
-                String message = "<HTML><BODY>";
-                if (jvmName != null && jvmName.toLowerCase().contains("openjdk")) {
-                    _logger.warn("Detected OpenJDK runtime environment.");
-                    shouldWarn = true;
-                    message += "<FONT COLOR='RED'>WARNING</FONT> : ";
-                    message += "Your Java Virtual Machine is an OpenJDK JVM, which has known bugs (SWING look and feel, fonts, PDF issues...) on several Linux distributions."
-                            + "<BR/><BR/>";
-                }
-
-                if (SystemUtils.IS_JAVA_1_5) {
-                    _logger.warn("Detected JDK 1.5 runtime environment.");
-                    shouldWarn = true;
-                    message += "<FONT COLOR='RED'>WARNING</FONT> : ";
-                    message += "Your Java Virtual Machine is of version 1.5, which has several limitations and is not maintained anymore security-wise."
-                            + "<BR/><BR/>";
-                }
-
-                if (shouldWarn) {
-                    message += "<BR/>"
-                            + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version 1.6 or newer, available at:"
-                            + "<BR/><BR/>"
-                            + "<CENTER><A HREF='http://java.sun.com/javase/downloads/'>http://java.sun.com/javase/downloads/</A></CENTER>"
-                            + "<BR/><BR/>"
-                            + "<I>Your current JVM Information :</I><BR/>"
-                            + "<TT>"
-                            + "java.vm.name = '" + jvmName + "'<BR/>"
-                            + "java.vm.vendor = '" + jvmVendor + "'<BR/>"
-                            + "java.vm.version = '" + jvmVersion + "'<BR/>"
-                            + "Java Home :<BR/>'" + jvmHome + "'"
-                            + "</TT>";
-                    message += "</BODY></HTML>";
-
-                    ResizableTextViewFactory.createHtmlWindow(message, "Deprecated Java environment detected !", true);
-                }
-            }
-        });
-    }
-
-    /**
-     * Return true if there is a file name argument for the open action (during startup)
-     * @return true if there is a file name argument for the open action
-     */
-    protected final boolean hasFileArgument() {
-        return _fileArgument != null;
+        showUnsupportedJdkWarning();
     }
 
     /** Show the splash screen */
@@ -639,7 +583,6 @@ public abstract class App {
                 App.quit();
             }
         });
-
     }
 
     /**
@@ -713,6 +656,58 @@ public abstract class App {
                 }
             }
         }
+    }
+
+    private void showUnsupportedJdkWarning() {
+        SwingUtils.invokeLaterEDT(new Runnable() {
+            /**
+             * Display warning if OpenJDK detected:
+             */
+            @Override
+            public void run() {
+
+                final String jvmName = System.getProperty("java.vm.name");
+                final String jvmVendor = System.getProperty("java.vm.vendor");
+                final String jvmVersion = System.getProperty("java.vm.version");
+                final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
+
+                boolean shouldWarn = false;
+                String message = "<HTML><BODY>";
+                if (jvmName != null && jvmName.toLowerCase().contains("openjdk")) {
+                    _logger.warn("Detected OpenJDK runtime environment.");
+                    shouldWarn = true;
+                    message += "<FONT COLOR='RED'>WARNING</FONT> : ";
+                    message += "Your Java Virtual Machine is an OpenJDK JVM, which has known bugs (SWING look and feel, fonts, PDF issues...) on several Linux distributions."
+                            + "<BR/><BR/>";
+                }
+
+                if (SystemUtils.IS_JAVA_1_5) {
+                    _logger.warn("Detected JDK 1.5 runtime environment.");
+                    shouldWarn = true;
+                    message += "<FONT COLOR='RED'>WARNING</FONT> : ";
+                    message += "Your Java Virtual Machine is of version 1.5, which has several limitations and is not maintained anymore security-wise."
+                            + "<BR/><BR/>";
+                }
+
+                if (shouldWarn) {
+                    message += "<BR/>"
+                            + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version 1.6 or newer, available at:"
+                            + "<BR/><BR/>"
+                            + "<CENTER><A HREF='http://java.sun.com/javase/downloads/'>http://java.sun.com/javase/downloads/</A></CENTER>"
+                            + "<BR/><BR/>"
+                            + "<I>Your current JVM Information :</I><BR/>"
+                            + "<TT>"
+                            + "java.vm.name = '" + jvmName + "'<BR/>"
+                            + "java.vm.vendor = '" + jvmVendor + "'<BR/>"
+                            + "java.vm.version = '" + jvmVersion + "'<BR/>"
+                            + "Java Home :<BR/>'" + jvmHome + "'"
+                            + "</TT>";
+                    message += "</BODY></HTML>";
+
+                    ResizableTextViewFactory.createHtmlWindow(message, "Deprecated Java environment detected !", true);
+                }
+            }
+        });
     }
 }
 /*___oOo___*/

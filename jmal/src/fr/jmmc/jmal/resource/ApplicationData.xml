@@ -65,6 +65,10 @@
             license="MPL/LGPL/GPL" />
             <!-- Mozilla Public License: http://www.mozilla.org/MPL/ -->
 
+        <package name="JODK"
+            description="Java Optimized Development Kit (JODK) is a performance-oriented Java general-purpose library, which treatments are extensions, additions (FastMath)"
+            link="http://code.google.com/p/jodk/"
+            license="APACHE_V2"/>
 
         <!-- 2. Swing -->
 

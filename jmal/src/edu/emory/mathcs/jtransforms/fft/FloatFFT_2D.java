@@ -49,7 +49,8 @@ import edu.emory.mathcs.utils.ConcurrencyUtils;
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
  * 
  */
-public final strictfp class FloatFFT_2D {
+// Laurent BOURGES: remove strictfp keyword
+public final class FloatFFT_2D {
 
     private final FloatFFT_1D fftColumns;
     private final FloatFFT_1D fftRows;

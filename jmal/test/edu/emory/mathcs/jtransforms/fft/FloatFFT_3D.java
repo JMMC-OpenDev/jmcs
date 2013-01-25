@@ -51,7 +51,8 @@ import edu.emory.mathcs.utils.ConcurrencyUtils;
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
  *
  */
-public strictfp class FloatFFT_3D {
+// Laurent BOURGES: remove strictfp keyword
+public class FloatFFT_3D {
 
     private int slices;
 

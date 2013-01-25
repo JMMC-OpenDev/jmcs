@@ -51,7 +51,8 @@ import edu.emory.mathcs.utils.ConcurrencyUtils;
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
  * 
  */
-public strictfp final class FloatFFT_1D {
+// Laurent BOURGES: remove strictfp keyword
+public final class FloatFFT_1D {
 
     private static enum Plans {
         SPLIT_RADIX, MIXED_RADIX, BLUESTEIN

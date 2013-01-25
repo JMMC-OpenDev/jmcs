@@ -11,6 +11,9 @@ import fr.jmmc.jmal.complex.MutableComplex;
  */
 public final class Functions {
 
+    /** enable / disable FastMath */
+    private static final boolean USE_FAST_MATH = true;
+
     /* mathematical constants */
     /** _LPB_PI = value of the variable PI, to avoid any corruption */
     public final static double PI = 3.141592653589793238462643383279503D;
@@ -20,6 +23,10 @@ public final class Functions {
     public final static double MAS2RAD = DEG2RAD / 3600D / 1000D;
     /** constant used to compute the gaussian model */
     private final static double GAUSS_CST = 4d * Math.log(2d);
+    /** 2 x PI x MAS2RAD */
+    private final static double TWO_PI_MAS2RAD = 2d * PI * MAS2RAD;
+    /** PI x MAS2RAD */
+    private final static double PI_MAS2RAD = PI * MAS2RAD;
 
     /**
      * Forbidden constructor
@@ -50,9 +57,13 @@ public final class Functions {
             // update output complex instance (mutable):
             output.updateComplex(value, 0d);
         } else {
-            final double phase = 2D * PI * MAS2RAD * (x * ufreq + y * vfreq);
+            final double phase = TWO_PI_MAS2RAD * (x * ufreq + y * vfreq);
             // update output complex instance (mutable):
-            output.updateComplex(value * Math.cos(phase), -value * Math.sin(phase));
+            if (USE_FAST_MATH) {
+                output.updateComplex(value * net.jodk.lang.FastMath.cos(phase), -value * net.jodk.lang.FastMath.sin(phase));
+            } else {
+                output.updateComplex(value * Math.cos(phase), -value * Math.sin(phase));
+            }
         }
     }
 
@@ -226,7 +237,7 @@ public final class Functions {
         // norm of uv :
         final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
 
-        final double d = PI * MAS2RAD * diameter * normUV;
+        final double d = PI_MAS2RAD * diameter * normUV;
 
         double g;
         if (d == 0D) {
@@ -254,7 +265,7 @@ public final class Functions {
         // norm of uv :
         final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
 
-        final double d = PI * MAS2RAD * diameter * normUV;
+        final double d = PI_MAS2RAD * diameter * normUV;
 
         double g;
         if (d == 0D) {
@@ -296,7 +307,7 @@ public final class Functions {
 
         final double alpha = 1d + width / radius;
 
-        final double r = PI * MAS2RAD * radius * normUV;
+        final double r = PI_MAS2RAD * radius * normUV;
 
         double g;
         if (r == 0D) {
@@ -321,7 +332,7 @@ public final class Functions {
     public static double computeGaussian(final double ufreq, final double vfreq, final double flux_weight,
                                          final double fwhm) {
 
-        final double f = PI * MAS2RAD * fwhm;
+        final double f = PI_MAS2RAD * fwhm;
 
         final double d = -f * f / GAUSS_CST * (ufreq * ufreq + vfreq * vfreq);
 
@@ -368,7 +379,7 @@ public final class Functions {
 
         final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
 
-        final double d = PI * MAS2RAD * diameter * normUV;
+        final double d = PI_MAS2RAD * diameter * normUV;
 
         double g;
         if (d == 0D) {

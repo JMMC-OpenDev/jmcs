@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
  * 
  * This class is dedicated to Slf4j @see http://www.slf4j.org/ (MIT License) using Logback @see http://logback.qos.ch/ (EPL v1.0 / LGPL 2.1).
  * 
- * License: LGPL 2.1
- * 
  * @author Laurent BOURGES.
  */
 public final class LogbackGui extends javax.swing.JPanel implements TreeSelectionListener, ActionListener {

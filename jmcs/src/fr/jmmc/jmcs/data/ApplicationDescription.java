@@ -345,7 +345,13 @@ public final class ApplicationDescription {
     }
 
     /**
+     * @return the value of the "program" element name from the XML file
+     */
+    public String getProgramNameWithVersion() {
+        return getProgramName() + " v" + getProgramVersion();
+    }
 
+    /**
      * @return the application main web page URL from the "link" field in the XML file
      */
     public String getLinkValue() {

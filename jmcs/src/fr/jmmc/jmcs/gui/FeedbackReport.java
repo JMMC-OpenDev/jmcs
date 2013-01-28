@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.PreferencedDocument;
@@ -318,14 +319,12 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         _logger.debug("Application is ready : {}", ready);
 
-        final boolean exit = !ready || !App.getFrame().isVisible();
+        final boolean shouldExit = !ready || !App.getFrame().isVisible();
 
         // Exit or not the application ?
-        if (exit) {
-
+        if (shouldExit) {
             // Exit the application
-            App.exit(-1);
-
+            Bootstrapper.stopApp(-1);
         }
     }
 

@@ -5,6 +5,7 @@ package fr.jmmc.jmcs.gui.action.internal;
 
 import com.apple.eawt.QuitResponse;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.AboutBox;
 import fr.jmmc.jmcs.gui.DependenciesView;
@@ -15,7 +16,6 @@ import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.resource.image.ResourceImage;
-import fr.jmmc.jmcs.util.logging.LoggingService;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -193,7 +193,7 @@ public class InternalActionFactory {
          */
         ShowAboutBoxAction(String classPath, String fieldName) {
 
-            super(classPath, fieldName, "Copy Acknowledgement to Clipboard");
+            super(classPath, fieldName, "About...");
             _applicationData = ApplicationDescription.getInstance();
         }
 
@@ -203,16 +203,14 @@ public class InternalActionFactory {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            if (_applicationData != null) {
-                if (_aboutBox != null) {
-                    if (!_aboutBox.isVisible()) {
-                        _aboutBox.setVisible(true);
-                    } else {
-                        _aboutBox.toFront();
-                    }
+            if (_aboutBox != null) {
+                if (!_aboutBox.isVisible()) {
+                    _aboutBox.setVisible(true);
                 } else {
-                    _aboutBox = new AboutBox();
+                    _aboutBox.toFront();
                 }
+            } else {
+                _aboutBox = new AboutBox();
             }
         }
     }
@@ -554,7 +552,7 @@ public class InternalActionFactory {
                     if (response != null) {
                         App.setAvoidSystemExit(true);
                     }
-                    App.exit(0);
+                    Bootstrapper.stopApp(0);
 
                     if (response != null) {
                         response.performQuit();

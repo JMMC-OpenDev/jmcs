@@ -189,7 +189,7 @@ public class Main extends App {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Bootstrapper.launch(new Main(args));
+        Bootstrapper.launchApp(new Main(args));
     }
 }
 /*___oOo___*/

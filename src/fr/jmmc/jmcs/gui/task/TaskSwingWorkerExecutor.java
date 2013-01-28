@@ -48,9 +48,9 @@ public final class TaskSwingWorkerExecutor {
     /**
      * Shutdown the TaskSwingWorkerExecutor
      */
-    public static synchronized void stop() {
+    public static synchronized void shutdown() {
         if (_instance != null) {
-            _instance.shutdown();
+            _instance.stop();
 
             if (DEBUG_FLAG) {
                 _logger.info("stopped SwingWorkerExecutor: {}", _instance);
@@ -144,7 +144,7 @@ public final class TaskSwingWorkerExecutor {
     /**
      * Stop all active worker threads immediately (interrupted)
      */
-    private void shutdown() {
+    private void stop() {
         _executorService.shutdownNow();
     }
 

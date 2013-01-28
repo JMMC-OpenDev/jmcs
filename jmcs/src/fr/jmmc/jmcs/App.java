@@ -15,6 +15,7 @@ import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
+import fr.jmmc.jmcs.util.logging.LoggingService;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import java.awt.Container;
@@ -262,7 +263,7 @@ public abstract class App {
                     if (arg != null) {
                         _logger.info("Set logger level to '{}'.", arg);
 
-                        final ch.qos.logback.classic.Logger jmmcLogger = Bootstrapper.getJmmcLogger();
+                        final ch.qos.logback.classic.Logger jmmcLogger = LoggingService.getJmmcLogger();
                         if (arg.equals("0")) {
                             jmmcLogger.setLevel(Level.OFF);
                         } else if (arg.equals("1")) {

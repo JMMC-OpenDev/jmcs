@@ -29,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,6 +145,15 @@ public abstract class App {
         _instance = this;
     }
 
+    static void ___internalSingletonCleanup(final int statusCode) {
+        _instance = null;
+        _applicationFrame = null;
+        if (!_avoidSystemExit) {
+            _logger.info("Exiting with status code '{}'.", statusCode);
+            System.exit(statusCode);
+        }
+    }
+
     final void ___internalStart() {
         // Interpret arguments
         interpretArguments(_args);
@@ -218,8 +226,10 @@ public abstract class App {
         final LongOpt[] longOptArray = new LongOpt[_longOpts.size()];
         _longOpts.toArray(longOptArray);
 
+        final ApplicationDescription applicationDescription = ApplicationDescription.getInstance();
+
         // Instantiate the getopt object
-        final Getopt getOpt = new Getopt(ApplicationDescription.getInstance().getProgramName(), args, "hv:", longOptArray, true);
+        final Getopt getOpt = new Getopt(applicationDescription.getProgramName(), args, "hv:", longOptArray, true);
 
         int c; // argument key
         String arg; // argument value
@@ -237,10 +247,10 @@ public abstract class App {
                 // Show the name and the version of the program
                 case 1:
                     // Show the application name on the shell
-                    System.out.println(ApplicationDescription.getInstance().getProgramName() + " v" + ApplicationDescription.getInstance().getProgramVersion());
+                    System.out.println(applicationDescription.getProgramNameWithVersion());
 
                     // Exit the application
-                    App.exit(0);
+                    Bootstrapper.stopApp(0);
                     break;
 
                 // Display the LogGUI panel
@@ -299,7 +309,7 @@ public abstract class App {
                     System.out.println("Unknow command");
 
                     // Exit the application
-                    App.exit(-1);
+                    Bootstrapper.stopApp(-1);
                     break;
             }
         }
@@ -324,7 +334,7 @@ public abstract class App {
         System.out.println("LEVEL : 0=OFF, 1=SEVERE, 2=WARNING, 3=INFO, 4=FINE, 5=ALL\n");
 
         // Exit the application
-        App.exit(0);
+        Bootstrapper.stopApp(0);
     }
 
     /**
@@ -401,39 +411,7 @@ public abstract class App {
      * Hook to handle operations when at exit time.
      * @see App#exit(int)
      */
-    public void cleanup() {
-        // Disconnect from SAMP Hub
-        SampManager.shutdown();
-
-        // Close all HTTP connections (http client)
-        MultiThreadedHttpConnectionManager.shutdownAll();
-    }
-
-    /**
-     * Exit the application :
-     * - calls onFinish()
-     * - System.exit(statusCode)
-     * @param statusCode status code to return
-     */
-    public static void exit(final int statusCode) {
-        _logger.info("Killing the application.");
-
-        try {
-            final App application = App.getInstance();
-
-            if (application != null) {
-                application.cleanup();
-            }
-        } finally {
-            _instance = null;
-            _applicationFrame = null;
-
-            if (!_avoidSystemExit) {
-                // anyway, exit :
-                System.exit(statusCode);
-            }
-        }
-    }
+    protected abstract void cleanup();
 
     /**
      * Define the  flag to avoid calls to System.exit() (JUnit)
@@ -444,26 +422,9 @@ public abstract class App {
     }
 
     /**
-     * Callback on exit.
-     */
-    public static void quit() {
-        InternalActionFactory.quitAction().actionPerformed(null);
-    }
-
-    /**
      * Describe the life cycle of the application
      */
     final void ___internalRun() {
-
-        initServices();
-
-        // If running under Mac OS X
-        if (SystemUtils.IS_OS_MAC_OSX) {
-            // Set application name :
-            // system properties must be set before using any Swing component:
-            // Hope nothing as already been done...
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", ApplicationDescription.getInstance().getProgramName());
-        }
 
         // Using invokeAndWait to be in sync with this thread :
         // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
@@ -473,6 +434,15 @@ public abstract class App {
              */
             @Override
             public void run() {
+
+                // If running under Mac OS X
+                if (SystemUtils.IS_OS_MAC_OSX) {
+                    // Set application name :
+                    // system properties must be set before using any Swing component:
+                    // Hope nothing as already been done...
+                    System.setProperty("com.apple.mrj.application.apple.menu.about.name", ApplicationDescription.getInstance().getProgramName());
+                }
+
                 // Show splash screen if we have to
                 if (_showSplashScreen) {
                     ___internalShowSplashScreen();
@@ -580,7 +550,7 @@ public abstract class App {
             @Override
             public void windowClosing(final WindowEvent e) {
                 // Callback on exit
-                App.quit();
+                InternalActionFactory.quitAction().actionPerformed(null);
             }
         });
     }
@@ -643,14 +613,12 @@ public abstract class App {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
 
             final Class<?> osxAdapter = IntrospectionUtils.getClass("fr.jmmc.jmcs.gui.util.MacOSXAdapter");
-
             if (osxAdapter == null) {
                 // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
                 // because OSXAdapter extends ApplicationAdapter in its def
                 _logger.error("This version of Mac OS X does not support the Apple EAWT. Application Menu handling has been disabled.");
             } else {
                 final Method registerMethod = IntrospectionUtils.getMethod(osxAdapter, "registerMacOSXApplication", new Class<?>[]{JFrame.class});
-
                 if (registerMethod != null) {
                     IntrospectionUtils.executeMethod(registerMethod, new Object[]{frame});
                 }

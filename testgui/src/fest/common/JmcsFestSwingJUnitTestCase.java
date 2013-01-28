@@ -4,6 +4,7 @@
 package fest.common;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import java.awt.Frame;
 import java.awt.image.BufferedImage;
@@ -111,16 +112,8 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
                 logger.info("onTearDownOnce : exit application = " + app);
             }
 
-            app.cleanup();
+            Bootstrapper.stopApp(1);
         }
-    }
-
-    /**
-     * Return the application
-     * @return application
-     */
-    protected static App getApplication() {
-        return App.getInstance();
     }
 
     /**

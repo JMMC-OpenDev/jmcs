@@ -191,5 +191,15 @@ public class Main extends App {
     public static void main(String[] args) {
         Bootstrapper.launchApp(new Main(args));
     }
+
+    @Override
+    protected void cleanup() {
+        _aboutBoxButton = null;
+        _feedbackReportButton = null;
+        _helpViewButton = null;
+        _openAction = null;
+        _actions = null;
+        _testDismissableMessagePane = null;
+    }
 }
 /*___oOo___*/

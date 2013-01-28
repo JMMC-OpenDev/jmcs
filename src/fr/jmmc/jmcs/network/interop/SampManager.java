@@ -136,9 +136,9 @@ public final class SampManager {
         _connector = new GuiHubConnector(profile);
 
         // Build application metadata
-        final ApplicationDescription applicationDataModel = ApplicationDescription.getInstance();
-        final String applicationName = applicationDataModel.getProgramName();
-        Metadata metaData = forgeSampMetaDataFromApplicationDataModel(applicationName, applicationDataModel);
+        final ApplicationDescription applicationDescription = ApplicationDescription.getInstance();
+        final String applicationName = applicationDescription.getProgramName();
+        Metadata metaData = forgeSampMetaDataFromApplicationDescription(applicationName, applicationDescription);
         _connector.declareMetadata(metaData);
 
         // Monitor hub connections
@@ -176,7 +176,7 @@ public final class SampManager {
      * @param applicationDataModel application data model instance
      * @return new SAMP Metadata instance
      */
-    private Metadata forgeSampMetaDataFromApplicationDataModel(final String applicationName, final ApplicationDescription applicationDataModel) {
+    private Metadata forgeSampMetaDataFromApplicationDescription(final String applicationName, final ApplicationDescription applicationDataModel) {
 
         final Metadata meta = new Metadata();
 

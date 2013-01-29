@@ -5,9 +5,7 @@ package fr.jmmc.jmcs;
 
 import ch.qos.logback.classic.Level;
 import fr.jmmc.jmcs.data.ApplicationDescription;
-import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.gui.MainMenuBar;
-import fr.jmmc.jmcs.gui.SplashScreen;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
@@ -60,19 +58,11 @@ public abstract class App {
     private static App _instance;
     /** flag indicating if the application started properly and is ready (visible) */
     private static boolean _applicationReady = false;
-    /** If it's true, exit the application after the exit method */
-    private static boolean _exitApplicationWhenClosed = true;
-    /** flag to avoid calls to System.exit() (JUnit) */
-    private static boolean _avoidSystemExit = false;
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
     // Members
     /** Store a proxy to the shared ActionRegistrar facility */
     private final ActionRegistrar _actionRegistrar = ActionRegistrar.getInstance();
-    /** Show the splash screen ? */
-    private boolean _showSplashScreen = true;
-    /** Splash screen */
-    private SplashScreen _splashScreen = null;
     /** Command-line argument meta data */
     private final List<LongOpt> _longOpts = new ArrayList<LongOpt>();
     /** Temporary store the command line arguments (long opt = value) */
@@ -95,48 +85,7 @@ public abstract class App {
      * @param args command-line arguments
      */
     protected App(String[] args) {
-        // Start application immediatly, with splashscreen
-        this(args, false);
-    }
-
-    /** Creates a new App object, with possibility to delay execution
-     *
-     * @param args command-line arguments
-     * @param waitBeforeExecution if true, do not launch ___internalRun() automatically
-     */
-    protected App(String[] args, boolean waitBeforeExecution) {
-        this(args, waitBeforeExecution, true);
-    }
-
-    /**
-     * Constructor with possibility to specify if the application should be
-     * stopped when the exit method is called
-     *
-     * @param args command-line arguments
-     * @param waitBeforeExecution if true, do not launch ___internalRun() automatically
-     * @param exitWhenClosed if true, the application will close when exit method is called
-     */
-    protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed) {
-        // Start application with splashscreen
-        this(args, waitBeforeExecution, exitWhenClosed, CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN));
-    }
-
-    /**
-     * Constructor with possibility to specify if the application should be
-     * stopped when the exit method is called
-     *
-     * @param args command-line arguments
-     * @param waitBeforeExecution if true, do not launch ___internalRun() automatically
-     * @param exitWhenClosed if true, the application will close when exit method is called
-     * @param shouldShowSplashScreen show startup splash screen if true, nothing otherwise
-     */
-    protected App(String[] args, boolean waitBeforeExecution, boolean exitWhenClosed, boolean shouldShowSplashScreen) {
         _args = args;
-        // Attributes affectations
-        _exitApplicationWhenClosed = exitWhenClosed;
-        // Check in common preferences whether startup splashscreen should be shown or not
-        _showSplashScreen = shouldShowSplashScreen;
-
         _logger.debug("App object instantiated and logger created.");
     }
 
@@ -145,13 +94,9 @@ public abstract class App {
         _instance = this;
     }
 
-    static void ___internalSingletonCleanup(final int statusCode) {
+    static void ___internalSingletonCleanup() {
         _instance = null;
         _applicationFrame = null;
-        if (!_avoidSystemExit) {
-            _logger.info("Exiting with status code '{}'.", statusCode);
-            System.exit(statusCode);
-        }
     }
 
     final void ___internalStart() {
@@ -350,10 +295,10 @@ public abstract class App {
     protected abstract void setupGui();
 
     /**
-     * Prepare interoperability (SAMP message handlers)
+     * Hook to override in your App, that let you declare SAMP capabilities (if any).
      */
     protected void declareInteroperability() {
-        _logger.debug("Default App.declareInteroperability() handler called.");
+        _logger.debug("Empty App.declareInteroperability() handler called.");
     }
 
     /**
@@ -381,13 +326,6 @@ public abstract class App {
     }
 
     /**
-     * @return true if should exit when closed, false otherwise.
-     */
-    public boolean shouldExitWhenClosed() {
-        return _exitApplicationWhenClosed;
-    }
-
-    /**
      * Hook to handle SAMP hub destiny before closing application.
      *
      * This method is automatically triggered when the application "Quit" menu
@@ -402,7 +340,7 @@ public abstract class App {
      * to ask user permission.
      */
     public boolean shouldSilentlyKillSampHubOnQuit() {
-        _logger.info("Default App.silentlyKillSampHubOnQuit() handler called.");
+        _logger.info("Empty App.silentlyKillSampHubOnQuit() handler called.");
 
         return false;
     }
@@ -412,14 +350,6 @@ public abstract class App {
      * @see App#exit(int)
      */
     protected abstract void cleanup();
-
-    /**
-     * Define the  flag to avoid calls to System.exit() (JUnit)
-     * @param flag true to avoid calls to System.exit()
-     */
-    public static void setAvoidSystemExit(final boolean flag) {
-        _avoidSystemExit = flag;
-    }
 
     /**
      * Describe the life cycle of the application
@@ -441,11 +371,6 @@ public abstract class App {
                     // system properties must be set before using any Swing component:
                     // Hope nothing as already been done...
                     System.setProperty("com.apple.mrj.application.apple.menu.about.name", ApplicationDescription.getInstance().getProgramName());
-                }
-
-                // Show splash screen if we have to
-                if (_showSplashScreen) {
-                    ___internalShowSplashScreen();
                 }
 
                 // Delegate initialization to daughter class through abstract setupGui() call
@@ -478,7 +403,7 @@ public abstract class App {
         // Indicate that the application is ready (visible)
         _applicationReady = true;
 
-        // If any file argument exists, open that file using the registered open action :
+        // If any file argument exists, open that file using the registered open action
         if (_fileArgument != null) {
             SwingUtils.invokeLaterEDT(new Runnable() {
                 /**
@@ -494,29 +419,6 @@ public abstract class App {
         }
 
         ResizableTextViewFactory.showUnsupportedJdkWarning();
-    }
-
-    /** Show the splash screen */
-    final void ___internalShowSplashScreen() {
-        _logger.debug("Show splash screen");
-
-        // Instantiate the splash screen :
-        _splashScreen = new SplashScreen();
-
-        // Show the splash screen :
-        _splashScreen.display();
-    }
-
-    /** Show the splash screen */
-    final void ___internalHideSplashScreen() {
-        // In order to see the error window
-        if (_splashScreen != null) {
-            if (_splashScreen.isVisible()) {
-                _splashScreen.setVisible(false);
-            }
-            // cleanup (helps GC):
-            _splashScreen = null;
-        }
     }
 
     /**

@@ -3,8 +3,6 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.action.internal;
 
-import com.apple.eawt.QuitResponse;
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.AboutBox;
@@ -14,7 +12,6 @@ import fr.jmmc.jmcs.gui.HelpView;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.network.BrowserLauncher;
-import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.resource.image.ResourceImage;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import java.awt.Toolkit;
@@ -39,27 +36,27 @@ public class InternalActionFactory {
     private static InternalActionFactory _instance = null;
     // Members
     /** Acknowledgment handling action */
-    private static ShowAcknowledgmentAction _showAcknowledgmentAction = null;
+    private ShowAcknowledgmentAction _showAcknowledgmentAction = null;
     /** Show About... box action */
-    private static ShowAboutBoxAction _showAboutBoxAction = null;
+    private ShowAboutBoxAction _showAboutBoxAction = null;
     /** Show Feedback Report action */
-    private static ShowFeedbackReportAction _showFeedbackReportAction = null;
+    private ShowFeedbackReportAction _showFeedbackReportAction = null;
     /** Show help handling action */
-    private static ShowHelpAction _showHelpAction = null;
+    private ShowHelpAction _showHelpAction = null;
     /** Show hot news handling action */
-    private static ShowHotNewsAction _showHotNewsAction = null;
+    private ShowHotNewsAction _showHotNewsAction = null;
     /** Show release handling action */
-    private static ShowReleaseAction _showReleaseAction = null;
+    private ShowReleaseAction _showReleaseAction = null;
     /** Show FAQ handling action */
-    private static ShowFaqAction _showFaqAction = null;
+    private ShowFaqAction _showFaqAction = null;
     /** Show Dependencies action */
-    private static ShowDependenciesAction _showDependenciesAction = null;
+    private ShowDependenciesAction _showDependenciesAction = null;
     /** Show log GUI action */
-    private static ShowLogGuiAction _showLogGuiAction = null;
+    private ShowLogGuiAction _showLogGuiAction = null;
     /** default Open handling action */
-    private static DefaultOpenAction _defaultOpenAction = null;
+    private DefaultOpenAction _defaultOpenAction = null;
     /** Quit handling action */
-    private static QuitAction _quitAction = null;
+    private QuitAction _quitAction = null;
 
     /** Hidden constructor */
     private InternalActionFactory() {
@@ -116,7 +113,7 @@ public class InternalActionFactory {
      * @return feedback action which open the feedback window
      */
     public static Action showFeedbackReportAction() {
-        return _showFeedbackReportAction;
+        return getInstance()._showFeedbackReportAction;
     }
 
     /**
@@ -521,52 +518,7 @@ public class InternalActionFactory {
         public void actionPerformed(ActionEvent evt) {
             _logger.debug("Application is about to die, should we proceed ?");
 
-            // Mac OS X Quit action handler:
-            final QuitResponse response;
-            if (evt != null && evt.getSource() instanceof QuitResponse) {
-                response = (QuitResponse) evt.getSource();
-            } else {
-                response = null;
-            }
-
-            // Check if user is OK to kill SAMP hub (if any)
-            if (!SampManager.getInstance().allowHubKilling()) {
-                _logger.debug("SAMP cancelled application kill.");
-                // Otherwise cancel quit
-
-                if (response != null) {
-                    response.cancelQuit();
-                }
-                return;
-            }
-
-            // If we are ready to canBeTerminatedNow application execution
-            final App app = App.getInstance();
-            if (app.canBeTerminatedNow()) {
-                _logger.debug("Application should be killed.");
-
-                // Verify if we are authorized to kill the application or not
-                if (app.shouldExitWhenClosed()) {
-                    // Exit the application
-
-                    if (response != null) {
-                        App.setAvoidSystemExit(true);
-                    }
-                    Bootstrapper.stopApp(0);
-
-                    if (response != null) {
-                        response.performQuit();
-                    }
-
-                } else {
-                    _logger.debug("Application left opened as required.");
-                }
-            } else {
-                _logger.debug("Application killing cancelled.");
-            }
-            if (response != null) {
-                response.cancelQuit();
-            }
+            Bootstrapper.quitApp(evt);
         }
     }
 }

@@ -3,19 +3,14 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.data.ApplicationDescription;
-import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.util.ImageUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -23,6 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class opens a new splash-screen window. Informations of this window
@@ -44,8 +41,9 @@ public class SplashScreen extends JFrame {
     private static final long serialVersionUID = 1;
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(SplashScreen.class.getName());
-
-    /* members */
+    /** Singleton instance */
+    private static SplashScreen _instance = null;
+    // Members
     /** Splash screen has got the same model than about box */
     private final ApplicationDescription _applicationDataModel;
     /** Logo label */
@@ -60,50 +58,68 @@ public class SplashScreen extends JFrame {
     /**
      * Creates a new SplashScreen object.
      */
-    public SplashScreen() {
+    private SplashScreen() {
         _applicationDataModel = ApplicationDescription.getInstance();
-    }
-
-    /**
-     * Create the window fulfilled with all the information included in the Application data model.
-     */
-    public void display() {
         if (_applicationDataModel != null) {
 
             // Draw window
             setAllProperties();
             pack();
-            WindowUtils.centerOnMainScreen(this);
-
-            // Show window :
-            setVisible(true);
-
-            // Use Timer to wait 2,5s before closing this dialog :
-            final Timer timer = new Timer(2500, new ActionListener() {
-
-                /**
-                 * Handle the timer call
-                 * @param ae action event
-                 */
-                @Override
-                public void actionPerformed(final ActionEvent ae) {
-                    // Just call close to hide and dispose this frame :
-                    close();
-                }
-            });
-
-            // timer runs only once :
-            timer.setRepeats(false);
-            timer.start();
         }
     }
 
     /**
-     * Close this splash screen
+     * Create the window fulfilled with all the information included in the Application data model.
+     * @param shouldShowSplashScreen true to effectively show the splash screen, false otherwise.
      */
-    public void close() {
-        setVisible(false);
-        dispose();
+    public static void display(final boolean shouldShowSplashScreen) {
+
+        if (!shouldShowSplashScreen) {
+            return;
+        }
+
+        if (_instance == null) {
+            _instance = new SplashScreen();
+        }
+
+        WindowUtils.centerOnMainScreen(_instance);
+
+        // Show window
+        _instance.setVisible(true);
+
+        // Use Timer to wait 2,5s before closing this dialog :
+        final Timer timer = new Timer(2500, new ActionListener() {
+            /**
+             * Handle the timer call
+             * @param ae action event
+             */
+            @Override
+            public void actionPerformed(final ActionEvent ae) {
+                // Just call close to hide and dispose this frame :
+                SplashScreen.close();
+            }
+        });
+
+        // timer runs only once :
+        timer.setRepeats(false);
+        timer.start();
+    }
+
+    /**
+     * Close the splash screen
+     */
+    public static void close() {
+        if (_instance == null) {
+            return;
+        }
+
+        if (_instance.isVisible()) {
+            _instance.setVisible(false);
+            _instance.dispose();
+        }
+
+        // cleanup (helps GC):
+        _instance = null;
     }
 
     /**

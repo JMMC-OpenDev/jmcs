@@ -52,8 +52,8 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
         // Use main thread to start Jmcs application using subclass.main() :
         if (App.getInstance() == null) {
 
-            // disable use of System.exit() :
-            App.setAvoidSystemExit(true);
+            // disable use of System.exit()
+            Bootstrapper.disableSystemExit(true);
 
             if (JmcsApplicationSetup.applicationClass != null) {
                 if (logger.isLoggable(Level.INFO)) {

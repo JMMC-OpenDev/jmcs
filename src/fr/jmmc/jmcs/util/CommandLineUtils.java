@@ -15,20 +15,16 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
-public final class CliStarter {
+public final class CommandLineUtils {
 
     /** Class logger */
-    private static final Logger _logger = LoggerFactory.getLogger(JnlpStarter.class.getName());
-    /** application identifier for LocalLauncher */
+    private static final Logger _logger = LoggerFactory.getLogger(CommandLineUtils.class.getName());
+    /** Application identifier for LocalLauncher */
     public final static String APP_NAME = "CliStarter";
-    /** user for LocalLauncher */
+    /** User for LocalLauncher */
     public final static String USER_NAME = "JMMC";
-    /** task identifier for LocalLauncher */
+    /** Task identifier for LocalLauncher */
     public final static String TASK_NAME = "CliStarter";
-
-    /** Forbidden constructor */
-    private CliStarter() {
-    }
 
     /**
      * Launch the given command-line path application in background.
@@ -37,8 +33,8 @@ public final class CliStarter {
      * @return the job context identifier
      * @throws IllegalStateException if the job can not be submitted to the job queue
      */
-    public static Long launch(final String cliPath) throws IllegalStateException {
-        return launch(cliPath, new EmptyJobListener());
+    public static Long exec(final String cliPath) throws IllegalStateException {
+        return exec(cliPath, new EmptyJobListener());
     }
 
     /**
@@ -49,7 +45,7 @@ public final class CliStarter {
      * @return the job context identifier
      * @throws IllegalStateException if the job can not be submitted to the job queue
      */
-    public static Long launch(final String cliPath, final JobListener jobListener) throws IllegalStateException {
+    public static Long exec(final String cliPath, final JobListener jobListener) throws IllegalStateException {
 
         if (cliPath == null || cliPath.length() == 0) {
             throw new IllegalArgumentException("empty command-line path !");
@@ -135,4 +131,8 @@ public final class CliStarter {
         }
     }
     */
+
+    /** Forbidden constructor */
+    private CommandLineUtils() {
+    }
 }

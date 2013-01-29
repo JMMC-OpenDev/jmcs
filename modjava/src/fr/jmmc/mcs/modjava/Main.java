@@ -52,7 +52,7 @@ public class Main extends App {
      * @param args
      */
     public Main(String[] args) {
-        super(args, false, true);
+        super(args);
     }
 
     @Override
@@ -189,7 +189,7 @@ public class Main extends App {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Bootstrapper.launchApp(new Main(args));
+        Bootstrapper.launchApp(new Main(args), false, true);
     }
 
     @Override

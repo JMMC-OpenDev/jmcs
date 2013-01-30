@@ -32,21 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class represents an application. In order to use
- * functionalities that are implemented here, you have to
+ * Singleton that represents an application.
+ *
+ * In order to use functionalities provided by jMCS,
  * extend your application from this class.
- *
- * This class is a singleton with abstract methods. If you extend
- * a class from this one, you can have a splash-screen, an about
- * window, the menu bar generation, the possibility to have a help
- * window using <b>jmcsGenerateHelpSetFromHtml</b> from the bash
- * script called <b>jmcsHTML2HelpSet.sh</b> located into the src
- * folder of jMCS, the feedback report etc...
- *
- * To access to the XML informations, this class uses
- * <b>ApplicationDescription</b> class. It's a class which has got getters
- * in order to do that and which has been written to abstract the way
- * to access to these informations.
  *
  * @author Brice COLUCCI, Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
@@ -73,16 +62,16 @@ public abstract class App {
     protected final String[] _args;
 
     /**
-     * Static Logger initialization and Network settings
+     * Static jMCS environment startup.
      */
     static {
         Bootstrapper.bootstrap();
     }
 
     /**
-     * Creates a new App object
+     * Creates a new App object.
      *
-     * @param args command-line arguments
+     * @param args command-line arguments.
      */
     protected App(String[] args) {
         _args = args;
@@ -92,11 +81,6 @@ public abstract class App {
     final void ___internalSingletonInitialization() {
         // Set shared instance
         _instance = this;
-    }
-
-    static void ___internalSingletonCleanup() {
-        _instance = null;
-        _applicationFrame = null;
     }
 
     final void ___internalStart() {
@@ -109,15 +93,15 @@ public abstract class App {
     }
 
     /**
-     * Return command line arguments
-     * @return command line arguments 
+     * Return command line arguments.
+     * @return command line arguments. 
      */
     protected final Map<String, String> getCommandLineArguments() {
         return _cliArguments;
     }
 
     /**
-     * To be override by child classes to add custom command line argument(s) using:
+     * Hook to override in your class to add custom command line argument(s) using:
      * @see  #addCustomCommandLineArgument(java.lang.String, boolean)
      */
     protected void addCustomCommandLineArguments() {
@@ -125,25 +109,24 @@ public abstract class App {
     }
 
     /** 
-     * To be override by child classes to show custom command line argument help 
+     * Hook to override in your class to show custom command line argument help.
      */
     protected void showCustomArgumentsHelp() {
         // noop
     }
 
     /**
-     * Add custom command line argument
-     * @param name option name
-     * @param hasArgument true if an argument is required; false otherwise 
+     * Add custom command line argument.
+     * @param name option name.
+     * @param hasArgument true if an argument is required, false otherwise.
      */
     protected final void addCustomCommandLineArgument(final String name, final boolean hasArgument) {
         _longOpts.add(new LongOpt(name, (hasArgument) ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, 'c')); // 'c' means custom
     }
 
     /**
-     * Interpret command line arguments
-     *
-     * @param args arguments
+     * Interpret command line arguments.
+     * @param args arguments.
      */
     private void interpretArguments(final String[] args) {
         // List received arguments
@@ -206,9 +189,8 @@ public abstract class App {
                 // Open the given file
                 case 3:
                     // get the file path argument and store it temporarly :
-                    this._fileArgument = getOpt.getOptarg();
-
-                    _logger.info("Should open '{}'.", this._fileArgument);
+                    _fileArgument = getOpt.getOptarg();
+                    _logger.info("Should open '{}'.", _fileArgument);
                     break;
 
                 // Set the logger level
@@ -262,7 +244,7 @@ public abstract class App {
         _logger.debug("Application arguments interpreted");
     }
 
-    /** Show command arguments help */
+    /** Show command arguments help. */
     private void showArgumentsHelp() {
         System.out.println("------------- Arguments help --------------------------------------------");
         System.out.println("| Key          Value           Description                              |");
@@ -288,71 +270,25 @@ public abstract class App {
     protected abstract void initServices();
 
     /**
-     * Initialize user interface in EDT.
+     * Hook to override in your App, to initialize user interface in EDT.
      *
      * The actions which are present in menu bar must be instantiated in this method.
      */
     protected abstract void setupGui();
 
     /**
-     * Hook to override in your App, that let you declare SAMP capabilities (if any).
+     * Hook to override in your App, to declare SAMP capabilities (if any).
      */
     protected void declareInteroperability() {
         _logger.debug("Empty App.declareInteroperability() handler called.");
     }
 
     /**
-     * Execute application body
+     * Hook to override in your App, to execute application body.
      */
     protected abstract void execute();
-
     /**
-     * Hook to return whether the application can be terminated or not.
-     *
-     * This method is automatically triggered when the application "Quit" menu
-     * has been used. Thus, you have a chance to do things like saves before the
-     * application really quits.
-     *
-     * The default implementation lets the application silently quit without further ado.
-     *
-     * @warning This method should be overridden to handle quit as you intend to.
-     * In its default behavior, all changes that occurred during application life will be lost.
-     *
-     * @return should return true if the application can exit, or false to cancel exit.
-     */
-    public boolean canBeTerminatedNow() {
-        _logger.info("Default App.canBeTerminatedNow() handler called.");
-        return true;
-    }
-
-    /**
-     * Hook to handle SAMP hub destiny before closing application.
-     *
-     * This method is automatically triggered when the application "Quit" menu
-     * has been used. Thus, you have a chance to bypass SAMP warning message.
-     *
-     * The default implementation asks the user if he really wants to shutdown hub.
-     *
-     * @warning This method should be overridden to handle SAMP hub die as you intend to.
-     * In its default behavior, the SAMP warning message will be shown.
-     *
-     * @return should return true if the SAMP hub should be silently killed, false otherwise
-     * to ask user permission.
-     */
-    public boolean shouldSilentlyKillSampHubOnQuit() {
-        _logger.info("Empty App.silentlyKillSampHubOnQuit() handler called.");
-
-        return false;
-    }
-
-    /**
-     * Hook to handle operations when at exit time.
-     * @see App#exit(int)
-     */
-    protected abstract void cleanup();
-
-    /**
-     * Describe the life cycle of the application
+     * Describe the life cycle of the application.
      */
     final void ___internalRun() {
 
@@ -422,9 +358,8 @@ public abstract class App {
     }
 
     /**
-     * Return the application frame (singleton)
-     *
-     * @return application frame
+     * Return the application frame (singleton).
+     * @return application frame.
      */
     public static JFrame getFrame() {
         if (_applicationFrame == null) {
@@ -437,9 +372,9 @@ public abstract class App {
      * Define the application frame (singleton).
      *
      * TODO : workaround to let App create the frame (getFrame)...
-     * Concrete applications must be later re-factored to initialize correctly the GUI using getFrame()
+     * Concrete applications must be later re-factored to initialize correctly the GUI using getFrame().
      *
-     * @param frame application frame
+     * @param frame application frame.
      */
     public static void setFrame(final JFrame frame) {
         _applicationFrame = frame;
@@ -458,7 +393,7 @@ public abstract class App {
     }
 
     /**
-     * Show the application frame and bring it to front
+     * Show the application frame and bring it to front.
      */
     public static void showFrameToFront() {
         final JFrame frame = getFrame();
@@ -474,37 +409,82 @@ public abstract class App {
     }
 
     /**
-     * Return the application frame panel
-     *
-     * @return application frame panel
+     * Return the application frame panel.
+     * @return application frame panel.
      */
     public static Container getFramePanel() {
         return getFrame().getContentPane();
     }
 
     /**
-     * Return App shared instance
-     *
-     * @return shared instance
+     * Return App shared instance.
+     * @return shared instance.
      */
     public static App getInstance() {
         return _instance;
     }
 
     /**
-     * Return true if the Application is ready
-     *
-     * @return true if the Application is ready
+     * Return true if the Application is ready.
+     * @return true if the Application is ready.
      */
     public static boolean isReady() {
         return _applicationReady;
     }
 
     /**
-     * Generic registration with the Mac OS X application menu.
+     * Hook to override in your App, to return whether the application can be terminated or not.
      *
-     * Checks the platform, then attempts.
+     * This method is automatically triggered when the application "Quit" menu
+     * has been used. Thus, you have a chance to do things like saves before the
+     * application really quits.
      *
+     * The default implementation lets the application silently quit without further ado.
+     *
+     * @warning This method should be overridden to handle quit as you intend to.
+     * In its default behavior, all changes that occurred during application life will be lost.
+     *
+     * @return should return true if the application can exit, or false to cancel exit.
+     */
+    public boolean canBeTerminatedNow() {
+        _logger.info("Default App.canBeTerminatedNow() handler called.");
+        return true;
+    }
+
+    /**
+     * Hook to override in your App, to handle SAMP hub destiny before closing application.
+     *
+     * This method is automatically triggered when the application "Quit" menu
+     * has been used. Thus, you have a chance to bypass SAMP warning message.
+     *
+     * The default implementation asks the user if he really wants to shutdown hub.
+     *
+     * @warning This method should be overridden to handle SAMP hub die as you intend to.
+     * In its default behavior, the SAMP warning message will be shown.
+     *
+     * @return should return true if the SAMP hub should be silently killed, false otherwise
+     * to ask user permission.
+     */
+    public boolean shouldSilentlyKillSampHubOnQuit() {
+        _logger.info("Empty App.silentlyKillSampHubOnQuit() handler called.");
+
+        return false;
+    }
+
+    /**
+     * Hook to override in your App, to handle operations before exit time.
+     * @see App#exit(int)
+     */
+    protected abstract void cleanup();
+
+
+    static void ___internalSingletonCleanup() {
+        _instance = null;
+        _applicationFrame = null;
+    }
+
+    /**
+     * Generic registration with the Mac OS X application menu (if needed).
      * @param frame application frame
      */
     private void macOSXRegistration(final JFrame frame) {

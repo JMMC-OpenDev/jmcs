@@ -10,6 +10,7 @@ import fr.jmmc.jmal.model.ModelFunctionComputeContext;
 import fr.jmmc.jmal.model.ModelManager;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.Bootstrapper;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -240,7 +241,7 @@ public class TestModel {
     public static void main(String[] args) {
 
         // invoke App method to initialize logback now:
-        App.isReady();
+        Bootstrapper.getApplicationState();
 
         // Set the default locale to en-US locale (for Numerical Fields "." ",")
         Locale.setDefault(Locale.US);

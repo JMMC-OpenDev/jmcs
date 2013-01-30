@@ -9,6 +9,7 @@ import fr.jmmc.jmal.model.ModelUVMapService;
 import fr.jmmc.jmal.model.ImageMode;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
 import fr.jmmc.jmcs.util.FileUtils;
@@ -47,7 +48,7 @@ public class ConcurrentModelTest {
     public static void main(String[] args) {
 
         // invoke App method to initialize logback now:
-        App.isReady();
+        Bootstrapper.getApplicationState();
 
         logger.warn("\n\nPlease check that the CPU is running at full speed (avoid frequency changes on demand).\n");
 

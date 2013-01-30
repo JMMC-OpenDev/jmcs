@@ -6,6 +6,7 @@ package fr.jmmc.jmal.model.test;
 import fr.jmmc.jmal.image.ColorModels;
 import fr.jmmc.jmal.image.ImageUtils;
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import java.awt.image.IndexColorModel;
 import java.util.Locale;
@@ -33,7 +34,7 @@ public class ConcurrentImageTest {
     public static void main(String[] args) {
 
         // invoke App method to initialize logback now:
-        App.isReady();
+        Bootstrapper.getApplicationState();
 
         logger.warn("\n\nPlease check that the CPU is running at full speed (avoid frequency changes on demand).\n");
 

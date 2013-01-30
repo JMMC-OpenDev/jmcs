@@ -8,17 +8,25 @@ import com.apple.eawt.QuitResponse;
 import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.gui.FeedbackReport;
+import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.SplashScreen;
+import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.component.MessagePane;
+import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.gui.task.TaskSwingWorkerExecutor;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
+import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import fr.jmmc.jmcs.util.logging.LoggingService;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Method;
 import java.util.Date;
+import javax.swing.JFrame;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.lang.SystemUtils;
 import org.ivoa.util.runner.LocalLauncher;
 
 /**
@@ -28,14 +36,20 @@ import org.ivoa.util.runner.LocalLauncher;
  */
 public final class Bootstrapper {
 
-    /** Flag to avoid reentrance in launch sequence */
-    private static boolean _staticBootstrapDone = false;
     /** JMMC Logger */
     private final static Logger _jmmcLogger = LoggingService.getJmmcLogger();
+    /** Store a proxy to the shared ActionRegistrar facility */
+    private final static ActionRegistrar _actionRegistrar = ActionRegistrar.getInstance();
+    /** Flag to avoid reentrance in launch sequence */
+    private static boolean _staticBootstrapDone = false;
     /** Store whether application should be quit when main frame close box clicked. */
     private static boolean _exitApplicationWhenClosed;
     /** Flag to prevent calls to System.exit() */
     private static boolean _avoidSystemExit = false;
+    /** Flag indicating if the application started properly and is ready (visible) */
+    private static ApplicationState _applicationState = ApplicationState.ENV_LIMB;
+    /** The application  instance */
+    private static App _application = null;
 
     /**
      * Static Logger initialization and Network settings
@@ -55,21 +69,21 @@ public final class Bootstrapper {
             return true;
         }
 
+        setApplicationState(ApplicationState.ENV_BOOTSTRAP);
+
         // Start the application log singleton:
         LoggingService.getInstance();
-        // Get the jmmc logger:
         _jmmcLogger.info("Application log created at {}. Current level is {}.", new Date(), _jmmcLogger.getEffectiveLevel());
 
         // Define swing settings (laf, locale...) before any Swing usage if not called at the first line of the main method:
         SwingSettings.setup();
 
         // Define default network settings:
-        // note: settings must be set before using any URLConnection (loadApplicationData)
         NetworkSettings.defineDefaults();
 
         _jmmcLogger.info("Application bootstrap done.");
 
-        // set reentrance flag
+        // Set reentrance flag
         _staticBootstrapDone = true;
         return true;
     }
@@ -133,23 +147,39 @@ public final class Bootstrapper {
      */
     public static boolean launchApp(final App application, final boolean waitBeforeExecution, final boolean exitWhenClosed, final boolean shouldShowSplashScreen) throws IllegalStateException {
 
+        _jmmcLogger.debug("Application starting.");
+
+        setApplicationState(ApplicationState.ENV_INIT);
+
         final long startTime = System.nanoTime();
         boolean launchDone = false;
 
+        _application = application;
         _exitApplicationWhenClosed = exitWhenClosed;
-        application.___internalSingletonInitialization();
-
-        // Load jMCS and application data models
-        ApplicationDescription.init();
-        _jmmcLogger.debug("Application data loaded.");
+        _application.___internalSingletonInitialization();
 
         try {
-            application.___internalStart();
+            // Load jMCS and application data models
+            ApplicationDescription.init();
+            _jmmcLogger.debug("Application data loaded.");
+
+            _application.___internalStart();
+
+            // Build Acknowledgment, ShowRelease and ShowHelp Actions
+            // (the creation must be done after applicationModel instanciation)
+            _actionRegistrar.createAllInternalActions();
+
+            setApplicationState(ApplicationState.APP_INIT);
+
             application.initServices();
+
             SplashScreen.display(shouldShowSplashScreen);
-            application.___internalRun();
+
+            ___internalRun();
             launchDone = true;
         } catch (Throwable th) {
+            setApplicationState(ApplicationState.APP_BROKEN);
+
             // Show the feedback report (modal)
             SplashScreen.close();
             MessagePane.showErrorMessage("An error occured while initializing the application");
@@ -160,6 +190,91 @@ public final class Bootstrapper {
         }
 
         return launchDone;
+    }
+
+    /**
+     * Describe the life cycle of the application.
+     */
+    static void ___internalRun() {
+
+        // Using invokeAndWait to be in sync with this thread :
+        // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
+        SwingUtils.invokeAndWaitEDT(new Runnable() {
+            /**
+             * Initializes Splash Screen in EDT
+             */
+            @Override
+            public void run() {
+
+                // If running under Mac OS X
+                if (SystemUtils.IS_OS_MAC_OSX) {
+                    // Set application name :
+                    // system properties must be set before using any Swing component:
+                    // Hope nothing as already been done...
+                    System.setProperty("com.apple.mrj.application.apple.menu.about.name", ApplicationDescription.getInstance().getProgramName());
+                }
+
+
+                setApplicationState(ApplicationState.GUI_SETUP);
+
+                // Delegate initialization to daughter class through abstract setupGui() call
+                _application.setupGui();
+
+                // Initialize SampManager as needed by MainMenuBar:
+                SampManager.getInstance();
+
+                // Declare SAMP message handlers first:
+                _application.declareInteroperability();
+
+                // Perform defered action initialization (SAMP-related actions)
+                _actionRegistrar.performDeferedInitialization();
+
+                // Define the jframe associated to the application which will get the JMenuBar
+                final JFrame frame = App.getFrame();
+                // Use OSXAdapter on the frame
+                macOSXRegistration(frame);
+                // create menus including the Interop menu (SAMP required)
+                frame.setJMenuBar(new MainMenuBar());
+
+                // Set application frame common properties
+                frame.pack();
+            }
+        });
+
+        ResizableTextViewFactory.showUnsupportedJdkWarning();
+
+        // Indicate that the application is ready (visible)
+        setApplicationState(ApplicationState.APP_READY);
+
+        _application.openFile();
+
+        // Delegate execution to daughter class through abstract execute() call
+        _application.execute();
+    }
+
+    /**
+     * Generic registration with the Mac OS X application menu (if needed).
+     * @param frame application frame
+     */
+    private static void macOSXRegistration(final JFrame frame) {
+        // If running under Mac OS X
+        if (SystemUtils.IS_OS_MAC_OSX) {
+
+            // Set the menu bar under Mac OS X
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+            final Class<?> osxAdapter = IntrospectionUtils.getClass("fr.jmmc.jmcs.gui.util.MacOSXAdapter");
+            if (osxAdapter == null) {
+                // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
+                // because OSXAdapter extends ApplicationAdapter in its def
+                _jmmcLogger.error("This version of Mac OS X does not support the Apple EAWT. Application Menu handling has been disabled.");
+            } else {
+                final Method registerMethod = IntrospectionUtils.getMethod(osxAdapter, "registerMacOSXApplication", new Class<?>[]{JFrame.class});
+                if (registerMethod != null) {
+                    IntrospectionUtils.executeMethod(registerMethod, new Object[]{frame});
+                }
+            }
+        }
     }
 
     /**
@@ -181,10 +296,12 @@ public final class Bootstrapper {
      * Quit the application properly:
      * - warn user of SAMP shutdown if needed;
      * - prompt user of unsaved data loss;
-     * - stops application if everything is ok.
+     * - stops application if user is OK.
      * @param evt the triggering event if any, null otherwise.
      */
     public static void quitApp(ActionEvent evt) {
+
+        _jmmcLogger.info("Application quitting.");
 
         // Mac OS X Quit action handler
         final QuitResponse response;
@@ -209,25 +326,27 @@ public final class Bootstrapper {
             _jmmcLogger.debug("Application should be killed.");
 
             // Verify if we are authorized to kill the application or not
-            if (Bootstrapper.shouldExitAppWhenFrameClosed()) {
+            if (shouldExitAppWhenFrameClosed()) {
+
+                setApplicationState(ApplicationState.APP_STOP);
 
                 // Max OS X quit
                 if (response != null) {
-                    Bootstrapper.disableSystemExit(true);
+                    disableSystemExit(true);
                 }
 
                 // Exit the application
-                Bootstrapper.stopApp(0);
+                stopApp(0);
 
                 // Max OS X quit
                 if (response != null) {
                     response.performQuit();
                 }
             } else {
-                _jmmcLogger.debug("Application left opened as required.");
+                _jmmcLogger.debug("Application frame left opened as required.");
             }
         } else {
-            _jmmcLogger.debug("Application killing cancelled.");
+            _jmmcLogger.debug("Application quit cancelled.");
         }
         if (response != null) {
             response.cancelQuit();
@@ -238,7 +357,7 @@ public final class Bootstrapper {
      * Stop the application properly without user feedback:
      * - calls your App.cleanup() method;
      * - stops all critical jMCS services;
-     * - System.exit(statusCode) if so.
+     * - System.exit(statusCode) if so (@see disableSystemExit()).
      * @param statusCode status code to return
      */
     public static void stopApp(final int statusCode) {
@@ -248,34 +367,55 @@ public final class Bootstrapper {
 
         try {
             if (application != null) {
+
+                setApplicationState(ApplicationState.APP_CLEANUP);
                 application.cleanup();
+
+                setApplicationState(ApplicationState.ENV_CLEANUP);
                 ___internalStop();
             }
         } finally {
+            setApplicationState(ApplicationState.APP_DEAD);
             App.___internalSingletonCleanup();
             if (!_avoidSystemExit) {
                 _jmmcLogger.info("Exiting with status code '{}'.", statusCode);
                 System.exit(statusCode);
             }
         }
+        setApplicationState(ApplicationState.ENV_LIMB);
     }
 
     private static void ___internalStop() {
 
-        // Stop the job runner
+        // Stop the job runner (if any)
         LocalLauncher.shutdown();
 
-        // Stop the task executor
+        // Stop the task executor (if any)
         TaskSwingWorkerExecutor.shutdown();
 
-        // Stop the parallel job executor
+        // Stop the parallel job executor (if any)
         ParallelJobExecutor.shutdown();
 
-        // Disconnect from SAMP Hub
+        // Disconnect from SAMP Hub (if any)
         SampManager.shutdown();
 
-        // Close all HTTP connections (http client)
+        // Close all HTTP connections (http client) (if any)
         MultiThreadedHttpConnectionManager.shutdownAll();
+    }
+
+    /**
+     * @return the application current state.
+     */
+    private static void setApplicationState(ApplicationState state) {
+        _jmmcLogger.debug("Change state from '{}' to '{}'.", _applicationState, state);
+        _applicationState = state;
+    }
+
+    /**
+     * @return the application current state.
+     */
+    public static ApplicationState getApplicationState() {
+        return _applicationState;
     }
 
     /** Private constructor */

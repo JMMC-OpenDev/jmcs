@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.util;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import org.ivoa.util.concurrent.ThreadExecutors;
 import org.slf4j.Logger;
@@ -21,9 +22,9 @@ public class TestParallelExecutor {
     public static void main(String[] args) {
 
         // invoke App method to initialize logback now:
-        App.isReady();
+        Bootstrapper.getApplicationState();
 
-        /** Jmcs Parallel Job executor */
+        /** jMCS Parallel Job executor */
         final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();
 
         for (int nIter = 1; nIter <= 100 * 1000; nIter *= 10) {

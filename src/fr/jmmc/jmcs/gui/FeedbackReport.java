@@ -4,6 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.ApplicationState;
 import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
@@ -315,7 +316,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     /** Exit the application if there was a fatal error */
     private void exit() {
         // If the application is not ready, exit now :
-        final boolean ready = App.isReady();
+        final boolean ready = (Bootstrapper.getApplicationState() == ApplicationState.APP_READY);
 
         _logger.debug("Application is ready : {}", ready);
 

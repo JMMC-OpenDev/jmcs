@@ -5,13 +5,9 @@ package fr.jmmc.jmcs;
 
 import ch.qos.logback.classic.Level;
 import fr.jmmc.jmcs.data.ApplicationDescription;
-import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
-import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
-import fr.jmmc.jmcs.network.interop.SampManager;
-import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import fr.jmmc.jmcs.util.logging.LoggingService;
 import gnu.getopt.Getopt;
@@ -21,13 +17,11 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
-import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +39,9 @@ public abstract class App {
     private static final Logger _logger = LoggerFactory.getLogger(App.class.getName());
     /** Singleton reference */
     private static App _instance;
-    /** flag indicating if the application started properly and is ready (visible) */
-    private static boolean _applicationReady = false;
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
     // Members
-    /** Store a proxy to the shared ActionRegistrar facility */
-    private final ActionRegistrar _actionRegistrar = ActionRegistrar.getInstance();
     /** Command-line argument meta data */
     private final List<LongOpt> _longOpts = new ArrayList<LongOpt>();
     /** Temporary store the command line arguments (long opt = value) */
@@ -78,6 +68,14 @@ public abstract class App {
         _logger.debug("App object instantiated and logger created.");
     }
 
+    /**
+     * Return App shared instance.
+     * @return shared instance.
+     */
+    public static App getInstance() {
+        return _instance;
+    }
+
     final void ___internalSingletonInitialization() {
         // Set shared instance
         _instance = this;
@@ -86,10 +84,6 @@ public abstract class App {
     final void ___internalStart() {
         // Interpret arguments
         interpretArguments(_args);
-
-        // Build Acknowledgment, ShowRelease and ShowHelp Actions
-        // (the creation must be done after applicationModel instanciation)
-        _actionRegistrar.createAllInternalActions();
     }
 
     /**
@@ -287,58 +281,8 @@ public abstract class App {
      * Hook to override in your App, to execute application body.
      */
     protected abstract void execute();
-    /**
-     * Describe the life cycle of the application.
-     */
-    final void ___internalRun() {
 
-        // Using invokeAndWait to be in sync with this thread :
-        // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
-        SwingUtils.invokeAndWaitEDT(new Runnable() {
-            /**
-             * Initializes Splash Screen in EDT
-             */
-            @Override
-            public void run() {
-
-                // If running under Mac OS X
-                if (SystemUtils.IS_OS_MAC_OSX) {
-                    // Set application name :
-                    // system properties must be set before using any Swing component:
-                    // Hope nothing as already been done...
-                    System.setProperty("com.apple.mrj.application.apple.menu.about.name", ApplicationDescription.getInstance().getProgramName());
-                }
-
-                // Delegate initialization to daughter class through abstract setupGui() call
-                setupGui();
-
-                // Initialize SampManager as needed by MainMenuBar:
-                SampManager.getInstance();
-                // declare SAMP message handlers first:
-                declareInteroperability();
-                // Perform defered action initialization (SAMP-related actions)
-                _actionRegistrar.performDeferedInitialization();
-
-                // Define the jframe associated to the application which will get the JmenuBar
-                final JFrame frame = getFrame();
-
-                // Use OSXAdapter on the frame
-                macOSXRegistration(frame);
-
-                // create menus including the Interop menu (SAMP required)
-                frame.setJMenuBar(new MainMenuBar());
-
-                // Set application frame common properties
-                frame.pack();
-            }
-        });
-
-        // Delegate execution to daughter class through abstract execute() call
-        execute();
-
-        // Indicate that the application is ready (visible)
-        _applicationReady = true;
-
+    void openFile() {
         // If any file argument exists, open that file using the registered open action
         if (_fileArgument != null) {
             SwingUtils.invokeLaterEDT(new Runnable() {
@@ -347,14 +291,13 @@ public abstract class App {
                  */
                 @Override
                 public void run() {
-                    _actionRegistrar.getOpenAction().actionPerformed(new ActionEvent(_actionRegistrar, 0, _fileArgument));
+                    final ActionRegistrar actionRegistrar = ActionRegistrar.getInstance();
+                    actionRegistrar.getOpenAction().actionPerformed(new ActionEvent(actionRegistrar, 0, _fileArgument));
                     // clear :
                     _fileArgument = null;
                 }
             });
         }
-
-        ResizableTextViewFactory.showUnsupportedJdkWarning();
     }
 
     /**
@@ -417,22 +360,6 @@ public abstract class App {
     }
 
     /**
-     * Return App shared instance.
-     * @return shared instance.
-     */
-    public static App getInstance() {
-        return _instance;
-    }
-
-    /**
-     * Return true if the Application is ready.
-     * @return true if the Application is ready.
-     */
-    public static boolean isReady() {
-        return _applicationReady;
-    }
-
-    /**
      * Hook to override in your App, to return whether the application can be terminated or not.
      *
      * This method is automatically triggered when the application "Quit" menu
@@ -477,35 +404,9 @@ public abstract class App {
      */
     protected abstract void cleanup();
 
-
     static void ___internalSingletonCleanup() {
         _instance = null;
         _applicationFrame = null;
-    }
-
-    /**
-     * Generic registration with the Mac OS X application menu (if needed).
-     * @param frame application frame
-     */
-    private void macOSXRegistration(final JFrame frame) {
-        // If running under Mac OS X
-        if (SystemUtils.IS_OS_MAC_OSX) {
-
-            // Set the menu bar under Mac OS X
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-
-            final Class<?> osxAdapter = IntrospectionUtils.getClass("fr.jmmc.jmcs.gui.util.MacOSXAdapter");
-            if (osxAdapter == null) {
-                // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
-                // because OSXAdapter extends ApplicationAdapter in its def
-                _logger.error("This version of Mac OS X does not support the Apple EAWT. Application Menu handling has been disabled.");
-            } else {
-                final Method registerMethod = IntrospectionUtils.getMethod(osxAdapter, "registerMacOSXApplication", new Class<?>[]{JFrame.class});
-                if (registerMethod != null) {
-                    IntrospectionUtils.executeMethod(registerMethod, new Object[]{frame});
-                }
-            }
-        }
     }
 }
 /*___oOo___*/

@@ -3,24 +3,18 @@
  ******************************************************************************/
 package fr.jmmc.jmcs;
 
-import ch.qos.logback.classic.Level;
-import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
-import fr.jmmc.jmcs.util.logging.LogbackGui;
-import fr.jmmc.jmcs.util.logging.LoggingService;
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
+import fr.jmmc.jmcs.util.CommandLineUtils;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,14 +36,14 @@ public abstract class App {
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
     // Members
-    /** Command-line argument meta data */
-    private final List<LongOpt> _longOpts = new ArrayList<LongOpt>();
-    /** Temporary store the command line arguments (long opt = value) */
-    private Map<String, String> _cliArguments = null;
-    /** Temporary store the file name argument for the open action */
-    private String _fileArgument = null;
     /** Command-line arguments */
     protected final String[] _args;
+    /** Command-line argument meta data */
+    private final Map<String, Boolean> _customArgumentsDefinition = new HashMap<String, Boolean>();
+    /** Command-line custom help */
+    private String _customHelp = null;
+    /** Store the custom command line argument values (keyed by name) */
+    private Map<String, String> _customArgumentValues = null;
 
     /**
      * Static jMCS environment startup.
@@ -68,45 +62,45 @@ public abstract class App {
         _logger.debug("App object instantiated and logger created.");
     }
 
-    /**
-     * Return App shared instance.
-     * @return shared instance.
-     */
-    public static App getInstance() {
-        return _instance;
-    }
-
     final void ___internalSingletonInitialization() {
         // Set shared instance
         _instance = this;
     }
 
+    /**
+     * @return App shared instance.
+     */
+    public static App getInstance() {
+        return _instance;
+    }
+
     final void ___internalStart() {
         // Interpret arguments
-        interpretArguments(_args);
+        _customArgumentValues = CommandLineUtils.interpretArguments(_args, _customArgumentsDefinition, _customHelp);
     }
 
     /**
-     * Return command line arguments.
-     * @return command line arguments. 
+     * @return command line arguments hash map (argument value keyed by argument name).
      */
     protected final Map<String, String> getCommandLineArguments() {
-        return _cliArguments;
+        return _customArgumentValues;
     }
 
     /**
-     * Hook to override in your class to add custom command line argument(s) using:
+     * Hook to override in your class to add custom command line argument(s) and help using:
      * @see  #addCustomCommandLineArgument(java.lang.String, boolean)
+     * @see  #addCustomArgumentsHelp(java.lang.String, boolean)
      */
-    protected void addCustomCommandLineArguments() {
+    protected void defineCustomCommandLineArgumentsAndHelp() {
         // noop
     }
 
     /** 
-     * Hook to override in your class to show custom command line argument help.
+     * Add custom command line argument help.
+     * @param help custom help text.
      */
-    protected void showCustomArgumentsHelp() {
-        // noop
+    protected final void addCustomArgumentsHelp(final String help) {
+        _customHelp = help;
     }
 
     /**
@@ -115,147 +109,7 @@ public abstract class App {
      * @param hasArgument true if an argument is required, false otherwise.
      */
     protected final void addCustomCommandLineArgument(final String name, final boolean hasArgument) {
-        _longOpts.add(new LongOpt(name, (hasArgument) ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, 'c')); // 'c' means custom
-    }
-
-    /**
-     * Interpret command line arguments.
-     * @param args arguments.
-     */
-    private void interpretArguments(final String[] args) {
-        // List received arguments
-        if (_logger.isDebugEnabled()) {
-            for (int i = 0; i < args.length; i++) {
-                _logger.debug("args[{}] = '{}'.", i, args[i]);
-            }
-        }
-
-        // Just leave method if no argument has been given
-        if (args == null) {
-            return;
-        }
-
-        // Define default arguments (help & version):
-        _longOpts.clear();
-        _longOpts.add(new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'));
-        _longOpts.add(new LongOpt("version", LongOpt.NO_ARGUMENT, null, 1));
-        _longOpts.add(new LongOpt("loggui", LongOpt.NO_ARGUMENT, null, 2));
-        _longOpts.add(new LongOpt("open", LongOpt.REQUIRED_ARGUMENT, null, 3));
-
-        // Application needs custom arguments:
-        addCustomCommandLineArguments();
-
-        final LongOpt[] longOptArray = new LongOpt[_longOpts.size()];
-        _longOpts.toArray(longOptArray);
-
-        final ApplicationDescription applicationDescription = ApplicationDescription.getInstance();
-
-        // Instantiate the getopt object
-        final Getopt getOpt = new Getopt(applicationDescription.getProgramName(), args, "hv:", longOptArray, true);
-
-        int c; // argument key
-        String arg; // argument value
-
-        // While there is a argument key
-        while ((c = getOpt.getopt()) != -1) {
-            _logger.debug("opt = {}", c);
-
-            switch (c) {
-                // Show the arguments help
-                case 'h':
-                    showArgumentsHelp();
-                    break;
-
-                // Show the name and the version of the program
-                case 1:
-                    // Show the application name on the shell
-                    System.out.println(applicationDescription.getProgramNameWithVersion());
-
-                    // Exit the application
-                    Bootstrapper.stopApp(0);
-                    break;
-
-                // Display the LogGUI panel
-                case 2:
-                    LogbackGui.showLogConsole();
-                    break;
-
-                // Open the given file
-                case 3:
-                    // get the file path argument and store it temporarly :
-                    _fileArgument = getOpt.getOptarg();
-                    _logger.info("Should open '{}'.", _fileArgument);
-                    break;
-
-                // Set the logger level
-                case 'v':
-                    arg = getOpt.getOptarg();
-
-                    if (arg != null) {
-                        _logger.info("Set logger level to '{}'.", arg);
-
-                        final ch.qos.logback.classic.Logger jmmcLogger = LoggingService.getJmmcLogger();
-                        if (arg.equals("0")) {
-                            jmmcLogger.setLevel(Level.OFF);
-                        } else if (arg.equals("1")) {
-                            jmmcLogger.setLevel(Level.ERROR);
-                        } else if (arg.equals("2")) {
-                            jmmcLogger.setLevel(Level.WARN);
-                        } else if (arg.equals("3")) {
-                            jmmcLogger.setLevel(Level.INFO);
-                        } else if (arg.equals("4")) {
-                            jmmcLogger.setLevel(Level.DEBUG);
-                        } else if (arg.equals("5")) {
-                            jmmcLogger.setLevel(Level.ALL);
-                        } else {
-                            showArgumentsHelp();
-                        }
-                    }
-                    break;
-
-                // Show the arguments help
-                case '?':
-                    showArgumentsHelp();
-                    break;
-
-                case 'c':
-                    // custom argument case:
-                    if (_cliArguments == null) {
-                        _cliArguments = new LinkedHashMap<String, String>();
-                    }
-                    _cliArguments.put(_longOpts.get(getOpt.getLongind()).getName(), (getOpt.getOptarg() != null) ? getOpt.getOptarg() : "");
-                    break;
-
-                default:
-                    System.out.println("Unknow command");
-
-                    // Exit the application
-                    Bootstrapper.stopApp(-1);
-                    break;
-            }
-        }
-
-        _logger.debug("Application arguments interpreted");
-    }
-
-    /** Show command arguments help. */
-    private void showArgumentsHelp() {
-        System.out.println("------------- Arguments help --------------------------------------------");
-        System.out.println("| Key          Value           Description                              |");
-        System.out.println("|-----------------------------------------------------------------------|");
-        System.out.println("| [-h]                         Show the options help                    |");
-        System.out.println("| [-loggui]                    Show the logging tool                    |");
-        System.out.println("| [-v]         [0|1|2|3|4|5]   Define console logging level             |");
-        System.out.println("| [-version]                   Show application name and version        |");
-        System.out.println("| [-h|-help]                   Show arguments help                      |");
-        System.out.println("|-----------------------------------------------------------------------|");
-
-        showCustomArgumentsHelp();
-
-        System.out.println("LEVEL : 0=OFF, 1=SEVERE, 2=WARNING, 3=INFO, 4=FINE, 5=ALL\n");
-
-        // Exit the application
-        Bootstrapper.stopApp(0);
+        _customArgumentsDefinition.put(name, hasArgument);
     }
 
     /**
@@ -277,28 +131,35 @@ public abstract class App {
         _logger.debug("Empty App.declareInteroperability() handler called.");
     }
 
+    final void openCommandLineFile() {
+
+        if ((_customArgumentValues == null) || (_customArgumentValues.size() == 0)) {
+            return;
+        }
+
+        // If any file argument exists, open that file using the registered open action
+        final String fileArgument = _customArgumentValues.get(CommandLineUtils.CLI_OPEN_KEY);
+        if (fileArgument == null) {
+            return;
+        }
+
+        SwingUtils.invokeLaterEDT(new Runnable() {
+            /**
+             * Open the file using EDT :
+             */
+            @Override
+            public void run() {
+                final ActionRegistrar actionRegistrar = ActionRegistrar.getInstance();
+                final AbstractAction openAction = actionRegistrar.getOpenAction();
+                openAction.actionPerformed(new ActionEvent(actionRegistrar, 0, fileArgument));
+            }
+        });
+    }
+
     /**
      * Hook to override in your App, to execute application body.
      */
     protected abstract void execute();
-
-    void openFile() {
-        // If any file argument exists, open that file using the registered open action
-        if (_fileArgument != null) {
-            SwingUtils.invokeLaterEDT(new Runnable() {
-                /**
-                 * Open the file using EDT :
-                 */
-                @Override
-                public void run() {
-                    final ActionRegistrar actionRegistrar = ActionRegistrar.getInstance();
-                    actionRegistrar.getOpenAction().actionPerformed(new ActionEvent(actionRegistrar, 0, _fileArgument));
-                    // clear :
-                    _fileArgument = null;
-                }
-            });
-        }
-    }
 
     /**
      * Return the application frame (singleton).
@@ -400,7 +261,6 @@ public abstract class App {
 
     /**
      * Hook to override in your App, to handle operations before exit time.
-     * @see App#exit(int)
      */
     protected abstract void cleanup();
 

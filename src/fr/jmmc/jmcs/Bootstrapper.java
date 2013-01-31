@@ -127,7 +127,8 @@ public final class Bootstrapper {
      * @throws IllegalStateException in case something went really wrong.
      */
     public static boolean launchApp(final App application, boolean waitBeforeExecution, boolean exitWhenClosed) throws IllegalStateException {
-        return launchApp(application, waitBeforeExecution, exitWhenClosed, CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN));
+        final boolean shouldShowSplashScreen = CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.SHOW_STARTUP_SPLASHSCREEN);
+        return launchApp(application, waitBeforeExecution, exitWhenClosed, shouldShowSplashScreen);
     }
 
     /**
@@ -145,7 +146,8 @@ public final class Bootstrapper {
      * @return true on success, false otherwise.
      * @throws IllegalStateException
      */
-    public static boolean launchApp(final App application, final boolean waitBeforeExecution, final boolean exitWhenClosed, final boolean shouldShowSplashScreen) throws IllegalStateException {
+    public static boolean launchApp(final App application, final boolean waitBeforeExecution, final boolean exitWhenClosed,
+            final boolean shouldShowSplashScreen) throws IllegalStateException {
 
         _jmmcLogger.debug("Application starting.");
 
@@ -322,7 +324,7 @@ public final class Bootstrapper {
         }
 
         // If we are ready to stop application execution
-        if (App.getInstance().canBeTerminatedNow()) {
+        if (_application.canBeTerminatedNow()) {
             _jmmcLogger.debug("Application should be killed.");
 
             // Verify if we are authorized to kill the application or not
@@ -363,13 +365,11 @@ public final class Bootstrapper {
     public static void stopApp(final int statusCode) {
 
         _jmmcLogger.info("Stopping the application.");
-        final App application = App.getInstance();
-
         try {
-            if (application != null) {
+            if (_application != null) {
 
                 setApplicationState(ApplicationState.APP_CLEANUP);
-                application.cleanup();
+                _application.cleanup();
 
                 setApplicationState(ApplicationState.ENV_CLEANUP);
                 ___internalStop();

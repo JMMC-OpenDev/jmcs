@@ -67,8 +67,6 @@ public final class LogUtil {
      * PUBLIC: onExit method : TODO release all ClassLoader references due to SLF4J
      * NOTE : <b>This method must be called in the context of a web application via
      * ServletContextListener.contextDestroyed(ServletContextEvent)</b>
-     * 
-     * @see org.apache.commons.logging.LogFactory#release(ClassLoader)
      */
     public static void onExit() {
         isShutdown = true;
@@ -115,8 +113,6 @@ public final class LogUtil {
      * methods
      * 
      * @see #getLogger()
-     * @see #getLoggerBase()
-     * @see #getLoggerDev()
      * @param key logger name defined in the log4j configuration file
      * @return Logger instance or null if shutdown flag is set
      */

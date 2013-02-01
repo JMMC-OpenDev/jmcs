@@ -11,7 +11,6 @@ public class LogSupport {
 
     /** 
      * Main Logger for the application
-     * @see org.ivoa.bean.LogSupport
      */
     protected final static Logger logger = LogUtil.getLogger();
 

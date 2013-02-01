@@ -93,7 +93,7 @@ public class SwingSettings {
 
     /**
      * Defines in code some System.properties to force text anti-aliasing and Mac OS features ...
-     * @see fr.jmmc.mcs.gui.OSXAdapter
+     * @see MacOSXAdapter
      */
     protected static void setSystemProps() {
         // force anti aliasing :

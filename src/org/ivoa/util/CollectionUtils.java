@@ -53,7 +53,7 @@ public final class CollectionUtils {
      * }
      * </code>
      * 
-     * @param c collection
+     * @param o collection
      * @return string
      */
     public static String toString(final Object[] o) {

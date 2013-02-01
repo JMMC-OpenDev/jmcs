@@ -178,10 +178,7 @@ public final class ThreadExecutors extends LogSupport {
     }
 
     /**
-     * Return the generic thread pool or create it (lazy)
-     * 
-     * @see #newCachedThreadPool(String, int, int, ThreadFactory)
-     * @return generic thread pool
+     * @return the generic thread pool or create it (lazy)
      */
     public static ThreadExecutors getGenericExecutor() {
         checkRunning();

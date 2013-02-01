@@ -109,7 +109,7 @@ public class RegisteredPreferencedBooleanAction extends RegisteredAction
      * Added as it is the only reliable way to deal with ButtonGroup and JRadioButton.
      * ButtonGroups don't handle "UNSELECT" ActionEvent, whereas ItemEvent do !!!
      * @param e 
-     * @sa http://forums.sun.com/thread.jspa?forumID=257&threadID=173201
+     * @link http://forums.sun.com/thread.jspa?forumID=257&threadID=173201
      */
     @Override
     public void itemStateChanged(ItemEvent e) {

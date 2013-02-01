@@ -56,7 +56,7 @@ public final class ApplicationDescription {
     private static ApplicationDescription _defaultDataModel = null;
 
     /**
-     * @return ApplicationDescription instance.
+     * ApplicationDescription instance initialization.
      */
     public static void init() {
         getJmcsInstance();

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  *
  * In order to use functionalities provided by jMCS,
  * extend your application from this class and use:
- * @see Bootstrapper.launch(new YourApp(args), ...);
+ * @see Bootstrapper
  *
  * @author Brice COLUCCI, Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
@@ -55,8 +55,8 @@ public abstract class App {
 
     /**
      * Creates a new App object.
-     *
      * @param args command-line arguments.
+     * @warning mandatory call to super(...) in your App derived class.
      */
     protected App(String[] args) {
         _args = args;
@@ -69,7 +69,7 @@ public abstract class App {
     }
 
     /**
-     * @return App shared instance.
+     * @return App shared instance if available, null otherwise.
      */
     public static App getInstance() {
         return _instance;
@@ -82,15 +82,16 @@ public abstract class App {
 
     /**
      * @return command line arguments hash map (argument value keyed by argument name).
+     * @warning may be empty if no argument provided by user at launch.
      */
     protected final Map<String, String> getCommandLineArguments() {
         return _customArgumentValues;
     }
 
     /**
-     * Hook to override in your class to add custom command line argument(s) and help using:
-     * @see  #addCustomCommandLineArgument(java.lang.String, boolean)
-     * @see  #addCustomArgumentsHelp(java.lang.String, boolean)
+     * Optional hook to override in your App, to add support for custom command-line argument(s) and help using:
+     * @see #addCustomCommandLineArgument(java.lang.String, boolean)
+     * @see #addCustomArgumentsHelp(java.lang.String)
      */
     protected void defineCustomCommandLineArgumentsAndHelp() {
         // noop
@@ -110,22 +111,25 @@ public abstract class App {
      * @param hasArgument true if an argument is required, false otherwise.
      */
     protected final void addCustomCommandLineArgument(final String name, final boolean hasArgument) {
+        if ((name == null) || (name.isEmpty())) {
+            return;
+        }
         _customArgumentsDefinition.put(name, hasArgument);
     }
 
     /**
-     * Initialize services before the GUI
+     * Mandatory hook to override in your App, to initialize services before the GUI.
      */
     protected abstract void initServices();
 
     /**
-     * Hook to override in your App, to initialize user interface in EDT.
+     * Mandatory hook to override in your App, to initialize user interface in EDT.
      * @warning : The actions which are present in menu bar must be instantiated in this method.
      */
     protected abstract void setupGui();
 
     /**
-     * Hook to override in your App, to declare SAMP capabilities (if any).
+     * Optional hook to override in your App, to declare SAMP capabilities (if any).
      */
     protected void declareInteroperability() {
         _logger.debug("Empty App.declareInteroperability() handler called.");
@@ -157,7 +161,7 @@ public abstract class App {
     }
 
     /**
-     * Hook to override in your App, to execute application body.
+     * Mandatory hook to override in your App, to execute application body.
      */
     protected abstract void execute();
 
@@ -219,7 +223,7 @@ public abstract class App {
     }
 
     /**
-     * Hook to override in your App, to return whether the application can be terminated or not.
+     * Optional hook to override in your App, to return whether the application can be terminated or not.
      *
      * This method is automatically triggered when the application "Quit" menu is used.
      * Thus, you have a chance to do things like saves before the application dies.
@@ -237,7 +241,7 @@ public abstract class App {
     }
 
     /**
-     * Hook to override in your App, to handle SAMP hub destiny before closing application.
+     * Optional hook to override in your App, to handle SAMP hub destiny before closing application.
      *
      * This method is automatically triggered when the application "Quit" menu is used.
      * Thus, you have a chance to bypass SAMP warning message if needed.
@@ -256,7 +260,7 @@ public abstract class App {
     }
 
     /**
-     * Hook to override in your App, to handle operations before exit time.
+     * Mandatory hook to override in your App, to handle operations before exit time.
      */
     protected abstract void cleanup();
 

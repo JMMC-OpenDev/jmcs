@@ -10,7 +10,7 @@ package fr.jmmc.jmcs;
 public enum ApplicationState {
 
     APP_BROKEN(-1),
-    ENV_LIMB(0),
+    JAVA_LIMB(0),
     ENV_BOOTSTRAP(1),
     ENV_INIT(2),
     APP_INIT(3),

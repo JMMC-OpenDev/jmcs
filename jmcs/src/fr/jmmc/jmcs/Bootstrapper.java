@@ -47,7 +47,7 @@ public final class Bootstrapper {
     /** Flag to prevent calls to System.exit() */
     private static boolean _avoidSystemExit = false;
     /** Flag indicating if the application started properly and is ready (visible) */
-    private static ApplicationState _applicationState = ApplicationState.ENV_LIMB;
+    private static ApplicationState _applicationState = ApplicationState.JAVA_LIMB;
     /** The application  instance */
     private static App _application = null;
 
@@ -69,7 +69,7 @@ public final class Bootstrapper {
             return true;
         }
 
-        setApplicationState(ApplicationState.ENV_BOOTSTRAP);
+        setState(ApplicationState.ENV_BOOTSTRAP);
 
         // Start the application log singleton:
         LoggingService.getInstance();
@@ -151,7 +151,7 @@ public final class Bootstrapper {
 
         _jmmcLogger.debug("Application starting.");
 
-        setApplicationState(ApplicationState.ENV_INIT);
+        setState(ApplicationState.ENV_INIT);
 
         final long startTime = System.nanoTime();
         boolean launchDone = false;
@@ -171,7 +171,7 @@ public final class Bootstrapper {
             // (the creation must be done after applicationModel instanciation)
             _actionRegistrar.createAllInternalActions();
 
-            setApplicationState(ApplicationState.APP_INIT);
+            setState(ApplicationState.APP_INIT);
 
             application.initServices();
 
@@ -180,7 +180,7 @@ public final class Bootstrapper {
             ___internalRun();
             launchDone = true;
         } catch (Throwable th) {
-            setApplicationState(ApplicationState.APP_BROKEN);
+            setState(ApplicationState.APP_BROKEN);
 
             // Show the feedback report (modal)
             SplashScreen.close();
@@ -217,7 +217,7 @@ public final class Bootstrapper {
                 }
 
 
-                setApplicationState(ApplicationState.GUI_SETUP);
+                setState(ApplicationState.GUI_SETUP);
 
                 // Delegate initialization to daughter class through abstract setupGui() call
                 _application.setupGui();
@@ -246,7 +246,7 @@ public final class Bootstrapper {
         ResizableTextViewFactory.showUnsupportedJdkWarning();
 
         // Indicate that the application is ready (visible)
-        setApplicationState(ApplicationState.APP_READY);
+        setState(ApplicationState.APP_READY);
 
         _application.openCommandLineFile();
 
@@ -330,7 +330,7 @@ public final class Bootstrapper {
             // Verify if we are authorized to kill the application or not
             if (shouldExitAppWhenFrameClosed()) {
 
-                setApplicationState(ApplicationState.APP_STOP);
+                setState(ApplicationState.APP_STOP);
 
                 // Max OS X quit
                 if (response != null) {
@@ -368,21 +368,21 @@ public final class Bootstrapper {
         try {
             if (_application != null) {
 
-                setApplicationState(ApplicationState.APP_CLEANUP);
+                setState(ApplicationState.APP_CLEANUP);
                 _application.cleanup();
 
-                setApplicationState(ApplicationState.ENV_CLEANUP);
+                setState(ApplicationState.ENV_CLEANUP);
                 ___internalStop();
             }
         } finally {
-            setApplicationState(ApplicationState.APP_DEAD);
+            setState(ApplicationState.APP_DEAD);
             App.___internalSingletonCleanup();
             if (!_avoidSystemExit) {
                 _jmmcLogger.info("Exiting with status code '{}'.", statusCode);
                 System.exit(statusCode);
             }
         }
-        setApplicationState(ApplicationState.ENV_LIMB);
+        setState(ApplicationState.JAVA_LIMB);
     }
 
     private static void ___internalStop() {
@@ -406,7 +406,7 @@ public final class Bootstrapper {
     /**
      * @return the application current state.
      */
-    private static void setApplicationState(ApplicationState state) {
+    private static void setState(ApplicationState state) {
         _jmmcLogger.debug("Change state from '{}' to '{}'.", _applicationState, state);
         _applicationState = state;
     }
@@ -414,8 +414,16 @@ public final class Bootstrapper {
     /**
      * @return the application current state.
      */
-    public static ApplicationState getApplicationState() {
+    public static ApplicationState getState() {
         return _applicationState;
+    }
+
+    /**
+     * @return true if the application is in the given state, false otherwise.
+     * @param givenState the state to check against.
+     */
+    public static boolean isInState(ApplicationState givenState) {
+        return (_applicationState == givenState);
     }
 
     /** Private constructor */

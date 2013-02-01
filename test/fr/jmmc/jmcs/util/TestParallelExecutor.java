@@ -22,7 +22,7 @@ public class TestParallelExecutor {
     public static void main(String[] args) {
 
         // invoke App method to initialize logback now:
-        Bootstrapper.getApplicationState();
+        Bootstrapper.getState();
 
         /** jMCS Parallel Job executor */
         final ParallelJobExecutor jobExecutor = ParallelJobExecutor.getInstance();

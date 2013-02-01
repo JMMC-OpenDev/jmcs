@@ -18,7 +18,7 @@ public class AlternateRawColorCellRenderer extends JLabel implements ListCellRen
 
     private static final long serialVersionUID = 1L;
     /** light grey blue (as on Mac OS X) */
-    static Color lightGreyBlue = new Color(240, 240, 250);
+    private static final Color lightGreyBlue = new Color(240, 240, 250);
 
     /** Constructor */
     public AlternateRawColorCellRenderer() {
@@ -27,13 +27,7 @@ public class AlternateRawColorCellRenderer extends JLabel implements ListCellRen
 
     /**
      * Alternates background colors.
-     * 
-     * @param list
-     * @param value
-     * @param index
-     * @param isSelected
-     * @param cellHasFocus
-     * @return
+     * @see ListCellRenderer
      */
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {

@@ -246,9 +246,6 @@ public final class LocalLauncher {
      * Adds a job context in the queue and call the registered listener if job is accepted in the queue (pending).
      * The job will be executed by the Process Thread pool.
      * 
-     * @see JobRunner
-     * @see ThreadExecutors
-     *
      * @param rootCtx root context to execute
      */
     public static void startJob(final RootContext rootCtx) {
@@ -275,9 +272,6 @@ public final class LocalLauncher {
      * Adds a job context in the queue and call the given listener if job is accepted in the queue (pending).
      * The job will be executed by the Process Thread pool.
      * 
-     * @see JobRunner
-     * @see ThreadExecutors
-     *
      * @param rootCtx root context to execute
      * @param listener job listener to use
      */

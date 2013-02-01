@@ -8,7 +8,6 @@ import org.slf4j.Logger;
  * start methods
  * 
  * @see CustomThreadFactory
- * @see org.ivoa.bean.LogSupport
  * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
  */
 public final class PoolThread extends Thread {
@@ -17,7 +16,6 @@ public final class PoolThread extends Thread {
 
     /**
      * Logger for the base framework
-     * @see org.ivoa.bean.LogSupport
      */
     private static Logger logger = LogUtil.getLogger();
 

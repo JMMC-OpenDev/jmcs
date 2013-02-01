@@ -41,10 +41,10 @@ import org.slf4j.LoggerFactory;
  * a placeholder string (when the user hasn't yet typed anything), and a button
  * to clear the currently-entered text.
  *
- * @origin Elliott Hughes
+ * ORIGIN : Elliott Hughes
  *
- * @todo : add a menu of recent searches.
- * @todo : make recent searches persistent.
+ * TODO : add a menu of recent searches.
+ * TODO : make recent searches persistent.
  *
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */

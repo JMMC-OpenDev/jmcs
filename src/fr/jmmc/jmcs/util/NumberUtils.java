@@ -200,13 +200,14 @@ public final class NumberUtils {
      * Returns an {@code Integer} instance representing the specified
      * {@code int} value.  If a new {@code Integer} instance is not
      * required, this method should generally be used in preference to
-     * the constructor {@link #Integer(int)}, as this method is likely
+     * the constructor, as this method is likely
      * to yield significantly better space and time performance by
      * caching frequently requested values.
      *
      * This method will always cache values in the range -128 to 128 * 1024,
      * inclusive, and may cache other values outside of this range.
      *
+     * @see Integer#Integer(int)
      * @param  i an {@code int} value.
      * @return an {@code Integer} instance representing {@code i}.
      */
@@ -218,8 +219,7 @@ public final class NumberUtils {
      * Returns an {@code Integer} object holding the
      * value of the specified {@code String}. The argument is
      * interpreted as representing a signed decimal integer, exactly
-     * as if the argument were given to the {@link
-     * #parseInt(java.lang.String)} method. The result is an
+     * as if the argument were given to the method. The result is an
      * {@code Integer} object that represents the integer value
      * specified by the string.
      *
@@ -230,6 +230,7 @@ public final class NumberUtils {
      *  {@code new Integer(Integer.parseInt(s))}
      * </blockquote>
      *
+     * @see Integer#parseInt(java.lang.String)
      * @param      s   the string to be parsed.
      * @return     an {@code Integer} object holding the value
      *             represented by the string argument.

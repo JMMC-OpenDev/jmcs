@@ -23,7 +23,8 @@ import org.slf4j.LoggerFactory;
  * Singleton that represents an application.
  *
  * In order to use functionalities provided by jMCS,
- * extend your application from this class.
+ * extend your application from this class and use:
+ * @see Bootstrapper.launch(new YourApp(args), ...);
  *
  * @author Brice COLUCCI, Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
@@ -119,8 +120,7 @@ public abstract class App {
 
     /**
      * Hook to override in your App, to initialize user interface in EDT.
-     *
-     * The actions which are present in menu bar must be instantiated in this method.
+     * @warning : The actions which are present in menu bar must be instantiated in this method.
      */
     protected abstract void setupGui();
 
@@ -162,17 +162,6 @@ public abstract class App {
     protected abstract void execute();
 
     /**
-     * Return the application frame (singleton).
-     * @return application frame.
-     */
-    public static JFrame getFrame() {
-        if (_applicationFrame == null) {
-            _applicationFrame = new JFrame();
-        }
-        return _applicationFrame;
-    }
-
-    /**
      * Define the application frame (singleton).
      *
      * TODO : workaround to let App create the frame (getFrame)...
@@ -197,6 +186,23 @@ public abstract class App {
     }
 
     /**
+     * @return the application frame (singleton).
+     */
+    public static JFrame getFrame() {
+        if (_applicationFrame == null) {
+            _applicationFrame = new JFrame();
+        }
+        return _applicationFrame;
+    }
+
+    /**
+     * @return the application frame panel.
+     */
+    public static Container getFramePanel() {
+        return getFrame().getContentPane();
+    }
+
+    /**
      * Show the application frame and bring it to front.
      */
     public static void showFrameToFront() {
@@ -213,24 +219,15 @@ public abstract class App {
     }
 
     /**
-     * Return the application frame panel.
-     * @return application frame panel.
-     */
-    public static Container getFramePanel() {
-        return getFrame().getContentPane();
-    }
-
-    /**
      * Hook to override in your App, to return whether the application can be terminated or not.
      *
-     * This method is automatically triggered when the application "Quit" menu
-     * has been used. Thus, you have a chance to do things like saves before the
-     * application really quits.
+     * This method is automatically triggered when the application "Quit" menu is used.
+     * Thus, you have a chance to do things like saves before the application dies.
      *
      * The default implementation lets the application silently quit without further ado.
      *
-     * @warning This method should be overridden to handle quit as you intend to.
-     * In its default behavior, all changes that occurred during application life will be lost.
+     * @warning This method should be overridden to handle quit as you intend to. In its default
+     * behavior, all changes that occurred during application life will be lost.
      *
      * @return should return true if the application can exit, or false to cancel exit.
      */
@@ -242,20 +239,19 @@ public abstract class App {
     /**
      * Hook to override in your App, to handle SAMP hub destiny before closing application.
      *
-     * This method is automatically triggered when the application "Quit" menu
-     * has been used. Thus, you have a chance to bypass SAMP warning message.
+     * This method is automatically triggered when the application "Quit" menu is used.
+     * Thus, you have a chance to bypass SAMP warning message if needed.
      *
-     * The default implementation asks the user if he really wants to shutdown hub.
+     * The default implementation asks the user if he really wants to kill the hub.
      *
-     * @warning This method should be overridden to handle SAMP hub die as you intend to.
-     * In its default behavior, the SAMP warning message will be shown.
+     * @warning This method should be overridden to handle SAMP hub death as you intend to.
+     * In its default behavior, the SAMP warning message will be shown to get user's advice.
      *
      * @return should return true if the SAMP hub should be silently killed, false otherwise
-     * to ask user permission.
+     * to ask for user permission.
      */
     public boolean shouldSilentlyKillSampHubOnQuit() {
-        _logger.info("Empty App.silentlyKillSampHubOnQuit() handler called.");
-
+        _logger.info("Default App.silentlyKillSampHubOnQuit() handler called.");
         return false;
     }
 

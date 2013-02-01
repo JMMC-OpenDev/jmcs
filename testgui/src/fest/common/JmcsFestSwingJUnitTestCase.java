@@ -81,7 +81,7 @@ public class JmcsFestSwingJUnitTestCase extends FestSwingCustomJUnitTestCase {
                      */
                     @Override
                     public boolean test() {
-                        return (Bootstrapper.getApplicationState() == ApplicationState.APP_READY);
+                        return (Bootstrapper.isInState(ApplicationState.APP_READY));
                     }
                 });
 

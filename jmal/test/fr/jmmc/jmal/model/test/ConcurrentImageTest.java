@@ -34,7 +34,7 @@ public class ConcurrentImageTest {
     public static void main(String[] args) {
 
         // invoke App method to initialize logback now:
-        Bootstrapper.getApplicationState();
+        Bootstrapper.getState();
 
         logger.warn("\n\nPlease check that the CPU is running at full speed (avoid frequency changes on demand).\n");
 

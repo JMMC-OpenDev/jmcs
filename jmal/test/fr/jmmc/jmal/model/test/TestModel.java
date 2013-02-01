@@ -241,7 +241,7 @@ public class TestModel {
     public static void main(String[] args) {
 
         // invoke App method to initialize logback now:
-        Bootstrapper.getApplicationState();
+        Bootstrapper.getState();
 
         // Set the default locale to en-US locale (for Numerical Fields "." ",")
         Locale.setDefault(Locale.US);

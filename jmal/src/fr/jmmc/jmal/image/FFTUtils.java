@@ -286,7 +286,9 @@ public final class FFTUtils {
             }
         }
 
-        logger.info("shiftQuadrants: duration = {} ms.", 1e-6d * (System.nanoTime() - start));
+        if (logger.isDebugEnabled()) {
+            logger.debug("shiftQuadrants: duration = {} ms.", 1e-6d * (System.nanoTime() - start));
+        }
     }
 
     /**

@@ -50,6 +50,14 @@ public final class UVMapData {
     private final int uvMapSize;
     /** concrete uv frequency area */
     private final Rectangle.Double uvMapRect;
+    /** image index used (user model only) */
+    private int imageIndex = -1;
+    /** image count (user model only) */
+    private int imageCount = -1;
+    /** image wavelength in meters (user model only) */
+    private Double wavelength = null;
+    /** user model (user model only) */
+    private Object userModel = null;
 
     /**
      * Constuctor
@@ -229,6 +237,70 @@ public final class UVMapData {
     }
 
     /**
+     * Return the image index used (user model only)
+     * @return image index used (user model only)
+     */
+    public int getImageIndex() {
+        return imageIndex;
+    }
+
+    /**
+     * Define the image index used (user model only)
+     * @param imageIndex image index used (user model only)
+     */
+    public void setImageIndex(int imageIndex) {
+        this.imageIndex = imageIndex;
+    }
+
+    /**
+     * Return the image count (user model only)
+     * @return image count (user model only)
+     */
+    public int getImageCount() {
+        return imageCount;
+    }
+
+    /**
+     * Define the image count (user model only)
+     * @param imageCount image count (user model only)
+     */
+    public void setImageCount(final int imageCount) {
+        this.imageCount = imageCount;
+    }
+
+    /**
+     * Return the image wavelength in meters (user model only)
+     * @return image wavelength in meters (user model only) or null
+     */
+    public Double getWaveLength() {
+        return this.wavelength;
+    }
+
+    /**
+     * Define the image wavelength in meters (user model only)
+     * @param wavelength image wavelength in meters (user model only) or null
+     */
+    public void setWaveLength(final Double wavelength) {
+        this.wavelength = wavelength;
+    }
+
+    /**
+     * Return the user model (user model only)
+     * @return userModel user model (user model only)
+     */
+    public Object getUserModel() {
+        return userModel;
+    }
+
+    /**
+     * Define the user model (user model only)
+     * @param userModel user model (user model only)
+     */
+    public void setUserModel(final Object userModel) {
+        this.userModel = userModel;
+    }
+
+    /**
      * Return the optional Complex visibility Noise Service ready to use to compute noise on model images
      * @return optional Complex visibility Noise Service ready to use to compute noise on model images
      */
@@ -245,6 +317,7 @@ public final class UVMapData {
      * @param imageSize number of pixels for both width and height of the generated image
      * @param colorModel image color model
      * @param colorScale color scaling method
+     * @param imageIndex image index used (user model only)
      * @param noiseService optional Complex visibility Noise Service ready to use to compute noise on model images
      * @return true only if input parameters are equals
      */
@@ -254,6 +327,7 @@ public final class UVMapData {
                            final int imageSize,
                            final IndexColorModel colorModel,
                            final ColorScale colorScale,
+                           final int imageIndex,
                            final VisNoiseService noiseService) {
 
         if (!targetName.equals(getTargetName())) {
@@ -277,6 +351,9 @@ public final class UVMapData {
         if (colorScale != getColorScale()) {
             return false;
         }
+        if (imageIndex != getImageIndex()) {
+            return false;
+        }
         // TODO: check correctly noise service equality (i.e. check each individual parameters)
         if (noiseService != getNoiseService()) {
             return false;
@@ -290,11 +367,13 @@ public final class UVMapData {
      * @param targetVersion target version
      * @param uvRect uv frequency area
      * @param imageSize number of pixels for both width and height of the generated image
+     * @param imageIndex image index used (user model only)
      * @return true only if input parameters are equals
      */
     public boolean isDataValid(final String targetName, final int targetVersion,
                                final Rectangle.Double uvRect,
-                               final int imageSize) {
+                               final int imageSize,
+                               final int imageIndex) {
 
         if (!targetName.equals(getTargetName())) {
             return false;
@@ -306,6 +385,9 @@ public final class UVMapData {
             return false;
         }
         if (imageSize != getImageSize()) {
+            return false;
+        }
+        if (imageIndex != getImageIndex()) {
             return false;
         }
         return true;

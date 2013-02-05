@@ -248,10 +248,11 @@ public final class Bootstrapper {
         // Indicate that the application is ready (visible)
         setState(ApplicationState.APP_READY);
 
-        _application.openCommandLineFile();
-
         // Delegate execution to daughter class through abstract execute() call
         _application.execute();
+        
+        // Optionally Open given File:
+        _application.openCommandLineFile();        
     }
 
     /**

@@ -15,7 +15,7 @@ Runtime Libraries (JNLP) are described in the following files :
 -rw-r--r--. 1 bourgesl laogsite  124332 27 avril  2011 activation.jar
 -rwxr-xr-x   1 lafrasse  3021    25K 27 mar 11:19 AppleJavaExtensions-1.6.jar
 -rw-r--r--. 1 bourgesl laogsite  102603 27 avril  2011 BrowserLauncher2-1_3.jar
--rw-r--r--. 1 bourgesl laogsite   46725 27 avril  2011 commons-codec-1.3.jar
+-rw-r--r--@  1 lafrasse  502    227K  2 déc  2011 commons-codec-1.6.jar
 -rw-r--r--. 1 bourgesl laogsite  305001 27 avril  2011 commons-httpclient-3.1.jar
 -rw-r--r--. 1 bourgesl laogsite  284220 27 avril  2011 commons-lang-2.6.jar
 -rw-r--r--. 1 bourgesl laogsite   56709 27 avril  2011 java-getopt-1.0.13.jar

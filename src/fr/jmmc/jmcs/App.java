@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Singleton that represents an application.
+ * Singleton that formalize application's life-cycle.
  *
  * In order to use functionalities provided by jMCS,
  * extend your application from this class and use:

@@ -30,8 +30,16 @@ import org.apache.commons.lang.SystemUtils;
 import org.ivoa.util.runner.LocalLauncher;
 
 /**
- * This class provides jMCS initialization (logs, SWING, network ...)
+ * This class ordinate App life-cycle.
  *
+ * Starting with jMCS initialization (logs, SWING, network ...);
+ * Followed in this order:
+ * - App.initServices()
+ * - App.setupGui()
+ * - App.execute()
+ * - App.cleanup()
+ *
+ * @see App
  * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class Bootstrapper {
@@ -250,9 +258,9 @@ public final class Bootstrapper {
 
         // Delegate execution to daughter class through abstract execute() call
         _application.execute();
-        
+
         // Optionally Open given File:
-        _application.openCommandLineFile();        
+        _application.openCommandLineFile();
     }
 
     /**

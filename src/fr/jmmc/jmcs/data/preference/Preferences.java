@@ -32,20 +32,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is the mother class to manage preferences (aka user defaults).
+ * This is the mother class to manage preferences (a.k.a user defaults).
  * 
  * A singleton of yours SHALL derive from it, and implements all abstract methods.
  * Then use the observer/observable pattern to get notifications on value changes.
  *
  * Preferences are stored in key-value pairs. Keys are actually Object instances,
  * but their toString() representation is always used internally to identify each
- * value. SO WE STRONGLY ADVISE OU TO USE RAW STRINGS AS IDENTIFIERS.
- * We had to use this workaround in order to handle use of enumeration as key repository
- * (so you don't have to explicitely call toSting() on each call requiring a key),
- * while still handling direct String key use.
+ * value. SO WE STRONGLY ADVISE YOU TO USE RAW STRINGS AS IDENTIFIERS.
+ * We used this trick in order to handle use of enumeration as key repository so
+ * you don't have to explicitely call toSting() each time, while still handling
+ * direct String key use.
  *
- * If your singleton is instantiated in App.init(), you can use the following actions
- * to save preferences to file or restore preferences that get default values:
+ * If your singleton is instantiated in App.initServices(), you can use the following actions
+ * to save preferences to file or restore preferences to their default values:
  * &lt;menu label="Preferences"&gt;
  *  &lt;menu label="Save to file" classpath="fr.jmmc.jmcs.data.preference.Preferences" action="savePreferences"/&gt;
  *  &lt;menu label="Set default values" classpath="fr.jmmc.jmcs.data.preference.Preferences" action="restorePreferences"/&gt;
@@ -81,7 +81,7 @@ public abstract class Preferences extends Observable {
     /** Internal storage of preferences. */
     private Properties _currentProperties = new Properties();
     /** Default property. */
-    protected final Properties _defaultProperties = new Properties();
+    private final Properties _defaultProperties = new Properties();
     /** Save to file action */
     protected final Action _savePreferences;
     /** Restore preferences that get one default value */

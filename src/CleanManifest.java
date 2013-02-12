@@ -1,9 +1,7 @@
 
-/**
- * *****************************************************************************
+/*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- * ****************************************************************************
- */
+ ******************************************************************************/
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,10 +18,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This program will remove the Class-Path attributes of the manifest contained
- * in the given jar files
+ * in the given jar files.
  *
  * TODO: move this class outside src folder to be not released
- *
  */
 public class CleanManifest {
 

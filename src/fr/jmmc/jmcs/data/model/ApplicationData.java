@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="company" type="{}Company" minOccurs="0"/>
+ *         &lt;element name="company" type="{}Company"/>
  *         &lt;element name="program" type="{}Program"/>
  *         &lt;element name="compilation" type="{}Compilation"/>
  *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -65,6 +65,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "ApplicationData")
 public class ApplicationData {
 
+    @XmlElement(required = true)
     protected Company company;
     @XmlElement(required = true)
     protected Program program;

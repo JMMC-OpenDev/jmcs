@@ -77,19 +77,19 @@ public final class Bootstrapper {
             return true;
         }
 
-        setState(ApplicationState.ENV_BOOTSTRAP);
-
         // Start the application log singleton:
         LoggingService.getInstance();
-        _jmmcLogger.info("Application log created at {}. Current level is {}.", new Date(), _jmmcLogger.getEffectiveLevel());
+        _jmmcLogger.debug("jMCS log created at {}. Current level is {}.", new Date(), _jmmcLogger.getEffectiveLevel());
+
+        _jmmcLogger.info("jMCS environment bootstrapping...");
+
+        setState(ApplicationState.ENV_BOOTSTRAP);
 
         // Define swing settings (laf, locale...) before any Swing usage if not called at the first line of the main method:
         SwingSettings.setup();
 
         // Define default network settings:
         NetworkSettings.defineDefaults();
-
-        _jmmcLogger.info("Application bootstrap done.");
 
         // Set reentrance flag
         _staticBootstrapDone = true;
@@ -157,10 +157,12 @@ public final class Bootstrapper {
     public static boolean launchApp(final App application, final boolean waitBeforeExecution, final boolean exitWhenClosed,
             final boolean shouldShowSplashScreen) throws IllegalStateException {
 
-        _jmmcLogger.debug("Application starting.");
+        return ___internalLaunch(application, exitWhenClosed, shouldShowSplashScreen);
+    }
+
+    private static boolean ___internalLaunch(final App application, final boolean exitWhenClosed, final boolean shouldShowSplashScreen) {
 
         setState(ApplicationState.ENV_INIT);
-
         final long startTime = System.nanoTime();
         boolean launchDone = false;
 
@@ -172,6 +174,7 @@ public final class Bootstrapper {
             // Load jMCS and application data models
             ApplicationDescription.init();
             _jmmcLogger.debug("Application data loaded.");
+            _jmmcLogger.info("jMCS launching '{}' application...", ApplicationDescription.getInstance().getProgramNameWithVersion());
 
             _application.___internalStart();
 
@@ -205,7 +208,7 @@ public final class Bootstrapper {
     /**
      * Describe the life cycle of the application.
      */
-    static void ___internalRun() {
+    private static void ___internalRun() {
 
         // Using invokeAndWait to be in sync with this thread :
         // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs

@@ -202,49 +202,36 @@ public final class ApplicationDescription {
                 + "</body></html>";
 
 
-        // Use company meta data (if any)
-        if (_applicationData.isSetCompany()) {
-            _company = _applicationData.getCompany();
+        // Load company meta data (if available)
+        _company = _applicationData.getCompany();
 
-            // Mandatory data
-            _shortCompanyName = _company.getShortName();
-            _legalCompanyName = _shortCompanyName;
-            _companyLogoFileName = _company.getLogoResource();
-            _mainWebPageURL = _company.getHomepageUrl();
+        // Mandatory data
+        _shortCompanyName = _company.getShortName();
+        _legalCompanyName = _shortCompanyName;
+        _companyLogoFileName = _company.getLogoResource();
+        _mainWebPageURL = _company.getHomepageUrl();
 
-            // Optionnal data
-            if (_company.isSetLegalName()) {
-                _legalCompanyName = _company.getLegalName();
-            }
-            if (_applicationData.isSetAuthors()) {
-                _authors = _applicationData.getAuthors();
-            }
-            if (_company.isSetFeedbackFormUrl()) {
-                _phpScriptURL = _company.getFeedbackFormUrl();
-            }
-            if (_company.isSetUserSupportUrl()) {
-                _userSupportUrl = _company.getUserSupportUrl();
-            }
-            if (_applicationData.isSetFaqlink()) {
-                _faqLink = _applicationData.getFaqlink();
-            }
-            if (_applicationData.isSetRsslink()) {
-                _hotNewsRSSFeedLink = _applicationData.getRsslink();
-            }
-            if (_applicationData.isSetReleasenotes()) {
-                _releaseNotesLink = _applicationData.getReleaselink();
-            }
-        } else { // If no 'company' data, assume we are in the JMMC context
-            _companyLogoFileName = "fr/jmmc/jmcs/resource/image/jmmc_logo.png";
-            _mainWebPageURL = "http://www.jmmc.fr/";
-            _phpScriptURL = "http://jmmc.fr/feedback/feedback.php";
-            _userSupportUrl = "http://www.jmmc.fr/support.htm";
-            _authors = "The JMMC Team";
-            _shortCompanyName = "JMMC";
-            _legalCompanyName = "Jean-Marie Mariotti Center";
-            _hotNewsRSSFeedLink = getLinkValue() + "/" + programName.toLowerCase() + ".rss";
-            _faqLink = getLinkValue() + "/faq/";
-            _releaseNotesLink = getLinkValue() + "/releasenotes.htm";
+        // Optionnal data
+        if (_company.isSetLegalName()) {
+            _legalCompanyName = _company.getLegalName();
+        }
+        if (_applicationData.isSetAuthors()) {
+            _authors = _applicationData.getAuthors();
+        }
+        if (_company.isSetFeedbackFormUrl()) {
+            _phpScriptURL = _company.getFeedbackFormUrl();
+        }
+        if (_company.isSetUserSupportUrl()) {
+            _userSupportUrl = _company.getUserSupportUrl();
+        }
+        if (_applicationData.isSetFaqlink()) {
+            _faqLink = _applicationData.getFaqlink();
+        }
+        if (_applicationData.isSetRsslink()) {
+            _hotNewsRSSFeedLink = _applicationData.getRsslink();
+        }
+        if (_applicationData.isSetReleasenotes()) {
+            _releaseNotesLink = _applicationData.getReleaselink();
         }
 
         _logger.debug("Application data model loaded.");

@@ -202,7 +202,7 @@ public final class ApplicationDescription {
                 + "</body></html>";
 
 
-        // Load company meta data (if available)
+        // Load company meta data
         _company = _applicationData.getCompany();
 
         // Mandatory data

@@ -86,19 +86,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Prerelease }
+     * Create an instance of {@link Release }
      * 
      */
-    public Prerelease createPrerelease() {
-        return new Prerelease();
-    }
-
-    /**
-     * Create an instance of {@link Change }
-     * 
-     */
-    public Change createChange() {
-        return new Change();
+    public Release createRelease() {
+        return new Release();
     }
 
     /**
@@ -110,11 +102,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Release }
+     * Create an instance of {@link Change }
      * 
      */
-    public Release createRelease() {
-        return new Release();
+    public Change createChange() {
+        return new Change();
+    }
+
+    /**
+     * Create an instance of {@link Prerelease }
+     * 
+     */
+    public Prerelease createPrerelease() {
+        return new Prerelease();
     }
 
     /**

@@ -32,10 +32,10 @@ public final class MessagePane {
     private static final int MINIMUM_WIDTH = 450;
     /** Maximum width for message component of dialog frames */
     private static final int MAXIMUM_WIDTH = 600;
-    /** Maximum height for message component of dialog frames */
-    private static final int MAXIMUM_HEIGHT = 600;
     /** Margin trick used to get better layout */
     private static final int MARGIN = 35;
+    /** Maximum height for message component of dialog frames */
+    private static final int MAXIMUM_HEIGHT = 3 * MARGIN;
     /** default title for error messages */
     private final static String TITLE_ERROR = "Error";
     /** default title for warning messages */
@@ -431,10 +431,9 @@ public final class MessagePane {
     private static Component getMessageComponent(String message) {
         final JTextArea textArea = new JTextArea(message);
 
-        // Sizing
-        // add MARGIN to the textArea to avoid scrollPane borders when the size is near to the limit
+        // Sizing : add MARGIN to the textArea to avoid scrollPane borders when the size is reaching the limit
         final int textAreaWidth = textArea.getMinimumSize().width + MARGIN;
-        final int textAreaHeight = textArea.getMinimumSize().height + MARGIN;
+        final int textAreaHeight = textArea.getMinimumSize().height;
         final int finalHeight = Math.min(textAreaHeight, MAXIMUM_HEIGHT);
         final int finalWidth = Math.max(MINIMUM_WIDTH, Math.min(textAreaWidth, MAXIMUM_WIDTH));
         final Dimension dims = new Dimension(finalWidth, finalHeight);
@@ -447,7 +446,12 @@ public final class MessagePane {
         textArea.setOpaque(textAreaBackgroundShouldBeOpaque);
         scrollPane.setOpaque(textAreaBackgroundShouldBeOpaque);
         scrollPane.getViewport().setOpaque(textAreaBackgroundShouldBeOpaque);
-        if (!textAreaBackgroundShouldBeOpaque) {
+        if (textAreaBackgroundShouldBeOpaque) {
+            // Accomodate more vertical space for visible scroll pane
+            dims.setSize(finalWidth, MAXIMUM_HEIGHT);
+            scrollPane.setMaximumSize(dims);
+            scrollPane.setPreferredSize(dims);
+        } else {
             scrollPane.setBorder(null);
         }
 
@@ -477,5 +481,6 @@ public final class MessagePane {
 
         message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue tincidunt justo. Etiam massa arcu, vestibulum pulvinar accumsan ut, ullamcorper sed sapien. Quisque ullamcorper felis eget turpis mattis vestibulum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras et turpis justo, sed lacinia libero. Sed in tellus eget libero posuere euismod. In nulla mi, semper a condimentum quis, tincidunt eget magna. Etiam tristique venenatis ante eu interdum. Phasellus ultrices rhoncus urna, ac pretium ante ultricies condimentum. Vestibulum et turpis ac felis pulvinar rhoncus nec a nulla. Proin eu ante eu leo fringilla ornare in a massa. Morbi varius porttitor nibh ac elementum. Cras sed neque massa, sed vulputate magna. Ut viverra velit magna, sagittis tempor nibh.";
         MessagePane.showMessage(message, "Lorem Ipsum");
+        System.exit(0);
     }
 }

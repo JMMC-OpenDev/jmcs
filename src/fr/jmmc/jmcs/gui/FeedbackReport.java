@@ -387,7 +387,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         sendReportPanel.setLayout(new java.awt.GridBagLayout());
 
-        emailLabel.setText("E-Mail :");
+        emailLabel.setText("E-Mail:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -395,7 +395,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         sendReportPanel.add(emailLabel, gridBagConstraints);
 
-        typeLabel.setText("Type :");
+        typeLabel.setText("Type:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -429,7 +429,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         sendReportPanel.add(headerLabel, gridBagConstraints);
 
-        descriptionScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("* Description :"));
+        descriptionScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("* Description:"));
 
         descriptionTextArea.setColumns(20);
         descriptionTextArea.setRows(5);
@@ -482,7 +482,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         sendReportPanel.add(summaryTextField, gridBagConstraints);
 
-        summaryLabel.setText("* Summary :");
+        summaryLabel.setText("* Summary:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;

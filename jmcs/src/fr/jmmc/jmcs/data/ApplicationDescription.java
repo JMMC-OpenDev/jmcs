@@ -26,6 +26,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.ivoa.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +114,19 @@ public final class ApplicationDescription {
                 _appDataModel = getJmcsInstance();
             }
         }
+    }
+
+    /**
+     * Custom loader to load an ApplicationDescription from any URL (module for example)
+     * @param filePath path to any file included in the application class loader like 
+     * @return new loaded and parsed ApplicationDescription instance
+     * @throws IllegalStateException if the given URL can not be loaded
+     */
+    public static ApplicationDescription loadDescription(final String filePath) throws IllegalStateException {
+        // TODO: fix that code : To be discussed
+        final URL fileURL = FileUtils.getResource(filePath);
+
+        return new ApplicationDescription(fileURL);
     }
 
     /**

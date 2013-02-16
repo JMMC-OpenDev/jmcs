@@ -272,7 +272,7 @@ public class TestJide extends JFrame {
 
             @Override
             public void run() {
-                LookAndFeelFactory.installDefaultLookAndFeelAndExtension();
+                LookAndFeelFactory.installJideExtension();
                 new TestJide();
             }
         });

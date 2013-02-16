@@ -27,6 +27,8 @@ public final class SearchPanel extends javax.swing.JFrame {
     private static final long serialVersionUID = 1;
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(SearchPanel.class.getName());
+    /** A very light red color. */
+    private static final Color VERY_LIGHT_RED = new Color(0xFF, 0x80, 0x80);
 
     /** Quick search direction enumeration */
     public static enum SEARCH_DIRECTION {
@@ -54,16 +56,23 @@ public final class SearchPanel extends javax.swing.JFrame {
     private FindNextAction _findNextAction;
     /** Find Previous action */
     private FindPreviousAction _findPreviousAction;
-    // Search Controler stuff
-    private SearchPanelDelegate _searchHelper;
+    /** Search Controler */
+    private final SearchPanelDelegate _searchDelegate;
 
-    /** Creates new form SearchPanel */
-    public SearchPanel(SearchPanelDelegate searchHelper) {
+    /** 
+     * Creates new form SearchPanel 
+     * @param searchDelegate search delegate instance
+     */
+    public SearchPanel(final SearchPanelDelegate searchDelegate) {
         super("Find");
 
         setupActions();
         initComponents();
-        _searchHelper = searchHelper;
+
+        // Initialize normal background color (LAF issue):
+        _searchField.setBackground(Color.WHITE);
+
+        _searchDelegate = searchDelegate;
 
         WindowUtils.centerOnMainScreen(this);
         WindowUtils.setClosingKeyboardShortcuts(this);
@@ -166,7 +175,7 @@ public final class SearchPanel extends javax.swing.JFrame {
      *
      * @param shouldBeEnabled Enables menu if true, disables them otherwise.
      */
-    public void enableMenus(boolean shouldBeEnabled) {
+    public void enableMenus(final boolean shouldBeEnabled) {
         _findAction.setEnabled(shouldBeEnabled);
         _findNextAction.setEnabled(shouldBeEnabled);
         _findPreviousAction.setEnabled(shouldBeEnabled);
@@ -176,7 +185,7 @@ public final class SearchPanel extends javax.swing.JFrame {
      * Handle search requests.
      * @param direction Going 'NEXT' or 'PREVIOUS', or reset in 'UNDEFINED'.
      */
-    private void doSearch(SEARCH_DIRECTION direction) {
+    private void doSearch(final SEARCH_DIRECTION direction) {
 
         final String text = _searchField.getText().trim();
         if (text.length() != 0) {
@@ -194,10 +203,10 @@ public final class SearchPanel extends javax.swing.JFrame {
 
             // Performance timer
             final long startTime = System.nanoTime();
-            final boolean found = _searchHelper.search(pattern, direction);
+            final boolean found = _searchDelegate.search(pattern, direction);
             if (!found) {
-                _logger.info("Searched token {} not found.", text);
-                _searchField.setBackground(Color.red);
+                _logger.info("Searched token '{}' not found.", text);
+                _searchField.setBackground(VERY_LIGHT_RED);
             } else {
                 _searchField.setBackground(Color.WHITE);
             }
@@ -222,7 +231,7 @@ public final class SearchPanel extends javax.swing.JFrame {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             setVisible(true);
         }
     }
@@ -244,7 +253,7 @@ public final class SearchPanel extends javax.swing.JFrame {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             doSearch(SEARCH_DIRECTION.NEXT);
         }
     }
@@ -260,13 +269,13 @@ public final class SearchPanel extends javax.swing.JFrame {
          * @param classPath
          * @param fieldName 
          */
-        FindPreviousAction(String classPath, String fieldName) {
+        FindPreviousAction(final String classPath, final String fieldName) {
             super(classPath, fieldName);
             setEnabled(false); // Will be (dis)enabled dynamically on CalibratorView::tableChanged()
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             doSearch(SEARCH_DIRECTION.PREVIOUS);
         }
     }

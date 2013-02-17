@@ -38,25 +38,9 @@ public final class MCSExceptionHandler {
     private static volatile Thread.UncaughtExceptionHandler _exceptionHandler = null;
 
     /**
-     * Disable the security manager to be able to use System.setProperty ...
-     */
-    private static void disableSecurityManager() {
-        try {
-            // Disable security checks :
-            System.setSecurityManager(null);
-        } catch (SecurityException se) {
-            // This case occurs with java netx and
-            // OpenJDK Runtime Environment (IcedTea6 1.6) (rhel-1.13.b16.el5-x86_64)
-            _logger.warn("Can't set security manager to null", se);
-        }
-    }
-
-    /**
      * Public method to initialize the exception handler singleton with the LoggingExceptionHandler
      */
     public static void installLoggingHandler() {
-        disableSecurityManager();
-
         setExceptionHandler(new LoggingExceptionHandler());
     }
 
@@ -64,7 +48,7 @@ public final class MCSExceptionHandler {
      * Public method to initialize the exception handler singleton with the SwingExceptionHandler
      */
     public static void installSwingHandler() {
-        disableSecurityManager();
+        // Requires SecurityManager disabled: @see Bootstrapper.disableSecurityManager()
 
         // AWT exception handler for modal dialogs :
         System.setProperty("sun.awt.exception.handler", MCSExceptionHandler.class.getName());

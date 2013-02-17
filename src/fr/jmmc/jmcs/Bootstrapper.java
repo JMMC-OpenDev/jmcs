@@ -14,6 +14,7 @@ import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.gui.task.TaskSwingWorkerExecutor;
+import fr.jmmc.jmcs.gui.util.MacOSXAdapter;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.network.NetworkSettings;
@@ -24,6 +25,8 @@ import fr.jmmc.jmcs.util.logging.LoggingService;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import javax.swing.JFrame;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
@@ -46,12 +49,14 @@ public final class Bootstrapper {
 
     /** JMMC Logger */
     private final static Logger _jmmcLogger = LoggingService.getJmmcLogger();
-    /** Store a proxy to the shared ActionRegistrar facility */
-    private final static ActionRegistrar _actionRegistrar = ActionRegistrar.getInstance();
+    /** user defined Locale before setting Locale.US */
+    private static Locale _userLocale = null;
+    /** user defined Timezone before setting Timezone.GMT */
+    private static TimeZone _userTimeZone = null;
     /** Flag to avoid reentrance in launch sequence */
     private static boolean _staticBootstrapDone = false;
     /** Store whether application should be quit when main frame close box clicked. */
-    private static boolean _exitApplicationWhenClosed;
+    private static boolean _exitApplicationWhenClosed = false;
     /** Flag to prevent calls to System.exit() */
     private static boolean _avoidSystemExit = false;
     /** Flag indicating if the application started properly and is ready (visible) */
@@ -72,20 +77,31 @@ public final class Bootstrapper {
      * @return true if the initialization sequence succeeds, false otherwise.
      */
     static boolean bootstrap() throws IllegalStateException {
-
+        // avoid reentrance:
         if (_staticBootstrapDone) {
             return true;
         }
 
+        // Disable security checks:
+        disableSecurityManager();
+
+        // Set System properties:
+        // note: it calls: System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+        // Must be set before any call to Collections or Arrays.sort(Object[]) that use that property once
+        // ie before initializing Logs because it calls Collections.sort in LoggerContext.getLoggerList:195	
+        setSystemProps();
+
+        // Initialize Locale.US:
+        initializeLocale();
+
         // Start the application log singleton:
         LoggingService.getInstance();
-        _jmmcLogger.debug("jMCS log created at {}. Current level is {}.", new Date(), _jmmcLogger.getEffectiveLevel());
+        _jmmcLogger.info("jMCS log created at {}. Current level is {}.", new Date(), _jmmcLogger.getEffectiveLevel());
 
         _jmmcLogger.info("jMCS environment bootstrapping...");
-
         setState(ApplicationState.ENV_BOOTSTRAP);
 
-        // Define swing settings (laf, locale...) before any Swing usage if not called at the first line of the main method:
+        // Define swing settings (laf, defaults...) before any Swing usage if not called at the first line of the main method:
         SwingSettings.setup();
 
         // Define default network settings:
@@ -94,6 +110,85 @@ public final class Bootstrapper {
         // Set reentrance flag
         _staticBootstrapDone = true;
         return true;
+    }
+
+    /**
+     * Defines in code some System.properties to force text anti-aliasing and Mac OS features ...
+     * Called by bootstrap() before anything
+     * @see MacOSXAdapter
+     */
+    private static void setSystemProps() {
+        // force anti aliasing :
+        if (SystemUtils.IS_JAVA_1_5) {
+            System.setProperty("swing.aatext", "true");
+        } else if (SystemUtils.IS_JAVA_1_6) {
+            final String old = System.getProperty("awt.useSystemAAFontSettings");
+            if (old == null) {
+                System.setProperty("awt.useSystemAAFontSettings", "on");
+            }
+        }
+
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            // always use screen menuBar on MacOS X:
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+        }
+
+        // JDK 1.7 settings:
+        if (SystemUtils.isJavaVersionAtLeast(1.7f)) {
+            // Fix JDK 1.7 - Swing Focus : java.lang.IllegalArgumentException: Comparison method violates its general contract!
+            // bug in SortingFocusTraversalPolicy.enumerateAndSortCycle() related to LayoutComparator
+            // See also JIDE: @see com.jidesoft.plaf.LookAndFeelFactory#workAroundSwingIssues()
+            /*
+             * http://stackoverflow.com/questions/13575224/comparison-method-violates-its-general-contract-timsort-and-gridlayout
+             * https://forums.oracle.com/forums/thread.jspa?threadID=2455538
+             */
+            System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+        }
+    }
+
+    /**
+     * Disable the security manager to be able to use System.setProperty ...
+     */
+    private static void disableSecurityManager() {
+        try {
+            // Disable security checks:
+            System.setSecurityManager(null);
+        } catch (SecurityException se) {
+            // This case occurs with java netx and
+            // OpenJDK Runtime Environment (IcedTea6 1.6) (rhel-1.13.b16.el5-x86_64)
+            _jmmcLogger.warn("Can't set security manager to null", se);
+        }
+    }
+
+    /**
+     * Initialize default locale and default time zone.
+     */
+    private static void initializeLocale() {
+        // Backup user settings:
+        _userLocale = Locale.getDefault();
+        _userTimeZone = TimeZone.getDefault();
+
+        // Set the default locale to en-US locale (for Numerical Fields "." ",")
+        Locale.setDefault(Locale.US);
+
+        // Set the default timezone to GMT to handle properly the date in UTC:
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+    }
+
+    /**
+     * Return the user Locale defined before using Locale.US
+     * @return user Locale
+     */
+    public static Locale getUserLocale() {
+        return _userLocale;
+    }
+
+    /**
+     * Return the user TimeZone defined before using GMT
+     * @return user TimeZone
+     */
+    public static TimeZone getUserTimeZone() {
+        return _userTimeZone;
     }
 
     /**
@@ -160,6 +255,13 @@ public final class Bootstrapper {
         return ___internalLaunch(application, exitWhenClosed, shouldShowSplashScreen);
     }
 
+    /**
+     * Internal: launch given application instance
+     * @param application application instance to launch
+     * @param exitWhenClosed flag indicating if application should be quit when main frame close box clicked.
+     * @param shouldShowSplashScreen true to effectively show the splash screen, false otherwise.
+     * @return true if launch succeeded; false otherwise
+     */
     private static boolean ___internalLaunch(final App application, final boolean exitWhenClosed, final boolean shouldShowSplashScreen) {
 
         setState(ApplicationState.ENV_INIT);
@@ -180,7 +282,7 @@ public final class Bootstrapper {
 
             // Build Acknowledgment, ShowRelease and ShowHelp Actions
             // (the creation must be done after applicationModel instanciation)
-            _actionRegistrar.createAllInternalActions();
+            ActionRegistrar.getInstance().createAllInternalActions();
 
             setState(ApplicationState.APP_INIT);
 
@@ -240,7 +342,7 @@ public final class Bootstrapper {
                 _application.declareInteroperability();
 
                 // Perform defered action initialization (SAMP-related actions)
-                _actionRegistrar.performDeferedInitialization();
+                ActionRegistrar.getInstance().performDeferedInitialization();
 
                 // Define the jframe associated to the application which will get the JMenuBar
                 final JFrame frame = App.getFrame();
@@ -397,6 +499,9 @@ public final class Bootstrapper {
         setState(ApplicationState.JAVA_LIMB);
     }
 
+    /**
+     * Internal: Stop services
+     */
     private static void ___internalStop() {
 
         // Stop the job runner (if any)
@@ -416,9 +521,9 @@ public final class Bootstrapper {
     }
 
     /**
-     * @return the application current state.
+     * @param state the new application state.
      */
-    private static void setState(ApplicationState state) {
+    private static void setState(final ApplicationState state) {
         _jmmcLogger.debug("Change state from '{}' to '{}'.", _applicationState, state);
         _applicationState = state;
     }

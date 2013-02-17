@@ -31,15 +31,14 @@ public final class LoggingService {
 
     /** Singleton instance */
     private volatile static LoggingService _instance = null;
-    // Loggers
-    /** JMMC application log */
-    public final static String JMMC_APP_LOG = Logger.ROOT_LOGGER_NAME;
     /** JMMC status log */
     public final static String JMMC_STATUS_LOG = "fr.jmmc.jmcs.status";
     /** JMMC main logger */
     private final static String JMMC_LOGGER = "fr.jmmc";
     /** JMMC LogBack configuration file as one resource file (in class path) */
     private final static String JMMC_LOGBACK_CONFIG_RESOURCE = "jmmc-logback.xml";
+    /** JMMC application log */
+    public final static String JMMC_APP_LOG = Logger.ROOT_LOGGER_NAME;
 
     /**
      * Get the singleton instance or create a new one if needed
@@ -58,7 +57,7 @@ public final class LoggingService {
         return (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(JMMC_LOGGER);
     }
 
-    /** slf4j / logback initialization done */
+    /** slf4j / logback initialization */
     private static void init() throws SecurityException, IllegalStateException {
         final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         final URL logConf = FileUtils.getResource(JMMC_LOGBACK_CONFIG_RESOURCE);

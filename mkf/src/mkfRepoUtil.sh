@@ -257,16 +257,18 @@ function getProjectDesc()
     # Warning use shell {} for expasion but don't include them into quoted string
     case "${project}" in
         AMBER  ) 
-            echo "${JMMC_SVNROOT} AMBER/${version}/amdlib" ;;
+            echo "${JMMC_SVNROOT} AMBER/${version}/amdlib " ;;
         ASPRO2 )
-            echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal"
-            echo  oiTools/${version}/{oitools,oiexplorer-core}
-            echo "ASPRO2/${version}/aspro" ;;
+            echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
+            echo oiTools/${version}/{oitools,oiexplorer-core}
+            echo ASPRO2/${version}/{aspro-conf,aspro} ;;
         AppLauncher )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs "
             echo AppLauncher/${version}/{smptest,smprsc,smprun} ;;
         LITpro ) 
-            echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal oiTools/${version}/oitools LITpro/${version}/mfgui" ;;
+            echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
+            echo oiTools/${version}/{oitools,oiexplorer-core}
+            echo LITpro/${version}/mfgui ;;
         MCS )
             echo -n "${JMMC_SVNROOT} "
             echo MCS/${version}/{mkf,mcscfg,tat,ctoo,mcs,log,err,misc,thrd,timlog,fnd,misco,env,cmd,msg,sdb,evh,gwt,jmcs,jmal,modc,modcpp,modsh,modjava,testgui} ;;
@@ -277,9 +279,9 @@ function getProjectDesc()
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
             echo SearchCal/${version}/{simcli,alx,vobs,sclsvr,sclws,sclgui} ;;
         WISARD )
-            echo "${JMMC_SVNROOT} WISARD/${version}/wisard" ;;
+            echo "${JMMC_SVNROOT} WISARD/${version}/wisard " ;;
         YOCO )
-            echo "https://forge.osug.fr/svn/ipag-sw YOCO/${version}/yoco" ;;
+            echo "https://forge.osug.fr/svn/ipag-sw YOCO/${version}/yoco " ;;
         * )
           return 1 ;;
     esac

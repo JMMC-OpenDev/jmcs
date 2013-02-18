@@ -22,7 +22,7 @@ COMMANDROOT=$(pwd)
 _abort()
 {
     RETVALUE=$1
-    echo "Abording"
+    echo "Aborting"
     exit $RETVALUE
 }
 
@@ -636,22 +636,18 @@ createAppJar()
 createHtmlAcknowledgement()
 {
     _installTrap
-    APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
-    if [ -f "$APPLICATION_DATA_XML" ]
-    then
-        OUTPUTFILE=acknowledgement.htm
-        echo "Creating '$OUTPUTFILE' ... "
-        cd $APP_WEBROOT
-        xml sel -I -t -e "html" \
-        -e "head" \
-        -e "title" -o "$APPNAME acknowledgment" -b -b \
-        -e "body" \
-        -e "pre" -v "//acknowledgment" \
-        -b -b \
-        ${APPLICATION_DATA_XML} > $OUTPUTFILE
-        cd -
-        echo "    done"
-    fi
+    OUTPUTFILE=acknowledgement.htm
+    echo "Creating '$OUTPUTFILE' ... "
+    cd $APP_WEBROOT
+    xml sel -I -t -e "html" \
+    -e "head" \
+    -e "title" -o "$APPNAME acknowledgment" -b -b \
+    -e "body" \
+    -e "pre" -v "//acknowledgment" \
+    -b -b \
+    ${APPLICATION_DATA_XML} > $OUTPUTFILE
+    cd -
+    echo "    done"
 }
 
 
@@ -687,7 +683,7 @@ createHtmlIndex()
     -m "//application-desc/argument" -o "&quot;" -v "." -o "&quot; " -b -b -b \
     -i "//j2se" \
     -e "h4" -o "List of supported Java 2 SE Runtime Environment (JRE) versions:" -b \
-    -e "ul" -m "//j2se" -e "li" -v "@version" -b -b -b \
+    -e "ul" -m "//j2se" -e "li" -v "@version" -b -b -b -b \
     -e "p" -e "a" -a "href" -o "./credits.htm" -b -o "View credits." -b -b \
     -e "p" -e "a" -a "href" -o "./releasenotes.htm" -b -o "View release notes." -b -b \
     -e "p" -e "a" -a "href" -o "./releasenotes.rss" -b -o "Subscribe to this rss feed to be informed of future releases." -b -b \
@@ -709,39 +705,37 @@ createHtmlIndex()
 createReleaseFiles()
 {
     _installTrap 
-    APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
     cd $APP_WEBROOT
     createXsltFiles
-    if [ -f "$APPLICATION_DATA_XML" ]
+    
+    echo "Creating releasenotes files ... "
+
+    # recover release from previous installation or build new one
+    XML_RELEASE_FILE=ApplicationRelease.xml
+    if [ -e $REAL_APP_WEBROOT/$XML_RELEASE_FILE ]
     then
-        echo "Creating releasenotes files ... "
-
-        # recover release from previous installation or build new one
-        XML_RELEASE_FILE=ApplicationRelease.xml
-        if [ -e $REAL_APP_WEBROOT/$XML_RELEASE_FILE ]
-        then
-            OLDXML_RELEASE_FILE=$REAL_APP_WEBROOT/$XML_RELEASE_FILE
-        else
-            OLDXML_RELEASE_FILE=$APPLICATION_DATA_XML
-        fi
-
-        # complete OLD release file with ones comming from given APPLICATION_DATA_XML
-        # and set pubDate
-        xsltproc --path .:$PWD \
-        --stringparam releaseFile $OLDXML_RELEASE_FILE \
-        --output $XML_RELEASE_FILE \
-        setDateOfReleases.xsl $APPLICATION_DATA_XML 
-
-        # transform into html and rss format
-        OUTPUTFILE=releasenotes.htm
-        echo "Creating '$OUTPUTFILE'"
-        xsltproc --output $OUTPUTFILE applicationReleaseToHtml.xsl $XML_RELEASE_FILE
-        
-        OUTPUTFILE=releasenotes.rss
-        echo "Creating '$OUTPUTFILE'"
-        xsltproc --output $OUTPUTFILE applicationReleaseToRss.xsl $XML_RELEASE_FILE
-        echo "    done"
+        OLDXML_RELEASE_FILE=$REAL_APP_WEBROOT/$XML_RELEASE_FILE
+    else
+        OLDXML_RELEASE_FILE=$APPLICATION_DATA_XML
     fi
+
+    # complete OLD release file with ones comming from given APPLICATION_DATA_XML
+    # and set pubDate
+    xsltproc --path .:$PWD \
+    --stringparam releaseFile $OLDXML_RELEASE_FILE \
+    --output $XML_RELEASE_FILE \
+    setDateOfReleases.xsl $APPLICATION_DATA_XML 
+
+    # transform into html and rss format
+    OUTPUTFILE=releasenotes.htm
+    echo "Creating '$OUTPUTFILE'"
+    xsltproc --output $OUTPUTFILE applicationReleaseToHtml.xsl $XML_RELEASE_FILE
+    
+    OUTPUTFILE=releasenotes.rss
+    echo "Creating '$OUTPUTFILE'"
+    xsltproc --output $OUTPUTFILE applicationReleaseToRss.xsl $XML_RELEASE_FILE
+    echo "    done"
+   
     cd -
 }
 
@@ -753,7 +747,6 @@ createReleaseFiles()
 createCreditFile()
 {
     _installTrap
-    APPLICATION_DATA_XML=$(find $SCRIPTROOT -name ApplicationData.xml)
     OUTPUTFILE=credits.htm
     echo "Creating '$OUTPUTFILE' ... "
     cd $APP_WEBROOT
@@ -819,6 +812,15 @@ then
     echo "Missing JNLP file"
     _usage
     exit 1
+fi
+
+# check applicationData.xml
+APPLICATION_DATA_XML=$(find $MODULEROOT -name ApplicationData.xml)
+if [ -z "$APPLICATION_DATA_XML" ]
+then
+    echo "JNLP deployement requires an ApplicationData.xml file"
+    _usage
+    exit 2
 fi
 
 

@@ -91,15 +91,15 @@ public final class StarResolver {
 
         // Launch the query in the background in order to keep GUI updated
 
-        // Define the star name :
+        // Define the star name
         _newStarModel.setName(_starName);
 
         _resolveStarThread = new ResolveStarThread();
 
-        // define UncaughtExceptionHandler :
+        // Define UncaughtExceptionHandler
         MCSExceptionHandler.installThreadHandler(_resolveStarThread);
 
-        // Launch query :
+        // Launch query
         _resolveStarThread.start();
     }
 
@@ -112,8 +112,8 @@ public final class StarResolver {
     }
 
     /**
-     * Return the current Simbad mirror
-     * @return Simbad mirror name
+     * Return the current SIMBAD mirror
+     * @return SIMBAD mirror name
      */
     public static String getSimbadMirror() {
         if (_simbadMirror == null) {
@@ -123,8 +123,8 @@ public final class StarResolver {
     }
 
     /**
-     * Return the Simbad url from the current mirror or the first one
-     * @return Simbad url
+     * Return the SIMBAD URL from the current mirror or the first one
+     * @return SIMBAD URL
      */
     public static String getSimbadUrl() {
         if (_simbadMirror == null) {
@@ -148,9 +148,9 @@ public final class StarResolver {
     }
 
     /**
-     * Return the next Simbad Mirror which url is not in the failed URL Set
+     * Return the next SIMBAD Mirror which URL is not in the failed URL Set
      * @param failedUrl failed URL(s)
-     * @return next Simbad Mirror or null if none is still available
+     * @return next SIMBAD Mirror or null if none is still available
      */
     private static String getNextSimbadMirror(final Set<String> failedUrl) {
         for (Map.Entry<String, String> e : _simbadMirrors.entrySet()) {
@@ -189,9 +189,9 @@ public final class StarResolver {
      */
     private final class ResolveStarThread extends Thread {
 
-        /** flag to indicate that an error occured */
+        /** flag to indicate that an error occurred */
         private boolean _error = false;
-        /** Simbad querying result */
+        /** SIMBAD querying result */
         private String _result = null;
 
         @Override
@@ -274,15 +274,15 @@ public final class StarResolver {
         }
 
         /**
-         * Return the flag indicating that an error occured
-         * @return true if an error occured
+         * Return the flag indicating that an error occurred
+         * @return true if an error occurred
          */
         private boolean isError() {
             return _error;
         }
 
         /**
-         * Query Simbad using script
+         * Query SIMBAD using script
          */
         public void querySimbad() {
             _logger.trace("ResolveStarThread.querySimbad");
@@ -320,7 +320,7 @@ public final class StarResolver {
             // Forge the URL in UTF8 unicode charset
             final String encodedScript = UrlUtils.encode(simbadScript);
 
-            // Use prefered Simbad mirror:
+            // Use prefered Simbad mirror
             String simbadMirror = getSimbadMirror();
             String simbadURL;
 
@@ -329,7 +329,7 @@ public final class StarResolver {
             InputStream inputStream = null;
             BufferedReader bufferedReader = null;
 
-            // retry other mirrors:
+            // Retry other mirrors if needed
             while (simbadMirror != null) {
                 // Try to get star data from CDS
                 simbadURL = getSimbadUrl();

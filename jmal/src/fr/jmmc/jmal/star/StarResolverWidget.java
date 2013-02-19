@@ -56,15 +56,7 @@ public class StarResolverWidget extends SearchField implements Observer {
     }
 
     /**
-     * Creates a new StarResolverWidget object.
-     */
-    public StarResolverWidget() {
-        this(new Star());
-    }
-
-    /**
-     * Creates a new StarResolverWidget object.
-     *
+     * Creates a new StarResolverWidget object dedicated to unique star resolution.
      * @param star star model
      */
     public StarResolverWidget(final Star star) {
@@ -99,6 +91,35 @@ public class StarResolverWidget extends SearchField implements Observer {
      */
     public final Star getStar() {
         return _star;
+    }
+
+    /**
+     * Creates a new StarResolverWidget object dedicated to multiple star resolutions.
+     * @param stars star list
+     */
+    public StarResolverWidget(final StarList stars) {
+
+        _star = null;
+        stars.addObserver(this);
+
+        addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final String starNames = e.getActionCommand().trim();
+
+                if (starNames.length() > 0) {
+                    _logger.info("Searching CDS Simbad data for star '{}'.", starNames);
+
+                    StatusBar.show("searching CDS Simbad data for stars '"
+                            + starNames + "'... (please wait, this may take a while)");
+
+                    // Disable search field while request processing to avoid concurrent calls :
+                    setEnabled(false);
+
+                    new StarResolver(starNames, stars).multipleResolve();
+                }
+            }
+        });
     }
 
     /**
@@ -145,18 +166,31 @@ public class StarResolverWidget extends SearchField implements Observer {
 
         // Force to exit when the frame closes :
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        /*
+         // Resolver initialization
+         final Star star = new Star();
+         star.addObserver(new Observer() {
+         @Override
+         public void update(Observable o, Object arg) {
+         _logger.info("Star changed:\n{}", star);
+         }
+         });
+        
+         final JPanel panel = new JPanel();
+         panel.add(new StarResolverWidget(star));
+         */
 
         // Resolver initialization
-        final Star star = new Star();
-        star.addObserver(new Observer() {
+        final StarList stars = new StarList();
+        stars.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
-                _logger.info("Star changed:\n{}", star);
+                _logger.info("Star list complete:\n{}", stars);
             }
         });
 
         final JPanel panel = new JPanel();
-        panel.add(new StarResolverWidget(star));
+        panel.add(new StarResolverWidget(stars));
 
         frame.getContentPane().add(panel);
 

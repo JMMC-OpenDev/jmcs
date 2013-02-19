@@ -49,23 +49,22 @@ public final class StarResolver {
 
     static {
         _simbadMirrors = new LinkedHashMap<String, String>(4);
-        _simbadMirrors.put("SIMBAD Strasbourg FR", "http://simbad.u-strasbg.fr/simbad/sim-script?script=");
-        _simbadMirrors.put("SIMBAD Harvard US", "http://simbad.harvard.edu/simbad/sim-script?script=");
-        _simbadMirrors.put("SIMBAD Strasbourg FR [IP]", "http://130.79.128.4/simbad/sim-script?script=");
-        _simbadMirrors.put("SIMBAD Harvard US [IP]", "http://131.142.185.22/simbad/sim-script?script=");
+        _simbadMirrors.put("SIMBAD Strasbourg, FR", "http://simbad.u-strasbg.fr/simbad/sim-script?script=");
+        _simbadMirrors.put("SIMBAD Harvard, US", "http://simbad.harvard.edu/simbad/sim-script?script=");
+        _simbadMirrors.put("SIMBAD Strasbourg, FR [IP]", "http://130.79.128.4/simbad/sim-script?script=");
+        _simbadMirrors.put("SIMBAD Harvard, US [IP]", "http://131.142.185.22/simbad/sim-script?script=");
     }
     /* members */
-    /** The sought star name */
-    private final String _starName;
+    /** The sought star name(s) */
+    private String _starNames;
     /** The star data container */
-    private final Star _starModel;
-    /**
-     * The querying result data container, not to overwrite original model with
-     * incomplete data in case an error occurs during CDS querying
-     */
-    private final Star _newStarModel = new Star();
+    private Star _starModel;
     /** The thread executing the CDS SIMBAD query and parsing */
     private ResolveStarThread _resolveStarThread = null;
+    /** running job left to complete */
+    private int _jobCounter = 0;
+    /** Star list */
+    private final StarList _starList;
 
     /**
      * Constructor.
@@ -74,8 +73,20 @@ public final class StarResolver {
      * @param star the star to fulfill.
      */
     public StarResolver(final String name, final Star star) {
-        _starName = name;
+        _starNames = name;
         _starModel = star;
+        _starList = null;
+    }
+
+    /**
+     * Dedicated constructor for multiple star resolution.
+     *
+     * @param names the names of the star to resolve, separated by semi-colons.
+     */
+    public StarResolver(final String names, final StarList stars) {
+        _starNames = names;
+        _starModel = new Star();
+        _starList = stars;
     }
 
     /**
@@ -92,15 +103,78 @@ public final class StarResolver {
         // Launch the query in the background in order to keep GUI updated
 
         // Define the star name
-        _newStarModel.setName(_starName);
+        Star newStarModel = new Star();
+        _jobCounter = 1;
+        newStarModel.setName(_starNames);
 
-        _resolveStarThread = new ResolveStarThread();
+        _resolveStarThread = new ResolveStarThread(_starNames, newStarModel);
 
         // Define UncaughtExceptionHandler
         MCSExceptionHandler.installThreadHandler(_resolveStarThread);
 
         // Launch query
         _resolveStarThread.start();
+    }
+
+    /**
+     * Synchronously query CDS SIMBAD to retrieve multiple stars information according to their names.
+     */
+    public void multipleResolve() {
+        _logger.trace("StarResolver.multipleResolve");
+
+        if (_starList == null) {
+            _logger.warn("No star list provided, so doing nothing.");
+            return;
+        }
+
+        if (_resolveStarThread != null) {
+            _logger.warn("A star resolution thread is already running, so doing nothing.");
+            return;
+        }
+
+        // Flush current list
+        _starList.clear();
+
+        // Launch the query in the background in order to keep GUI updated
+        String[] names = _starNames.split(SEPARATOR_SEMI_COLON);
+        _jobCounter = names.length;
+        for (String name : names) {
+
+            // Skip empty names
+            if (name.isEmpty()) {
+                decrementJobCounter();
+                continue;
+            }
+
+            // Define the star name
+            Star newStarModel = new Star();
+            newStarModel.setName(name);
+            _starList.add(newStarModel);
+
+            _resolveStarThread = new ResolveStarThread(_starNames, newStarModel);
+
+            // Define UncaughtExceptionHandler
+            MCSExceptionHandler.installThreadHandler(_resolveStarThread);
+
+            // Launch query
+            _resolveStarThread.start();
+        }
+    }
+
+    private synchronized void decrementJobCounter() {
+        _jobCounter--;
+        if (_jobCounter <= 0) {
+            if (_starList != null) {
+                // Use EDT to ensure only 1 thread (EDT) updates the model and handles the notification :
+                SwingUtils.invokeEDT(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Notify all registered observers that the query went fine :
+                        _starList.fireNotification(Star.Notification.QUERY_COMPLETE);
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -185,7 +259,7 @@ public final class StarResolver {
     }
 
     /**
-     * Star resolver thread : launch and handle CDS SimBad query
+     * Star resolver thread : launch and handle CDS SIMBAD query
      */
     private final class ResolveStarThread extends Thread {
 
@@ -193,6 +267,18 @@ public final class StarResolver {
         private boolean _error = false;
         /** SIMBAD querying result */
         private String _result = null;
+        /** The sought star name */
+        private final String _starName;
+        /**
+         * The querying result data container, not to overwrite original model with
+         * incomplete data in case an error occurs during CDS querying
+         */
+        private final Star _newStarModel;
+
+        private ResolveStarThread(final String starName, final Star newStarModel) {
+            _starName = starName;
+            _newStarModel = newStarModel;
+        }
 
         @Override
         public void run() {
@@ -203,6 +289,8 @@ public final class StarResolver {
             if (!isError()) {
                 parseResult();
             }
+
+            decrementJobCounter();
         }
 
         /**
@@ -234,6 +322,8 @@ public final class StarResolver {
             } else {
                 _starModel.raiseCDSimbadErrorMessage(message);
             }
+
+            decrementJobCounter();
         }
 
         /**
@@ -259,6 +349,8 @@ public final class StarResolver {
             } else {
                 _starModel.raiseCDSimbadErrorMessage(message);
             }
+
+            decrementJobCounter();
         }
 
         /**

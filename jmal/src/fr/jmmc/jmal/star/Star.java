@@ -18,13 +18,13 @@ import org.slf4j.LoggerFactory;
  */
 public class Star extends Observable {
 
-    /** Logger - register on fr.jmmc to collect all logs under this path */
+    /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(Star.class.getName());
     /** Star property-value backing store for String data */
     final Map<Property, String> _stringContent;
     /** Star property-value backing store for Double data */
     final Map<Property, Double> _doubleContent;
-    /** CDS Simbad error message */
+    /** CDS SIMBAD error message */
     private String _cdsSimbadErrorMessage = null;
 
     /**
@@ -152,18 +152,17 @@ public class Star extends Observable {
     }
 
     /**
-     * Set an error message from CDS Simbad query execution, and notify
+     * Set an error message from CDS SIMBAD query execution, and notify
      * registered observers.
      *
-     * @sa fr.jmmc.mcs.astro.star.StarResolver.
-     * @sa fr.jmmc.mcs.astro.star.StarResolverWidget.
+     * @see StarResolver.
+     * @see StarResolverWidget.
      *
      * @param message the error message to store.
      */
     public final void raiseCDSimbadErrorMessage(final String message) {
         // Use EDT to ensure only 1 thread (EDT) set and consume the error message :
         SwingUtils.invokeEDT(new Runnable() {
-
             /**
              * The state is left unchanged (no clear), only the error message is notified
              */
@@ -180,11 +179,11 @@ public class Star extends Observable {
     }
 
     /**
-     * Get the error message from CDS Simbad query execution, and reset it
+     * Get the error message from CDS SIMBAD query execution, and reset it
      * for later use.
      *
-     * @sa fr.jmmc.mcs.astro.star.StarResolver.
-     * @sa fr.jmmc.mcs.astro.star.StarResolverWidget.
+     * @see StarResolver.
+     * @see StarResolverWidget.
      *
      * @return A String object containing the error message, or null if
      * everything went fine.
@@ -216,7 +215,7 @@ public class Star extends Observable {
 
     /**
      * Fires the notification to the registered observers
-     * @param notification notification enum value
+     * @param notification notification enumeration value
      */
     public final void fireNotification(final Notification notification) {
         // notify observers (swing components) within EDT :
@@ -234,11 +233,11 @@ public class Star extends Observable {
      */
     public enum Notification {
 
-        /** sucessfull query */
+        /** successful query */
         QUERY_COMPLETE,
         /** error state (CDS or parsing failure */
         QUERY_ERROR,
-        /** unknow state */
+        /** unknown state */
         UNKNOWN;
     };
 
@@ -259,15 +258,15 @@ public class Star extends Observable {
         RV, RV_DEF;
 
         /**
-         * Give back the enum value from the corresponding string.
+         * Give back the enumeration value from the corresponding string.
          *
          * For example:
          * Property.fromString("RA_d") == Property.RA_d;
          * Property.fromString("toto") == Property.NOPROPERTY;
          *
-         * @param propertyName name of the sought enum value.
+         * @param propertyName name of the sought enumeration value.
          *
-         * @return the enum value from the corresponding string.
+         * @return the enumeration value from the corresponding string.
          */
         public static Property fromString(final String propertyName) {
             try {

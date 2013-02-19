@@ -11,6 +11,7 @@ import fr.jmmc.jmcs.data.model.Dependences;
 import fr.jmmc.jmcs.data.model.Menubar;
 import fr.jmmc.jmcs.data.model.Package;
 import fr.jmmc.jmcs.data.model.Program;
+import fr.jmmc.jmcs.data.model.Release;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
 import fr.jmmc.jmcs.util.ResourceUtils;
@@ -546,6 +547,14 @@ public final class ApplicationDescription {
 
     public String getJnlpUrl() {
         return _applicationData.getJnlp();
+    }
+
+    /**
+     * Return the release notes
+     * @return release list.
+     */
+    public List<Release> getReleases() {
+        return _applicationData.getReleasenotes().getReleases();
     }
 }
 /*___oOo___*/

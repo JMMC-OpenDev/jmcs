@@ -213,5 +213,6 @@ public class ResizableTextViewFactory {
         ResizableTextViewFactory.showUnsupportedJdkWarning();
 
         System.out.println("That's all Folks !");
+        System.exit(0);
     }
 }

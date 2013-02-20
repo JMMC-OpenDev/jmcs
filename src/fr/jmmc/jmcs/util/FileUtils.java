@@ -416,7 +416,7 @@ public final class FileUtils {
      *
      * @param src source file
      * @param dst destination file
-     * @throws IOException if any Input/Output problem occurs
+     * @throws IOException if an I/O exception occurred
      * @throws FileNotFoundException if input file is not found
      */
     public static void copy(final File src, final File dst) throws IOException, FileNotFoundException {
@@ -430,7 +430,7 @@ public final class FileUtils {
      *
      * @param in input stream to save as file
      * @param dst destination file
-     * @throws IOException if any Input/Output problem occurs
+     * @throws IOException if an I/O exception occurred
      * @throws FileNotFoundException if input file is not found
      */
     public static void saveStream(final InputStream in, final File dst) throws IOException, FileNotFoundException {
@@ -455,7 +455,7 @@ public final class FileUtils {
      *
      * @param src source file to be zipped
      * @param dst destination file corresponding to the zipped source file
-     * @throws IOException if any Input/Output problem occurs
+     * @throws IOException if an I/O exception occurred
      * @throws FileNotFoundException if input file is not found
      */
     public static void zip(final File src, final File dst) throws IOException, FileNotFoundException {
@@ -481,7 +481,7 @@ public final class FileUtils {
      *
      * @param in input file
      * @param out output file
-     * @throws IOException
+     * @throws IOException if an I/O exception occurred
      */
     public static void copyFile(final File in, final File out) throws IOException {
         FileChannel inChannel = new FileInputStream(in).getChannel();
@@ -497,6 +497,20 @@ public final class FileUtils {
             if (outChannel != null) {
                 outChannel.close();
             }
+        }
+    }
+
+    /**
+     * Return the MD5 checksum of the given input stream
+     * @param in input file
+     * @return MD5 checksum as byte[]
+     * @throws IOException if an I/O exception occurred
+     */
+    public static byte[] checksum(final InputStream in) throws IOException {
+        try {
+            return org.apache.commons.codec.digest.DigestUtils.md5(in);
+        } finally {
+            closeStream(in);
         }
     }
 

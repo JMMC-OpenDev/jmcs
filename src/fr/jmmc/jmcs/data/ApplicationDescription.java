@@ -15,6 +15,7 @@ import fr.jmmc.jmcs.data.model.Release;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
 import fr.jmmc.jmcs.util.ResourceUtils;
+import fr.jmmc.jmcs.util.SpecialChars;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -499,8 +500,7 @@ public final class ApplicationDescription {
             year = cal.get(Calendar.YEAR);
         }
 
-        // \u00A9 means (c)
-        return "Copyright \u00A9 " + year + ", " + _shortCompanyName + ".";
+        return "Copyright " + SpecialChars.SYMBOL_COPYRIGHT + " " + year + ", " + _shortCompanyName + ".";
     }
 
     /**

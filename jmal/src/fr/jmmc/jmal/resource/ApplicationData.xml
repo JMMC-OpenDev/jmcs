@@ -65,9 +65,10 @@
             license="MPL/LGPL/GPL" />
             <!-- Mozilla Public License: http://www.mozilla.org/MPL/ -->
 
-        <package name="JODK"
-            description="Java Optimized Development Kit (JODK) is a performance-oriented Java general-purpose library, which treatments are extensions, additions (FastMath)"
-            link="http://code.google.com/p/jodk/"
+        <package name="Jafama"
+            description="Jafama (Java Fast Math) consists of fast counterparts of java.lang.Math treatments, plus additional ones. They are usually about 2-4 (up to 15) times faster, with about 1e-15 accuracy, and handle special cases (NaN, etc.)."
+            link="http://sourceforge.net/projects/jafama/"
+            jars="jafama.jar"
             license="APACHE_V2"/>
 
         <!-- 2. Swing -->

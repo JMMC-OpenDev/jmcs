@@ -9,6 +9,7 @@
 package cern.jet.stat;
 
 import cern.jet.math.Polynomial;
+import net.jafama.FastMath;
 
 /**
  * Custom tailored numerical integration of certain probability distributions.
@@ -168,7 +169,7 @@ public final class Probability extends cern.jet.math.Constants {
             }
         }
 
-        z = Math.exp(z);
+        z = FastMath.exp(z);
 
         double p, q;
         if (x < 8.0) {

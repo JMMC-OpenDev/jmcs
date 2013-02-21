@@ -22,7 +22,7 @@
  */
 package fr.jmmc.jmal.complex;
 
-import net.jodk.lang.FastMath;
+import net.jafama.FastMath;
 
 /**
  * Representation of an immutable Complex number - a number which has both a real and imaginary part. <p> Implementations of

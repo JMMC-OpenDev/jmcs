@@ -8,7 +8,7 @@
  */
 package cern.jet.math;
 
-import net.jodk.lang.FastMath;
+import net.jafama.FastMath;
 
 /**
  * Bessel and Airy functions.
@@ -17,8 +17,6 @@ import net.jodk.lang.FastMath;
  */
 public final class Bessel extends Constants {
 
-    /** enable / disable FastMath */
-    private static final boolean USE_FAST_MATH = true;
     // constants used by jn(int, double)
     private final static double ACC = 40.0;
     private final static double BIGNO = 1.0e+10;
@@ -56,10 +54,7 @@ public final class Bessel extends Constants {
                     + y * (-0.6911147651e-5 + y * (0.7621095161e-6
                     - y * 0.934935152e-7)));
 
-            if (USE_FAST_MATH) {
-                return Math.sqrt(0.636619772 / ax) * (FastMath.cos(xx) * ans1 - z * FastMath.sin(xx) * ans2);
-            }
-            return Math.sqrt(0.636619772 / ax) * (Math.cos(xx) * ans1 - z * Math.sin(xx) * ans2);
+            return Math.sqrt(0.636619772 / ax) * (FastMath.cos(xx) * ans1 - z * FastMath.sin(xx) * ans2);
         }
     }
 
@@ -90,12 +85,7 @@ public final class Bessel extends Constants {
                     + y * (0.8449199096e-5 + y * (-0.88228987e-6
                     + y * 0.105787412e-6)));
 
-            double ans;
-            if (USE_FAST_MATH) {
-                ans = Math.sqrt(0.636619772 / ax) * (FastMath.cos(xx) * ans1 - z * FastMath.sin(xx) * ans2);
-            } else {
-                ans = Math.sqrt(0.636619772 / ax) * (Math.cos(xx) * ans1 - z * Math.sin(xx) * ans2);
-            }
+            double ans = Math.sqrt(0.636619772 / ax) * (FastMath.cos(xx) * ans1 - z * FastMath.sin(xx) * ans2);
 
             if (x < 0.0) {
                 ans = -ans;

@@ -229,7 +229,7 @@ public final class ConcurrencyUtils {
         if (x < 1) {
             throw new IllegalArgumentException("x must be greater or equal 1");
         }
-        return (int) Math.pow(2, Math.floor(Math.log(x) / Math.log(2)));
+        return (int) Math.pow(2d, Math.floor(Math.log(x) / Math.log(2d)));
     }
 
     /**

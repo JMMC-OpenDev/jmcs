@@ -5,15 +5,12 @@ package fr.jmmc.jmal.model.function.math;
 
 import cern.jet.math.Bessel;
 import fr.jmmc.jmal.complex.MutableComplex;
-import net.jodk.lang.FastMath;
+import net.jafama.FastMath;
 
 /**
  * @author Laurent BOURGES.
  */
 public final class Functions {
-
-    /** enable / disable FastMath */
-    private static final boolean USE_FAST_MATH = true;
 
     /* mathematical constants */
     /** _LPB_PI = value of the variable PI, to avoid any corruption */
@@ -60,11 +57,7 @@ public final class Functions {
         } else {
             final double phase = TWO_PI_MAS2RAD * (x * ufreq + y * vfreq);
             // update output complex instance (mutable):
-            if (USE_FAST_MATH) {
-                output.updateComplex(value * FastMath.cos(phase), -value * FastMath.sin(phase));
-            } else {
-                output.updateComplex(value * Math.cos(phase), -value * Math.sin(phase));
-            }
+            output.updateComplex(value * FastMath.cos(phase), -value * FastMath.sin(phase));
         }
     }
 
@@ -87,7 +80,7 @@ public final class Functions {
      * @return cosinus of the beta angle
      */
     public static double getCosBeta(final double rotation) {
-        return Math.cos(getBeta(rotation));
+        return FastMath.cos(getBeta(rotation));
     }
 
     /**
@@ -109,7 +102,7 @@ public final class Functions {
      * @return sinus of the beta angle
      */
     public static double getSinBeta(final double rotation) {
-        return Math.sin(getBeta(rotation));
+        return FastMath.sin(getBeta(rotation));
     }
 
     /**
@@ -341,7 +334,7 @@ public final class Functions {
         if (d == 0D) {
             g = 1D;
         } else {
-            g = Math.exp(d);
+            g = FastMath.exp(d);
         }
         g *= flux_weight;
 
@@ -393,9 +386,9 @@ public final class Functions {
 
             // Note : BesselJ[3/2, z] == (Sqrt[2/Pi] ((-z) Cos[z] + Sin[z]))/z^(3/2)
             // BesselJ[3/2, d] * Sqrt(Pi/2) :
-            final double term2 = (Math.sin(d) / d - Math.cos(d)) / Math.sqrt(d);
+            final double term2 = (FastMath.sin(d) / d - FastMath.cos(d)) / Math.sqrt(d);
 
-            g = (a * Bessel.j1(d) / d + b * term2 / Math.pow(d, 1.5d) + 2d * c * Bessel.jn(2, d) / (d * d)) / s;
+            g = (a * Bessel.j1(d) / d + b * term2 / FastMath.pow(d, 1.5d) + 2d * c * Bessel.jn(2, d) / (d * d)) / s;
         }
         g *= flux_weight;
 

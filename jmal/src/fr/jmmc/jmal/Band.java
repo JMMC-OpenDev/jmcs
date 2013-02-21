@@ -3,6 +3,7 @@
  ***************************************************************************** */
 package fr.jmmc.jmal;
 
+import net.jafama.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,7 @@ public enum Band {
 
         final Band band = findBand(waveLength);
 
-        final double r0 = 0.251d * lambdaV / seeing * Math.pow(waveLength / lambdaV, 6d / 5d);
+        final double r0 = 0.251d * lambdaV / seeing * FastMath.pow(waveLength / lambdaV, 6d / 5d);
 
         final double doverr0 = diameter / r0;
 
@@ -90,14 +91,14 @@ public enum Band {
             logger.debug("doverr0       = {}", doverr0);
         }
 
-        final double sigmaphi2_alias = 0.87d * Math.pow((double) nbOfActuators, -5d / 6d) * Math.pow(doverr0, 5d / 3d);
+        final double sigmaphi2_alias = 0.87d * FastMath.pow((double) nbOfActuators, -5d / 6d) * FastMath.pow(doverr0, 5d / 3d);
 
         // ??? (doverr0 * doverr0)**2 = doverr0**4 ou bien erreur ??
-        final double sigmaphi2_phot = 1.59e-8d * Math.pow(doverr0, 4d) * Math.pow(waveLength / lambdaV, -2d)
-                * (double) nbOfActuators * Math.pow(10d, 0.4d * magnitude);
+        final double sigmaphi2_phot = 1.59e-8d * FastMath.pow(doverr0, 4d) * FastMath.pow(waveLength / lambdaV, -2d)
+                * (double) nbOfActuators * FastMath.pow(10d, 0.4d * magnitude);
         final double sigmaphi2_fixe = -Math.log(band.getStrehlMax());
         final double sigmaphi2 = sigmaphi2_alias + sigmaphi2_phot + sigmaphi2_fixe;
-        final double strehl = Math.exp(-sigmaphi2) + (1 - Math.exp(-sigmaphi2)) / (1 + doverr0 * doverr0);
+        final double strehl = FastMath.exp(-sigmaphi2) + (1 - FastMath.exp(-sigmaphi2)) / (1 + doverr0 * doverr0);
 
         if (logger.isDebugEnabled()) {
             logger.debug("strehl        = {}", strehl);

@@ -7,6 +7,7 @@ import fr.jmmc.jmal.model.ModelDefinition;
 import fr.jmmc.jmal.model.ModelManager;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmal.model.targetmodel.Parameter;
+import net.jafama.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -338,7 +339,7 @@ public final class EditableRhoThetaParameter implements Editable {
      * @return theta angle in [-180;180]
      */
     public static double getTheta(final double x, final double y) {
-        return Math.toDegrees(Math.atan2(y, x));
+        return FastMath.toDegrees(FastMath.atan2(y, x));
     }
 
     /**
@@ -349,7 +350,7 @@ public final class EditableRhoThetaParameter implements Editable {
      * @return coordinate x
      */
     public static double getX(final double rho, final double theta) {
-        final double x = rho * Math.cos(Math.toRadians(theta));
+        final double x = rho * FastMath.cos(FastMath.toRadians(theta));
         /*
          * if (Math.abs(x) < ZERO_THRESHOLD) {
          * return 0d;
@@ -366,7 +367,7 @@ public final class EditableRhoThetaParameter implements Editable {
      * @return coordinate y
      */
     public static double getY(final double rho, final double theta) {
-        final double y = rho * Math.sin(Math.toRadians(theta));
+        final double y = rho * FastMath.sin(FastMath.toRadians(theta));
         /*
          * if (Math.abs(y) < ZERO_THRESHOLD) {
          * return 0d;

@@ -5,7 +5,7 @@ package fr.jmmc.jmal.model;
 
 import fr.jmmc.jmal.complex.ImmutableComplex;
 import java.util.Random;
-import net.jodk.lang.FastMath;
+import net.jafama.FastMath;
 
 /**
  * This class performs complex visibility conversion to amplitude or phase and optionaly add error noise

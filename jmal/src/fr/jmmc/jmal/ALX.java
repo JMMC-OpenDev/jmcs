@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import net.jafama.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,11 +76,11 @@ public final class ALX {
                                                   final double raDeg2, final double decDeg2) {
 
         /* Convert all the given angle from degrees to rad */
-        final double ra1 = Math.toRadians(raDeg1);
-        final double dec1 = Math.toRadians(decDeg1);
+        final double ra1 = FastMath.toRadians(raDeg1);
+        final double dec1 = FastMath.toRadians(decDeg1);
 
-        final double ra2 = Math.toRadians(raDeg2);
-        final double dec2 = Math.toRadians(decDeg2);
+        final double ra2 = FastMath.toRadians(raDeg2);
+        final double dec2 = FastMath.toRadians(decDeg2);
 
         /*
          * This implementation derives from Bob Chamberlain's contribution
@@ -89,17 +90,17 @@ public final class ALX {
          */
 
         /* haversine formula: better precision than cosinus law */
-        final double sd2 = Math.sin(0.5d * (dec2 - dec1));
-        final double sr2 = Math.sin(0.5d * (ra2 - ra1));
+        final double sd2 = FastMath.sin(0.5d * (dec2 - dec1));
+        final double sr2 = FastMath.sin(0.5d * (ra2 - ra1));
 
-        final double angle = sd2 * sd2 + sr2 * sr2 * Math.cos(dec1) * Math.cos(dec2);
+        final double angle = sd2 * sd2 + sr2 * sr2 * FastMath.cos(dec1) * FastMath.cos(dec2);
 
         /* check angle ranges [0;1] */
         if (angle <= 0d) {
             return 0d;
         }
         if (angle < 1d) {
-            return 2d * Math.toDegrees(Math.asin(Math.sqrt(angle)));
+            return 2d * FastMath.toDegrees(FastMath.asin(Math.sqrt(angle)));
         }
         return 180d;
     }

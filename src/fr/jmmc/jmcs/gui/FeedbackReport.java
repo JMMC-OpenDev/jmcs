@@ -85,7 +85,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         if (ApplicationDescription.getInstance() != null
                 && ApplicationDescription.getInstance().getFeedbackReportFormURL() != null) {
             // Create Gui using EDT:
-            SwingUtils.invokeEDT(new Runnable() {
+            SwingUtils.invokeAndWaitEDT(new Runnable() {
                 @Override
                 public void run() {
                     new FeedbackReport(modal, exception);

@@ -12,6 +12,6 @@ Runtime Libraries (JNLP) are described in the following files :
 ../src/fr/jmmc/jmal/resource/ApplicationData.xml 
 ../src/JmalLibs.jnlp
 
--rw-r--r--. 1 bourgesl laogsite 581945  7 sept.  2011 colt.jar
+-rw-r--r--. 1 bourgesl laogsite  32404 21 févr. 09:27 jafama.jar
 -rw-r--r--. 1 bourgesl laogsite  34234  7 sept.  2011 sptype.jar
 

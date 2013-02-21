@@ -24,6 +24,8 @@ public final class StringUtils {
     private final static Pattern PATTERN_WHITE_SPACE_MULTIPLE = Pattern.compile("\\s+");
     /** regular expression used to match characters different than alpha/numeric/+/- (1..n) */
     private final static Pattern PATTERN_NON_ALPHA_NUM = Pattern.compile("[^a-zA-Z_\\+\\-0-9]+");
+    /** regular expression used to match characters different than numeric (1..n) */
+    private final static Pattern PATTERN_NON_NUM = Pattern.compile("[^0-9]+");
     /** RegExp expression to match carriage return */
     private final static Pattern PATTERN_CR = Pattern.compile("\n");
     /** RegExp expression to match tags */
@@ -147,8 +149,18 @@ public final class StringUtils {
     public static String replaceNonAlphaNumericChars(final String value, final String replaceBy) {
         return PATTERN_NON_ALPHA_NUM.matcher(value).replaceAll(replaceBy);
     }
-    /* --- common helper methods ------------------------------ */
 
+    /**
+     * Replace non numeric characters by the given replacement string
+     * @param value input value
+     * @param replaceBy replacement string
+     * @return string value
+     */
+    public static String replaceNonNumericChars(final String value, final String replaceBy) {
+        return PATTERN_NON_NUM.matcher(value).replaceAll(replaceBy);
+    }
+
+    /* --- common helper methods ------------------------------ */
     /**
      * Replace carriage return characters by the given replacement string
      * @param value input value

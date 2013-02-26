@@ -3,7 +3,6 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.data.model.Package;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
@@ -15,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Show the list of jMCS dependencies in a dedicated window.
- * @author Sylvain LAFRASSE
+ * @author Sylvain LAFRASSE.
  */
 public class DependenciesView {
 

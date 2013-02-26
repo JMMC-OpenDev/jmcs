@@ -10,6 +10,7 @@ import fr.jmmc.jmcs.gui.DependenciesView;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.HelpView;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
+import fr.jmmc.jmcs.gui.action.ShowReleaseNotesAction;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.resource.image.ResourceImage;
@@ -25,38 +26,39 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Initiate all actions needed by jMCS.
- * @author Sylvain LAFRASSE
+ * @author Sylvain LAFRASSE.
  */
 public class InternalActionFactory {
 
-    /** Logger */
+    /** Class path */
     private static final String CLASS_PATH = InternalActionFactory.class.getName();
+    /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(CLASS_PATH);
     /** Singleton instance */
     private static InternalActionFactory _instance = null;
     // Members
     /** Acknowledgment handling action */
-    private ShowAcknowledgmentAction _showAcknowledgmentAction = null;
+    private Action _showAcknowledgmentAction = null;
     /** Show About... box action */
-    private ShowAboutBoxAction _showAboutBoxAction = null;
+    private Action _showAboutBoxAction = null;
     /** Show Feedback Report action */
-    private ShowFeedbackReportAction _showFeedbackReportAction = null;
+    private Action _showFeedbackReportAction = null;
     /** Show help handling action */
-    private ShowHelpAction _showHelpAction = null;
+    private Action _showHelpAction = null;
     /** Show hot news handling action */
-    private ShowHotNewsAction _showHotNewsAction = null;
+    private Action _showHotNewsAction = null;
     /** Show release handling action */
-    private ShowReleaseAction _showReleaseAction = null;
+    private Action _showReleaseNotesAction = null;
     /** Show FAQ handling action */
-    private ShowFaqAction _showFaqAction = null;
+    private Action _showFaqAction = null;
     /** Show Dependencies action */
-    private ShowDependenciesAction _showDependenciesAction = null;
+    private Action _showDependenciesAction = null;
     /** Show log GUI action */
-    private ShowLogGuiAction _showLogGuiAction = null;
+    private Action _showLogGuiAction = null;
     /** default Open handling action */
-    private DefaultOpenAction _defaultOpenAction = null;
+    private Action _defaultOpenAction = null;
     /** Quit handling action */
-    private QuitAction _quitAction = null;
+    private Action _quitAction = null;
 
     /** Hidden constructor */
     private InternalActionFactory() {
@@ -64,7 +66,7 @@ public class InternalActionFactory {
         _showAboutBoxAction = new ShowAboutBoxAction(CLASS_PATH, "_showAboutBoxsAction");
         _showFeedbackReportAction = new ShowFeedbackReportAction(CLASS_PATH, "_showFeedbackReportAction");
         _showHotNewsAction = new ShowHotNewsAction(CLASS_PATH, "_showHotNewsAction");
-        _showReleaseAction = new ShowReleaseAction(CLASS_PATH, "_showReleaseAction");
+        _showReleaseNotesAction = new ShowReleaseNotesAction("_showReleaseNotesAction");
         _showFaqAction = new ShowFaqAction(CLASS_PATH, "_showFaqAction");
         _showHelpAction = new ShowHelpAction(CLASS_PATH, "_showHelpAction");
         _showDependenciesAction = new ShowDependenciesAction(CLASS_PATH, "_showDependenciesAction");
@@ -93,7 +95,7 @@ public class InternalActionFactory {
     }
 
     /**
-     * Creates the action which open the about box window
+     * Creates the action which open the About Box window.
      * @return action which open the about box window
      */
     public static Action showAboutBoxAction() {
@@ -101,7 +103,7 @@ public class InternalActionFactory {
     }
 
     /**
-     * Return the action which displays and copy acknowledgment to clipboard
+     * Return the action which displays and copy acknowledgment to clipboard.
      * @return action which displays and copy acknowledgment to clipboard
      */
     public static Action showAcknowledgmentAction() {
@@ -109,7 +111,7 @@ public class InternalActionFactory {
     }
 
     /**
-     * Creates the feedback action which open the feedback window
+     * Creates the feedback action which open the Feedback window.
      * @return feedback action which open the feedback window
      */
     public static Action showFeedbackReportAction() {
@@ -117,7 +119,7 @@ public class InternalActionFactory {
     }
 
     /**
-     * Return the action which tries to display the help
+     * Return the action which tries to display user help.
      * @return action which tries to display the help
      */
     public static Action showHelpAction() {
@@ -125,7 +127,7 @@ public class InternalActionFactory {
     }
 
     /**
-     * Return the action which tries to display dependencies
+     * Return the action which tries to display dependencies.
      * @return action which tries to display dependencies
      */
     public static Action showDependenciesAction() {
@@ -133,7 +135,7 @@ public class InternalActionFactory {
     }
 
     /**
-     * Return the action dedicated to display hot news
+     * Return the action dedicated to display hot news.
      * @return action dedicated to display hot news
      */
     public static Action showHotNewsAction() {
@@ -141,15 +143,15 @@ public class InternalActionFactory {
     }
 
     /**
-     * Return the action dedicated to display release
+     * Return the action dedicated to display release notes.
      * @return action dedicated to display release
      */
     public static Action showReleaseAction() {
-        return getInstance()._showReleaseAction;
+        return getInstance()._showReleaseNotesAction;
     }
 
     /**
-     * Return the action dedicated to display FAQ
+     * Return the action dedicated to display FAQ.
      * @return action dedicated to display FAQ
      */
     public static Action showFaqAction() {
@@ -157,7 +159,7 @@ public class InternalActionFactory {
     }
 
     /**
-     * Return the action dedicated to display log GUI
+     * Return the action dedicated to display log GUI.
      * @return action dedicated to display log GUI
      */
     public static Action showLogGuiAction() {
@@ -165,7 +167,7 @@ public class InternalActionFactory {
     }
 
     /**
-     * Return the action which tries to quit the application
+     * Return the action which tries to quit the application.
      * @return action which tries to quit the application
      */
     public static Action quitAction() {
@@ -321,32 +323,6 @@ public class InternalActionFactory {
         @Override
         public void actionPerformed(ActionEvent evt) {
             BrowserLauncher.openURL(ApplicationDescription.getInstance().getHotNewsRSSFeedLinkValue());
-        }
-    }
-
-    /** Action to show release. */
-    protected static class ShowReleaseAction extends RegisteredAction {
-
-        /** default serial UID for Serializable interface */
-        private static final long serialVersionUID = 1;
-
-        /**
-         * Public constructor
-         * @param classPath the path of the class containing the field pointing to
-         * the action, in the form returned by 'getClass().getName();'.
-         * @param fieldName the name of the field pointing to the action.
-         */
-        ShowReleaseAction(String classPath, String fieldName) {
-            super(classPath, fieldName, "Release Notes");
-        }
-
-        /**
-         * Handle the action event
-         * @param evt action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            BrowserLauncher.openURL(ApplicationDescription.getInstance().getReleaseNotesLinkValue());
         }
     }
 

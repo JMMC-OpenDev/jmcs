@@ -157,7 +157,7 @@ public class ResizableTextViewFactory {
 
         // Sizing
         dialog.pack();
-        final int minimumEditorPaneWidth = editorPane.getMinimumSize().width + MARGIN;
+        final int minimumEditorPaneWidth = editorPane.getWidth() + MARGIN;
         final int minimumEditorPaneHeight = editorPane.getMinimumSize().height + MARGIN;
         final int finalWidth = Math.max(Math.min(minimumEditorPaneWidth, MAXIMUM_WIDTH), MINIMUM_WIDTH);
         int finalHeight = Math.max(Math.min(minimumEditorPaneHeight, MAXIMUM_HEIGHT), MINIMUM_HEIGHT);
@@ -213,6 +213,5 @@ public class ResizableTextViewFactory {
         ResizableTextViewFactory.showUnsupportedJdkWarning();
 
         System.out.println("That's all Folks !");
-        System.exit(0);
     }
 }

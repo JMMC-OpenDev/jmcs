@@ -16,36 +16,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This action generates release notes for the given 
- * @author bourgesl
+ * This action generates release notes for the given ApplicationDescription.
+ * @author Laurent BOURGES, Sylvain LAFRASSE.
  */
-public final class ShowHtmlReleaseNotesAction extends RegisteredAction {
+public final class ShowReleaseNotesAction extends RegisteredAction {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Class name. This name is used to register to the ActionRegistrar */
-    public final static String className = ShowHtmlReleaseNotesAction.class.getName();
-    /** Action name. This name is used to register to the ActionRegistrar */
-    public final static String actionName = "showReleaseNotes";
+    public final static String _className = ShowReleaseNotesAction.class.getName();
     /** Class logger */
-    private final static Logger logger = LoggerFactory.getLogger(className);
-    /* members */
-    /** version */
-    private String _windowTitle;
-    /** html content (cached) */
-    private String _windowContent;
+    private final static Logger _logger = LoggerFactory.getLogger(_className);
+    // Members
+    /** Description to extract release notes from */
+    private ApplicationDescription _applicationDescription = null;
+    /** Title */
+    private String _windowTitle = null;
+    /** HTML content (cached) */
+    private String _windowContent = null;
 
     /**
-     * Public constructor that automatically register the action in RegisteredAction.
+     * Constructor that use the default ApplicationDescription instance and generate title automatically.
+     * @param actionName the name of the action.
+     */
+    public ShowReleaseNotesAction(final String actionName) {
+        super(_className, actionName, "Release Notes");
+        _applicationDescription = ApplicationDescription.getInstance();
+    }
+
+    /**
+     * Constructor that automatically register the action in RegisteredAction.
      * 
      * @param actionName the name of the action.
-     * @param titlePrefix title prefix to use in window title and html content
+     * @param titlePrefix title prefix to use in window title and HTML content
      * @param applicationDescription application description to use
      */
-    public ShowHtmlReleaseNotesAction(final String actionName, final String titlePrefix, final ApplicationDescription applicationDescription) {
-        super(className, actionName);
-
-        generateHtml(titlePrefix, applicationDescription);
+    public ShowReleaseNotesAction(final String actionName, final String titlePrefix, final ApplicationDescription applicationDescription) {
+        super(_className, actionName);
+        _windowTitle = titlePrefix;
+        _applicationDescription = applicationDescription;
     }
 
     /**
@@ -54,66 +63,64 @@ public final class ShowHtmlReleaseNotesAction extends RegisteredAction {
      */
     @Override
     public void actionPerformed(final ActionEvent evt) {
-        logger.debug("actionPerformed");
+        _logger.debug("actionPerformed");
 
-        ResizableTextViewFactory.createHtmlWindow(_windowContent, this._windowTitle, false);
+        // Lazily compute content only once
+        if (_windowContent == null) {
+            _windowContent = generateHtml();
+        }
+
+        ResizableTextViewFactory.createHtmlWindow(_windowContent, _windowTitle, false);
     }
 
-    /**
-     * Generate Html content
-     * @param titlePrefix title prefix to use in window title and html content
-     * @param applicationDescription application description to use
-     */
-    private void generateHtml(final String titlePrefix, final ApplicationDescription applicationDescription) {
+    /** Generate HTML content */
+    private String generateHtml() {
 
-        this._windowTitle = titlePrefix + ' ' + applicationDescription.getProgramVersion() + " release notes";
+        // Compute title (if none)
+        if (_windowTitle == null) {
+            _windowTitle = _applicationDescription.getProgramNameWithVersion();
+        }
+        _windowTitle += " Release Notes";
 
-        // Compose jMCS header
+        // Compose standard header
         final StringBuilder generatedHtml = new StringBuilder(8 * 1024);
         generatedHtml.append("<html><body>");
+        generatedHtml.append("<h1><center><b>").append(_windowTitle).append("</b></center><br></h1>");
 
-        generatedHtml.append("<h1>").append(this._windowTitle).append("</h1>\n");
-
-        // extracted changes per type:
+        // Extracted changes per type:
         final List<Change> changeList = new ArrayList<Change>(20);
+        for (Release r : _applicationDescription.getReleases()) {
 
-        for (Release r : applicationDescription.getReleases()) {
-            generatedHtml.append("<h2>").append("Version ").append(r.getVersion()).append("</h2>\n");
-            generatedHtml.append("<p>");
-
-            if (r.getPubDate() != null) {
-                generatedHtml.append(r.getPubDate()).append('\n');
+            generatedHtml.append("<hr>").append("<h3>").append("Version ").append(r.getVersion());
+            String pubDate = r.getPubDate();
+            if (pubDate == null) {
+                pubDate = "no publication date yet";
             }
-
-            generatedHtml.append("<ul>\n");
+            generatedHtml.append(" (<i>").append(pubDate).append("</i>)</h3>\n");
 
             processChangeType("FEATURE", "Features", r.getPrereleases(), generatedHtml, changeList);
             processChangeType("CHANGE", "Changes", r.getPrereleases(), generatedHtml, changeList);
-            processChangeType("BUGFIX", "Bug fixes", r.getPrereleases(), generatedHtml, changeList);
+            processChangeType("BUGFIX", "Bug Fixes", r.getPrereleases(), generatedHtml, changeList);
             processChangeType(null, "Other", r.getPrereleases(), generatedHtml, changeList);
-
-            generatedHtml.append("</ul>\n");
-
-            generatedHtml.append("</p>\n");
         }
 
         generatedHtml.append("</body></html>");
 
-        this._windowContent = generatedHtml.toString();
+        return generatedHtml.toString();
     }
 
     /**
-     * Generate HTML for the given type
+     * Generate HTML for the given change type.
      * @see #findChangeByType(java.lang.String, java.util.List, java.util.List) 
      * @param type type to match or null (matches empty type)
      * @param label label to display for the given type
      * @param prereleaseList list of prerelease 
-     * @param generatedHtml html buffer to fill
+     * @param generatedHtml HTML buffer to fill
      * @param changeList temporary list of Change to fill
      */
     private void processChangeType(final String type, final String label, final List<Prerelease> prereleaseList, final StringBuilder generatedHtml, final List<Change> changeList) {
         if (findChangeByType(type, prereleaseList, changeList)) {
-            generatedHtml.append("<li>").append(label).append(":</li>\n");
+            generatedHtml.append(label).append(":\n");
             generatedHtml.append("<ul>\n");
 
             for (Change c : changeList) {
@@ -124,11 +131,11 @@ public final class ShowHtmlReleaseNotesAction extends RegisteredAction {
     }
 
     /**
-     * Extract Change instances according to their type
+     * Extract Change instances according to their type.
      * @param type type to match or null (matches empty type)
      * @param prereleaseList list of prerelease 
      * @param changeList list of Change to fill
-     * @return true if Change instances found for the given type
+     * @return true if Change instances found for the given type, false otherwise.
      */
     private boolean findChangeByType(final String type, final List<Prerelease> prereleaseList, final List<Change> changeList) {
         changeList.clear();

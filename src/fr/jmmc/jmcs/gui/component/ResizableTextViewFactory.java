@@ -172,17 +172,21 @@ public class ResizableTextViewFactory {
         dialog.setVisible(true);
     }
 
+    /**
+     * Check the JVM version and show a warning message if it is unsupported
+     */
     public static void showUnsupportedJdkWarning() {
+        final String javaVersion = System.getProperty("java.version");
         final String jvmVendor = System.getProperty("java.vm.vendor");
         final String jvmName = System.getProperty("java.vm.name");
         final String jvmVersion = System.getProperty("java.vm.version");
 
-        boolean shouldWarn = true;
+        boolean shouldWarn = false;
         String message = "<HTML><BODY>";
 
         if (jvmName != null && jvmName.toLowerCase().contains("openjdk")) {
             shouldWarn = true;
-            _logger.warn("Detected OpenJDK runtime environment: {} {} {}", jvmVendor, jvmName, jvmVersion);
+            _logger.warn("Detected OpenJDK runtime environment: {} {} {} - {}", jvmVendor, jvmName, javaVersion, jvmVersion);
 
             message += "<FONT COLOR='RED'>WARNING</FONT> : ";
             message += "Your Java Virtual Machine is an OpenJDK JVM, which has known bugs (SWING look and feel,"
@@ -190,7 +194,7 @@ public class ResizableTextViewFactory {
         }
         if (SystemUtils.IS_JAVA_1_5) {
             shouldWarn = true;
-            _logger.warn("Detected JDK 1.5 runtime environment: {} {} {}", jvmVendor, jvmName, jvmVersion);
+            _logger.warn("Detected JDK 1.5 runtime environment: {} {} {} - {}", jvmVendor, jvmName, javaVersion, jvmVersion);
 
             message += "<FONT COLOR='RED'>WARNING</FONT> : ";
             message += "Your Java Virtual Machine is of version 1.5, which has several limitations and is not"
@@ -202,9 +206,12 @@ public class ResizableTextViewFactory {
             message += "<BR>" + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version 1.6 or newer,"
                     + " available at:" + "<BR><CENTER><A HREF='http://java.sun.com/javase/downloads/'>"
                     + "http://java.sun.com/javase/downloads/</A></CENTER>" + "<BR><BR>"
-                    + "<I>Your current JVM Information :</I><BR>" + "<TT>" + "java.vm.name = '" + jvmName + "'<BR>"
-                    + "java.vm.vendor = '" + jvmVendor + "'<BR>" + "java.vm.version = '" + jvmVersion + "'<BR>"
-                    + "Java Home :<BR>'" + jvmHome + "'" + "</TT>";
+                    + "<I>Your current JVM Information :</I><BR><TT>"
+                    + "java.vm.name    = '" + jvmName + "'<BR>"
+                    + "java.vm.vendor  = '" + jvmVendor + "'<BR>"
+                    + "java.version    = '" + javaVersion + "'<BR>"
+                    + "java.vm.version = '" + jvmVersion + "'<BR>"
+                    + "Java Home:<BR>'" + jvmHome + "'" + "</TT>";
             message += "</BODY></HTML>";
 
             ResizableTextViewFactory.createHtmlWindow(message, "Deprecated Java environment detected !", true);

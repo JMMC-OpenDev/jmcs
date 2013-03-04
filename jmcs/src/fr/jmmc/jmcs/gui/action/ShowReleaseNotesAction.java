@@ -29,7 +29,7 @@ public final class ShowReleaseNotesAction extends RegisteredAction {
     private final static Logger _logger = LoggerFactory.getLogger(_className);
     // Members
     /** Description to extract release notes from */
-    private ApplicationDescription _applicationDescription = null;
+    private final ApplicationDescription _applicationDescription;
     /** Title */
     private String _windowTitle = null;
     /** HTML content (cached) */
@@ -73,7 +73,10 @@ public final class ShowReleaseNotesAction extends RegisteredAction {
         ResizableTextViewFactory.createHtmlWindow(_windowContent, _windowTitle, false);
     }
 
-    /** Generate HTML content */
+    /** 
+     * Generate HTML content
+     * @return HTML content
+     */
     private String generateHtml() {
 
         // Compute title (if none)
@@ -85,7 +88,7 @@ public final class ShowReleaseNotesAction extends RegisteredAction {
         // Compose standard header
         final StringBuilder generatedHtml = new StringBuilder(8 * 1024);
         generatedHtml.append("<html><body>");
-        generatedHtml.append("<h1><center><b>").append(_windowTitle).append("</b></center><br></h1>");
+        generatedHtml.append("<h1><center><b>").append(_windowTitle).append("</b></center></h1>\n");
 
         // Extracted changes per type:
         final List<Change> changeList = new ArrayList<Change>(20);
@@ -100,8 +103,8 @@ public final class ShowReleaseNotesAction extends RegisteredAction {
 
             processChangeType("FEATURE", "Features", r.getPrereleases(), generatedHtml, changeList);
             processChangeType("CHANGE", "Changes", r.getPrereleases(), generatedHtml, changeList);
+            processChangeType(null, null, r.getPrereleases(), generatedHtml, changeList); // empty type considered as 'Change'
             processChangeType("BUGFIX", "Bug Fixes", r.getPrereleases(), generatedHtml, changeList);
-            processChangeType(null, "Other", r.getPrereleases(), generatedHtml, changeList);
         }
 
         generatedHtml.append("</body></html>");
@@ -120,7 +123,9 @@ public final class ShowReleaseNotesAction extends RegisteredAction {
      */
     private void processChangeType(final String type, final String label, final List<Prerelease> prereleaseList, final StringBuilder generatedHtml, final List<Change> changeList) {
         if (findChangeByType(type, prereleaseList, changeList)) {
-            generatedHtml.append(label).append(":\n");
+            if (label != null) {
+                generatedHtml.append(label).append(":\n");
+            }
             generatedHtml.append("<ul>\n");
 
             for (Change c : changeList) {

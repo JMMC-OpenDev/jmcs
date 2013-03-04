@@ -173,6 +173,7 @@ public class ResizableTextViewFactory {
     }
 
     public static void showUnsupportedJdkWarning() {
+        final String jvmVendor = System.getProperty("java.vm.vendor");
         final String jvmName = System.getProperty("java.vm.name");
         final String jvmVersion = System.getProperty("java.vm.version");
 
@@ -181,7 +182,7 @@ public class ResizableTextViewFactory {
 
         if (jvmName != null && jvmName.toLowerCase().contains("openjdk")) {
             shouldWarn = true;
-            _logger.warn("Detected OpenJDK runtime environment: {} {}", jvmName, jvmVersion);
+            _logger.warn("Detected OpenJDK runtime environment: {} {} {}", jvmVendor, jvmName, jvmVersion);
 
             message += "<FONT COLOR='RED'>WARNING</FONT> : ";
             message += "Your Java Virtual Machine is an OpenJDK JVM, which has known bugs (SWING look and feel,"
@@ -189,14 +190,13 @@ public class ResizableTextViewFactory {
         }
         if (SystemUtils.IS_JAVA_1_5) {
             shouldWarn = true;
-            _logger.warn("Detected JDK 1.5 runtime environment: {} {}", jvmName, jvmVersion);
+            _logger.warn("Detected JDK 1.5 runtime environment: {} {} {}", jvmVendor, jvmName, jvmVersion);
 
             message += "<FONT COLOR='RED'>WARNING</FONT> : ";
             message += "Your Java Virtual Machine is of version 1.5, which has several limitations and is not"
                     + " maintained anymore security-wise." + "<BR><BR>";
         }
         if (shouldWarn) {
-            final String jvmVendor = System.getProperty("java.vm.vendor");
             final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
 
             message += "<BR>" + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version 1.6 or newer,"

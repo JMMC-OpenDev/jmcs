@@ -1,0 +1,166 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+package fr.jmmc.jmcs.jaxb;
+
+import java.util.concurrent.ConcurrentHashMap;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * JAXBFactory is an utility class to configure JAXB context & properties
+ *
+ * @author Laurent BOURGES.
+ */
+public final class JAXBFactory {
+
+    /** Class logger */
+    private static final Logger logger = LoggerFactory.getLogger(JAXBFactory.class.getName());
+    /**
+     * JAXB 2 Context Factory (System property) "javax.xml.bind.JAXBContext" instead of "javax.xml.bind.context.factory"
+     * bug reported : http://java.net/jira/browse/JAXB-816
+     */
+    public static final String JAXB_CONTEXT_FACTORY = "javax.xml.bind.JAXBContext";
+    /** JAXB implementation 2.1.12 provided in JMCS libraries */
+    public static final String JAXB_CONTEXT_FACTORY_IMPLEMENTATION = "com.sun.xml.bind.v2.ContextFactory";
+    /** all factories */
+    private static ConcurrentHashMap<String, JAXBFactory> managedInstances = new ConcurrentHashMap<String, JAXBFactory>(4);
+    // Members
+    /** JAXB context path : used to find a factory */
+    private final String _jaxbPath;
+    /** JAXB Context for the given JAXB context path */
+    private JAXBContext _jaxbContext = null;
+
+    /**
+     * Creates a new JPAFactory object
+     *
+     * @param pJaxbPath JAXB context path
+     */
+    private JAXBFactory(final String pJaxbPath) {
+        _jaxbPath = pJaxbPath;
+    }
+
+    //~ Methods ----------------------------------------------------------------------------------------------------------
+    /**
+     * Factory singleton per JAXB-context-path pattern
+     *
+     * @param jaxbPath JAXB context path
+     *
+     * @return JAXBFactory initialized
+     *
+     * @throws XmlBindException if a JAXBException was caught
+     */
+    public static JAXBFactory getInstance(final String jaxbPath) throws XmlBindException {
+        JAXBFactory factory = managedInstances.get(jaxbPath);
+
+        if (factory == null) {
+            factory = new JAXBFactory(jaxbPath);
+
+            factory.initialize();
+
+            if (factory != null) {
+                managedInstances.putIfAbsent(jaxbPath, factory);
+                // to be sure to return the singleton :
+                factory = managedInstances.get(jaxbPath);
+            }
+        }
+
+        return factory;
+    }
+
+    /**
+     * Initializes the JAXB Context
+     *
+     * @throws XmlBindException if a JAXBException was caught
+     */
+    private void initialize() throws XmlBindException {
+        try {
+            _jaxbContext = getContext(_jaxbPath);
+        } catch (XmlBindException xbe) {
+            logger.error("JAXBFactory.initialize : JAXB failure : ", xbe);
+            throw xbe;
+        }
+    }
+
+    /**
+     * JAXBContext factory for a given path
+     *
+     * @param path given path
+     * @return JAXBContext instance
+     * @throws XmlBindException if a JAXBException was caught
+     */
+    private JAXBContext getContext(final String path) throws XmlBindException {
+        JAXBContext context = null;
+
+        // Define the system property to define which JAXB implementation to use :
+        System.setProperty(JAXB_CONTEXT_FACTORY, JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
+
+        logger.debug("JAXB implementation: {}", System.getProperty(JAXB_CONTEXT_FACTORY));
+
+        try {
+            // create a JAXBContext capable of handling classes generated into
+            // ivoa schema package
+            context = JAXBContext.newInstance(path);
+
+        } catch (JAXBException je) {
+            throw new XmlBindException("JAXBFactory.getContext : Unable to create JAXBContext : " + path, je);
+        }
+
+        return context;
+    }
+
+    /**
+     * Returns JAXB Context for the given JAXB context path
+     *
+     * @return JAXB Context for the given JAXB context path
+     */
+    private JAXBContext getJAXBContext() {
+        return _jaxbContext;
+    }
+
+    /**
+     * Creates a JAXB Unmarshaller
+     *
+     * @return JAXB Unmarshaller
+     * @throws XmlBindException if a JAXBException was caught while creating an unmarshaller
+     */
+    public Unmarshaller createUnMarshaller() throws XmlBindException {
+        Unmarshaller unmarshaller = null;
+
+        try {
+            // create an Unmarshaller
+            unmarshaller = getJAXBContext().createUnmarshaller();
+
+        } catch (JAXBException je) {
+            throw new XmlBindException("JAXBFactory.createUnMarshaller : JAXB Failure", je);
+        }
+
+        return unmarshaller;
+    }
+
+    /**
+     * Creates a JAXB Marshaller
+     *
+     * @return JAXB Marshaller
+     * @throws XmlBindException if a JAXBException was caught while creating an marshaller
+     */
+    public Marshaller createMarshaller() throws XmlBindException {
+        Marshaller marshaller = null;
+
+        try {
+            // create an Unmarshaller
+            marshaller = getJAXBContext().createMarshaller();
+
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        } catch (JAXBException je) {
+            throw new XmlBindException("JAXBFactory.createMarshaller : JAXB Failure", je);
+        }
+
+        return marshaller;
+    }
+}

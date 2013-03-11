@@ -1,6 +1,6 @@
 package org.ivoa.util.runner.process;
 
-import org.ivoa.util.CollectionUtils;
+import fr.jmmc.jmcs.util.CollectionUtils;
 import org.ivoa.util.runner.RootContext;
 import org.ivoa.util.runner.RunContext;
 

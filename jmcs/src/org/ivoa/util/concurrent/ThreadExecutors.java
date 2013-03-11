@@ -11,7 +11,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import org.ivoa.util.CollectionUtils;
+import fr.jmmc.jmcs.util.CollectionUtils;
 import org.ivoa.util.LogSupport;
 
 /**

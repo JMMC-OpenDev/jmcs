@@ -1,5 +1,6 @@
 package org.ivoa.util.runner;
 
+import fr.jmmc.jmcs.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -7,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import fr.jmmc.jmcs.util.CollectionUtils;
-import org.ivoa.util.LogUtil;
 import org.ivoa.util.concurrent.CustomThreadPoolExecutor;
 import org.ivoa.util.concurrent.FastSemaphore;
 import org.ivoa.util.concurrent.GenericRunnable;
@@ -17,6 +16,7 @@ import org.ivoa.util.runner.process.ProcessContext;
 import org.ivoa.util.runner.process.ProcessRunner;
 import org.ivoa.util.runner.process.RingBuffer;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Job Management (queue & execution) on local machine
@@ -26,8 +26,8 @@ import org.slf4j.Logger;
 public final class LocalLauncher {
     //~ Constants --------------------------------------------------------------------------------------------------------
 
-    /** logger */
-    private static Logger logger = LogUtil.getLogger();
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(LocalLauncher.class.getName());
     /** initial capacity for queue */
     public static final int INITIAL_QUEUE_CAPACITY = 10;
     /** job ID generator (counter) */

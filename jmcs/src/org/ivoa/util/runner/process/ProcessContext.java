@@ -1,10 +1,8 @@
 package org.ivoa.util.runner.process;
 
+import org.ivoa.util.CollectionUtils;
 import org.ivoa.util.runner.RootContext;
 import org.ivoa.util.runner.RunContext;
-
-import org.ivoa.util.CollectionUtils;
-import org.ivoa.util.JavaUtils;
 
 /**
  * Unix Process Job (command, buffer, process status, unix process wrapper)
@@ -51,7 +49,7 @@ public final class ProcessContext extends RunContext {
     public ProcessContext(final RootContext parent, final String name, final Long id, final String[] cmd) {
         super(parent, name, id);
 
-        this.command = CollectionUtils.toString(JavaUtils.asList(cmd), DB_SEPARATOR, "", "");
+        this.command = CollectionUtils.toString(CollectionUtils.asList(cmd), DB_SEPARATOR, "", "");
     }
 
     //~ Methods ----------------------------------------------------------------------------------------------------------

@@ -5,10 +5,11 @@ import fr.jmmc.jmcs.util.StringUtils;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import org.ivoa.util.LogSupport;
 import org.ivoa.util.concurrent.ArrayDeque;
 import org.ivoa.util.concurrent.Deque;
 import org.ivoa.util.concurrent.FastSemaphore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Ring buffer : maintain a limited list of string. 
@@ -16,9 +17,11 @@ import org.ivoa.util.concurrent.FastSemaphore;
  *
  * @author laurent bourges (voparis)
  */
-public final class RingBuffer extends LogSupport {
+public final class RingBuffer {
     //~ Constants --------------------------------------------------------------------------------------------------------
 
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(RingBuffer.class.getName());
     /** default line size */
     public static final int DEFAULT_LINE_SIZE = 100;
     //~ Members ----------------------------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 package org.ivoa.util.concurrent;
 
+import fr.jmmc.jmcs.util.CollectionUtils;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -11,8 +12,8 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import fr.jmmc.jmcs.util.CollectionUtils;
-import org.ivoa.util.LogSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Thread Pools Utilities : this class simplifies the thread pool management with Java 1.5+. This
@@ -25,10 +26,12 @@ import org.ivoa.util.LogSupport;
  * @see ThreadPoolExecutor
  * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
  */
-public final class ThreadExecutors extends LogSupport {
+public final class ThreadExecutors {
     // ~ Constants
     // --------------------------------------------------------------------------------------------------------
 
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(ThreadExecutors.class.getName());
     /** running flag (volatile) */
     private static volatile boolean RUNNING = true;
     /** generic thread pool name */

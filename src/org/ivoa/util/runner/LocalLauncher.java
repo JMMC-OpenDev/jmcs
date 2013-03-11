@@ -1,9 +1,5 @@
 package org.ivoa.util.runner;
 
-import org.ivoa.util.runner.process.ProcessContext;
-import org.ivoa.util.runner.process.ProcessRunner;
-import org.ivoa.util.runner.process.RingBuffer;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -11,13 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.ivoa.util.JavaUtils;
+import org.ivoa.util.CollectionUtils;
 import org.ivoa.util.LogUtil;
 import org.ivoa.util.concurrent.CustomThreadPoolExecutor;
 import org.ivoa.util.concurrent.FastSemaphore;
 import org.ivoa.util.concurrent.GenericRunnable;
 import org.ivoa.util.concurrent.ThreadExecutors;
+import org.ivoa.util.runner.process.ProcessContext;
+import org.ivoa.util.runner.process.ProcessRunner;
+import org.ivoa.util.runner.process.RingBuffer;
 import org.slf4j.Logger;
 
 /**
@@ -222,7 +220,7 @@ public final class LocalLauncher {
      * @return created job context
      */
     public static RunContext prepareChildJob(final RootContext parent, final String name, final String[] command) {
-        if (JavaUtils.isEmpty(command)) {
+        if (CollectionUtils.isEmpty(command)) {
             throw new IllegalArgumentException("Invalid command parameter !");
         }
 

@@ -11,8 +11,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import org.ivoa.util.JavaUtils;
+import org.ivoa.util.CollectionUtils;
 import org.ivoa.util.LogSupport;
 
 /**
@@ -152,7 +151,7 @@ public final class ThreadExecutors extends LogSupport {
         }
 
         final Map<String, ThreadExecutors> m = getSingleExecutors(false);
-        if (!JavaUtils.isEmpty(m)) {
+        if (!CollectionUtils.isEmpty(m)) {
             for (final Iterator<ThreadExecutors> it = m.values().iterator(); it.hasNext();) {
                 it.next().stop();
                 it.remove();

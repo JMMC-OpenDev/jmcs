@@ -1,7 +1,10 @@
 package org.ivoa.util;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +26,67 @@ public final class CollectionUtils {
     public final static String BEGIN_SEPARATOR = LINE_SEPARATOR + ONE_LINE_BEGIN_SEPARATOR + LINE_SEPARATOR;
     /** end separator = \n} */
     public final static String END_SEPARATOR = LINE_SEPARATOR + ONE_LINE_END_SEPARATOR;
+
+    /**
+     * Fill the given array with the given value
+     * @param <T> Type of array elements
+     * @param array array to fill
+     * @param value value to use
+     * @return filled array
+     */
+    public static <T> T[] fill(final T[] array, final T value) {
+        Arrays.fill(array, value);
+        return array;
+    }
+
+    /**
+     * Converts the given array to a List. <br/>
+     * If the array is empty, it gives the Collections.EMPTY_LIST
+     *
+     * @param <T> type of objects contained in the array
+     * @param array array to convert
+     * @return list (Collections.EMPTY_LIST if the array is empty)
+     * @see java.util.Arrays#asList(Object...)
+     */
+    public static <T> List<T> asList(final T[] array) {
+        List<T> res;
+        if (isEmpty(array)) {
+            res = Collections.emptyList();
+        } else {
+            res = Arrays.asList(array);
+        }
+        return res;
+    }
+
+    /**
+     * Is the given map null or empty ?
+     *
+     * @param map map to test
+     * @return true if the map is null or empty
+     */
+    public static boolean isEmpty(final Map<?, ?> map) {
+        return map == null || map.isEmpty();
+    }
+
+    /**
+     * Is the given collection null or empty ?
+     *
+     * @param col collection to test
+     * @return true if the collection is null or empty
+     */
+    public static boolean isEmpty(final Collection<?> col) {
+        return col == null || col.isEmpty();
+    }
+
+    /**
+     * Is the given array null or empty ?
+     *
+     * @param array array to test
+     * @return true if the array is null or empty
+     */
+    public static boolean isEmpty(final Object[] array) {
+        return array == null || array.length == 0;
+    }
 
     //~ Constructors -----------------------------------------------------------------------------------------------------
     /**

@@ -1,6 +1,6 @@
 package org.ivoa.util.runner;
 
-import org.ivoa.util.CollectionUtils;
+import fr.jmmc.jmcs.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

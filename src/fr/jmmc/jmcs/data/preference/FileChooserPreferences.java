@@ -9,7 +9,7 @@ import fr.jmmc.jmcs.util.MimeType;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import org.ivoa.util.CollectionUtils;
+import fr.jmmc.jmcs.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

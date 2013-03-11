@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.ivoa.util.CollectionUtils;
+import fr.jmmc.jmcs.util.CollectionUtils;
 import org.ivoa.util.LogUtil;
 import org.ivoa.util.concurrent.CustomThreadPoolExecutor;
 import org.ivoa.util.concurrent.FastSemaphore;

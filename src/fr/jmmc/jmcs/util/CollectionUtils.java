@@ -1,4 +1,7 @@
-package org.ivoa.util;
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+package fr.jmmc.jmcs.util;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,7 +13,7 @@ import java.util.Map;
 /**
  * Collection toString() methods
  *
- * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
+ * @author Laurent BOURGES (from org.ivoa).
  */
 public final class CollectionUtils {
 

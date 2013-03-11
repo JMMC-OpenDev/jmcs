@@ -1,5 +1,6 @@
 package org.ivoa.util.runner.process;
 
+import fr.jmmc.jmcs.util.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -8,7 +9,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.ivoa.util.FileUtils;
 import org.ivoa.util.LogUtil;
 import org.ivoa.util.concurrent.ThreadExecutors;
 import org.slf4j.Logger;

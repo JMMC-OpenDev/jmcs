@@ -14,6 +14,7 @@ import fr.jmmc.jmcs.data.model.Program;
 import fr.jmmc.jmcs.data.model.Release;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
+import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.SpecialChars;
 import java.io.BufferedInputStream;
@@ -28,7 +29,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.ivoa.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

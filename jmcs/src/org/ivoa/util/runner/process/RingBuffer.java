@@ -1,10 +1,10 @@
 package org.ivoa.util.runner.process;
 
 import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import org.ivoa.util.JavaUtils;
 import org.ivoa.util.LogSupport;
 import org.ivoa.util.concurrent.ArrayDeque;
 import org.ivoa.util.concurrent.Deque;
@@ -65,7 +65,7 @@ public final class RingBuffer extends LogSupport {
         this.buffer = new StringBuilder(this.maxCount * DEFAULT_LINE_SIZE / 2);
         this.lineBuffer = new StringBuilder(DEFAULT_LINE_SIZE);
 
-        if (!JavaUtils.isEmpty(this.writeLogFile)) {
+        if (!StringUtils.isEmpty(this.writeLogFile)) {
             this.fw = FileUtils.openFile(this.writeLogFile);
         }
     }

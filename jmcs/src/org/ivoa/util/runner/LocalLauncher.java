@@ -10,7 +10,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.ivoa.util.concurrent.CustomThreadPoolExecutor;
 import org.ivoa.util.concurrent.FastSemaphore;
-import org.ivoa.util.concurrent.GenericRunnable;
 import org.ivoa.util.concurrent.ThreadExecutors;
 import org.ivoa.util.runner.process.ProcessContext;
 import org.ivoa.util.runner.process.ProcessRunner;
@@ -572,7 +571,7 @@ public final class LocalLauncher {
     /**
      * This class implements Runnable to run a job submitted in the queue
      */
-    private static final class JobRunner extends GenericRunnable {
+    private static final class JobRunner implements Runnable {
 
         /** max number of executed child task (avoid indefinite loop) */
         public final static int MAX_TASKS = 10;

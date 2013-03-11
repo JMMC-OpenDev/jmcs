@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import org.ivoa.util.concurrent.GenericRunnable;
 import org.ivoa.util.concurrent.ThreadExecutors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author laurent bourges (voparis)
  */
-public final class StreamRedirector extends GenericRunnable {
+public final class StreamRedirector implements Runnable {
 
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(StreamRedirector.class.getName());

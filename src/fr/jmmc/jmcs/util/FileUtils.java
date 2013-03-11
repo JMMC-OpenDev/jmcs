@@ -21,13 +21,14 @@ import java.io.Writer;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.zip.GZIPOutputStream;
+import org.ivoa.util.JavaUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Several File utility methods.
  *
- * @author Guillaume MELLA, Laurent BOURGES.
+ * @author Guillaume MELLA, Laurent BOURGES,  Sylvain LAFRASSE.
  */
 public final class FileUtils {
 
@@ -333,6 +334,64 @@ public final class FileUtils {
         }
     }
 
+
+    /**
+     * Returns a Writer for the given file path and use the default writer
+     * buffer capacity
+     *
+     * @param absoluteFilePath absolute file path
+     * @return Writer (buffered) or null
+     */
+    public static Writer openFile(final String absoluteFilePath) {
+        return openFile(absoluteFilePath, DEFAULT_BUFFER_CAPACITY);
+    }
+
+    /**
+     * Returns a Writer for the given file path and use the given buffer
+     * capacity
+     *
+     * @param absoluteFilePath absolute file path
+     * @param bufferSize write buffer capacity
+     * @return Writer (buffered) or null
+     */
+    public static Writer openFile(final String absoluteFilePath, final int bufferSize) {
+        if (!JavaUtils.isEmpty(absoluteFilePath)) {
+            return openFile(new File(absoluteFilePath), bufferSize);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns a Writer for the given file and use the default writer buffer
+     * capacity
+     *
+     * @param file file to write
+     * @return Writer (buffered) or null
+     */
+    public static Writer openFile(final File file) {
+        return openFile(file, DEFAULT_BUFFER_CAPACITY);
+    }
+
+    /**
+     * Returns a Writer for the given file and use the given buffer capacity
+     *
+     * @param file file to write
+     * @param bufferSize write buffer capacity
+     * @return Writer (buffered) or null
+     */
+    public static Writer openFile(final File file, final int bufferSize) {
+        try {
+            // Should define UTF-8 encoding for cross platform compatibility 
+            // but we must stay compatible with existing files (windows vs unix)
+            return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)), bufferSize);
+        } catch (final IOException ioe) {
+            _logger.error("IO failure : ", ioe);
+        }
+
+        return null;
+    }
+
     /**
      * Returns a Writer for the given file
      *
@@ -341,22 +400,20 @@ public final class FileUtils {
      *
      * @throws IOException if an I/O exception occurred
      */
+/*
     public static Writer openFile(final File file) throws IOException {
         // Should define UTF-8 encoding for cross platform compatibility 
         // but we must stay compatible with existing files (windows vs unix)
         return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-        /*
-         * return new BufferedWriter(new OutputStreamWriter(new
-         * FileOutputStream(file), FILE_ENCODING));
-         */
+        // return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), FILE_ENCODING));
     }
-
+*/
     /**
      * Close the given reader
      *
      * @param r reader to close
      */
-    public static void closeFile(final Reader r) {
+    public static Reader closeFile(final Reader r) {
         if (r != null) {
             try {
                 r.close();
@@ -364,6 +421,7 @@ public final class FileUtils {
                 _logger.debug("IO close failure.", ioe);
             }
         }
+        return null;
     }
 
     /**
@@ -371,7 +429,7 @@ public final class FileUtils {
      *
      * @param w writer to close
      */
-    public static void closeFile(final Writer w) {
+    public static Writer closeFile(final Writer w) {
         if (w != null) {
             try {
                 w.close();
@@ -379,6 +437,7 @@ public final class FileUtils {
                 _logger.debug("IO close failure.", ioe);
             }
         }
+        return null;
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.ivoa.util.concurrent;
 
-import org.ivoa.util.LogUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class extends {@link java.lang.Thread} to add the logging system and logs on interrupt and
@@ -14,10 +14,8 @@ public final class PoolThread extends Thread {
     // ~ Constants
     // --------------------------------------------------------------------------------------------------------
 
-    /**
-     * Logger for the base framework
-     */
-    private static Logger logger = LogUtil.getLogger();
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(PoolThread.class.getName());
 
     //~ Constructors -----------------------------------------------------------------------------------------------------
     /**

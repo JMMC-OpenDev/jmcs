@@ -21,14 +21,13 @@ import java.io.Writer;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.zip.GZIPOutputStream;
-import org.ivoa.util.JavaUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Several File utility methods.
  *
- * @author Guillaume MELLA, Laurent BOURGES,  Sylvain LAFRASSE.
+ * @author Guillaume MELLA, Laurent BOURGES, Sylvain LAFRASSE.
  */
 public final class FileUtils {
 
@@ -334,7 +333,6 @@ public final class FileUtils {
         }
     }
 
-
     /**
      * Returns a Writer for the given file path and use the default writer
      * buffer capacity
@@ -355,7 +353,7 @@ public final class FileUtils {
      * @return Writer (buffered) or null
      */
     public static Writer openFile(final String absoluteFilePath, final int bufferSize) {
-        if (!JavaUtils.isEmpty(absoluteFilePath)) {
+        if (!StringUtils.isEmpty(absoluteFilePath)) {
             return openFile(new File(absoluteFilePath), bufferSize);
         }
 
@@ -400,14 +398,14 @@ public final class FileUtils {
      *
      * @throws IOException if an I/O exception occurred
      */
-/*
-    public static Writer openFile(final File file) throws IOException {
-        // Should define UTF-8 encoding for cross platform compatibility 
-        // but we must stay compatible with existing files (windows vs unix)
-        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-        // return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), FILE_ENCODING));
-    }
-*/
+    /*
+     public static Writer openFile(final File file) throws IOException {
+     // Should define UTF-8 encoding for cross platform compatibility 
+     // but we must stay compatible with existing files (windows vs unix)
+     return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+     // return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), FILE_ENCODING));
+     }
+     */
     /**
      * Close the given reader
      *

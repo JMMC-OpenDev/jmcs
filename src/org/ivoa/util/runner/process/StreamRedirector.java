@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import org.ivoa.util.concurrent.GenericRunnable;
 import org.ivoa.util.concurrent.ThreadExecutors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class implements Runnable to redirect an input stream to a ring buffer
@@ -17,9 +19,11 @@ import org.ivoa.util.concurrent.ThreadExecutors;
  */
 public final class StreamRedirector extends GenericRunnable {
 
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(StreamRedirector.class.getName());
     /** debug flag : dump every read line in logs */
     private final static boolean DEBUG = false;
-    /** pause flag : waits 10ms after each line read */
+    /** pause flag : waits 10 milliseconds after each line read */
     private final static boolean PAUSE = false;
     /** prefix for example : 'ERROR' */
     private final String prefix;

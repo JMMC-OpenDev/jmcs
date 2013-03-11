@@ -2,8 +2,8 @@ package org.ivoa.util.concurrent;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.ivoa.util.LogSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Custom Thread Factory for ThreadExecutors to create threads
@@ -11,7 +11,10 @@ import org.ivoa.util.LogSupport;
  * @see ThreadFactory
  * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
  */
-public final class CustomThreadFactory extends LogSupport implements ThreadFactory {
+public final class CustomThreadFactory implements ThreadFactory {
+
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(CustomThreadFactory.class.getName());
 
     //~ Members ----------------------------------------------------------------------------------------------------------
     /** thread pool name */

@@ -9,9 +9,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.ivoa.util.LogUtil;
 import org.ivoa.util.concurrent.ThreadExecutors;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Process Runner : manages Unix process (start and kill)
@@ -20,8 +20,8 @@ import org.slf4j.Logger;
  */
 public final class ProcessRunner {
 
-    /** logger */
-    private static final Logger logger = LogUtil.getLogger();
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(ProcessRunner.class.getName());
     /** ERROR prefix */
     public final static String ERR_PREFIX = "ERROR";
     /** undefined process status */

@@ -6,7 +6,7 @@ package fr.jmmc.jmal.star;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.util.ArrayList;
 import java.util.Observable;
-import org.ivoa.util.CollectionUtils;
+import fr.jmmc.jmcs.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

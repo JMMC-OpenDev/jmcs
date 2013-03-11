@@ -4,8 +4,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import org.ivoa.util.LogUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Custom ThreadPoolExecutor to add extensions
@@ -15,11 +15,8 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
     // ~ Constants
     // --------------------------------------------------------------------------------------------------------
 
-    /**
-     * Logger for the base framework
-     * @see org.ivoa.bean.LogSupport
-     */
-    private static Logger logger = LogUtil.getLogger();
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(CustomThreadPoolExecutor.class.getName());
     /** debug flag to log thread activity */
     public static final boolean DO_DEBUG = false;
     //~ Members ----------------------------------------------------------------------------------------------------------

@@ -3,8 +3,8 @@
  ******************************************************************************/
 package org.ivoa.util.runner;
 
-import org.ivoa.util.LogUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class implements the JobListener interface (no op)
@@ -12,8 +12,8 @@ import org.slf4j.Logger;
  */
 public final class EmptyJobListener implements JobListener {
 
-    /** logger */
-    private static Logger logger = LogUtil.getLogger();
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(EmptyJobListener.class.getName());
 
     /**
      * Perform the job event from the given root context.

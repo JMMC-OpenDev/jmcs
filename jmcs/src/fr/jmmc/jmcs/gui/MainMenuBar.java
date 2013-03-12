@@ -15,6 +15,7 @@ import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.RecentFilesManager;
+import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
 import java.awt.Component;
 import java.awt.Frame;
@@ -635,11 +636,9 @@ public class MainMenuBar extends JMenuBar {
 
         // Set action icon
         String icon = menu.getIcon();
-
         if (icon != null) {
             // Open XML file at path
-            URL iconURL = getClass().getResource(icon);
-
+            URL iconURL = ResourceUtils.getUrlFromResourceFilename(icon);
             if (iconURL != null) {
                 action.putValue(Action.SMALL_ICON, new ImageIcon(UrlUtils.fixJarURL(iconURL)));
             } else {

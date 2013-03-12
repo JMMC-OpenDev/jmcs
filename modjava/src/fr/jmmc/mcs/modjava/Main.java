@@ -10,6 +10,7 @@ import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.gui.component.DismissableMessagePane;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.StatusBar;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.network.interop.SampCapability;
 import fr.jmmc.jmcs.network.interop.SampMessageHandler;
 import fr.jmmc.jmcs.util.RecentFilesManager;
@@ -86,13 +87,16 @@ public class Main extends App {
         framePanel.add(_feedbackReportButton, BorderLayout.NORTH);
         framePanel.add(_testDismissableMessagePane, BorderLayout.CENTER);
         framePanel.add(new StatusBar(), BorderLayout.SOUTH);
+
+        // Center main window on the screen
+        WindowUtils.centerOnMainScreen(getFrame());
     }
 
     /** Execute application body */
     @Override
     protected void execute() {
-        _logger.info("Execute application body");
         StatusBar.show("Application ready.");
+        _logger.info("Execute application body");
 
         // Show the frame
         getFrame().setVisible(true);

@@ -98,7 +98,7 @@ JARFILES        = modjava
 #
 # <brief description of modjava jar files>
 modjava_DIRS         = fr
-modjava_EXTRAS       = fr/jmmc/mcs/modjava/resource/ApplicationData.xml
+modjava_EXTRAS       = fr/jmmc/mcs/modjava/resource/*
 
 #
 # Java programs
@@ -107,8 +107,7 @@ JAVA_EXECUTABLES=modjavaExample modjavaTest
 
 #
 # <brief description of modjavaExample java program>
-modjavaExample_CLASS = fr.jmmc.mcs.modjava.ModjavaExample
-modjavaTest_CLASS    = fr.jmmc.mcs.modjava.Main
+modjava_CLASS    = fr.jmmc.mcs.modjava.Main
 
 #
 # Command Definition Files (CDF)

@@ -5,107 +5,61 @@ package fr.jmmc.mcs.modjava;
 
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
-
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * DOCUMENT ME!
- *
- * @author $author$
- * @version $Revision: 1.3 $
+ * Class containing all application actions.
  */
-public class Actions
-{
-    /**
-     * DOCUMENT ME!
-     */
+public class Actions {
+
+    /** Logger */
+    private static final Logger _logger = LoggerFactory.getLogger(Actions.class.getName());
+
     public GenericLoggedAction scaction1;
-
-    /**
-     * DOCUMENT ME!
-     */
     public GenericLoggedAction scaction2;
-
-    /**
-     * DOCUMENT ME!
-     */
     public GenericLoggedAction scaction3;
-
-    /**
-     * DOCUMENT ME!
-     */
     public GenericLoggedAction scaction5;
-
-    /**
-     * DOCUMENT ME!
-     */
     public GenericLoggedAction mfaction3;
-
-    /**
-     * DOCUMENT ME!
-     */
     public GenericLoggedAction mfaction4;
-
-    /**
-     * DOCUMENT ME!
-     */
     public GenericLoggedAction mfaction5;
-
-    /**
-     * DOCUMENT ME!
-     */
     public GenericLoggedAction radio1;
-
-    /**
-     * DOCUMENT ME!
-     */
     public GenericLoggedAction radio2;
-
-    /**
-     * DOCUMENT ME!
-     */
     public GenericLoggedAction radio3;
 
-    /**
-     * Creates a new Actions object.
-     */
-    public Actions()
-    {
-        System.out.println("" + ActionRegistrar.getInstance());
+    /** Creates a new Actions object. */
+    public Actions() {
+        _logger.info(ActionRegistrar.getInstance().toString());
 
-        scaction1     = new GenericLoggedAction("scaction1");
-        scaction2     = new GenericLoggedAction("scaction2");
-        scaction3     = new GenericLoggedAction("scaction3");
-        scaction5     = new GenericLoggedAction("scaction5");
+        scaction1 = new GenericLoggedAction("scaction1");
+        scaction2 = new GenericLoggedAction("scaction2");
+        scaction3 = new GenericLoggedAction("scaction3");
+        scaction5 = new GenericLoggedAction("scaction5");
 
-        mfaction3     = new GenericLoggedAction("mfaction3");
-        mfaction4     = new GenericLoggedAction("mfaction4");
-        mfaction5     = new GenericLoggedAction("mfaction5");
+        mfaction3 = new GenericLoggedAction("mfaction3");
+        mfaction4 = new GenericLoggedAction("mfaction4");
+        mfaction5 = new GenericLoggedAction("mfaction5");
 
-        radio1        = new GenericLoggedAction("radio1");
-        radio2        = new GenericLoggedAction("radio2");
-        radio3        = new GenericLoggedAction("radio3");
+        radio1 = new GenericLoggedAction("radio1");
+        radio2 = new GenericLoggedAction("radio2");
+        radio3 = new GenericLoggedAction("radio3");
 
-        System.out.println("" + ActionRegistrar.getInstance());
+        _logger.info(ActionRegistrar.getInstance().toString());
     }
 
-    protected class GenericLoggedAction extends RegisteredAction
-    {
+    protected class GenericLoggedAction extends RegisteredAction {
+
         String _fieldName = null;
 
-        public GenericLoggedAction(String fieldName)
-        {
+        public GenericLoggedAction(String fieldName) {
             super("fr.jmmc.mcs.modjava.Actions", fieldName);
-
-            System.out.println("GenericLoggedAction('" + fieldName + "').");
-
+            _logger.info("GenericLoggedAction('" + fieldName + "').");
             _fieldName = fieldName;
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent e)
-        {
-            System.out.println("GenericLoggedAction.actionPerformed('" +
-                _fieldName + "').");
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            _logger.info("GenericLoggedAction.actionPerformed('" + _fieldName + "').");
         }
     }
 }

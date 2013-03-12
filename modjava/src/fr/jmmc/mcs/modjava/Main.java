@@ -17,25 +17,22 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import org.astrogrid.samp.Message;
 import org.astrogrid.samp.SampUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Class for tests
- *
- * @author $author$
- * @version $Revision: 1.11 $
+ * Main class of your application.
  */
 public class Main extends App {
 
     /** Logger */
-    private static final Logger _logger = Logger.getLogger(Main.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(Main.class.getName());
     /** Button to launch about box window */
     private JButton _aboutBoxButton = null;
     /** Button to launch feedback report window */
@@ -48,27 +45,29 @@ public class Main extends App {
     /** Test button */
     private JButton _testDismissableMessagePane = null;
 
-    /** Constructor
+    /**
+     * Constructor.
      * @param args
      */
     public Main(String[] args) {
         super(args);
     }
 
+    /** Initialize application services */
     @Override
     protected void initServices() {
         // Set others preferences
         try {
             Preferences.getInstance().setPreference("MAIN", "main");
         } catch (Exception ex) {
-            _logger.log(Level.WARNING, "Failed setting preference.", ex);
+            _logger.error("Failed setting preference.", ex);
         }
     }
 
-    /** Initialize application objects */
+    /** Initialize application GUI */
     @Override
     protected void setupGui() {
-        _logger.warning("Initialize application objects");
+        _logger.warn("Initialize application objects");
 
         _actions = new Actions();
         _openAction = openAction();
@@ -118,17 +117,28 @@ public class Main extends App {
                 }
             };
         } catch (Exception ex) {
-            ex.printStackTrace();
+            _logger.error("SAMP error", ex);
         }
     }
 
     /** Execute operations before closing application */
     @Override
     public boolean canBeTerminatedNow() {
-        _logger.warning("Execute operations before closing application");
+        _logger.warn("Execute operations before closing application");
 
         // Quit application
         return true;
+    }
+
+    /** application cleanup */
+    @Override
+    protected void cleanup() {
+        _aboutBoxButton = null;
+        _feedbackReportButton = null;
+        _helpViewButton = null;
+        _openAction = null;
+        _actions = null;
+        _testDismissableMessagePane = null;
     }
 
     /** Open help view action */
@@ -185,21 +195,10 @@ public class Main extends App {
 
     /**
      * Main
-     *
      * @param args command line arguments
      */
     public static void main(String[] args) {
         Bootstrapper.launchApp(new Main(args), false, true);
-    }
-
-    @Override
-    protected void cleanup() {
-        _aboutBoxButton = null;
-        _feedbackReportButton = null;
-        _helpViewButton = null;
-        _openAction = null;
-        _actions = null;
-        _testDismissableMessagePane = null;
     }
 }
 /*___oOo___*/

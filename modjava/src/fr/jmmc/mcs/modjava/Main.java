@@ -41,7 +41,7 @@ public class Main extends App {
     private JButton _helpViewButton = null;
     /** Actions class */
     public RegisteredAction _openAction;
-    Actions _actions = null;
+    private Actions _actions = null;
     /** Test button */
     private JButton _testDismissableMessagePane = null;
 

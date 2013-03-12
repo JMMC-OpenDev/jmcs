@@ -16,33 +16,33 @@ public class Actions {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(Actions.class.getName());
 
-    public GenericLoggedAction scaction1;
-    public GenericLoggedAction scaction2;
-    public GenericLoggedAction scaction3;
-    public GenericLoggedAction scaction5;
-    public GenericLoggedAction mfaction3;
-    public GenericLoggedAction mfaction4;
-    public GenericLoggedAction mfaction5;
-    public GenericLoggedAction radio1;
-    public GenericLoggedAction radio2;
-    public GenericLoggedAction radio3;
+    public GenericLoggedAction _scaction1;
+    public GenericLoggedAction _scaction2;
+    public GenericLoggedAction _scaction3;
+    public GenericLoggedAction _scaction5;
+    public GenericLoggedAction _mfaction3;
+    public GenericLoggedAction _mfaction4;
+    public GenericLoggedAction _mfaction5;
+    public GenericLoggedAction _radio1;
+    public GenericLoggedAction _radio2;
+    public GenericLoggedAction _radio3;
 
     /** Creates a new Actions object. */
     public Actions() {
         _logger.info(ActionRegistrar.getInstance().toString());
 
-        scaction1 = new GenericLoggedAction("scaction1");
-        scaction2 = new GenericLoggedAction("scaction2");
-        scaction3 = new GenericLoggedAction("scaction3");
-        scaction5 = new GenericLoggedAction("scaction5");
+        _scaction1 = new GenericLoggedAction("scaction1");
+        _scaction2 = new GenericLoggedAction("scaction2");
+        _scaction3 = new GenericLoggedAction("scaction3");
+        _scaction5 = new GenericLoggedAction("scaction5");
 
-        mfaction3 = new GenericLoggedAction("mfaction3");
-        mfaction4 = new GenericLoggedAction("mfaction4");
-        mfaction5 = new GenericLoggedAction("mfaction5");
+        _mfaction3 = new GenericLoggedAction("mfaction3");
+        _mfaction4 = new GenericLoggedAction("mfaction4");
+        _mfaction5 = new GenericLoggedAction("mfaction5");
 
-        radio1 = new GenericLoggedAction("radio1");
-        radio2 = new GenericLoggedAction("radio2");
-        radio3 = new GenericLoggedAction("radio3");
+        _radio1 = new GenericLoggedAction("radio1");
+        _radio2 = new GenericLoggedAction("radio2");
+        _radio3 = new GenericLoggedAction("radio3");
 
         _logger.info(ActionRegistrar.getInstance().toString());
     }

@@ -185,7 +185,7 @@ public abstract class ResourceUtils {
     }
 
     /**
-     * Get Path from resource filename located in the following path:
+     * Get path from resource filename located in the following path:
      * $package(this App class)$/resource/fileName
      *
      * @param fileName name of searched file.
@@ -194,6 +194,18 @@ public abstract class ResourceUtils {
      */
     public static String getPathFromResourceFilename(final String fileName) {
         return getPathFromResourceFilename(App.getInstance().getClass(), fileName);
+    }
+
+    /**
+     * Get URL from resource filename located in the following path:
+     * $package(this App class)$/resource/fileName
+     *
+     * @param fileName name of searched file.
+     *
+     * @return resource URL
+     */
+    public static URL getUrlFromResourceFilename(final String fileName) {
+        return getURLFromResourceFilename(App.getInstance().getClass(), fileName);
     }
 
     /**

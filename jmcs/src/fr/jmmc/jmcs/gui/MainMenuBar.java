@@ -559,8 +559,8 @@ public class MainMenuBar extends JMenuBar {
 
                 return null;
             }
-        } else if (buttonGroup != null) // Is it a radio-button ?
-        {
+        } else if (buttonGroup != null) { // Is it a radio-button ?
+
             _logger.debug("Component is a JRadioButtonMenuItem.");
             item = new JRadioButtonMenuItem(action);
 
@@ -577,12 +577,12 @@ public class MainMenuBar extends JMenuBar {
 
                 return null;
             }
-        } else if (isMenu) // is it a menu containig other menu item ?
-        {
+        } else if (isMenu) { // is it a menu containig other menu item ?
+
             _logger.debug("Component is a JMenu.");
             item = new JMenu(action);
-        } else // It is a menu item.
-        {
+        } else { // It is a menu item.
+
             _logger.debug("Component is a JMenuItem.");
             item = new JMenuItem(action);
 
@@ -596,6 +596,11 @@ public class MainMenuBar extends JMenuBar {
         if (menu.getLabel() != null) {
             // Superseed the name of the item associated action
             item.setText(menu.getLabel());
+        }
+
+        // Discard all menu icons under Mac OS X
+        if (_isRunningUnderMacOSX) {
+            item.setIcon(null);
         }
 
         return item;

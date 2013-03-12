@@ -9,10 +9,12 @@ import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.gui.component.DismissableMessagePane;
 import fr.jmmc.jmcs.gui.component.MessagePane;
+import fr.jmmc.jmcs.gui.component.StatusBar;
 import fr.jmmc.jmcs.network.interop.SampCapability;
 import fr.jmmc.jmcs.network.interop.SampMessageHandler;
 import fr.jmmc.jmcs.util.RecentFilesManager;
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.HashMap;
@@ -33,8 +35,6 @@ public class Main extends App {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(Main.class.getName());
-    /** Button to launch about box window */
-    private JButton _aboutBoxButton = null;
     /** Button to launch feedback report window */
     private JButton _feedbackReportButton = null;
     /** Button to launch help view window */
@@ -73,24 +73,26 @@ public class Main extends App {
         _openAction = openAction();
 
         // Buttons
-        _aboutBoxButton = new JButton(InternalActionFactory.showAboutBoxAction());
         _feedbackReportButton = new JButton(InternalActionFactory.showFeedbackReportAction());
         _helpViewButton = new JButton(openHelpFrame());
         _testDismissableMessagePane = new JButton(dismissableMessagePaneAction());
 
+        final Container framePanel = getFramePanel();
+
         // Set borderlayout
-        getFramePanel().setLayout(new BorderLayout());
+        framePanel.setLayout(new BorderLayout());
 
         // Add buttons to panel
-        getFramePanel().add(_aboutBoxButton, BorderLayout.NORTH);
-        getFramePanel().add(_feedbackReportButton, BorderLayout.CENTER);
-        getFramePanel().add(_testDismissableMessagePane, BorderLayout.SOUTH);
+        framePanel.add(_feedbackReportButton, BorderLayout.NORTH);
+        framePanel.add(_testDismissableMessagePane, BorderLayout.CENTER);
+        framePanel.add(new StatusBar(), BorderLayout.SOUTH);
     }
 
     /** Execute application body */
     @Override
     protected void execute() {
         _logger.info("Execute application body");
+        StatusBar.show("Application ready.");
 
         // Show the frame
         getFrame().setVisible(true);
@@ -101,7 +103,8 @@ public class Main extends App {
                 @Override
                 public void processMessage(String senderId, Message msg) {
                     // do stuff
-                    System.out.println("\tReceived 'stuff.do' message from '" + senderId + "' : '" + msg + "'.");
+                    _logger.info("Received 'stuff.do' message from '" + senderId + "' : '" + msg + "'.");
+                    StatusBar.show("Received 'stuff.do' SAMP message.");
 
                     String name = (String) msg.getParam("name");
                     Map result = new HashMap();
@@ -113,7 +116,8 @@ public class Main extends App {
                 @Override
                 public void processMessage(String senderId, Message msg) {
                     // do stuff
-                    System.out.println("\tReceived 'LOAD_VO_TABLE' message from '" + senderId + "' : '" + msg + "'.");
+                    _logger.info("Received 'LOAD_VO_TABLE' message from '" + senderId + "' : '" + msg + "'.");
+                    StatusBar.show("Received 'LOAD_VO_TABLE' SAMP message.");
                 }
             };
         } catch (Exception ex) {
@@ -133,7 +137,6 @@ public class Main extends App {
     /** application cleanup */
     @Override
     protected void cleanup() {
-        _aboutBoxButton = null;
         _feedbackReportButton = null;
         _helpViewButton = null;
         _openAction = null;
@@ -186,6 +189,7 @@ public class Main extends App {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
+                StatusBar.show("Open action !!!");
                 MessagePane.showMessage("test !");
             }
         };

@@ -437,7 +437,7 @@ public final class XmlFactory {
             throw new IllegalArgumentException("XmlFactory.resolveXSLTPath : unable to load XSLT : empty file path !");
         }
 
-        final URL url = FileUtils.getResource(xslFilePath);
+        final URL url = ResourceUtils.getResource(xslFilePath);
 
         logger.debug("XmlFactory.resolveXSLTPath : url : {}", url);
 

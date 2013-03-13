@@ -18,7 +18,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
@@ -39,11 +38,6 @@ public final class FileUtils {
     public static final String FILE_ENCODING = "UTF-8";
     /** Default read buffer capacity: 8K */
     public static final int DEFAULT_BUFFER_CAPACITY = 8192;
-
-    /** Forbidden constructor */
-    private FileUtils() {
-        // no-op
-    }
 
     /**
      * Returns an existing File for the given path
@@ -201,60 +195,6 @@ public final class FileUtils {
             }
         }
         return null;
-    }
-
-    /**
-     * Find a file in the current classloader (application class Loader)
-     * Accepts filename like fr/jmmc/aspro/fileName.ext
-     *
-     * @param classpathLocation file name like fr/jmmc/aspro/fileName.ext
-     * @return URL to the file or null
-     *
-     * @throws IllegalStateException if the file is not found
-     */
-    public static URL getResource(final String classpathLocation) throws IllegalStateException {
-        _logger.debug("getResource : {}", classpathLocation);
-
-        if (classpathLocation == null) {
-            throw new IllegalStateException("Invalid 'null' value for classpathLocation.");
-        }
-
-        final String fixedPath;
-        if (classpathLocation.startsWith("/")) {
-            fixedPath = classpathLocation.substring(1);
-            _logger.warn("Given classpath had to be fixed : {}", classpathLocation);
-        } else {
-            fixedPath = classpathLocation;
-        }
-
-        // use the class loader resource resolver
-        final URL url = FileUtils.class.getClassLoader().getResource(fixedPath);
-
-        if (url == null) {
-            throw new IllegalStateException("Unable to find the file in the classpath : " + fixedPath);
-        }
-
-        return url;
-    }
-
-    /**
-     * Read a text file from the current class loader into a string
-     *
-     * @param classpathLocation file name like fr/jmmc/aspro/fileName.ext
-     * @return text file content
-     *
-     * @throws IllegalStateException if the file is not found or an I/O
-     * exception occurred
-     */
-    public static String readFile(final String classpathLocation) throws IllegalStateException {
-        final URL url = getResource(classpathLocation);
-
-        try {
-            return readStream(new BufferedInputStream(url.openStream()), DEFAULT_BUFFER_CAPACITY);
-        } catch (IOException ioe) {
-            // Unexpected exception :
-            throw new IllegalStateException("unable to read file : " + classpathLocation, ioe);
-        }
     }
 
     /**
@@ -644,44 +584,6 @@ public final class FileUtils {
     }
 
     /**
-     * Return the filename from a resource path (assumed delimiter is '/').
-     *
-     * @param resourcePath a '/' delimited path, such as Java resource path.
-     * @return the last element of a '/' delimited path, or null otherwise.
-     */
-    public static String filenameFromResourcePath(final String resourcePath) {
-        String[] pathTokens = resourcePath.split("/");
-        if (pathTokens.length > 0) {
-            return pathTokens[pathTokens.length - 1];
-        }
-        return null;
-    }
-
-    /**
-     * Extract the given resource given its file name in the JAR archive and
-     * save it as one temporary file
-     *
-     * @param fullResourceFilePath complete path to the resource name to
-     * extract.
-     * @return file URL
-     * @throws IllegalStateException if the given resource does not exist
-     */
-    public static String extractResource(final String fullResourceFilePath) throws IllegalStateException {
-
-        // Use the class loader resource resolver
-        final URL url = FileUtils.getResource(fullResourceFilePath);
-
-        final File tmpFile = getTempFile(filenameFromResourcePath(fullResourceFilePath));
-
-        try {
-            saveStream(new BufferedInputStream(url.openStream()), tmpFile);
-            return tmpFile.toURI().toString();
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Unable to save file '" + tmpFile + "' for URL '" + url + "'.", ioe);
-        }
-    }
-
-    /**
      * Remove accents from characters and replace wild chars with '_'.
      * @param fileName the string to clean up
      * @return cleaned up file name
@@ -698,6 +600,11 @@ public final class FileUtils {
         }
 
         return cleaned;
+    }
+
+    /** Forbidden constructor */
+    private FileUtils() {
+        // no-op
     }
 
     public static void main(String[] args) {

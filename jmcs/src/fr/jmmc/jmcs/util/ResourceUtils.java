@@ -4,19 +4,15 @@
 package fr.jmmc.jmcs.util;
 
 import fr.jmmc.jmcs.App;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
-import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class used to get resources informations from one central point (XML file).
- * 
- * Applications must start to set the resource file name before any GUI construction.
+ * Class used to get resources from inside JAR files.
  * 
  * @author Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
@@ -24,164 +20,42 @@ public abstract class ResourceUtils {
 
     /** the logger facility */
     protected static final Logger _logger = LoggerFactory.getLogger(ResourceUtils.class.getName());
-    /** Resource filename, that must be overloaded by subclasses */
-    private static String _resourceName = "fr/jmmc/jmcs/resource/Resources";
-    /** Cached resource bundle */
-    private static ResourceBundle _resources = null;
-    /** Flag to indicate whether the resource bundle is resolved or not */
-    private static boolean _resolved = false;
-    /** Store whether the execution platform is a Mac or not */
-    private static boolean MAC_OS_X = SystemUtils.IS_OS_MAC_OSX;
 
     /**
-     * Indicates the property file where informations will be extracted.
-     * The property file must end with .properties filename extension. But the
-     * given name should omit the extension.
+     * Return the filename from a resource path (assumed delimiter is '/').
      *
-     * @param name Indicates property file to use.
+     * @param resourcePath a '/' delimited path, such as Java resource path.
+     * @return the last element of a '/' delimited path, or null otherwise.
      */
-    public static void setResourceName(final String name) {
-        _logger.debug("Application will grab resources from '{}'", name);
-
-        _resourceName = name;
-        _resolved = false;
-    }
-
-    /**
-     * Get content from resource file.
-     *
-     * @param resourceName name of resource
-     *
-     * @return the content of the resource or null indicating error
-     */
-    public static String getResourceProperty(final String resourceName) {
-        return getResourceProperty(resourceName, false);
-    }
-
-    /**
-     * Get content from resource file.
-     *
-     * @param resourceKey name of resource
-     * @param quietIfNotFound true to not log at warning level i.e. debug level
-     *
-     * @return the content of the resource or null indicating error
-     */
-    public static String getResourceProperty(final String resourceKey, final boolean quietIfNotFound) {
-        if (_resources == null) {
-
-            if (!_resolved) {
-                _logger.debug("getResource for '{}'", _resourceName);
-                try {
-                    // update the resolve flag to avoid redundant calls to getBundle when no bundle is available:
-                    _resolved = true;
-                    _resources = ResourceBundle.getBundle(_resourceName);
-                } catch (MissingResourceException mre) {
-                    if (quietIfNotFound) {
-                        _logger.debug("Resource bundle can't be found : {}", mre.getMessage());
-                    } else {
-                        _logger.warn("Resource bundle can't be found : {}", mre.getMessage());
-                    }
-                }
-            }
-
-            if (_resources == null) {
-                return null;
-            }
+    public static String filenameFromResourcePath(final String resourcePath) {
+        String[] pathTokens = resourcePath.split("/");
+        if (pathTokens.length > 0) {
+            return pathTokens[pathTokens.length - 1];
         }
-
-        _logger.debug("getResource for '{}'", resourceKey);
-        try {
-            return _resources.getString(resourceKey);
-        } catch (MissingResourceException mre) {
-            if (quietIfNotFound) {
-                _logger.debug("Entry can't be found : {}", mre.getMessage());
-            } else {
-                _logger.warn("Entry can't be found : {}", mre.getMessage());
-            }
-        }
-
         return null;
     }
 
     /**
-     * Get the text of an action.
+     * Get Path from resource filename located in the class loader using the following path:
+     * $package(appClass)$/resource/fileName
      *
-     * @param actionName the actionInstanceName
+     * For example: getPathFromResourceFilename(App.class, fileName) uses the path:
+     * fr/jmmc/jmcs/resource/$fileName$
      *
-     * @return the associated text
+     * @param appClass any App class or subclass
+     * @param fileName name of searched file.
+     *
+     * @return resource path, or null.
      */
-    public static String getActionText(final String actionName) {
-        return getResourceProperty("actions.action." + actionName + ".text", true);
-    }
-
-    /**
-     * Get the description of an action.
-     *
-     * @param actionName the actionInstanceName
-     *
-     * @return the associated description
-     */
-    public static String getActionDescription(final String actionName) {
-        return getResourceProperty("actions.action." + actionName + ".description", true);
-    }
-
-    /**
-     * Get the tool-tip text of widget related to the common widget group.
-     *
-     * @param widgetName the widgetInstanceName
-     *
-     * @return the tool-tip text
-     */
-    public static String getToolTipText(final String widgetName) {
-        return getResourceProperty("widgets.widget." + widgetName + ".tooltip", true);
-    }
-
-    /**
-     * Get the accelerator (aka. keyboard short cut) of an action .
-     *
-     * @param actionName the actionInstanceName
-     *
-     * @return the associated accelerator
-     */
-    public static KeyStroke getActionAccelerator(final String actionName) {
-        // Get the accelerator string description from the Resource.properties file
-        String keyString = getResourceProperty("actions.action." + actionName + ".accelerator", true);
-
-        if (keyString == null) {
+    static String getPathFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
+        if (appClass == null) {
             return null;
         }
-
-        // If the execution is on Mac OS X
-        if (MAC_OS_X) {
-            // The 'command' key (aka Apple key) is used
-            keyString = "meta " + keyString;
-        } else {
-            // The 'control' key ise used elsewhere
-            keyString = "ctrl " + keyString;
-        }
-
-        // Get and return the KeyStroke from the accelerator string description
-        KeyStroke accelerator = KeyStroke.getKeyStroke(keyString);
-
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("keyString['{}'] = '{}' -> accelerator = '{}'.",
-                    actionName, keyString, accelerator);
-        }
-
-        return accelerator;
-    }
-
-    /**
-     * Get the icon of an action.
-     *
-     * @param actionName the actionInstanceName
-     *
-     * @return the associated icon
-     */
-    public static ImageIcon getActionIcon(final String actionName) {
-        // Get back the icon image path
-        String iconPath = getResourceProperty("actions.action." + actionName + ".icon", true);
-        return ImageUtils.loadResourceIcon(iconPath);
+        final String packageName = appClass.getPackage().getName();
+        final String packagePath = packageName.replace(".", "/");
+        final String filePath = packagePath + "/resource/" + fileName;
+        _logger.debug("filePath = '{}'.", filePath);
+        return filePath;
     }
 
     /**
@@ -197,18 +71,6 @@ public abstract class ResourceUtils {
     }
 
     /**
-     * Get URL from resource filename located in the following path:
-     * $package(this App class)$/resource/fileName
-     *
-     * @param fileName name of searched file.
-     *
-     * @return resource URL
-     */
-    public static URL getUrlFromResourceFilename(final String fileName) {
-        return getURLFromResourceFilename(App.getInstance().getClass(), fileName);
-    }
-
-    /**
      * Get URL from resource filename located in the class loader using the following path:
      * $package(appClass)$/resource/fileName
      *
@@ -220,7 +82,7 @@ public abstract class ResourceUtils {
      *
      * @return resource file URL, or null.
      */
-    public static URL getURLFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
+    public static URL getUrlFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
         final String filePath = getPathFromResourceFilename(appClass, fileName);
         if (filePath == null) {
             return null;
@@ -236,27 +98,80 @@ public abstract class ResourceUtils {
     }
 
     /**
-     * Get Path from resource filename located in the class loader using the following path:
-     * $package(appClass)$/resource/fileName
+     * Get URL from resource filename located in the following path:
+     * $package(this App class)$/resource/fileName
      *
-     * For example: getPathFromResourceFilename(App.class, fileName) uses the path:
-     * fr/jmmc/jmcs/resource/$fileName$
-     *
-     * @param appClass any App class or subclass
      * @param fileName name of searched file.
      *
-     * @return resource path, or null.
+     * @return resource URL
      */
-    private static String getPathFromResourceFilename(final Class<? extends App> appClass, final String fileName) {
-        if (appClass == null) {
-            return null;
+    public static URL getUrlFromResourceFilename(final String fileName) {
+        return getUrlFromResourceFilename(App.getInstance().getClass(), fileName);
+    }
+
+    /**
+     * Read a text file from the current class loader into a string
+     *
+     * @param classpathLocation file name like fr/jmmc/aspro/fileName.ext
+     * @return text file content
+     *
+     * @throws IllegalStateException if the file is not found or an I/O
+     * exception occurred
+     */
+    public static String readResource(final String classpathLocation) throws IllegalStateException {
+        final URL url = getResource(classpathLocation);
+        try {
+            return FileUtils.readStream(new BufferedInputStream(url.openStream()), FileUtils.DEFAULT_BUFFER_CAPACITY);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("unable to read file : " + classpathLocation, ioe);
         }
-        final Package p = appClass.getPackage();
-        final String packageName = p.getName();
-        final String packagePath = packageName.replace(".", "/");
-        final String filePath = packagePath + "/resource/" + fileName;
-        _logger.debug("filePath = '{}'.", filePath);
-        return filePath;
+    }
+
+    /**
+     * Extract the given resource given its file name in the JAR archive and save it as one temporary file.
+     *
+     * @param fullResourceFilePath complete path to the resource name to
+     * extract.
+     * @return file URL
+     * @throws IllegalStateException if the given resource does not exist
+     */
+    public static String extractResource(final String fullResourceFilePath) throws IllegalStateException {
+        final URL url = getResource(fullResourceFilePath);
+        final File tmpFile = FileUtils.getTempFile(filenameFromResourcePath(fullResourceFilePath));
+        try {
+            FileUtils.saveStream(new BufferedInputStream(url.openStream()), tmpFile);
+            return tmpFile.toURI().toString();
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Unable to save file '" + tmpFile + "' for URL '" + url + "'.", ioe);
+        }
+    }
+
+    /**
+     * Find a file in the current classloader (application class Loader)
+     * Accepts filename like fr/jmmc/aspro/fileName.ext
+     *
+     * @param classpathLocation file name like fr/jmmc/aspro/fileName.ext
+     * @return URL to the file or null
+     *
+     * @throws IllegalStateException if the file is not found
+     */
+    public static URL getResource(final String classpathLocation) throws IllegalStateException {
+        _logger.debug("getResource : {}", classpathLocation);
+        if (classpathLocation == null) {
+            throw new IllegalStateException("Invalid 'null' value for classpathLocation.");
+        }
+        final String fixedPath;
+        if (classpathLocation.startsWith("/")) {
+            fixedPath = classpathLocation.substring(1);
+            _logger.warn("Given classpath had to be fixed : {}", classpathLocation);
+        } else {
+            fixedPath = classpathLocation;
+        }
+        final URL url = ResourceUtils.class.getClassLoader().getResource(fixedPath);
+        if (url == null) {
+            throw new IllegalStateException("Unable to find the file in the classpath : " + fixedPath);
+        }
+        return url;
     }
 
     /**

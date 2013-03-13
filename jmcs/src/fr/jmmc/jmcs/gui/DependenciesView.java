@@ -6,7 +6,7 @@ package fr.jmmc.jmcs.gui;
 import fr.jmmc.jmcs.data.ApplicationDescription;
 import fr.jmmc.jmcs.data.model.Package;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
-import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.ResourceUtils;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class DependenciesView {
         final ApplicationDescription data = ApplicationDescription.getJmcsInstance();
         final String jMcsName = data.getProgramName();
         final String jmmcLogoResourcePath = data.getCompanyLogoResourcePath();
-        final String jmmcLogoURL = FileUtils.getResource(jmmcLogoResourcePath).toString();
+        final String jmmcLogoURL = ResourceUtils.getResource(jmmcLogoResourcePath).toString();
         final String jmmcUrl = data.getMainWebPageURL();
         final String jmmcName = data.getShortCompanyName();
         final String jmmcLongName = data.getLegalCompanyName();
@@ -109,7 +109,7 @@ public class DependenciesView {
             // Try to load license content
             final String licenseResourcePath = JMCS_LICENSE_CONTENT_FILE_PATH + licenseFilename;
             try {
-                final String licenseText = FileUtils.readFile(licenseResourcePath);
+                final String licenseText = ResourceUtils.readResource(licenseResourcePath);
                 generatedHtml.append("<pre>").append(licenseText).append("</pre>");
             } catch (IllegalStateException ise) {
                 _logger.error("Could not load '{}' resource.", licenseResourcePath, ise);

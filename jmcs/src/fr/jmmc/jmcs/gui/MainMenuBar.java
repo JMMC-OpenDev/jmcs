@@ -13,6 +13,7 @@ import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
+import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.RecentFilesManager;
 import fr.jmmc.jmcs.util.ResourceUtils;
@@ -637,10 +638,9 @@ public class MainMenuBar extends JMenuBar {
         // Set action icon
         String icon = menu.getIcon();
         if (icon != null) {
-            // Open XML file at path
-            URL iconURL = ResourceUtils.getUrlFromResourceFilename(icon);
-            if (iconURL != null) {
-                action.putValue(Action.SMALL_ICON, new ImageIcon(UrlUtils.fixJarURL(iconURL)));
+            final ImageIcon imageIcon = ImageUtils.loadResourceIcon(icon);
+            if (imageIcon != null) {
+                action.putValue(Action.SMALL_ICON, imageIcon);
             } else {
                 _logger.warn("Can't find iconUrl: {}", icon);
             }

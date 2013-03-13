@@ -55,7 +55,7 @@ public final class ImageUtils {
 
         URL imageUrl;
         try {
-            imageUrl = FileUtils.getResource(url);
+            imageUrl = ResourceUtils.getResource(url);
         } catch (IllegalStateException e) {
             if (url.length() == 0) {
                 _logger.debug(CANNOT_LOAD_ICON_MESSAGE, url);

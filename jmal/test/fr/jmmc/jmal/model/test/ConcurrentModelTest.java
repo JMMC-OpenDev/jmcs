@@ -5,14 +5,13 @@ package fr.jmmc.jmal.model.test;
 
 import fr.jmmc.jmal.image.ColorModels;
 import fr.jmmc.jmal.image.ColorScale;
-import fr.jmmc.jmal.model.ModelUVMapService;
 import fr.jmmc.jmal.model.ImageMode;
+import fr.jmmc.jmal.model.ModelUVMapService;
 import fr.jmmc.jmal.model.targetmodel.Model;
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
-import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.IndexColorModel;
@@ -161,8 +160,8 @@ public class ConcurrentModelTest {
      * @param benchType benchmark type
      */
     private static void performBenchmark(final List<Model> models, final Rectangle2D.Double uvRect, final ImageMode mode,
-                                         final int minImageSize, final int maxImageSize,
-                                         final int nCpu, final int N, final String benchType) {
+            final int minImageSize, final int maxImageSize,
+            final int nCpu, final int N, final String benchType) {
 
         final int modelSize = models.size();
 
@@ -211,7 +210,7 @@ public class ConcurrentModelTest {
      * @param imageSize number of pixels for both width and height of the generated image
      */
     private static void computeModel(final int maxParallelJob,
-                                     final List<Model> models, final Rectangle2D.Double uvRect, final ImageMode mode, final int imageSize) {
+            final List<Model> models, final Rectangle2D.Double uvRect, final ImageMode mode, final int imageSize) {
 
         ParallelJobExecutor.getInstance().setMaxParallelJob(maxParallelJob);
 
@@ -241,12 +240,12 @@ public class ConcurrentModelTest {
     }
 
     /**
-     * Protected load method used by ConfigurationManager.initialize to load the aspro configuration files
+     * Protected load method used by ConfigurationManager.initialize to load the ASPRO configuration files
      *
      * @param uri relative URI of the document to load (class loader)
      * @return unmarshalled object
      *
-     * @throws IllegalStateException if the file is not found or an I/O exception occured
+     * @throws IllegalStateException if the file is not found or an I/O exception occurred
      * @throws IllegalArgumentException if the load operation failed
      * @throws XmlBindException if a JAXBException was caught while creating an unmarshaller
      */
@@ -261,7 +260,7 @@ public class ConcurrentModelTest {
             final JAXBFactory jf = JAXBFactory.getInstance(TM_JAXB_PATH);
 
             // use the class loader resource resolver
-            final URL url = FileUtils.getResource(uri);
+            final URL url = ResourceUtils.getResource(uri);
 
             if (logger.isInfoEnabled()) {
                 logger.info("loading url: {}", url);

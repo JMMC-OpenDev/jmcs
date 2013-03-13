@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.action;
 
-import fr.jmmc.jmcs.util.ResourceUtils;
+import fr.jmmc.jmcs.util.PropertyUtils;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -26,10 +26,10 @@ public abstract class ResourcedAction extends AbstractAction {
     public ResourcedAction(final String actionName) {
 
         // Collect action info
-        String text = ResourceUtils.getActionText(actionName);
-        String desc = ResourceUtils.getActionDescription(actionName);
-        ImageIcon icon = ResourceUtils.getActionIcon(actionName);
-        KeyStroke accelerator = ResourceUtils.getActionAccelerator(actionName);
+        String text = PropertyUtils.getActionText(actionName);
+        String desc = PropertyUtils.getActionDescription(actionName);
+        ImageIcon icon = PropertyUtils.getActionIcon(actionName);
+        KeyStroke accelerator = PropertyUtils.getActionAccelerator(actionName);
 
         // Init action    
         if (text != null) {

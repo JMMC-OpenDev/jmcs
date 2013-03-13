@@ -14,7 +14,6 @@ import fr.jmmc.jmcs.data.model.Program;
 import fr.jmmc.jmcs.data.model.Release;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
-import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.SpecialChars;
 import java.io.BufferedInputStream;
@@ -71,7 +70,7 @@ public final class ApplicationDescription {
      */
     public static ApplicationDescription getJmcsInstance() {
         if (_defaultDataModel == null) {
-            loadDefaultData();
+            loadJMcstData();
         }
         return _defaultDataModel;
     }
@@ -87,11 +86,24 @@ public final class ApplicationDescription {
     }
 
     /**
+     * Custom loader to load an ApplicationDescription from any URL (module for example)
+     * @param filePath path to any file included in the application class loader like 
+     * @return new loaded and parsed ApplicationDescription instance
+     * @throws IllegalStateException if the given URL can not be loaded
+     */
+    public static ApplicationDescription loadDescription(final String filePath) throws IllegalStateException {
+        // TODO: fix that code : To be discussed
+        final URL fileURL = ResourceUtils.getResource(filePath);
+
+        return new ApplicationDescription(fileURL);
+    }
+
+    /**
      * Load the default ApplicationData.xml
      * @throws IllegalStateException if the default ApplicationData.xml can not be loaded
      */
-    private static void loadDefaultData() throws IllegalStateException {
-        final URL defaultXmlURL = ResourceUtils.getURLFromResourceFilename(App.class, APPLICATION_DATA_FILE);
+    private static void loadJMcstData() throws IllegalStateException {
+        final URL defaultXmlURL = ResourceUtils.getUrlFromResourceFilename(App.class, APPLICATION_DATA_FILE);
         if (defaultXmlURL == null) {
             throw new IllegalStateException("Cannot load default application data.");
         }
@@ -104,31 +116,19 @@ public final class ApplicationDescription {
      * Otherwise, uses the default ApplicationData.xml.
      */
     private static void loadApplicationData() {
-        final Class<? extends App> appClass = App.getInstance().getClass();
-        final URL fileURL = ResourceUtils.getURLFromResourceFilename(appClass, APPLICATION_DATA_FILE);
+
+        final URL fileURL = ResourceUtils.getUrlFromResourceFilename(APPLICATION_DATA_FILE);
         if (fileURL == null) {
             _appDataModel = getJmcsInstance();
-        } else {
-            try {
-                _appDataModel = new ApplicationDescription(fileURL);
-            } catch (IllegalStateException iae) {
-                _logger.error("Could not load application data from '{}' file.", fileURL, iae);
-                _appDataModel = getJmcsInstance();
-            }
+            return;
         }
-    }
 
-    /**
-     * Custom loader to load an ApplicationDescription from any URL (module for example)
-     * @param filePath path to any file included in the application class loader like 
-     * @return new loaded and parsed ApplicationDescription instance
-     * @throws IllegalStateException if the given URL can not be loaded
-     */
-    public static ApplicationDescription loadDescription(final String filePath) throws IllegalStateException {
-        // TODO: fix that code : To be discussed
-        final URL fileURL = FileUtils.getResource(filePath);
-
-        return new ApplicationDescription(fileURL);
+        try {
+            _appDataModel = new ApplicationDescription(fileURL);
+        } catch (IllegalStateException iae) {
+            _logger.error("Could not load application data from '{}' file.", fileURL, iae);
+            _appDataModel = getJmcsInstance();
+        }
     }
 
     /**

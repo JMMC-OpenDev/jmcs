@@ -7,7 +7,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
-import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.ResourceUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -60,7 +60,7 @@ public final class LoggingService {
     /** slf4j / logback initialization */
     private static void init() throws SecurityException, IllegalStateException {
         final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        final URL logConf = FileUtils.getResource(JMMC_LOGBACK_CONFIG_RESOURCE);
+        final URL logConf = ResourceUtils.getResource(JMMC_LOGBACK_CONFIG_RESOURCE);
         try {
             final JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(loggerContext);

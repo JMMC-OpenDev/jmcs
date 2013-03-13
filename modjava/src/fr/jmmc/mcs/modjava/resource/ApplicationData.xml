@@ -27,7 +27,7 @@
     <menubar>
         <menu label="File">
             <menu label="Open..." classpath="fr.jmmc.mcs.modjava.Main" action="_openAction" accelerator="O"/>
-            <menu label="Import" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" icon="import.png"/>
+            <menu label="Import" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1" icon="fr/jmmc/mcs/modjava/resource/import.png"/>
             <menu label="Export" classpath="fr.jmmc.mcs.modjava.Actions" action="scaction1"/>
         </menu>
         <menu label="Edit">

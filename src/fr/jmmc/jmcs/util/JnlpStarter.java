@@ -3,10 +3,10 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
-import org.ivoa.util.runner.EmptyJobListener;
-import org.ivoa.util.runner.JobListener;
-import org.ivoa.util.runner.LocalLauncher;
-import org.ivoa.util.runner.RootContext;
+import fr.jmmc.jmcs.util.runner.EmptyJobListener;
+import fr.jmmc.jmcs.util.runner.JobListener;
+import fr.jmmc.jmcs.util.runner.LocalLauncher;
+import fr.jmmc.jmcs.util.runner.RootContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,7 @@
-package org.ivoa.util.concurrent;
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+package fr.jmmc.jmcs.util.concurrent;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -9,21 +12,18 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Custom ThreadPoolExecutor to add extensions
- * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
+ * @author Laurent BOURGES (voparis).
  */
 public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
-    // ~ Constants
-    // --------------------------------------------------------------------------------------------------------
 
     /** Logger */
-    private static final Logger logger = LoggerFactory.getLogger(CustomThreadPoolExecutor.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(CustomThreadPoolExecutor.class.getName());
     /** debug flag to log thread activity */
     public static final boolean DO_DEBUG = false;
-    //~ Members ----------------------------------------------------------------------------------------------------------
+    // Members
     /** thread pool name */
-    private final String name;
+    private final String _name;
 
-    //~ Constructors -----------------------------------------------------------------------------------------------------
     /**
      * Single constructor allowed
      * 
@@ -52,7 +52,7 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
             final ThreadFactory threadFactory) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 threadFactory);
-        this.name = pPoolName;
+        _name = pPoolName;
     }
 
     /**
@@ -60,7 +60,7 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      * @return thread pool name
      */
     public String getPoolName() {
-        return this.name;
+        return _name;
     }
 
     /**
@@ -70,10 +70,10 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
      */
     @Override
     protected void beforeExecute(final Thread t, final Runnable r) {
-        logger.debug("{}.beforeExecute : runnable: {}", this.name, r);
+        _logger.debug("{}.beforeExecute : runnable: {}", _name, r);
 
         if (DO_DEBUG) {
-            logger.warn("{}.beforeExecute : runnable: {}", this.name, r);
+            _logger.warn("{}.beforeExecute : runnable: {}", _name, r);
         }
     }
 
@@ -86,24 +86,24 @@ public final class CustomThreadPoolExecutor extends ThreadPoolExecutor {
     @Override
     protected void afterExecute(final Runnable r, final Throwable th) {
         if (th == null) {
-            logger.debug("{}.afterExecute : runnable: {}", this.name, r);
+            _logger.debug("{}.afterExecute : runnable: {}", _name, r);
 
             if (DO_DEBUG) {
-                logger.warn("{}.afterExecute : runnable: {}", this.name, r);
+                _logger.warn("{}.afterExecute : runnable: {}", _name, r);
             }
         } else {
-            logger.error("{}.afterExecute : uncaught exception: {}", this.name, th);
+            _logger.error("{}.afterExecute : uncaught exception: {}", _name, th);
         }
     }
 
     /**
      * Method invoked when the Executor has terminated.  Default
      * implementation does nothing. Note: To properly nest multiple
-     * overridings, subclasses should generally invoke
+     * overriding, subclasses should generally invoke
      * <tt>super.terminated</tt> within this method.
      */
     @Override
     protected void terminated() {
-        logger.debug("{}.terminated.", this.name);
+        _logger.debug("{}.terminated.", _name);
     }
 }

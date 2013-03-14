@@ -1,4 +1,7 @@
-package org.ivoa.util.concurrent;
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+package fr.jmmc.jmcs.util.concurrent;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,24 +12,22 @@ import org.slf4j.LoggerFactory;
  * Custom Thread Factory for ThreadExecutors to create threads
  * 
  * @see ThreadFactory
- * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
+ * @author Laurent BOURGES (voparis).
  */
 public final class CustomThreadFactory implements ThreadFactory {
 
     /** Logger */
-    private static final Logger logger = LoggerFactory.getLogger(CustomThreadFactory.class.getName());
-
-    //~ Members ----------------------------------------------------------------------------------------------------------
+    private static final Logger _logger = LoggerFactory.getLogger(CustomThreadFactory.class.getName());
+    // Members
     /** thread pool name */
-    private final String name;
+    private final String _name;
     /** thread priority */
-    private final int priority;
+    private final int _priority;
     /** global thread counter */
-    private final AtomicInteger threadNumber = new AtomicInteger(1);
+    private final AtomicInteger _threadNumber = new AtomicInteger(1);
     /** thread name prefix */
-    private final String namePrefix;
+    private final String _namePrefix;
 
-    //~ Constructors -----------------------------------------------------------------------------------------------------
     /**
      * Constructor with the given thread pool name and use the normal thread priority
      * 
@@ -43,9 +44,9 @@ public final class CustomThreadFactory implements ThreadFactory {
      * @param pPriority thread priority to set on created thread
      */
     public CustomThreadFactory(final String pPoolName, final int pPriority) {
-        name = pPoolName;
-        priority = pPriority;
-        namePrefix = pPoolName + "-thread-";
+        _name = pPoolName;
+        _priority = pPriority;
+        _namePrefix = pPoolName + "-thread-";
     }
 
     //~ Methods ----------------------------------------------------------------------------------------------------------
@@ -58,19 +59,19 @@ public final class CustomThreadFactory implements ThreadFactory {
      */
     @Override
     public Thread newThread(final Runnable r) {
-        logger.debug("CustomThreadFactory.newThread : enter with task: {}", r);
+        _logger.debug("CustomThreadFactory.newThread : enter with task: {}", r);
 
-        final Thread t = new PoolThread(r, namePrefix + threadNumber.getAndIncrement());
+        final Thread t = new PoolThread(r, _namePrefix + _threadNumber.getAndIncrement());
         if (t.isDaemon()) {
             t.setDaemon(false);
         }
-        if (t.getPriority() != priority) {
-            t.setPriority(priority);
+        if (t.getPriority() != _priority) {
+            t.setPriority(_priority);
         } else {
             t.setPriority(Thread.NORM_PRIORITY);
         }
 
-        logger.debug("CustomThreadFactory.newThread : exit with thread {} for task: {}", t, r);
+        _logger.debug("CustomThreadFactory.newThread : exit with thread {} for task: {}", t, r);
         return t;
     }
 
@@ -79,7 +80,7 @@ public final class CustomThreadFactory implements ThreadFactory {
      * @return thread pool name
      */
     public String getName() {
-        return name;
+        return _name;
     }
 
     /**
@@ -88,7 +89,7 @@ public final class CustomThreadFactory implements ThreadFactory {
      * @return thread priority
      */
     public int getPriority() {
-        return priority;
+        return _priority;
     }
 
     /**
@@ -96,6 +97,6 @@ public final class CustomThreadFactory implements ThreadFactory {
      * @return global thread counter
      */
     public AtomicInteger getThreadNumber() {
-        return threadNumber;
+        return _threadNumber;
     }
 }

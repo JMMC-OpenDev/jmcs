@@ -30,7 +30,7 @@ import java.util.TimeZone;
 import javax.swing.JFrame;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
-import org.ivoa.util.runner.LocalLauncher;
+import fr.jmmc.jmcs.util.runner.LocalLauncher;
 
 /**
  * This class ordinate App life-cycle.

@@ -49,7 +49,7 @@ public final class ApplicationDescription {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(ApplicationDescription.class.getName());
     /** Package name for JAXB generated code */
-    private static final String APP_DATA_MODEL_JAXB_PATH = "fr.jmmc.jmcs.data.model";
+    private static final String APP_DATA_MODEL_JAXB_PATH = "fr.jmmc.jmcs.data.app.model";
     /** Application data file i.e. "ApplicationData.xml" */
     private static final String APPLICATION_DATA_FILE = "ApplicationData.xml";
     /** Shared application data model */

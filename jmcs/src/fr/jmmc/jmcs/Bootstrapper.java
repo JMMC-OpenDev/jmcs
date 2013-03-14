@@ -18,11 +18,12 @@ import fr.jmmc.jmcs.gui.task.TaskSwingWorkerExecutor;
 import fr.jmmc.jmcs.gui.util.MacOSXAdapter;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
+import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
-import fr.jmmc.jmcs.logging.LoggingService;
+import fr.jmmc.jmcs.util.runner.LocalLauncher;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -31,7 +32,6 @@ import java.util.TimeZone;
 import javax.swing.JFrame;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.lang.SystemUtils;
-import fr.jmmc.jmcs.util.runner.LocalLauncher;
 
 /**
  * This class ordinate App life-cycle.
@@ -50,9 +50,9 @@ public final class Bootstrapper {
 
     /** JMMC Logger */
     private final static Logger _jmmcLogger = LoggingService.getJmmcLogger();
-    /** user defined Locale before setting Locale.US */
+    /** User defined Locale before setting Locale.US */
     private static Locale _userLocale = null;
-    /** user defined Timezone before setting Timezone.GMT */
+    /** User defined time zone before setting GMT */
     private static TimeZone _userTimeZone = null;
     /** Flag to avoid reentrance in launch sequence */
     private static boolean _staticBootstrapDone = false;

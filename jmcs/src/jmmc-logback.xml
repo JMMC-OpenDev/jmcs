@@ -17,13 +17,13 @@
         </encoder>
     </appender>
 
-    <appender name="APPLOG" class="fr.jmmc.jmcs.util.logging.ByteArrayOutputStreamAppender">
+    <appender name="APPLOG" class="fr.jmmc.jmcs.logging.ByteArrayOutputStreamAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{60} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="STATUSLOG" class="fr.jmmc.jmcs.util.logging.ByteArrayOutputStreamAppender">
+    <appender name="STATUSLOG" class="fr.jmmc.jmcs.logging.ByteArrayOutputStreamAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
         </encoder>

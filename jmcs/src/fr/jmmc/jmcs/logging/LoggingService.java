@@ -163,7 +163,8 @@ public final class LoggingService {
      * @param appenderName appender name
      */
     public void addLogMapper(final String displayName, final String loggerPath, final String appenderName) {
-        _mappers.put(loggerPath, new AppenderLogMapper(displayName, loggerPath, appenderName));
+        final AppenderLogMapper appenderLogMapper = new AppenderLogMapper(displayName, loggerPath, appenderName);
+        _mappers.put(loggerPath, appenderLogMapper);
     }
 
     /**

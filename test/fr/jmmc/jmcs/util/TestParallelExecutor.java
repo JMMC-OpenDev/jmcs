@@ -3,10 +3,9 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
-import org.ivoa.util.concurrent.ThreadExecutors;
+import fr.jmmc.jmcs.util.concurrent.ThreadExecutors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

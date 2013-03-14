@@ -134,24 +134,27 @@ public final class ThreadExecutors {
      * @see #stop()
      */
     public static void stopExecutors() {
-        // set flag to indicate the shutdown :
-        RUNNING = false;
+        // avoid reentrance:
+        if (RUNNING) {
+            // set flag to indicate the shutdown:
+            RUNNING = false;
 
-        // runner first because it uses the generic executor :
-        if (_runnerExecutor != null) {
-            _runnerExecutor.stop();
-            _runnerExecutor = null;
-        }
-        if (_genericExecutor != null) {
-            _genericExecutor.stop();
-            _genericExecutor = null;
-        }
+            // runner first because it uses the generic executor:
+            if (_runnerExecutor != null) {
+                _runnerExecutor.stop();
+                _runnerExecutor = null;
+            }
+            if (_genericExecutor != null) {
+                _genericExecutor.stop();
+                _genericExecutor = null;
+            }
 
-        final Map<String, ThreadExecutors> m = getSingleExecutors(false);
-        if (!CollectionUtils.isEmpty(m)) {
-            for (final Iterator<ThreadExecutors> it = m.values().iterator(); it.hasNext();) {
-                it.next().stop();
-                it.remove();
+            final Map<String, ThreadExecutors> m = getSingleExecutors(false);
+            if (!CollectionUtils.isEmpty(m)) {
+                for (final Iterator<ThreadExecutors> it = m.values().iterator(); it.hasNext();) {
+                    it.next().stop();
+                    it.remove();
+                }
             }
         }
     }
@@ -344,7 +347,6 @@ public final class ThreadExecutors {
             logger.debug("ThreadExecutors.stop : starting shutdown: {}", getPoolName());
         }
 
-        logger.warn("ThreadExecutors.stop : starting shutdown: {}", getPoolName());
         getExecutor().shutdown();
 
         boolean terminated = false;

@@ -13,7 +13,7 @@ import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.network.interop.SampCapability;
 import fr.jmmc.jmcs.network.interop.SampMessageHandler;
-import fr.jmmc.jmcs.util.RecentFilesManager;
+import fr.jmmc.jmcs.service.RecentFilesManager;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;

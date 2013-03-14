@@ -5,8 +5,8 @@ package fr.jmmc.jmal.timer;
 
 import fr.jmmc.jmal.ALX;
 import java.util.Locale;
-import org.ivoa.util.timer.TimerFactory;
-import org.ivoa.util.timer.TimerFactory.UNIT;
+import fr.jmmc.jmcs.util.timer.TimerFactory;
+import fr.jmmc.jmcs.util.timer.TimerFactory.UNIT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

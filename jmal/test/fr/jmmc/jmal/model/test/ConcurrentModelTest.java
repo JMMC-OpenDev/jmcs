@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import javax.xml.bind.JAXBException;
-import org.ivoa.util.timer.TimerFactory;
+import fr.jmmc.jmcs.util.timer.TimerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

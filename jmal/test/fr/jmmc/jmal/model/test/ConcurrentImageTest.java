@@ -5,12 +5,11 @@ package fr.jmmc.jmal.model.test;
 
 import fr.jmmc.jmal.image.ColorModels;
 import fr.jmmc.jmal.image.ImageUtils;
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import java.awt.image.IndexColorModel;
 import java.util.Locale;
-import org.ivoa.util.timer.TimerFactory;
+import fr.jmmc.jmcs.util.timer.TimerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +120,7 @@ public class ConcurrentImageTest {
      * @param benchType benchmark type
      */
     private static void performBenchmark(final int minImageSize, final int maxImageSize,
-                                         final int nCpu, final int N, final String benchType) {
+            final int nCpu, final int N, final String benchType) {
 
         float[][] array;
 

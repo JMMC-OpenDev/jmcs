@@ -6,7 +6,7 @@ package fr.jmmc.jmcs.gui.component;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
-import fr.jmmc.jmcs.network.BrowserLauncher;
+import fr.jmmc.jmcs.service.BrowserLauncher;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;

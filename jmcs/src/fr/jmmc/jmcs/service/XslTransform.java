@@ -1,8 +1,9 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.jmcs.util;
+package fr.jmmc.jmcs.service;
 
+import fr.jmmc.jmcs.util.ResourceUtils;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;

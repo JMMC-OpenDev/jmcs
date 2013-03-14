@@ -3,8 +3,8 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.data.ApplicationDescription;
-import fr.jmmc.jmcs.data.model.Package;
+import fr.jmmc.jmcs.data.app.ApplicationDescription;
+import fr.jmmc.jmcs.data.app.model.Package;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.util.ResourceUtils;
 import java.util.HashMap;

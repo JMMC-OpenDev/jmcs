@@ -1,8 +1,11 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.jmcs.util;
+package fr.jmmc.jmcs.data;
 
+import fr.jmmc.jmcs.util.FileFilterRepository;
+import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.GenericFileFilter;
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedHashMap;

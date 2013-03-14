@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.network.interop;
 
-import fr.jmmc.jmcs.util.MimeType;
+import fr.jmmc.jmcs.data.MimeType;
 import java.util.HashMap;
 import java.util.Map;
 

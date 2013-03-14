@@ -4,7 +4,7 @@
 package fest.common;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.ApplicationState;
+import fr.jmmc.jmcs.App.ApplicationState;
 import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import java.awt.Frame;

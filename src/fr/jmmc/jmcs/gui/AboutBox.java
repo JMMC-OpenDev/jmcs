@@ -3,10 +3,9 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
-import fr.jmmc.jmcs.network.BrowserLauncher;
+import fr.jmmc.jmcs.service.BrowserLauncher;
 import fr.jmmc.jmcs.util.ImageUtils;
 import java.awt.*;
 import java.awt.event.MouseAdapter;

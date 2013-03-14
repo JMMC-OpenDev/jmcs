@@ -99,8 +99,7 @@ JARFILES        = jmcs
 
 #
 # <brief description of jmcs jar files>
-jmcs_DIRS     = fr \
-                org
+jmcs_DIRS     = fr
 
 jmcs_EXTRAS   = jmmc-logback.xml \
                 fr/jmmc/jmcs/resource/image/*.png \

@@ -60,7 +60,7 @@ lllll_OBJECTS   =
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         = jmcsHTML2HelpSet \
-		  jmcsDeployJnlp \
+                  jmcsDeployJnlp \
                   jmcsCheckJarCert
 SCRIPTS_L       =
 

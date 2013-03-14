@@ -28,14 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for XSL transformations
+ * Utility class for XSL transformations.
  *
  * @author Laurent BOURGES.
  */
-public final class XmlFactory {
+public final class XslTransform {
 
     /** Class logger */
-    private static final Logger logger = LoggerFactory.getLogger(XmlFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(XslTransform.class.getName());
     /** Encoding used for XML and XSL documents */
     public static final String ENCODING = "UTF-8";
     /** Default buffer size for XSLT result document */
@@ -46,7 +46,7 @@ public final class XmlFactory {
     private static final Map<String, Templates> _cachedTemplates = new HashMap<String, Templates>(32);
 
     /** Forbidden constructor */
-    private XmlFactory() {
+    private XslTransform() {
         /* no-op */
     }
 

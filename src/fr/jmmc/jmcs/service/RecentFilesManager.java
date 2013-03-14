@@ -1,11 +1,11 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.jmcs.util;
+package fr.jmmc.jmcs.service;
 
-import fr.jmmc.jmcs.util.collection.FixedSizeLinkedHashMap;
 import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
+import fr.jmmc.jmcs.util.collection.FixedSizeLinkedHashMap;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;

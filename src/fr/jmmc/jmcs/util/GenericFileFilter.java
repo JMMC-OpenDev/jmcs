@@ -44,7 +44,7 @@ public final class GenericFileFilter extends FileFilter implements FilenameFilte
      * @param fileExtensions an array of file extensions associated to the mime type.
      * @param description the humanly readable description for the mime type.
      */
-    GenericFileFilter(final String[] fileExtensions, final String description) {
+    public GenericFileFilter(final String[] fileExtensions, final String description) {
         super();
 
         if (_logger.isDebugEnabled()) {

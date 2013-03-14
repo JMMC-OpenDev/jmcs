@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data;
 
-import fr.jmmc.jmcs.util.FileFilterRepository;
+import fr.jmmc.jmcs.service.FileFilterRepository;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.GenericFileFilter;
 import java.io.File;

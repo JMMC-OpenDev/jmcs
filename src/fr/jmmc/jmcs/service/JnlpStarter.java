@@ -1,8 +1,9 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.jmcs.util;
+package fr.jmmc.jmcs.service;
 
+import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.runner.EmptyJobListener;
 import fr.jmmc.jmcs.util.runner.JobListener;
 import fr.jmmc.jmcs.util.runner.LocalLauncher;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Wrapper on http://code.google.com/p/vo-urp/ task runner.
  * 
- * @author Sylvain LAFRASSE, Laurent BOURGES
+ * @author Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class JnlpStarter {
 

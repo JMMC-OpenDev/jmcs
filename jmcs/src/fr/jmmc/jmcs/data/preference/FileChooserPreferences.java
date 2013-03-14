@@ -5,7 +5,7 @@ package fr.jmmc.jmcs.data.preference;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
-import fr.jmmc.jmcs.util.MimeType;
+import fr.jmmc.jmcs.data.MimeType;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;

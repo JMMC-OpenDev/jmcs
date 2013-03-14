@@ -36,7 +36,7 @@ Description: Store jMCS Application meta data.
             </jaxb:globalBindings>
 
             <jaxb:schemaBindings>
-                <jaxb:package name="fr.jmmc.jmcs.data.model"/>
+                <jaxb:package name="fr.jmmc.jmcs.data.app.model"/>
             </jaxb:schemaBindings>
 
         </xsd:appinfo>

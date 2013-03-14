@@ -350,6 +350,8 @@ public final class FileUtils {
      * Close the given reader
      *
      * @param r reader to close
+     * 
+     * @return null to optionally reset variable (fluent API)
      */
     public static Reader closeFile(final Reader r) {
         if (r != null) {
@@ -366,6 +368,8 @@ public final class FileUtils {
      * Close the given writer
      *
      * @param w writer to close
+     * 
+     * @return null to optionally reset variable (fluent API)
      */
     public static Writer closeFile(final Writer w) {
         if (w != null) {

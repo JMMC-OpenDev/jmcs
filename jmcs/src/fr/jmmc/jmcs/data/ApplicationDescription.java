@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
  * which use it to access to the informations like <b>AboutBox</b>,
  * <b>SplashScreen</b> etc...
  *
- * This class uses <b>Castor</b> classes to access to these informations
+ * This class uses <b>JAXB</b> classes to access to these informations
  * and provides the good getters for each field of the XML file.
- *
+ * 
  * @author Guillaume MELLA, Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class ApplicationDescription {
@@ -70,7 +70,7 @@ public final class ApplicationDescription {
      */
     public static ApplicationDescription getJmcsInstance() {
         if (_defaultDataModel == null) {
-            loadJMcstData();
+            loadJMcsData();
         }
         return _defaultDataModel;
     }
@@ -102,7 +102,7 @@ public final class ApplicationDescription {
      * Load the default ApplicationData.xml
      * @throws IllegalStateException if the default ApplicationData.xml can not be loaded
      */
-    private static void loadJMcstData() throws IllegalStateException {
+    private static void loadJMcsData() throws IllegalStateException {
         final URL defaultXmlURL = ResourceUtils.getUrlFromResourceFilename(App.class, APPLICATION_DATA_FILE);
         if (defaultXmlURL == null) {
             throw new IllegalStateException("Cannot load default application data.");

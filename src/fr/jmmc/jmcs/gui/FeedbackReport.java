@@ -16,7 +16,7 @@ import fr.jmmc.jmcs.gui.task.TaskSwingWorker;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.network.Http;
-import fr.jmmc.jmcs.util.logging.LoggingService;
+import fr.jmmc.jmcs.logging.LoggingService;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,8 +52,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     private static final String DOCUMENTATION_TYPO = "Documentation Typo";
     private static final String EVOLUTION_REQUEST = "Evolution Request";
     private static final String SUPPORT_REQUEST = "Support Request";
-    private static final String[] _feedbackTypes = new String[]{
-        BUG_REPORT, DOCUMENTATION_TYPO, EVOLUTION_REQUEST, SUPPORT_REQUEST};
+    private static final String[] _feedbackTypes = new String[]{BUG_REPORT, DOCUMENTATION_TYPO, EVOLUTION_REQUEST, SUPPORT_REQUEST};
 
     /**
      * Show a new FeedbackReport object (not modal).

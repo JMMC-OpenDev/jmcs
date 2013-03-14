@@ -1,4 +1,7 @@
-package org.ivoa.util.concurrent;
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+package fr.jmmc.jmcs.util.concurrent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,16 +11,13 @@ import org.slf4j.LoggerFactory;
  * start methods
  * 
  * @see CustomThreadFactory
- * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
+ * @author Laurent BOURGES (voparis).
  */
 public final class PoolThread extends Thread {
-    // ~ Constants
-    // --------------------------------------------------------------------------------------------------------
 
     /** Logger */
-    private static final Logger logger = LoggerFactory.getLogger(PoolThread.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(PoolThread.class.getName());
 
-    //~ Constructors -----------------------------------------------------------------------------------------------------
     /**
      * Allocates a new <code>Thread</code> object.
      * 
@@ -29,14 +29,13 @@ public final class PoolThread extends Thread {
         super(target, name);
     }
 
-    //~ Methods ----------------------------------------------------------------------------------------------------------
     /**
      * Log and Interrupt this thread.
      */
     @Override
     public void interrupt() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} : interrupt", getName());
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("{} : interrupt", getName());
         }
         super.interrupt();
     }
@@ -46,8 +45,8 @@ public final class PoolThread extends Thread {
      */
     @Override
     public synchronized void start() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} : start", getName());
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("{} : start", getName());
         }
         super.start();
     }
@@ -57,18 +56,16 @@ public final class PoolThread extends Thread {
      */
     @Override
     public void run() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} : before run()", getName());
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("{} : before run()", getName());
         }
         try {
             super.run();
         } finally {
-            if (logger.isDebugEnabled()) {
-                logger.debug("{} : after run()", getName());
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("{} : after run()", getName());
             }
         }
 
     }
-    // ~ End of file
-    // --------------------------------------------------------------------------------------------------------
 }

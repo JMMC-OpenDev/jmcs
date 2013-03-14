@@ -1,4 +1,7 @@
-package org.ivoa.util.concurrent;
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+package fr.jmmc.jmcs.util.concurrent;
 
 import java.io.Serializable;
 import java.util.concurrent.Semaphore;

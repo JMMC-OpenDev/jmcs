@@ -1,4 +1,7 @@
-package org.ivoa.util.concurrent;
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+package fr.jmmc.jmcs.util.concurrent;
 
 import fr.jmmc.jmcs.util.CollectionUtils;
 import java.util.Iterator;
@@ -27,8 +30,6 @@ import org.slf4j.LoggerFactory;
  * @author Laurent Bourges (voparis) / Gerard Lemson (mpe)
  */
 public final class ThreadExecutors {
-    // ~ Constants
-    // --------------------------------------------------------------------------------------------------------
 
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(ThreadExecutors.class.getName());
@@ -44,7 +45,7 @@ public final class ThreadExecutors {
     public static final boolean PROCESS_THREAD_FIXED = false;
     /** Process thread pool : minimum threads : 2 */
     public static final int PROCESS_THREAD_MIN = 2;
-    /** Process thread pool : maximum threads = number of cpu */
+    /** Process thread pool : maximum threads = number of CPU */
     public static final int PROCESS_THREAD_MAX = Runtime.getRuntime().availableProcessors();
     /** Generic thread pool : minimum threads : 2 */
     public static final int GENERIC_THREAD_MIN = 2;
@@ -52,28 +53,23 @@ public final class ThreadExecutors {
     public static final long SHUTDOWN_DELAY = 10L;
     /** delay to wait for shutdownNow */
     public static final long SHUTDOWN_NOW_DELAY = 1L;
-
-    /* executors */
+    // Members
     /** generic thread pool singleton */
-    private static volatile ThreadExecutors genericExecutor;
+    private static volatile ThreadExecutors _genericExecutor;
     /** processRunner thread pool singleton */
-    private static volatile ThreadExecutors runnerExecutor;
+    private static volatile ThreadExecutors _runnerExecutor;
     /** single thread pool singletons : used to shutdown them */
-    private static volatile Map<String, ThreadExecutors> singleExecutors = null;
-    // ~ Members
-    // ----------------------------------------------------------------------------------------------------------
+    private static volatile Map<String, ThreadExecutors> _singleExecutors = null;
     /** wrapped Java 5 Thread pool executor */
-    private final CustomThreadPoolExecutor threadExecutor;
+    private final CustomThreadPoolExecutor _threadExecutor;
 
-    // ~ Constructors
-    // -----------------------------------------------------------------------------------------------------
     /**
      * Constructor with the given thread pool executor
      * 
      * @param executor wrapped thread pool
      */
     protected ThreadExecutors(final CustomThreadPoolExecutor executor) {
-        threadExecutor = executor;
+        _threadExecutor = executor;
 
         if (logger.isDebugEnabled()) {
             logger.debug("ThreadExecutors.new : creating a new thread pool: {}", getPoolName());
@@ -83,12 +79,10 @@ public final class ThreadExecutors {
         executor.prestartAllCoreThreads();
     }
 
-    // ~ Methods
-    // ----------------------------------------------------------------------------------------------------------
     /**
      * Calling thread sleeps for the given lapse delay
      * 
-     * @param lapse delay in ms
+     * @param lapse delay in milliseconds
      * @return true if thread awaken normally, false if interrupted
      */
     public static boolean sleep(final long lapse) {
@@ -122,13 +116,13 @@ public final class ThreadExecutors {
      * @return singleExecutors map
      */
     private static Map<String, ThreadExecutors> getSingleExecutors(final boolean doCreate) {
-        Map<String, ThreadExecutors> m = singleExecutors;
+        Map<String, ThreadExecutors> m = _singleExecutors;
         if (doCreate) {
             while (m == null) {
-                singleExecutors = new ConcurrentHashMap<String, ThreadExecutors>(8);
+                _singleExecutors = new ConcurrentHashMap<String, ThreadExecutors>(8);
 
                 // volatile & thread safety :
-                m = singleExecutors;
+                m = _singleExecutors;
             }
         }
         return m;
@@ -144,13 +138,13 @@ public final class ThreadExecutors {
         RUNNING = false;
 
         // runner first because it uses the generic executor :
-        if (runnerExecutor != null) {
-            runnerExecutor.stop();
-            runnerExecutor = null;
+        if (_runnerExecutor != null) {
+            _runnerExecutor.stop();
+            _runnerExecutor = null;
         }
-        if (genericExecutor != null) {
-            genericExecutor.stop();
-            genericExecutor = null;
+        if (_genericExecutor != null) {
+            _genericExecutor.stop();
+            _genericExecutor = null;
         }
 
         final Map<String, ThreadExecutors> m = getSingleExecutors(false);
@@ -184,12 +178,12 @@ public final class ThreadExecutors {
      */
     public static ThreadExecutors getGenericExecutor() {
         checkRunning();
-        if (genericExecutor == null) {
-            genericExecutor = new ThreadExecutors(
+        if (_genericExecutor == null) {
+            _genericExecutor = new ThreadExecutors(
                     newCachedThreadPool(GENERIC_THREAD_POOL, GENERIC_THREAD_MIN, new CustomThreadFactory(GENERIC_THREAD_POOL)));
         }
 
-        return genericExecutor;
+        return _genericExecutor;
     }
 
     /**
@@ -201,13 +195,13 @@ public final class ThreadExecutors {
      */
     public static ThreadExecutors getRunnerExecutor() {
         checkRunning();
-        if (runnerExecutor == null) {
-            runnerExecutor = new ThreadExecutors(
+        if (_runnerExecutor == null) {
+            _runnerExecutor = new ThreadExecutors(
                     PROCESS_THREAD_FIXED ? newFixedThreadPool(PROCESS_THREAD_POOL, PROCESS_THREAD_MAX, new CustomThreadFactory(PROCESS_THREAD_POOL))
                     : newCachedThreadPool(PROCESS_THREAD_POOL, PROCESS_THREAD_MIN, new CustomThreadFactory(PROCESS_THREAD_POOL)));
         }
 
-        return runnerExecutor;
+        return _runnerExecutor;
     }
 
     /**
@@ -273,7 +267,7 @@ public final class ThreadExecutors {
      * @return ThreadPoolExecutor
      */
     public CustomThreadPoolExecutor getExecutor() {
-        return threadExecutor;
+        return _threadExecutor;
     }
 
     /**
@@ -392,6 +386,3 @@ public final class ThreadExecutors {
         return getExecutor().getPoolName();
     }
 }
-// ~ End of file
-// --------------------------------------------------------------------------------------------------------
-

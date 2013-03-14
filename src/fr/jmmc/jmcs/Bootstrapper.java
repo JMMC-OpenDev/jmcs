@@ -5,6 +5,7 @@ package fr.jmmc.jmcs;
 
 import ch.qos.logback.classic.Logger;
 import com.apple.eawt.QuitResponse;
+import fr.jmmc.jmcs.App.ApplicationState;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.gui.FeedbackReport;

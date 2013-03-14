@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.ApplicationState;
+import fr.jmmc.jmcs.App.ApplicationState;
 import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;

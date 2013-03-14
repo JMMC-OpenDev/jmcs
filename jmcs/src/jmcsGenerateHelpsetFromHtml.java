@@ -1,8 +1,7 @@
+
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.jmcs.resource;
-
 import java.io.File;
 import net.sourceforge.jhelpdev.JHelpDevFrame;
 import net.sourceforge.jhelpdev.TOCEditorPanel;

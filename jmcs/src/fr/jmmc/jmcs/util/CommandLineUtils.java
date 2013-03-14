@@ -5,7 +5,7 @@ package fr.jmmc.jmcs.util;
 
 import ch.qos.logback.classic.Level;
 import fr.jmmc.jmcs.Bootstrapper;
-import fr.jmmc.jmcs.data.ApplicationDescription;
+import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.util.logging.LogbackGui;
 import fr.jmmc.jmcs.util.logging.LoggingService;
 import gnu.getopt.Getopt;

@@ -1,17 +1,17 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.jmcs.data;
+package fr.jmmc.jmcs.data.app;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.model.ApplicationData;
-import fr.jmmc.jmcs.data.model.Company;
-import fr.jmmc.jmcs.data.model.Compilation;
-import fr.jmmc.jmcs.data.model.Dependences;
-import fr.jmmc.jmcs.data.model.Menubar;
-import fr.jmmc.jmcs.data.model.Package;
-import fr.jmmc.jmcs.data.model.Program;
-import fr.jmmc.jmcs.data.model.Release;
+import fr.jmmc.jmcs.data.app.model.ApplicationData;
+import fr.jmmc.jmcs.data.app.model.Company;
+import fr.jmmc.jmcs.data.app.model.Compilation;
+import fr.jmmc.jmcs.data.app.model.Dependences;
+import fr.jmmc.jmcs.data.app.model.Menubar;
+import fr.jmmc.jmcs.data.app.model.Package;
+import fr.jmmc.jmcs.data.app.model.Program;
+import fr.jmmc.jmcs.data.app.model.Release;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
 import fr.jmmc.jmcs.util.ResourceUtils;
@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
  * which use it to access to the informations like <b>AboutBox</b>,
  * <b>SplashScreen</b> etc...
  *
- * This class uses <b>JAXB</b> classes to access to these informations
+ * This class uses <b>Castor</b> classes to access to these informations
  * and provides the good getters for each field of the XML file.
- * 
+ *
  * @author Guillaume MELLA, Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public final class ApplicationDescription {
@@ -70,7 +70,7 @@ public final class ApplicationDescription {
      */
     public static ApplicationDescription getJmcsInstance() {
         if (_defaultDataModel == null) {
-            loadJMcsData();
+            loadJMcstData();
         }
         return _defaultDataModel;
     }
@@ -102,7 +102,7 @@ public final class ApplicationDescription {
      * Load the default ApplicationData.xml
      * @throws IllegalStateException if the default ApplicationData.xml can not be loaded
      */
-    private static void loadJMcsData() throws IllegalStateException {
+    private static void loadJMcstData() throws IllegalStateException {
         final URL defaultXmlURL = ResourceUtils.getUrlFromResourceFilename(App.class, APPLICATION_DATA_FILE);
         if (defaultXmlURL == null) {
             throw new IllegalStateException("Cannot load default application data.");
@@ -467,7 +467,7 @@ public final class ApplicationDescription {
         final List<String> packagesInfo = new ArrayList<String>();
 
         // For each package
-        for (fr.jmmc.jmcs.data.model.Package p : dependences.getPackages()) {
+        for (fr.jmmc.jmcs.data.app.model.Package p : dependences.getPackages()) {
             packagesInfo.add(p.getName());
             packagesInfo.add(p.getLink());
             packagesInfo.add(p.getDescription());

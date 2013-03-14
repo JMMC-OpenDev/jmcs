@@ -3,10 +3,10 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.action;
 
-import fr.jmmc.jmcs.data.ApplicationDescription;
-import fr.jmmc.jmcs.data.model.Change;
-import fr.jmmc.jmcs.data.model.Prerelease;
-import fr.jmmc.jmcs.data.model.Release;
+import fr.jmmc.jmcs.data.app.ApplicationDescription;
+import fr.jmmc.jmcs.data.app.model.Change;
+import fr.jmmc.jmcs.data.app.model.Prerelease;
+import fr.jmmc.jmcs.data.app.model.Release;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.event.ActionEvent;

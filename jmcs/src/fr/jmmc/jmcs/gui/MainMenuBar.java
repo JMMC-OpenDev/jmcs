@@ -5,9 +5,9 @@ package fr.jmmc.jmcs.gui;
 
 import com.jidesoft.plaf.LookAndFeelFactory;
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.ApplicationDescription;
-import fr.jmmc.jmcs.data.model.Menu;
-import fr.jmmc.jmcs.data.model.Menubar;
+import fr.jmmc.jmcs.data.app.ApplicationDescription;
+import fr.jmmc.jmcs.data.app.model.Menu;
+import fr.jmmc.jmcs.data.app.model.Menubar;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;

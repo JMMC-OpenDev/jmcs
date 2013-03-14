@@ -15,7 +15,7 @@ import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
-import fr.jmmc.jmcs.util.RecentFilesManager;
+import fr.jmmc.jmcs.service.RecentFilesManager;
 import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
 import java.awt.Component;

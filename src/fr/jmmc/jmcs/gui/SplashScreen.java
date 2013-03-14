@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.data.ApplicationDescription;
+import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.util.ImageUtils;
 import java.awt.BorderLayout;

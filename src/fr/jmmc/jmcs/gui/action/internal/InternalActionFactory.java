@@ -4,7 +4,7 @@
 package fr.jmmc.jmcs.gui.action.internal;
 
 import fr.jmmc.jmcs.Bootstrapper;
-import fr.jmmc.jmcs.data.ApplicationDescription;
+import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.gui.AboutBox;
 import fr.jmmc.jmcs.gui.DependenciesView;
 import fr.jmmc.jmcs.gui.FeedbackReport;

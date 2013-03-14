@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
-import fr.jmmc.jmcs.collection.FixedSizeLinkedHashMap;
+import fr.jmmc.jmcs.util.collection.FixedSizeLinkedHashMap;
 import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import java.awt.event.ActionEvent;

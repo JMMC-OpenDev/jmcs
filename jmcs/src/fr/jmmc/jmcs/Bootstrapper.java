@@ -22,7 +22,7 @@ import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
-import fr.jmmc.jmcs.util.logging.LoggingService;
+import fr.jmmc.jmcs.logging.LoggingService;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Method;
 import java.util.Date;

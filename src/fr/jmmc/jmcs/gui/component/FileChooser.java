@@ -6,7 +6,7 @@ package fr.jmmc.jmcs.gui.component;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
 import fr.jmmc.jmcs.util.FileUtils;
-import fr.jmmc.jmcs.util.MimeType;
+import fr.jmmc.jmcs.data.MimeType;
 import java.awt.FileDialog;
 import java.io.File;
 import java.util.ArrayList;

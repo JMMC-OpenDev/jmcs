@@ -292,7 +292,12 @@ public final class Bootstrapper {
             SplashScreen.display(shouldShowSplashScreen);
 
             ___internalRun();
+
             launchDone = true;
+
+            final double elapsedTime = 1e-6d * (System.nanoTime() - startTime);
+            _jmmcLogger.info("Application startup done (duration = {} ms).", elapsedTime);
+
         } catch (Throwable th) {
             final ApplicationState stateOnError = Bootstrapper.getState();
 
@@ -301,7 +306,6 @@ public final class Bootstrapper {
             // Show the feedback report (modal)
             SplashScreen.close();
             MessagePane.showErrorMessage("An error occured while initializing the application");
-            System.err.println("stateInError = " + stateOnError);
 
             // Add last chance tip if this exception appears in an inited state but before being ready. ( cf. trac #458 )                        
             if (stateOnError.after(ApplicationState.ENV_INIT) && stateOnError.before(ApplicationState.APP_READY)) {
@@ -312,10 +316,6 @@ public final class Bootstrapper {
             } else {
                 FeedbackReport.openDialog(true, th);
             }
-
-        } finally {
-            final double elapsedTime = 1e-6d * (System.nanoTime() - startTime);
-            _jmmcLogger.info("Application startup done (duration = {} ms).", elapsedTime);
         }
 
         return launchDone;

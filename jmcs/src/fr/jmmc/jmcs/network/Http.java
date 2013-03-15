@@ -310,7 +310,7 @@ public final class Http {
             state.setCredentials(AuthScope.ANY, credentials);
         }
 
-        logger.info("HTTP client and GET method have been created doAuthentication=" + method.getDoAuthentication());
+        logger.info("HTTP client and GET method have been created. doAuthentication = {}", method.getDoAuthentication());
 
         try {
             // Send HTTP GET query:
@@ -338,10 +338,10 @@ public final class Http {
                     return download(uri, useDedicatedClient, credentialForm.getCredentials(), resultProcessor);
                 }
                 MessagePane.showWarning("Sorry, your file '" + uri + "' can't be retrieved properly\nresult code :" + resultCode + "\n status :" + method.getStatusText(), "Remote file can't be dowloaded");
-                logger.warn("download didn't succeed, result code : " + resultCode + ", status : " + method.getStatusText());
+                logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
 
             } else {
-                logger.warn("download didn't succeed, result code : " + resultCode + ", status : " + method.getStatusText());
+                logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
                 return false;
             }
 

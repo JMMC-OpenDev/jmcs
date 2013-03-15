@@ -294,12 +294,25 @@ public final class Bootstrapper {
             ___internalRun();
             launchDone = true;
         } catch (Throwable th) {
+            final ApplicationState stateOnError = Bootstrapper.getState();
+
             setState(ApplicationState.APP_BROKEN);
 
             // Show the feedback report (modal)
             SplashScreen.close();
             MessagePane.showErrorMessage("An error occured while initializing the application");
-            FeedbackReport.openDialog(true, th);
+            System.err.println("stateInError = " + stateOnError);
+
+            // Add last chance tip if this exception appears in an inited state but before being ready. ( cf. trac #458 )                        
+            if (stateOnError.after(ApplicationState.ENV_INIT) && stateOnError.before(ApplicationState.APP_READY)) {
+                final String warningMessage = "The application did not start properly. Please try first to start it again from the website:\n"
+                        + ApplicationDescription.getInstance().getLinkValue()
+                        + "\nIf this operation does not fix the problem, please send us a feedback report!\n\n";
+                FeedbackReport.openDialog(true, new Throwable(warningMessage, th));
+            } else {
+                FeedbackReport.openDialog(true, th);
+            }
+
         } finally {
             final double elapsedTime = 1e-6d * (System.nanoTime() - startTime);
             _jmmcLogger.info("Application startup done (duration = {} ms).", elapsedTime);

@@ -163,7 +163,7 @@ public abstract class ResourceUtils {
         final String fixedPath;
         if (classpathLocation.startsWith("/")) {
             fixedPath = classpathLocation.substring(1);
-            _logger.warn("Given classpath had to be fixed : {}", classpathLocation);
+            _logger.warn("getResource : Given classpath had to be fixed : {} to {}", classpathLocation, fixedPath);
         } else {
             fixedPath = classpathLocation;
         }

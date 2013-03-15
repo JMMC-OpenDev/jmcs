@@ -437,10 +437,21 @@ public final class IntrospectionUtils {
      * @return sought field in class, null otherwise.
      */
     public static Field getField(final String classPath, final String fieldName) {
-        final Class<?> clazz = getClass(classPath);
+        return getField(getClass(classPath), fieldName);
+    }
+
+    /**
+     * Returns the sought field in the given class.
+     *
+     * @param clazz class.
+     * @param fieldName sought field name.
+     *
+     * @return sought field in class, null otherwise.
+     */
+    public static Field getField(final Class<?> clazz, final String fieldName) {
         if (clazz != null) {
             try {
-                return clazz.getField(fieldName);
+                return clazz.getDeclaredField(fieldName);
             } catch (NoSuchFieldException nsfe) {
                 _logger.warn("Cannot get field '{}'", fieldName, nsfe);
             }

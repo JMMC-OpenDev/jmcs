@@ -255,7 +255,7 @@ public abstract class App {
      * to ask for user permission.
      */
     public boolean shouldSilentlyKillSampHubOnQuit() {
-        _logger.info("Default App.silentlyKillSampHubOnQuit() handler called.");
+        _logger.info("Default App.shouldSilentlyKillSampHubOnQuit() handler called.");
         return false;
     }
 

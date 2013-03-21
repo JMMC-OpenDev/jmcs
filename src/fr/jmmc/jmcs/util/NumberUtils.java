@@ -4,7 +4,6 @@
 package fr.jmmc.jmcs.util;
 
 import java.text.DecimalFormat;
-import java.text.FieldPosition;
 import java.text.NumberFormat;
 
 /**
@@ -17,14 +16,17 @@ public final class NumberUtils {
 
     /** Smallest positive number used in double comparisons (rounding). */
     public final static double EPSILON = 1e-6d;
+    /* shared Double instances */
+    /** shared Double = NaN instance */
+    public final static Double DBL_NAN = Double.valueOf(Double.NaN);
+    /** shared Double = 0 instance */
+    public final static Double DBL_ZERO = Double.valueOf(0d);
+    /** shared Double = 1 instance */
+    public final static Double DBL_ONE = Double.valueOf(1d);
     /** default formatter */
     private final static NumberFormat _fmtDef = NumberFormat.getInstance();
     /** scientific formatter */
     private final static NumberFormat _fmtScience = new DecimalFormat("0.0##E0");
-    /** formatter string buffer argument */
-    private final static StringBuffer _fmtBuffer = new StringBuffer(32);
-    /** ignore formatter position argument */
-    private final static FieldPosition _ignorePosition = new FieldPosition(0);
 
     /**
      * Private constructor
@@ -71,39 +73,9 @@ public final class NumberUtils {
         }
 
         if (abs < 1e-3d || abs > 1e6d) {
-            return format(_fmtScience, val);
+            return FormatterUtils.format(_fmtScience, val);
         }
-        return format(_fmtDef, val);
-    }
-
-    /**
-     * Format the given double value using given formater
-     * 
-     * Note: this method is not thread safe (synchronization must be performed by callers)
-     * 
-     * @param fmt formatter to use
-     * @param val double value
-     * @return formatted value
-     */
-    public static String format(final NumberFormat fmt, final double val) {
-        // reset shared buffer:
-        _fmtBuffer.setLength(0);
-
-        return format(fmt, _fmtBuffer, val).toString();
-    }
-
-    /**
-     * Format the given double value using given formater and append into the given string buffer
-     * 
-     * Note: this method is thread safe
-     * 
-     * @param fmt formatter to use
-     * @param sb string buffer to append to
-     * @param val double value
-     * @return formatted value
-     */
-    public static StringBuffer format(final NumberFormat fmt, final StringBuffer sb, final double val) {
-        return fmt.format(val, sb, _ignorePosition);
+        return FormatterUtils.format(_fmtDef, val);
     }
 
     /**

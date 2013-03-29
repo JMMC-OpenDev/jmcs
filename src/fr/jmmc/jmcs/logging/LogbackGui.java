@@ -33,6 +33,7 @@ import ch.qos.logback.classic.LoggerContext;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -252,6 +253,8 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
      * Generate the tree from the current edited list of Loggers
      */
     private void generateTree() {
+
+        visitJulLoggers();
 
         final GenericJTree<Logger> treeLoggers = getTreeLoggers();
 
@@ -1057,5 +1060,27 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
             c.setSize(w, h);
         }
+    }
+
+    /**
+     * Resolve all existing J.U.L Logger as logback Loggers to see them in the configuration
+     */
+    private void visitJulLoggers() {
+        _logger.debug("visitJulLoggers: start");
+
+        java.util.logging.LogManager julManager = java.util.logging.LogManager.getLogManager();
+
+        for (Enumeration<String> e = julManager.getLoggerNames(); e.hasMoreElements();) {
+            final String loggerName = e.nextElement();
+            
+            if (!StringUtils.isEmpty(loggerName)) {
+                _logger.debug("JUL logger: {}", loggerName);
+
+                // Resolve Logback logger:
+                LoggerFactory.getLogger(loggerName);
+            }
+        }
+
+        _logger.debug("visitJulLoggers: end");
     }
 }

@@ -139,6 +139,7 @@ function displayModules()
     done
     supportedTags=$(displayProjectVersions $project)
     echo "  ( Supported versions: $supportedTags )" | sed "s@/@@g"
+    echo "  (         TAG syntax: $(getProjectTagPrefix $project))"
     echo
 }
 
@@ -303,6 +304,16 @@ getProjectSvnBaseUrl(){
     echo $prjSvnroot
 }
 
+# returns the svn top level dir that host the main project material
+function getProjectSvnDir(){
+    project="${1}";
+    case "$project" in
+        OIFitsExplorer )  echo -n "oiTools" ;;
+        ASPRO2-conf )  echo -n "ASPRO2" ;;
+        *) echo -n "$project" ;;
+    esac 
+}
+
 
 
 # This function returns the text description (following the twiki syntax) of
@@ -319,16 +330,6 @@ function listProjects (){
         echo -n "[[$(getProjectSvnBaseUrl "$p")/$(getProjectSvnDir "$p")/tags][$(getProjectTagPrefix "$p")]]"
         echo " |"
     done
-}
-
-# returns the svn top level dir that host the main project material
-function getProjectSvnDir(){
-    project="${1}";
-    case "$project" in
-        OIFitsExplorer )  echo -n "oiTools" ;;
-        ASPRO2-conf )  echo -n "ASPRO2" ;;
-        *) echo -n "$project" ;;
-    esac 
 }
 
 
@@ -358,7 +359,7 @@ function getProjectTagPrefix(){
         SearchCal) echo -n "SC${versionSuffix}" ;;
         MCS) echo -n "mmmyyyy" ;;
         ASPRO2 | LITpro ) echo -n "$(echo $project | tr [a-z] [A-Z] )"${versionSuffix} ;;
-        ASPRO2-conf ) echo -n "$(echo ASPRO2 | tr [a-z] [A-Z] )YYYY.MM<DD>" ;;
+        ASPRO2-conf ) echo -n "$(echo ASPRO2-CONF | tr [a-z] [A-Z] )_VYYYY.MM<DD>" ;;
         * ) echo -n "${project}${versionSuffix}" ;;
     esac 
 }

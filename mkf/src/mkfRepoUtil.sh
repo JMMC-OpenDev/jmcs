@@ -15,10 +15,6 @@
 # - MCS//mkf/src/mkfRepoUtil.sh (master reference)
 # - AMBER//amdlib/src/amdlibRepoUtil.sh
 # - YOCO//yoco/distrib/repoUtil.sh
-# Wish list: 
-# - add new action to tag a project
-# - add for info action the way to get list of supported versions
-
 
 # main default repository url
 JMMC_SVNROOT=https://svn.jmmc.fr/jmmc-sw
@@ -28,7 +24,7 @@ SCRIPTNAME=$(basename $0)
 # Print usage 
 function printUsage ()
 {
-    echo -e "Usage: $SCRIPTNAME  [-d outputDir] [-h] [-n] [-m] [-v version] [-r revision] <info<.versions>|checkout|export|install|package|update|tag> <PROJECT> [... <PROJECT_N>]"
+    echo -e "Usage: $SCRIPTNAME  [-d outputDir] [-h] [-n] [-m] [-v version] [-r revision] <info<.versions>|checkout|export|install|package|update|tag|list> <PROJECT> [... <PROJECT_N>]"
     echo -e "\t-d <directory>\tset working area for modules (default is current dir).";
     echo -e "\t-h\tprint this help.";
     echo -e "\t-n\tdisplay svn command which is performed when this option is not set.";
@@ -44,6 +40,7 @@ function printUsage ()
     echo -e "\t   package       : package the modules of given projects with tag given by -v option.";
     echo -e "\t   update        : update the modules of given projects.";
     echo -e "\t   tag           : tag the modules of given projects with tag given by -v option.";
+    echo -e "\t   list          : export some project info (twiki syntax).";
     echo -e "\tPROJECTS :";
     echo -e "\t   ${supportedProjects}";
     exit 1
@@ -122,8 +119,9 @@ function displayProjectVersions()
       TAGS=$(for t in $ALLTAGS ; do echo -n $t |grep "${VERSIONPREFIX}_" ; done)
       echo -n $TAGS
     else
-    echo $ALLTAGS
+    echo -n $ALLTAGS
     fi
+    echo
     
 }
 
@@ -237,10 +235,16 @@ function tagModules(){
     do
         echo " '${prjSvnroot}/${module}' ..."
         trunkModule="${module/$userTag/trunk}"
+        if echo ${SVN_COMMAND} | grep echo &> /dev/null
+        then
+            echo "WARNING dry mode does not stop  if following url has no svn info"
+            ${SVN_COMMAND} info "$prjSvnroot/$module"
+        else
         if ${SVN_COMMAND} info "$prjSvnroot/$module" &> /dev/null
         then
           echo "ERROR module $prjSvnroot/$module already present remove first if you want to overwrite"
           return 1
+        fi
         fi
         ${SVN_COMMAND} copy --parents -m "Automatically tagged ${project} in version ${version/$tagPrefix/} from trunk${revision}  ($SCRIPTNAME)" "$prjSvnroot/$trunkModule${revision}" "$prjSvnroot/$module"
     done
@@ -248,7 +252,7 @@ function tagModules(){
 # This function contains the description of the svn repository and modules for a given project and version
 # it returns on the output the svnroot followed by the list of modules paths
 # TODO complete with full project list if they require to be packed or handled automatically by scripts
-supportedProjects="AMBER AppLauncher ASPRO2 LITpro MCS OIFitsExplorer SearchCal WISARD YOCO "
+supportedProjects="AMBER AppLauncher ASPRO2 ASPRO2-conf LITpro MCS OIFitsExplorer SearchCal WISARD YOCO "
 function getProjectDesc()
 {
     project="${1}"
@@ -262,6 +266,8 @@ function getProjectDesc()
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
             echo oiTools/${version}/{oitools,oiexplorer-core}
             echo ASPRO2/${version}/{aspro-conf,aspro} ;;
+        ASPRO2-conf )
+            echo "${JMMC_SVNROOT} ASPRO2/${version}/aspro-conf" ;;
         AppLauncher )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs "
             echo AppLauncher/${version}/{smptest,smprsc,smprun} ;;
@@ -290,6 +296,7 @@ function getProjectDesc()
 getProjectSvnBaseUrl(){
     project="${1}";
     version="${2}";
+
     if [ -z "$version" ] ; then version="trunk" ; fi
     prjElements=( $(getProjectDesc "${project}" "${version}") )
     prjSvnroot=${prjElements[*]:0:1}
@@ -319,6 +326,7 @@ function getProjectSvnDir(){
     project="${1}";
     case "$project" in
         OIFitsExplorer )  echo -n "oiTools" ;;
+        ASPRO2-conf )  echo -n "ASPRO2" ;;
         *) echo -n "$project" ;;
     esac 
 }
@@ -349,8 +357,9 @@ function getProjectTagPrefix(){
         AppLauncher) echo -n "AL${versionSuffix}" ;;
         SearchCal) echo -n "SC${versionSuffix}" ;;
         MCS) echo -n "mmmyyyy" ;;
-        ASPRO2 | LITpro ) echo -n "$(echo $project | tr [a-z] [A-Z] |tr -d [:digit:])"${versionSuffix} ;;
-        *) echo -n "${project}${versionSuffix}" ;;
+        ASPRO2 | LITpro ) echo -n "$(echo $project | tr [a-z] [A-Z] )"${versionSuffix} ;;
+        ASPRO2-conf ) echo -n "$(echo ASPRO2 | tr [a-z] [A-Z] )YYYY.MM<DD>" ;;
+        * ) echo -n "${project}${versionSuffix}" ;;
     esac 
 }
 

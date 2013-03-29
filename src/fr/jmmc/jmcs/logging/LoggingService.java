@@ -37,8 +37,6 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -95,11 +93,12 @@ public final class LoggingService {
         } catch (JoranException je) {
             StatusPrinter.printInCaseOfErrorsOrWarnings((LoggerContext) LoggerFactory.getILoggerFactory());
         }
-        final java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
-        final Handler[] handlers = rootLogger.getHandlers();
-        for (int i = 0, len = handlers.length; i < len; i++) {
-            rootLogger.removeHandler(handlers[i]);
-        }
+
+        // Remove existing handlers attached to j.u.l root logger
+        SLF4JBridgeHandler.removeHandlersForRootLogger();  // (since SLF4J 1.6.5)
+
+        // add SLF4JBridgeHandler to j.u.l's root logger, should be done once during
+        // the initialization phase of your application
         SLF4JBridgeHandler.install();
     }
     // Members

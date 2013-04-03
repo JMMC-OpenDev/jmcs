@@ -98,7 +98,8 @@ JARFILES        = modjava
 #
 # <brief description of modjava jar files>
 modjava_DIRS         = fr
-modjava_EXTRAS       = fr/jmmc/mcs/modjava/resource/*
+modjava_EXTRAS       = LogbackConfiguration.xml \
+                       fr/jmmc/mcs/modjava/resource/*
 
 #
 # Java programs

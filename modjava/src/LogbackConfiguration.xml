@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!-- Application specific configuration -->
+<included>
+
+    <!-- ModJava -->
+    <logger name="fr.jmmc.mcs.modjava" level="WARN"/>
+
+</included>

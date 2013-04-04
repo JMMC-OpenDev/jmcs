@@ -2,7 +2,7 @@
  *                 jMCS project ( http://www.jmmc.fr/dev/jmcs )
  *******************************************************************************
  * Copyright (c) 2013, CNRS. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     - Redistributions of source code must retain the above copyright
@@ -13,7 +13,7 @@
  *     - Neither the name of the CNRS nor the names of its contributors may be
  *       used to endorse or promote products derived from this software without
  *       specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -128,7 +128,7 @@ public final class CollectionUtils {
      * toString method for a Collection instance Format : <code><br/>
      * {value, ...}
      * </code>
-     * 
+     *
      * @param c collection
      * @return string
      */
@@ -143,7 +143,7 @@ public final class CollectionUtils {
      * ...<br/>
      * }
      * </code>
-     * 
+     *
      * @param o collection
      * @return string
      */
@@ -158,7 +158,7 @@ public final class CollectionUtils {
      * ...<br/>
      * }
      * </code>
-     * 
+     *
      * @param c collection
      * @return string
      */
@@ -173,7 +173,7 @@ public final class CollectionUtils {
      * ...<br/>
      * }
      * </code>
-     * 
+     *
      * @param sb buffer
      * @param c collection
      * @return buffer (sb)
@@ -189,7 +189,7 @@ public final class CollectionUtils {
      * ...<br/>
      * }
      * </code>
-     * 
+     *
      * @param m map
      * @return string
      */
@@ -204,7 +204,7 @@ public final class CollectionUtils {
      * ...<br/>
      * }
      * </code>
-     * 
+     *
      * @param sb buffer
      * @param m map
      * @return buffer (sb)
@@ -217,7 +217,7 @@ public final class CollectionUtils {
      * toString method for a Collection instance with the given line separator Format : <code>
      * value lineSep ...
      * </code>
-     * 
+     *
      * @param c collection
      * @param lineSep line separator
      * @return string
@@ -230,7 +230,7 @@ public final class CollectionUtils {
      * toString method for a Collection instance with the given line separator Format : <code>
      * value lineSep ...
      * </code>
-     * 
+     *
      * @param sb buffer
      * @param c collection
      * @param lineSep line separator
@@ -244,7 +244,7 @@ public final class CollectionUtils {
      * toString method for a Map instance with the given line separator Format : <code>
      * key = value lineSep ...
      * </code>
-     * 
+     *
      * @param m map
      * @param lineSep line separator
      * @return string
@@ -257,7 +257,7 @@ public final class CollectionUtils {
      * toString method for a Map instance with the given line separator Format : <code>
      * key = value lineSep ...
      * </code>
-     * 
+     *
      * @param sb buffer
      * @param m map
      * @param lineSep line separator
@@ -269,7 +269,7 @@ public final class CollectionUtils {
 
     /**
      * toString method for a Collection instance with the given start, line and end separators
-     * 
+     *
      * @param c collection
      * @param lineSep line separator
      * @param startSep start separator
@@ -285,7 +285,7 @@ public final class CollectionUtils {
 
     /**
      * toString method for a Collection instance with the given start, line and end separators
-     * 
+     *
      * @param sb buffer
      * @param c collection
      * @param lineSep line separator
@@ -312,7 +312,7 @@ public final class CollectionUtils {
 
     /**
      * toString method for a Map instance with the given start, line and end separators
-     * 
+     *
      * @param m map
      * @param lineSep line separator
      * @param startSep start separator
@@ -328,7 +328,7 @@ public final class CollectionUtils {
 
     /**
      * toString method for a Map instance with the given start, line and end separators
-     * 
+     *
      * @param sb buffer
      * @param m map
      * @param lineSep line separator

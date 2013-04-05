@@ -195,7 +195,7 @@ clean : clean_all
 man   : do_man
 	@echo " . . . man page(s) done"
 
-install : check install_all
+install : install_all
 	@echo "Deploy $(JNLP).jnlp"
 	jmcsDeployJnlp $(JNLP).jnlp
 	@echo "Install $(JNLP).jar"

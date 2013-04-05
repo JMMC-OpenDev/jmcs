@@ -182,7 +182,7 @@ JNLP=JmcsLibs
 #
 # TARGETS
 # -------
-all   :	check do_all
+all   :	do_all
 	@echo " . . . 'all' done"
 
 check :

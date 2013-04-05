@@ -32,28 +32,28 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+#USER_CFLAGS =
 
 #
 # user definable javac compilation flags
-#USER_JFLAGS = 
+#USER_JFLAGS =
 
 #
 # additional include and library search paths
-#USER_INC = 
-#USER_LIB = 
+#USER_INC =
+#USER_LIB =
 
 #
 # MODULE CODE DESCRIPTION:
 # ------------------------
-# As a general rule:  public file are "cleaned" and "installed"  
+# As a general rule:  public file are "cleaned" and "installed"
 #                     local (_L) are not "installed".
 
 #
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     =
-EXECUTABLES_L   = 
+EXECUTABLES_L   =
 
 #
 # <brief description of xxxxx program>
@@ -63,7 +63,7 @@ xxxxx_LIBS      =
 
 #
 # special compilation flags for single c sources
-#yyyyy_CFLAGS   = 
+#yyyyy_CFLAGS   =
 
 #
 # Includes (.h) files (public only)
@@ -97,8 +97,8 @@ TCL_SCRIPTS_L   =
 #
 # <brief description of tttttt tcl-script>
 tttttt_OBJECTS  =
-tttttt_TCLSH    = 
-tttttt_LIBS     = 
+tttttt_TCLSH    =
+tttttt_LIBS     =
 
 #
 # TCL libraries (public and local)
@@ -108,7 +108,7 @@ TCL_LIBRARIES_L =
 
 #
 # <brief description of tttlll library>
-tttlll_OBJECTS  = 
+tttlll_OBJECTS  =
 
 #
 # Python scripts (public and local)
@@ -125,15 +125,12 @@ JARFILES        = jmcs
 # <brief description of jmcs jar files>
 jmcs_DIRS     = fr
 
-jmcs_EXTRAS   = jmmc-logback.xml \
-                fr/jmmc/jmcs/resource/image/*.png \
-                fr/jmmc/jmcs/resource/license/*.txt \
-                fr/jmmc/jmcs/resource/ApplicationData.xml
+jmcs_EXTRAS   = fr/jmmc/jmcs/resource/*
 
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES = 
+JAVA_EXECUTABLES =
 
 #
 # <brief description of jmcsGenerateHelpsetFromHtml java program>
@@ -185,23 +182,25 @@ JNLP=JmcsLibs
 #
 # TARGETS
 # -------
-all:	do_all
-	@echo " . . . 'all' done" 
+check :
+	ctooCheckJMCSHeader ../
+	@echo " . . . 'check' done"
 
-clean : clean_all 
+all   :	check do_all
+	@echo " . . . 'all' done"
+
+clean : clean_all
 	@echo " . . . clean done"
 
-man   : do_man 
+man   : do_man
 	@echo " . . . man page(s) done"
 
-install : install_all
+install : check install_all
 	@echo "Deploy $(JNLP).jnlp"
 	jmcsDeployJnlp $(JNLP).jnlp
-        
 	@echo "Install $(JNLP).jar"
-# JmcsLibs contains only shared libraries used to package application single jar file
+	# JmcsLibs contains only shared libraries used to package application single jar file
 	@cp $$HOME/public_html/$(JNLP)/$(JNLP).jar $(INSTALL_ROOT)/lib
-        
 	@echo " . . . installation done"
 
 #___oOo___

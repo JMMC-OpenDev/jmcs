@@ -182,12 +182,12 @@ JNLP=JmcsLibs
 #
 # TARGETS
 # -------
+all   :	check do_all
+	@echo " . . . 'all' done"
+
 check :
 	ctooCheckJMCSHeader ../
 	@echo " . . . 'check' done"
-
-all   :	check do_all
-	@echo " . . . 'all' done"
 
 clean : clean_all
 	@echo " . . . clean done"

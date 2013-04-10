@@ -102,34 +102,34 @@ public final class Bootstrapper {
      * @return true if the initialization sequence succeeds, false otherwise.
      */
     static boolean bootstrap() throws IllegalStateException {
-        // avoid reentrance:
+
+        // Avoid reentrance
         if (_staticBootstrapDone) {
             return true;
         }
 
-        // Disable security checks:
+        // Disable security checks
         disableSecurityManager();
 
-        // Set System properties:
+        // Set System properties
         // note: it calls: System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
         // Must be set before any call to Collections or Arrays.sort(Object[]) that use that property once
         // ie before initializing Logs because it calls Collections.sort in LoggerContext.getLoggerList:195	
-        setSystemProps();
+        setSystemProperties();
 
-        // Initialize Locale.US:
+        // Initialize Locale.US
         initializeLocale();
 
-        // Start the application log singleton:
+        // Start the application log singleton
         LoggingService.getInstance();
         _jmmcLogger.info("jMCS log created at {}. Current level is {}.", new Date(), _jmmcLogger.getEffectiveLevel());
-
         _jmmcLogger.info("jMCS environment bootstrapping...");
         setState(ApplicationState.ENV_BOOTSTRAP);
 
-        // Define swing settings (laf, defaults...) before any Swing usage if not called at the first line of the main method:
+        // Define swing settings (laf, defaults...) before any Swing usage if not called at the first line of the main method
         SwingSettings.setup();
 
-        // Define default network settings:
+        // Define default network settings
         NetworkSettings.defineDefaults();
 
         // Set reentrance flag
@@ -142,11 +142,10 @@ public final class Bootstrapper {
      * Called by bootstrap() before anything
      * @see MacOSXAdapter
      */
-    private static void setSystemProps() {
-        // force anti aliasing :
-        if (SystemUtils.IS_JAVA_1_5) {
-            System.setProperty("swing.aatext", "true");
-        } else if (SystemUtils.IS_JAVA_1_6) {
+    private static void setSystemProperties() {
+
+        // Force anti-aliasing
+        if (SystemUtils.IS_JAVA_1_6) {
             final String old = System.getProperty("awt.useSystemAAFontSettings");
             if (old == null) {
                 System.setProperty("awt.useSystemAAFontSettings", "on");
@@ -154,11 +153,11 @@ public final class Bootstrapper {
         }
 
         if (SystemUtils.IS_OS_MAC_OSX) {
-            // always use screen menuBar on MacOS X:
+            // Always use screen menuBar on MacOS X
             System.setProperty("apple.laf.useScreenMenuBar", "true");
         }
 
-        // JDK 1.7 settings:
+        // JDK 1.7 settings
         if (SystemUtils.isJavaVersionAtLeast(1.7f)) {
             // Fix JDK 1.7 - Swing Focus : java.lang.IllegalArgumentException: Comparison method violates its general contract!
             // bug in SortingFocusTraversalPolicy.enumerateAndSortCycle() related to LayoutComparator
@@ -189,14 +188,15 @@ public final class Bootstrapper {
      * Initialize default locale and default time zone.
      */
     private static void initializeLocale() {
-        // Backup user settings:
+
+        // Backup user settings
         _userLocale = Locale.getDefault();
         _userTimeZone = TimeZone.getDefault();
 
         // Set the default locale to en-US locale (for Numerical Fields "." ",")
         Locale.setDefault(Locale.US);
 
-        // Set the default timezone to GMT to handle properly the date in UTC:
+        // Set the default timezone to GMT to handle properly the date in UTC
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
 
@@ -310,7 +310,6 @@ public final class Bootstrapper {
             ActionRegistrar.getInstance().createAllInternalActions();
 
             setState(ApplicationState.APP_INIT);
-
             application.initServices();
 
             SplashScreen.display(shouldShowSplashScreen);
@@ -331,7 +330,7 @@ public final class Bootstrapper {
             SplashScreen.close();
             MessagePane.showErrorMessage("An error occured while initializing the application");
 
-            // Add last chance tip if this exception appears in an inited state but before being ready. ( cf. trac #458 )                        
+            // Add last chance tip if this exception appears in an inited state but before being ready. (cf. trac #458)
             if (stateOnError.after(ApplicationState.ENV_INIT) && stateOnError.before(ApplicationState.APP_READY)) {
                 final String warningMessage = "The application did not start properly. Please try first to start it again from the website:\n"
                         + ApplicationDescription.getInstance().getLinkValue()
@@ -361,32 +360,29 @@ public final class Bootstrapper {
 
                 // If running under Mac OS X
                 if (SystemUtils.IS_OS_MAC_OSX) {
-                    // Set application name :
-                    // system properties must be set before using any Swing component:
-                    // Hope nothing as already been done...
-                    System.setProperty("com.apple.mrj.application.apple.menu.about.name", ApplicationDescription.getInstance().getProgramName());
+                    // Set application name
+                    // System properties must be set before using any Swing component:
+                    // Hope nothing has already been done...
+                    System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                            ApplicationDescription.getInstance().getProgramName());
                 }
 
-
-                setState(ApplicationState.GUI_SETUP);
-
                 // Delegate initialization to daughter class through abstract setupGui() call
+                setState(ApplicationState.GUI_SETUP);
                 _application.setupGui();
 
                 // Initialize SampManager as needed by MainMenuBar:
                 SampManager.getInstance();
-
                 // Declare SAMP message handlers first:
                 _application.declareInteroperability();
-
                 // Perform defered action initialization (SAMP-related actions)
                 ActionRegistrar.getInstance().performDeferedInitialization();
 
-                // Define the jframe associated to the application which will get the JMenuBar
+                // Define the JFrame associated to the application which will get the JMenuBar
                 final JFrame frame = App.getFrame();
                 // Use OSXAdapter on the frame
                 macOSXRegistration(frame);
-                // create menus including the Interop menu (SAMP required)
+                // Create menus including the Interop menu (SAMP required)
                 frame.setJMenuBar(new MainMenuBar());
 
                 // Set application frame common properties
@@ -411,6 +407,7 @@ public final class Bootstrapper {
      * @param frame application frame
      */
     private static void macOSXRegistration(final JFrame frame) {
+
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
 

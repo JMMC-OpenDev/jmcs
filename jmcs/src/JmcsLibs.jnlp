@@ -64,9 +64,6 @@
     <!-- Documentation reader -->
     <jar href="@SHARED@/jhall.jar "/>
     
-    <!-- Swing Task management -->
-    <jar href="@SHARED@/swing-worker-1.2.jar"/>
-    
     <!-- Mac OS X Desktop integration -->
     <jar href="@SHARED@/AppleJavaExtensions-1.6.jar"/>
     

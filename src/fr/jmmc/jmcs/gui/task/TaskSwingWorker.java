@@ -30,21 +30,20 @@ package fr.jmmc.jmcs.gui.task;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.util.concurrent.ExecutionException;
+import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class extends SwingWorker back port for Java 5 to :
+ * This class extends SwingWorker (Java 6+) to :
  * - define related task to cancel easily the task and its child tasks;
  * - simplify debugging / logging.
- * Requires library :
- * swing-worker-1.2.jar (org.jdesktop.swingworker.SwingWorker)
  *
  * @param <T> the result type returned by this {@code TaskSwingWorker}
  * 
  * @author Guillaume MELLA, Laurent BOURGES.
  */
-public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingWorker<T, Void> {
+public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
 
     /** Class _logger */
     protected static final Logger _logger = LoggerFactory.getLogger(TaskSwingWorker.class.getName());
@@ -124,10 +123,8 @@ public abstract class TaskSwingWorker<T> extends org.jdesktop.swingworker.SwingW
             _logger.info("{}.doInBackground : START", _logPrefix);
         }
 
-        T data = null;
-
         // compute the data :
-        data = computeInBackground();
+        T data = computeInBackground();
 
         if (isCancelled()) {
             if (DEBUG_FLAG) {

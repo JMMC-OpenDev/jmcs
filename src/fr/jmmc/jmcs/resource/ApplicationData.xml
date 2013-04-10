@@ -108,13 +108,6 @@
           license="Proprietary"
           file="JTidy.txt"/>
 
-        <!-- Swing Task management -->
-        <package name="SwingWorker"
-          description="backport of SwingWorker included into Java 1.6."
-          link="https://swingworker.dev.java.net/"
-          jars="swing-worker-1.2.jar"
-          license="LGPL v2.1"/>
-
         <!-- Missing Swing Widgets -->
         <package name="JCL"
           description="JIDE Common Layer."

@@ -159,6 +159,8 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
+	@echo "......jnlps:"
+	jmcsDeployJnlp JmcsAppExample.jnlp    
 	@echo " . . . installation done"
 
 #___oOo___

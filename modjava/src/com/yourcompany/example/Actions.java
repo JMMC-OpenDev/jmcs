@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.mcs.modjava;
+package com.yourcompany.example;
 
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
@@ -52,7 +52,7 @@ public class Actions {
         String _fieldName = null;
 
         public GenericLoggedAction(String fieldName) {
-            super("fr.jmmc.mcs.modjava.Actions", fieldName);
+            super(Actions.class.getName(), fieldName);
             _logger.info("GenericLoggedAction('" + fieldName + "').");
             _fieldName = fieldName;
         }

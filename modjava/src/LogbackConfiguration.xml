@@ -3,7 +3,7 @@
 <!-- Application specific configuration -->
 <included>
 
-    <!-- ModJava -->
-    <logger name="fr.jmmc.mcs.modjava" level="WARN"/>
+    <!-- JmcsAppExample -->
+    <logger name="com.yourcompany.example" level="WARN"/>
 
 </included>

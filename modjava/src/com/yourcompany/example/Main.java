@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.mcs.modjava;
+package com.yourcompany.example;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.Bootstrapper;
@@ -172,7 +172,7 @@ public class Main extends App {
 
     /** Open file action */
     private RegisteredAction openAction() {
-        RegisteredAction temp = new RegisteredAction("fr.jmmc.mcs.modjava.Main", "_openAction") {
+        RegisteredAction temp = new RegisteredAction(Main.class.getName(), "_openAction") {
             private static final long serialVersionUID = 1L;
 
             @Override

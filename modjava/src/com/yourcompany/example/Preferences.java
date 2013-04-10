@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.mcs.modjava;
+package com.yourcompany.example;
 
 import fr.jmmc.jmcs.data.preference.PreferencesException;
 
@@ -21,8 +21,7 @@ public class Preferences extends fr.jmmc.jmcs.data.preference.Preferences {
     @Override
     protected String getPreferenceFilename() {
         _logger.entering("Preferences", "getPreferenceFilename");
-
-        return "fr.jmmc.modjava.test.properties";
+        return "com.yourcompany.example.test.properties";
     }
 
     /** Return the preference revision number. */

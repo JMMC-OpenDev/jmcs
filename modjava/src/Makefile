@@ -93,22 +93,22 @@ PY_SCRIPTS_L   =
 #
 # Jarfiles and their directories
 # ---------------------------------
-JARFILES        = modjava
+JARFILES        = jae
 
 #
-# <brief description of modjava jar files>
-modjava_DIRS         = fr
-modjava_EXTRAS       = LogbackConfiguration.xml \
-                       fr/jmmc/mcs/modjava/resource/*
+# <brief description of jae jar files>
+jae_DIRS         = com
+jae_EXTRAS       = LogbackConfiguration.xml \
+                   com/yourcompany/example/resource/*
 
 #
 # Java programs
 # ---------------------------------
-JAVA_EXECUTABLES=modjavaExample modjavaTest
+JAVA_EXECUTABLES=JmcsAppExample
 
 #
-# <brief description of modjavaExample java program>
-modjava_CLASS    = fr.jmmc.mcs.modjava.Main
+# <brief description of JmcsAppExample java program>
+JmcsAppExample_CLASS = com.yourcompany.example.Main
 
 #
 # Command Definition Files (CDF)

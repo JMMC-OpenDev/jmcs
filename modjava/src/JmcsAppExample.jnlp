@@ -6,7 +6,7 @@
         <homepage href="http://www.yourcompany.com/JmcsAppExample/"/>
         <description kind="tooltip">JmcsAppExample</description>
         <description kind="short">jMCS Application Example</description>
-        <icon href="AppIcon.jpg"/>
+        <icon href="com/yourcompany/example/resource/AppIcon.jpg"/>
         <offline-allowed/> 
         <shortcut>
             <desktop/>

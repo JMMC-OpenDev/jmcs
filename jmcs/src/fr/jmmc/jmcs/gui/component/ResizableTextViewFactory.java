@@ -200,6 +200,10 @@ public class ResizableTextViewFactory {
      * Check the JVM version and show a warning message if it is unsupported
      */
     public static void showUnsupportedJdkWarning() {
+
+        final float requiredRuntime = 1.6f;
+        final float javaRuntime = SystemUtils.JAVA_VERSION_FLOAT;
+
         final String javaVersion = System.getProperty("java.version");
         final String jvmVendor = System.getProperty("java.vm.vendor");
         final String jvmName = System.getProperty("java.vm.name");
@@ -216,19 +220,19 @@ public class ResizableTextViewFactory {
             message += "Your Java Virtual Machine is an OpenJDK JVM, which has known bugs (SWING look and feel,"
                     + " fonts, PDF issues...) on several Linux distributions." + "<BR><BR>";
         }
-        if (SystemUtils.IS_JAVA_1_5) {
+
+        if (javaRuntime < requiredRuntime) {
             shouldWarn = true;
-            _logger.warn("Detected JDK 1.5 runtime environment: {} {} {} - {}", jvmVendor, jvmName, javaVersion, jvmVersion);
+            _logger.warn("Detected JDK {} runtime environment: {} {} {} - {}", javaRuntime, jvmVendor, jvmName, javaVersion, jvmVersion);
 
             message += "<FONT COLOR='RED'>WARNING</FONT> : ";
-            message += "Your Java Virtual Machine is of version 1.5, which has several limitations and is not"
-                    + " maintained anymore security-wise." + "<BR><BR>";
+            message += "Your Java Virtual Machine is too old and not supported anymore.<BR><BR>";
         }
         if (shouldWarn) {
             final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
 
-            message += "<BR>" + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version 1.6 or newer,"
-                    + " available at:" + "<BR><CENTER><A HREF='http://java.sun.com/javase/downloads/'>"
+            message += "<BR>" + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version '" + requiredRuntime
+                    + "' or newer, available at:" + "<BR><CENTER><A HREF='http://java.sun.com/javase/downloads/'>"
                     + "http://java.sun.com/javase/downloads/</A></CENTER>" + "<BR><BR>"
                     + "<I>Your current JVM Information :</I><BR><TT>"
                     + "java.vm.name    = '" + jvmName + "'<BR>"

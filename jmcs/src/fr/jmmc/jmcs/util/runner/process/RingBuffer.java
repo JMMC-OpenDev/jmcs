@@ -32,9 +32,9 @@ import fr.jmmc.jmcs.util.StringUtils;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import fr.jmmc.jmcs.util.collection.ArrayDeque;
-import fr.jmmc.jmcs.util.collection.Deque;
 import fr.jmmc.jmcs.util.concurrent.FastSemaphore;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

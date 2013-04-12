@@ -525,6 +525,14 @@ public final class FileUtils {
         }
     }
 
+    /**
+     * Rename a file from an old path to a new path.
+     *
+     * @param oldPath original file path.
+     * @param newPath destination path.
+     * @param overwrite true to overwrite destination path if needed, false otherwise.
+     * @throws IOException if an I/O exception occurred
+     */
     public static void renameFile(String oldPath, String newPath, boolean overwrite) throws IOException {
 
         boolean done = false;

@@ -525,6 +525,33 @@ public final class FileUtils {
         }
     }
 
+    public static void renameFile(String oldPath, String newPath, boolean overwrite) throws IOException {
+
+        boolean done = false;
+        File source = new File(oldPath);
+        File destination = new File(newPath);
+
+        try {
+            if (destination.exists()) {
+                if (!overwrite) {
+                    throw new IOException("'" + newPath + "' already exists");
+                }
+                if (!destination.delete()) {
+                    throw new IOException("Could not delete '" + newPath + "'");
+                }
+            }
+
+            if (!source.renameTo(destination)) {
+                throw new IOException("'" + oldPath + "' could not be renamed to '" + newPath + "'");
+            }
+            done = true;
+        } finally {
+            if (done) {
+                source.delete();
+            }
+        }
+    }
+
     /**
      * Return the MD5 checksum of the given input stream
      * @param in input file

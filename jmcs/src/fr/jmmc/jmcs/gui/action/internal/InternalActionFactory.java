@@ -105,9 +105,7 @@ public class InternalActionFactory {
         if (_instance == null) {
             _instance = new InternalActionFactory();
         }
-
         return _instance;
-
         // DO NOT MODIFY !!!
     }
 

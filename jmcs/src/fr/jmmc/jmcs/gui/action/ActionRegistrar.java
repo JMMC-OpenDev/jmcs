@@ -75,9 +75,7 @@ public class ActionRegistrar {
         if (_instance == null) {
             _instance = new ActionRegistrar();
         }
-
         return _instance;
-
         // DO NOT MODIFY !!!
     }
 
@@ -247,7 +245,7 @@ public class ActionRegistrar {
      * @return string one line per name of registered action
      */
     public String dumpRegisteredActions() {
-        // sort properties :
+        // Sort properties
         final String[] keys = new String[_register.size()];
         _register.keySet().toArray(keys);
         Arrays.sort(keys);

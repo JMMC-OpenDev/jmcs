@@ -29,9 +29,11 @@ package fr.jmmc.jmcs.data.preference;
 
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
+import fr.jmmc.jmcs.util.ColorEncoder;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.NumberUtils;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -98,6 +100,10 @@ public abstract class Preferences extends Observable {
     private static final String PREFERENCES_VERSION_NUMBER_ID = JMCS_PUBLIC_PREFIX + "preference.version";
     /** Store hidden properties index prefix. */
     private static final String PREFERENCES_ORDER_INDEX_PREFIX = JMCS_PUBLIC_PREFIX + "order.index.";
+    /** Store dimension width index prefix. */
+    private static final String DIMENSION_WIDTH_PREFIX = JMCS_PUBLIC_PREFIX + "dimension.width.";
+    /** Store dimension height index prefix. */
+    private static final String DIMENSION_HEIGHT_PREFIX = JMCS_PUBLIC_PREFIX + "dimension.height.";
 
     /* members */
     /** Store preference filename. */
@@ -463,7 +469,7 @@ public abstract class Preferences extends Observable {
     /**
      * Save the preferences state in memory (i.e for the current session) to file.
      *
-     * @param comment comment to be included in the preference file
+     * @param comment comment to be included in the preference file.
      *
      * @throws PreferencesException if the preference file could not be written.
      */
@@ -517,7 +523,7 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      * @param preferenceValue the preference value.
      *
-     * @throws PreferencesException if any preference value has a unsupported class type
+     * @throws PreferencesException if any preference value has a unsupported class type.
      */
     final public void setPreference(Object preferenceName, Object preferenceValue) throws PreferencesException {
         setPreferenceToProperties(_currentProperties, preferenceName, preferenceValue);
@@ -531,7 +537,7 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      * @param preferenceValue the preference value.
      *
-     * @throws PreferencesException if any preference value has a unsupported class type
+     * @throws PreferencesException if any preference value has a unsupported class type.
      */
     final public void setDefaultPreference(Object preferenceName, Object preferenceValue) throws PreferencesException {
         setPreferenceToProperties(_defaultProperties, preferenceName, preferenceValue);
@@ -544,7 +550,7 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      * @param preferenceValue the preference value.
      *
-     * @throws PreferencesException if any preference value has a unsupported class type
+     * @throws PreferencesException if any preference value has a unsupported class type.
      */
     private void setPreferenceToProperties(Properties properties, Object preferenceName, Object preferenceValue)
             throws PreferencesException {
@@ -563,7 +569,7 @@ public abstract class Preferences extends Observable {
      * @param preferenceIndex the order number for the property (-1 for no order).
      * @param preferenceValue the preference value.
      *
-     * @throws PreferencesException if any preference value has a unsupported class type
+     * @throws PreferencesException if any preference value has a unsupported class type.
      */
     private void setPreferenceToProperties(Properties properties, Object preferenceName, int preferenceIndex, Object preferenceValue)
             throws PreferencesException {
@@ -582,20 +588,27 @@ public abstract class Preferences extends Observable {
 
         final Class<?> preferenceClass = preferenceValue.getClass();
         // If the constraint is a String object
-        if (preferenceClass == java.lang.String.class) {
+        if (preferenceClass == String.class) {
             properties.setProperty(preferenceNameString, (String) preferenceValue);
         } // Else if the constraint is a Boolean object
-        else if (preferenceClass == java.lang.Boolean.class) {
+        else if (preferenceClass == Boolean.class) {
             properties.setProperty(preferenceNameString, ((Boolean) preferenceValue).toString());
         } // Else if the constraint is an Integer object
-        else if (preferenceClass == java.lang.Integer.class) {
+        else if (preferenceClass == Integer.class) {
             properties.setProperty(preferenceNameString, ((Integer) preferenceValue).toString());
         } // Else if the constraint is a Double object
-        else if (preferenceClass == java.lang.Double.class) {
+        else if (preferenceClass == Double.class) {
             properties.setProperty(preferenceNameString, ((Double) preferenceValue).toString());
         } // Else if the constraint is a Color object
-        else if (preferenceClass == java.awt.Color.class) {
-            properties.setProperty(preferenceNameString, fr.jmmc.jmcs.util.ColorEncoder.encode((Color) preferenceValue));
+        else if (preferenceClass == Color.class) {
+            properties.setProperty(preferenceNameString, ColorEncoder.encode((Color) preferenceValue));
+        } // Else if the constraint is a Dimension object
+        else if (preferenceClass == Dimension.class) {
+            final Dimension dimension = (Dimension) preferenceValue;
+            final Double width = dimension.getWidth();
+            final Double height = dimension.getHeight();
+            setPreference(DIMENSION_WIDTH_PREFIX + preferenceNameString, width);
+            setPreference(DIMENSION_HEIGHT_PREFIX + preferenceNameString, height);
         } // Else if the constraint is a List<String> object
         else if (List.class.isAssignableFrom(preferenceClass)) {
             @SuppressWarnings("unchecked")
@@ -653,7 +666,7 @@ public abstract class Preferences extends Observable {
      * @param preferenceIndex the order number for the property (-1 for no order).
      * @param preferenceValue the preference value.
      *
-     * @throws PreferencesException if any preference value has a unsupported class type
+     * @throws PreferencesException if any preference value has a unsupported class type.
      */
     final public void setPreference(Object preferenceName, int preferenceIndex, Object preferenceValue) throws PreferencesException {
         setPreferenceToProperties(_currentProperties, preferenceName, preferenceIndex, preferenceValue);
@@ -738,8 +751,7 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return the preference value.
-     * 
-     * @throws MissingPreferenceException if the preference value is missing
+     * @throws MissingPreferenceException if the preference value is missing.
      */
     final public String getPreference(final Object preferenceName) throws MissingPreferenceException {
         return getPreference(preferenceName, false);
@@ -749,11 +761,10 @@ public abstract class Preferences extends Observable {
      * Get a preference value.
      *
      * @param preferenceName the preference name.
-     * @param ignoreMissing true to return null when the property is missing
+     * @param ignoreMissing true to return null when the property is missing.
      *
      * @return the preference value or null if the preference value is missing and the ignoreMissing argument is true.
-     * 
-     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false
+     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false.
      */
     final public String getPreference(final Object preferenceName, final boolean ignoreMissing) throws MissingPreferenceException {
         final String value = _currentProperties.getProperty(preferenceName.toString());
@@ -770,8 +781,7 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return one boolean representing the preference value.
-     * 
-     * @throws MissingPreferenceException if the preference value is missing
+     * @throws MissingPreferenceException if the preference value is missing.
      */
     final public boolean getPreferenceAsBoolean(final Object preferenceName) throws MissingPreferenceException {
         return getPreferenceAsBoolean(preferenceName, false);
@@ -781,11 +791,10 @@ public abstract class Preferences extends Observable {
      * Get a boolean preference value.
      *
      * @param preferenceName the preference name.
-     * @param ignoreMissing true to return false when the property is missing
+     * @param ignoreMissing true to return false when the property is missing.
      *
      * @return one boolean representing the preference value or false if the preference value is missing and the ignoreMissing argument is true.
-     * 
-     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false
+     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false.
      */
     final public boolean getPreferenceAsBoolean(final Object preferenceName, final boolean ignoreMissing) throws MissingPreferenceException {
         final String value = getPreference(preferenceName, ignoreMissing);
@@ -801,8 +810,7 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return one double representing the preference value.
-     * 
-     * @throws MissingPreferenceException if the preference value is missing
+     * @throws MissingPreferenceException if the preference value is missing.
      */
     final public double getPreferenceAsDouble(final Object preferenceName) throws MissingPreferenceException {
         return getPreferenceAsDouble(preferenceName, false);
@@ -812,16 +820,15 @@ public abstract class Preferences extends Observable {
      * Get a double preference value.
      *
      * @param preferenceName the preference name.
-     * @param ignoreMissing true to return 0.0 when the property is missing
+     * @param ignoreMissing true to return Double.NaN when the property is missing
      *
-     * @return one double representing the preference value or 0.0 if the preference value is missing and the ignoreMissing argument is true.
-     * 
-     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false
+     * @return Double.NaN if the preference value is missing and the ignoreMissing argument is true.
+     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false.
      */
     final public double getPreferenceAsDouble(final Object preferenceName, final boolean ignoreMissing) throws MissingPreferenceException {
         final String value = getPreference(preferenceName, ignoreMissing);
         if (value == null) {
-            return 0d;
+            return Double.NaN;
         }
         return Double.valueOf(value).doubleValue();
     }
@@ -832,8 +839,7 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return one integer representing the preference value.
-     * 
-     * @throws MissingPreferenceException if the preference value is missing
+     * @throws MissingPreferenceException if the preference value is missing.
      */
     final public int getPreferenceAsInt(final Object preferenceName) throws MissingPreferenceException {
         return getPreferenceAsInt(preferenceName, false);
@@ -843,11 +849,10 @@ public abstract class Preferences extends Observable {
      * Get an integer preference value.
      *
      * @param preferenceName the preference name.
-     * @param ignoreMissing true to return 0 when the property is missing
+     * @param ignoreMissing true to return 0 when the property is missing.
      *
      * @return one integer representing the preference value or 0 if the preference value is missing and the ignoreMissing argument is true.
-     * 
-     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false
+     * @throws MissingPreferenceException if the preference value is missing and the ignoreMissing argument is false.
      */
     final public int getPreferenceAsInt(final Object preferenceName, final boolean ignoreMissing) throws MissingPreferenceException {
         final String value = getPreference(preferenceName, ignoreMissing);
@@ -863,9 +868,8 @@ public abstract class Preferences extends Observable {
      * @param preferenceName the preference name.
      *
      * @return one Color object representing the preference value.
-     *
-     * @throws MissingPreferenceException if the preference value is missing
-     * @throws PreferencesException if the preference value is not a Color
+     * @throws MissingPreferenceException if the preference value is missing.
+     * @throws PreferencesException if the preference value is not a Color.
      */
     final public Color getPreferenceAsColor(final Object preferenceName) throws MissingPreferenceException, PreferencesException {
         final String value = getPreference(preferenceName);
@@ -878,6 +882,44 @@ public abstract class Preferences extends Observable {
         }
 
         return colorValue;
+    }
+
+    /**
+     * Get a Dimension preference value.
+     *
+     * @param preferenceName the preference name.
+     *
+     * @return one Dimension representing the preference value.
+     * 
+     * @throws MissingPreferenceException if the preference value is missing.
+     */
+    final public Dimension getPreferenceAsDimension(final Object preferenceName) throws MissingPreferenceException, PreferencesException {
+        return getPreferenceAsDimension(preferenceName, false);
+    }
+
+    /**
+     * Get a dimension preference value.
+     *
+     * @param preferenceName the preference name.
+     * @param ignoreMissing true to return null when the property is missing
+     *
+     * @return one Dimension object representing the preference value, or null if none.
+     *
+     * @throws MissingPreferenceException if the preference value is missing.
+     * @throws PreferencesException if the preference value is not a Dimension.
+     */
+    final public Dimension getPreferenceAsDimension(final Object preferenceName, final boolean ignoreMissing) throws MissingPreferenceException, PreferencesException {
+
+        final Double width = getPreferenceAsDouble(DIMENSION_WIDTH_PREFIX + preferenceName, ignoreMissing);
+        final Double height = getPreferenceAsDouble(DIMENSION_HEIGHT_PREFIX + preferenceName, ignoreMissing);
+
+        if ((width == Double.NaN) || (height == Double.NaN)) {
+            return null;
+        }
+
+        Dimension dimension = new Dimension();
+        dimension.setSize(width, height);
+        return dimension;
     }
 
     /**
@@ -1182,7 +1224,7 @@ public abstract class Preferences extends Observable {
      * @param notify flag to enable/disable observer notifications
      */
     public final void setNotify(final boolean notify) {
-        this._notify = notify;
+        _notify = notify;
     }
 
     /**

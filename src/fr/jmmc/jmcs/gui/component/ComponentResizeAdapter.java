@@ -46,7 +46,7 @@ public final class ComponentResizeAdapter extends ComponentAdapter {
      * @param dim minimal dimension
      */
     public ComponentResizeAdapter(final Dimension dim) {
-        this._dimension = dim;
+        _dimension = dim;
     }
 
     /**

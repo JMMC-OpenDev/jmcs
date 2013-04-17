@@ -27,30 +27,32 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
-import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.MimeType;
+import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import fr.jmmc.jmcs.util.CollectionUtils;
+import java.awt.Dimension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This class gathers :
  * - user preferences related to local folders in FileChooser;
- * - recently used file paths.
+ * - recently used file paths;
+ * - windows size.
  *
- * @author Laurent BOURGES, Sylvain LAFRASSE
+ * @author Laurent BOURGES, Sylvain LAFRASSE.
  */
-public final class FileChooserPreferences extends Preferences {
+public final class SessionPersistencePreferences extends Preferences {
 
     /** Singleton instance */
-    private static FileChooserPreferences _singleton = null;
+    private static SessionPersistencePreferences _singleton = null;
     /** Logger */
-    private static final Logger _logger = LoggerFactory.getLogger(FileChooserPreferences.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(SessionPersistencePreferences.class.getName());
     /** File name prefix */
-    private static final String FILENAME_PREFIX = "fr.jmmc.jmcs.filechooser.";
+    private static final String FILENAME_PREFIX = "fr.jmmc.jmcs.session_persistence.";
     /** File name suffix */
     private static final String FILENAME_SUFFIX = ".properties";
     /** Recent file prefix */
@@ -59,22 +61,21 @@ public final class FileChooserPreferences extends Preferences {
     /**
      * Private constructor that must be empty.
      */
-    private FileChooserPreferences() {
+    private SessionPersistencePreferences() {
         super(false); // No update notifications
     }
 
     /**
-     * Return the singleton instance of FilePreferences.
-     *
+     * Return the singleton instance of SessionPersistencePreferences.
      * @return the singleton instance
      */
-    synchronized static FileChooserPreferences getInstance() {
+    synchronized static SessionPersistencePreferences getInstance() {
         // Build new reference if singleton does not already exist
         // or return previous reference
         if (_singleton == null) {
-            _logger.debug("FilePreferences.getInstance()");
+            _logger.debug("SessionPersistencePreferences.getInstance()");
             // disable notifications:
-            _singleton = new FileChooserPreferences();
+            _singleton = new SessionPersistencePreferences();
             // enable future notifications:
             _singleton.setNotify(true);
         }
@@ -96,7 +97,7 @@ public final class FileChooserPreferences extends Preferences {
      */
     @Override
     protected void setDefaultPreferences() throws PreferencesException {
-        _logger.debug("FilePreferences.setDefaultPreferences");
+        _logger.debug("SessionPersistencePreferences.setDefaultPreferences");
 
         final String defaultDirectory = getDefaultDirectory();
 
@@ -117,8 +118,8 @@ public final class FileChooserPreferences extends Preferences {
     protected String getPreferenceFilename() {
 
         final ApplicationDescription applicationDataModel = ApplicationDescription.getInstance();
-        final String shortCompanyName = (applicationDataModel != null) ? applicationDataModel.getShortCompanyName() : "";
-        final String programName = (applicationDataModel != null) ? applicationDataModel.getProgramName() : "";
+        final String shortCompanyName = applicationDataModel.getShortCompanyName();
+        final String programName = applicationDataModel.getProgramName();
 
         String preferenceFileName = FILENAME_PREFIX + shortCompanyName + "." + programName + FILENAME_SUFFIX;
         preferenceFileName = preferenceFileName.replace(" ", "");
@@ -163,11 +164,12 @@ public final class FileChooserPreferences extends Preferences {
         if (mimeType != null && path != null) {
             final String oldPath = getLastDirectoryForMimeTypeAsPath(mimeType);
             if (!path.equals(oldPath)) {
+                final SessionPersistencePreferences instance = getInstance();
                 try {
-                    getInstance().setPreference(mimeType.getId(), path);
-                    getInstance().saveToFile();
+                    instance.setPreference(mimeType.getId(), path);
+                    instance.saveToFile();
                 } catch (PreferencesException pe) {
-                    _logger.warn("Saving FilePreferences failure:", pe);
+                    _logger.warn("Saving SessionPersistencePreferences failure:", pe);
                 }
             }
         }
@@ -183,9 +185,9 @@ public final class FileChooserPreferences extends Preferences {
         try {
             paths = getInstance().getPreferenceAsStringList(RECENT_FILE_PREFIX);
         } catch (MissingPreferenceException mpe) {
-            _logger.error("No recent files found.", mpe);
+            _logger.info("No recent files found.", mpe);
         } catch (PreferencesException pe) {
-            _logger.error("Could not read preference for recent files", pe);
+            _logger.warn("Could not read preference for recent files", pe);
         }
 
         if ((paths == null) || (paths.isEmpty())) {
@@ -194,10 +196,7 @@ public final class FileChooserPreferences extends Preferences {
         }
 
         // Deserialize paths to recent file list
-        if (_logger.isDebugEnabled()) {
-            _logger.debug("Found recent files '{}'.", CollectionUtils.toString(paths));
-        }
-
+        _logger.debug("Found recent files '{}'.", CollectionUtils.toString(paths));
         return paths;
     }
 
@@ -211,12 +210,55 @@ public final class FileChooserPreferences extends Preferences {
         }
 
         // Try to store paths list to preference
+        final SessionPersistencePreferences instance = getInstance();
         try {
-            getInstance().setPreference(RECENT_FILE_PREFIX, paths);
-            getInstance().saveToFile();
+            instance.setPreference(RECENT_FILE_PREFIX, paths);
+            instance.saveToFile();
         } catch (PreferencesException pe) {
             _logger.error("Could not store recent file list in preference", pe);
         }
+    }
+
+    /**
+     * Try to load the dimension associated with the given key.
+     * @param key Unique string identifying a given dimension.
+     * @return the sought dimension if found, null otherwise.
+     */
+    public static Dimension loadDimension(final String key) {
+        if (key == null) {
+            _logger.error("Null dimension key received");
+            return null;
+        }
+        try {
+            return getInstance().getPreferenceAsDimension(key, true);
+        } catch (MissingPreferenceException mpe) {
+            _logger.info("No dimension found for window key '{}'", key, mpe);
+        } catch (PreferencesException pe) {
+            _logger.warn("Could not read dimension preference for window key '{}'", key, pe);
+        }
+        return null;
+    }
+
+    /**
+     * Try to save the dimension associated with the given key.
+     * @param key Unique string identifying a given dimension.
+     * @param dimension the dimension to save.
+     */
+    public static void saveDimension(final String key, final Dimension dimension) {
+        if (key == null) {
+            _logger.error("Null dimension key received");
+            return;
+        }
+        if (dimension == null) {
+            _logger.error("Null dimension value received");
+            return;
+        }
+        try {
+            getInstance().setPreference(key, dimension);
+        } catch (PreferencesException pe) {
+            _logger.error("Could not store dimension '{}' for key '{}' in preference", dimension, key, pe);
+        }
+        _logger.info("saveDimension('" + key + "') = " + dimension);
     }
 
     /**
@@ -225,7 +267,13 @@ public final class FileChooserPreferences extends Preferences {
      */
     public static void main(String[] args) {
         try {
-            FileChooserPreferences.getInstance().saveToFile();
+            final SessionPersistencePreferences instance = SessionPersistencePreferences.getInstance();
+            instance.setPreference("test", new Dimension(123, 456));
+            instance.saveToFile();
+            instance.setPreference("test", new Dimension(0, 0));
+            System.out.println("dimension = " + instance.getPreferenceAsDimension("test"));
+            instance.loadFromFile();
+            System.out.println("dimension = " + instance.getPreferenceAsDimension("test"));
         } catch (PreferencesException pe) {
             _logger.error("property failure : ", pe);
         }

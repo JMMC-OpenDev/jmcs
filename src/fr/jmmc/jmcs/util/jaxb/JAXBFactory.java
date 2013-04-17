@@ -127,10 +127,16 @@ public final class JAXBFactory {
 
         try {
             // create a JAXBContext capable of handling classes generated into
-            // ivoa schema package
-            context = JAXBContext.newInstance(path);
+            // package given by path:
+            context = JAXBContext.newInstance(path, JAXBFactory.class.getClassLoader());
 
         } catch (JAXBException je) {
+            // Can happen if either JAXB library can not be loaded (classloader) or if ObjectFactory can not be loaded (classloader)
+            // put stack trace in netbeans IDE logs:
+            je.printStackTrace();
+            System.err.println("ClassLoader (Jmcs): "+ JAXBFactory.class.getClassLoader());
+            System.err.println("ClassLoader (thread): "+ Thread.currentThread().getContextClassLoader());
+            
             throw new XmlBindException("JAXBFactory.getContext : Unable to create JAXBContext : " + path, je);
         }
 

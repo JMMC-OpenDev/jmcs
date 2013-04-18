@@ -147,7 +147,7 @@ public abstract class App {
     protected abstract void initServices();
 
     /**
-     * Mandatory hook to override in your App, to initialize user interface in EDT.
+     * Mandatory hook to override in your App, to properly initialize user interface elements in EDT.
      * @warning : The actions which are present in menu bar must be instantiated in this method.
      */
     protected abstract void setupGui();
@@ -161,7 +161,7 @@ public abstract class App {
 
     final void openCommandLineFile() {
 
-        if ((_customArgumentValues == null) || (_customArgumentValues.size() == 0)) {
+        if ((_customArgumentValues == null) || (_customArgumentValues.isEmpty())) {
             return;
         }
 
@@ -198,7 +198,9 @@ public abstract class App {
      * @param frame application frame.
      */
     public static void setFrame(final JFrame frame) {
+
         _applicationFrame = frame;
+        _applicationFrame.setLocationByPlatform(true);
 
         // previous adapter manages the windowClosing(event) :
         _applicationFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -236,12 +238,12 @@ public abstract class App {
     public static void showFrameToFront() {
         final JFrame frame = getFrame();
 
-        // ensure window is visible (not iconified):
+        // Ensure window is visible (not iconified)
         if (frame.getState() == Frame.ICONIFIED) {
             frame.setState(Frame.NORMAL);
         }
 
-        // force the frame to be visible and bring it to front
+        // Force the frame to be visible and bring it to front
         frame.setVisible(true);
         frame.toFront();
     }

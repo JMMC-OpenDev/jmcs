@@ -28,7 +28,7 @@
 package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
+import fr.jmmc.jmcs.data.preference.SessionPersistencePreferences;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.data.MimeType;
 import java.awt.FileDialog;
@@ -354,7 +354,7 @@ public final class FileChooser {
     private static File retrieveLastDirectoryForMimeType(final File givenDirectory, final MimeType mimeType) {
         File preselectedDirectory = givenDirectory;
         if (preselectedDirectory == null && mimeType != null) {
-            preselectedDirectory = FileChooserPreferences.getLastDirectoryForMimeTypeAsFile(mimeType);
+            preselectedDirectory = SessionPersistencePreferences.getLastDirectoryForMimeTypeAsFile(mimeType);
         }
         return preselectedDirectory;
     }
@@ -366,7 +366,7 @@ public final class FileChooser {
      */
     private static void updateDirectoryForMimeType(final MimeType mimeType, final String path) {
         if (path != null && mimeType != null) {
-            FileChooserPreferences.setCurrentDirectoryForMimeType(mimeType, path);
+            SessionPersistencePreferences.setCurrentDirectoryForMimeType(mimeType, path);
         }
     }
 

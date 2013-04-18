@@ -3,7 +3,6 @@
  ***************************************************************************** */
 package fr.jmmc.jmal.star;
 
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.SearchField;
 import fr.jmmc.jmcs.gui.component.StatusBar;
@@ -161,8 +160,7 @@ public class StarResolverWidget extends SearchField implements Observer {
      */
     public static void main(final String[] args) {
         // GUI initialization
-        final JFrame frame = App.getFrame();
-        frame.setTitle("StarResolverWidget Demo");
+        final JFrame frame = new JFrame("StarResolverWidget Demo");
 
         // Force to exit when the frame closes :
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.util;
 
+import fr.jmmc.jmcs.data.preference.SessionSettingsPreferences;
 import fr.jmmc.jmcs.gui.MainMenuBar;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
@@ -36,13 +37,17 @@ import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.lang.ref.WeakReference;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +79,14 @@ public class WindowUtils {
         _screenHeight = dm.getHeight();
     }
 
+    /** Return the maximum viewable area or dimension if smaller. */
+    public static Dimension getMaximumArea(Dimension dimension) {
+        Dimension max = new Dimension();
+        max.height = Math.min(_screenHeight, dimension.height);
+        max.width = Math.min(_screenWidth, dimension.width);
+        return max;
+    }
+
     /**
      * Center the given JFrame on the main screen real estate.
      *
@@ -82,24 +95,34 @@ public class WindowUtils {
      * @param frameToCenter the JFrame we want to center
      */
     public static void centerOnMainScreen(final Window frameToCenter) {
-        // next try catch is mandatory to catach null pointer excpetion that
-        // can occure on some virtual machine emulation (at least virtualBox)
-        try {
-            getScreenProperties();
+        // Using invokeAndWait to be in sync with this thread
+        // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
+        SwingUtils.invokeAndWaitEDT(new Runnable() {
+            /**
+             * Initializes Splash Screen in EDT
+             */
+            @Override
+            public void run() {
+                // Next try catch is mandatory to catach null pointer excpetion that
+                // can occure on some virtual machine emulation (at least virtualBox)
+                try {
+                    getScreenProperties();
 
-            // Dimension of the JFrame
-            Dimension frameSize = frameToCenter.getSize();
+                    // Dimension of the JFrame
+                    Dimension frameSize = frameToCenter.getSize();
 
-            // Get centering point
-            Point point = getCenteringPoint(frameSize);
+                    // Get centering point
+                    Point point = getCenteringPoint(frameSize);
 
-            frameToCenter.setLocation(point);
+                    frameToCenter.setLocation(point);
 
-            _logger.debug("The window has been centered");
+                    _logger.debug("The window has been centered");
 
-        } catch (NullPointerException npe) {
-            _logger.warn("Could not center window");
-        }
+                } catch (NullPointerException npe) {
+                    _logger.warn("Could not center window");
+                }
+            }
+        });
     }
 
     /**
@@ -108,8 +131,8 @@ public class WindowUtils {
      * @return centered point
      * @throws NullPointerException on some platform (virtual box)
      */
-    public static Point getCenteringPoint(final Dimension frameDimension)
-            throws NullPointerException {
+    public static Point getCenteringPoint(final Dimension frameDimension) throws NullPointerException {
+
         getScreenProperties();
 
         int x = (_screenWidth - frameDimension.width) / 2;
@@ -170,6 +193,85 @@ public class WindowUtils {
 
         rootPane.registerKeyboardAction(actionListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
         rootPane.registerKeyboardAction(actionListener, metaWStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    }
+
+    /**
+     * Restore, then automatically save window size changes.
+     * @param frame the frame to monitor.
+     * @param key the frame identifier.
+     */
+    public static void rememberWindowSize(final JFrame frame, final String key) {
+
+        // Restore dimension from preferences
+        final Dimension loadedDimension = SessionSettingsPreferences.loadDimension(key);
+        // Using invokeAndWait to be in sync with this thread :
+        // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
+        SwingUtils.invokeAndWaitEDT(new Runnable() {
+            /**
+             * Initializes Splash Screen in EDT
+             */
+            @Override
+            public void run() {
+                if (loadedDimension == null) {
+                    frame.pack();
+                } else {
+                    getScreenProperties();
+                    frame.setSize(getMaximumArea(loadedDimension));
+                }
+            }
+        });
+
+        // Triggered once timer definitly expires
+        final ActionListener frameSizeChangedAction = new ActionListener() {
+            // Weak to let frame deallocation occure gracefully
+            private final WeakReference<JFrame> _weakFrame = new WeakReference<JFrame>(frame);
+            private final String _key = key;
+
+            public void actionPerformed(ActionEvent evt) {
+
+                final JFrame frame = _weakFrame.get();
+                if (frame == null) {
+                    return;
+                }
+
+                _logger.debug("Archive frame[" + _key + "] size = " + frame.getSize() + ".");
+                SessionSettingsPreferences.storeDimension(_key, frame.getSize());
+            }
+        };
+
+        final ComponentListener frameSizeListener = new ComponentListener() {
+            private Timer _timer = new Timer(1000, frameSizeChangedAction); // 1 second grace periods
+
+            {
+                _timer.setRepeats(false);
+            }
+
+            public void componentResized(ComponentEvent e) {
+                e.getComponent().getSize();
+
+                // Start timer once
+                if (!_timer.isRunning()) {
+                    _timer.start();
+                    return;
+                }
+
+                // Or restart it until there is no more resizing events for at least the timer duration
+                _timer.restart();
+            }
+
+            public void componentMoved(ComponentEvent e) {
+                // No op
+            }
+
+            public void componentShown(ComponentEvent e) {
+                // No op
+            }
+
+            public void componentHidden(ComponentEvent e) {
+                // No op
+            }
+        };
+        frame.addComponentListener(frameSizeListener);
     }
 
     /**

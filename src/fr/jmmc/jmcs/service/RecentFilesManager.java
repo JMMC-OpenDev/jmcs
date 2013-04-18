@@ -27,7 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.service;
 
-import fr.jmmc.jmcs.data.preference.FileChooserPreferences;
+import fr.jmmc.jmcs.data.preference.SessionPersistencePreferences;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.util.collection.FixedSizeLinkedHashMap;
 import java.awt.event.ActionEvent;
@@ -248,7 +248,7 @@ public final class RecentFilesManager {
      */
     private void populateMenuFromPreferences() {
 
-        final List<String> recentFilePaths = FileChooserPreferences.getRecentFilePaths();
+        final List<String> recentFilePaths = SessionPersistencePreferences.getRecentFilePaths();
         if (recentFilePaths == null) {
             _logger.warn("No recent file path found.");
             return;
@@ -273,6 +273,6 @@ public final class RecentFilesManager {
         final List<String> pathsList = new ArrayList<String>(_repository.keySet());
 
         // Put this to prefs
-        FileChooserPreferences.setRecentFilePaths(pathsList);
+        SessionPersistencePreferences.setRecentFilePaths(pathsList);
     }
 }

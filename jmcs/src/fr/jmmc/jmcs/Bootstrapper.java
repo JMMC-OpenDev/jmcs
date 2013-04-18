@@ -32,6 +32,7 @@ import com.apple.eawt.QuitResponse;
 import fr.jmmc.jmcs.App.ApplicationState;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
+import fr.jmmc.jmcs.data.preference.SessionSettingsPreferences;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.SplashScreen;
@@ -42,6 +43,7 @@ import fr.jmmc.jmcs.gui.task.TaskSwingWorkerExecutor;
 import fr.jmmc.jmcs.gui.util.MacOSXAdapter;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
@@ -352,6 +354,7 @@ public final class Bootstrapper {
         // Using invokeAndWait to be in sync with this thread :
         // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
         SwingUtils.invokeAndWaitEDT(new Runnable() {
+            private static final String MAIN_FRAME_DIMENSION_KEY = "___JMCS_INTERNAL_MAIN_FRAME_DIMENSION";
             /**
              * Initializes Splash Screen in EDT
              */
@@ -380,13 +383,18 @@ public final class Bootstrapper {
 
                 // Define the JFrame associated to the application which will get the JMenuBar
                 final JFrame frame = App.getFrame();
+                if (frame == null) {
+                    return;
+                }
                 // Use OSXAdapter on the frame
                 macOSXRegistration(frame);
                 // Create menus including the Interop menu (SAMP required)
                 frame.setJMenuBar(new MainMenuBar());
-
-                // Set application frame common properties
+                // Set application frame ideal size
                 frame.pack();
+                // Restore, then automatically save window size changes
+                WindowUtils.rememberWindowSize(frame, MAIN_FRAME_DIMENSION_KEY);
+                frame.setVisible(true);
             }
         });
 
@@ -538,6 +546,9 @@ public final class Bootstrapper {
      * Internal: Stop services
      */
     private static void ___internalStop() {
+
+        // Save session settings if needed
+        SessionSettingsPreferences.saveToFileIfNeeded();
 
         // Stop the job runner (if any)
         LocalLauncher.shutdown();

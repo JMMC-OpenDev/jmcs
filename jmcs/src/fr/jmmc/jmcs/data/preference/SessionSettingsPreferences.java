@@ -45,12 +45,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Laurent BOURGES, Sylvain LAFRASSE.
  */
-public final class SessionPersistencePreferences extends Preferences {
+public final class SessionSettingsPreferences extends Preferences {
 
     /** Singleton instance */
-    private static SessionPersistencePreferences _singleton = null;
+    private static SessionSettingsPreferences _singleton = null;
     /** Logger */
-    private static final Logger _logger = LoggerFactory.getLogger(SessionPersistencePreferences.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(SessionSettingsPreferences.class.getName());
     /** File name prefix */
     private static final String FILENAME_PREFIX = "fr.jmmc.jmcs.session_settings.";
     /** File name suffix */
@@ -65,7 +65,7 @@ public final class SessionPersistencePreferences extends Preferences {
     /**
      * Private constructor that must be empty.
      */
-    private SessionPersistencePreferences() {
+    private SessionSettingsPreferences() {
         super(false); // No update notifications
     }
 
@@ -73,13 +73,13 @@ public final class SessionPersistencePreferences extends Preferences {
      * Return the singleton instance of SessionPersistencePreferences.
      * @return the singleton instance
      */
-    synchronized static SessionPersistencePreferences getInstance() {
+    synchronized static SessionSettingsPreferences getInstance() {
         // Build new reference if singleton does not already exist
         // or return previous reference
         if (_singleton == null) {
             _logger.debug("SessionPersistencePreferences.getInstance()");
             // disable notifications:
-            _singleton = new SessionPersistencePreferences();
+            _singleton = new SessionSettingsPreferences();
             // enable future notifications:
             _singleton.setNotify(true);
         }
@@ -221,7 +221,7 @@ public final class SessionPersistencePreferences extends Preferences {
         }
 
         // Try to store paths list to preference
-        final SessionPersistencePreferences instance = getInstance();
+        final SessionSettingsPreferences instance = getInstance();
         try {
             instance.setPreference(RECENT_FILE_KEY, paths);
         } catch (PreferencesException pe) {
@@ -303,7 +303,7 @@ public final class SessionPersistencePreferences extends Preferences {
      */
     public static void main(String[] args) {
         try {
-            final SessionPersistencePreferences instance = SessionPersistencePreferences.getInstance();
+            final SessionSettingsPreferences instance = SessionSettingsPreferences.getInstance();
             instance.setPreference("test", new Dimension(123, 456));
             instance.saveToFile();
             instance.setPreference("test", new Dimension(0, 0));

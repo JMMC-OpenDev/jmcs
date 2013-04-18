@@ -95,7 +95,7 @@ public class Main extends App {
         _openAction = openAction();
 
         // Buttons
-        _openBrowserButton = new JButton(openJMcsWebSite());
+        _openBrowserButton = new JButton(openJMcsWebSiteAction());
         _testDismissableMessagePane = new JButton(dismissableMessagePaneAction());
 
         final Container framePanel = getFramePanel();
@@ -107,19 +107,18 @@ public class Main extends App {
         framePanel.add(_openBrowserButton, BorderLayout.NORTH);
         framePanel.add(_testDismissableMessagePane, BorderLayout.CENTER);
         framePanel.add(new StatusBar(), BorderLayout.SOUTH);
-
-        // Center main window on the screen
-        WindowUtils.centerOnMainScreen(getFrame());
     }
 
     /** Execute application body */
     @Override
     protected void execute() {
+
+        // Center main window on the screen
+        WindowUtils.centerOnMainScreen(getFrame());
+
         StatusBar.show("Application ready.");
         _logger.info("Execute application body");
 
-        // Show the frame
-        getFrame().setVisible(true);
         RecentFilesManager.addFile(new File("/Users/lafrasse/test.scvot"));
 
         try {
@@ -158,7 +157,7 @@ public class Main extends App {
         return true;
     }
 
-    /** application cleanup */
+    /** Application cleanup */
     @Override
     protected void cleanup() {
         _openBrowserButton = null;
@@ -168,7 +167,7 @@ public class Main extends App {
     }
 
     /** Open help view action */
-    private Action openJMcsWebSite() {
+    private Action openJMcsWebSiteAction() {
         return new AbstractAction("Open jMCS Web Site") {
             private static final long serialVersionUID = 1L;
 

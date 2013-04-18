@@ -52,11 +52,15 @@ public final class SessionPersistencePreferences extends Preferences {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(SessionPersistencePreferences.class.getName());
     /** File name prefix */
-    private static final String FILENAME_PREFIX = "fr.jmmc.jmcs.session_persistence.";
+    private static final String FILENAME_PREFIX = "fr.jmmc.jmcs.session_settings.";
     /** File name suffix */
     private static final String FILENAME_SUFFIX = ".properties";
-    /** Recent file prefix */
-    private static final String RECENT_FILE_PREFIX = "recent_files.";
+    /** Recent directory for MIME type preference key prefix */
+    private static final String RECENT_DIRECTORY_PREFIX = "recent_directory_for_MIME_type.";
+    /** Recent file list preference key */
+    private static final String RECENT_FILE_KEY = "recent_files";
+    /** Dimension preference key prefix */
+    private static final String DIMENSION_PREFIX = "dimension.";
 
     /**
      * Private constructor that must be empty.
@@ -102,11 +106,11 @@ public final class SessionPersistencePreferences extends Preferences {
         final String defaultDirectory = getDefaultDirectory();
 
         for (MimeType mimeType : MimeType.values()) {
-            setDefaultPreference(mimeType.getId(), defaultDirectory);
+            setDefaultPreference(computeMimeTypeRecentDirectoryKey(mimeType), defaultDirectory);
         }
 
         final List<String> emptyList = Collections.emptyList();
-        setDefaultPreference(RECENT_FILE_PREFIX, emptyList);
+        setDefaultPreference(RECENT_FILE_KEY, emptyList);
     }
 
     /**
@@ -152,7 +156,7 @@ public final class SessionPersistencePreferences extends Preferences {
         if (mimeType == null) {
             return getDefaultDirectory();
         }
-        return getInstance().getPreference(mimeType.getId());
+        return getInstance().getPreference(computeMimeTypeRecentDirectoryKey(mimeType));
     }
 
     /**
@@ -161,18 +165,25 @@ public final class SessionPersistencePreferences extends Preferences {
      * @param path file path to an existing directory
      */
     public static void setCurrentDirectoryForMimeType(final MimeType mimeType, final String path) {
-        if (mimeType != null && path != null) {
-            final String oldPath = getLastDirectoryForMimeTypeAsPath(mimeType);
-            if (!path.equals(oldPath)) {
-                final SessionPersistencePreferences instance = getInstance();
-                try {
-                    instance.setPreference(mimeType.getId(), path);
-                    instance.saveToFile();
-                } catch (PreferencesException pe) {
-                    _logger.warn("Saving SessionPersistencePreferences failure:", pe);
-                }
-            }
+
+        if (mimeType == null || path == null) {
+            return;
         }
+
+        final String oldPath = getLastDirectoryForMimeTypeAsPath(mimeType);
+        if (path.equals(oldPath)) {
+            return;
+        }
+
+        try {
+            getInstance().setPreference(computeMimeTypeRecentDirectoryKey(mimeType), path);
+        } catch (PreferencesException pe) {
+            _logger.warn("Saving SessionPersistencePreferences failure:", pe);
+        }
+    }
+
+    private static String computeMimeTypeRecentDirectoryKey(MimeType mimeType) {
+        return RECENT_DIRECTORY_PREFIX + mimeType.getId();
     }
 
     /**
@@ -183,7 +194,7 @@ public final class SessionPersistencePreferences extends Preferences {
         // Try to read paths list from preference
         List<String> paths = null;
         try {
-            paths = getInstance().getPreferenceAsStringList(RECENT_FILE_PREFIX);
+            paths = getInstance().getPreferenceAsStringList(RECENT_FILE_KEY);
         } catch (MissingPreferenceException mpe) {
             _logger.info("No recent files found.", mpe);
         } catch (PreferencesException pe) {
@@ -212,8 +223,7 @@ public final class SessionPersistencePreferences extends Preferences {
         // Try to store paths list to preference
         final SessionPersistencePreferences instance = getInstance();
         try {
-            instance.setPreference(RECENT_FILE_PREFIX, paths);
-            instance.saveToFile();
+            instance.setPreference(RECENT_FILE_KEY, paths);
         } catch (PreferencesException pe) {
             _logger.error("Could not store recent file list in preference", pe);
         }
@@ -225,17 +235,20 @@ public final class SessionPersistencePreferences extends Preferences {
      * @return the sought dimension if found, null otherwise.
      */
     public static Dimension loadDimension(final String key) {
+
         if (key == null) {
-            _logger.error("Null dimension key received");
+            _logger.warn("Null dimension key received");
             return null;
         }
+
         try {
-            return getInstance().getPreferenceAsDimension(key, true);
+            return getInstance().getPreferenceAsDimension(computeDimensionKey(key), true);
         } catch (MissingPreferenceException mpe) {
-            _logger.info("No dimension found for window key '{}'", key, mpe);
+            _logger.debug("No dimension found for window key '{}'", key, mpe);
         } catch (PreferencesException pe) {
             _logger.warn("Could not read dimension preference for window key '{}'", key, pe);
         }
+
         return null;
     }
 
@@ -244,21 +257,44 @@ public final class SessionPersistencePreferences extends Preferences {
      * @param key Unique string identifying a given dimension.
      * @param dimension the dimension to save.
      */
-    public static void saveDimension(final String key, final Dimension dimension) {
+    public static void storeDimension(final String key, final Dimension dimension) {
+
         if (key == null) {
-            _logger.error("Null dimension key received");
+            _logger.warn("Null dimension key received");
             return;
         }
         if (dimension == null) {
-            _logger.error("Null dimension value received");
+            _logger.warn("Null dimension value received");
             return;
         }
+
         try {
-            getInstance().setPreference(key, dimension);
+            getInstance().setPreference(computeDimensionKey(key), dimension);
         } catch (PreferencesException pe) {
             _logger.error("Could not store dimension '{}' for key '{}' in preference", dimension, key, pe);
         }
-        _logger.info("saveDimension('" + key + "') = " + dimension);
+
+        _logger.debug("saveDimension('" + key + "') = " + dimension);
+    }
+
+    private static String computeDimensionKey(final String key) {
+        return DIMENSION_PREFIX + key;
+    }
+
+    /**
+     * Try to save the session settings to file if needed.
+     */
+    public static void saveToFileIfNeeded() {
+
+        if (_singleton == null) {
+            return;
+        }
+
+        try {
+            _singleton.saveToFile();
+        } catch (PreferencesException ex) {
+            _logger.warn("Could not save session settings", ex);
+        }
     }
 
     /**

@@ -913,7 +913,7 @@ public abstract class Preferences extends Observable {
         final Double width = getPreferenceAsDouble(DIMENSION_WIDTH_PREFIX + preferenceName, ignoreMissing);
         final Double height = getPreferenceAsDouble(DIMENSION_HEIGHT_PREFIX + preferenceName, ignoreMissing);
 
-        if ((width == Double.NaN) || (height == Double.NaN)) {
+        if (width.isNaN() || height.isNaN()) {
             return null;
         }
 

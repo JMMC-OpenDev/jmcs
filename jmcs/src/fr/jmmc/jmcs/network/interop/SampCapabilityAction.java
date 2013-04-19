@@ -29,7 +29,6 @@ package fr.jmmc.jmcs.network.interop;
 
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.component.StatusBar;
-import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 import javax.swing.Action;
@@ -90,8 +89,8 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     }
 
     /**
-     * Perform defered initialization i.e. executed after the application startup.
-     * This method must be overriden in sub classes
+     * Perform deferred initialization i.e. executed after the application startup.
+     * This method must be override in sub classes
      */
     @Override
     protected void performDeferedInitialization() {
@@ -149,11 +148,6 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * Updates linked JMenu entry to offer all capable clients, plus broadcast.
      */
     private void updateMenuAndActionAfterSubscribedClientChange() {
-
-        // TODO : remove when code is clean !
-        if (!SwingUtils.isEDT()) {
-            _logger.error("invalid thread : use EDT", new Throwable());
-        }
 
         // Disabled until a client for the given capabily registers to the hub
         setEnabled(false);

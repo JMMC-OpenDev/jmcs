@@ -65,7 +65,6 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="iconlink" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="faqlink" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="rsslink" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="releaselink" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="documentationlink" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -114,8 +113,6 @@ public class ApplicationData {
     protected String faqlink;
     @XmlAttribute(name = "rsslink")
     protected String rsslink;
-    @XmlAttribute(name = "releaselink")
-    protected String releaselink;
     @XmlAttribute(name = "documentationlink")
     protected String documentationlink;
 
@@ -537,34 +534,6 @@ public class ApplicationData {
 
     public boolean isSetRsslink() {
         return (this.rsslink!= null);
-    }
-
-    /**
-     * Gets the value of the releaselink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getReleaselink() {
-        return releaselink;
-    }
-
-    /**
-     * Sets the value of the releaselink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setReleaselink(String value) {
-        this.releaselink = value;
-    }
-
-    public boolean isSetReleaselink() {
-        return (this.releaselink!= null);
     }
 
     /**

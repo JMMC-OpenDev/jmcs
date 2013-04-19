@@ -250,11 +250,6 @@ public final class SampManager {
             meta.put(SampMetaData.RSS_URL.id(), newsUrl);
         }
 
-        final String releaseNoteUrl = applicationDataModel.getReleaseNotesLinkValue();
-        if (releaseNoteUrl != null) {
-            meta.put(SampMetaData.RELEASENOTES_URL.id(), releaseNoteUrl);
-        }
-
         final String faq = applicationDataModel.getFaqLinkValue();
         if (faq != null) {
             meta.put(SampMetaData.FAQ_URL.id(), faq);

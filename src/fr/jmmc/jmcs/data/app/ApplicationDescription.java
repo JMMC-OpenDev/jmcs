@@ -205,8 +205,6 @@ public final class ApplicationDescription {
     private String _hotNewsRSSFeedLink = null;
     /** FAQ URL */
     private String _faqLink = null;
-    /** Release Notes URL */
-    private String _releaseNotesLink = null;
 
     /**
      * Public constructor
@@ -269,9 +267,6 @@ public final class ApplicationDescription {
         }
         if (_applicationData.isSetRsslink()) {
             _hotNewsRSSFeedLink = _applicationData.getRsslink();
-        }
-        if (_applicationData.isSetReleasenotes()) {
-            _releaseNotesLink = _applicationData.getReleaselink();
         }
 
         _logger.debug("Application data model loaded.");
@@ -388,16 +383,6 @@ public final class ApplicationDescription {
         _logger.debug("MainWebPageURL: {}", mainWebPageURL);
 
         return mainWebPageURL;
-    }
-
-    /**
-
-     * @return the application release notes URL if any, null otherwise.
-     */
-    public String getReleaseNotesLinkValue() {
-        _logger.debug("ReleaseNotesLink: {}", _releaseNotesLink);
-
-        return _releaseNotesLink;
     }
 
     /**

@@ -28,6 +28,7 @@
 package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
+import fr.jmmc.jmcs.data.app.model.Package;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.service.BrowserLauncher;
 import fr.jmmc.jmcs.util.ImageUtils;
@@ -289,15 +290,12 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         final String jMcsDescription = data.getTextValue();
         generatedHtml.append("<a href='").append(jMcsUrl).append("'>").append(jMcsName).append("</a>");
         generatedHtml.append(" : <i>").append(jMcsDescription).append("</i><br>");
-
-        // Generate a HTML string with each package informations
-        final List<String> packagesInfo = _applicationDataModel.getPackagesInfo();
-
-        /* We have a step of 3 because for each package we have a name, a link and a description */
-        for (int i = 0; i < packagesInfo.size(); i += 3) {
-            final String name = packagesInfo.get(i);
-            final String link = packagesInfo.get(i + 1);
-            final String description = packagesInfo.get(i + 2);
+        // For each dependency
+        final List<Package> packageList = _applicationDataModel.getPackages();
+        for (fr.jmmc.jmcs.data.app.model.Package p : packageList) {
+            final String name = p.getName();
+            final String link = p.getLink();
+            final String description = p.getDescription();
 
             // We check if there is a link
             if (link == null) {

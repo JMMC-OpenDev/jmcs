@@ -65,7 +65,7 @@ Description: Store jMCS Application meta data.
     </xsd:annotation>
 
 
-<!-- Elements -->
+    <!-- Elements -->
 
     <xsd:element name="ApplicationData" type="ApplicationData">
         <xsd:annotation>
@@ -76,7 +76,7 @@ Description: Store jMCS Application meta data.
     </xsd:element>
 
 
-<!-- Class Types -->
+    <!-- Class Types -->
 
     <xsd:complexType name="ApplicationData">
         <xsd:annotation>
@@ -223,15 +223,6 @@ Description: Store jMCS Application meta data.
             <xsd:annotation>           
                 <xsd:documentation>
                     Application RSS URL
-                </xsd:documentation>
-            </xsd:annotation>
-        </xsd:attribute>
-
-        <!-- TODO : Use URL type -->
-        <xsd:attribute name="releaselink" type="xsd:string" use="optional">
-            <xsd:annotation>           
-                <xsd:documentation>
-                    Application Release Note URL
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

@@ -438,7 +438,7 @@ public class MainMenuBar extends JMenuBar {
         helpMenu.add(InternalActionFactory.showAcknowledgmentAction());
 
         final boolean isHotNewsAvailable = _applicationDataModel.getHotNewsRSSFeedLinkValue() != null;
-        final boolean isReleaseNotesAvailable = _applicationDataModel.getReleaseNotesLinkValue() != null;
+        final boolean isReleaseNotesAvailable = !_applicationDataModel.getReleases().isEmpty();
         final boolean isFaqAvailable = _applicationDataModel.getFaqLinkValue() != null;
         final boolean shouldAddSeparator = (isHotNewsAvailable || isReleaseNotesAvailable || isFaqAvailable);
         if (shouldAddSeparator) {

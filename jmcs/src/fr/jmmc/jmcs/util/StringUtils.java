@@ -35,8 +35,7 @@ import java.util.regex.Pattern;
  */
 public final class StringUtils {
 
-    // TODO: use Pattern.compile to compile regexp once for all:
-    /** empty String constant '' */
+    /** Empty String constant '' */
     public final static String STRING_EMPTY = "";
     /** String constant containing 1 space character ' ' */
     public final static String STRING_SPACE = " ";

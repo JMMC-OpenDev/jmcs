@@ -5,11 +5,11 @@
 #  REPLACE_BY_PROJECT_HEADER
 #
 # This script retrieves modules of the GIVEN project
-# The list of projects and their associated modules is defined inside this file 
+# The list of projects and their associated modules is defined inside this file
 # use -h version to get list of options
-# 
+#
 # In its first versions, this script is deployed in several modules. This is
-# not the best solution, but allows projects to live independently. We may 
+# not the best solution, but allows projects to live independently. We may
 # imagine in the future other way to help modules retrieval.
 # So this script must be synchronized ( manually first ) between the following modules:
 # - MCS//mkf/src/mkfRepoUtil.sh (master reference)
@@ -21,7 +21,7 @@ JMMC_SVNROOT=https://svn.jmmc.fr/jmmc-sw
 IPAG_SVNROOT=https://forge.osug.fr/svn/ipag-sw
 SCRIPTNAME=$(basename $0)
 
-# Print usage 
+# Print usage
 function printUsage ()
 {
     echo -e "Usage: $SCRIPTNAME  [-d outputDir] [-h] [-n] [-m] [-v version] [-r revision] <info<.versions>|checkout|export|install|package|update|tag|list> <PROJECT> [... <PROJECT_N>]"
@@ -54,7 +54,7 @@ function getModules ()
     modules=$*
     prjSvnroot=$(getProjectSvnBaseUrl $project)
 
-    case "${svnOptions}" in 
+    case "${svnOptions}" in
         update)
         CMD="${SVN_COMMAND} ${svnOptions}" ;;
         *)
@@ -76,33 +76,33 @@ function getModules ()
             echo "ERROR: directory '$moduleName' already exists."
             exit 1
         fi
-        case "${svnOptions}" in 
+        case "${svnOptions}" in
             update)
                 MODULE_PATH="${moduleName}" ;;
             *)
                 MODULE_PATH="${prjSvnroot}/${module}${revision}" ;;
         esac
-        CMD="$CMD $MODULE_PATH" 
+        CMD="$CMD $MODULE_PATH"
         echo " '$MODULE_PATH' ..."
     done
 
     # export/checkout in current dir
-    case "${svnOptions}" in 
+    case "${svnOptions}" in
             update) ;;
             *)
             CMD="$CMD $OUTDIR" ;;
     esac
- 
+
     # executing previously built command:
-    $CMD 
+    $CMD
     if [ $? != 0 ]
     then
-        echo -e "\nERROR: '$CMD' failed ... \n"; 
+        echo -e "\nERROR: '$CMD' failed ... \n";
         #tail "$logFile"
         #echo -e "See log file '$logFile' for details."
         exit 1;
     fi
-    
+
 }
 
 function displayProjectVersions()
@@ -110,11 +110,11 @@ function displayProjectVersions()
     project="$1"
     prjSvnroot=$(getProjectSvnBaseUrl $1)
     svnTags=$(${SVN_COMMAND} list ${revisionOption} $prjSvnroot/$(getProjectSvnDir $project)/tags)
-    
+
     ALLTAGS=$(echo $svnTags | sed "s@/@@g")
     TAGPREFIX=$(getProjectTagPrefix $project)
     VERSIONPREFIX=${TAGPREFIX%%_V*}
-    if [ -n "$VERSIONPREFIX" ] 
+    if [ -n "$VERSIONPREFIX" ]
     then
       TAGS=$(for t in $ALLTAGS ; do echo -n $t |grep "${VERSIONPREFIX}_" ; done)
       echo -n $TAGS
@@ -122,7 +122,7 @@ function displayProjectVersions()
     echo -n $ALLTAGS
     fi
     echo
-    
+
 }
 
 function displayModules()
@@ -197,14 +197,14 @@ function packageProject()
     packageProjectHook
     echo "Package finished."
     echo
-    cd "$MYOLDPWD" 
+    cd "$MYOLDPWD"
 }
 
 function packageProjectHook()
 {
     # now we are in then $project/PACKAGE dir where modules have been exported
     echo " - apply last packaging steps..."
-    if [ $project == "WISARD" ] ; then 
+    if [ $project == "WISARD" ] ; then
         echo "     Remove optimpack sources"
         rm -rf wisard/optimpack &>/dev/null
         echo "     Update doc and remove test directories"
@@ -217,7 +217,7 @@ function packageProjectHook()
         cd ..
         DIRNAME=PACKAGE
     fi
-       
+
     VERSIONED_DIR="$project-$version"
     mv "$DIRNAME" "$VERSIONED_DIR"
     tar czf "$VERSIONED_DIR".tgz $VERSIONED_DIR
@@ -253,7 +253,7 @@ function tagModules(){
 # This function contains the description of the svn repository and modules for a given project and version
 # it returns on the output the svnroot followed by the list of modules paths
 # TODO complete with full project list if they require to be packed or handled automatically by scripts
-supportedProjects="AMBER AppLauncher ASPRO2 ASPRO2-conf LITpro MCS OIFitsExplorer SearchCal WISARD YOCO "
+supportedProjects="AMBER AppLauncher ASPRO2 ASPRO2-conf LITpro MCS OIFitsExplorer SearchCal WISARD YOCO JAE"
 function getProjectDesc()
 {
     project="${1}"
@@ -261,7 +261,7 @@ function getProjectDesc()
 
     # Warning use shell {} for expasion but don't include them into quoted string
     case "${project}" in
-        AMBER  ) 
+        AMBER  )
             echo "${JMMC_SVNROOT} AMBER/${version}/amdlib " ;;
         ASPRO2 )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
@@ -272,7 +272,7 @@ function getProjectDesc()
         AppLauncher )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs "
             echo AppLauncher/${version}/{smptest,smprsc,smprun} ;;
-        LITpro ) 
+        LITpro )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
             echo oiTools/${version}/{oitools,oiexplorer-core}
             echo LITpro/${version}/mfgui ;;
@@ -282,13 +282,16 @@ function getProjectDesc()
         OIFitsExplorer )
             echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
             echo  oiTools/${version}/{oitools,oiexplorer-core,oiexplorer};;
-        SearchCal ) 
+        SearchCal )
             echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
             echo SearchCal/${version}/{simcli,alx,vobs,sclsvr,sclws,sclgui} ;;
         WISARD )
             echo "${JMMC_SVNROOT} WISARD/${version}/wisard " ;;
         YOCO )
             echo "https://forge.osug.fr/svn/ipag-sw YOCO/${version}/yoco " ;;
+        JAE )
+            echo -n "${JMMC_SVNROOT} MCS/${version}/jmcs "
+            echo MCS/${version}/jae ;;
         * )
           return 1 ;;
     esac
@@ -311,7 +314,7 @@ function getProjectSvnDir(){
         OIFitsExplorer )  echo -n "oiTools" ;;
         ASPRO2-conf )  echo -n "ASPRO2" ;;
         *) echo -n "$project" ;;
-    esac 
+    esac
 }
 
 
@@ -339,7 +342,7 @@ function getProjectName(){
         AMBER )  echo -n "Amber DRS" ;;
         MCS ) echo -n "Mariotti Common Software" ;;
         *) echo -n "$project" ;;
-    esac 
+    esac
 }
 function getProjectInstallationAccount(){
     project="${1}"
@@ -348,7 +351,7 @@ function getProjectInstallationAccount(){
         SearchCal )  echo -n "~sclws" ;;
         WISARD | YOCO | AMBER )  echo -n "N.A." ;;
         *) echo -n "~swmgr" ;;
-    esac 
+    esac
 }
 
 function getProjectTagPrefix(){
@@ -361,16 +364,16 @@ function getProjectTagPrefix(){
         ASPRO2 | LITpro ) echo -n "$(echo $project | tr [a-z] [A-Z] )"${versionSuffix} ;;
         ASPRO2-conf ) echo -n "$(echo ASPRO2-CONF | tr [a-z] [A-Z] )_VYYYY.MM<DD>" ;;
         * ) echo -n "${project}${versionSuffix}" ;;
-    esac 
+    esac
 }
 
 
-# Set default value for 
-# - development version 
-# - svn revision 
+# Set default value for
+# - development version
+# - svn revision
 # - output directory
-# - svn command 
-# - installation target 
+# - svn command
+# - installation target
 version="trunk";
 revision="";
 revisionOption="";
@@ -384,17 +387,17 @@ while getopts "d:hnmv:r:" option
     # : after option shows it will have an argument passed with it.
 do
     case $option in
-        d ) 
+        d )
             outputDir="${OPTARG}";;
-        h ) 
+        h )
             printUsage ;;
         n )
             SVN_COMMAND="echo svn";;
         m )
             MAN_CMD_DURING_INSTALL="man";;
-        v ) 
+        v )
             version="${tagPrefix}${OPTARG}";;
-        r ) 
+        r )
             revisionOption="-r ${OPTARG}"
             revision="@${OPTARG}";;
         * ) # Unknown option
@@ -421,7 +424,7 @@ fi
 if [ $NB_ARGS -lt 2 ]
 then
     echo "ERROR: Missing action or project"
-    printUsage 
+    printUsage
     exit 1
 fi
 
@@ -436,12 +439,12 @@ fi
 
 for project in $userProjects
 do
-    # Retrieve svnroot and module list for given project 
+    # Retrieve svnroot and module list for given project
     # return error if no module is found
     prjElements=( $(getProjectDesc "${project}" "${version}") )
     modules=${prjElements[*]:1}
     if [ -z "$modules" ]
-    then 
+    then
         echo "ERROR: Project '${project}' is not supported"
         echo "Supported projects are : ${supportedProjects}"
         exit 1

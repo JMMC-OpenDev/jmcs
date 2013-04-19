@@ -31,7 +31,6 @@ import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.app.model.ApplicationData;
 import fr.jmmc.jmcs.data.app.model.Company;
 import fr.jmmc.jmcs.data.app.model.Compilation;
-import fr.jmmc.jmcs.data.app.model.Dependences;
 import fr.jmmc.jmcs.data.app.model.Menubar;
 import fr.jmmc.jmcs.data.app.model.Package;
 import fr.jmmc.jmcs.data.app.model.Program;
@@ -45,7 +44,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -118,7 +116,6 @@ public final class ApplicationDescription {
     public static ApplicationDescription loadDescription(final String filePath) throws IllegalStateException {
         // TODO: fix that code : To be discussed
         final URL fileURL = ResourceUtils.getResource(filePath);
-
         return new ApplicationDescription(fileURL);
     }
 
@@ -462,29 +459,6 @@ public final class ApplicationDescription {
      */
     public List<Package> getPackages() {
         return _applicationData.getDependences().getPackages();
-    }
-
-    /**
-     * Return the informations about "packages" taken from the XML file
-     * @return vector template [name, link, description], [name, link, description]...
-     */
-    public List<String> getPackagesInfo() {
-
-        // TODO: API: use objects not List<string>
-        Dependences dependences = _applicationData.getDependences();
-
-        final List<String> packagesInfo = new ArrayList<String>();
-
-        // For each package
-        for (fr.jmmc.jmcs.data.app.model.Package p : dependences.getPackages()) {
-            packagesInfo.add(p.getName());
-            packagesInfo.add(p.getLink());
-            packagesInfo.add(p.getDescription());
-        }
-
-        _logger.debug("Packages informations: ", packagesInfo);
-
-        return packagesInfo;
     }
 
     /**

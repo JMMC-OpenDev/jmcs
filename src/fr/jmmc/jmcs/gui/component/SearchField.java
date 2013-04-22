@@ -35,7 +35,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -94,20 +93,24 @@ public class SearchField extends JTextField {
     private final String _placeholderText;
     /** Store the previous entered text */
     private String _previousText = "";
-    /** Store shape object representing the search button area */
-    private Shape _searchButtonShape = null;
     /** Store whether the mouse is over the cancel cross */
     private boolean _armedCancelButton = false;
-    /** Store optional shape object representing the cancel button area */
-    private Shape _cancelButtonShape = null;
     /** Store whether the mouse is over the options button */
     private boolean _armedOptionsButton = false;
-    /** Store optional shape object representing the options button area */
-    private Shape _optionsButtonShape = null;
     /** Store the pop up men for options */
     private JPopupMenu _optionsPopupMenu = null;
-    /** Store the rounded rectangle area of this search field */
-    private Shape _roundedInnerArea = null;
+    /** Store shape object representing the search button area */
+    private Rectangle _searchButtonShape = null;
+    /** Store optional shape object representing the cancel button area */
+    private Ellipse2D.Double _cancelButtonShape = null;
+    /** Store optional shape object representing the options button area */
+    private Rectangle _optionsButtonShape = null;
+    /** Store the rounded rectangle inner area of this search field */
+    private final RoundRectangle2D.Double _roundedInnerArea = new RoundRectangle2D.Double();
+    /** Store the rounded rectangle outer area of this search field */
+    private final RoundRectangle2D.Double _outerArea = new RoundRectangle2D.Double();
+    /** Store the rounded rectangle inner area of this search field */
+    private final RoundRectangle2D.Double _innerArea = new RoundRectangle2D.Double();
 
     /**
      * Creates a new SearchField object with options.
@@ -152,18 +155,18 @@ public class SearchField extends JTextField {
             putClientProperty("JTextField.variant", "search");
             putClientProperty("JTextField.FindAction",
                     new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            postActionEvent();
-                        }
-                    });
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    postActionEvent();
+                }
+            });
             putClientProperty("JTextField.CancelAction",
                     new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            handleCancelEdit();
-                        }
-                    });
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    handleCancelEdit();
+                }
+            });
             if (_optionsPopupMenu != null) {
                 putClientProperty("JTextField.Search.FindPopup", _optionsPopupMenu);
             }
@@ -198,45 +201,56 @@ public class SearchField extends JTextField {
      */
     @Override
     protected void paintComponent(final Graphics g2) {
+        final long start = System.nanoTime();
+
         // On anything but Mac OS X
         if (!MACOSX_RUNTIME) {
             final int width = getWidth();
             final int height = getHeight();
 
             final Graphics2D g2d = (Graphics2D) g2;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
+            final Object savedAAHint = g2d.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
             final Color savedColor = g2d.getColor();
 
+            // force antialiasing On:
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // TODO: use buffered image caches to avoid drawing ops at each repaint (caret, mouse over ...)
+
             // Paint a rounded rectangle in the background surrounded by a black line.
-            final RoundRectangle2D outerArea = new RoundRectangle2D.Double(0d, 0d, width, height, height, height);
+            _outerArea.setRoundRect(0d, 0d, width, height, height, height);
             g2d.setColor(Color.LIGHT_GRAY);
-            g2d.fill(outerArea);
+            g2d.fill(_outerArea);
 
             g2d.setColor(Color.GRAY);
             g2d.fillRoundRect(0, -1, width, height, height, height);
 
             // inner area (text field):
-            final RoundRectangle2D innerArea = new RoundRectangle2D.Double(1d, 1d, width - 2d, height - 2d, height - 2d, height - 2d);
+            _innerArea.setRoundRect(1d, 1d, width - 2d, height - 2d, height - 2d, height - 2d);
             g2d.setColor(getBackground());
-            g2d.fill(innerArea);
+            g2d.fill(_innerArea);
 
             // define clip for the following line only:
-            g2.setClip(outerArea);
+            g2.setClip(_outerArea);
 
             g2d.setColor(Color.GRAY);
             g2d.drawLine(0, 1, width, 1);
 
             // define clip as smaller rounded rectangle (GTK and nimbus LAF):
-            _roundedInnerArea = new RoundRectangle2D.Double(3d, 3d, width - 6d, height - 6d, height - 6d, height - 6d);
+            _roundedInnerArea.setRoundRect(3d, 3d, width - 6d, height - 6d, height - 6d, height - 6d);
             g2.setClip(_roundedInnerArea);
 
             // restore g2d state:
             g2d.setColor(savedColor);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedAAHint);
         }
 
         // Now call the superclass behavior to paint the foreground.
         super.paintComponent(g2);
+
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("paintComponent() - duration: {} ms.", (System.nanoTime() - start) / 1e6d);
+        }
     }
 
     /**
@@ -343,6 +357,18 @@ public class SearchField extends JTextField {
         /** debug flag to draw shapes */
         private static final boolean DEBUG_SHAPES = false;
 
+        /* members */
+        /** arrow points (x coords) */
+        private final int[] arrowXPoints = new int[3];
+        /** arrow points (y coords) */
+        private final int[] arrowYPoints = new int[3];
+        /** rectangle area containing the options button */
+        private final Rectangle optionsButtonRect = new Rectangle();
+        /** rectangle area containing the search button */
+        private final Rectangle searchButtonRect = new Rectangle();
+        /** disk area containing the cancel button */
+        private final Ellipse2D.Double cancelButtonEllipse = new Ellipse2D.Double();
+
         /**
          * Constructor
          */
@@ -359,16 +385,19 @@ public class SearchField extends JTextField {
 
             final SearchField field = (SearchField) c;
             final Graphics2D g2d = (Graphics2D) g2;
+            final Object savedAAHint = g2d.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+            final Color savedColor = g2d.getColor();
+
+            // force antialiasing On:
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            final Color savedColor = g2d.getColor();
             if (DEBUG_SHAPES) {
                 g2d.setColor(Color.BLUE);
                 g2d.draw(new Rectangle(x, y, width, height));
             }
             final Color backgroundColor = field.getBackground();
 
-            // left = x = 30
+            // TODO: use buffered image caches to avoid drawing ops at each repaint (caret, mouse over ...)
 
             // Draw magnifying glass lens:
             final int diskL = 10;
@@ -395,42 +424,46 @@ public class SearchField extends JTextField {
                 g2d.setColor(_armedOptionsButton ? DISARMED_GRAY : Color.GRAY);
 
                 final int size = 4;
-
                 final int xOrigin = diskX + diskL + 3 + size;
                 final int yOrigin = y + height / 2 + 1;
-                final int[] xPoints = {xOrigin - size, xOrigin + size, xOrigin};
-                final int[] yPoints = {yOrigin - size, yOrigin - size, yOrigin + size};
-                g2d.fillPolygon(xPoints, yPoints, 3);
+                arrowXPoints[0] = xOrigin - size;
+                arrowYPoints[0] = yOrigin - size;
+                arrowXPoints[1] = xOrigin + size;
+                arrowYPoints[1] = yOrigin - size;
+                arrowXPoints[2] = xOrigin;
+                arrowYPoints[2] = yOrigin + size;
+                g2d.fillPolygon(arrowXPoints, arrowYPoints, arrowXPoints.length);
 
                 // add 1 pixel margin:
+                optionsButtonRect.setBounds(diskX - 1, diskY - 1, diskL + 2 + 2 * size + 2, diskL + 2);
                 _searchButtonShape = null;
-                _optionsButtonShape = new Rectangle(diskX - 1, diskY - 1, diskL + 2 + 2 * size + 2, diskL + 2);
+                _optionsButtonShape = optionsButtonRect;
                 if (DEBUG_SHAPES) {
                     g2d.setColor(Color.RED);
                     g2d.draw(_optionsButtonShape);
                 }
             } else {
                 // add 1 pixel margin:
-                _searchButtonShape = new Rectangle(diskX - 1, diskY - 1, diskL + 2, diskL + 2);
+                searchButtonRect.setBounds(diskX - 1, diskY - 1, diskL + 2, diskL + 2);
+                _searchButtonShape = searchButtonRect;
+                _optionsButtonShape = null;
                 if (DEBUG_SHAPES) {
                     g2d.setColor(Color.RED);
                     g2d.draw(_searchButtonShape);
                 }
-                _optionsButtonShape = null;
             }
 
             if (!_showingPlaceholderText && getText().length() != 0) {
                 // if NOT empty, draw the cancel cross
-
-                // right = x + width = 22
 
                 // Draw shaded disk
                 final int circleL = 14;
                 final int circleX = (x + width) + (22 - 5) - circleL;
                 final int circleY = y + ((height - circleL) / 2);
 
-                _cancelButtonShape = new Ellipse2D.Double(circleX, circleY, circleL, circleL);
-                g2d.setColor(_armedCancelButton ? Color.GRAY : DISARMED_GRAY);
+                cancelButtonEllipse.setFrame(circleX, circleY, circleL, circleL);
+                _cancelButtonShape = cancelButtonEllipse;
+                g2d.setColor(_armedCancelButton ? DISARMED_GRAY : Color.GRAY);
                 g2d.fill(_cancelButtonShape);
 
                 if (DEBUG_SHAPES) {
@@ -453,6 +486,7 @@ public class SearchField extends JTextField {
 
             // restore g2d state:
             g2d.setColor(savedColor);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedAAHint);
         }
     }
 

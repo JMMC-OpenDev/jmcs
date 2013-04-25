@@ -14,6 +14,7 @@ import java.util.Hashtable;
  */
 public enum Catalog {
 
+    /* keep ordering as follow (important for color association */
     ASCC_2_5("I/280", "I/280B", "ASCC-2.5", "All-sky Compiled Catalogue of 2.5 million stars"),
     USNO_B("I/284", "USNO-B", "The USNO-B1.0 Catalog"),
     CIO("II/225/catalog", "CIO", "Catalog of Infrared Observations, Edition 5"),
@@ -30,7 +31,8 @@ public enum Catalog {
     SB9("B/sb9/main", "SB9", "SB9: 9th Catalogue of Spectroscopic Binary Orbits"),
     WDS("B/wds/wds", "WDS", "The Washington Visual Double Star Catalog"),
     AKARI("II/297/irc", "AKARI", "AKARI/IRC mid-IR all-sky Survey (ISAS/JAXA, 2010)"),
-    HIP2("I/311/hip2", "HIP2", "Hipparcos, the New Reduction (van Leeuwen, 2007)");
+    HIP2("I/311/hip2", "HIP2", "Hipparcos, the New Reduction (van Leeuwen, 2007)"),
+    HIP1("I/239/hip_main", "HIP1", "	Hipparcos and Tycho Catalogues (ESA 1997)");
     /* members */
     /** Store the catalog CDS 'cryptic' reference */
     private final String _reference;

@@ -29,7 +29,7 @@ package fr.jmmc.jmcs.gui.component;
 
 import java.util.List;
 import javax.swing.AbstractListModel;
-import javax.swing.ComboBoxModel;
+import javax.swing.MutableComboBoxModel;
 
 /**
  * This custom implementation uses an existing List.
@@ -38,9 +38,8 @@ import javax.swing.ComboBoxModel;
  *  
  * @author Laurent BOURGES.
  */
-public final class GenericListModel<K> extends AbstractListModel implements ComboBoxModel {
-    // TODO could be nice to support MutableComboBoxModel (but didn't manage to make it work)
-    
+public final class GenericListModel<K> extends AbstractListModel implements MutableComboBoxModel {
+
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
 
@@ -205,19 +204,19 @@ public final class GenericListModel<K> extends AbstractListModel implements Comb
         _model.add(obj);
         fireIntervalAdded(this, index, index);
     }
-    
+
     /**
      * Adds the specified list of components to the end of this list.
      *
-     * @param   obj   the list of component to be added
+     * @param   objs   the list of component to be added
      * @see List#add(Object)
      */
     public void add(final List<K> objs) {
         final int index = size();
         for (K k : objs) {
-           _model.add(k); 
-        }        
-        fireIntervalAdded(this, index, index+objs.size());
+            _model.add(k);
+        }
+        fireIntervalAdded(this, index, index + objs.size());
     }
 
     /**
@@ -343,5 +342,30 @@ public final class GenericListModel<K> extends AbstractListModel implements Comb
     @Override
     public Object getSelectedItem() {
         return _selectedObject;
+    }
+
+    // implements javax.swing.MutableComboBoxModel
+    @Override
+    @SuppressWarnings("unchecked")
+    public void addElement(Object item) {
+        add((K) item);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void removeElement(Object obj) {
+        remove((K) obj);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void insertElementAt(Object item, int index) {
+        add(index, (K) item);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void removeElementAt(int index) {
+        remove(index);
     }
 }

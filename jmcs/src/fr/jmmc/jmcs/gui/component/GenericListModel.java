@@ -35,11 +35,12 @@ import javax.swing.ComboBoxModel;
  * This custom implementation uses an existing List.
  *
  * @param <K> type of elements in the List<K>
- *
+ *  
  * @author Laurent BOURGES.
  */
 public final class GenericListModel<K> extends AbstractListModel implements ComboBoxModel {
-
+    // TODO could be nice to support MutableComboBoxModel (but didn't manage to make it work)
+    
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
 
@@ -203,6 +204,20 @@ public final class GenericListModel<K> extends AbstractListModel implements Comb
         final int index = size();
         _model.add(obj);
         fireIntervalAdded(this, index, index);
+    }
+    
+    /**
+     * Adds the specified list of components to the end of this list.
+     *
+     * @param   obj   the list of component to be added
+     * @see List#add(Object)
+     */
+    public void add(final List<K> objs) {
+        final int index = size();
+        for (K k : objs) {
+           _model.add(k); 
+        }        
+        fireIntervalAdded(this, index, index+objs.size());
     }
 
     /**

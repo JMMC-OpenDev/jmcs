@@ -41,6 +41,15 @@
     <all-permissions/>
   </security>
   <resources>
+
+    <!--                                                                     -->  
+    <!--  WARNING :                                                          -->  
+    <!--  Please do not remove any jar entry until all applications          -->  
+    <!--  that depend on this common jnlp (beta and public)                  -->  
+    <!--  have been tested and released.                                     -->  
+    <!--                                                                     -->  
+    
+          
     <!-- Generated with 'xml sel -t -m "//package" -c "./preceding-sibling::comment()[1]" -e jar -a href -o "@SHARED@/" -v "./@jars" -b -b -n -n fr/jmmc/jmcs/resource/ApplicationData.xml'-->
 
     <!-- slf4j + JUL and JCL wrappers -->
@@ -64,6 +73,9 @@
     <!-- Documentation reader -->
     <jar href="@SHARED@/jhall.jar "/>
     
+    <!-- Swing Task management -->  	 	 
+    <jar href="@SHARED@/swing-worker-1.2.jar"/> 
+
     <!-- Mac OS X Desktop integration -->
     <jar href="@SHARED@/AppleJavaExtensions-1.6.jar"/>
     

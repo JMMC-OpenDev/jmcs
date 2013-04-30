@@ -209,7 +209,7 @@
 1 - 
 1 - miscDynBufReplaceBytesFromTo("Toujours ce", 11, 1, 9) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '43'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '1028'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf'... :) !!~~~@".
 1 - 
@@ -219,13 +219,13 @@
 1 - 
 1 - miscDynBufReplaceBytesFromTo("X", 1, 40, 40) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '43'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '1028'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf'... :) !!X~~@".
 1 - 
 1 - miscDynBufReplaceBytesFromTo(" !", 3, 31, 43) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '33'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '1028'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'Hello miscBynBuf' !".
 1 - 
@@ -250,7 +250,7 @@
 1 - 
 1 - miscDynBufDeleteBytesFromTo(1, 13) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '20'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '1028'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello miscBynBuf' !".
 1 - 
@@ -260,19 +260,19 @@
 1 - 
 1 - miscDynBufDeleteBytesFromTo(7, 10) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '16'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '1028'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf' !".
 1 - 
 1 - miscDynBufDeleteBytesFromTo(13, 13) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '15'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '1028'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf !".
 1 - 
 1 - miscDynBufDeleteBytesFromTo(13, 14) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '13'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '1028'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Hello BynBuf".
 1 - 
@@ -312,7 +312,7 @@
 1 - miscDynBufGetNbStoredBytes = '0'.
 1 - miscDynBufGetNbAllocatedBytes = '13'.
 1 - miscDynBufGetCommentPattern = "".
-1 - miscDynBufGetBuffer= "Hello BynBuf".
+1 - miscDynBufGetBuffer= "".
 1 - 
 1 - ---------------------------------------------------------------
 1 - &dynBuf = NULL :
@@ -399,7 +399,7 @@
 1 - 
 1 - miscDynBufReplaceStringFromTo("Toujours ce", 1, 9) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '44'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '1028'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr ... :) !!!~~~".
 1 - 
@@ -411,7 +411,7 @@
 1 - 
 1 - miscDynBufReplaceStringFromTo(" !", 31, 43) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '33'.
-1 - miscDynBufGetNbAllocatedBytes = '896'.
+1 - miscDynBufGetNbAllocatedBytes = '1028'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "Toujours ce 'hello miscdynStr  !".
 1 - 
@@ -476,12 +476,12 @@
 1 - FAILED
 1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Could not read '../config/' file : 'Is a directory'.
 1 - miscDynBufGetNbStoredBytes = '0'.
-1 - miscDynBufGetNbAllocatedBytes = '4096'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "".
 1 - miscDynBufLoadFile(../config/doxyfile) SUCCEED
-1 - miscDynBufGetNbStoredBytes = '840'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbStoredBytes = '841'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -505,8 +505,8 @@
 1 - 
 1 - ---------------------------------------------------------------
 1 - miscDynBufSavePartInFile(0, ../tmp/0.txt) SUCCEED
-1 - miscDynBufGetNbStoredBytes = '840'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbStoredBytes = '841'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -528,8 +528,8 @@
 1 - OPTIMIZE_OUTPUT_FOR_C  = YES
 1 - ".
 1 - miscDynBufSavePartInFile(10, ../tmp/10.txt) SUCCEED
-1 - miscDynBufGetNbStoredBytes = '840'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbStoredBytes = '841'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -556,7 +556,7 @@
 1 - FAILED
 1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -580,7 +580,7 @@
 1 - ".
 1 - miscDynBufSaveInFile(../tmp/test.txt) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -608,7 +608,7 @@
 1 - FAILED
 1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Could not save '../tmp/' file : 'Is a directory'.
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -632,7 +632,7 @@
 1 - ".
 1 - miscDynBufSaveInASCIIFile(../tmp/testASCII.txt) SUCCEED
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -759,7 +759,7 @@
 1 - FAILED
 1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - miscDynBufGetNbStoredBytes = '842'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "#".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -787,7 +787,7 @@
 1 - line           = 'Test de miscAppendLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '869'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "#".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -819,7 +819,7 @@
 1 - FAILED
 1 - miscTestDynBuf -   misc - Error - ERROR: 1 S Received a NULL value for parameter 'str'.
 1 - miscDynBufGetNbStoredBytes = '869'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -848,7 +848,7 @@
 1 - line           = 'Test de miscAppendCommentLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '903'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -878,7 +878,7 @@
 1 - line           = 'Test de miscAppendCommentLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '938'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = "#".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -909,7 +909,7 @@
 1 - line           = 'Test de miscAppendCommentLine() !'
 1 - SUCCEED
 1 - miscDynBufGetNbStoredBytes = '975'.
-1 - miscDynBufGetNbAllocatedBytes = '7168'.
+1 - miscDynBufGetNbAllocatedBytes = '4097'.
 1 - miscDynBufGetCommentPattern = " /*".
 1 - miscDynBufGetBuffer= "#*******************************************************************************
 1 - # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
@@ -977,8 +977,8 @@
 1 - ------------------
 1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://www.apple.com"':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '9403'.
-1 - miscDynBufGetNbAllocatedBytes = '10976'.
+1 - miscDynBufGetNbStoredBytes = '9540'.
+1 - miscDynBufGetNbAllocatedBytes = '14336'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "<!DOCTYPE html>
 1 - <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
@@ -991,26 +991,36 @@
 1 - 
 1 - 	<title>Apple</title>
 1 - 	<meta name="omni_page" content="Apple - Index/Tab" />
-1 - 	<meta name="Keywords" content="Apple" />
 1 - 	<meta name="Description" content="Apple designs and creates iPod and iTunes, Mac laptop and desktop computers, the OS X operating system, and the revolutionary iPhone and iPad." />
 1 - 	<link rel="home" href="http://www.apple.com/" />
 1 - 	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://images.apple.com/main/rss/hotnews/hotnews.rss" />
 1 - 	<link rel="index" href="http://www.apple.com/sitemap/" />
+1 - 	<link rel="stylesheet" href="http://images.apple.com/global/styles/base.css" type="text/css" />
+1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/s/styles/home.css" type="text/css" />
+1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/s/styles/billboard.css" type="text/css" />
+1 - 	<link rel="stylesheet" href="http://images.apple.com/home/styles/home.css" type="text/css" />
 1 - 	<script src="http://images.apple.com/global/scripts/lib/prototype.js" type="text/javascript" charset="utf-8"></script>
 1 - 	<script src="http://images.apple.com/global/scripts/lib/scriptaculous.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/global/scripts/lib/sizzle.js" type="text/javascript" charset="utf-8"></script>
 1 - 	<script src="http://images.apple.com/global/scripts/browserdetect.js" type="text/javascript" charset="utf-8"></script>
 1 - 	<script src="http://images.apple.com/global/scripts/apple_core.js" type="text/javascript" charset="utf-8"></script>
 1 - 	<script src="http://images.apple.com/global/scripts/search_decorator.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/global/scripts/feedstatistics.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/global/ac_base/ac_base.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/global/ac_retina/ac_retina.js" type="text/javascript" charset="utf-8"></script>
 1 - 
-1 - 	<link rel="stylesheet" href="http://images.apple.com/global/styles/base.css" type="text/css" />
-1 - 	<link rel="stylesheet" href="http://images.apple.com/v/home/g/styles/home.css" type="text/css" />
-1 - 	<link rel="stylesheet" href="http://images.apple.com/home/styles/home.css" type="text/css" />
+1 - 	<script src="http://images.apple.com/global/scripts/promomanager.js" type="text/javascript" charset="utf-8"></script>
+1 - 	<script src="http://images.apple.com/v/home/s/scripts/home.js" type="text/javascript" charset="utf-8"></script>
 1 - </head>
 1 - <body id="home" class="home">
+1 - 	
 1 - 	<script type="text/javascript">
-1 - 	var searchSection = 'global';
-1 - 	var searchCountry = 'us';
-1 - </script>
+1 - 		var searchSection = 'global';
+1 - 		var searchCountry = 'us';
+1 - 		var aiRequestsEnabled = true;
+1 - 		var aiDisplaySuggestions = true;
+1 - 	</script>
+1 - 
 1 - <script src="http://images.apple.com/global/nav/scripts/globalnav.js" type="text/javascript" charset="utf-8"></script>
 1 - <nav id="globalheader" class="apple">
 1 - 	<!--googleoff: all-->
@@ -1058,7 +1068,7 @@
 1 - </script>
 1 - 
 1 - 
-1 - <script type="text/javascript" src="http://images.apple.com/metrics/scripts/s_code_h.js"></script>
+1 - 	<script type="text/javascript" src="http://images.apple.com/metrics/scripts/s_code_h.js"></script>
 1 - 
 1 - 
 1 - 
@@ -1068,9 +1078,43 @@
 1 - s.channel="www.us.homepage"
 1 - 
 1 - 
+1 - /* Browser Height and Device Type */
+1 - var platform = '';
+1 - if (s.u.match(/(kindle|silk-accelerated|android|webos|rim tablet os|windows phone)/i)) {
+1 - 	platform = 'mobile other';
+1 - } else if (s.u.match(/windows/i)) {
+1 - 	platform = 'windows';
+1 - }else if (s.u.match(/(iphone|ipod)/i)) {
+1 - 	platform = 'iphone/ipod touch';
+1 - } else if (s.u.match(/(ipad)/i)) {
+1 - 	platform = 'ipad';
+1 - }else if (s.u.match(/Mac OS X/i)){
+1 - 		platform = 'Mac';
+1 - } else {
+1 - 	platform = 'other';
+1 - }
+1 - s.eVar44=window.innerHeight;
+1 - s.eVar43=platform;
+1 - 
 1 - Event.onDOMReady(function() {
 1 - 	function trackNav(link,loc) {
 1 - 		link.observe('mousedown',function(){
+1 - 			var propURL = null;
+1 - 			if(propURL = link.down('img')){
+1 - 				propURL = propURL.getAttribute('src');
+1 - 				propURL = propURL.substring(propURL.lastIndexOf('/')+1, propURL.length);
+1 - 			}
+1 - 			if(propURL == null){
+1 - 				propURL = link.getAttribute('href');
+1 - 			}
+1 - 			if (propURL != null) {
+1 - 				var prefix=(loc=='hero')?'h@':'p@';
+1 - 				AC.Tracking.trackClick({
+1 - 					prop3: prefix + propURL + ' - ' + AC.Tracking.pageName()
+1 - 				}, this, 'o', prefix + propURL + ' - ' + AC.Tracking.pageName());
+1 - 			}
+1 - 			
+1 - 			//navigation tracking
 1 - 			if(AC&&AC.Storage){
 1 - 				AC.Storage.setItem('s_nav',loc,'0');
 1 - 			}
@@ -1089,123 +1133,88 @@
 1 - var s_code=s.t();if(s_code)document.write(s_code)</script>
 1 - <!-- End SiteCatalyst code version: H.8. -->
 1 - </div>
-1 - 	<div id="main">
-1 - 		<div id="content">
-1 - 			<article id="billboard" class="grid2col">
-1 - 				<a href="/iphone/"><img class="hero left" src="http://images.apple.com/home/images/hero.jpg" alt="iPhone 4S" width="579" height="595" /></a>
-1 - 				<div class="column last">
-1 - 					<h1 class="selfclear">
-1 - 						<a href="/iphone/">
-1 - 							<img class="left" src="http://images.apple.com/home/images/title.png" alt="iPhone 4S. Dual-core A5 chip. All-new 8MP camera and optics. iOS 5 and iCloud. And introducing Siri. It’s the most amazing iPhone yet." width="313" height="219" />
-1 - 						</a>
-1 - 					</h1>
-1 - 					<ul class="videos">						
-1 - 						<li>
-1 - 							<a class="block video-thumb" href="/iphone/#video-4s">
-1 - 								<span class="image">
-1 - 									<span class="play"></span>
-1 - 									<img src="http://images.apple.com/home/images/video_iphone4s.jpg" alt="" width="90" height="57" />
-1 - 								</span>
-1 - 								<span class="link">
-1 - 									<span class="nowrap">Watch the</span> <span class="more">iPhone 4S video</span>
-1 - 								</span>
-1 - 							</a>
-1 - 						</li>
-1 - 						<li>
-1 - 							<a class="block video-thumb" href="/iphone/#video-4s-ad">
-1 - 								<span class="image">
-1 - 									<span class="play"></span>
-1 - 									<img src="http://images.apple.com/home/images/video_iphone4s_ad.jpg" alt="" width="90" height="57" />
-1 - 								</span>
-1 - 								<span class="link">
-1 - 									<span class="nowrap">Watch the</span> <span class="more">iPhone 4S TV ad</span>
-1 - 								</span>
-1 - 							</a>
-1 - 						</li>
-1 - 					</ul>
-1 - 				</div>
-1 - 			</article><!--/billboard-->
+1 - 	<div id="main" data-hires="true">
+1 - 		<article id="billboard">
+1 - 			<section class="hero">
+1 - 				<a href="/iphone/" class="block iphone">
+1 - 					<h1><img src="http://images.apple.com/home/images/billboard_iphone_title.png" height="136" width="640" alt="iPhone 5. Loving it is easy. That's why so many people do." /></h1>
+1 - 					<img src="http://images.apple.com/home/images/billboard_iphone_hero.jpg" height="528" width="763" alt="" class="hero-image" />
+1 - 				</a>
+1 - 			</section>
 1 - 
-1 - 			<aside class="promos"><ul><li>
-1 - 				<a href="/ios/"><img src="http://images.apple.com/home/images/promo_ios5.png" alt="iOS 5 Software Update. Get over 200 new features - free for iPhone, iPad, and iPod touch." width="231" height="149" /></a></li><li>
-1 - 				<a href="icloud"><img src="http://images.apple.com/home/images/promo_icloud.png" alt="iCloud is here. iCloud stores your content and wirelessly pushes it to your devices." width="231" height="149" /></a></li><li>
-1 - 				<a href="/ipodtouch/"><img src="http://images.apple.com/home/images/promo_ipodtouch.png" alt="iPod touch. It has fun written all over it. Now starting at $199." width="231" height="149" /></a></li><li>
-1 - 				<a href="/ipad/"><img src="http://images.apple.com/home/images/promo_ipad2.png" alt="iPad 2. Now with iOS 5 and iCloud, it just got even harder to put down." width="231" height="149" /></a>
-1 - 			</li></ul></aside>
+1 - 			<section class="hero">
+1 - 				<a href="/ipad/" class="block ipad">
+1 - 					<h1><img src="http://images.apple.com/home/images/billboard_ipad_title.png" height="118" width="217" alt="iPad. Two sizes do all." /></h1>
+1 - 					<img src="http://images.apple.com/home/images/billboard_ipad_hero.jpg" height="607" width="510" alt="" class="hero-image" />
+1 - 				</a>
+1 - 			</section>
+1 - 		</article><!--/billboard-->
 1 - 
-1 - 			<aside class="rememberingsteve rounded grid2col">
-1 - 				<ul>
-1 - 					<li class="column first">
-1 - 						<a class="block roundedleft" href="/stevejobs/">
-1 - 							<img class="title" src="http://images.apple.com/home/images/rememberingsteve_title.png" alt="Steve Jobs, 1955-2011. Share your condolences and read others from around the world." width="399" height="34" />
-1 - 						</a>
-1 - 					</li><li class="column last">
-1 - 						<a class="block roundedright" href="/celebrating-steve/">
-1 - 							<img class="video block" src="http://images.apple.com/home/images/celebratingsteve_video.png" alt="" width="82" height="56" />
-1 - 							<img class="title" src="http://images.apple.com/home/images/celebratingsteve_title.png" alt="Celebrating Steve. Watch the October 19 special event." width="224" height="34" />
-1 - 						</a>
-1 - 					</li>
+1 - 		<aside class="promos">
+1 - 	<ul>
+1 - 		<li class="first-child"><div class="curve-down">
+1 - 			<a class="promo1" href="/ipad/"><img src="http://images.apple.com/home/images/promo_ipad.png" alt="iPad. Two sizes do all." width="237" height="185" /></a>
+1 - 			<a class="promo1" href="/iphone/"><img src="http://images.apple.com/home/images/promo_iphone5.png" alt="iPhone 5. Loving it is easy. That’s why so many people do." width="237" height="185" /></a>
+1 - 		</div></li>
+1 - 		<li class="second-child"><div class="curve-down">
+1 - 			<a class="promo2" href="/iphone/videos/#tv-ads-photos-every-day"><img src="http://images.apple.com/home/images/promo_iphone_ad_photoseveryday.png" alt="Watch the new iPhone TV ad.”" width="237" height="185" /><span class="play"></span></a>
+1 - 		</div></li>
+1 - 		<li class="third-child"><div class="curve-down">
+1 - 			<a class="promo3" href="/imac/"><img src="http://images.apple.com/home/images/promo_imac.png" alt="iMac. Performance and design. Taken right to the edge." width="237" height="185" /></a>
+1 - 		</div></li>
+1 - 		<li class="last-child"><div class="curve-down">
+1 - 			<a class="promo4" href="https://developer.apple.com/wwdc/"><img src="http://images.apple.com/home/images/promo_wwdc.png" alt="WWDC 2013. June 10-14 in San Francisco." width="237" height="185" /></a>
+1 - 		</div></li>
+1 - 	</ul>
+1 - </aside>
+1 - 
+1 - 
+1 - 		<footer id="homefooter">
+1 - 			<div id="links">
+1 - 				<p class="left">Shop the <a href="http://store.apple.com/us">Apple Online Store</a> (1-800-MY-APPLE), visit an <a href="/retail/">Apple Retail Store</a>, or find a <a href="/buy/">reseller</a>.</p>
+1 - 				<ul class="piped right">
+1 - 					<li><a href="/sitemap/" class="first">Site Map</a></li>
+1 - 					<li><a href="/hotnews/">Hot News</a></li>
+1 - 					<li><a href="/rss/">RSS Feeds</a></li>
+1 - 					<li><a href="/pr/">Media Info</a></li>
+1 - 					<li><a href="/environment/">Environment</a></li>
+1 - 					<li><a href="/jobs/">Job Opportunities</a></li>
+1 - 					<li><a href="/contact/">Contact Us</a></li>
 1 - 				</ul>
-1 - 			</aside>
+1 - 			</div><!--/links-->
 1 - 
-1 - 			<footer id="homefooter">
-1 - 				<div id="links">
-1 - 					<p class="left">Shop the <a href="/store/">Apple Online Store</a> (1-800-MY-APPLE), visit an <a href="/retail/">Apple Retail Store</a>, or find a <a href="/buy/">reseller</a>.</p>
-1 - 					<ul class="piped right">
-1 - 						<li><a href="/sitemap/" class="first">Site Map</a></li>
-1 - 						<li><a href="/hotnews/">Hot News</a></li>
-1 - 						<li><a href="/rss/">RSS Feeds</a></li>
-1 - 						<li><a href="/pr/">Media Info</a></li>
-1 - 						<li><a href="/environment/">Environment</a></li>
-1 - 						<li><a href="/jobs/">Job Opportunities</a></li>
-1 - 						<li><a href="/contact/">Contact Us</a></li>
-1 - 					</ul>
-1 - 				</div><!--/links-->
+1 - 			<div class="sosumi">
+1 - 				<p class="copyright">Copyright © 2013 Apple Inc. All rights reserved.</p>
+1 - 				<ul class="piped">
+1 - 					<li><a href="/legal/" class="first">Terms of Use</a></li>
+1 - 					<li><a href="/legal/privacy/">Privacy Policy</a></li>
+1 - 				</ul>
+1 - 				<div id="worldwide">
+1 - 					<a href="/choose-your-country/">
+1 - 						<img src="http://images.apple.com/global/elements/flags/22x22/usa.png" alt="United States of America" height="22" width="22" />
+1 - 						<span class="more">Choose your country or region</span>
+1 - 					</a>
+1 - 				</div>
+1 - 			</div><!--/sosumi-->
+1 - 		</footer><!--/homefooter-->
 1 - 
-1 - 				<div class="sosumi">
-1 - 	                <p class="copyright">Copyright © 2011 Apple Inc. All rights reserved.</p>
-1 - 					<ul class="piped">
-1 - 						<li><a href="/legal/" class="first">Terms of Use</a></li>
-1 - 						<li><a href="/legal/privacy/">Privacy Policy</a></li>
-1 - 					</ul>
-1 - 					<div id="worldwide">
-1 - 						<a href="/choose-your-country/">
-1 - 							<img src="http://images.apple.com/global/elements/flags/22x22/usa.png" alt="United States of America" height="22" width="22" />
-1 - 							<span class="more">Choose your country or region</span>
-1 - 						</a>
-1 - 					</div>
-1 - 				</div><!--/sosumi-->
-1 - 			</footer><!--/homefooter-->
-1 - 		</div><!--/content-->
 1 - 	</div><!--/main-->
-1 - 
-1 - 	<!-- Start of DoubleClick Spotlight Tag: Please do not remove-->
-1 - 	<!-- Creation Date:11/19/07 -->
-1 - 	<script type="text/javascript">
-1 - 		var axel = Math.random()+"";
-1 - 		var a = axel * 10000000000000;
-1 - 		document.write('<iframe src="http://fls.doubleclick.net/activityi;src=1566767;type=apple663;cat=apple249;ord='+ a + '?" width=1 height=1 frameborder=0><\/iframe>');
-1 - 	</script>
-1 - 	<noscript>
-1 - 	<iframe src="http://fls.doubleclick.net/activityi;src=1566767;type=apple663;cat=apple249;ord=1?" width=1 height=1 frameborder=0></iframe>
-1 - 	</noscript>
-1 - 	<!-- End of DoubleClick Spotlight Tag: Please do not remove-->
 1 - </body>
-1 - </html>".
+1 - </html>
+1 - ".
 1 - 
 1 - ------------------
 1 - Executing '/usr/bin/curl --max-time 30 -s -L "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*"':
 1 - SUCCEED
-1 - miscDynBufGetNbStoredBytes = '6075'.
-1 - miscDynBufGetNbAllocatedBytes = '10976'.
+1 - miscDynBufGetNbStoredBytes = '6553'.
+1 - miscDynBufGetNbAllocatedBytes = '14336'.
 1 - miscDynBufGetCommentPattern = "".
 1 - miscDynBufGetBuffer= "<?xml version="1.0" encoding="UTF-8"?>
 1 - <VOTABLE version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 1 -   xmlns="http://www.ivoa.net/xml/VOTable/v1.2" >
 1 -  <DESCRIPTION>
-1 -    VizieR Astronomical Server vizier.u-strasbg.fr 	2011-10-26T07:52:38 [V1.80]
-1 -    (replaces the 'Astrores' format originally described at
-1 -     http://vizier.u-strasbg.fr/doc/astrores.htx)
+1 -    VizieR Astronomical Server vizier.u-strasbg.fr
+1 -     Date: 2013-04-30T07:41:18 [V1.97 (28-Nov-2012)]
 1 -    In case of problem, please report to:	question@simbad.u-strasbg.fr
 1 -  </DESCRIPTION>
 1 - <!-- VOTable description at http://www.ivoa.net/Documents/latest/VOT.html -->
@@ -1214,26 +1223,59 @@
 1 -   <COOSYS ID="J2000" system="eq_FK5" equinox="J2000"/>
 1 - </DEFINITIONS>
 1 - 
-1 - <INFO ID="Ref" name="-ref" value="VOTx14761"/>
+1 - <INFO ID="VERSION" name="votable-version" value="1.97 (28-Nov-2012)"/>
+1 - <INFO ID="Ref" name="-ref" value="VOTx31404"/>
 1 - <INFO ID="MaxTuples" name="-out.max" value="100"/>
+1 - <INFO name="queryParameters" value="29">
+1 - -oc.form=D.
+1 - -source=I/280
+1 - -c.ra=22:57:39.05
+1 - -c.dec=-29:37:20.1
+1 - Vmag=0.00..4.00
+1 - -c.eq=J2000
+1 - -out.max=100
+1 - -c.geom=b
+1 - -c.bm=3391/1200
+1 - -c.u=arcmin
+1 - -out.add=_RAJ2000,_DEJ2000
+1 - -oc=hms
+1 - -out=*POS_EQ_PMDEC
+1 - -out=*POS_EQ_PMRA
+1 - -out=*POS_PARLX_TRIG
+1 - -out=e_Plx
+1 - -out=*SPECT_TYPE_MK
+1 - -out=*PHOT_JHN_B
+1 - -out=*PHOT_JHN_V
+1 - -out=v1
+1 - -out=v2
+1 - -out=v3
+1 - -out=d5
+1 - -out=HIP
+1 - -out=HD
+1 - -out=DM
+1 - -out=TYC1
+1 - -sort=_r
+1 - SpType=[OBAFGKM]*
+1 - </INFO>
 1 - 
 1 - <!--
 1 - Execution Reports
 1 -  -->
-1 - <INFO ID="Target" name="-c" value="344.412708-29.622250,bm=3391.000000/1200."/>
+1 - <INFO ID="Target" name="-c" value="344.412708-29.622250,bm=3391.000000/1200.">
+1 - </INFO>
 1 - 
 1 - <RESOURCE ID="yCat_1280" name="I/280B">
 1 -   <DESCRIPTION>All-sky Compiled Catalogue of 2.5 million stars (Kharchenko+ 2009)</DESCRIPTION>
 1 -   <COOSYS ID="J2000_1991.250" system="eq_FK5" equinox="J2000" epoch="1991.250"/>
 1 -   <TABLE ID="I_280B_ascc" name="I/280B/ascc">
 1 -     <DESCRIPTION>ASCC-2.5 V3: All-sky Compiled Catalogue of 2.5 million stars, 3rd version</DESCRIPTION>
-1 -     <!-- RowName:  ${ASCC} -->
+1 -     <!-- RowName: ${ASCC} -->
 1 -     <!-- Definitions of GROUPs and FIELDs -->
 1 -     <FIELD name="_RAJ2000" ucd="pos.eq.ra;meta.main" ref="J2000" datatype="char" arraysize="12" unit="&quot;h:m:s&quot;"><!-- ucd="POS_EQ_RA_MAIN" -->
-1 -       <DESCRIPTION>Right ascension (FK5) Equinox=J2000.0 Epoch=J2000.000, proper motions taken into account  (computed by VizieR, not part of the original data)</DESCRIPTION>
+1 -       <DESCRIPTION>Right ascension (FK5, Equinox=J2000.0) at Epoch=J2000, proper motions taken into account  (computed by VizieR, not part of the original data)</DESCRIPTION>
 1 -     </FIELD>
 1 -     <FIELD name="_DEJ2000" ucd="pos.eq.dec;meta.main" ref="J2000" datatype="char" arraysize="12" unit="&quot;d:m:s&quot;"><!-- ucd="POS_EQ_DEC_MAIN" -->
-1 -       <DESCRIPTION>Declination (FK5) Equinox=J2000.0 Epoch=J2000.000, proper motions taken into account  (computed by VizieR, not part of the original data)</DESCRIPTION>
+1 -       <DESCRIPTION>Declination (FK5, Equinox=J2000.0) at Epoch=J2000, proper motions taken into account  (computed by VizieR, not part of the original data)</DESCRIPTION>
 1 -     </FIELD>
 1 -     <FIELD name="pmDE" ucd="pos.pm;pos.eq.dec" ref="J2000_1991.250" datatype="double" width="8" precision="2" unit="mas/yr"><!-- ucd="POS_EQ_PMDEC" -->
 1 -       <DESCRIPTION>Proper Motion in Declination</DESCRIPTION>
@@ -1243,22 +1285,22 @@
 1 -     </FIELD>
 1 -     <FIELD name="Plx" ucd="pos.parallax.trig" datatype="float" width="7" precision="2" unit="mas"><!-- ucd="POS_PARLX_TRIG" -->
 1 -       <DESCRIPTION>? Trigonometric parallax</DESCRIPTION>
-1 -       <VALUES null=" " />
+1 -       <VALUES null="NaN" />
 1 -     </FIELD>
 1 -     <FIELD name="e_Plx" ucd="stat.error;pos.parallax" datatype="float" width="6" precision="2" unit="mas"><!-- ucd="ERROR" -->
 1 -       <DESCRIPTION>? Standard error in Plx</DESCRIPTION>
-1 -       <VALUES null=" " />
+1 -       <VALUES null="NaN" />
 1 -     </FIELD>
 1 -     <FIELD name="SpType" ucd="src.spType" datatype="char" arraysize="20*"><!-- ucd="SPECT_TYPE_MK" -->
 1 -       <DESCRIPTION>Spectral type in MK or HD system</DESCRIPTION>
 1 -     </FIELD>
 1 -     <FIELD name="Bmag" ucd="phot.mag;em.opt.B" datatype="float" width="6" precision="3" unit="mag"><!-- ucd="PHOT_JHN_B" -->
 1 -       <DESCRIPTION>? B magnitude in Johnson system</DESCRIPTION>
-1 -       <VALUES null=" " />
+1 -       <VALUES null="NaN" />
 1 -     </FIELD>
 1 -     <FIELD name="Vmag" ucd="phot.mag;em.opt.V" datatype="float" width="6" precision="3" unit="mag"><!-- ucd="PHOT_JHN_V" -->
 1 -       <DESCRIPTION>? V magnitude in Johnson system</DESCRIPTION>
-1 -       <VALUES null=" " />
+1 -       <VALUES null="NaN" />
 1 -     </FIELD>
 1 -     <FIELD name="v1" ucd="meta.code;src.var" datatype="char" arraysize="1"><!-- ucd="CODE_VARIAB" -->
 1 -       <DESCRIPTION>[GN ] Known variability from GCVS/NSV</DESCRIPTION>
@@ -1274,19 +1316,19 @@
 1 -     </FIELD>
 1 -     <FIELD name="HIP" ucd="meta.id" datatype="int" width="6"><!-- ucd="ID_ALTERNATIVE" -->
 1 -       <DESCRIPTION>? Hipparcos number</DESCRIPTION>
-1 -       <VALUES null=" " />
+1 -       <VALUES null="-2147483648" />
 1 -     </FIELD>
 1 -     <FIELD name="HD" ucd="meta.id" datatype="int" width="6"><!-- ucd="ID_ALTERNATIVE" -->
 1 -       <DESCRIPTION>? HD number</DESCRIPTION>
-1 -       <VALUES null=" " />
+1 -       <VALUES null="-2147483648" />
 1 -     </FIELD>
 1 -     <FIELD name="DM" ucd="meta.id" datatype="int" width="8"><!-- ucd="ID_ALTERNATIVE" -->
 1 -       <DESCRIPTION>? DM number</DESCRIPTION>
-1 -       <VALUES null=" " />
+1 -       <VALUES null="-2147483648" />
 1 -     </FIELD>
 1 -     <FIELD name="TYC1" ucd="meta.id" datatype="short" width="4"><!-- ucd="ID_ALTERNATIVE" -->
 1 -       <DESCRIPTION>? TYC1 number from Tycho-2</DESCRIPTION>
-1 -       <VALUES null=" " />
+1 -       <VALUES null="-32768" />
 1 -     </FIELD>
 1 - <DATA><CSV headlines="3"><![CDATA[
 1 - _RAJ2000	_DEJ2000	pmDE	pmRA	Plx	e_Plx	SpType	Bmag	Vmag	v1	v2	v3	d5	HIP	HD	DM	TYC1

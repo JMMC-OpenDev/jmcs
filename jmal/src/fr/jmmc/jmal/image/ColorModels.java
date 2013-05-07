@@ -41,6 +41,10 @@ public class ColorModels {
     public static final int NB_COLORS = 240;
     /** force zero surroundings to be black */
     public final static boolean FORCE_ZERO = true;
+    /** Color model Aspro */
+    public final static String COLOR_MODEL_ASPRO = "aspro";
+    /** Color model Aspro Isophot*/
+    public final static String COLOR_MODEL_ASPRO_ISOPHOT = "aspro-isophot";
     /** Color model Gray */
     public final static String COLOR_MODEL_GRAY = "Gray";
     /** Color model Earth */
@@ -118,11 +122,52 @@ public class ColorModels {
             }
         }
 
+        // post process lut color models:
+        postProcess();
+
         Collections.sort(colorModelNames);
 
         if (logger.isInfoEnabled()) {
             logger.info("ColorModels [{} available] : duration = {} ms.", colorModelNames.size(), 1e-6d * (System.nanoTime() - start));
         }
+    }
+
+    private static void postProcess() {
+        computeLutAsproIsoPhot();
+    }
+
+    /**
+     * create an isophot variant of the aspro color model
+     */
+    private static void computeLutAsproIsoPhot() {
+        final IndexColorModel colorModel = getColorModel(COLOR_MODEL_ASPRO);
+
+        final byte[] r = new byte[MAX_COLORS];
+        final byte[] g = new byte[MAX_COLORS];
+        final byte[] b = new byte[MAX_COLORS];
+
+        colorModel.getReds(r);
+        colorModel.getGreens(g);
+        colorModel.getBlues(b);
+
+        final float inc = 1f / MAX_COLORS;
+        final float halfInc = 0.5f * inc;
+        float diff;
+        float v = halfInc; // [0;1]
+
+        // Avoid zero:
+        for (int i = 1; i < MAX_COLORS; i++) {
+            diff = Math.abs((10f * v - Math.round(10f * v)) / 10f);
+
+            if (diff < halfInc) {
+                r[i] = (byte) 0xff;
+                g[i] = (byte) 0xff;
+                b[i] = (byte) 0xff;
+            }
+            v += inc;
+        }
+
+        addColorModel(COLOR_MODEL_ASPRO_ISOPHOT, new IndexColorModel(8, MAX_COLORS, r, g, b));
     }
 
     private static void addColorModel(final String name, final IndexColorModel colorModel) {

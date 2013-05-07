@@ -100,6 +100,8 @@ public abstract class App {
     }
 
     final void ___internalStart() {
+        defineCustomCommandLineArgumentsAndHelp();
+        
         // Interpret arguments
         _customArgumentValues = CommandLineUtils.interpretArguments(_args, _customArgumentsDefinition, _customHelp);
     }

@@ -253,6 +253,7 @@ EOF
             <xsl:variable name="featureSet" select=".//change[starts-with(@type,'FEATURE')]"/>
             <xsl:variable name="changeSet" select=".//change[not(@type) or starts-with(@type,'CHANGE')] "/>
             <xsl:variable name="bugfixSet" select=".//change[starts-with(@type,'BUG')]"/>
+            <xsl:variable name="developerSet" select=".//change[contains(@type,'DEVEL')]"/>
             <xsl:if test="\$featureSet">
               <li>Features:</li>
               <ul><xsl:apply-templates select="\$featureSet"/></ul>
@@ -264,6 +265,10 @@ EOF
             <xsl:if test="\$bugfixSet">
               <li>Bug fixes:</li>
               <ul><xsl:apply-templates select="\$bugfixSet"/></ul>
+            </xsl:if>
+            <xsl:if test="\$developerSet">
+              <li>Developer notes:</li>
+              <ul><xsl:apply-templates select="\$developerSet"/></ul>
             </xsl:if>
             </xsl:element>
           </xsl:element>
@@ -341,6 +346,7 @@ EOF
             <xsl:variable name="featureSet" select=".//change[starts-with(@type,'FEATURE')]"/>
             <xsl:variable name="changeSet" select=".//change[not(@type) or starts-with(@type,'CHANGE')] "/>
             <xsl:variable name="bugfixSet" select=".//change[starts-with(@type,'BUG')]"/>
+            <xsl:variable name="developerSet" select=".//change[contains(@type,'DEVEL')]"/>
             <xsl:if test="\$featureSet">
               <li>Features:</li>
               <ul><xsl:apply-templates select="\$featureSet"/></ul>
@@ -352,6 +358,10 @@ EOF
             <xsl:if test="\$bugfixSet">
               <li>Bug fixes:</li>
               <ul><xsl:apply-templates select="\$bugfixSet"/></ul>
+            </xsl:if>
+            <xsl:if test="\$developerSet">
+              <li>Developer notes:</li>
+              <ul><xsl:apply-templates select="\$developerSet"/></ul>
             </xsl:if>
             </ul>
             <xsl:value-of select="']]>'" disable-output-escaping="yes"/>

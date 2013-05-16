@@ -700,7 +700,7 @@ createHtmlIndex()
     -e "p" -o "Run Java Webstart application" -e "a" -a "href" -v "/jnlp/@href" -b \
     -o " using this link on main jnlp file" -b -b \
     -e "p" -o "- OR -" -b \
-    -e "p" -e "a" -a "href" -o "$JARFILE" -b -o "Download JAR " -b \
+    -e "p" -e "a" -a "href" -o "http://www.jmmc.fr/apps" -b -o "Download JAR " -b \
     -o "of application and run following command:" -b \
     -e "p" -e "pre" -o "java " \
     -i "//j2se/@initial-heap-size" -v "concat('-Xms',//j2se/@initial-heap-size,' ')" -b \

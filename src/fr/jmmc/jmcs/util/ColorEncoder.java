@@ -62,11 +62,9 @@ public class ColorEncoder {
      * @return the encoded string for given color
      */
     public static String encode(final Color c) {
-        String ret = "#";
-        ret += hexForInt(c.getRed());
-        ret += hexForInt(c.getGreen());
-        ret += hexForInt(c.getBlue());
-
-        return ret;
+        return "#"
+                + hexForInt(c.getRed())
+                + hexForInt(c.getGreen())
+                + hexForInt(c.getBlue());
     }
 }

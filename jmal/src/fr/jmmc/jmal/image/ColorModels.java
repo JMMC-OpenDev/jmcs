@@ -55,14 +55,12 @@ public class ColorModels {
     public final static String COLOR_MODEL_RAINBOW_ALPHA = "RainbowAlpha";
     /** Default color model (Earth) */
     public final static String DEFAULT_COLOR_MODEL = COLOR_MODEL_EARTH;
-    /**
-     * Color model names
-     */
-    private final static Vector<String> colorModelNames = new Vector<String>();
-    /**
-     * Color models keyed by names
-     */
-    private final static Map<String, IndexColorModel> colorModels = new HashMap<String, IndexColorModel>();
+    /** Color model names (sorted) */
+    private final static Vector<String> colorModelNames = new Vector<String>(64);
+    /** Color models keyed by names */
+    private final static Map<String, IndexColorModel> colorModels = new HashMap<String, IndexColorModel>(64);
+    /** Cyclic Color models keyed by names */
+    private final static Map<String, IndexColorModel> cyclicColorModels = new HashMap<String, IndexColorModel>(64);
     /**
      * Generated array of lut file names in the jmcs folder fr/jmmc/jmal/image/lut/
      */
@@ -107,7 +105,7 @@ public class ColorModels {
         // hard coded color models :
         addColorModel(DEFAULT_COLOR_MODEL, getEarthColorModel());
 
-        addColorModel(COLOR_MODEL_GRAY, getGrayColorModel(MAX_COLORS));
+        addColorModel(COLOR_MODEL_GRAY, getGrayColorModel());
 
         addColorModel(COLOR_MODEL_RAINBOW, getRainbowColorModel());
 
@@ -122,7 +120,7 @@ public class ColorModels {
             }
         }
 
-        // post process lut color models:
+        // post process color models (variants):
         postProcess();
 
         Collections.sort(colorModelNames);
@@ -134,40 +132,83 @@ public class ColorModels {
 
     private static void postProcess() {
         computeLutAsproIsoPhot();
+
+        // compute cyclic color models:
+        for (String name : colorModelNames.toArray(new String[colorModelNames.size()])) {
+            computeCyclicModel(name);
+        }
     }
 
     /**
      * create an isophot variant of the aspro color model
      */
     private static void computeLutAsproIsoPhot() {
-        final IndexColorModel colorModel = getColorModel(COLOR_MODEL_ASPRO);
+        final IndexColorModel colorModel = colorModels.get(COLOR_MODEL_ASPRO);
+        if (colorModel != null) {
+            final byte[] r = new byte[MAX_COLORS];
+            final byte[] g = new byte[MAX_COLORS];
+            final byte[] b = new byte[MAX_COLORS];
 
-        final byte[] r = new byte[MAX_COLORS];
-        final byte[] g = new byte[MAX_COLORS];
-        final byte[] b = new byte[MAX_COLORS];
+            colorModel.getReds(r);
+            colorModel.getGreens(g);
+            colorModel.getBlues(b);
 
-        colorModel.getReds(r);
-        colorModel.getGreens(g);
-        colorModel.getBlues(b);
+            final double inc = 1d / (MAX_COLORS - 1);
+            final double halfInc = 0.5d * inc;
+            double diff;
+            double v = inc; // ]0;1]
 
-        final float inc = 1f / MAX_COLORS;
-        final float halfInc = 0.5f * inc;
-        float diff;
-        float v = halfInc; // [0;1]
+            // Avoid zero:
+            for (int i = 1; i < MAX_COLORS; i++) {
+                diff = Math.abs((10d * v - Math.round(10d * v)) * 0.1d);
 
-        // Avoid zero:
-        for (int i = 1; i < MAX_COLORS; i++) {
-            diff = Math.abs((10f * v - Math.round(10f * v)) / 10f);
-
-            if (diff < halfInc) {
-                r[i] = (byte) 0xff;
-                g[i] = (byte) 0xff;
-                b[i] = (byte) 0xff;
+                if (diff < halfInc) {
+                    r[i] = (byte) 0xff;
+                    g[i] = (byte) 0xff;
+                    b[i] = (byte) 0xff;
+                }
+                v += inc;
             }
-            v += inc;
-        }
 
-        addColorModel(COLOR_MODEL_ASPRO_ISOPHOT, new IndexColorModel(8, MAX_COLORS, r, g, b));
+            addColorModel(COLOR_MODEL_ASPRO_ISOPHOT, new IndexColorModel(8, MAX_COLORS, r, g, b));
+        }
+    }
+
+    /**
+     * create a cyclic variant of the given color model
+     * @param name color model name to use
+     */
+    private static void computeCyclicModel(final String name) {
+        final IndexColorModel colorModel = colorModels.get(name);
+        if (colorModel != null) {
+            final int nColors = colorModel.getMapSize();
+
+            final byte[] t = new byte[nColors]; // temporary
+            final byte[] r = new byte[nColors * 2];
+            final byte[] g = new byte[nColors * 2];
+            final byte[] b = new byte[nColors * 2];
+
+            colorModel.getReds(t);
+            for (int i = 0; i < nColors; i++) {
+                r[nColors + i] = t[i];
+                r[nColors - 1 - i] = t[i];
+            }
+
+            colorModel.getGreens(t);
+            for (int i = 0; i < nColors; i++) {
+                g[nColors + i] = t[i];
+                g[nColors - 1 - i] = t[i];
+            }
+
+            colorModel.getBlues(t);
+            for (int i = 0; i < nColors; i++) {
+                b[nColors + i] = t[i];
+                b[nColors - 1 - i] = t[i];
+            }
+
+            // 9 means 9bytes => up to 512 colors !
+            cyclicColorModels.put(name, new IndexColorModel(9, 2 * nColors, r, g, b));
+        }
     }
 
     private static void addColorModel(final String name, final IndexColorModel colorModel) {
@@ -182,14 +223,27 @@ public class ColorModels {
         // no-op
     }
 
+    /**
+     * Return the Color model names (sorted)
+     * @return Color model names (sorted)
+     */
     public static Vector<String> getColorModelNames() {
         return colorModelNames;
     }
 
+    /**
+     * Return the default IndexColorModel
+     * @return IndexColorModel
+     */
     public static IndexColorModel getDefaultColorModel() {
         return getColorModel(DEFAULT_COLOR_MODEL);
     }
 
+    /**
+     * Return the IndexColorModel given its name
+     * @param name
+     * @return IndexColorModel or the default IndexColorModel if the name was not found
+     */
     public static IndexColorModel getColorModel(final String name) {
         IndexColorModel colorModel = colorModels.get(name);
         if (colorModel == null) {
@@ -198,8 +252,21 @@ public class ColorModels {
         return colorModel;
     }
 
+    /**
+     * Return the cyclic IndexColorModel given its name
+     * @param name
+     * @return IndexColorModel or the default IndexColorModel if the name was not found
+     */
+    public static IndexColorModel getCyclicColorModel(final String name) {
+        IndexColorModel colorModel = cyclicColorModels.get(name);
+        if (colorModel == null) {
+            return getDefaultColorModel();
+        }
+        return colorModel;
+    }
+
     /* Private methods */
-    /** Returns one 'earth' color model */
+    /** @return the 'earth' color model */
     private static IndexColorModel getEarthColorModel() {
         /* dk blue - lt blue - dk green - yellow green - lt brown - white */
         /* sort of like mapmakers colors from deep ocean to snow capped peak */
@@ -934,7 +1001,7 @@ public class ColorModels {
         return new IndexColorModel(8, NB_COLORS, r, g, b);
     }
 
-    /** Returns one 'rainbow' color model */
+    /** @return the 'rainbow' color model */
     private static IndexColorModel getRainbowColorModel() {
         /* red - orange - yellow - green - blue - purple */
         /* colors in spectral order */
@@ -1669,7 +1736,7 @@ public class ColorModels {
     }
 
     /** 
-     * Returns one 'rainbow' color model with given opacity 
+     * @return a 'rainbow' color model with given opacity 
      * @param alpha opacity 
      */
     private static IndexColorModel getRainbowColorModelAlpha(final float alpha) {
@@ -1689,26 +1756,20 @@ public class ColorModels {
         return new IndexColorModel(8, NB_COLORS, r, g, b, a);
     }
 
-    /** Returns one gray color model */
-    private static IndexColorModel getGrayColorModel(int nbElements) {
-        final byte[] r = new byte[nbElements];
-        final byte[] g = new byte[nbElements];
-        final byte[] b = new byte[nbElements];
+    /** @return the gray color model */
+    private static IndexColorModel getGrayColorModel() {
+        final byte[] r = new byte[MAX_COLORS];
+        final byte[] g = new byte[MAX_COLORS];
+        final byte[] b = new byte[MAX_COLORS];
 
-        final int mult = MAX_COLORS / nbElements;
-
-        for (int i = 0; i < nbElements; i++) {
-            byte v = (byte) (i * mult);
+        for (int i = 0; i < MAX_COLORS; i++) {
+            byte v = (byte) (i);
             r[i] = v;
             g[i] = v;
             b[i] = v;
         }
 
-        if (nbElements > 16) {
-            return new IndexColorModel(8, nbElements, r, g, b);
-        }
-
-        return new IndexColorModel(4, nbElements, r, g, b);
+        return new IndexColorModel(8, MAX_COLORS, r, g, b);
     }
 
     private static byte[][] loadLutFromFile(final String name) {
@@ -1743,7 +1804,7 @@ public class ColorModels {
 
             }
 
-            for (int i = 1, j = 0, k = 0, size = MAX_COLORS - 2; i < size; i += 2) {
+            for (int i = 1, j, k, size = MAX_COLORS - 2; i < size; i += 2) {
                 j = i - 1;
                 k = i + 1;
                 rf[i] = 0.5f * (rf[j] + rf[k]);
@@ -1794,7 +1855,6 @@ public class ColorModels {
     }
 
     private static IndexColorModel loadFromFile(final String name) {
-
         final byte[][] rgb = loadLutFromFile(name);
 
         if (rgb != null) {
@@ -1829,7 +1889,7 @@ public class ColorModels {
 
         // Prepare the lut file list :
         try {
-            final String[] lutFiles = getResourceListing(ColorModels.class, "fr/jmmc/mcs/image/lut/");
+            final String[] lutFiles = getResourceListing(ColorModels.class, "fr/jmmc/jmal/image/lut/");
 
             if (lutFiles != null) {
                 Arrays.sort(lutFiles);

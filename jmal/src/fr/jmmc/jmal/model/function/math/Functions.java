@@ -5,6 +5,7 @@ package fr.jmmc.jmal.model.function.math;
 
 import cern.jet.math.Bessel;
 import fr.jmmc.jmal.complex.MutableComplex;
+import fr.jmmc.jmal.util.MathUtils;
 import net.jafama.FastMath;
 
 /**
@@ -228,10 +229,7 @@ public final class Functions {
     public static double computeCircle(final double ufreq, final double vfreq, final double flux_weight,
                                        final double diameter) {
 
-        // norm of uv :
-        final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
-
-        final double d = PI_MAS2RAD * diameter * normUV;
+        final double d = PI_MAS2RAD * diameter * MathUtils.carthesianNorm(ufreq, vfreq);
 
         double g;
         if (d == 0D) {
@@ -256,10 +254,7 @@ public final class Functions {
     public static double computeDisk(final double ufreq, final double vfreq, final double flux_weight,
                                      final double diameter) {
 
-        // norm of uv :
-        final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
-
-        final double d = PI_MAS2RAD * diameter * normUV;
+        final double d = PI_MAS2RAD * diameter * MathUtils.carthesianNorm(ufreq, vfreq);
 
         double g;
         if (d == 0D) {
@@ -294,14 +289,11 @@ public final class Functions {
             return computeDisk(ufreq, vfreq, flux_weight, 2d * width);
         }
 
-        // norm of uv :
-        final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
-
         final double radius = 0.5d * diameter;
 
         final double alpha = 1d + width / radius;
 
-        final double r = PI_MAS2RAD * radius * normUV;
+        final double r = PI_MAS2RAD * radius * MathUtils.carthesianNorm(ufreq, vfreq);
 
         double g;
         if (r == 0D) {
@@ -371,9 +363,7 @@ public final class Functions {
          * q**2 = u**2+v**2
          */
 
-        final double normUV = Math.sqrt(ufreq * ufreq + vfreq * vfreq);
-
-        final double d = PI_MAS2RAD * diameter * normUV;
+        final double d = PI_MAS2RAD * diameter * MathUtils.carthesianNorm(ufreq, vfreq);
 
         double g;
         if (d == 0D) {

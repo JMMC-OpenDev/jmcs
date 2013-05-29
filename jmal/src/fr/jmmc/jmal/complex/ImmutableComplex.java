@@ -22,6 +22,7 @@
  */
 package fr.jmmc.jmal.complex;
 
+import fr.jmmc.jmal.util.MathUtils;
 import net.jafama.FastMath;
 
 /**
@@ -50,11 +51,11 @@ public final class ImmutableComplex implements Complex {
     private final double real;
     /** The imaginary part. */
     private final double imaginary;
-    /** Record whether this complex number is equal to NaN. */
-    private boolean isNaN;
-    /** Record whether this complex number is infinite. */
-    private boolean isInfinite;
 
+    /** Record whether this complex number is equal to NaN. */
+//    private boolean isNaN;
+    /** Record whether this complex number is infinite. */
+//    private boolean isInfinite;
     /**
      * Create an immutable complex number given another complex number.
      * @param complex another complex number
@@ -73,14 +74,15 @@ public final class ImmutableComplex implements Complex {
         /* same code in updateComplex(real, imaginary); */
         this.real = real;
         this.imaginary = imaginary;
-
-        if (CHECK_NAN_INF) {
-            this.isNaN = Double.isNaN(real) || Double.isNaN(imaginary);
-            this.isInfinite = !this.isNaN && (Double.isInfinite(real) || Double.isInfinite(imaginary));
-        } else {
-            this.isNaN = false;
-            this.isInfinite = false;
-        }
+        /*
+         if (CHECK_NAN_INF) {
+         this.isNaN = Double.isNaN(real) || Double.isNaN(imaginary);
+         this.isInfinite = !this.isNaN && (Double.isInfinite(real) || Double.isInfinite(imaginary));
+         } else {
+         this.isNaN = false;
+         this.isInfinite = false;
+         }
+         */
     }
 
     /**
@@ -98,14 +100,12 @@ public final class ImmutableComplex implements Complex {
             if (im == 0.0d) {
                 return absRe;
             }
-            final double q = re / im;
-            return absIm * Math.sqrt(1d + q * q);
+            return MathUtils.carthesianNorm(re, im);
         }
         if (re == 0.0d) {
             return absIm;
         }
-        final double q = im / re;
-        return absRe * Math.sqrt(1d + q * q);
+        return MathUtils.carthesianNorm(re, im);
     }
 
     /**
@@ -137,15 +137,17 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public double abs() {
-        if (CHECK_NAN_INF) {
-            if (this.isNaN) {
-                return Double.NaN;
-            }
+        /*
+         if (CHECK_NAN_INF) {
+         if (this.isNaN) {
+         return Double.NaN;
+         }
 
-            if (this.isInfinite) {
-                return Double.POSITIVE_INFINITY;
-            }
-        }
+         if (this.isInfinite) {
+         return Double.POSITIVE_INFINITY;
+         }
+         }
+         */
         return ImmutableComplex.abs(real, imaginary);
     }
 
@@ -218,11 +220,13 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public Complex conjugate() {
-        if (CHECK_NAN_INF) {
-            if (this.isNaN) {
-                return updateOrCreateComplex(NaN);
-            }
-        }
+        /*
+         if (CHECK_NAN_INF) {
+         if (this.isNaN) {
+         return updateOrCreateComplex(NaN);
+         }
+         }
+         */
         return updateOrCreateComplex(real, -imaginary);
     }
 
@@ -252,11 +256,13 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public Complex divide(final Complex rhs) {
-        if (CHECK_NAN_INF) {
-            if (this.isNaN || rhs.isNaN()) {
-                return updateOrCreateComplex(NaN);
-            }
-        }
+        /*
+         if (CHECK_NAN_INF) {
+         if (this.isNaN || rhs.isNaN()) {
+         return updateOrCreateComplex(NaN);
+         }
+         }
+         */
 
         final double c = rhs.getReal();
         final double d = rhs.getImaginary();
@@ -264,11 +270,13 @@ public final class ImmutableComplex implements Complex {
             return updateOrCreateComplex(NaN);
         }
 
-        if (CHECK_NAN_INF) {
-            if (rhs.isInfinite() && !this.isInfinite) {
-                return updateOrCreateComplex(ZERO);
-            }
-        }
+        /*
+         if (CHECK_NAN_INF) {
+         if (rhs.isInfinite() && !this.isInfinite) {
+         return updateOrCreateComplex(ZERO);
+         }
+         }
+         */
 
         if (abs(c) < abs(d)) {
             final double q = c / d;
@@ -302,11 +310,13 @@ public final class ImmutableComplex implements Complex {
         }
         if (other instanceof Complex) {
             final Complex rhs = (Complex) other;
-            if (CHECK_NAN_INF && rhs.isNaN()) {
-                return this.isNaN;
-            } else {
-                return (this.real == rhs.getReal()) && (this.imaginary == rhs.getImaginary());
-            }
+            /*
+             if (CHECK_NAN_INF && rhs.isNaN()) {
+             return this.isNaN;
+             } else {
+             */
+            return (this.real == rhs.getReal()) && (this.imaginary == rhs.getImaginary());
+            // }
         }
         return false;
     }
@@ -318,11 +328,13 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public int hashCode() {
-        if (CHECK_NAN_INF) {
-            if (this.isNaN) {
-                return 7;
-            }
-        }
+        /*
+         if (CHECK_NAN_INF) {
+         if (this.isNaN) {
+         return 7;
+         }
+         }
+         */
         return 37 * (17 * hashcodeDouble(imaginary) + hashcodeDouble(real));
     }
 
@@ -353,7 +365,7 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public boolean isNaN() {
-        return this.isNaN;
+        return false; //this.isNaN;
     }
 
     /**
@@ -367,7 +379,7 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public boolean isInfinite() {
-        return this.isInfinite;
+        return false; //this.isInfinite;
     }
 
     /**
@@ -389,14 +401,16 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public Complex multiply(final Complex rhs) {
-        if (CHECK_NAN_INF) {
-            if (this.isNaN || rhs.isNaN()) {
-                return updateOrCreateComplex(NaN);
-            }
-            if (this.isInfinite || rhs.isInfinite()) {
-                return updateOrCreateComplex(INF);
-            }
-        }
+        /*
+         if (CHECK_NAN_INF) {
+         if (this.isNaN || rhs.isNaN()) {
+         return updateOrCreateComplex(NaN);
+         }
+         if (this.isInfinite || rhs.isInfinite()) {
+         return updateOrCreateComplex(INF);
+         }
+         }
+         */
         return updateOrCreateComplex(real * rhs.getReal() - imaginary * rhs.getImaginary(), real * rhs.getImaginary() + imaginary * rhs.getReal());
     }
 
@@ -417,14 +431,16 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public Complex multiply(final double rhs) {
-        if (CHECK_NAN_INF) {
-            if (this.isNaN || Double.isNaN(rhs)) {
-                return updateOrCreateComplex(NaN);
-            }
-            if (this.isInfinite || Double.isInfinite(rhs)) {
-                return updateOrCreateComplex(INF);
-            }
-        }
+        /*
+         if (CHECK_NAN_INF) {
+         if (this.isNaN || Double.isNaN(rhs)) {
+         return updateOrCreateComplex(NaN);
+         }
+         if (this.isInfinite || Double.isInfinite(rhs)) {
+         return updateOrCreateComplex(INF);
+         }
+         }
+         */
         return updateOrCreateComplex(real * rhs, imaginary * rhs);
     }
 
@@ -437,11 +453,13 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public Complex negate() {
-        if (CHECK_NAN_INF) {
-            if (this.isNaN) {
-                return updateOrCreateComplex(NaN);
-            }
-        }
+        /*
+         if (CHECK_NAN_INF) {
+         if (this.isNaN) {
+         return updateOrCreateComplex(NaN);
+         }
+         }
+         */
         return updateOrCreateComplex(-real, -imaginary);
     }
 
@@ -462,11 +480,13 @@ public final class ImmutableComplex implements Complex {
      */
     @Override
     public Complex subtract(final Complex rhs) {
-        if (CHECK_NAN_INF) {
-            if (this.isNaN || rhs.isNaN()) {
-                return updateOrCreateComplex(NaN);
-            }
-        }
+        /*
+         if (CHECK_NAN_INF) {
+         if (this.isNaN || rhs.isNaN()) {
+         return updateOrCreateComplex(NaN);
+         }
+         }
+         */
         return updateOrCreateComplex(real - rhs.getReal(), imaginary - rhs.getImaginary());
     }
 
@@ -493,11 +513,11 @@ public final class ImmutableComplex implements Complex {
         // does nothing in ImmutableComplex
         // does following in MutableComplex
         /*
-        this.real = other.getReal();
-        this.imaginary = other.getImaginary();
+         this.real = other.getReal();
+         this.imaginary = other.getImaginary();
         
-        this.isNaN = other.isNaN();
-        this.isInfinite = other.isInfinite();
+         this.isNaN = other.isNaN();
+         this.isInfinite = other.isInfinite();
          */
     }
 
@@ -527,16 +547,16 @@ public final class ImmutableComplex implements Complex {
         // does nothing in ImmutableComplex
         // does following in MutableComplex
         /*
-        this.real = real;
-        this.imaginary = imaginary;
+         this.real = real;
+         this.imaginary = imaginary;
         
-        if (CHECK_NAN_INF) {
-        this.isNaN = Double.isNaN(real) || Double.isNaN(imaginary);
-        this.isInfinite = !this.isNaN && (Double.isInfinite(real) || Double.isInfinite(imaginary));
-        } else {
-        this.isNaN = false;
-        this.isInfinite = false;
-        }
+         if (CHECK_NAN_INF) {
+         this.isNaN = Double.isNaN(real) || Double.isNaN(imaginary);
+         this.isInfinite = !this.isNaN && (Double.isInfinite(real) || Double.isInfinite(imaginary));
+         } else {
+         this.isNaN = false;
+         this.isInfinite = false;
+         }
          */
     }
 
@@ -548,7 +568,7 @@ public final class ImmutableComplex implements Complex {
      * @return abs(x)
      */
     private static double abs(final double x) {
-        return (x < 0.0d) ? -x : (x == 0.0d) ? 0.0d : x; // -0.0 => +0.0
+        return (x < 0.0) ? -x : (x == 0.0) ? 0.0 : x; // -0.0 => +0.0
     }
 
     /**

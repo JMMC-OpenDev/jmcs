@@ -101,7 +101,8 @@ public final class MutableComplex implements Complex {
      */
     @Override
     public double abs() {
-        /*        if (CHECK_NAN_INF) {
+        /*
+         if (CHECK_NAN_INF) {
          if (this.isNaN) {
          return Double.NaN;
          }
@@ -189,7 +190,8 @@ public final class MutableComplex implements Complex {
      */
     @Override
     public Complex conjugate() {
-        /*        if (CHECK_NAN_INF) {
+        /*
+         if (CHECK_NAN_INF) {
          if (this.isNaN) {
          return updateOrCreateComplex(NaN);
          }
@@ -224,7 +226,8 @@ public final class MutableComplex implements Complex {
      */
     @Override
     public Complex divide(final Complex rhs) {
-        /*        if (CHECK_NAN_INF) {
+        /*
+         if (CHECK_NAN_INF) {
          if (this.isNaN || rhs.isNaN()) {
          return updateOrCreateComplex(NaN);
          }
@@ -274,7 +277,8 @@ public final class MutableComplex implements Complex {
         }
         if (other instanceof Complex) {
             final Complex rhs = (Complex) other;
-            /*            if (CHECK_NAN_INF && rhs.isNaN()) {
+            /*
+             if (CHECK_NAN_INF && rhs.isNaN()) {
              return this.isNaN;
              } else {
              */
@@ -291,7 +295,8 @@ public final class MutableComplex implements Complex {
      */
     @Override
     public int hashCode() {
-        /*        if (CHECK_NAN_INF) {
+        /*
+         if (CHECK_NAN_INF) {
          if (this.isNaN) {
          return 7;
          }
@@ -363,7 +368,8 @@ public final class MutableComplex implements Complex {
      */
     @Override
     public Complex multiply(final Complex rhs) {
-        /*        if (CHECK_NAN_INF) {
+        /*
+         if (CHECK_NAN_INF) {
          if (this.isNaN || rhs.isNaN()) {
          return updateOrCreateComplex(NaN);
          }
@@ -392,7 +398,8 @@ public final class MutableComplex implements Complex {
      */
     @Override
     public Complex multiply(final double rhs) {
-        /*        if (CHECK_NAN_INF) {
+        /*
+         if (CHECK_NAN_INF) {
          if (this.isNaN || Double.isNaN(rhs)) {
          return updateOrCreateComplex(NaN);
          }
@@ -413,7 +420,8 @@ public final class MutableComplex implements Complex {
      */
     @Override
     public Complex negate() {
-        /*        if (CHECK_NAN_INF) {
+        /*
+         if (CHECK_NAN_INF) {
          if (this.isNaN) {
          return updateOrCreateComplex(NaN);
          }
@@ -439,7 +447,8 @@ public final class MutableComplex implements Complex {
      */
     @Override
     public Complex subtract(final Complex rhs) {
-        /*        if (CHECK_NAN_INF) {
+        /*
+         if (CHECK_NAN_INF) {
          if (this.isNaN || rhs.isNaN()) {
          return updateOrCreateComplex(NaN);
          }

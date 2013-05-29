@@ -7,6 +7,7 @@ import fr.jmmc.jmal.model.ModelDefinition;
 import fr.jmmc.jmal.model.ModelManager;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmal.model.targetmodel.Parameter;
+import fr.jmmc.jmal.util.MathUtils;
 import net.jafama.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -328,7 +329,7 @@ public final class EditableRhoThetaParameter implements Editable {
      * @return distance rho
      */
     public static double getRho(final double x, final double y) {
-        return Math.sqrt(x * x + y * y);
+        return MathUtils.carthesianNorm(x, y);
     }
 
     /**

@@ -221,18 +221,29 @@ public abstract class SampCapabilityAction extends RegisteredAction {
      * command the name of the destination.
      */
     @Override
-    public final void actionPerformed(final ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
+        composeAndSendMessage(e.getActionCommand());
+    }
+
+    /**
+     * Create a new Samp message returned by composeMessage() and send it to
+     * user selected client(s).
+     * @param command action command. It contains in its
+     * command the name of the destination.
+     * @return true if success; false otherwise
+     */
+    protected final boolean composeAndSendMessage(final String command) {
+        boolean ok = true;
+
         // Delegate message forging to app-specific code
         final Map<?, ?> parameters = composeMessage();
 
         if (parameters != null) {
             StatusBar.show("Sending data through SAMP ...");
 
-            boolean ok = false;
             try {
+                ok = false;
                 // Get the user clicked menu label
-                final String command = e.getActionCommand();
-
                 // If the 'All' menu was used
                 if (BROADCAST_MENU_LABEL.equals(command)) {
                     // Broadcast the forged message to all capable clients
@@ -247,11 +258,12 @@ public abstract class SampCapabilityAction extends RegisteredAction {
 
             } catch (SampException se) {
                 _logger.error("Samp message send failure", se);
+            } finally {
+                StatusBar.show(
+                        (ok) ? "Sending data through SAMP ... done."
+                        : "Sending data through SAMP ... failed.");
             }
-
-            StatusBar.show(
-                    (ok) ? "Sending data through SAMP ... done."
-                    : "Sending data through SAMP ... failed.");
         }
+        return ok;
     }
 }

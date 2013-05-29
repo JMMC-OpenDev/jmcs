@@ -162,10 +162,10 @@ public final class Probability extends cern.jet.math.Constants {
         double z = -a * a;
 
         if (z < -MAXLOG) {
-            if (a < 0) {
-                return (2.0);
+            if (a < 0.0) {
+                return 2.0;
             } else {
-                return (0.0);
+                return 0.0;
             }
         }
 
@@ -182,15 +182,15 @@ public final class Probability extends cern.jet.math.Constants {
 
         double y = (z * p) / q;
 
-        if (a < 0) {
+        if (a < 0.0) {
             y = 2.0 - y;
         }
 
         if (y == 0.0) {
-            if (a < 0) {
+            if (a < 0.0) {
                 return 2.0;
             } else {
-                return (0.0);
+                return 0.0;
             }
         }
 
@@ -216,12 +216,52 @@ public final class Probability extends cern.jet.math.Constants {
      * @param mean the mean of the normal distribution.
      * @param variance the variance of the normal distribution.
      * @param x the integration limit.
+     * @return the area under the Normal (Gaussian) probability density
+     * function, integrated from minus infinity to <tt>x</tt>.
      */
     static public double normal(final double mean, final double variance, final double x) throws ArithmeticException {
-        if (x > 0) {
-            return 0.5 + 0.5 * errorFunction((x - mean) / Math.sqrt(2.0 * variance));
+        return normalWeighted(mean, getNormalWeight(variance), x);
+    }
+
+    /**
+     * Returns the area under the Normal (Gaussian) probability density
+     * function, integrated from minus infinity to <tt>x</tt>.
+     * <pre>
+     *                            x
+     *                             -
+     *                   1        | |                 2
+     *  normal(x)  = ---------    |    exp( - (t-mean) / 2v ) dt
+     *               sqrt(2pi*v)| |
+     *                           -
+     *                          -inf.
+     *
+     * </pre>
+     * where <tt>v = variance</tt>.
+     * Computation is via the functions <tt>errorFunction</tt>.
+     * 
+     * Note: this methods uses the given weight coefficient:
+     * @see #getNormalWeight(double) 
+     *
+     * @param mean the mean of the normal distribution.
+     * @param weight the weight coefficient = 1.0 / Math.sqrt(2.0 * variance)
+     * @param x the integration limit.
+     * @return the area under the Normal (Gaussian) probability density
+     * function, integrated from minus infinity to <tt>x</tt>.
+     */
+    static public double normalWeighted(final double mean, final double weight, final double x) throws ArithmeticException {
+        if (x > 0.0) {
+            return 0.5 + 0.5 * errorFunction((x - mean) * weight);
         } else {
-            return 0.5 - 0.5 * errorFunction((-(x - mean)) / Math.sqrt(2.0 * variance));
+            return 0.5 - 0.5 * errorFunction(-(x - mean) * weight);
         }
+    }
+
+    /**
+     * Return the weight coefficient = 1.0 / Math.sqrt(2.0 * variance)
+     * @param variance
+     * @return 
+     */
+    static public double getNormalWeight(final double variance) {
+        return 1.0 / Math.sqrt(2.0 * variance);
     }
 }

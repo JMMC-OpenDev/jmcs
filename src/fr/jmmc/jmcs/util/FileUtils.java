@@ -652,14 +652,14 @@ public final class FileUtils {
      * @return cleaned up file name
      */
     public static String cleanupFileName(final String fileName) {
-        // Remove accent from characters (if any)        
-        final String removed = fileName.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        // Remove accent from characters (if any) (Java 1.6)
+        final String removed = StringUtils.removeAccents(fileName);
 
         // Replace wild characters with '_'
-        final String cleaned = removed.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
+        final String cleaned = StringUtils.replaceNonFileNameCharsByUnderscore(removed);
 
-        if (!cleaned.matches(fileName)) {
-            _logger.warn("Had to clean up file name (was '{}', became '{}').", fileName, cleaned);
+        if (_logger.isDebugEnabled() && !cleaned.equals(fileName)) {
+            _logger.debug("Had to clean up file name (was '{}', became '{}').", fileName, cleaned);
         }
 
         return cleaned;
@@ -676,5 +676,10 @@ public final class FileUtils {
             final String cleanupFileName = cleanupFileName(string);
             System.out.println("cleanupFileName(" + string + ") = " + cleanupFileName);
         }
+        /*
+         cleanupFileName(aZeRtY/uiop) = aZeRtY_uiop
+         cleanupFileName(This>is some(string,with $invalid*-chars).jpg) = This_is_some_string_with__invalid_-chars_.jpg
+         cleanupFileName(aáeéiíoóöőuúüű AÁEÉIÍOÓÖŐUÚÜŰ-_*$€\[]) = a_e_i_o___u____A_E_I_O___U___-_______
+         */
     }
 }

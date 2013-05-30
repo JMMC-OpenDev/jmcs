@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import java.text.Normalizer;
 import java.util.regex.Pattern;
 
 /**
@@ -45,8 +46,12 @@ public final class StringUtils {
     public final static String STRING_MINUS_SIGN = "-";
     /** RegExp expression to match white spaces (1..n) */
     private final static Pattern PATTERN_WHITE_SPACE_MULTIPLE = Pattern.compile("\\s+");
-    /** regular expression used to match characters different than alpha/numeric/+/- (1..n) */
+    /** regular expression used to match characters different than alpha/numeric/_/+/- (1..n) */
     private final static Pattern PATTERN_NON_ALPHA_NUM = Pattern.compile("[^a-zA-Z_\\+\\-0-9]+");
+    /** regular expression used to match characters different than alpha/numeric/_/-/. (1..n) */
+    private final static Pattern PATTERN_NON_FILE_NAME = Pattern.compile("[^a-zA-Z0-9\\-_\\.]");
+    /** regular expression used to match characters with accents */
+    private final static Pattern PATTERN_ACCENT_CHARS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
     /** regular expression used to match characters different than numeric (1..n) */
     private final static Pattern PATTERN_NON_NUM = Pattern.compile("[^0-9]+");
     /** RegExp expression to match carriage return */
@@ -95,6 +100,19 @@ public final class StringUtils {
      */
     public static boolean isTrimmedEmpty(final String value) {
         return value == null || value.trim().length() == 0;
+    }
+
+    /* --- accent handling -------------------------------------------------- */
+    /**
+     * Remove accents from any character i.e. remove diacritical marks
+     * @param value input value
+     * @return string value
+     */
+    public static String removeAccents(final String value) {
+        // Remove accent from characters (if any) (Java 1.6)
+        final String normalized = Normalizer.normalize(value, Normalizer.Form.NFD);
+
+        return PATTERN_ACCENT_CHARS.matcher(normalized).replaceAll(STRING_EMPTY);
     }
 
     /* --- common white space helper methods -------------------------------- */
@@ -181,6 +199,26 @@ public final class StringUtils {
      */
     public static String replaceNonNumericChars(final String value, final String replaceBy) {
         return PATTERN_NON_NUM.matcher(value).replaceAll(replaceBy);
+    }
+
+    /* --- common file name helper methods ------------------------------ */
+    /**
+     * Replace invalid file name characters (1..n) by the underscore character
+     * @param value input value
+     * @return string value
+     */
+    public static String replaceNonFileNameCharsByUnderscore(final String value) {
+        return replaceNonFileNameChars(value, STRING_UNDERSCORE);
+    }
+
+    /**
+     * Replace invalid file name characters (1..n) by the given replacement string
+     * @param value input value
+     * @param replaceBy replacement string
+     * @return string value
+     */
+    public static String replaceNonFileNameChars(final String value, final String replaceBy) {
+        return PATTERN_NON_FILE_NAME.matcher(value).replaceAll(replaceBy);
     }
 
     /* --- common helper methods ------------------------------ */

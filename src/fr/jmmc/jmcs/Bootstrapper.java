@@ -394,7 +394,6 @@ public final class Bootstrapper {
                 frame.pack();
                 // Restore, then automatically save window size changes
                 WindowUtils.rememberWindowSize(frame, MAIN_FRAME_DIMENSION_KEY);
-                frame.setVisible(true);
             }
         });
 

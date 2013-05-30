@@ -37,8 +37,8 @@ import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.lang.ref.WeakReference;
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Brice COLUCCI, Guillaume MELLA, Laurent BOURGES.
  */
-public class WindowUtils {
+public final class WindowUtils {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(WindowUtils.class.getName());
@@ -79,8 +79,12 @@ public class WindowUtils {
         _screenHeight = dm.getHeight();
     }
 
-    /** Return the maximum viewable area or dimension if smaller. */
-    public static Dimension getMaximumArea(Dimension dimension) {
+    /** 
+     * Return the maximum viewable area or dimension if smaller. 
+     * @param dimension frame dimension
+     * @return dimension
+     */
+    public static Dimension getMaximumArea(final Dimension dimension) {
         Dimension max = new Dimension();
         max.height = Math.min(_screenHeight, dimension.height);
         max.width = Math.min(_screenWidth, dimension.width);
@@ -95,34 +99,36 @@ public class WindowUtils {
      * @param frameToCenter the JFrame we want to center
      */
     public static void centerOnMainScreen(final Window frameToCenter) {
-        // Using invokeAndWait to be in sync with this thread
-        // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
-        SwingUtils.invokeAndWaitEDT(new Runnable() {
-            /**
-             * Initializes Splash Screen in EDT
-             */
-            @Override
-            public void run() {
-                // Next try catch is mandatory to catach null pointer excpetion that
-                // can occure on some virtual machine emulation (at least virtualBox)
-                try {
-                    getScreenProperties();
+        if (frameToCenter != null) {
+            // Using invokeAndWait to be in sync with this thread
+            // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
+            SwingUtils.invokeAndWaitEDT(new Runnable() {
+                /**
+                 * Initializes Splash Screen in EDT
+                 */
+                @Override
+                public void run() {
+                    // Next try catch is mandatory to catach null pointer excpetion that
+                    // can occure on some virtual machine emulation (at least virtualBox)
+                    try {
+                        getScreenProperties();
 
-                    // Dimension of the JFrame
-                    Dimension frameSize = frameToCenter.getSize();
+                        // Dimension of the JFrame
+                        Dimension frameSize = frameToCenter.getSize();
 
-                    // Get centering point
-                    Point point = getCenteringPoint(frameSize);
+                        // Get centering point
+                        Point point = getCenteringPoint(frameSize);
 
-                    frameToCenter.setLocation(point);
+                        frameToCenter.setLocation(point);
 
-                    _logger.debug("The window has been centered");
+                        _logger.debug("The window has been centered");
 
-                } catch (NullPointerException npe) {
-                    _logger.warn("Could not center window");
+                    } catch (NullPointerException npe) {
+                        _logger.warn("Could not center window");
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -221,57 +227,7 @@ public class WindowUtils {
             }
         });
 
-        // Triggered once timer definitly expires
-        final ActionListener frameSizeChangedAction = new ActionListener() {
-            // Weak to let frame deallocation occure gracefully
-            private final WeakReference<JFrame> _weakFrame = new WeakReference<JFrame>(frame);
-            private final String _key = key;
-
-            public void actionPerformed(ActionEvent evt) {
-
-                final JFrame frame = _weakFrame.get();
-                if (frame == null) {
-                    return;
-                }
-
-                _logger.debug("Archive frame[" + _key + "] size = " + frame.getSize() + ".");
-                SessionSettingsPreferences.storeDimension(_key, frame.getSize());
-            }
-        };
-
-        final ComponentListener frameSizeListener = new ComponentListener() {
-            private Timer _timer = new Timer(1000, frameSizeChangedAction); // 1 second grace periods
-
-            {
-                _timer.setRepeats(false);
-            }
-
-            public void componentResized(ComponentEvent e) {
-                e.getComponent().getSize();
-
-                // Start timer once
-                if (!_timer.isRunning()) {
-                    _timer.start();
-                    return;
-                }
-
-                // Or restart it until there is no more resizing events for at least the timer duration
-                _timer.restart();
-            }
-
-            public void componentMoved(ComponentEvent e) {
-                // No op
-            }
-
-            public void componentShown(ComponentEvent e) {
-                // No op
-            }
-
-            public void componentHidden(ComponentEvent e) {
-                // No op
-            }
-        };
-        frame.addComponentListener(frameSizeListener);
+        frame.addComponentListener(new FrameSizeAdapter(frame, key));
     }
 
     /**
@@ -279,6 +235,57 @@ public class WindowUtils {
      */
     private WindowUtils() {
         super();
+    }
+
+    private static final class FrameSizeAdapter extends ComponentAdapter {
+
+        /** component resize timer to avoid repeated calls */
+        private final Timer _timer;
+
+        /**
+         * Constructor
+         * @param frame the frame to monitor.
+         * @param key the frame identifier.
+         */
+        FrameSizeAdapter(final JFrame frame, final String key) {
+
+            // Triggered once timer definitly expires
+            final ActionListener frameSizeChangedAction = new ActionListener() {
+                // Weak to let frame deallocation occur gracefully
+                private final WeakReference<JFrame> _weakFrame = new WeakReference<JFrame>(frame);
+                private final String _key = key;
+
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    final JFrame frame = _weakFrame.get();
+                    if (frame == null) {
+                        return;
+                    }
+
+                    if (_logger.isDebugEnabled()) {
+                        _logger.debug("Store frame[{}] size = {}.", _key, frame.getSize());
+                    }
+
+                    SessionSettingsPreferences.storeDimension(_key, frame.getSize());
+                }
+            };
+
+            // 1 second grace periods:
+            _timer = new Timer(1000, frameSizeChangedAction);
+            _timer.setRepeats(false);
+        }
+
+        @Override
+        public void componentResized(final ComponentEvent e) {
+            // Start timer once
+            if (!_timer.isRunning()) {
+                _timer.start();
+                return;
+            }
+
+            // Or restart it until there is no more resizing events for at least the timer duration
+            _timer.restart();
+        }
     }
 }
 /*___oOo___*/

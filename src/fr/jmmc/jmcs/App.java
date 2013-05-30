@@ -101,7 +101,7 @@ public abstract class App {
 
     final void ___internalStart() {
         defineCustomCommandLineArgumentsAndHelp();
-        
+
         // Interpret arguments
         _customArgumentValues = CommandLineUtils.interpretArguments(_args, _customArgumentsDefinition, _customHelp);
     }
@@ -244,7 +244,7 @@ public abstract class App {
         if (frame.getState() == Frame.ICONIFIED) {
             frame.setState(Frame.NORMAL);
         }
-
+        
         // Force the frame to be visible and bring it to front
         frame.setVisible(true);
         frame.toFront();

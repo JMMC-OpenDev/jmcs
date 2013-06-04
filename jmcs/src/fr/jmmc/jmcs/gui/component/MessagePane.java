@@ -160,12 +160,7 @@ public final class MessagePane {
         }
 
         // display the message within EDT :
-        SwingUtils.invokeAndWaitEDT(new Runnable() {
-            @Override
-            public void run() {
-                showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -400,25 +395,26 @@ public final class MessagePane {
      */
     public static String showInputMessage(final String message, final String title) {
 
-        FutureTask<String> future = new FutureTask<String>(
+        final FutureTask<String> future = new FutureTask<String>(
                 new Callable<String>() {
-                    @Override
-                    public String call() {
-                        // ensure window is visible (not iconified):
-                        App.showFrameToFront();
-                        return JOptionPane.showInputDialog(getApplicationFrame(), getMessageComponent(message), title, JOptionPane.INFORMATION_MESSAGE);
-                    }
-                });
+            @Override
+            public String call() {
+                // ensure window is visible (not iconified):
+                App.showFrameToFront();
+                return JOptionPane.showInputDialog(getApplicationFrame(), getMessageComponent(message), title, JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
 
-        SwingUtils.invokeAndWaitEDT(future);
+        SwingUtils.invokeEDT(future);
 
+        // Wait for call result:
         String receivedValue = null;
         try {
             receivedValue = future.get();
-        } catch (InterruptedException ex) {
-            _logger.error("Could not read user input", ex);
-        } catch (ExecutionException ex) {
-            _logger.error("Could not read user input", ex);
+        } catch (InterruptedException ie) {
+            _logger.error("Could not read user input", ie);
+        } catch (ExecutionException ee) {
+            _logger.error("Could not read user input", ee);
         }
 
         return receivedValue;

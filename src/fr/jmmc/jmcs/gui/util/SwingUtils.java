@@ -85,16 +85,21 @@ public final class SwingUtils {
             // current Thread is EDT, simply execute runnable:
             runnable.run();
         } else {
-            try {
-                // Using invokeAndWait to be in sync with the main thread :
-                SwingUtilities.invokeAndWait(runnable);
+            // If the current thread is interrupted, then use invoke later EDT (i.e. do not wait):
+            if (Thread.currentThread().isInterrupted()) {
+                invokeLaterEDT(runnable);
+            } else {
+                try {
+                    // Using invokeAndWait to be in sync with the calling thread:
+                    SwingUtilities.invokeAndWait(runnable);
 
-            } catch (InterruptedException ie) {
-                // propagate the exception :
-                throw new IllegalStateException("SwingUtils.invokeAndWaitEDT : interrupted while running " + runnable, ie);
-            } catch (InvocationTargetException ite) {
-                // propagate the internal exception :
-                throw new IllegalStateException("SwingUtils.invokeAndWaitEDT : an exception occured while running " + runnable, ite.getCause());
+                } catch (InterruptedException ie) {
+                    // propagate the exception because it should never happen:
+                    throw new IllegalStateException("SwingUtils.invokeAndWaitEDT : interrupted while running " + runnable, ie);
+                } catch (InvocationTargetException ite) {
+                    // propagate the internal exception :
+                    throw new IllegalStateException("SwingUtils.invokeAndWaitEDT : an exception occured while running " + runnable, ite.getCause());
+                }
             }
         }
     }

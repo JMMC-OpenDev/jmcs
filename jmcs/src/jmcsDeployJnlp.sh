@@ -866,7 +866,10 @@ export SEARCHPATHS="../lib:$COMMANDROOT/lib:$MODULEROOT/lib:$SCRIPTROOT/lib:$INT
 # define application name from given jnlp
 APPSHORTNAME=$(basename $JNLPFILE .jnlp 2> /dev/null)
 APPVERSION=$(xml sel -t -v "/ApplicationData/program/@version" $APPLICATION_DATA_XML | tr -d -c "[:alnum:]." )
-if [ "UNKNOWNReleaseVersion" == "$APPVERSION" ]
+APPCLASS=$(xml sel -t -v "//application-desc/@main-class" $JNLPFILE )
+# APPNAME get version number for application big jars and should keep the jnlp
+# basename for component-desc included modules.
+if [ -z "$APPCLASS" ]
 then 
     APPNAME=${APPSHORTNAME}
 else

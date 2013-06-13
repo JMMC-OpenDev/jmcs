@@ -200,6 +200,12 @@ public abstract class App {
      * @param frame application frame.
      */
     public static void setFrame(final JFrame frame) {
+        
+        if (_applicationFrame != null && _applicationFrame != frame) {
+            // Hide and dispose the former application frame:
+            _applicationFrame.setVisible(false);
+            _applicationFrame.dispose();
+        }
 
         _applicationFrame = frame;
         _applicationFrame.setLocationByPlatform(true);
@@ -238,16 +244,21 @@ public abstract class App {
      * Show the application frame and bring it to front.
      */
     public static void showFrameToFront() {
-        final JFrame frame = getFrame();
+        // use the existing application frame only
+        // to not create a new frame when displaying messages 
+        // during application startup
+        final JFrame frame = _applicationFrame;
+        if (frame != null) {
 
-        // Ensure window is visible (not iconified)
-        if (frame.getState() == Frame.ICONIFIED) {
-            frame.setState(Frame.NORMAL);
+            // Ensure window is visible (not iconified)
+            if (frame.getState() == Frame.ICONIFIED) {
+                frame.setState(Frame.NORMAL);
+            }
+
+            // Force the frame to be visible and bring it to front
+            frame.setVisible(true);
+            frame.toFront();
         }
-        
-        // Force the frame to be visible and bring it to front
-        frame.setVisible(true);
-        frame.toFront();
     }
 
     /**

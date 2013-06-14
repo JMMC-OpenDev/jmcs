@@ -79,6 +79,26 @@ public final class LoggingService {
         return (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(JMMC_LOGGER);
     }
 
+    /**
+     * Set the logger's level (if it is a logback logger) given its name
+     * @param loggerName logger name
+     * @param level Logback level
+     */
+    public static void setLoggerLevel(final String loggerName, ch.qos.logback.classic.Level level) {
+        setLoggerLevel(LoggerFactory.getLogger(loggerName), level);
+    }
+
+    /**
+     * Set given logger's level (if it is a logback logger)
+     * @param logger slf4j logger
+     * @param level Logback level
+     */
+    public static void setLoggerLevel(Logger logger, ch.qos.logback.classic.Level level) {
+        if (logger instanceof ch.qos.logback.classic.Logger) {
+            ((ch.qos.logback.classic.Logger) logger).setLevel(level);
+        }
+    }
+
     /** slf4j / Logback initialization */
     private static void init() throws SecurityException, IllegalStateException {
         final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();

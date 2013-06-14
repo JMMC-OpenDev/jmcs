@@ -202,9 +202,7 @@ public abstract class App {
     public static void setFrame(final JFrame frame) {
         
         if (_applicationFrame != null && _applicationFrame != frame) {
-            // Hide and dispose the former application frame:
-            _applicationFrame.setVisible(false);
-            _applicationFrame.dispose();
+            ___internalDisposeFrame();
         }
 
         _applicationFrame = frame;
@@ -304,8 +302,19 @@ public abstract class App {
     protected abstract void cleanup();
 
     static void ___internalSingletonCleanup() {
+        ___internalDisposeFrame();
+        
         _instance = null;
         _applicationFrame = null;
+    }
+    
+    private static void ___internalDisposeFrame() {
+        if (_applicationFrame != null) {
+            // Hide and dispose the former application frame:
+            _applicationFrame.setVisible(false);
+            _applicationFrame.dispose();
+            _applicationFrame = null;
+        }
     }
 
     /**

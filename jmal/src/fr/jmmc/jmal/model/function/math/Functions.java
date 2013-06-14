@@ -21,7 +21,7 @@ public final class Functions {
     /** _LPB_MAS2RAD = milliarcsecond to radian conversion factor */
     public final static double MAS2RAD = DEG2RAD / 3600D / 1000D;
     /** constant used to compute the gaussian model */
-    private final static double GAUSS_CST = 4d * Math.log(2d);
+    private final static double GAUSS_CST_INV = 1d / (4d * Math.log(2d));
     /** 2 x PI x MAS2RAD */
     private final static double TWO_PI_MAS2RAD = 2d * PI * MAS2RAD;
     /** PI x MAS2RAD */
@@ -320,7 +320,7 @@ public final class Functions {
 
         final double f = PI_MAS2RAD * fwhm;
 
-        final double d = -f * f / GAUSS_CST * (ufreq * ufreq + vfreq * vfreq);
+        final double d = -f * f * GAUSS_CST_INV * (ufreq * ufreq + vfreq * vfreq);
 
         double g;
         if (d == 0D) {

@@ -247,6 +247,8 @@ public final class MCSExceptionHandler {
      * @param e the exception
      */
     private static void logException(final Thread t, final Throwable e) {
+        System.err.println("An unexpected exception occured in thread " + t.getName());
+        e.printStackTrace(System.err);
         _logger.error("An unexpected exception occured in thread {}", t.getName(), e);
     }
 

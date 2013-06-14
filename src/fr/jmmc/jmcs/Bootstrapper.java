@@ -48,6 +48,7 @@ import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
+import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import fr.jmmc.jmcs.util.runner.LocalLauncher;
 import java.awt.event.ActionEvent;
@@ -563,6 +564,9 @@ public final class Bootstrapper {
 
         // Close all HTTP connections (http client) (if any)
         MultiThreadedHttpConnectionManager.shutdownAll();
+
+        // Switch to logging exception handler:
+        MCSExceptionHandler.installLoggingHandler();
     }
 
     /**

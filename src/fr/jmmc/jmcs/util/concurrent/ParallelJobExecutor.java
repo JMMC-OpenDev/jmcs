@@ -28,6 +28,7 @@
 package fr.jmmc.jmcs.util.concurrent;
 
 import ch.qos.logback.classic.Level;
+import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +106,7 @@ public final class ParallelJobExecutor {
         _logger.info("ParallelJobExecutor ready with {} threads", _parallelExecutor.getMaximumPoolSize());
 
         if (DEBUG_JOBS) {
-            ((ch.qos.logback.classic.Logger) _logger).setLevel(Level.DEBUG);
+            LoggingService.setLoggerLevel(_logger, Level.DEBUG);
         }
     }
 

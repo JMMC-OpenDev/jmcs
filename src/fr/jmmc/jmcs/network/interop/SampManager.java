@@ -27,10 +27,12 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.network.interop;
 
+import ch.qos.logback.classic.Level;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.StatusBar;
+import fr.jmmc.jmcs.logging.LoggingService;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -72,6 +74,8 @@ public final class SampManager {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(SampManager.class.getName());
+    /** flag to stop running hub at shutdown explicitely i.e. do not rely on JVM shutdown hooks (buggy) */
+    private static final boolean stopHubOnShutdown = true;
     /** Singleton instance */
     private static volatile SampManager _instance = null;
     /** Hook to the "Interop" menu */
@@ -270,6 +274,24 @@ public final class SampManager {
         _connector.setActive(false);
 
         _logger.info("SAMP Hub connection closed.");
+
+        // Perform manual JSamp Hub shutdown as its JVM shudown hook seems not working well ...
+        if (stopHubOnShutdown) {
+            LoggingService.setLoggerLevel("org.astrogrid.samp", Level.DEBUG);
+            LoggingService.setLoggerLevel("org.astrogrid.samp.hub.Hub", Level.DEBUG);
+
+            final Hub hub = getRunningHub();
+
+            if (hub != null) {
+                _logger.info("Stopping SAMP Hub ...");
+
+                hub.shutdown();
+                _logger.info("SAMP Hub shutdown.");
+            }
+            
+            // Note: JVM ShutdownHook can not use j.u.l.Logger (log lost) because LogManager adds itself a Cleaner hook
+            // to free all log handlers => lost logs !
+        }
     }
 
     /**

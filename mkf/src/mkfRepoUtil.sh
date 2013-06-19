@@ -278,7 +278,7 @@ function getProjectDesc()
             echo LITpro/${version}/mfgui ;;
         MCS )
             echo -n "${JMMC_SVNROOT} "
-            echo MCS/${version}/{mkf,mcscfg,tat,ctoo,mcs,log,err,misc,thrd,timlog,fnd,misco,env,cmd,msg,sdb,evh,gwt,jmcs,jmal,modc,modcpp,modsh,modjava,testgui} ;;
+            echo MCS/${version}/{mkf,mcscfg,tat,ctoo,mcs,log,err,misc,thrd,timlog,fnd,misco,env,cmd,msg,sdb,evh,gwt,jmcs,jmal,modc,modcpp,modsh,jae,testgui} ;;
         OIFitsExplorer )
             echo "${JMMC_SVNROOT} MCS/${version}/jmcs MCS/${version}/jmal "
             echo  oiTools/${version}/{oitools,oiexplorer-core,oiexplorer};;

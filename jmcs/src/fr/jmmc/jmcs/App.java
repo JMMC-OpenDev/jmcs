@@ -305,15 +305,16 @@ public abstract class App {
         ___internalDisposeFrame();
         
         _instance = null;
-        _applicationFrame = null;
     }
     
     private static void ___internalDisposeFrame() {
         if (_applicationFrame != null) {
             // Hide and dispose the former application frame:
-            _applicationFrame.setVisible(false);
-            _applicationFrame.dispose();
+            final JFrame frame = _applicationFrame;
+            // Free pointer now in case an exception occurs.
             _applicationFrame = null;
+            frame.setVisible(false);
+            frame.dispose();
         }
     }
 

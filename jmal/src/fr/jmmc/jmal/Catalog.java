@@ -5,11 +5,16 @@ package fr.jmmc.jmal;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Enumeration of all different catalogs and their properties.
- * If catalog list get updated, please deploy new jmcs_webapp.
+ * If catalog list get updated, please check consistency with:
+ * - SearchCal vobsCATALOG.h (#define block)
+ * - SearchCal GUI (XLST) (sclgui/src/fr/jmmc/sclgui/resource/sclguiVOTableToHTML.xsl)
+ * - getStar service (XSLT) : link to source file
  * 
  * @author Sylvain LAFRASSE, Guillaume MELLA.
  */
@@ -33,7 +38,7 @@ public enum Catalog {
     WDS("B/wds/wds", "WDS", "The Washington Visual Double Star Catalog"),
     AKARI("II/297/irc", "AKARI", "AKARI/IRC mid-IR all-sky Survey (ISAS/JAXA, 2010)"),
     HIP2("I/311/hip2", "HIP2", "Hipparcos, the New Reduction (van Leeuwen, 2007)"),
-    HIP1("I/239/hip_main", "HIP1", "	Hipparcos and Tycho Catalogues (ESA 1997)");
+    HIP1("I/239/hip_main", "HIP1", "Hipparcos and Tycho Catalogues (ESA 1997)");
     /* members */
     /** Store the catalog CDS 'cryptic' reference */
     private final String _reference;
@@ -240,6 +245,7 @@ public enum Catalog {
 
         System.out.println();
         System.out.println();
+        
         // Display in xml each catalog in the enum
         for (Catalog catalog : Catalog.values()) {
             String reference = catalog.reference();
@@ -253,6 +259,23 @@ public enum Catalog {
 
         // Display in html
         System.out.println("HTML version  :\n" + Catalog.toHtmlTable());
+        
+
+        System.out.println("CSS version  :\n<!-- origins (catalog) -->");
+        
+        final Pattern pattern = Pattern.compile("[^a-zA-Z_0-9]+");
+
+        // use all catalog entries (includes aliases):
+        for (Map.Entry<String,Catalog> entry : NastyTrick._catalogs.entrySet()) {
+            System.out.println("<set>");
+            System.out.print("<key>o");
+            System.out.print(pattern.matcher(entry.getKey()).replaceAll("_"));
+            System.out.println("</key>");
+            System.out.print("<value>");
+            System.out.print(fr.jmmc.jmcs.util.ColorEncoder.encode(getDefaultColor(entry.getValue())));
+            System.out.println("</value>");
+            System.out.println("</set>");
+        }
     }
 }
 
@@ -267,7 +290,7 @@ final class NastyTrick {
     private final static int CAPACITY = 32;
     static final Map<String, String> _titles = new HashMap<String, String>(CAPACITY);
     static final Map<String, String> _descriptions = new HashMap<String, String>(CAPACITY);
-    static final Map<String, Catalog> _catalogs = new HashMap<String, Catalog>(CAPACITY);
+    static final Map<String, Catalog> _catalogs = new LinkedHashMap<String, Catalog>(CAPACITY);
 
     private NastyTrick() {
     }

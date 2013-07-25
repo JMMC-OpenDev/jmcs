@@ -67,7 +67,7 @@ public final class MimeType {
     /** MimeType associated to VEGA Star Lists */
     public final static MimeType STAR_LIST = MimeType.add("STAR_LIST", "text/plain", "Star Lists", "txt");
     /** MimeType associated to Character-Separated Values format */
-    public final static MimeType CSV = MimeType.add("CSV", "text/csv", "CSV", "txt");
+    public final static MimeType CSV = MimeType.add("CSV", "text/csv", "CSV", "csv", "txt");
     /** MimeType associated to HTML format */
     public final static MimeType HTML = MimeType.add("HTML", "text/html", "HTML", "html");
     /** MimeType associated to Text files */

@@ -210,7 +210,10 @@ public final class RecentFilesManager {
                     _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, currentPath));
                 }
             };
-            _menu.add(new JMenuItem(currentAction));
+            
+            final JMenuItem menuItem = new JMenuItem(currentAction);
+            menuItem.setToolTipText(currentPath);
+            _menu.add(menuItem);
         }
 
         if (_menu.getItemCount() > 0) {

@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public enum Catalog {
 
     /* keep ordering as follows (used by default color association) */
-    ASCC_2_5("I/280", "I/280B", "ASCC-2.5", "All-sky Compiled Catalogue of 2.5 million stars"),
+    ASCC_2_5("I/280", "ASCC-2.5", "All-sky Compiled Catalogue of 2.5 million stars"),
     USNO_B("I/284", "USNO-B", "The USNO-B1.0 Catalog"),
     CIO("II/225/catalog", "CIO", "Catalog of Infrared Observations, Edition 5"),
     JP11("II/7A/catalog", "JP11", "UBVRIJKLMNH Photoelectric Catalogue"),
@@ -29,7 +29,7 @@ public enum Catalog {
     BSC("V/50/catalog", "BSC", "Bright Star Catalogue, 5th Revised Ed."),
     Merand("J/A+A/433/1155", "Merand", "Calibrator stars for 200m baseline interferometry"),
     DENIS("B/denis", "DENIS", "The DENIS database"),
-    J_K_DENIS("J/A+A/413/1037", "J/A+A/413/1037/table1", "J-K DENIS", "J-K DENIS photometry of bright southern stars"),
+    J_K_DENIS("J/A+A/413/1037", "J-K DENIS", "J-K DENIS photometry of bright southern stars"),
     HIC("I/196/main", "HIC", "Hipparcos Input Catalogue, Version 2"),
     LBSI("J/A+A/393/183/catalog", "LBSI", "Catalogue of calibrator stars for LBSI"),
     MIDI("MIDI", "MIDI", "Photometric observations and angular size estimates of mid infrared interferometric calibration sources"),
@@ -50,10 +50,6 @@ public enum Catalog {
     public static final String UNKNOWN = "Unknown";
 
     Catalog(final String reference, final String title, final String description) {
-        this(reference, null, title, description);
-    }
-
-    Catalog(final String reference, final String alias, final String title, final String description) {
         _reference = (reference == null ? UNKNOWN : reference);
         addCatalog(_reference);
 
@@ -62,24 +58,18 @@ public enum Catalog {
 
         _description = (description == null ? UNKNOWN : description);
         addDescription(_reference, _description);
-
-        if (alias != null) {
-            addCatalog(alias);
-            addTitle(alias, _title);
-            addDescription(alias, _title);
-        }
     }
 
     private void addTitle(final String reference, final String title) {
-        NastyTrick._titles.put(reference, title);
+        CatalogMapping._titles.put(reference, title);
     }
 
     private void addDescription(final String reference, final String description) {
-        NastyTrick._descriptions.put(reference, description);
+        CatalogMapping._descriptions.put(reference, description);
     }
 
     private void addCatalog(final String reference) {
-        NastyTrick._catalogs.put(reference, this);
+        CatalogMapping._catalogs.put(reference, this);
     }
 
     /**
@@ -126,7 +116,7 @@ public enum Catalog {
             return UNKNOWN;
         }
 
-        String title = NastyTrick._titles.get(reference);
+        String title = CatalogMapping._titles.get(reference);
         if (title == null) {
             title = reference;
         }
@@ -151,7 +141,7 @@ public enum Catalog {
             return UNKNOWN;
         }
 
-        String description = NastyTrick._descriptions.get(reference);
+        String description = CatalogMapping._descriptions.get(reference);
         if (description == null) {
             description = reference;
         }
@@ -167,12 +157,21 @@ public enum Catalog {
      * @return the sought catalog, null otherwise.
      */
     public static Catalog catalogFromReference(final String reference) {
-        return (reference == null) ? null : NastyTrick._catalogs.get(reference);
+        return (reference == null) ? null : CatalogMapping._catalogs.get(reference);
     }
 
     @Override
     public String toString() {
-        return _title + " - '" + _description + "' (" + _reference + ")";
+        return toString(new StringBuilder(128)).toString();
+    }
+
+    /**
+     * Append the string representation to the given buffer
+     * @param sb buffer to append to
+     * @return sb given buffer (fluent API)
+     */
+    public StringBuilder toString(final StringBuilder sb) {
+        return sb.append(_title).append(" - '").append(_description).append("' (").append(_reference).append(")");
     }
 
     /**
@@ -213,7 +212,7 @@ public enum Catalog {
 
             // Hue is between ]0;1] as hue = 0 is equivalent to hue = 1
             final float computedHue = ((float) (catalog.ordinal() + 1) / (float) (Catalog.values().length));
-            
+
             return Color.getHSBColor(computedHue, saturation, brightness);
         }
         return Color.BLACK;
@@ -245,7 +244,7 @@ public enum Catalog {
 
         System.out.println();
         System.out.println();
-        
+
         // Display in xml each catalog in the enum
         for (Catalog catalog : Catalog.values()) {
             String reference = catalog.reference();
@@ -259,39 +258,17 @@ public enum Catalog {
 
         // Display in html
         System.out.println("HTML version  :\n" + Catalog.toHtmlTable());
-        
-
-        System.out.println("CSS version  :\n<!-- origins (catalog) -->");
-        
-        final Pattern pattern = Pattern.compile("[^a-zA-Z_0-9]+");
-
-        // use all catalog entries (includes aliases):
-        for (Map.Entry<String,Catalog> entry : NastyTrick._catalogs.entrySet()) {
-            System.out.println("<set>");
-            System.out.print("<key>o");
-            System.out.print(pattern.matcher(entry.getKey()).replaceAll("_"));
-            System.out.println("</key>");
-            System.out.print("<value>");
-            System.out.print(fr.jmmc.jmcs.util.ColorEncoder.encode(getDefaultColor(entry.getValue())));
-            System.out.println("</value>");
-            System.out.println("</set>");
-        }
     }
-}
 
-/**
- * To get over Java 1.5 limitation prohibiting static members in enum (initialization order hazard).
- *
- * @sa http://www.velocityreviews.com/forums/t145807-an-enum-mystery-solved.html
- * @sa http://www.jroller.com/ethdsy/entry/static_fields_in_enum
- */
-final class NastyTrick {
+    /** mappings: specific class to ensure mappings are defined before Confidence instances (initialization order issue) */
+    private static final class CatalogMapping {
 
-    private final static int CAPACITY = 32;
-    static final Map<String, String> _titles = new HashMap<String, String>(CAPACITY);
-    static final Map<String, String> _descriptions = new HashMap<String, String>(CAPACITY);
-    static final Map<String, Catalog> _catalogs = new LinkedHashMap<String, Catalog>(CAPACITY);
+        private final static int CAPACITY = 32;
+        final static Map<String, String> _titles = new HashMap<String, String>(CAPACITY);
+        final static Map<String, String> _descriptions = new HashMap<String, String>(CAPACITY);
+        final static Map<String, Catalog> _catalogs = new LinkedHashMap<String, Catalog>(CAPACITY);
 
-    private NastyTrick() {
+        private CatalogMapping() {
+        }
     }
 }

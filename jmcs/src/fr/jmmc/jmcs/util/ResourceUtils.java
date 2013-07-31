@@ -88,10 +88,14 @@ public abstract class ResourceUtils {
      *
      * @param fileName name of searched file.
      *
-     * @return resource path
+     * @return resource path or null if no started Application (App singleton is null)
      */
     public static String getPathFromResourceFilename(final String fileName) {
-        return getPathFromResourceFilename(App.getInstance().getClass(), fileName);
+        final App app = App.getInstance();
+        if (app == null) {
+            return null;
+        }
+        return getPathFromResourceFilename(app.getClass(), fileName);
     }
 
     /**
@@ -127,10 +131,14 @@ public abstract class ResourceUtils {
      *
      * @param fileName name of searched file.
      *
-     * @return resource URL
+     * @return resource URL or null if no started Application (App singleton is null)
      */
     public static URL getUrlFromResourceFilename(final String fileName) {
-        return getUrlFromResourceFilename(App.getInstance().getClass(), fileName);
+        final App app = App.getInstance();
+        if (app == null) {
+            return null;
+        }
+        return getUrlFromResourceFilename(app.getClass(), fileName);
     }
 
     /**

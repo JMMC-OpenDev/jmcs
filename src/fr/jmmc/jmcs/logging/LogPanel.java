@@ -245,6 +245,7 @@ public class LogPanel extends javax.swing.JPanel implements ActionListener, Chan
         logScrollPane.setOpaque(false);
 
         logTextArea.setEditable(false);
+        logTextArea.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         logTextArea.setTabSize(4);
         logScrollPane.setViewportView(logTextArea);
 

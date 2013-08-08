@@ -243,6 +243,49 @@ public final class Functions {
     }
 
     /**
+     * Compute the disk model function for a single frequency (used by SearchCal GUI)
+     *
+     * @param freq spatial frequency in rad-1
+     * @param diameter diameter of the uniform disk object given in milliarcsecond
+     * @return Fourier transform value
+     */
+    public static double computeDisk(final double freq, final double diameter) {
+
+        final double d = PI_MAS2RAD * diameter * freq;
+
+        double g;
+        if (d == 0D) {
+            g = 1D;
+        } else {
+            g = 2D * Bessel.j1(d) / d;
+        }
+
+        return g;
+    }
+
+    /**
+     * Compute the disk model function error for a single frequency (used by SearchCal GUI)
+     *
+     * @param freq spatial frequency in rad-1
+     * @param diameter diameter of the uniform disk object given in milliarcsecond
+     * @param diameterError diameter error of the uniform disk object given in milliarcsecond
+     * @return Error on Fourier transform value
+     */
+    public static double computeDiskError(final double freq, final double diameter, final double diameterError) {
+
+        final double d = PI_MAS2RAD * diameter * freq;
+
+        double e;
+        if (d == 0D) {
+            e = 0D;
+        } else {
+            e = 2D * Bessel.jn(2, d) * diameterError / diameter;
+        }
+
+        return e;
+    }
+
+    /**
      * Compute the disk model function for a single UV point
      *
      * @param ufreq U frequency in rad-1
@@ -254,17 +297,7 @@ public final class Functions {
     public static double computeDisk(final double ufreq, final double vfreq, final double flux_weight,
                                      final double diameter) {
 
-        final double d = PI_MAS2RAD * diameter * MathUtils.carthesianNorm(ufreq, vfreq);
-
-        double g;
-        if (d == 0D) {
-            g = 1D;
-        } else {
-            g = 2D * Bessel.j1(d) / d;
-        }
-        g *= flux_weight;
-
-        return g;
+        return flux_weight * computeDisk(MathUtils.carthesianNorm(ufreq, vfreq), diameter);
     }
 
     /**

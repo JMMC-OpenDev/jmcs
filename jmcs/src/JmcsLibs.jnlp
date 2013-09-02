@@ -73,7 +73,8 @@
     <!-- Documentation reader -->
     <jar href="@SHARED@/jhall.jar "/>
     
-    <!-- Swing Task management -->  	 	 
+    <!-- Swing Task management (no more used but kept for compatibility issue with previously deployed applications)
+         TODO: remove it once all applications are updated in production -->
     <jar href="@SHARED@/swing-worker-1.2.jar"/> 
 
     <!-- Mac OS X Desktop integration -->

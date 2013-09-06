@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?> 
+
+<jnlp 
+  spec="1.0+" 
+  codebase="http://www.jidesoft.com/products/1.4" 
+  href="jide_demo.jnlp"> 
+  <information> 
+    <title>Demo for JIDE Products</title> 
+    <vendor>JIDE Software, Inc.</vendor> 
+    <homepage href="../../index.html"/> 
+    <description>This application is a demo of the capabilities of JIDE Docking Framework, JIDE Action Framework, JIDE Components, JIDE Grids and JIDE Dialogs</description> 
+    <description kind="short">A demo of the capabilities of JIDE prodcuts.</description> 
+    <offline-allowed/> 
+  </information> 
+  <security> 
+      <all-permissions/> 
+  </security> 
+  <resources> 
+    <j2se version="1.4+" initial-heap-size="12m" max-heap-size="256m"/>
+    <jar href="jide_demo.jar"/> 
+    <property name="apple.laf.useScreenMenuBar" value="true"/>
+    <property name="swing.aatext" value="true"/>
+  </resources> 
+  <application-desc main-class="JideDemos"/> 
+</jnlp> 
+
+
+

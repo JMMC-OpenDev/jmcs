@@ -40,9 +40,9 @@ import com.apple.eawt.QuitResponse;
 import com.apple.eawt.QuitStrategy;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
+import fr.jmmc.jmcs.util.concurrent.ThreadExecutors;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,99 +51,149 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public class MacOSXAdapter implements AboutHandler, PreferencesHandler, QuitHandler, OpenFilesHandler {
+public final class MacOSXAdapter implements AboutHandler, PreferencesHandler, QuitHandler, OpenFilesHandler {
 
     /** Class logger */
-    private static final Logger logger = LoggerFactory.getLogger(MacOSXAdapter.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(MacOSXAdapter.class.getName());
+    /** enable / disable EDT fix (JDK 1.6.0_51 and 1.7.0_25) */
+    private static final boolean _useEdtFix = true;
+    /** enable / disable EDT fix debugging statements */
+    private static final boolean _debugEdtFix = true;
     /** pseudo-singleton model; no point in making multiple instances */
-    private static MacOSXAdapter _instance;
+    private static MacOSXAdapter _instance = null;
     /** application */
-    private static Application _application;
+    private static Application _application = null;
+    /** Application's Event Dispatcher Thread (EDT) name */
+    private static String _appEDTName = null;
     /* members */
-    /** flag to prevent handleQuit() to be called twice (known Apple bug) */
-    private boolean alreadyQuitting = false;
     /** Store a proxy to the shared ActionRegistrar facility */
-    private ActionRegistrar _registrar = null;
-    /** reference to the app frame where the existing quit, about, prefs code is */
-    private JFrame mainAppFrame;
+    private final ActionRegistrar _registrar;
 
     /**
      * Creates a new OSXAdapter object.
-     *
-     * @param mainFrame application main frame
      */
-    private MacOSXAdapter(final JFrame mainFrame) {
-        mainAppFrame = mainFrame;
+    private MacOSXAdapter() {
         _registrar = ActionRegistrar.getInstance();
     }
 
-    /** Handle about action */
+    /**
+     * Handle about action 
+     * @param ae about event
+     */
     @Override
-    public void handleAbout(AboutEvent ae) {
-        if (mainAppFrame != null) {
-            InternalActionFactory.showAboutBoxAction().actionPerformed(null);
-        } else {
-            throw new IllegalStateException("handleAbout: MyApp instance detached from listener");
-        }
-    }
+    public void handleAbout(final AboutEvent ae) {
+        logEDT("handleAbout");
 
-    /** Show the user preferences */
-    @Override
-    public void handlePreferences(PreferencesEvent ae) {
-        if (mainAppFrame != null) {
-            AbstractAction preferenceAction = _registrar.getPreferenceAction();
-            if (preferenceAction != null) {
-                preferenceAction.actionPerformed(null);
+        invokeLaterUsingApplicationEDT(new Runnable() {
+            @Override
+            public void run() {
+                logEDT("handleAbout");
+                InternalActionFactory.showAboutBoxAction().actionPerformed(null);
             }
-        } else {
-            throw new IllegalStateException("handlePreferences: MyApp instance detached from listener");
+        });
+    }
+
+    /** 
+     * Show the user preferences
+     * @param pe preferences event
+     */
+    @Override
+    public void handlePreferences(final PreferencesEvent pe) {
+        logEDT("handlePreferences");
+
+        final AbstractAction preferenceAction = _registrar.getPreferenceAction();
+        if (preferenceAction != null) {
+            invokeLaterUsingApplicationEDT(new Runnable() {
+                @Override
+                public void run() {
+                    logEDT("handlePreferences");
+                    preferenceAction.actionPerformed(null);
+                }
+            });
         }
     }
 
-    /** Handle quit action */
+    /** 
+     * Handle quit action 
+     * @param qe quit event
+     * @param response quit response
+     */
     @Override
-    public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
-        if (mainAppFrame != null) {
-            /* You MUST setHandled(false) if you want to delay or cancel the quit.
-             * This is important for cross-platform development -- have a universal quit
-             * routine that chooses whether or not to quit, so the functionality is identical
-             * on all platforms.  This example simply cancels the AppleEvent-based quit and
-             * defers to that universal method. */
-            ActionEvent evt = new ActionEvent(response, 0, null);
-            _registrar.getQuitAction().actionPerformed(evt);
-        } else {
-            throw new IllegalStateException("handleQuitRequestWith: MyApp instance detached from listener");
-        }
-    }
+    public void handleQuitRequestWith(final QuitEvent qe, final QuitResponse response) {
+        logEDT("handleQuitRequestWith");
 
-    /** Handle the open action */
-    @Override
-    public void openFiles(OpenFilesEvent e) {
-        if (mainAppFrame != null) {
-            final int FIRST_FILE_INDEX = 0;
-            final String firstFilePath = e.getFiles().get(FIRST_FILE_INDEX).getAbsolutePath();
-            if (logger.isInfoEnabled()) {
-                logger.info("Should open '{}' file.", firstFilePath);
+        /* This is important for cross-platform development -- have a universal quit
+         * routine that chooses whether or not to quit, so the functionality is identical
+         * on all platforms.  This example simply cancels the AppleEvent-based quit and
+         * defers to that universal method. */
+
+        invokeLaterUsingApplicationEDT(new Runnable() {
+            @Override
+            public void run() {
+                logEDT("handleQuitRequestWith");
+
+                /*
+                 * the Quit action must call response.cancelQuit() or response.performQuit()
+                 * Note: QuitResponse is thread safe and methods can be called after handleQuitRequestWith() returns.
+                 */
+                _registrar.getQuitAction().actionPerformed(new ActionEvent(response, 0, null));
             }
-            _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, firstFilePath));
-        } else {
-            throw new IllegalStateException("openFiles: MyApp instance detached from listener");
+        });
+    }
+
+    /** 
+     * Handle the open action 
+     * @param ofe open files event
+     */
+    @Override
+    public void openFiles(final OpenFilesEvent ofe) {
+        logEDT("openFiles");
+
+        final int FIRST_FILE_INDEX = 0;
+        final String firstFilePath = ofe.getFiles().get(FIRST_FILE_INDEX).getAbsolutePath();
+        if (_logger.isInfoEnabled()) {
+            _logger.info("Should open '{}' file.", firstFilePath);
         }
+
+        invokeLaterUsingApplicationEDT(new Runnable() {
+            @Override
+            public void run() {
+                logEDT("openFiles");
+                _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, firstFilePath));
+            }
+        });
     }
 
     /**
-     * Register this adapter
-     *
-     * @param mainFrame main application frame
+     * Register this adapter (should be performed by EDT)
      */
-    public static void registerMacOSXApplication(final JFrame mainFrame) {
+    public static void registerMacOSXApplication() {
+        logEDT("registerMacOSXApplication");
+
+        // ensure events are fired by Swing EDT:
+        if (!SwingUtils.isEDT()) {
+            throw new IllegalStateException("invalid thread : use EDT", new Throwable());
+        }
+
+        // MacOSX EDT Fix:
+        if (_useEdtFix) {
+            // Create EDT submitter from EDT within AppClassLoader (not JNLPClassLoader):
+            invokeLaterUsingApplicationEDT(new Runnable() {
+                @Override
+                public void run() {
+                    if (SwingUtils.isEDT()) {
+                        setApplicationEDT(Thread.currentThread().getName());
+                    }
+                }
+            });
+        }
 
         if (_application == null) {
             _application = Application.getApplication();
         }
 
         if (_instance == null) {
-            _instance = new MacOSXAdapter(mainFrame);
+            _instance = new MacOSXAdapter();
         }
 
         // Link 'About...' menu entry
@@ -163,6 +213,57 @@ public class MacOSXAdapter implements AboutHandler, PreferencesHandler, QuitHand
             _application.setPreferencesHandler(null);
         } else {
             _application.setPreferencesHandler(_instance);
+        }
+    }
+
+    /* --- EDT Fix ---------------------------------------------------------- */
+    /**
+     * Get a single thread executor dedicated to EDT runnable submission
+     * @return single thread executor
+     */
+    private static ThreadExecutors getEDTSubmitter() {
+        /*
+         * Note: This pool is not stopped during shutdown: avoid 10s delay before quit:
+         * stopping thread calling Bootstrapper.quitApp() > Bootstrapper.stopApp() 
+         * > Bootstrapper.___internalStop() > LocalLauncher.shutdown() > ThreadExecutors.stopExecutors()
+         */
+        return ThreadExecutors.getSingleExecutor("JmcsEDTSubmitter", false);
+    }
+
+    private static void invokeLaterUsingApplicationEDT(final Runnable runnable) {
+        // If Current thread is not application EDT 
+        // => use the EDT submitter to call invokeLater() ie transfer to the real application EDT
+        if (_useEdtFix && !isApplicationEDT()) {
+            getEDTSubmitter().submit(new Runnable() {
+                @Override
+                public void run() {
+                    SwingUtils.invokeAndWaitEDT(runnable);
+                }
+            });
+        } else {
+            // current Thread is EDT, simply execute runnable:
+            runnable.run();
+        }
+    }
+
+    private static boolean isApplicationEDT() {
+        final boolean isMainEdt = Thread.currentThread().getName().equals(_appEDTName);
+        if (_debugEdtFix) {
+            _logger.info("isApplicationEDT: thread {} : {}", Thread.currentThread(), isMainEdt);
+        }
+        return isMainEdt;
+    }
+
+    private static void setApplicationEDT(final String name) {
+        _appEDTName = name;
+        if (_debugEdtFix) {
+            _logger.info("Application EDT: {}", _appEDTName);
+        }
+    }
+
+    private static void logEDT(final String caller) {
+        if (_debugEdtFix) {
+            _logger.info("{}() invoked from thread {} classLoader {}", caller, Thread.currentThread(), Thread.currentThread().getContextClassLoader());
         }
     }
 }

@@ -197,7 +197,7 @@ public class ResizableTextViewFactory {
             // Set as default button with focus activated
             dialog.getRootPane().setDefaultButton(button);
 
-            SwingUtilities.invokeLater(new Runnable() {
+            SwingUtils.invokeLaterEDT(new Runnable() {
                 @Override
                 public void run() {
                     button.requestFocusInWindow();

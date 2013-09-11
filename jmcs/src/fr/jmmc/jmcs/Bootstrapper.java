@@ -105,7 +105,6 @@ public final class Bootstrapper {
      * @return true if the initialization sequence succeeds, false otherwise.
      */
     static boolean bootstrap() throws IllegalStateException {
-
         // Avoid reentrance
         if (_staticBootstrapDone) {
             return true;
@@ -129,7 +128,7 @@ public final class Bootstrapper {
         _jmmcLogger.info("jMCS environment bootstrapping...");
         setState(ApplicationState.ENV_BOOTSTRAP);
 
-        // Define swing settings (laf, defaults...) before any Swing usage if not called at the first line of the main method
+        // Define swing settings (laf, defaults...) before any Swing usage
         SwingSettings.setup();
 
         // Define default network settings
@@ -146,7 +145,6 @@ public final class Bootstrapper {
      * @see MacOSXAdapter
      */
     private static void setSystemProperties() {
-
         // Force anti-aliasing
         if (SystemUtils.IS_JAVA_1_6) {
             final String old = System.getProperty("awt.useSystemAAFontSettings");
@@ -191,7 +189,6 @@ public final class Bootstrapper {
      * Initialize default locale and default time zone.
      */
     private static void initializeLocale() {
-
         // Backup user settings
         _userLocale = Locale.getDefault();
         _userTimeZone = TimeZone.getDefault();
@@ -291,7 +288,6 @@ public final class Bootstrapper {
      * @return true if launch succeeded; false otherwise
      */
     private static boolean ___internalLaunch(final App application, final boolean exitWhenClosed, final boolean shouldShowSplashScreen) {
-
         setState(ApplicationState.ENV_INIT);
         final long startTime = System.nanoTime();
         boolean launchDone = false;
@@ -351,11 +347,11 @@ public final class Bootstrapper {
      * Describe the life cycle of the application.
      */
     private static void ___internalRun() {
-
         // Using invokeAndWait to be in sync with this thread :
         // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
         SwingUtils.invokeAndWaitEDT(new Runnable() {
             private static final String MAIN_FRAME_DIMENSION_KEY = "___JMCS_INTERNAL_MAIN_FRAME_DIMENSION";
+
             /**
              * Initializes Splash Screen in EDT
              */
@@ -387,8 +383,8 @@ public final class Bootstrapper {
                 if (frame == null) {
                     return;
                 }
-                // Use OSXAdapter on the frame
-                macOSXRegistration(frame);
+                // Define OSXAdapter (menu bar integration)
+                macOSXRegistration();
                 // Create menus including the Interop menu (SAMP required)
                 frame.setJMenuBar(new MainMenuBar());
                 // Set application frame ideal size
@@ -412,10 +408,8 @@ public final class Bootstrapper {
 
     /**
      * Generic registration with the Mac OS X application menu (if needed).
-     * @param frame application frame
      */
-    private static void macOSXRegistration(final JFrame frame) {
-
+    private static void macOSXRegistration() {
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
 
@@ -428,9 +422,9 @@ public final class Bootstrapper {
                 // because OSXAdapter extends ApplicationAdapter in its def
                 _jmmcLogger.error("This version of Mac OS X does not support the Apple EAWT. Application Menu handling has been disabled.");
             } else {
-                final Method registerMethod = IntrospectionUtils.getMethod(osxAdapter, "registerMacOSXApplication", new Class<?>[]{JFrame.class});
+                final Method registerMethod = IntrospectionUtils.getMethod(osxAdapter, "registerMacOSXApplication", null);
                 if (registerMethod != null) {
-                    IntrospectionUtils.executeMethod(registerMethod, new Object[]{frame});
+                    IntrospectionUtils.executeMethod(registerMethod, null);
                 }
             }
         }
@@ -458,8 +452,7 @@ public final class Bootstrapper {
      * - stops application if user is OK.
      * @param evt the triggering event if any, null otherwise.
      */
-    public static void quitApp(ActionEvent evt) {
-
+    public static void quitApp(final ActionEvent evt) {
         _jmmcLogger.info("Application quitting.");
 
         // Mac OS X Quit action handler
@@ -501,6 +494,8 @@ public final class Bootstrapper {
                 if (response != null) {
                     response.performQuit();
                 }
+                return;
+
             } else {
                 _jmmcLogger.debug("Application frame left opened as required.");
             }
@@ -520,7 +515,6 @@ public final class Bootstrapper {
      * @param statusCode status code to return
      */
     public static void stopApp(final int statusCode) {
-
         _jmmcLogger.info("Stopping the application.");
         try {
             if (_application != null) {
@@ -546,7 +540,6 @@ public final class Bootstrapper {
      * Internal: Stop services
      */
     private static void ___internalStop() {
-
         // Save session settings if needed
         SessionSettingsPreferences.saveToFileIfNeeded();
 

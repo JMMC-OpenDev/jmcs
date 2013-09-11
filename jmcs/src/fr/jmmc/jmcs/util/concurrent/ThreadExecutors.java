@@ -77,15 +77,17 @@ public final class ThreadExecutors {
     public static final long SHUTDOWN_DELAY = 10L;
     /** delay to wait for shutdownNow */
     public static final long SHUTDOWN_NOW_DELAY = 1L;
-    // Members
     /** generic thread pool singleton */
     private static volatile ThreadExecutors _genericExecutor;
     /** processRunner thread pool singleton */
     private static volatile ThreadExecutors _runnerExecutor;
     /** single thread pool singletons : used to shutdown them */
     private static volatile Map<String, ThreadExecutors> _singleExecutors = null;
+    // Members
     /** wrapped Java 5 Thread pool executor */
     private final CustomThreadPoolExecutor _threadExecutor;
+    /** true to shutdown this pool during ThreadExecutors.stop() */
+    final boolean _doShutdown;
 
     /**
      * Constructor with the given thread pool executor
@@ -93,7 +95,18 @@ public final class ThreadExecutors {
      * @param executor wrapped thread pool
      */
     protected ThreadExecutors(final CustomThreadPoolExecutor executor) {
+        this(executor, true);
+    }
+
+    /**
+     * Constructor with the given thread pool executor
+     * 
+     * @param executor wrapped thread pool
+     * @param doShutdown true to shutdown this pool during ThreadExecutors.stop()
+     */
+    protected ThreadExecutors(final CustomThreadPoolExecutor executor, final boolean doShutdown) {
         _threadExecutor = executor;
+        _doShutdown = doShutdown;
 
         if (logger.isDebugEnabled()) {
             logger.debug("ThreadExecutors.new : creating a new thread pool: {}", getPoolName());
@@ -176,7 +189,12 @@ public final class ThreadExecutors {
             final Map<String, ThreadExecutors> m = getSingleExecutors(false);
             if (!CollectionUtils.isEmpty(m)) {
                 for (final Iterator<ThreadExecutors> it = m.values().iterator(); it.hasNext();) {
-                    it.next().stop();
+                    ThreadExecutors e = it.next();
+                    if (e._doShutdown) {
+                        e.stop();
+                    } else {
+                        logger.info("Skipping {} pool shutdown", e.getPoolName());
+                    }
                     it.remove();
                 }
             }
@@ -239,12 +257,24 @@ public final class ThreadExecutors {
      * @return process thread pool
      */
     public static ThreadExecutors getSingleExecutor(final String name) {
+        return getSingleExecutor(name, true);
+    }
+
+    /**
+     * Return the single-thread pool or create it (lazy) for the given name
+     * 
+     * @param name key or name of the single-thread pool
+     * @see #newFixedThreadPool(String, int, ThreadFactory)
+     * @param doShutdown true to shutdown this pool during ThreadExecutors.stop()
+     * @return process thread pool
+     */
+    public static ThreadExecutors getSingleExecutor(final String name, final boolean doShutdown) {
         checkRunning();
         final Map<String, ThreadExecutors> m = getSingleExecutors(true);
 
         ThreadExecutors e = m.get(name);
         if (e == null) {
-            e = new ThreadExecutors(newFixedThreadPool(name, 1, new CustomThreadFactory(name)));
+            e = new ThreadExecutors(newFixedThreadPool(name, 1, new CustomThreadFactory(name)), doShutdown);
 
             final ThreadExecutors old = m.put(name, e);
             if (old != null) {

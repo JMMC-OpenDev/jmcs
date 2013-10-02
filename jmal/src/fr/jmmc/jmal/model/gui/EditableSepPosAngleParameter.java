@@ -13,24 +13,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class overrides the EditableParameter class to define a rho or theta position parameter where only the value is editable
+ * This class overrides the EditableParameter class to define a separation or position angle position parameter where only the value is editable
  *
  * @author Laurent BOURGES.
  */
-public final class EditableRhoThetaParameter implements Editable {
+public final class EditableSepPosAngleParameter implements Editable {
 
     /** Class logger */
-    private static Logger logger = LoggerFactory.getLogger(EditableRhoThetaParameter.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(EditableSepPosAngleParameter.class.getName());
 
     /**
      * Custom type enum
      */
-    public enum RhoThetaType {
+    public enum SepPosAngleType {
 
-        /** rho parameter */
-        RHO("rho", "rho", "mas"),
-        /** theta parameter */
-        THETA("theta", "theta", "deg");
+        /** separation parameter */
+        SEPARATION("sep", "separation", "mas"),
+        /** position angle parameter */
+        POS_ANGLE("pos_angle", "position_angle", "deg");
 
         /**
          * Custom constructor
@@ -39,7 +39,7 @@ public final class EditableRhoThetaParameter implements Editable {
          * @param type type of the parameter
          * @param units units of the parameter
          */
-        private RhoThetaType(final String name, final String type, final String units) {
+        private SepPosAngleType(final String name, final String type, final String units) {
             this.name = name;
             this.type = type;
             this.units = units;
@@ -80,7 +80,7 @@ public final class EditableRhoThetaParameter implements Editable {
     /** model of the parameter */
     private final Model model;
     /** type */
-    private final RhoThetaType type;
+    private final SepPosAngleType type;
     /** name */
     private final String name;
     /** parameter X */
@@ -89,12 +89,12 @@ public final class EditableRhoThetaParameter implements Editable {
     private final Parameter paramY;
 
     /**
-     * Constructor for rho or theta editable parameter
+     * Constructor for separation or position angle editable parameter
      *
      * @param model parent model
-     * @param type rho or theta type
+     * @param type separation or position angle type
      */
-    public EditableRhoThetaParameter(final Model model, final RhoThetaType type) {
+    public EditableSepPosAngleParameter(final Model model, final SepPosAngleType type) {
         this.model = model;
         this.type = type;
 
@@ -184,11 +184,11 @@ public final class EditableRhoThetaParameter implements Editable {
 
         double value = 0d;
         switch (this.type) {
-            case RHO:
+            case SEPARATION:
                 value = getDistance(x, y);
                 break;
-            case THETA:
-                value = getTheta(x, y);
+            case POS_ANGLE:
+                value = getPosAngle(x, y);
                 break;
             default:
         }
@@ -220,13 +220,13 @@ public final class EditableRhoThetaParameter implements Editable {
         double y2 = 0d;
 
         switch (this.type) {
-            case RHO:
-                final double theta = getTheta(x, y);
+            case SEPARATION:
+                final double posAngle = getPosAngle(x, y);
 
-                x2 = getX(value, theta);
-                y2 = getY(value, theta);
+                x2 = getX(value, posAngle);
+                y2 = getY(value, posAngle);
                 break;
-            case THETA:
+            case POS_ANGLE:
                 final double dist = getDistance(x, y);
 
                 x2 = getX(dist, value);
@@ -331,35 +331,36 @@ public final class EditableRhoThetaParameter implements Editable {
     }
 
     /**
-     * Return the theta angle in [-180;180]
+     * Return the position angle in [-180;180] as the astronomical position angle, 
+     * North equal to 0 or 180 for x=0, and 90 or 270 for y=0.
      *
      * @param x coordinate x
      * @param y coordinate y
-     * @return theta angle in [-180;180]
+     * @return position angle in [-180;180]
      */
-    public static double getTheta(final double x, final double y) {
-        return FastMath.toDegrees(FastMath.atan2(y, x));
+    public static double getPosAngle(final double x, final double y) {
+        return FastMath.toDegrees(FastMath.atan2(x, y));
     }
 
     /**
      * Return the coordinate x
      *
      * @param dist distance
-     * @param theta angle in [-180;180]
+     * @param posAngle angle in [-180;180]
      * @return coordinate x
      */
-    public static double getX(final double dist, final double theta) {
-        return dist * FastMath.cos(FastMath.toRadians(theta));
+    public static double getX(final double dist, final double posAngle) {
+        return dist * FastMath.sin(FastMath.toRadians(posAngle));
     }
 
     /**
      * Return the coordinate y
      *
      * @param dist distance
-     * @param theta angle in [-180;180]
+     * @param posAngle angle in [-180;180]
      * @return coordinate y
      */
-    public static double getY(final double dist, final double theta) {
-        return dist * FastMath.sin(FastMath.toRadians(theta));
+    public static double getY(final double dist, final double posAngle) {
+        return dist * FastMath.cos(FastMath.toRadians(posAngle));
     }
 }

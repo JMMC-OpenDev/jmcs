@@ -34,13 +34,15 @@ public final class ModelParameterTableModel extends AbstractTableModel {
         ASPRO;
     }
 
-    /** Table edit mode enumeration (X_Y or RHO_THETA) */
+    /** Table edit mode enumeration (X_Y, RHO_THETA or SEP_POS_ANGLE) */
     public enum EditMode {
 
         /** coordinates in carthesian (x/y) format */
         X_Y,
         /** coordinates in polar (rho/theta) format */
-        RHO_THETA;
+        RHO_THETA,
+        /** coordinates in astronomical convention (sep/pos angle) format */
+        SEP_POS_ANGLE;
     }
 
     /** Column definition enum */
@@ -129,7 +131,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
     private static final ColumnDef[] ASPRO_COLUMNS = {ColumnDef.MODEL, ColumnDef.NAME, ColumnDef.UNITS, ColumnDef.VALUE};
 
     /* members */
-    /** edit mode */
+    /** edit mode (X_Y, RHO_THETA or SEP_POS_ANGLE) */
     private EditMode editMode = EditMode.X_Y;
     /** column count */
     private int columnCount;
@@ -266,10 +268,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
                 break;
 
             case RHO_THETA:
-
-                // First Model Rules :
-
-                // For the first model keep X/Y fixed parameters :
+                // First Model Rule: keep X/Y parameters set to (0,0):
 
                 if (model == this.firstModel) {
                     this.parameterList.add(new EditableParameter(model, parameter, shared));
@@ -278,9 +277,28 @@ public final class ModelParameterTableModel extends AbstractTableModel {
                     // Intercept and check for X/Y parameters :
 
                     if (ModelDefinition.PARAM_X.equals(parameter.getType())) {
-                        this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.Type.RHO));
+                        this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.RhoThetaType.RHO));
                     } else if (ModelDefinition.PARAM_Y.equals(parameter.getType())) {
-                        this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.Type.THETA));
+                        this.parameterList.add(new EditableRhoThetaParameter(model, EditableRhoThetaParameter.RhoThetaType.THETA));
+                    } else {
+                        this.parameterList.add(new EditableParameter(model, parameter, shared));
+                    }
+                }
+                break;
+
+            case SEP_POS_ANGLE:
+                // First Model Rule: keep X/Y parameters set to (0,0):
+
+                if (model == this.firstModel) {
+                    this.parameterList.add(new EditableParameter(model, parameter, shared));
+                } else {
+
+                    // Intercept and check for X/Y parameters :
+
+                    if (ModelDefinition.PARAM_X.equals(parameter.getType())) {
+                        this.parameterList.add(new EditableSepPosAngleParameter(model, EditableSepPosAngleParameter.SepPosAngleType.SEPARATION));
+                    } else if (ModelDefinition.PARAM_Y.equals(parameter.getType())) {
+                        this.parameterList.add(new EditableSepPosAngleParameter(model, EditableSepPosAngleParameter.SepPosAngleType.POS_ANGLE));
                     } else {
                         this.parameterList.add(new EditableParameter(model, parameter, shared));
                     }
@@ -297,6 +315,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
      * @return the number of columns in the model
      * @see #getRowCount
      */
+    @Override
     public int getColumnCount() {
         return this.columnCount;
     }
@@ -356,12 +375,12 @@ public final class ModelParameterTableModel extends AbstractTableModel {
             // First Model Rules :
             if (getModelAt(rowIndex) == this.firstModel) {
 
-                // if the parameter is a position (X/Y or RHO/THETA) => not editable :
+                // if the parameter is a position parameter => not editable:
                 editable = !parameter.isPosition();
             }
 
             // Custom position parameter = only value is editable :
-            if (editable && parameter instanceof EditableRhoThetaParameter) {
+            if (editable && !(parameter instanceof EditableParameter)) {
                 editable = (this.columnDefs[columnIndex] == ColumnDef.VALUE);
             }
         }
@@ -377,6 +396,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
      * @return the number of rows in the model
      * @see #getColumnCount
      */
+    @Override
     public int getRowCount() {
         return this.parameterList.size();
     }
@@ -390,6 +410,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
      * @param	columnIndex the column whose value is to be queried
      * @return	the value Object at the specified cell
      */
+    @Override
     public Object getValueAt(final int rowIndex, final int columnIndex) {
         final Editable parameter = this.parameterList.get(rowIndex);
 
@@ -442,7 +463,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
             if (logger.isDebugEnabled()) {
                 logger.debug("setValueAt: parameter {} old: {} new: {} ({})",
                         parameter.getName(), getValueAt(rowIndex, columnIndex), aValue,
-                                     ((aValue != null) ? aValue.getClass() : ""));
+                        ((aValue != null) ? aValue.getClass() : ""));
             }
             boolean modified = false;
 
@@ -473,7 +494,8 @@ public final class ModelParameterTableModel extends AbstractTableModel {
             }
 
             if (modified) {
-                if (parameter instanceof EditableRhoThetaParameter) {
+                // Custom position parameter = update complete table to refresh several parameters at once:
+                if (!(parameter instanceof EditableParameter)) {
                     fireTableDataChanged();
                 } else {
                     fireTableCellUpdated(rowIndex, columnIndex);
@@ -495,7 +517,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
     }
 
     /**
-     * Return the edit mode
+     * Return the edit mode (X_Y, RHO_THETA or SEP_POS_ANGLE)
      *
      * @return edit mode
      */
@@ -504,7 +526,7 @@ public final class ModelParameterTableModel extends AbstractTableModel {
     }
 
     /**
-     * Define the edit mode (X_Y or RHO_THETA)
+     * Define the edit mode (X_Y, RHO_THETA or SEP_POS_ANGLE)
      *
      * @param editMode edit mode
      */

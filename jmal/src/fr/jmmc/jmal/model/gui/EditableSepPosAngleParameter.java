@@ -185,7 +185,7 @@ public final class EditableSepPosAngleParameter implements Editable {
         double value = 0d;
         switch (this.type) {
             case SEPARATION:
-                value = getDistance(x, y);
+                value = getSeparation(x, y);
                 break;
             case POS_ANGLE:
                 value = getPosAngle(x, y);
@@ -227,7 +227,7 @@ public final class EditableSepPosAngleParameter implements Editable {
                 y2 = getY(value, posAngle);
                 break;
             case POS_ANGLE:
-                final double dist = getDistance(x, y);
+                final double dist = getSeparation(x, y);
 
                 x2 = getX(dist, value);
                 y2 = getY(dist, value);
@@ -320,13 +320,13 @@ public final class EditableSepPosAngleParameter implements Editable {
 
     /* --- utility methods */
     /**
-     * Return the distance
+     * Return the separation
      *
      * @param x coordinate x
      * @param y coordinate y
-     * @return distance
+     * @return separation
      */
-    public static double getDistance(final double x, final double y) {
+    public static double getSeparation(final double x, final double y) {
         return MathUtils.carthesianNorm(x, y);
     }
 

@@ -200,25 +200,28 @@ public abstract class App {
      * @param frame application frame.
      */
     public static void setFrame(final JFrame frame) {
-        
-        if (_applicationFrame != null && _applicationFrame != frame) {
-            ___internalDisposeFrame();
-        }
-
-        _applicationFrame = frame;
-        _applicationFrame.setLocationByPlatform(true);
-
-        // previous adapter manages the windowClosing(event) :
-        _applicationFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-        // Properly quit the application when main window close button is clicked
-        _applicationFrame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(final WindowEvent e) {
-                // Callback on exit
-                InternalActionFactory.quitAction().actionPerformed(null);
+        // avoid reentrance:
+        if (_applicationFrame != frame) {
+            
+            if (_applicationFrame != null) {
+                ___internalDisposeFrame();
             }
-        });
+
+            _applicationFrame = frame;
+            _applicationFrame.setLocationByPlatform(true);
+
+            // previous adapter manages the windowClosing(event) :
+            _applicationFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+            // Properly quit the application when main window close button is clicked
+            _applicationFrame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(final WindowEvent e) {
+                    // Callback on exit
+                    InternalActionFactory.quitAction().actionPerformed(null);
+                }
+            });
+        }
     }
 
     /**

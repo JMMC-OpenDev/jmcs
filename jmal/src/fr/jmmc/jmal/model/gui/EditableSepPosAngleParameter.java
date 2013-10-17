@@ -8,6 +8,7 @@ import fr.jmmc.jmal.model.ModelManager;
 import fr.jmmc.jmal.model.targetmodel.Model;
 import fr.jmmc.jmal.model.targetmodel.Parameter;
 import fr.jmmc.jmal.util.MathUtils;
+import fr.jmmc.jmcs.util.NumberUtils;
 import net.jafama.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,10 +228,10 @@ public final class EditableSepPosAngleParameter implements Editable {
                 y2 = getY(value, posAngle);
                 break;
             case POS_ANGLE:
-                final double dist = getSeparation(x, y);
+                final double sep = getSeparation(x, y);
 
-                x2 = getX(dist, value);
-                y2 = getY(dist, value);
+                x2 = getX(sep, value);
+                y2 = getY(sep, value);
                 break;
             default:
         }
@@ -332,8 +333,8 @@ public final class EditableSepPosAngleParameter implements Editable {
 
     /**
      * Return the position angle in [-180;180] as the astronomical position angle, 
-     * North equal to 0 or 180 for x=0, and 90 or 270 for y=0.
-     *
+     * Position angle equal to 0(North) or 180 for x=0 and 90(East) or 270 for y=0.
+     * 
      * @param x coordinate x
      * @param y coordinate y
      * @return position angle in [-180;180]
@@ -345,22 +346,59 @@ public final class EditableSepPosAngleParameter implements Editable {
     /**
      * Return the coordinate x
      *
-     * @param dist distance
+     * @param sep separation
      * @param posAngle angle in [-180;180]
      * @return coordinate x
      */
-    public static double getX(final double dist, final double posAngle) {
-        return dist * FastMath.sin(FastMath.toRadians(posAngle));
+    public static double getX(final double sep, final double posAngle) {
+        return sep * FastMath.sin(FastMath.toRadians(posAngle));
     }
 
     /**
      * Return the coordinate y
      *
-     * @param dist distance
+     * @param sep separation
      * @param posAngle angle in [-180;180]
      * @return coordinate y
      */
-    public static double getY(final double dist, final double posAngle) {
-        return dist * FastMath.cos(FastMath.toRadians(posAngle));
+    public static double getY(final double sep, final double posAngle) {
+        return sep * FastMath.cos(FastMath.toRadians(posAngle));
     }
+
+    /** 
+     * Return the X, Y coordinates.
+     *      
+     * @param sep separation
+     * @param posAngle angle in [-180;180]      
+     * @return the x, y coordinates
+     */
+    public static String getXYCoords(final double sep, final double posAngle) {
+        StringBuffer sb = new StringBuffer(512);
+        sb.append("x=");
+        sb.append(NumberUtils.format(NumberUtils.trimTo3Digits(getX(sep, posAngle))));
+        sb.append(SepPosAngleType.SEPARATION.getUnits());
+        sb.append("' y='");
+        sb.append(NumberUtils.format(NumberUtils.trimTo3Digits(getY(sep, posAngle))));        
+        sb.append(SepPosAngleType.SEPARATION.getUnits());
+        return sb.toString();
+    }
+
+    /** 
+     * Return the separation, position angle coordinates.
+     *      
+     * @param x x
+     * @param y y     
+     * @return the separation, posAngle coordinates
+     */
+    public static String getSepPosAngleCoords(final double x, final double y) {
+        StringBuffer sb = new StringBuffer(512);
+        sb.append("sep=");
+        sb.append(NumberUtils.format(NumberUtils.trimTo3Digits(getSeparation(x, y))));
+        sb.append(SepPosAngleType.SEPARATION.getUnits());
+        sb.append("' PA='");
+        sb.append(NumberUtils.format(NumberUtils.trimTo3Digits(getPosAngle(x, y))));
+        sb.append(SepPosAngleType.POS_ANGLE.getUnits());
+        return sb.toString();
+    }
+
 }

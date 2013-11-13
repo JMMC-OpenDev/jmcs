@@ -116,6 +116,9 @@ public class Main extends App {
         // Center main window on the screen
         WindowUtils.centerOnMainScreen(getFrame());
 
+        // Show the application frame
+        showFrameToFront();
+
         StatusBar.show("Application ready.");
         _logger.info("Execute application body");
 

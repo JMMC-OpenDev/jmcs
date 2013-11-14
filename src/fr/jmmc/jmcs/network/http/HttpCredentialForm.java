@@ -25,7 +25,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package fr.jmmc.jmcs.network;
+package fr.jmmc.jmcs.network.http;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.util.StringUtils;
@@ -158,10 +158,8 @@ public class HttpCredentialForm extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         jPanel1.add(submitButton, gridBagConstraints);
 
-        jScrollPane1.setBackground(null);
         jScrollPane1.setBorder(null);
 
-        infoTextPane.setBackground(null);
         infoTextPane.setBorder(null);
         jScrollPane1.setViewportView(infoTextPane);
 

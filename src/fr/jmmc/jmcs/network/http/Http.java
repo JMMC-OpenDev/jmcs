@@ -25,9 +25,10 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package fr.jmmc.jmcs.network;
+package fr.jmmc.jmcs.network.http;
 
 import fr.jmmc.jmcs.gui.component.MessagePane;
+import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.util.FileUtils;
 import java.io.BufferedInputStream;
 import java.io.File;

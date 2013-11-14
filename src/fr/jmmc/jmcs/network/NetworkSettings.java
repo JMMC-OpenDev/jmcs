@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.network;
 
+import fr.jmmc.jmcs.network.http.Http;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.util.IntrospectionUtils;

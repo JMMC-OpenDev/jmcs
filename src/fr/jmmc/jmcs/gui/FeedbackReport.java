@@ -39,7 +39,7 @@ import fr.jmmc.jmcs.gui.task.JmcsTaskRegistry;
 import fr.jmmc.jmcs.gui.task.TaskSwingWorker;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
-import fr.jmmc.jmcs.network.Http;
+import fr.jmmc.jmcs.network.http.Http;
 import fr.jmmc.jmcs.logging.LoggingService;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

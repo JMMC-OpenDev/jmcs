@@ -25,7 +25,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package fr.jmmc.jmcs.network;
+package fr.jmmc.jmcs.network.http;
 
 import java.io.IOException;
 import org.apache.commons.httpclient.methods.PostMethod;

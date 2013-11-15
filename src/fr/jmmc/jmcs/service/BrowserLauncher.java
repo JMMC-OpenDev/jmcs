@@ -59,7 +59,7 @@ public class BrowserLauncher {
             if (osName.startsWith("Mac OS")) {
                 if (mrjVersionSystemProperty == null) {
                     System.setProperty("mrj.version", "9999.999");
-                    _logger.debug("Probably running Oracle JVM nuder MAc OS X, faking missing 'mrj.version' system property.");
+                    _logger.debug("Probably running Oracle JVM under Mac OS X, faking missing 'mrj.version' system property.");
                 }
             }
 
@@ -81,7 +81,7 @@ public class BrowserLauncher {
     }
 
     /**
-     * Open in web browser the URL passed in argument.
+     * Open the given URL in the default web browser.
      *
      * @param url URL to open in web browser.
      */

@@ -517,7 +517,7 @@ copyJnlpAndRelated()
                     shllibEchoInfo "Copying/signing '$srcjar' into '$destjar'"
                     cp $srcjar $destjar
   
-                    if ! echo "$MYKEY" | jarsigner -keystore $KEYSTOREFILE $destjar mykey &> /dev/null
+                    if ! echo "$MYKEY" | jarsigner -keystore $KEYSTOREFILE $destjar ${KEYNAME} &> /dev/null
                     then
                         shllibEchoError "Can't sign '$destjar'"
                         exit 1
@@ -560,7 +560,7 @@ copyJnlpAndRelated()
                 shllibEchoInfo "Copying/signing '$srcjar' into '$destjar'"
                 cp $srcjar  $destjar
 
-                if ! echo "$MYKEY" | jarsigner -keystore $KEYSTOREFILE $destjar mykey &> /dev/null
+                if ! echo "$MYKEY" | jarsigner -keystore $KEYSTOREFILE $destjar ${KEYNAME} &> /dev/null
                 then
                     shllibEchoError "Can't sign '$destjar'"
                     exit 1
@@ -888,8 +888,15 @@ APP_WEBROOT=$WEBROOT/$APPSHORTNAME.$(date +%s)
 APP_CODEBASE=$CODEBASE/$APPSHORTNAME
 
 # search keystore file
-KEYSTOREFILE="$MCSTOP/etc/keystore"
-echo "Signing step uses '$KEYSTOREFILE' keystore"
+if [ -z "$KEYSTOREFILE" ]
+then
+    KEYSTOREFILE="$MCSTOP/etc/keystore"
+fi
+if [ -z "$KEYNAME" ]
+then
+    KEYNAME="mykey"
+fi
+echo "Signing step uses KEYSTOREFILE='$KEYSTOREFILE' keystore and KEYNAME='$KEYNAME'"
 # read keyword password from file or from prompt if key file is not present
 KEYFILE="${KEYSTOREFILE}.key"
 if [ -f "$KEYFILE" ]
@@ -897,8 +904,9 @@ then
     echo "Using '$KEYFILE' as key file"
     MYKEY=$(cat $KEYFILE)
 else
-    read -s -p "Enter 'mykey' password to sign every jar files:" MYKEY
-    echo -e "\n"    
+    read -s -p "Enter '${KEYNAME}' password to sign every jar files:" MYKEY
+    echo -e "\n"   
+    echo "(you may enter '${KEYNAME}' password into $KEYFILE)"
 fi
 
 # Check webroot directory

@@ -37,7 +37,7 @@ import fr.jmmc.jmcs.gui.action.RegisteredAction;
 import fr.jmmc.jmcs.gui.action.ShowReleaseNotesAction;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.logging.LogbackGui;
-import fr.jmmc.jmcs.resource.image.ResourceImage;
+import fr.jmmc.jmcs.gui.util.ResourceImage;
 import fr.jmmc.jmcs.service.BrowserLauncher;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;

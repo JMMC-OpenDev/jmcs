@@ -30,7 +30,7 @@ package fr.jmmc.jmcs.gui.component;
 import fr.jmmc.jmcs.gui.component.Message.Level;
 import static fr.jmmc.jmcs.gui.component.Message.Level.Information;
 import fr.jmmc.jmcs.logging.LoggingService;
-import fr.jmmc.jmcs.resource.image.ResourceImage;
+import fr.jmmc.jmcs.gui.util.ResourceImage;
 import fr.jmmc.jmcs.util.StringUtils;
 import javax.swing.Icon;
 import org.slf4j.Logger;

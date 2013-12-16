@@ -27,9 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
-import fr.jmmc.jmcs.gui.component.Message.Level;
 import static fr.jmmc.jmcs.gui.component.Message.Level.Information;
-import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.gui.util.ResourceImage;
 import fr.jmmc.jmcs.util.StringUtils;
 import javax.swing.Icon;
@@ -37,17 +35,19 @@ import org.slf4j.Logger;
 
 /**
  * This panel aims to display the content of a given MessageContainer.
- * 
+ *
  * @author Guillaume MELLA
  */
-public class MessagePanel extends javax.swing.JPanel {
+public final class MessagePanel extends javax.swing.JPanel {
+
+    /** default serial UID for Serializable interface */
+    private static final long serialVersionUID = 1;
 
     /** Logger */
     private Logger logger = null;
 
     /**
      * Creates new form MessagePanel.
-     * @param loggerPath logger name where messages will be logged into
      */
     public MessagePanel() {
         initComponents();
@@ -83,7 +83,6 @@ public class MessagePanel extends javax.swing.JPanel {
                     break;
             }
 
-
             // update text content
             final StringBuilder sb = new StringBuilder(100 * messageContainer.getMessages().size());
             sb.append("<html>");
@@ -94,7 +93,7 @@ public class MessagePanel extends javax.swing.JPanel {
 
                 sb.append(msg).append("<br>");
 
-                // avoid redundant logs of the same message :                
+                // avoid redundant logs of the same message :
                 if (!m.isLogged()) {
                     msg = StringUtils.removeTags(msg);
                     // if logger is not null, log message :

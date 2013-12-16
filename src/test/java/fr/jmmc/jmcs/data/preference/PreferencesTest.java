@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
+import fr.jmmc.jmcs.Bootstrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.LinkedList;
@@ -41,6 +42,13 @@ import static org.junit.Assert.*;
  * @author bourgesl
  */
 public class PreferencesTest {
+
+    static {
+
+        // invoke App method to initialize logback now:
+        Bootstrapper.getState();
+
+    }
 
     /** Logger - get from given class name */
     private static final Logger _logger = LoggerFactory.getLogger(PreferencesTest.class.getName());

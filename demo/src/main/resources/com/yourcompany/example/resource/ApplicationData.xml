@@ -42,9 +42,9 @@
 
     <authors>Sylvain LAFRASSE</authors>
 
-    <program name="JmcsAppExample" version="1.0"/>
+    <program name="jMCS Demo" version="1.0.0"/>
 
-    <compilation date="10/4/2013" compiler="1.6"/>
+    <compilation date="29/1/2014" compiler="1.6"/>
 
     <text>Description of your program should go here...</text>
 
@@ -106,7 +106,7 @@
     </menubar>
 
     <releasenotes>
-        <release version="1.0">
+        <release version="1.0.0">
             <prerelease version="1.0b3" tag="V1_0b3">
                 <change type="FEATURE">Added jMCS web site button.</change>
                 <change type="FEATURE">Added fake feedback script URL for demonstration purpose.</change>

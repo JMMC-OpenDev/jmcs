@@ -39,8 +39,8 @@
         <feedback_form_url>http://jmmc.fr/feedback/jmcs.php</feedback_form_url>
     </company>
 
-    <program name="jMCS framework" version="UNKNOWN Release Version"/>
-    <compilation date="UNKNOWN Compilation Date" compiler="UNKNOWN Compiler"/>
+    <program name="jMCS Framework" version="1.0.0"/>
+    <compilation date="29/1/2014" compiler="1.6"/>
     
     <text>JMMC framework, enabling better user interface and platform integration across Mac, Linux and Windows through numerous third-party libraries and in-house code</text>
     
@@ -56,7 +56,7 @@
         <package name="JSAMP"
           description="JSAMP is a Java toolkit for use with the Simple Applications Messaging Protocol. Made by Mark Taylor, working in the Astrophysics Group at Bristol University."
           link="http://software.astrogrid.org/doc/jsamp/"
-          jars="jsamp-1.3-3.jar"
+          jars="jsamp-1.3.4+.jar"
           license="AFL v2.1"
           file="JSAMP.txt"/>
           <!--license="(at least) the Academic Free Licence and the BSD License."/>-->
@@ -112,7 +112,7 @@
         <package name="JCL"
           description="JIDE Common Layer."
           link="https://github.com/jidesoft/jide-oss"
-          jars="jide-oss-3.5.2.jar"
+          jars="jide-oss-3.5.11.jar"
           license="GPL v3"/>
 
 
@@ -130,7 +130,7 @@
         <package name="Logback"
           description="Logback is intended as a successor to the popular log4j project, picking up where log4j leaves off."
           link="http://logback.qos.ch/"
-          jars="logback-core-1.0.11.jar logback-classic-1.0.11.jar"
+          jars="logback-core-1.1.0.jar logback-classic-1.1.0.jar"
           license="Eclipse v1"/>
           <!--license="EPL v1.0 / LGPL 2.1" />-->
 
@@ -188,9 +188,10 @@
     </dependences>
     
     <releasenotes>
-        <release version="0.0">
-            <prerelease version="0.0b0" tag="V0_0b0">
-                <change></change>
+        <release version="1.0.0">
+            <pubDate>Wed, 29 Jan 2014 13:43:26 GMT</pubDate>
+            <prerelease version="1.0.0b1" tag="V1_0_0b1">
+                <change type="FEATURE">First Public Release !!!</change>
             </prerelease>
         </release>
     </releasenotes>

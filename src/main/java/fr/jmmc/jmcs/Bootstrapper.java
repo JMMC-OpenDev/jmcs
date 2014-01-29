@@ -300,7 +300,10 @@ public final class Bootstrapper {
             // Load jMCS and application data models
             ApplicationDescription.init();
             _jmmcLogger.debug("Application data loaded.");
-            _jmmcLogger.info("jMCS launching '{}' application...", ApplicationDescription.getInstance().getProgramNameWithVersion());
+
+            _jmmcLogger.info("{} launching application '{}' ...",
+                    ApplicationDescription.getJmcsInstance().getProgramNameWithVersion(),
+                    ApplicationDescription.getInstance().getProgramNameWithVersion());
 
             _application.___internalStart();
 

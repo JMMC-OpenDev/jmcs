@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>fr.jmmc.jmcs</groupId>
     <artifactId>jmcs</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
+
     <packaging>jar</packaging>
     <name>jMCS</name>
     <url>http://www.jmmc.fr/dev/jmcs</url>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
         <dependency>
             <!-- Requires you to install manually the artifact:
@@ -51,6 +56,7 @@
             <artifactId>java-getopt</artifactId>
             <version>1.0.13</version>
         </dependency>
+        <!-- JAXB -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -62,6 +68,7 @@
             <version>2.2.7</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- SLF4J -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -76,7 +83,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.sun.woodstock.dependlibs</groupId>
@@ -103,6 +110,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -114,10 +122,12 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.3</version>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -131,6 +141,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -154,6 +165,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!-- To create the 'big JMCS jar' -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -173,6 +185,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!-- To copy dependencies into target/runtime-libs folder -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

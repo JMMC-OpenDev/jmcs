@@ -48,7 +48,7 @@
         <!--  that depend on this common jnlp (beta and public)                  -->
         <!--  have been tested and released.                                     -->
         <!--                                                                     -->
-        
+
         <!-- MANUALLY EDITED - Should be generated with maven ASAP ! -->
 
         <!-- slf4j + JUL and JCL wrappers -->
@@ -76,13 +76,10 @@
         <jar href="@SHARED@/AppleJavaExtensions-1.6.jar"/>
 
         <!-- Xml binding -->
-        <jar href="@SHARED@/jaxb-api-2.2.11.jar"/>
         <jar href="@SHARED@/jaxb-core-2.2.7.jar"/>
         <jar href="@SHARED@/jaxb-impl-2.2.7.jar"/>
-        <jar href="@SHARED@/istack-commons-runtime-2.16.jar"/>
-        <jar href="@SHARED@/FastInfoset-1.2.12.jar"/>
-        <jar href="@SHARED@/jsr173_api-1.0.jar"/>
-        
+        <jar href="@SHARED@/jaxb-api-2.2.7.jar"/>
+
         <!-- HttpClient -->
         <jar href="@SHARED@/commons-httpclient-3.1.jar "/>
         <!-- HttpClient dependency -->

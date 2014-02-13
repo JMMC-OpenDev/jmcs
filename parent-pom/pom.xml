@@ -11,8 +11,11 @@
     <name>JMMC</name>
 
     <properties>
+        <jarsigner.skip>true</jarsigner.skip>
+        <jarsigner.alias>alias</jarsigner.alias>
         <maven.build.timestamp.format>yyyy/MM/dd HH:mm:ss</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <timestamp>${maven.build.timestamp}</timestamp>
     </properties>
 
     <build>

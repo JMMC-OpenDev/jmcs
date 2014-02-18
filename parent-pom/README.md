@@ -10,7 +10,7 @@ Proceed first to its installation.
 
 ```bash
 cd parent-pom
-mvn install
+mvn -Dassembly.skipAssembly clean install
 ```
 
 ### Use:

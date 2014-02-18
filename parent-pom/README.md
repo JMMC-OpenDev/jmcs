@@ -4,7 +4,7 @@ PARENT POM
 This directory contains the jMCS parent pom.
 It may be used for any other project that want to use it as parent.
 
-Use it giving *relativePath* or proceed first to its installation.
+Proceed first to its installation.
 
 ### Install:
 
@@ -19,17 +19,13 @@ mvn install
 <parent>
     <groupId>fr.jmmc</groupId>
     <artifactId>jmmc</artifactId>
-    <version>TRUNK</version>
-    <!-- <relativePath>./parent-pom</relativePath> -->
+    <version>TRUNK</version>    
 </parent>
-
-<properties>
-    <jarsigner.skip>true</jarsigner.skip>
-    ...
-</properties>
 ```
 
-Add *jarsigner.skip=true* to your properties if you want to prevent archive signing. Else you will have to prepare a keystore and provide the following properties to make signing process valid:
+By default parent pom sign jar of classes. To skip this operation (developer profile), please set the *jarsigner.skip=true* property.
+Signing step requires to prepare a keystore and some properties (see below) to make signing process valid
+Else you will have :
 
 ```xml
 <properties>
@@ -38,6 +34,7 @@ Add *jarsigner.skip=true* to your properties if you want to prevent archive sign
     <jarsigner.alias>codesigningcert</jarsigner.alias>
     <jarsigner.storepass>Osug2013DC</jarsigner.storepass>
     <jarsigner.keypass>Osug2013DC</jarsigner.keypass>
+    <jarsigner.skip>true</jarsigner.skip>
 ...
 </properties>
 ```

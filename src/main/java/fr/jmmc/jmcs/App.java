@@ -229,7 +229,7 @@ public abstract class App {
      */
     public static JFrame getFrame() {
         if (_applicationFrame == null) {
-            _applicationFrame = new JFrame();
+            setFrame(new JFrame());
         }
         return _applicationFrame;
     }

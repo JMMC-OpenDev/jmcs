@@ -28,14 +28,32 @@ Signing step requires to prepare a keystore and some properties (see below) to m
 Else you will have :
 
 ```xml
-<properties>
+<settings>
 ...
-    <jarsigner.keystore>/home/MCS/etc/globalsign.jks</jarsigner.keystore>
-    <jarsigner.alias>codesigningcert</jarsigner.alias>
-    <jarsigner.storepass>Osug2013DC</jarsigner.storepass>
-    <jarsigner.keypass>Osug2013DC</jarsigner.keypass>
-    <jarsigner.skip>true</jarsigner.skip>
+<profiles>
+    <profile>
+      <id>dev</id>
+      <properties>
+        <jarsigner.skip>true</jarsigner.skip>
+        <user.install>${user.home}/our-project</user.install>
+      </properties>
+    </profile>
+    <profile>
+      <id>deployer</id>
+      <properties>
+        <jarsigner.keystore>/home/MCS/etc/globalsign.jks</jarsigner.keystore>
+        <jarsigner.alias>codesigningcert</jarsigner.alias>
+        <jarsigner.storepass>XXXXXX</jarsigner.storepass>
+        <jarsigner.keypass>XXXXXX</jarsigner.keypass>
+        <jarsigner.skip>true</jarsigner.skip>
+        <user.install>${user.home}/our-project</user.install>
+      </properties>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>dev</activeProfile>
+  </activeProfiles>
 ...
-</properties>
+</settings>
 ```
 

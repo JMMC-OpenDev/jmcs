@@ -383,9 +383,7 @@ public final class Bootstrapper {
 
                 // Define the JFrame associated to the application which will get the JMenuBar
                 final JFrame frame = App.getFrame();
-                if (frame == null) {
-                    return;
-                }
+
                 // Define OSXAdapter (menu bar integration)
                 macOSXRegistration();
                 // Create menus including the Interop menu (SAMP required)

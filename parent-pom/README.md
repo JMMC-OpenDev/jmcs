@@ -10,7 +10,7 @@ Proceed first to its installation.
 
 ```bash
 cd parent-pom
-mvn -Dassembly.skipAssembly clean install
+mvn -Dassembly.skipAssembly -Djarsigner.skip=true clean install
 ```
 
 ### Use:

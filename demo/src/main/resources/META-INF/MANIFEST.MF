@@ -2,8 +2,8 @@ Built-By: YOU
 Built-Date: ${timestamp}
 Implementation-Title: jMCS Demo
 Implementation-Version: ${project.version}
-Implementation-Vendor: example.yourcompany.comc
-Implementation-URL: http://example.yourcompany.comc
+Implementation-Vendor: yourcompany
+Implementation-URL: http://example.yourcompany.com
 Application-Name: jMCS Demo
 Permissions: all-permissions
 Codebase: http://example.yourcompany.com

@@ -4,15 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-      <groupId>fr.jmmc</groupId>
-      <artifactId>jmmc</artifactId>
-      <version>TRUNK</version>
-      <!--  please install first parent pom from jMCS/parent-pom directory -->
+        <groupId>fr.jmmc</groupId>
+        <artifactId>jmmc</artifactId>
+        <version>TRUNK</version>
+        <!--  please install first parent pom from jMCS/parent-pom directory -->
     </parent>
 
 
     <groupId>fr.jmmc.jmcs</groupId>
-    <artifactId>jMCS-Demo</artifactId>
+    <artifactId>jmcs-demo</artifactId>
     <packaging>jar</packaging>
 
     <name>jMCS-Demo</name>

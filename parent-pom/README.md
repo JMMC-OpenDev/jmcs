@@ -30,29 +30,32 @@ Else you will have :
 ```xml
 <settings>
 ...
-<profiles>
-    <profile>
-      <id>dev</id>
-      <properties>
-        <jarsigner.skip>true</jarsigner.skip>
-        <user.install>${user.home}/our-project</user.install>
-      </properties>
-    </profile>
-    <profile>
-      <id>deployer</id>
-      <properties>
-        <jarsigner.keystore>/home/MCS/etc/globalsign.jks</jarsigner.keystore>
-        <jarsigner.alias>codesigningcert</jarsigner.alias>
-        <jarsigner.storepass>XXXXXX</jarsigner.storepass>
-        <jarsigner.keypass>XXXXXX</jarsigner.keypass>
-        <jarsigner.skip>true</jarsigner.skip>
-        <user.install>${user.home}/our-project</user.install>
-      </properties>
-    </profile>
-  </profiles>
-  <activeProfiles>
-    <activeProfile>dev</activeProfile>
-  </activeProfiles>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <jarsigner.skip>true</jarsigner.skip>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>deployer</id>
+            <properties>
+                <jarsigner.skip>false</jarsigner.skip>
+                <jarsigner.alias>codesigningcert</jarsigner.alias>
+                <jarsigner.keystore>/home/MCS/etc/globalsign.jks</jarsigner.keystore>
+                <jarsigner.keypass>XXXXXX</jarsigner.keypass>
+                <jarsigner.storepass>XXXXXX</jarsigner.storepass>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>dev</activeProfile>
+    </activeProfiles>
+
 ...
 </settings>
 ```

@@ -18,7 +18,11 @@
     <url>http://www.jmmc.fr/dev/jmcs</url>
 
     <properties>
+        <!-- do not sign libraries only applications -->
         <jarsigner.skip>true</jarsigner.skip>
+
+        <!-- jMCS is an open source project -->
+        <source.skip>false</source.skip>
     </properties>
 
     <dependencies>

@@ -19,10 +19,15 @@
     <url>http://www.jmmc.fr/dev/jmcs</url>
 
     <properties>
+	<!-- do make assembly and copy dependencies -->
+	<assembly.skipAssembly>false</assembly.skipAssembly>
+	<mdep.skip>false</mdep.skip>
+
         <!-- do not sign libraries only applications -->
         <jarsigner.skip>true</jarsigner.skip>
 
         <!-- jMCS is an open source project -->
+        <maven.javadoc.skip>false</maven.javadoc.skip>
         <source.skip>false</source.skip>
     </properties>
 

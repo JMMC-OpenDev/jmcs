@@ -35,7 +35,11 @@ Else you will have :
         <profile>
             <id>dev</id>
             <properties>
+		<!-- disable jar signer -->
                 <jarsigner.skip>true</jarsigner.skip>
+		<!-- disable javadoc -->
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		<!-- disable tests -->
                 <maven.test.skip>true</maven.test.skip>
             </properties>
         </profile>

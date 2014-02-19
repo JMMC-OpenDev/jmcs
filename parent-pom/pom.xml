@@ -11,8 +11,13 @@
     <name>JMMC</name>
 
     <properties>
-        <!-- by default do not bundle source code -->
+	<!-- do not make assembly and copy dependencies by default -->
+	<assembly.skipAssembly>true</assembly.skipAssembly>
+	<mdep.skip>true</mdep.skip>
+
+        <!-- do not bundle source code by default -->
         <source.skip>true</source.skip>
+
 
         <!-- define required jarsigner alias parameter -->
         <jarsigner.alias>UNDEFINED</jarsigner.alias>

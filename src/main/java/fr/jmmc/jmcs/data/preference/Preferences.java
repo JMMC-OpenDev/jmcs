@@ -32,6 +32,7 @@ import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.ColorEncoder;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.NumberUtils;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -936,6 +937,10 @@ public abstract class Preferences extends Observable {
 
         final String value = getPreference(preferenceName);
 
+        /* ignore empty string */
+        if (StringUtils.isEmpty(value)) {
+            return Collections.emptyList();
+        }
         return Arrays.asList(value.split(LIST_SPLITTER));
     }
 

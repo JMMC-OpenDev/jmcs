@@ -41,6 +41,7 @@ import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.network.http.Http;
 import fr.jmmc.jmcs.logging.LoggingService;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -362,13 +363,13 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     }
 
     /**
-     * Enable submit button according desc and summary fields.
+     * Enable submit button according description and summary fields.
      * @param e event thrown by description or summary updates.
      */
     @Override
     public final void keyReleased(final KeyEvent e) {
-        final boolean hasDesc = descriptionTextArea.getText().length() > 0;
-        final boolean hasSummary = summaryTextField.getText().length() > 0;
+        final boolean hasDesc = !StringUtils.isEmpty(descriptionTextArea.getText());
+        final boolean hasSummary = !StringUtils.isEmpty(summaryTextField.getText());
         submitButton.setEnabled(hasDesc && hasSummary);
     }
 
@@ -588,7 +589,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         _logger.debug("logOutput length = {}", logOutput.length());
 
-        return (logOutput.length() > 0) ? logOutput : "None";
+        return (!StringUtils.isEmpty(logOutput)) ? logOutput : "None";
     }
 
     /**

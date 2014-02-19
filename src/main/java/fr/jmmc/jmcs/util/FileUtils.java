@@ -70,7 +70,7 @@ public final class FileUtils {
      * @return File or null
      */
     private static File getExistingFile(final String path) {
-        if (path != null && path.length() > 0) {
+        if (!StringUtils.isEmpty(path)) {
             final File file = new File(path);
 
             if (file.exists()) {

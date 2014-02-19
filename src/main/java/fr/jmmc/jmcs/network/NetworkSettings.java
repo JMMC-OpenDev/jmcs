@@ -31,6 +31,7 @@ import fr.jmmc.jmcs.network.http.Http;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.lang.reflect.Method;
 import java.util.Properties;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -191,17 +192,15 @@ public final class NetworkSettings {
             final String proxyHost = prefs.getPreference(CommonPreferences.HTTP_PROXY_HOST);
             final String proxyPort = prefs.getPreference(CommonPreferences.HTTP_PROXY_PORT);
 
-            if (proxyHost != null && proxyHost.length() > 0) {
-                if (proxyPort != null && proxyPort.length() > 0) {
-                    try {
-                        final int port = Integer.valueOf(proxyPort);
-                        if (port != 0) {
-                            defineProxy(proxyHost, port);
-                            return;
-                        }
-                    } catch (NumberFormatException nfe) {
-                        // invalid number
+            if (!StringUtils.isEmpty(proxyHost) && !StringUtils.isEmpty(proxyPort)) {
+                try {
+                    final int port = Integer.valueOf(proxyPort);
+                    if (port != 0) {
+                        defineProxy(proxyHost, port);
+                        return;
                     }
+                } catch (NumberFormatException nfe) {
+                    // invalid number
                 }
             }
             _logger.info("No http proxy defined.");
@@ -224,7 +223,6 @@ public final class NetworkSettings {
 
         // # http.nonProxyHosts
 //        System.setProperty(PROPERTY_HTTP_NO_PROXY_HOSTS, "localhost|127.0.0.1");
-
         // TODO : support also advanced proxy settings (user, password ...)
         // # http.proxyUser
         // # http.proxyPassword

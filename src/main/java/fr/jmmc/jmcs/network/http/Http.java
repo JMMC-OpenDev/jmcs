@@ -30,6 +30,7 @@ package fr.jmmc.jmcs.network.http;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -234,7 +235,7 @@ public final class Http {
                 }
                 final int port = epoint.getPort();
 
-                if (host.trim().length() > 0 && port > 0) {
+                if (!StringUtils.isTrimmedEmpty(host) && port > 0) {
                     hostConfiguration.setProxy(host, port);
                 }
             }

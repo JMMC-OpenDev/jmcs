@@ -30,6 +30,7 @@ package fr.jmmc.jmcs.gui.component;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.data.preference.PreferencesException;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -87,7 +88,7 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
         }
 
         // Decipher message availability
-        if ((message == null) || (message.length() == 0)) {
+        if (StringUtils.isEmpty(message)) {
             _message = null;
         } else {
             _message = message;

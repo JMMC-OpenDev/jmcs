@@ -24,6 +24,16 @@
             <artifactId>jmcs</artifactId>
             <version>TRUNK</version>
         </dependency>
+
+        <dependency>
+            <!-- Requires you to install manually the artifact:
+           mvn install:install-file -Dfile=lib/jmcs-demo-doc.jar -DgroupId=fr.jmmc.jmcs -DartifactId=jmcs-demo-doc -Dversion=1.0 -Dpackaging=jar
+            -->
+            <groupId>fr.jmmc.jmcs</groupId>
+            <artifactId>jmcs-demo-doc</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>

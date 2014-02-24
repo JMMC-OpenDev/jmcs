@@ -29,7 +29,7 @@
 ********************************************************************************
 -->
 
-<jnlp spec="1.0+" codebase="@GENERATED@" href="@GENERATED@">
+<jnlp spec="1.0+" codebase="@GENERATED@" href="Jmcs.jnlp">
     <information>
         <title>jMCS Framework</title>
         <vendor>JMMC (Jean-Marie MARIOTTI Center)</vendor>
@@ -41,30 +41,28 @@
         <all-permissions/>
     </security>
     <resources>
-
-        <!--                                                                     -->
-        <!--  WARNING :                                                          -->
-        <!--  Please do not remove any jar entry until all applications          -->
-        <!--  that depend on this common jnlp (beta and public)                  -->
-        <!--  have been tested and released.                                     -->
-        <!--                                                                     -->
-
         <!-- MANUALLY EDITED - Should be generated with maven ASAP ! -->
+        
+        <!-- Module code -->
+        <jar href="jar/jmcs-TRUNK.jar"/>
+
+
+        <!-- Libraries -->
 
         <!-- slf4j + JUL and JCL wrappers -->
-        <jar href="@SHARED@/slf4j-api-1.7.5.jar"/>
-        <jar href="@SHARED@/jul-to-slf4j-1.7.5.jar"/>
-        <jar href="@SHARED@/jcl-over-slf4j-1.7.5.jar"/>
+        <jar href="@SHARED@/slf4j-api-1.7.6.jar"/>
+        <jar href="@SHARED@/jul-to-slf4j-1.7.6.jar"/>
+        <jar href="@SHARED@/jcl-over-slf4j-1.7.6.jar"/>
 
         <!-- logback -->
         <jar href="@SHARED@/logback-core-1.1.0.jar"/>
         <jar href="@SHARED@/logback-classic-1.1.0.jar"/>
 
         <!-- VO interoperability -->
-        <jar href="@SHARED@/jsamp-1.3.4+.jar"/>
+        <jar href="@SHARED@/jsamp-1.3-4+.jar"/>
 
         <!-- Open URLs in user's default web browser -->
-        <jar href="@SHARED@/BrowserLauncher2-1.3.jar"/>
+        <jar href="@SHARED@/BrowserLauncher2.orig-1.3.jar"/>
 
         <!-- Missing Swing Widgets -->
         <jar href="@SHARED@/jide-oss-3.5.11.jar"/>
@@ -90,6 +88,8 @@
 
         <!-- Only used to detect the platform -->
         <jar href="@SHARED@/commons-lang-2.6.jar"/>
+
     </resources>
+
     <component-desc/>
 </jnlp>

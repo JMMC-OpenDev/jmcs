@@ -59,7 +59,7 @@ public class HelpView {
 
     /** Show the help window */
     private HelpView() {
-        _instance = this;
+        super();
     }
 
     /**
@@ -83,34 +83,12 @@ public class HelpView {
             // Get the helpset file and create the centered help broker 
             url = HelpSet.findHelpSet(appClassLoader, "documentation.hs");
 
-            _logger.info("HelpSet.findHelpSet(appClassLoader, 'documentation.hs') = '{}'.", url);
-
-            if (url == null) {
-                url = HelpSet.findHelpSet(appClassLoader, "/documentation.hs");
-
-                _logger.info("HelpSet.findHelpSet(appClassLoader, '/documentation.hs') = '{}'.", url);
-            }
-
-            if (url == null) {
-                // Works on Mac OS X 10.5 PPC G5 with JVM 1.5.0_16
-                // Works on Mac OS X 10.5 Intel with JVM 1.5.0_16
-                // Works on Windows XP with JVM 1.6.0_07
-                // Works on Linux with JVM 1.5.0_16
-                url = appClassLoader.getResource("documentation.hs");
-
-                _logger.info("appClassLoader.getResource('documentation.hs') = '{}'.", url);
-            }
-
-            if (url == null) {
-                url = appClassLoader.getResource("/documentation.hs");
-
-                _logger.info("appClassLoader.getResource('/documentation.hs') = '{}'.", url);
-            }
+            _logger.debug("HelpSet.findHelpSet(appClassLoader, 'documentation.hs') = '{}'.", url);
 
             // http://forums.sun.com/thread.jspa?messageID=10522645
             url = UrlUtils.fixJarURL(url);
 
-            _logger.info("using helpset url = '{}'.", url);
+            _logger.debug("using helpset url = '{}'.", url);
 
             // check if the url is valid :
             if (url == null) {

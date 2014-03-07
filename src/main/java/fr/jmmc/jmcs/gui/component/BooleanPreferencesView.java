@@ -56,7 +56,8 @@ import org.slf4j.LoggerFactory;
 public class BooleanPreferencesView extends JPanel implements Observer, ChangeListener {
 
     // Constants
-    public static final String SAVE_AND_RESTART_MESSAGE = "Please save modifications and restart the application to apply changes.";
+    private static final long serialVersionUID = 1L;
+    private static final String SAVE_AND_RESTART_MESSAGE = "Please save modifications and restart the application to apply changes.";
     private static final Logger _logger = LoggerFactory.getLogger(BooleanPreferencesView.class.getName());
     private final Preferences _preferences;
     private final Map<Object, JCheckBox> _booleanPreferencesHashMap;
@@ -238,7 +239,7 @@ public class BooleanPreferencesView extends JPanel implements Observer, ChangeLi
         final BooleanPreferencesView generalSettingsView = new BooleanPreferencesView(preferences, booleanSettings, "For testing purpose only !");
         generalSettingsView.init();
 
-        JFrame frame = new JFrame();
+        JFrame frame = new JFrame("BooleanPreferencesView Demo");
         frame.add(generalSettingsView);
         frame.pack();
         frame.setVisible(true);

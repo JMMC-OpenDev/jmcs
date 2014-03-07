@@ -647,8 +647,7 @@ public class SearchField extends JTextField {
         final boolean testOptions = true;
 
         // GUI initialization
-        final JFrame frame = new JFrame();
-        frame.setTitle("SearchField Demo");
+        final JFrame frame = new JFrame("SearchField Demo");
 
         // Force to exit when the frame closes :
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

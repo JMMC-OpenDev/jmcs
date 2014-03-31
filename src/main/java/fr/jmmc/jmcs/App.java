@@ -333,7 +333,6 @@ public abstract class App {
 
     static void ___internalSingletonCleanup() {
         ___internalDisposeFrame();
-
         _instance = null;
     }
 
@@ -362,8 +361,9 @@ public abstract class App {
         APP_READY(5),
         APP_STOP(6),
         APP_CLEANUP(7),
-        ENV_CLEANUP(8),
-        APP_DEAD(9);
+        APP_CLEANUP_FAIL(8),
+        ENV_CLEANUP(9),
+        APP_DEAD(10);
         // Members
         /** the numerical order of the internal progress */
         private final int _step;

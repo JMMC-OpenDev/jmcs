@@ -112,6 +112,9 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             SwingUtils.invokeAndWaitEDT(new Runnable() {
                 @Override
                 public void run() {
+                    // ensure window is visible (not iconified):
+                    App.showFrameToFront();
+                    
                     new FeedbackReport(modal, exception);
                 }
             });
@@ -122,6 +125,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     }
 
     /* members */
+    /** flag indicating if the dialog is disposed (avoid reentrance) */
+    private boolean disposed = false;
     /** Any Throwable (Exception, RuntimeException and Error) */
     private final Throwable _exception;
 
@@ -224,7 +229,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     /**
      * Close the dialog box if everything was correct or let the user retry.
      * This method is called by the worker using EDT.
-    
+     *
      * @param sent boolean flag indicating if the feedback report was sent
      */
     public void shouldDispose(final boolean sent) {
@@ -269,17 +274,21 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      */
     @Override
     public final void dispose() {
-        _logger.debug("dispose : {}", this);
+        if (!disposed) {
+            disposed = true;
+            
+            _logger.debug("dispose : {}", this);
 
-        // do not kill the associated worker task to let the started job end properly
-        // else we would have called:
-        // TaskSwingWorkerExecutor.cancel(JmcsTaskRegistry.TASK_FEEDBACK_REPORT);
+            // do not kill the associated worker task to let the started job end properly
+            // else we would have called:
+            // TaskSwingWorkerExecutor.cancel(JmcsTaskRegistry.TASK_FEEDBACK_REPORT);
 
-        // Exit or not the application
-        exit();
+            // Exit or not the application
+            exit();
 
-        // dispose Frame :
-        super.dispose();
+            // dispose Frame :
+            super.dispose();
+        }
     }
 
     /**

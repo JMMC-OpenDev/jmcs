@@ -285,15 +285,12 @@ public final class SessionSettingsPreferences extends Preferences {
      * Try to save the session settings to file if needed.
      */
     public static void saveToFileIfNeeded() {
-
-        if (_singleton == null) {
-            return;
-        }
-
-        try {
-            _singleton.saveToFile();
-        } catch (PreferencesException ex) {
-            _logger.warn("Could not save session settings", ex);
+        if (_singleton != null) {
+            try {
+                _singleton.saveToFile();
+            } catch (PreferencesException ex) {
+                _logger.warn("Could not save session settings", ex);
+            }
         }
     }
 

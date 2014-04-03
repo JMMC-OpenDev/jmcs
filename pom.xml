@@ -18,9 +18,9 @@
     <url>http://www.jmmc.fr/dev/jmcs</url>
 
     <properties>
-	<!-- do make assembly and copy dependencies -->
-	<assembly.skipAssembly>false</assembly.skipAssembly>
-	<mdep.skip>false</mdep.skip>
+        <!-- do make assembly and copy dependencies -->
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+        <mdep.skip>false</mdep.skip>
 
         <!-- do not sign libraries only applications -->
         <jarsigner.skip>true</jarsigner.skip>
@@ -115,7 +115,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>com.sun.woodstock.dependlibs</groupId>

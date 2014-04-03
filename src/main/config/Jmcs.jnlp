@@ -55,8 +55,8 @@
         <jar href="@SHARED@/jcl-over-slf4j-1.7.6.jar"/>
 
         <!-- logback -->
-        <jar href="@SHARED@/logback-core-1.1.0.jar"/>
-        <jar href="@SHARED@/logback-classic-1.1.0.jar"/>
+        <jar href="@SHARED@/logback-core-1.1.2.jar"/>
+        <jar href="@SHARED@/logback-classic-1.1.2.jar"/>
 
         <!-- VO interoperability -->
         <jar href="@SHARED@/jsamp-1.3-4+.jar"/>

@@ -40,10 +40,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class gathers general network settings:
- * - socket and connect timeouts
- * - proxy (host / port)
+ * - socket and connect timeouts;
+ * - proxy (host / port).
  *
- * It uses Java System properties and also JMCS Preferences to get the proxy settings
+ * It uses Java System properties and also jMCS Preferences to get the proxy settings.
  * 
  * @author Laurent BOURGES, Guillaume MELLA.
  */

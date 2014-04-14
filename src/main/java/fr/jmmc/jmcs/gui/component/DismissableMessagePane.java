@@ -88,6 +88,7 @@ public final class DismissableMessagePane {
 
     /**
      * @return the state of the preference for the given preference name.
+     * @param preferences Reference to the dedicated Preferences singleton
      * @param preferenceName Name of the preference related to this message
      */
     public static boolean getPreferenceState(final Preferences preferences, final String preferenceName) {
@@ -96,5 +97,24 @@ public final class DismissableMessagePane {
         final String dontShowPreferenceName = composePreferenceName(preferenceName);
         final boolean dontShow = preferences.getPreferenceAsBoolean(dontShowPreferenceName, true);
         return dontShow;
+    }
+
+    /**
+     * Set the state of the preference for the given preference name.
+     *
+     * @param preferences Reference to the dedicated Preferences singleton.
+     * @param preferenceName Name of the preference related to this message.
+     * @param state true to dismiss the message, false otherwise.
+     */
+    public static void setPreferenceState(final Preferences preferences, final String preferenceName, final boolean state) {
+
+        // Return false if the preference value is missing:
+        final String dontShowPreferenceName = composePreferenceName(preferenceName);
+        try {
+            preferences.setPreference(dontShowPreferenceName, state);
+        } catch (PreferencesException pe) {
+            // Show the feedback report :
+            FeedbackReport.openDialog(pe);
+        }
     }
 }

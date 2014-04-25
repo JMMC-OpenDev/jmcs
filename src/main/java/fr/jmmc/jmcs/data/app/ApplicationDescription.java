@@ -374,12 +374,10 @@ public final class ApplicationDescription {
      * @return the application main web page URL from the "link" field in the XML file
      */
     public String getLinkValue() {
-        String mainWebPageURL = _mainWebPageURL;
+        String linkValue = _applicationData.getLink();
+        _logger.debug("Link value is: {}", linkValue);
 
-        mainWebPageURL = _applicationData.getLink();
-        _logger.debug("MainWebPageURL: {}", mainWebPageURL);
-
-        return mainWebPageURL;
+        return linkValue;
     }
 
     /**

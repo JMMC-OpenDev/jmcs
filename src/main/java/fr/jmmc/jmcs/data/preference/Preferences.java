@@ -1316,8 +1316,18 @@ public abstract class Preferences extends Observable {
      * @return string representation of properties using the format "{name} : {value}"
      */
     public static String dumpProperties(final Properties properties) {
+        return dumpProperties(properties, new StringBuilder(2048)).toString();
+    }
+
+    /**
+     * Dump all properties (sorted by keys) into the given buffer
+     * @param properties properties to dump
+     * @param sb buffer to append into
+     * @return string representation of properties using the format "{name} : {value}"
+     */
+    public static StringBuilder dumpProperties(final Properties properties, final StringBuilder sb) {
         if (properties == null) {
-            return "";
+            return sb;
         }
 
         // Sort properties
@@ -1326,11 +1336,10 @@ public abstract class Preferences extends Observable {
         Arrays.sort(keys);
 
         // For each property, we make a string like "{name} : {value}"
-        final StringBuilder sb = new StringBuilder(2048);
         for (String key : keys) {
             sb.append(key).append(" : ").append(properties.getProperty(key)).append("\n");
         }
-        return sb.toString();
+        return sb;
     }
 
     /**

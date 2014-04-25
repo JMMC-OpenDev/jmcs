@@ -29,7 +29,7 @@ package fr.jmmc.jmcs.gui;
 
 import com.jidesoft.plaf.LookAndFeelFactory;
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.JVMUtils;
+import fr.jmmc.jmcs.util.JVMUtils;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.app.model.Menu;
 import fr.jmmc.jmcs.data.app.model.Menubar;

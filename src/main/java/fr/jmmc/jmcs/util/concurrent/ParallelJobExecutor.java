@@ -28,7 +28,7 @@
 package fr.jmmc.jmcs.util.concurrent;
 
 import ch.qos.logback.classic.Level;
-import fr.jmmc.jmcs.JVMUtils;
+import fr.jmmc.jmcs.util.JVMUtils;
 import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.ArrayList;

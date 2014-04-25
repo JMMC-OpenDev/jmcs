@@ -30,7 +30,7 @@ package fr.jmmc.jmcs.gui;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.App.ApplicationState;
 import fr.jmmc.jmcs.Bootstrapper;
-import fr.jmmc.jmcs.JVMUtils;
+import fr.jmmc.jmcs.util.JVMUtils;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.PreferencedDocument;

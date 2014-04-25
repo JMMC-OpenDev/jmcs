@@ -28,6 +28,7 @@
 package fr.jmmc.jmcs.util.concurrent;
 
 import ch.qos.logback.classic.Level;
+import fr.jmmc.jmcs.JVMUtils;
 import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public final class ParallelJobExecutor {
      */
     private ParallelJobExecutor() {
         super();
-        _cpuCount = Runtime.getRuntime().availableProcessors();
+        _cpuCount = JVMUtils.availableProcessors();
         _maxParallelJob = _cpuCount;
 
         // create any the thread pool even if there is only 1 CPU:

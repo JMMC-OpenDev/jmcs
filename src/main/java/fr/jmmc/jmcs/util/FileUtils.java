@@ -44,6 +44,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.channels.FileChannel;
 import java.util.zip.GZIPOutputStream;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public final class FileUtils {
     /** Class logger */
     private static final Logger _logger = LoggerFactory.getLogger(FileUtils.class.getName());
     /** Platform dependent line separator */
-    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static final String LINE_SEPARATOR = SystemUtils.LINE_SEPARATOR;
     /** File encoding use UTF-8 */
     public static final String FILE_ENCODING = "UTF-8";
     /** Default read buffer capacity: 8K */
@@ -643,7 +644,7 @@ public final class FileUtils {
      * @return the temporary directory name
      */
     public static String getTempDirPath() {
-        return System.getProperty("java.io.tmpdir");
+        return SystemUtils.JAVA_IO_TMPDIR;
     }
 
     /**

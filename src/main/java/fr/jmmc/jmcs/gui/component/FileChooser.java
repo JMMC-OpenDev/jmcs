@@ -398,7 +398,7 @@ public final class FileChooser {
         WindowUtils.centerOnMainScreen(fileDialog);
     }
 
-    private static class ExtendedFileChooser extends JFileChooser {
+    public static class ExtendedFileChooser extends JFileChooser {
 
         private static final long serialVersionUID = 1L;
 

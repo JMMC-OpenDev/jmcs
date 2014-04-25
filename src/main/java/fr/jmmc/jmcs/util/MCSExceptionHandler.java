@@ -159,22 +159,21 @@ public final class MCSExceptionHandler {
             applyUncaughtExceptionHandler(Thread.currentThread(), handler);
         }
 
-        if (handler instanceof SwingExceptionHandler) {
-            try {
-                // Using invokeAndWait to be in sync with this thread :
-                // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
-                SwingUtils.invokeAndWaitEDT(new Runnable() {
-                    /**
-                     * Add my handler to the Event-Driven Thread.
-                     */
-                    @Override
-                    public void run() {
-                        applyUncaughtExceptionHandler(Thread.currentThread(), handler);
-                    }
-                });
-            } catch (IllegalStateException ise) {
-                _logger.error("exception occured: ", ise);
-            }
+        // Set or reset the UncaughtExceptionHandler for EDT:
+        try {
+            // Using invokeAndWait to be in sync with this thread :
+            // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
+            SwingUtils.invokeAndWaitEDT(new Runnable() {
+                /**
+                 * Add my handler to the Event-Driven Thread.
+                 */
+                @Override
+                public void run() {
+                    applyUncaughtExceptionHandler(Thread.currentThread(), handler);
+                }
+            });
+        } catch (IllegalStateException ise) {
+            _logger.error("exception occured: ", ise);
         }
     }
 
@@ -242,10 +241,11 @@ public final class MCSExceptionHandler {
     }
 
     /**
-     * Log the exception
+     * Log the exception to both System.err and logback streams
      * @param t the thread
      * @param e the exception
      */
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private static void logException(final Thread t, final Throwable e) {
         System.err.println("An unexpected exception occured in thread " + t.getName());
         e.printStackTrace(System.err);

@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import fr.jmmc.jmcs.util.CollectionUtils;
 import java.awt.Dimension;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +92,7 @@ public final class SessionSettingsPreferences extends Preferences {
      * @return default directory (user home)
      */
     private static String getDefaultDirectory() {
-        return System.getProperty("user.home");
+        return SystemUtils.USER_HOME;
     }
 
     /**

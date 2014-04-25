@@ -27,8 +27,8 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util.concurrent;
 
-import fr.jmmc.jmcs.JVMUtils;
 import fr.jmmc.jmcs.util.CollectionUtils;
+import fr.jmmc.jmcs.util.JVMUtils;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;

@@ -417,10 +417,6 @@ public final class Bootstrapper {
     private static void macOSXRegistration() {
         // If running under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
-
-            // Set the menu bar under Mac OS X
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-
             final Class<?> osxAdapter = IntrospectionUtils.getClass("fr.jmmc.jmcs.gui.util.MacOSXAdapter");
             if (osxAdapter == null) {
                 // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT

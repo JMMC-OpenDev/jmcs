@@ -30,6 +30,7 @@ package fr.jmmc.jmcs.util;
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,8 @@ public final class MCSExceptionHandler {
     private static final boolean SET_HANDLER_TO_CURRENT_THREAD = false;
     /** uncaughtException handler singleton */
     private static volatile Thread.UncaughtExceptionHandler _exceptionHandler = null;
+    /** counter for OutOfMemoryError to avoid reporting too many */
+    private static AtomicInteger COUNT_OOME = new AtomicInteger();
 
     /**
      * Public method to initialize the exception handler singleton with the LoggingExceptionHandler
@@ -209,6 +212,15 @@ public final class MCSExceptionHandler {
         if (e instanceof ThreadDeath) {
             return true;
         }
+        if (e instanceof OutOfMemoryError) {
+            // count them:
+            final int countOOME = COUNT_OOME.incrementAndGet();
+            if (countOOME > 3) {
+                // log it anyway:
+                _logger.info("Ignored repeated OutOfMemoryError ({}): ", countOOME, e);
+                return true;
+            }
+        }
         // ignore java.lang.ArrayIndexOutOfBoundsException: 1
         // from apple.awt.CWindow.displayChanged(CWindow.java:924):
         if (e instanceof ArrayIndexOutOfBoundsException) {
@@ -216,14 +228,19 @@ public final class MCSExceptionHandler {
             if (lastStack != null) {
                 if ("apple.awt.CWindow".equalsIgnoreCase(lastStack.getClassName())
                         && "displayChanged".equalsIgnoreCase(lastStack.getMethodName())) {
-
                     // log it anyway:
                     _logger.info("Ignored apple exception: ", e);
-
                     return true;
                 }
             }
         }
+        // Avoid reentrance:
+        if (checkReentrance(e)) {
+            // log it anyway:
+            _logger.info("Ignored cycling exception: ", e);
+            return true;
+        }
+
         return false;
     }
 
@@ -238,6 +255,24 @@ public final class MCSExceptionHandler {
             return stackElements[0];
         }
         return null;
+    }
+
+    /**
+     * Return true if this class is already present in the exception's stack traces
+     * @param e exception to get its stack traces
+     * @return true if this class is already present in the exception's stack traces
+     */
+    private static boolean checkReentrance(final Throwable e) {
+        final StackTraceElement[] stackElements = e.getStackTrace();
+
+        final String className = MCSExceptionHandler.class.getName();
+
+        for (int i = 0, len = stackElements.length; i < len; i++) {
+            if (stackElements[i].getClassName().startsWith(className)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -267,7 +302,7 @@ public final class MCSExceptionHandler {
     }
 
     /**
-     * Public constructor used by reflection
+     * Public constructor used by reflection (AWT exception handler)
      */
     public MCSExceptionHandler() {
         super();
@@ -275,11 +310,13 @@ public final class MCSExceptionHandler {
 
     /**
      * AWT exception handler useful for exceptions occurring in modal dialogs
+     * 
+     * WARNING: Don't change the signature of this method!
      *
-     * @param e the exception
+     * @param throwable the exception
      */
-    public void handle(final Throwable e) {
-        showException(Thread.currentThread(), e);
+    public void handle(final Throwable throwable) {
+        runExceptionHandler(throwable);
     }
 
     /**

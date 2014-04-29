@@ -29,6 +29,7 @@ package fr.jmmc.jmcs.util;
 
 import fr.jmmc.jmcs.gui.FeedbackReport;
 import fr.jmmc.jmcs.gui.component.MessagePane;
+import fr.jmmc.jmcs.gui.component.StatusBar;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
@@ -59,10 +60,12 @@ public final class MCSExceptionHandler {
     private static final boolean USE_DEFAULT_UNCAUGHT_EXCEPTION_HANDLER = true;
     /** flag indicating to set the UncaughtExceptionHandler to the current thread (main) (false because of JNLP) */
     private static final boolean SET_HANDLER_TO_CURRENT_THREAD = false;
-    /** uncaughtException handler singleton */
-    private static volatile Thread.UncaughtExceptionHandler _exceptionHandler = null;
     /** counter for OutOfMemoryError to avoid reporting too many */
-    private static AtomicInteger COUNT_OOME = new AtomicInteger();
+    private static final AtomicInteger COUNT_OOME = new AtomicInteger();
+    /** flag indicating that Swing is enabled (StatusBar can be used) */
+    private static boolean SWING_ENABLED = false;
+    /** uncaughtException handler singleton */
+    private static volatile Thread.UncaughtExceptionHandler EXCEPTION_HANDLER = null;
 
     /**
      * Public method to initialize the exception handler singleton with the LoggingExceptionHandler
@@ -114,7 +117,7 @@ public final class MCSExceptionHandler {
      * @return exception handler singleton or null if undefined
      */
     private static Thread.UncaughtExceptionHandler getExceptionHandler() {
-        return _exceptionHandler;
+        return EXCEPTION_HANDLER;
     }
 
     /**
@@ -127,7 +130,8 @@ public final class MCSExceptionHandler {
      */
     private static synchronized void setExceptionHandler(final Thread.UncaughtExceptionHandler handler) {
         if (handler != null) {
-            _exceptionHandler = handler;
+            EXCEPTION_HANDLER = handler;
+            SWING_ENABLED = (handler instanceof SwingExceptionHandler);
 
             applyUncaughtExceptionHandler(handler);
         }
@@ -213,6 +217,10 @@ public final class MCSExceptionHandler {
             return true;
         }
         if (e instanceof OutOfMemoryError) {
+            if (SWING_ENABLED) {
+                StatusBar.show("OutOfMemoryError detected: the application may behave hazardously ...");
+            }
+
             // count them:
             final int countOOME = COUNT_OOME.incrementAndGet();
             if (countOOME > 3) {
@@ -263,9 +271,9 @@ public final class MCSExceptionHandler {
      * @return true if this class is already present in the exception's stack traces
      */
     private static boolean checkReentrance(final Throwable e) {
-        final StackTraceElement[] stackElements = e.getStackTrace();
-
         final String className = MCSExceptionHandler.class.getName();
+
+        final StackTraceElement[] stackElements = e.getStackTrace();
 
         for (int i = 0, len = stackElements.length; i < len; i++) {
             if (stackElements[i].getClassName().startsWith(className)) {

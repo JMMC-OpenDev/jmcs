@@ -32,6 +32,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import static java.io.File.separatorChar;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -115,6 +116,22 @@ public final class FileUtils {
     }
 
     /**
+     * Returns the name of the file or directory denoted by this abstract
+     * pathname.  This is just the last name in the pathname's name
+     * sequence.  If the pathname's name sequence is empty, then the empty
+     * string is returned.
+     *
+     * @return  The name of the file or directory denoted by this abstract
+     *          pathname, or the empty string if this pathname's name sequence
+     *          is empty
+     */
+    public static String getName(final String fileName) {
+        int index = fileName.lastIndexOf(separatorChar);
+        if (index < 0) return fileName;
+        return fileName.substring(index + 1);
+    }
+    
+    /**
      * Get the file name part without extension
      *
      * @param file file as File
@@ -175,7 +192,7 @@ public final class FileUtils {
         }
         return null;
     }
-
+        
     /**
      * Get the extension of a file in lower case
      *

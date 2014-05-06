@@ -49,7 +49,6 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
-import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
@@ -126,6 +125,8 @@ public final class FileUtils {
      * pathname.  This is just the last name in the pathname's name
      * sequence.  If the pathname's name sequence is empty, then the empty
      * string is returned.
+     * 
+     * @param fileName TODO
      *
      * @return  The name of the file or directory denoted by this abstract
      *          pathname, or the empty string if this pathname's name sequence
@@ -703,8 +704,8 @@ public final class FileUtils {
             //TODO check for jar: path also ?
             String scheme = u.getScheme();
             return !scheme.equalsIgnoreCase("file");
-        } catch (URISyntaxException ex) {
-            java.util.logging.Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (URISyntaxException ue) {
+            _logger.error("bad URI", ue);
         }
 
         return false;

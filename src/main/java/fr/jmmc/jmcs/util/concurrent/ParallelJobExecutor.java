@@ -64,7 +64,7 @@ public final class ParallelJobExecutor {
     /** maximum number of running parallel job */
     private int _maxParallelJob;
     /** thread pool dedicated to this computation */
-    private final ThreadPoolExecutor _parallelExecutor;
+    private final FixedThreadPoolExecutor _parallelExecutor;
 
     /**
      * Return the singleton instance
@@ -476,6 +476,9 @@ public final class ParallelJobExecutor {
                     // do interrupt thread if running:
                     future.cancel(true);
                 }
+
+                // Wait for threads to finish their task (cancellation):
+                _parallelExecutor.waitForTaskFinished();
 
                 // Anyway: interrupt this thread again anyway:
                 Thread.currentThread().interrupt();

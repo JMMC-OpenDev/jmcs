@@ -27,6 +27,9 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import fr.jmmc.jmcs.data.app.ApplicationDescription;
+import fr.jmmc.jmcs.data.preference.CommonPreferences;
+import fr.jmmc.jmcs.network.http.Http;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -43,7 +46,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
+import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
@@ -127,10 +133,12 @@ public final class FileUtils {
      */
     public static String getName(final String fileName) {
         int index = fileName.lastIndexOf(separatorChar);
-        if (index < 0) return fileName;
+        if (index < 0) {
+            return fileName;
+        }
         return fileName.substring(index + 1);
     }
-    
+
     /**
      * Get the file name part without extension
      *
@@ -192,7 +200,7 @@ public final class FileUtils {
         }
         return null;
     }
-        
+
     /**
      * Get the extension of a file in lower case
      *
@@ -681,6 +689,69 @@ public final class FileUtils {
         }
 
         return cleaned;
+    }
+
+    /**
+     * Test if given file is remote.
+     *
+     * @param fileLocation file location path to test.
+     * @return true if file is remote, false if local
+     */
+    public static boolean isRemote(String fileLocation) {
+        try {
+            URI u = new URI(fileLocation);
+            //TODO check for jar: path also ?
+            String scheme = u.getScheme();
+            return !scheme.equalsIgnoreCase("file");
+        } catch (URISyntaxException ex) {
+            java.util.logging.Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
+    }
+
+    /**
+     * Retrieve a remote file onto local disk.
+     * actually limited to HTTP and HTTPS.
+     *
+     * @param remoteLocation, String defaultParentDir remote location
+     * @param parentDir destination directory
+     * @return a copy of the remote file
+     * @throws IOException if any I/O operation fails (HTTP or file) 
+     * @throws URISyntaxException if given fileLocation  is invalid
+     */
+    public static File retrieveRemoteFile(String remoteLocation, String parentDir) throws IOException, URISyntaxException {
+        // TODO improve handling of existing files (do we have to warn the user ?)
+        // TODO add other remote file scheme (ftp, ssh?)
+
+        // assert that parentDir exist
+        new File(parentDir).mkdirs();
+
+        String tmpPath = parentDir + File.separator + FileUtils.getName(remoteLocation);
+        File tmpFile = getExistingFile(tmpPath);
+
+        if (tmpFile == null) {
+            tmpFile = new File(tmpPath);
+            Http.download(new URI(remoteLocation), tmpFile, true);
+        } else {
+            _logger.info("'{}' already present, do not download '{}' again ( please delete it first if it has changed or is not the same one and restart).", tmpPath, remoteLocation);
+        }
+
+        return tmpFile;
+    }
+
+    /**
+     * Return a directory where the application can put data into.
+     * The application name is added after the  common preference to build 
+     * the full directory path.
+     *
+     * @return the directory to put data into
+     */
+    public static File getFileStorageDirectory() {
+        String path = CommonPreferences.getInstance().getPreference(CommonPreferences.FILE_STORAGE_LOCATION)
+                + ApplicationDescription.getInstance().getProgramName();
+        File dir = new File(path);
+        return dir;
     }
 
     /** Forbidden constructor */

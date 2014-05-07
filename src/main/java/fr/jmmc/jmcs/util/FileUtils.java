@@ -129,9 +129,13 @@ public final class FileUtils {
      *
      * @return  The name of the file or directory denoted by this abstract
      *          pathname, or the empty string if this pathname's name sequence
-     *          is empty
+     *          is empty or null
      */
     public static String getName(final String fileName) {
+        if (fileName == null) {
+            return "";
+        }
+
         int index = fileName.lastIndexOf(separatorChar);
         if (index < 0) {
             return fileName;

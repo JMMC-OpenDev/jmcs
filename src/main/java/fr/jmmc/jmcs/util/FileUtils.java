@@ -126,7 +126,7 @@ public final class FileUtils {
      * sequence.  If the pathname's name sequence is empty, then the empty
      * string is returned.
      * 
-     * @param fileName TODO
+     * @param fileName long file name (local or remote)
      *
      * @return  The name of the file or directory denoted by this abstract
      *          pathname, or the empty string if this pathname's name sequence

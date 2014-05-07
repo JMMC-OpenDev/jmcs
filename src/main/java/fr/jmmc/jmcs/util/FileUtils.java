@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import fr.jmmc.jmcs.data.MimeType;
 import fr.jmmc.jmcs.network.http.Http;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -696,12 +697,11 @@ public final class FileUtils {
      * @param fileLocation file location path to test.
      * @return true if file is remote, false if local
      */
-    public static boolean isRemote(String fileLocation) {
+    public static boolean isRemote(final String fileLocation) {
         try {
-            URI u = new URI(fileLocation);
+            final URI uri = new URI(fileLocation);
             //TODO check for jar: path also ?
-            String scheme = u.getScheme();
-            return !scheme.equalsIgnoreCase("file");
+            return !"file".equalsIgnoreCase(uri.getScheme());
         } catch (URISyntaxException ue) {
             _logger.error("bad URI", ue);
         }
@@ -719,22 +719,32 @@ public final class FileUtils {
      * @throws IOException if any I/O operation fails (HTTP or file) 
      * @throws URISyntaxException if given fileLocation  is invalid
      */
-    public static File retrieveRemoteFile(final String remoteLocation, final String parentDir) throws IOException, URISyntaxException {
+    public static File retrieveRemoteFile(final String remoteLocation,
+                                          final String parentDir,
+                                          final MimeType mimeType) throws IOException, URISyntaxException {
         // TODO improve handling of existing files (do we have to warn the user ?)
         // TODO add other remote file scheme (ftp, ssh?)
 
         // assert that parentDir exist
         new File(parentDir).mkdirs();
 
-        final String tmpPath = parentDir + File.separatorChar + FileUtils.getName(remoteLocation);
-        File localFile = getExistingFile(tmpPath);
+        // TODO: check if getName() return ""
+        String fileName = FileUtils.getName(remoteLocation);
 
-        if (localFile == null) {
-            localFile = new File(tmpPath);
+        if (fileName.isEmpty()) {
+            fileName = StringUtils.replaceNonAlphaNumericCharsByUnderscore(remoteLocation);
+        }
+
+        // fix file extension if missing:
+        final File name = mimeType.checkFileExtension(new File(fileName));
+
+        final File localFile = new File(parentDir, name.getName());
+
+        if (!localFile.exists()) {
             Http.download(new URI(remoteLocation), localFile, true);
         } else {
             // TODO: use HEAD HTTP method to check remote file date / checksum ...
-            _logger.info("'{}' already present, do not download '{}' again ( please delete it first if it has changed or is not the same one and restart).", tmpPath, remoteLocation);
+            _logger.info("'{}' already present, do not download '{}' again ( please delete it first if it has changed or is not the same one and restart).", localFile, remoteLocation);
         }
 
         return localFile;

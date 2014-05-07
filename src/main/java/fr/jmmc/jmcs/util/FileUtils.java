@@ -27,8 +27,6 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
-import fr.jmmc.jmcs.data.app.ApplicationDescription;
-import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.network.http.Http;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -721,38 +719,25 @@ public final class FileUtils {
      * @throws IOException if any I/O operation fails (HTTP or file) 
      * @throws URISyntaxException if given fileLocation  is invalid
      */
-    public static File retrieveRemoteFile(String remoteLocation, String parentDir) throws IOException, URISyntaxException {
+    public static File retrieveRemoteFile(final String remoteLocation, final String parentDir) throws IOException, URISyntaxException {
         // TODO improve handling of existing files (do we have to warn the user ?)
         // TODO add other remote file scheme (ftp, ssh?)
 
         // assert that parentDir exist
         new File(parentDir).mkdirs();
 
-        String tmpPath = parentDir + File.separator + FileUtils.getName(remoteLocation);
-        File tmpFile = getExistingFile(tmpPath);
+        final String tmpPath = parentDir + File.separatorChar + FileUtils.getName(remoteLocation);
+        File localFile = getExistingFile(tmpPath);
 
-        if (tmpFile == null) {
-            tmpFile = new File(tmpPath);
-            Http.download(new URI(remoteLocation), tmpFile, true);
+        if (localFile == null) {
+            localFile = new File(tmpPath);
+            Http.download(new URI(remoteLocation), localFile, true);
         } else {
+            // TODO: use HEAD HTTP method to check remote file date / checksum ...
             _logger.info("'{}' already present, do not download '{}' again ( please delete it first if it has changed or is not the same one and restart).", tmpPath, remoteLocation);
         }
 
-        return tmpFile;
-    }
-
-    /**
-     * Return a directory where the application can put data into.
-     * The application name is added after the  common preference to build 
-     * the full directory path.
-     *
-     * @return the directory to put data into
-     */
-    public static File getFileStorageDirectory() {
-        String path = CommonPreferences.getInstance().getPreference(CommonPreferences.FILE_STORAGE_LOCATION)
-                + ApplicationDescription.getInstance().getProgramName();
-        File dir = new File(path);
-        return dir;
+        return localFile;
     }
 
     /** Forbidden constructor */

@@ -1168,16 +1168,16 @@ public abstract class Preferences extends Observable {
      */
     final public String computePreferenceFilepath() {
         // [USER_HOME]/
-        _fullFilepath = SystemUtils.USER_HOME + File.separator;
+        _fullFilepath = SystemUtils.USER_HOME + File.separatorChar;
 
         // Under Mac OS X
         if (SystemUtils.IS_OS_MAC_OSX) {
             // [USER_HOME]/Library/Preferences/
-            _fullFilepath += ("Library" + File.separator + "Preferences" + File.separator);
+            _fullFilepath += ("Library" + File.separatorChar + "Preferences" + File.separatorChar);
         } // Under Windows
         else if (SystemUtils.IS_OS_WINDOWS) {
             // [USER_HOME]/Local Settings/Application Data/
-            _fullFilepath += ("Local Settings" + File.separator + "Application Data" + File.separator);
+            _fullFilepath += ("Local Settings" + File.separatorChar + "Application Data" + File.separatorChar);
         } // Under Linux, and anything else
         else {
             // [USER_HOME]/.

@@ -27,7 +27,6 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
-import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.util.FileUtils;
 import java.io.File;
 import org.apache.commons.lang.SystemUtils;
@@ -58,7 +57,7 @@ public final class CommonPreferences extends Preferences {
     public static final String HTTP_PROXY_HOST = "http.proxyHost";
     /** HTTP proxy port */
     public static final String HTTP_PROXY_PORT = "http.proxyPort";
-    
+
     /**
      * Store the root directory to be used as default file storage.
      * This area can be used to store remote file.
@@ -66,12 +65,12 @@ public final class CommonPreferences extends Preferences {
      * a specific preference.
      */
     public static final String FILE_STORAGE_LOCATION = "file.storage.location";
-    
+
     /** 
      * Default Directory name for file storage directory.     
      */
     private static final String CACHE_STORAGE_DIRNAME = "UserData";
-    
+
     /**
      * Private constructor that must be empty.
      */
@@ -108,22 +107,23 @@ public final class CommonPreferences extends Preferences {
         setDefaultPreference(HTTP_PROXY_HOST, "");
         setDefaultPreference(HTTP_PROXY_PORT, "");
         setDefaultPreference(FEEDBACK_REPORT_USER_EMAIL, "");
-        
+
         // base directory into $HOME
         StringBuffer dirPath = new StringBuffer(SystemUtils.USER_HOME);
-        dirPath.append(File.separator);
-        
+        dirPath.append(File.separatorChar);
+
         // append Documents if present
-        if(FileUtils.getDirectory(dirPath+"Documents")!=null){
+        if (FileUtils.getDirectory(dirPath + "Documents") != null) {
             dirPath.append("Documents");
         }
-                
+
         // add default directory name
-        dirPath.append(File.separator);
+        dirPath.append(File.separatorChar);
         dirPath.append(CACHE_STORAGE_DIRNAME);
-                
-        setDefaultPreference(FILE_STORAGE_LOCATION,  dirPath.toString() );
-    }    
+        dirPath.append(File.separatorChar);
+
+        setDefaultPreference(FILE_STORAGE_LOCATION, dirPath.toString());
+    }
 
     /**
      * Return the preference filename.

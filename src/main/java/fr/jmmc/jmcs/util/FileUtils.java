@@ -695,7 +695,7 @@ public final class FileUtils {
      * Test if given file is remote.
      *
      * @param fileLocation file location path to test (must not be null).
-     * @return true if file is remote (or empty), false if local
+     * @return true if file is remote else false
      */
     public static boolean isRemote(final String fileLocation) {
 

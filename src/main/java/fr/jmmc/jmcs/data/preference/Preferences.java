@@ -1349,4 +1349,12 @@ public abstract class Preferences extends Observable {
     public String dumpCurrentProperties() {
         return dumpProperties(_currentProperties);
     }
+
+    /**
+     * Dump default properties (for debugging purposes)
+     * @return string representation of properties using the format "{name} : {value}"
+     */
+    public String dumpDefaultProperties() {
+        return dumpProperties(_defaultProperties);
+    }
 }

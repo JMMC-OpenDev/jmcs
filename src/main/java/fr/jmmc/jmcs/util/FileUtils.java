@@ -694,16 +694,22 @@ public final class FileUtils {
     /**
      * Test if given file is remote.
      *
-     * @param fileLocation file location path to test.
-     * @return true if file is remote, false if local
+     * @param fileLocation file location path to test (must not be null).
+     * @return true if file is remote (or empty), false if local
      */
     public static boolean isRemote(final String fileLocation) {
-        try {
-            final URI uri = new URI(fileLocation);
-            //TODO check for jar: path also ?
-            return !"file".equalsIgnoreCase(uri.getScheme());
-        } catch (URISyntaxException ue) {
-            _logger.error("bad URI", ue);
+
+        // If the given file is an URL :
+        if (fileLocation.contains(":/")) {
+
+            try {
+                final URI uri = new URI(fileLocation);
+                //TODO check for other local resources ?? jar is local or remote ?
+                return !"file".equalsIgnoreCase(uri.getScheme());
+            } catch (URISyntaxException ue) {
+                _logger.error("bad URI", ue);
+            }
+
         }
 
         return false;

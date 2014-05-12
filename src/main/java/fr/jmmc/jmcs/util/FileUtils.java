@@ -129,7 +129,7 @@ public final class FileUtils {
      *
      * @return  The name of the file or directory denoted by this abstract
      *          pathname, or the empty string if this pathname's name sequence
-     *          is empty or null
+     *          is empty
      */
     public static String getName(final String fileName) {
         if (fileName == null) {
@@ -725,6 +725,7 @@ public final class FileUtils {
      *
      * @param remoteLocation, String defaultParentDir remote location
      * @param parentDir destination directory
+     * @param mimeType mime type to fix missing file extension
      * @return a copy of the remote file
      * @throws IOException if any I/O operation fails (HTTP or file) 
      * @throws URISyntaxException if given fileLocation  is invalid
@@ -732,13 +733,13 @@ public final class FileUtils {
     public static File retrieveRemoteFile(final String remoteLocation,
                                           final String parentDir,
                                           final MimeType mimeType) throws IOException, URISyntaxException {
+        
         // TODO improve handling of existing files (do we have to warn the user ?)
         // TODO add other remote file scheme (ftp, ssh?)
 
         // assert that parentDir exist
         new File(parentDir).mkdirs();
 
-        // TODO: check if getName() return ""
         String fileName = FileUtils.getName(remoteLocation);
 
         if (fileName.isEmpty()) {

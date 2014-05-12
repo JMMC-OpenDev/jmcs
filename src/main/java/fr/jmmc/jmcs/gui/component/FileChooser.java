@@ -54,8 +54,6 @@ public final class FileChooser {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(FileChooser.class.getName());
-    /** JmcsFileChooser full class name as string */
-    public final static String JMCS_FILE_CHOOSER_CLASS_NAME = JmcsFileChooser.class.getName();
     /** Apple specific property to force AWT FileDialog work on directories only */
     public final static String MAC_FILE_DIALOG_DIRECTORY = "apple.awt.fileDialogForDirectories";
     /** Use native file chooser i.e. AWT FileDialog (Mac OS X) */
@@ -416,6 +414,5 @@ public final class FileChooser {
 
             return fileDialog;
         }
-
     }
 }

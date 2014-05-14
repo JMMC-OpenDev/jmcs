@@ -38,7 +38,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -54,7 +53,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Properties;
 import javax.swing.Action;
-import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1167,30 +1165,10 @@ public abstract class Preferences extends Observable {
      * according to execution platform.
      */
     final public String computePreferenceFilepath() {
-        // [USER_HOME]/
-        _fullFilepath = SystemUtils.USER_HOME + File.separatorChar;
 
-        // Under Mac OS X
-        if (SystemUtils.IS_OS_MAC_OSX) {
-            // [USER_HOME]/Library/Preferences/
-            _fullFilepath += ("Library" + File.separatorChar + "Preferences" + File.separatorChar);
-        } // Under Windows
-        else if (SystemUtils.IS_OS_WINDOWS) {
-            // [USER_HOME]/Local Settings/Application Data/
-            _fullFilepath += ("Local Settings" + File.separatorChar + "Application Data" + File.separatorChar);
-        } // Under Linux, and anything else
-        else {
-            // [USER_HOME]/.
-            _fullFilepath += ".";
-        }
-
-        // Mac OS X : [USER_HOME]/Library/Preferences/fr.jmmc...properties
-        // Windows : [USER_HOME]/Local Settings/Application Data/fr.jmmc...properties
-        // Linux (and anything else) : [USER_HOME]/.fr.jmmc...properties
+        _fullFilepath = FileUtils.getPlatformPreferencesPath();
         _fullFilepath += getPreferenceFilename();
-
         _logger.debug("Computed preference file path = '{}'.", _fullFilepath);
-
         return _fullFilepath;
     }
 

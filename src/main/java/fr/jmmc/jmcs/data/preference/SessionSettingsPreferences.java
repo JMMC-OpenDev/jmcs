@@ -117,7 +117,7 @@ public final class SessionSettingsPreferences extends Preferences {
         setDefaultPreference(RECENT_FILE_KEY, emptyList);
 
         // Default File storage location:
-        final String fileStorageLocation = CommonPreferences.getInstance().getPreference(CommonPreferences.FILE_STORAGE_LOCATION);
+        final String fileStorageLocation = FileUtils.getPlatformDocumentsPath();
         setDefaultPreference(APPLICATION_STORAGE_LOCATION, fileStorageLocation
                 + FileUtils.cleanupFileName(ApplicationDescription.getInstance().getProgramName())
                 + File.separatorChar);

@@ -731,9 +731,9 @@ public final class FileUtils {
      * @throws URISyntaxException if given fileLocation  is invalid
      */
     public static File retrieveRemoteFile(final String remoteLocation,
-                                          final String parentDir,
-                                          final MimeType mimeType) throws IOException, URISyntaxException {
-        
+            final String parentDir,
+            final MimeType mimeType) throws IOException, URISyntaxException {
+
         // TODO improve handling of existing files (do we have to warn the user ?)
         // TODO add other remote file scheme (ftp, ssh?)
 
@@ -761,6 +761,92 @@ public final class FileUtils {
         return localFile;
     }
 
+    /**
+     * Returns the path of folder containing preferences files, as this varies
+     * across different execution platforms.
+     *
+     * @return a string containing the full folder path to the preference file,
+     * according to execution platform.
+     */
+    static public String getPlatformPreferencesPath() {
+        // [USER_HOME]/
+        String fullPreferencesPath = SystemUtils.USER_HOME + File.separatorChar;
+
+        // Under Mac OS X
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            // [USER_HOME]/Library/Preferences/
+            fullPreferencesPath += ("Library" + File.separatorChar + "Preferences" + File.separatorChar);
+        } // Under Windows
+        else if (SystemUtils.IS_OS_WINDOWS) {
+            // [USER_HOME]/Local Settings/Application Data/
+            fullPreferencesPath += ("Local Settings" + File.separatorChar + "Application Data" + File.separatorChar);
+        } // Under Linux, and anything else
+        else {
+            // [USER_HOME]/.
+            fullPreferencesPath += ".";
+        }
+
+        // Mac OS X : [USER_HOME]/Library/Preferences/
+        // Windows : [USER_HOME]/Local Settings/Application Data/
+        // Linux (and anything else) : [USER_HOME]/.
+        _logger.debug("Computed preferences folder path = '{}'.", fullPreferencesPath);
+        return fullPreferencesPath;
+    }
+
+    /**
+     * Returns the preferred path for cache files across different execution platforms.
+     *
+     * @return a string containing the full file path for caches,
+     * according to the execution platform.
+     */
+    static public String getPlatformCachesPath() {
+        // [USER_HOME]/
+        String fullCachesPath = SystemUtils.USER_HOME + File.separatorChar;
+
+        // Under Mac OS X
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            // [USER_HOME]/Library/Caches/
+            fullCachesPath += ("Library" + File.separatorChar + "Caches" + File.separatorChar);
+        } // Under Windows
+        else if (SystemUtils.IS_OS_WINDOWS) {
+            // [USER_HOME]/AppData/Local/
+            fullCachesPath += ("AppData" + File.separatorChar + "Local" + File.separatorChar);
+        } // Under Linux, and anything else
+        else {
+            // [USER_HOME]/.cache/
+            fullCachesPath += ".cache" + File.separatorChar;
+        }
+
+        // Mac OS X : [USER_HOME]/Library/Caches/
+        // Windows : [USER_HOME]/AppData/Local/
+        // Linux (and anything else) : [USER_HOME]/.cache/
+        _logger.debug("Computed caches folder path = '{}'.", fullCachesPath);
+        return fullCachesPath;
+    }
+
+    /**
+     * Returns the preferred path for documents files across different execution platforms.
+     *
+     * @return a string containing the full file path for documents,
+     * according to the execution platform.
+     */
+    static public String getPlatformDocumentsPath() {
+        // [USER_HOME]/
+        String fullDocumentsPath = SystemUtils.USER_HOME + File.separatorChar;
+
+        // Under Mac OS X or Windows
+        if (SystemUtils.IS_OS_MAC_OSX || SystemUtils.IS_OS_WINDOWS) {
+            // [USER_HOME]/Documents/
+            fullDocumentsPath += ("Documents" + File.separatorChar);
+        }
+        // Under Linux, and anything else just use [USER_DIR]
+
+        // Mac OS X or Windows : [USER_HOME]/Documents/
+        // Linux (and anything else) : [USER_HOME]/
+        _logger.debug("Computed documents folder path = '{}'.", fullDocumentsPath);
+        return fullDocumentsPath;
+    }
+
     /** Forbidden constructor */
     private FileUtils() {
         // no-op
@@ -772,6 +858,9 @@ public final class FileUtils {
             final String cleanupFileName = cleanupFileName(string);
             System.out.println("cleanupFileName(" + string + ") = " + cleanupFileName);
         }
+        System.out.println("getPlatformPreferencesPath() = " + getPlatformPreferencesPath());
+        System.out.println("getPlatformCachesPath() = " + getPlatformCachesPath());
+        System.out.println("getPlatformDocumentsPath() = " + getPlatformDocumentsPath());
         /*
          cleanupFileName(aZeRtY/uiop) = aZeRtY_uiop
          cleanupFileName(This>is some(string,with $invalid*-chars).jpg) = This_is_some_string_with__invalid_-chars_.jpg

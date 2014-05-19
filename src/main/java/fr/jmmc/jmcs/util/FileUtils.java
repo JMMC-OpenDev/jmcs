@@ -721,7 +721,10 @@ public final class FileUtils {
 
     /**
      * Retrieve a remote file onto local disk.
-     * actually limited to HTTP and HTTPS.
+     * For now: limited to HTTP and HTTPS.
+     * 
+     * Warning: calling this method may block the current thread for long time (slow transfer or big file or timeout)
+     * Please take care of using it properly using a cancellable SwingWorker (Cancellable background task)
      *
      * @param remoteLocation, String defaultParentDir remote location
      * @param parentDir destination directory

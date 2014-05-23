@@ -191,6 +191,7 @@
         <release version="1.0.1">
             <pubDate>Thu, 25 May 2014 12:11:15 GMT</pubDate>
             <prerelease version="1.0.1b1" tag="V1_0_1b1">
+                <change type="CHANGE">In fr.jmmc.jmcs.data.preference.PreferencedDocument : Added a timer to limit save on disk access.</change>
                 <change type="CHANGE">In fr.jmmc.jmcs.App.java : Added state APP_CLEANUP_FAIL corresponding to an exception thrown during App.cleanup().</change>
                 <change type="CHANGE">In fr.jmmc.jmcs.App.java : Improved getFrame() to create an empty frame displayed in OS toolbar to better show message dialogs during startup.</change>
                 <change type="CHANGE">In fr.jmmc.jmcs.App.java : Use setFrame(new JFrame()) to create a new frame with standard behaviour (quit on close).</change>

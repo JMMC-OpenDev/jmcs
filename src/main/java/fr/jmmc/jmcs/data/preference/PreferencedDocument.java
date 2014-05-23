@@ -27,11 +27,14 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.data.preference;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -65,6 +68,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      * @warning : the whole preference list associated in the preference will also be saved !
      */
     private final boolean _autoSave;
+    private Timer _autoSaveTimer = null;
 
     /**
      * PreferencedButtonModel constructor
@@ -85,6 +89,20 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
 
         // store beavior flag
         _autoSave = autoSave;
+        if (autoSave) {
+            _autoSaveTimer = new Timer(2000, new ActionListener() {
+                /* Invoked when timer action occurs. */
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        _preferences.saveToFile();
+                        _autoSaveTimer.stop();
+                    } catch (PreferencesException ex) {
+                        throw new IllegalStateException("Can't set value for preference " + _preferenceProperty);
+                    }
+                }
+            });
+        }
 
         // Retrieve the property value and set the widget accordinaly
         setMyText(_preferences.getPreference(_preferenceProperty));
@@ -170,8 +188,8 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     private void setPrefValue(final String newValue) {
         try {
             _preferences.setPreference(_preferenceProperty, newValue);
-            if (_autoSave) {
-                _preferences.saveToFile();
+            if (_autoSaveTimer != null) {
+                _autoSaveTimer.restart();
             }
         } catch (PreferencesException ex) {
             throw new IllegalStateException("Can't set value for preference " + _preferenceProperty);

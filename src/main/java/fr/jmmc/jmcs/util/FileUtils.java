@@ -48,6 +48,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
@@ -516,6 +517,32 @@ public final class FileUtils {
     public static void zip(final File src, final File dst) throws IOException, FileNotFoundException {
         final InputStream in = new BufferedInputStream(new FileInputStream(src));
         final OutputStream out = new GZIPOutputStream(new FileOutputStream(dst), 64 * 1024);
+
+        // Transfer bytes from in to out
+        try {
+            final byte[] buf = new byte[8 * 1024];
+
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+        } finally {
+            closeStream(in);
+            closeStream(out);
+        }
+    }
+
+    /**
+     * Unzip source file into destination one.
+     *
+     * @param src source file to be unzipped
+     * @param dst destination file corresponding to the unzipped source file
+     * @throws IOException if an I/O exception occurred
+     * @throws FileNotFoundException if input file is not found
+     */
+    public static void unzip(final File src, final File dst) throws IOException, FileNotFoundException {
+        final InputStream in = new GZIPInputStream(new FileInputStream(src));
+        final OutputStream out = new BufferedOutputStream(new FileOutputStream(dst), 64 * 1024);
 
         // Transfer bytes from in to out
         try {

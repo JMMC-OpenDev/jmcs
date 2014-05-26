@@ -191,7 +191,7 @@
         <release version="1.0.1">
             <pubDate>Thu, 25 May 2014 12:11:15 GMT</pubDate>
             <prerelease version="1.0.1b1" tag="V1_0_1b1">
-                <change type="CHANGE">In fr.jmmc.jmcs.data.preference.PreferencedDocument : Added a timer to limit save on disk access.</change>
+                
                 <change type="CHANGE">In fr.jmmc.jmcs.App.java : Added state APP_CLEANUP_FAIL corresponding to an exception thrown during App.cleanup().</change>
                 <change type="CHANGE">In fr.jmmc.jmcs.App.java : Improved getFrame() to create an empty frame displayed in OS toolbar to better show message dialogs during startup.</change>
                 <change type="CHANGE">In fr.jmmc.jmcs.App.java : Use setFrame(new JFrame()) to create a new frame with standard behaviour (quit on close).</change>
@@ -199,6 +199,7 @@
                 <change type="FEATURE">In fr.jmmc.jmcs.Bootstrapper.java, src.main.resources.fr.jmmc.jmcs.resource.ApplicationData.xml : Added framework version number logging at bootstrap.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.JVMUtils.java : Added JVM Utils (java heap information, nb cpus).</change>
                 <change type="BUGFIX">In fr.jmmc.jmcs.data.app.ApplicationDescription.java : Fixed getInstance() to try loading the application data model first then return the the default data model. Fixed loadApplicationData() to set _appDataModel only if the file was loaded sucessfully (not the default data model).</change>
+                <change type="CHANGE">In fr.jmmc.jmcs.data.preference.PreferencedDocument.java : Added a timer to limit save on disk access.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.data.preference.Preferences.java : Added dumpDefaultProperties() and dumpProperties(props, sb).</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.data.preference.SessionSettingsPreferences.java : Added getApplicationFileStorage().</change>
                 <change type="BUGFIX">In fr.jmmc.jmcs.gui.FeedbackReport.java : Ensure window is visible (may create a default application frame) like other message dialogs. avoid reentrance in dispose().</change>
@@ -212,6 +213,7 @@
                 <change type="FEATURE">In fr.jmmc.jmcs.util.FileUtils.java : First implementation of an abstraction layer that retrieve remote files in a common dir (a commmon preference has been created).</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.util.FileUtils.java : Added getPlatform...Path() methods for Preferences, Caches and Documents.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.util.FileUtils.java : Added getName() method to get filenameWithoutExtension and its extension simultaneously.</change>
+                <change type="FEATURE">In fr.jmmc.jmcs.util.FileUtils.java : Added unzip() method to unzip a file into another one.</change>
                 <change type="BUGFIX">In fr.jmmc.jmcs.util.FileUtils.java : Fixed empty file name and extension in retrieveRemoteFile().</change>
                 <change type="BUGFIX">In fr.jmmc.jmcs.util.FileUtils.java : Fixed isRemote bug.</change>
                 <change type="BUGFIX">In fr.jmmc.jmcs.util.FileUtils.java : Prevents getName from NPE.</change>

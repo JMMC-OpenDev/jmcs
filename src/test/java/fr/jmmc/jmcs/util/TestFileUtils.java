@@ -632,18 +632,25 @@ public class TestFileUtils {
 
     }
 
-    public static void main(String[] args) {
+    /**
+     * Test neutral behaviour of a zip/unzip operation of a string through files.
+     */
+    @Test
+    public void testWriteAndZip() {
         try {
+
+            String msg = "ABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGH";
+
             File f1 = FileUtils.getTempFile("toto", "txt");
-            FileUtils.writeFile(f1, "ABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGHABCDEFGH");
+            FileUtils.writeFile(f1, msg);
             File f2 = FileUtils.getTempFile("toto", ".txt.gz");
             FileUtils.zip(f1, f2);
-            System.out.println("f1 = " + f1);
-            System.out.println("f1.length() = " + f1.length());
-            System.out.println("f2 = " + f2);
-            System.out.println("f2.length() = " + f2.length());
-            System.out.println("f2.read() = " + FileUtils.readFile(f2));
+            File f3 = FileUtils.getTempFile("titi", "txt");
+            FileUtils.unzip(f2, f3);
 
+            String expResult = msg;
+            String result = FileUtils.readFile(f3);
+            Assert.assertEquals(expResult, result);
         } catch (IOException ioe) {
             System.out.println("exception:" + ioe);
         }

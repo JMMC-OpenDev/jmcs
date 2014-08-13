@@ -99,7 +99,7 @@ public final class StringUtils {
      * @return true if value is empty (null or no chars after trim)
      */
     public static boolean isTrimmedEmpty(final String value) {
-        return value == null || value.trim().length() == 0;
+        return isEmpty(value) || value.trim().length() == 0;
     }
 
     /* --- accent handling -------------------------------------------------- */
@@ -116,6 +116,16 @@ public final class StringUtils {
     }
 
     /* --- common white space helper methods -------------------------------- */
+
+    /**
+     * Trim and remove redundant white space characters
+     * @param value input value
+     * @return string value
+     */
+    public static String cleanWhiteSpaces(final String value) {
+        return isEmpty(value) ? STRING_EMPTY : replaceWhiteSpaces(value.trim(), STRING_SPACE);
+    }
+
     /**
      * Remove any white space character
      * @param value input value

@@ -82,7 +82,7 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
         // increment running worker :
         TaskSwingWorkerExecutor.incRunningWorkerCounter();
 
-        // Cancel other observability task and execute this new task :
+        // Cancel other task and execute this new task :
         TaskSwingWorkerExecutor.executeTask(this);
     }
 
@@ -95,7 +95,10 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
     public final void executeTaskInEDT() {
         // increment running worker :
         TaskSwingWorkerExecutor.incRunningWorkerCounter();
-
+        
+        // cancel other task:
+        TaskSwingWorkerExecutor.cancelTask(this.getTask());
+        
         // Just execute this new task with EDT (synchronously) :
         SwingUtils.invokeEDT(this);
     }

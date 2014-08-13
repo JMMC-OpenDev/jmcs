@@ -156,18 +156,18 @@ public class SearchField extends JTextField {
             putClientProperty("JTextField.variant", "search");
             putClientProperty("JTextField.FindAction",
                     new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    postActionEvent();
-                }
-            });
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            postActionEvent();
+                        }
+                    });
             putClientProperty("JTextField.CancelAction",
                     new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    handleCancelEdit();
-                }
-            });
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            handleCancelEdit();
+                        }
+                    });
             if (_optionsPopupMenu != null) {
                 putClientProperty("JTextField.Search.FindPopup", _optionsPopupMenu);
             }
@@ -176,7 +176,6 @@ public class SearchField extends JTextField {
         }
 
         // Fallback for platforms other than Mac OS X
-
         // Add the border that draws the magnifying glass and the cancel cross:
         final int left = 30;
         final int right = 22;
@@ -217,7 +216,6 @@ public class SearchField extends JTextField {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             // TODO: use buffered image caches to avoid drawing ops at each repaint (caret, mouse over ...)
-
             // Paint a rounded rectangle in the background surrounded by a black line.
             _outerArea.setRoundRect(0d, 0d, width, height, height, height);
             g2d.setColor(Color.LIGHT_GRAY);
@@ -339,6 +337,14 @@ public class SearchField extends JTextField {
         postActionEvent();
     }
 
+    @Override
+    public void postActionEvent() {
+        // clean white spaces:
+        setText(StringUtils.cleanWhiteSpaces(getRealText()));
+
+        super.postActionEvent();
+    }
+
     /**
      * Store whether notifications should be sent for each key pressed.
      *
@@ -382,7 +388,7 @@ public class SearchField extends JTextField {
          */
         @Override
         public void paintBorder(final Component c, final Graphics g2,
-                final int x, final int y, final int width, final int height) {
+                                final int x, final int y, final int width, final int height) {
 
             final SearchField field = (SearchField) c;
             final Graphics2D g2d = (Graphics2D) g2;
@@ -399,7 +405,6 @@ public class SearchField extends JTextField {
             final Color backgroundColor = field.getBackground();
 
             // TODO: use buffered image caches to avoid drawing ops at each repaint (caret, mouse over ...)
-
             // Draw magnifying glass lens:
             final int diskL = 10;
             final int diskX = x - diskL - 15;
@@ -669,7 +674,7 @@ public class SearchField extends JTextField {
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(final ActionEvent e) {
-                    System.out.println("e = " + e);
+                    System.out.println("e = '" + e + "'");
                 }
             });
 
@@ -679,6 +684,16 @@ public class SearchField extends JTextField {
         } else {
             searchField = new SearchField("placeHolder");
         }
+
+        searchField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final String value = e.getActionCommand();
+
+                System.out.println("value = '" + value + "'");
+            }
+        });
+
         panel.add(searchField, BorderLayout.CENTER);
 
         frame.getContentPane().add(panel);

@@ -475,7 +475,7 @@ public final class Bootstrapper {
         }
 
         // If we are ready to stop application execution
-        if (_application.canBeTerminatedNow()) {
+        if (_application == null || _application.canBeTerminatedNow()) {
             _jmmcLogger.debug("Application should be killed.");
 
             // Verify if we are authorized to kill the application or not

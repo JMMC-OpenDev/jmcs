@@ -56,6 +56,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.PlainDocument;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +88,8 @@ public class SearchField extends JTextField {
     private static final boolean MACOSX_RUNTIME = SystemUtils.IS_OS_MAC_OSX;
     /** debug flag to draw border area */
     private static final boolean DEBUG_AREA = false;
-
+    /** default newline replacement character = ' ' */
+    public static final char NEWLINE_DEFAULT_REPLACEMENT_CHAR = ' ';
     /* members */
     /** Store whether notifications should be sent every time a key is pressed */
     private boolean _sendsNotificationForEachKeystroke = false;
@@ -120,7 +125,7 @@ public class SearchField extends JTextField {
      * @param options the pop up men for options, null if none.
      */
     public SearchField(final String placeholderText, final JPopupMenu options) {
-        super(8); // 8 characters wide by default
+        super(new CustomPlainDocument(), null, 8); // 8 characters wide by default
 
         _placeholderText = placeholderText;
         _optionsPopupMenu = options;
@@ -338,11 +343,22 @@ public class SearchField extends JTextField {
     }
 
     @Override
-    public void postActionEvent() {
-        // clean white spaces:
-        setText(StringUtils.cleanWhiteSpaces(getRealText()));
+    public final void postActionEvent() {
+        final String cleanedText = cleanText(getRealText());
+        setText(cleanedText);
 
-        super.postActionEvent();
+        if (!StringUtils.isEmpty(cleanedText)) {
+            super.postActionEvent();
+        }
+    }
+
+    /**
+     * Clean up the current text value before calling action listeners and update the text field.
+     * @param text current text value
+     * @return cleaned up text value
+     */
+    public String cleanText(final String text) {
+        return StringUtils.cleanWhiteSpaces(text);
     }
 
     /**
@@ -352,6 +368,92 @@ public class SearchField extends JTextField {
      */
     public void setSendsNotificationForEachKeystroke(final boolean eachKeystroke) {
         _sendsNotificationForEachKeystroke = eachKeystroke;
+    }
+
+    /**
+     * @return custom newLine replacement character
+     */
+    public char getNewLineReplacement() {
+        final CustomPlainDocument doc = getCustomPlainDocument();
+        return (doc != null) ? doc.getNewLineReplacement() : NEWLINE_DEFAULT_REPLACEMENT_CHAR;
+    }
+
+    /**
+     * @param newLineReplacement custom newLine replacement character
+     */
+    public void setNewLineReplacement(final char newLineReplacement) {
+        final CustomPlainDocument doc = getCustomPlainDocument();
+        if (doc != null) {
+            doc.setNewLineReplacement(newLineReplacement);
+        }
+    }
+
+    private CustomPlainDocument getCustomPlainDocument() {
+        final Document doc = getDocument();
+        if (doc instanceof CustomPlainDocument) {
+            return (CustomPlainDocument) doc;
+        }
+        return null;
+    }
+
+    private final static class CustomPlainDocument extends PlainDocument {
+
+        private static final long serialVersionUID = 1L;
+
+        /** custom newLine replacement character */
+        private char newLineReplacement = NEWLINE_DEFAULT_REPLACEMENT_CHAR;
+
+        CustomPlainDocument() {
+            super();
+        }
+
+        char getNewLineReplacement() {
+            return newLineReplacement;
+        }
+
+        void setNewLineReplacement(char newLineReplacement) {
+            this.newLineReplacement = newLineReplacement;
+        }
+
+        /**
+         * Inserts some content into the document.
+         * Inserting content causes a write lock to be held while the
+         * actual changes are taking place, followed by notification
+         * to the observers on the thread that grabbed the write lock.
+         * <p>
+         * This method is thread safe, although most Swing methods
+         * are not. Please see
+         * <A HREF="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/index.html">Concurrency
+         * in Swing</A> for more information.
+         *
+         * @param offs the starting offset &gt;= 0
+         * @param str the string to insert; does nothing with null/empty strings
+         * @param a the attributes for the inserted content
+         * @exception BadLocationException  the given insert position is not a valid
+         *   position within the document
+         * @see Document#insertString
+         */
+        @Override
+        public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+            // fields don't want to have multiple lines.  We may provide a field-specific
+            // model in the future in which case the filtering logic here will no longer
+            // be needed.
+            Object filterNewlines = getProperty("filterNewlines");
+            if (Boolean.TRUE.equals(filterNewlines)) {
+                if ((str != null) && (str.indexOf('\n') >= 0)) {
+                    final char replaceChar = newLineReplacement;
+                    final StringBuilder filtered = new StringBuilder(str);
+                    int n = filtered.length();
+                    for (int i = 0; i < n; i++) {
+                        if (filtered.charAt(i) == '\n') {
+                            filtered.setCharAt(i, replaceChar);
+                        }
+                    }
+                    str = filtered.toString();
+                }
+            }
+            super.insertString(offs, str, a);
+        }
     }
 
     /**

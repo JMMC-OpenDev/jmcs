@@ -30,7 +30,7 @@
 -->
 
 <ApplicationData link="https://github.com/JMMC-OpenDev/jMCS">
-  
+
     <company>
         <short_name>JMMC</short_name>
         <legal_name>Jean-Marie Mariotti Center</legal_name>
@@ -41,9 +41,9 @@
 
     <program name="jMCS Framework" version="1.0.1"/>
     <compilation date="15/5/2014" compiler="1.6"/>
-    
+
     <text>JMMC framework, enabling better user interface and platform integration across Mac, Linux and Windows through numerous third-party libraries and in-house code</text>
-    
+
     <dependences>
         <!-- SEE / UPDATE jmcs/lib/README.txt -->
 
@@ -54,140 +54,153 @@
 
         <!-- VO interoperability -->
         <package name="JSAMP"
-          description="JSAMP is a Java toolkit for use with the Simple Applications Messaging Protocol. Made by Mark Taylor, working in the Astrophysics Group at Bristol University."
-          link="http://software.astrogrid.org/doc/jsamp/"
-          jars="jsamp-1.3.4+.jar"
-          license="AFL v2.1"
-          file="JSAMP.txt"/>
-          <!--license="(at least) the Academic Free Licence and the BSD License."/>-->
+                 description="JSAMP is a Java toolkit for use with the Simple Applications Messaging Protocol. Made by Mark Taylor, working in the Astrophysics Group at Bristol University."
+                 link="http://software.astrogrid.org/doc/jsamp/"
+                 jars="jsamp-1.3.4+.jar"
+                 license="AFL v2.1"
+                 file="JSAMP.txt"/>
+        <!--license="(at least) the Academic Free Licence and the BSD License."/>-->
 
 
         <!-- 2. Swing -->
 
         <!-- Mac OS X Desktop integration -->
         <package name="AppleJavaExtensions"
-          description="Adapt menus for Mac OS X."
-          link="http://developer.apple.com/samplecode/AppleJavaExtensions/index.html"
-          jars="AppleJavaExtensions-1.6.jar"
-          license="Proprietary"
-          file="AppleJavaExtensions.txt"/>
+                 description="Adapt menus for Mac OS X."
+                 link="http://developer.apple.com/samplecode/AppleJavaExtensions/index.html"
+                 jars="AppleJavaExtensions-1.6.jar"
+                 license="Proprietary"
+                 file="AppleJavaExtensions.txt"/>
 
         <!-- Open URLs in user's default web browser -->
         <package name="BrowserLauncher2"
-          description="Permit to use the default web browser."
-          link="http://browserlaunch2.sourceforge.net/"
-          jars="BrowserLauncher2-1_3.jar"
-          license="LGPL"/>
+                 description="Permit to use the default web browser."
+                 link="http://browserlaunch2.sourceforge.net/"
+                 jars="BrowserLauncher2-1_3.jar"
+                 license="LGPL"/>
 
         <!-- Documentation reader -->
         <package name="jhall"
-          description="Show a help window from JavaHelp Jar file."
-          link="http://java.sun.com/javase/technologies/desktop/javahelp/"
-          jars="jhall.jar "
-          license="GPL v2"/>
-        
+                 description="Show a help window from JavaHelp Jar file."
+                 link="http://java.sun.com/javase/technologies/desktop/javahelp/"
+                 jars="jhall.jar "
+                 license="GPL v2"/>
+
         <package name="JHelpDev"
-          description="Easy to use yet full featured help authoring tool for the JavaHelp system."
-          link="http://jhelpdev.sourceforge.net/"
-          jars="jhelpdev.jar "
-          license="LGPL"/>
-        
+                 description="Easy to use yet full featured help authoring tool for the JavaHelp system."
+                 link="http://jhelpdev.sourceforge.net/"
+                 jars="jhelpdev.jar "
+                 license="LGPL"/>
+
         <!-- XML encoding (JHelpDev dependency) -->
         <package name="xmlenc"
-          description="Fast stream-based XML output library for Java."
-          link="http://xmlenc.sourceforge.net/"
-          jars="xmlenc.jar"
-          license="BSD"
-          file="xmlenc.txt"/>
-       
+                 description="Fast stream-based XML output library for Java."
+                 link="http://xmlenc.sourceforge.net/"
+                 jars="xmlenc.jar"
+                 license="BSD"
+                 file="xmlenc.txt"/>
+
         <!-- JTidy (used during Java HelpSet creation) -->
         <package name="JTidy"
-          description="HTML syntax checker and pretty printer."
-          link="http://jtidy.sourceforge.net/"
-          jars="Tidy.jar"
-          license="Proprietary"
-          file="JTidy.txt"/>
+                 description="HTML syntax checker and pretty printer."
+                 link="http://jtidy.sourceforge.net/"
+                 jars="Tidy.jar"
+                 license="Proprietary"
+                 file="JTidy.txt"/>
 
         <!-- Missing Swing Widgets -->
         <package name="JCL"
-          description="JIDE Common Layer."
-          link="https://github.com/jidesoft/jide-oss"
-          jars="jide-oss-3.5.11.jar"
-          license="GPL v3"/>
+                 description="JIDE Common Layer."
+                 link="https://github.com/jidesoft/jide-oss"
+                 jars="jide-oss-3.5.11.jar"
+                 license="GPL v3"/>
 
 
-        <!-- 3. Tools -->      
+        <!-- 3. Tools -->
 
         <!-- slf4j + JUL and JCL wrappers -->
         <package name="SLF4J"
-          description="The Simple Logging Facade for Java or (SLF4J) serves as a simple facade or abstraction for various logging frameworks, e.g. java.util.logging, log4j and logback, allowing the end user to plug in the desired logging framework at deployment time."
-          link="http://www.slf4j.org/"
-          jars="slf4j-api-1.7.5.jar jul-to-slf4j-1.7.5.jar jcl-over-slf4j-1.7.5.jar"
-          license="MIT"
-          file="SLF4J.txt"/>
+                 description="The Simple Logging Facade for Java or (SLF4J) serves as a simple facade or abstraction for various logging frameworks, e.g. java.util.logging, log4j and logback, allowing the end user to plug in the desired logging framework at deployment time."
+                 link="http://www.slf4j.org/"
+                 jars="slf4j-api-1.7.5.jar jul-to-slf4j-1.7.5.jar jcl-over-slf4j-1.7.5.jar"
+                 license="MIT"
+                 file="SLF4J.txt"/>
 
         <!-- logback -->
         <package name="Logback"
-          description="Logback is intended as a successor to the popular log4j project, picking up where log4j leaves off."
-          link="http://logback.qos.ch/"
-          jars="logback-core-1.1.0.jar logback-classic-1.1.0.jar"
-          license="Eclipse v1"/>
-          <!--license="EPL v1.0 / LGPL 2.1" />-->
+                 description="Logback is intended as a successor to the popular log4j project, picking up where log4j leaves off."
+                 link="http://logback.qos.ch/"
+                 jars="logback-core-1.1.0.jar logback-classic-1.1.0.jar"
+                 license="Eclipse v1"/>
+        <!--license="EPL v1.0 / LGPL 2.1" />-->
 
         <!-- Xml binding (ApplicationData, targetModel and aspro2) -->
         <package name="JAXB"
-          description="Java Architecture for XML Binding (JAXB) allows Java developers to map Java classes to XML representations."
-          link="https://jaxb.dev.java.net/"
-          jars="jaxb-api.jar jaxb-impl.jar jaxb-xjc.jar simple-regenerator-1.0.jar"
-          license="GPL v2"/>
+                 description="Java Architecture for XML Binding (JAXB) allows Java developers to map Java classes to XML representations."
+                 link="https://jaxb.dev.java.net/"
+                 jars="jaxb-api.jar jaxb-impl.jar jaxb-xjc.jar simple-regenerator-1.0.jar"
+                 license="GPL v2"/>
 
         <!-- JAXB dependency -->
         <package name="Activation"
-          description="Standard services to determine the type of an arbitrary piece of data, encapsulate access to it, discover the operations available on it, and to instantiate the appropriate bean to perform said operation(s)."
-          link="http://www.oracle.com/technetwork/java/jaf11-139815.html"
-          jars="activation.jar"
-          license="Proprietary"
-          file="Activation.txt"/>
+                 description="Standard services to determine the type of an arbitrary piece of data, encapsulate access to it, discover the operations available on it, and to instantiate the appropriate bean to perform said operation(s)."
+                 link="http://www.oracle.com/technetwork/java/jaf11-139815.html"
+                 jars="activation.jar"
+                 license="Proprietary"
+                 file="Activation.txt"/>
 
         <!-- JAXB dependency -->
         <package name="Jsr173"
-          description="Java streaming API for XML."
-          link="http://jcp.org/aboutJava/communityprocess/final/jsr173/index.html"
-          jars="jsr173_1.0_api.jar"
-          license="Proprietary"
-          file="Jsr173.txt"/>
+                 description="Java streaming API for XML."
+                 link="http://jcp.org/aboutJava/communityprocess/final/jsr173/index.html"
+                 jars="jsr173_1.0_api.jar"
+                 license="Proprietary"
+                 file="Jsr173.txt"/>
 
-       <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
+        <!-- HTTP client (feedback report and LITpro) (see fr.jmmc.mcs.util.Http wrapper) -->
         <package name="commons-httpclient"
-          description="HTTP Client (used to send HTTP POST requests)."
-          link="http://hc.apache.org/httpclient-3.x/"
-          jars="commons-httpclient-3.1.jar "
-          license="Apache v2"/>
+                 description="HTTP Client (used to send HTTP POST requests)."
+                 link="http://hc.apache.org/httpclient-3.x/"
+                 jars="commons-httpclient-3.1.jar "
+                 license="Apache v2"/>
 
         <!-- HttpClient dependency -->
         <package name="commons-codec"
-          description="Commons Codec provides implementations of common encoders and decoders such as Base64, Hex, Phonetic and URLs."
-          link="http://commons.apache.org/codec/"
-          jars="commons-codec-1.6.jar"
-          license="Apache v2"/>
-        
+                 description="Commons Codec provides implementations of common encoders and decoders such as Base64, Hex, Phonetic and URLs."
+                 link="http://commons.apache.org/codec/"
+                 jars="commons-codec-1.6.jar"
+                 license="Apache v2"/>
+
         <!-- Only used to detect the platform -->
         <package name="commons-lang"
-          description="Provide much needed additions to the standard JDK's java.lang package."
-          link="http://commons.apache.org/lang/"
-          jars="commons-lang-2.6.jar"
-          license="Apache v2"/>
-       
+                 description="Provide much needed additions to the standard JDK's java.lang package."
+                 link="http://commons.apache.org/lang/"
+                 jars="commons-lang-2.6.jar"
+                 license="Apache v2"/>
+
         <!-- Parse command line arguments -->
         <package name="java-getopt"
-          description="Interpret command line arguments."
-          link="http://www.urbanophile.com/arenn/hacking/download.html"
-          jars="java-getopt-1.0.13.jar"
-          license="LGPL v2"/>
-          
+                 description="Interpret command line arguments."
+                 link="http://www.urbanophile.com/arenn/hacking/download.html"
+                 jars="java-getopt-1.0.13.jar"
+                 license="LGPL v2"/>
+
     </dependences>
-    
+
     <releasenotes>
+        <release version="1.0.3">
+            <pubDate>Wed, 27 Aug 2014 11:00:00 GMT</pubDate>
+            <prerelease version="1.0.3b1" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.component.SearchField.java : Added cleanText(text) method to
+                    clean up the current text value before calling action listeners and update the text field.
+                    By default, it trims and removes redundant white space characters.</change>
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.component.SearchField.java : Added a CustomPlainDocument to
+                    define the newLine replacement character (' ' by default) used by copy/paste operations.</change>
+                <change type="FEATURE">In fr.jmmc.jmcs.network.http.Http.java : Modified the http retry handler: use new DefaultHttpMethodRetryHandler(0, false) to never retry requests.</change>
+                <change type="CHANGE">In fr.jmmc.jmcs.network.http.Http.java : Added new download() and post() methods to use the given HttpClient.</change>
+                <change type="CHANGE">In fr.jmmc.jmcs.util.CollectionUtils.java : check for nulls in toString() methods.</change>
+            </prerelease>
+        </release>
         <release version="1.0.2">
             <pubDate>Thu, 27 May 2014 12:11:15 GMT</pubDate>
             <prerelease version="1.0.2b1" tag="UNKNOWN">
@@ -261,7 +274,7 @@
             </prerelease>
         </release>
     </releasenotes>
-    
+
     <acknowledgment>
         <![CDATA[This research has made use of one of the services of the Jean-Marie Mariotti Center \footnote{Available at http://www.jmmc.fr}]]>
     </acknowledgment>

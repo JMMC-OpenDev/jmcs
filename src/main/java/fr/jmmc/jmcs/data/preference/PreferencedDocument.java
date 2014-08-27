@@ -58,17 +58,14 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     /** Class logger */
     private final static Logger _logger = LoggerFactory.getLogger(PreferencedDocument.class.getName());
     /** Store PreferencedDocument instances for a given preference name */
-    private static Map<String, PreferencedDocument> _instanceMap = Collections.synchronizedMap(new HashMap<String, PreferencedDocument>(8));
+    private static final Map<String, PreferencedDocument> _instanceMap = Collections.synchronizedMap(new HashMap<String, PreferencedDocument>(8));
+    /* members */
     /** Shared instance */
     private final Preferences _preferences;
     /** Preference property */
     private final String _preferenceProperty;
-    /**
-     * Tells if preference must be saved automatically or not (default).
-     * @warning : the whole preference list associated in the preference will also be saved !
-     */
-    private final boolean _autoSave;
-    private Timer _autoSaveTimer = null;
+    /** auto-save timer */
+    private final Timer _autoSaveTimer;
 
     /**
      * PreferencedButtonModel constructor
@@ -79,7 +76,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      * (default)
      */
     private PreferencedDocument(final Preferences preferences,
-            final String preferenceProperty, final boolean autoSave) {
+                                final String preferenceProperty, final boolean autoSave) {
 
         // Store the Preference shared instance of the main application
         _preferences = preferences;
@@ -87,8 +84,6 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
         // Store the property name for later use
         _preferenceProperty = preferenceProperty;
 
-        // store beavior flag
-        _autoSave = autoSave;
         if (autoSave) {
             _autoSaveTimer = new Timer(2000, new ActionListener() {
                 /* Invoked when timer action occurs. */
@@ -96,12 +91,15 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
                 public void actionPerformed(ActionEvent e) {
                     try {
                         _preferences.saveToFile();
-                        _autoSaveTimer.stop();
                     } catch (PreferencesException ex) {
                         throw new IllegalStateException("Can't set value for preference " + _preferenceProperty);
+                    } finally {
+                        _autoSaveTimer.stop();
                     }
                 }
             });
+        } else {
+            _autoSaveTimer = null;
         }
 
         // Retrieve the property value and set the widget accordinaly
@@ -125,7 +123,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      * @return the PreferencedDocument singleton
      */
     public static PreferencedDocument getInstance(final Preferences preferences,
-            final String preferenceProperty, final boolean autosave) {
+                                                  final String preferenceProperty, final boolean autosave) {
 
         PreferencedDocument d = _instanceMap.get(preferenceProperty);
 
@@ -146,7 +144,7 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      * @return the PreferencedDocument singleton
      */
     public static PreferencedDocument getInstance(final Preferences preferences,
-            final String preferenceProperty) {
+                                                  final String preferenceProperty) {
         return getInstance(preferences, preferenceProperty, false);
     }
 

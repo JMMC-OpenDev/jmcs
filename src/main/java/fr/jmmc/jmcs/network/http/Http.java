@@ -42,6 +42,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
@@ -51,6 +52,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,6 +162,8 @@ public final class Http {
         // set content-encoding to UTF-8 instead of default ISO-8859
         final HttpClientParams httpClientParams = httpClient.getParams();
         httpClientParams.setParameter(HttpClientParams.HTTP_CONTENT_CHARSET, "UTF-8");
+        // avoid retries (3 by default):
+        httpClientParams.setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(0, false));
     }
 
     /**
@@ -259,8 +263,10 @@ public final class Http {
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
     public static boolean download(final URI uri, final File outputFile, final boolean useDedicatedClient) throws IOException {
+        // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
+        final HttpClient client = (useDedicatedClient) ? Http.getHttpClient(uri, false) : Http.getHttpClient();
 
-        return download(uri, useDedicatedClient, null, new StreamProcessor() {
+        return download(uri, client, null, new StreamProcessor() {
             /**
              * Process the given input stream and CLOSE it anyway (try/finally)
              * @param in input stream to process
@@ -284,10 +290,26 @@ public final class Http {
      * @throws IOException if an I/O exception occurred
      */
     public static String download(final URI uri, final boolean useDedicatedClient) throws IOException {
+        // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
+        final HttpClient client = (useDedicatedClient) ? Http.getHttpClient(uri, false) : Http.getHttpClient();
+
+        return download(uri, client);
+    }
+
+    /**
+     * Read a text file from the given URI into a string
+     *
+     * @param uri URI to load
+     * @param client http client to use
+     * @return text file content or null if no result
+     *
+     * @throws IOException if an I/O exception occurred
+     */
+    public static String download(final URI uri, final HttpClient client) throws IOException {
 
         final StringStreamProcessor stringProcessor = new StringStreamProcessor();
 
-        if (download(uri, useDedicatedClient, null, stringProcessor)) {
+        if (download(uri, client, null, stringProcessor)) {
             return stringProcessor.getResult();
         }
 
@@ -305,11 +327,30 @@ public final class Http {
      * @throws IOException if an I/O exception occurred
      */
     public static String post(final URI uri, final boolean useDedicatedClient,
-            final PostQueryProcessor queryProcessor) throws IOException {
+                              final PostQueryProcessor queryProcessor) throws IOException {
+
+        // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
+        final HttpClient client = (useDedicatedClient) ? Http.getHttpClient(uri, false) : Http.getHttpClient();
+
+        return post(uri, client, queryProcessor);
+    }
+
+    /**
+     * Post a request to the given URI and get a string as result.
+     *
+     * @param uri URI to load
+     * @param client http client to use
+     * @param queryProcessor post query processor to define query parameters
+     * @return result as string or null if no result
+     *
+     * @throws IOException if an I/O exception occurred
+     */
+    public static String post(final URI uri, final HttpClient client,
+                              final PostQueryProcessor queryProcessor) throws IOException {
 
         final StringStreamProcessor stringProcessor = new StringStreamProcessor();
 
-        if (post(uri, useDedicatedClient, queryProcessor, stringProcessor)) {
+        if (post(uri, client, queryProcessor, stringProcessor)) {
             return stringProcessor.getResult();
         }
 
@@ -323,15 +364,14 @@ public final class Http {
      * 
      * @param uri URI to download
      * @param resultProcessor stream processor to use to consume HTTP response
-     * @param useDedicatedClient use one dedicated HttpClient if true or the common multi-threaded one else
+     * @param client http client to use
+     * @param credentials 
      * @return true if successful
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
-    private static boolean download(final URI uri, final boolean useDedicatedClient, Credentials credentials,
-            final StreamProcessor resultProcessor) throws IOException {
+    private static boolean download(final URI uri, final HttpClient client, final Credentials credentials,
+                                    final StreamProcessor resultProcessor) throws IOException {
 
-        // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
-        final HttpClient client = (useDedicatedClient) ? Http.getHttpClient(uri, false) : Http.getHttpClient();
         final GetMethod method = new GetMethod(uri.toString());
 
         // when present, add the credential to the client 
@@ -359,13 +399,13 @@ public final class Http {
             } else if (resultCode == 401) {
 
                 // Request user/login password and try again with given credential
-                HttpCredentialForm credentialForm = new HttpCredentialForm(method);
+                final HttpCredentialForm credentialForm = new HttpCredentialForm(method);
                 credentialForm.setVisible(true);
-                Credentials c = credentialForm.getCredentials();
+                final Credentials c = credentialForm.getCredentials();
 
                 // if user gives one login/password, try again with the new credential
                 if (c != null) {
-                    return download(uri, useDedicatedClient, credentialForm.getCredentials(), resultProcessor);
+                    return download(uri, client, credentialForm.getCredentials(), resultProcessor);
                 }
                 MessagePane.showWarning("Sorry, your file '" + uri + "' can't be retrieved properly\nresult code :" + resultCode + "\n status :" + method.getStatusText(), "Remote file can't be dowloaded");
                 logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
@@ -393,15 +433,13 @@ public final class Http {
      * @param uri URI to download
      * @param queryProcessor post query processor to define query parameters
      * @param resultProcessor stream processor to use to consume HTTP response
-     * @param useDedicatedClient use one dedicated HttpClient if true or the common multi-threaded one else
+     * @param client HttpClient to use
      * @return true if successful
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
-    private static boolean post(final URI uri, final boolean useDedicatedClient,
-            final PostQueryProcessor queryProcessor, final StreamProcessor resultProcessor) throws IOException {
+    private static boolean post(final URI uri, final HttpClient client,
+                                final PostQueryProcessor queryProcessor, final StreamProcessor resultProcessor) throws IOException {
 
-        // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
-        final HttpClient client = (useDedicatedClient) ? Http.getHttpClient(uri, false) : Http.getHttpClient();
         final PostMethod method = new PostMethod(uri.toString());
         logger.debug("HTTP client and POST method have been created");
 

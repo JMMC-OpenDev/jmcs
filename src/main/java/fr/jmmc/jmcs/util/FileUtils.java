@@ -753,7 +753,7 @@ public final class FileUtils {
      * Warning: calling this method may block the current thread for long time (slow transfer or big file or timeout)
      * Please take care of using it properly using a cancellable SwingWorker (Cancellable background task)
      *
-     * @param remoteLocation, String defaultParentDir remote location
+     * @param remoteLocation remote location
      * @param parentDir destination directory
      * @param mimeType mime type to fix missing file extension
      * @return a copy of the remote file

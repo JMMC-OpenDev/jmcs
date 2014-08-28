@@ -45,6 +45,7 @@ import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -358,6 +359,26 @@ public final class Http {
     }
 
     /**
+     * Execute a request to the given URI and get a string as result.
+     *
+     * @param client HttpClient to use
+     * @param method http method to execute
+     * @return result as string or null if no result
+     *
+     * @throws IOException if an I/O exception occurred
+     */
+    public static String execute(final HttpClient client, final HttpMethod method) throws IOException {
+
+        final StringStreamProcessor stringProcessor = new StringStreamProcessor();
+
+        if (execute(client, method, stringProcessor)) {
+            return stringProcessor.getResult();
+        }
+
+        return null;
+    }
+
+    /**
      * Save the document located at the given URI and use the given processor to get the result.
      * Requests with dedicatedClient will instance one new client with proxies compatible with given URI.
      * Other requests will use the common multi-threaded HTTP client.
@@ -416,7 +437,6 @@ public final class Http {
             }
 
         } finally {
-
             // Release the connection.
             method.releaseConnection();
 
@@ -447,7 +467,39 @@ public final class Http {
             // Define HTTP POST parameters
             queryProcessor.process(method);
 
-            // Send HTTP POST query
+            // Send HTTP query
+            final int resultCode = client.executeMethod(method);
+            logger.debug("The query has been sent. Status code: {}", resultCode);
+
+            // If everything went fine
+            if (resultCode == 200) {
+                // Get response
+                final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
+                resultProcessor.process(in);
+
+                return true;
+            }
+        } finally {
+            // Release the connection.
+            method.releaseConnection();
+        }
+
+        return false;
+    }
+
+    /**
+     * Execute the given Http method (GET, POST...) to the given URI and use the given processor to get the result.
+     * 
+     * @param client HttpClient to use
+     * @param method http method to execute
+     * @param resultProcessor stream processor to use to consume HTTP response
+     * @return true if successful
+     * @throws IOException if any I/O operation fails (HTTP or file) 
+     */
+    private static boolean execute(final HttpClient client,
+                                   final HttpMethod method, final StreamProcessor resultProcessor) throws IOException {
+        try {
+            // Send HTTP query
             final int resultCode = client.executeMethod(method);
             logger.debug("The query has been sent. Status code: {}", resultCode);
 

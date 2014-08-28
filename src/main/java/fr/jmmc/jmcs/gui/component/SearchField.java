@@ -282,8 +282,14 @@ public class SearchField extends JTextField {
                 // Field is NOT empty
                 setText("");
             }
-            postActionEvent();
+        } else {
+            // cancel action:
+            performCancel();
         }
+    }
+
+    protected void performCancel() {
+        _logger.debug("performCancel invoked.");
     }
 
     /**
@@ -434,11 +440,12 @@ public class SearchField extends JTextField {
          * @see Document#insertString
          */
         @Override
-        public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+        public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException {
+            String val = str;
             // fields don't want to have multiple lines.  We may provide a field-specific
             // model in the future in which case the filtering logic here will no longer
             // be needed.
-            Object filterNewlines = getProperty("filterNewlines");
+            final Object filterNewlines = getProperty("filterNewlines");
             if (Boolean.TRUE.equals(filterNewlines)) {
                 if ((str != null) && (str.indexOf('\n') >= 0)) {
                     final char replaceChar = newLineReplacement;
@@ -449,10 +456,10 @@ public class SearchField extends JTextField {
                             filtered.setCharAt(i, replaceChar);
                         }
                     }
-                    str = filtered.toString();
+                    val = filtered.toString();
                 }
             }
-            super.insertString(offs, str, a);
+            super.insertString(offs, val, a);
         }
     }
 
@@ -487,6 +494,7 @@ public class SearchField extends JTextField {
 
         /**
          * Paint this border
+         * @param g2
          */
         @Override
         public void paintBorder(final Component c, final Graphics g2,
@@ -694,11 +702,11 @@ public class SearchField extends JTextField {
             isOverButtons(me);
 
             // enable actions only if the text field is enabled:
-            if (SwingUtilities.isLeftMouseButton(me) && isEnabled()) {
+            if (SwingUtilities.isLeftMouseButton(me)) {
                 if (_armedCancelButton) {
                     handleCancelEdit();
                 }
-                if (_armedOptionsButton) {
+                if (_armedOptionsButton && isEnabled()) {
                     handleShowOptions(me);
                 }
             }
@@ -776,7 +784,7 @@ public class SearchField extends JTextField {
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(final ActionEvent e) {
-                    System.out.println("e = '" + e + "'");
+                    _logger.info("e = '" + e + "'");
                 }
             });
 
@@ -791,8 +799,7 @@ public class SearchField extends JTextField {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 final String value = e.getActionCommand();
-
-                System.out.println("value = '" + value + "'");
+                _logger.info("value = '" + value + "'");
             }
         });
 

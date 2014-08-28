@@ -191,13 +191,15 @@
         <release version="1.0.3">
             <pubDate>Wed, 27 Aug 2014 11:00:00 GMT</pubDate>
             <prerelease version="1.0.3b1" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.component.SearchField.java : Added empty performCancel() method to
+                    cancel any background operation</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.gui.component.SearchField.java : Added cleanText(text) method to
                     clean up the current text value before calling action listeners and update the text field.
                     By default, it trims and removes redundant white space characters.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.gui.component.SearchField.java : Added a CustomPlainDocument to
                     define the newLine replacement character (' ' by default) used by copy/paste operations.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.network.http.Http.java : Modified the http retry handler: use new DefaultHttpMethodRetryHandler(0, false) to never retry requests.</change>
-                <change type="CHANGE">In fr.jmmc.jmcs.network.http.Http.java : Added new download() and post() methods to use the given HttpClient.</change>
+                <change type="CHANGE">In fr.jmmc.jmcs.network.http.Http.java : Added new download(), post() and execute(method) methods to use the given HttpClient.</change>
                 <change type="CHANGE">In fr.jmmc.jmcs.util.CollectionUtils.java : check for nulls in toString() methods.</change>
             </prerelease>
         </release>

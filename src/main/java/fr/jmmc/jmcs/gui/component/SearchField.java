@@ -157,19 +157,21 @@ public class SearchField extends JTextField {
     private void initBorder() {
         // On Mac OS X, simply use the OS specific search textfield widget
         if (MACOSX_RUNTIME) {
-            // http://developer.apple.com/mac/library/technotes/tn2007/tn2196.html#//apple_ref/doc/uid/DTS10004439
+            // http://developer.apple.com/mac/library/technotes/tn2007/tn2196.html
             putClientProperty("JTextField.variant", "search");
-            putClientProperty("JTextField.FindAction",
+            putClientProperty("JTextField.Search.FindAction",
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
+                            _logger.info("FindAction Mac OS X called.");
                             postActionEvent();
                         }
                     });
-            putClientProperty("JTextField.CancelAction",
+            putClientProperty("JTextField.Search.CancelAction",
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
+                            _logger.info("CancelAction Mac OS X called.");
                             handleCancelEdit();
                         }
                     });

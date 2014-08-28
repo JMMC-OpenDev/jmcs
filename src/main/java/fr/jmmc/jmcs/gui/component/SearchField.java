@@ -159,11 +159,13 @@ public class SearchField extends JTextField {
         if (MACOSX_RUNTIME) {
             // http://developer.apple.com/mac/library/technotes/tn2007/tn2196.html
             putClientProperty("JTextField.variant", "search");
+
+            // note: possible conflict with FindPopup
             putClientProperty("JTextField.Search.FindAction",
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            _logger.info("FindAction Mac OS X called.");
+                            _logger.debug("FindAction Mac OS X called.");
                             postActionEvent();
                         }
                     });
@@ -171,7 +173,7 @@ public class SearchField extends JTextField {
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            _logger.info("CancelAction Mac OS X called.");
+                            _logger.debug("CancelAction Mac OS X called.");
                             handleCancelEdit();
                         }
                     });

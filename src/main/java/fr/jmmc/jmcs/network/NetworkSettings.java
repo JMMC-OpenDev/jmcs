@@ -73,8 +73,8 @@ public final class NetworkSettings {
     /* JMMC standard values */
     /** Use system proxies (false by default) */
     public static final String USE_SYSTEM_PROXIES = "false";
-    /** default value for the connection timeout in milliseconds (15 s) */
-    public static final int DEFAULT_CONNECT_TIMEOUT = 15 * 1000;
+    /** default value for the connection timeout in milliseconds (3 s) */
+    public static final int DEFAULT_CONNECT_TIMEOUT = 3 * 1000;
     /** default value for the read timeout in milliseconds (10 minutes) */
     public static final int DEFAULT_SOCKET_READ_TIMEOUT = 10 * 60 * 1000;
     /** The default maximum number of connections allowed per host */

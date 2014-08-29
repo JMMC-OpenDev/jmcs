@@ -800,7 +800,7 @@ public abstract class Preferences extends Observable {
         if (value == null) {
             return false;
         }
-        return Boolean.valueOf(value).booleanValue();
+        return Boolean.parseBoolean(value);
     }
 
     /**
@@ -829,7 +829,7 @@ public abstract class Preferences extends Observable {
         if (value == null) {
             return Double.NaN;
         }
-        return Double.valueOf(value).doubleValue();
+        return Double.parseDouble(value);
     }
 
     /**

@@ -328,11 +328,10 @@ public final class ApplicationDescription {
      * @return the value of the "program" element name from the XML file
      */
     public String getProgramName() {
-        Program program = null;
         String programName = "Unknown";
 
         // Get program
-        program = _applicationData.getProgram();
+        final Program program = _applicationData.getProgram();
 
         if (program != null) {
             programName = program.getName();
@@ -347,11 +346,10 @@ public final class ApplicationDescription {
      * @return the value of the "program version" element from the XML file
      */
     public String getProgramVersion() {
-        Program program = null;
         String programVersion = "?.?";
 
         // Get program
-        program = _applicationData.getProgram();
+        final Program program = _applicationData.getProgram();
 
         if (program != null) {
             programVersion = program.getVersion();
@@ -400,11 +398,10 @@ public final class ApplicationDescription {
      * @return the value of the element compilation date from the XML file
      */
     public String getCompilationDate() {
-        Compilation compilation = null;
         String compilationDate = "Unknown";
 
         // Get compilation
-        compilation = _applicationData.getCompilation();
+        final Compilation compilation = _applicationData.getCompilation();
 
         if (compilation != null) {
             compilationDate = compilation.getDate();
@@ -418,11 +415,10 @@ public final class ApplicationDescription {
      * @return the value of the element compiler version from the XML file
      */
     public String getCompilatorVersion() {
-        Compilation compilation = null;
         String compilationCompilator = "Unknown";
 
         // Get compilation
-        compilation = _applicationData.getCompilation();
+        final Compilation compilation = _applicationData.getCompilation();
 
         if (compilation != null) {
             compilationCompilator = compilation.getCompiler();
@@ -461,9 +457,8 @@ public final class ApplicationDescription {
      * @return Forge the "copyright" text used in the AboutBox
      */
     public String getCopyrightValue() {
-        int year = 0;
-        String compilationDate = getCompilationDate();
-
+        final String compilationDate = getCompilationDate();
+        int year;
         try {
             // Try to get the year from the compilation date
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");

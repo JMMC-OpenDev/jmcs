@@ -313,7 +313,7 @@ public final class SearchPanel extends javax.swing.JFrame {
      * @param value string value
      * @return regexp string
      */
-    protected static String convertToRegExp(final String value) {
+    private static String convertToRegExp(final String value) {
         final StringBuilder regexp = new StringBuilder(value.length() + 16);
 
         // Replace non regexp value to '*value*' to performs one contains operation (case sensitive)

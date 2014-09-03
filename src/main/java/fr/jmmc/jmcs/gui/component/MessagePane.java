@@ -285,17 +285,17 @@ public final class MessagePane {
 
     /**
      * Show a confirmation dialog to ask if the user wants to save changes before closing the application
-     * @return true if the user wants the file replaced, false otherwise.
+     * @return Save if the user wants to save changes, Cancel or Ignore otherwise.
      */
     public static ConfirmSaveChanges showConfirmSaveChangesBeforeClosing() {
         return showConfirmSaveChanges("closing");
     }
 
     /**
-     * Show a confirmation dialog to ask if the user wants to save changes before closing the application.
+     * Show a confirmation dialog to ask if the user wants to save changes before doing any operation.
      * 
      * @param beforeMessage part of the message inserted after 'before ' ?
-     * @return true if the user wants the file replaced, false otherwise.
+     * @return Save if the user wants to save changes, Cancel or Ignore otherwise.
      */
     public static ConfirmSaveChanges showConfirmSaveChanges(final String beforeMessage) {
         final String message = "Do you want to save changes to this document before "

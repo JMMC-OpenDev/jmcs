@@ -62,7 +62,7 @@ public class HttpCredentialForm extends javax.swing.JDialog {
         }
         String realm = getMethod.getResponseHeader("WWW-Authenticate").getValue();
         if (StringUtils.isSet(realm)) {
-            sb.append("\n").append(realm);
+            sb.append('\n').append(realm);
         }
         infoTextPane.setText(sb.toString());
 

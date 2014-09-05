@@ -1315,7 +1315,7 @@ public abstract class Preferences extends Observable {
 
         // For each property, we make a string like "{name} : {value}"
         for (String key : keys) {
-            sb.append(key).append(" : ").append(properties.getProperty(key)).append("\n");
+            sb.append(key).append(" : ").append(properties.getProperty(key)).append('\n');
         }
         return sb;
     }

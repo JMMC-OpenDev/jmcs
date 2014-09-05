@@ -45,9 +45,11 @@ import java.util.Map;
 public final class MimeType {
 
     /** Mime type registry keyed by identifier ordered by insertion order */
-    private final static Map<String, MimeType> _registry = new LinkedHashMap<String, MimeType>();
+    private final static Map<String, MimeType> _registry = new LinkedHashMap<String, MimeType>(32);
 
     /* Predefined Mime types */
+    /** MimeType associated to VOTable */
+    public final static MimeType VOTABLE = MimeType.add("VOTABLE", "application/x-votable+xml", "VOTable document", "vot", "xml");
     /** MimeType associated to SearchCal calibrator list */
     public final static MimeType SEARCHCAL_CALIBRATORLIST = MimeType.add("SEARCHCAL_CALIBRATORLIST", "application/x-searchcal+votable+xml", "SearchCal Calibrator List", "scvot.gz", "scvot");
     /** MimeType associated to Observation settings */

@@ -33,6 +33,8 @@ import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.StringUtils;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.slf4j.Logger;
@@ -72,7 +74,7 @@ public final class NetworkSettings {
     public static final String PROPERTY_SOCKS_PROXY_PORT = "socksProxyPort";
     /* JMMC standard values */
     /** Use system proxies (false by default) */
-    public static final String USE_SYSTEM_PROXIES = "false";
+    public static final String USE_SYSTEM_PROXIES = "true";
     /** default value for the connection timeout in milliseconds (3 s) */
     public static final int DEFAULT_CONNECT_TIMEOUT = 3 * 1000;
     /** default value for the read timeout in milliseconds (10 minutes) */
@@ -163,28 +165,50 @@ public final class NetworkSettings {
             _logger.info("Java plugin proxy list: {}", proxyList);
         }
 
-        // Dump Http Proxy settings from ProxySelector:
-        HostConfiguration hostConfiguration = Http.getHttpProxyConfiguration();
+        // Get Http Proxy settings from ProxySelector:
+        final HostConfiguration httpConfiguration = Http.getHttpProxyConfiguration();
 
-        if (hostConfiguration.getProxyHost() != null) {
-            _logger.info("Found http proxy: {}:{}", hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
+        if (httpConfiguration.getProxyHost() != null) {
+            _logger.info("Found http proxy: {}:{}", httpConfiguration.getProxyHost(), httpConfiguration.getProxyPort());
         }
 
-        // Dump Socks Proxy settings from ProxySelector:
-        hostConfiguration = Http.getSocksProxyConfiguration();
+        // Get Socks Proxy settings from ProxySelector:
+        final HostConfiguration socksConfiguration = Http.getSocksProxyConfiguration();
 
-        if (hostConfiguration.getProxyHost() != null) {
-            _logger.info("Found socks proxy: {}:{}", hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
+        if (socksConfiguration.getProxyHost() != null) {
+            _logger.info("Found socks proxy: {}:{}", socksConfiguration.getProxyHost(), socksConfiguration.getProxyPort());
         }
 
-        // Get Proxy settings (available at least in JNLP runtime environement):
-        hostConfiguration = Http.getHttpProxyConfiguration();
-
-        if (hostConfiguration.getProxyHost() != null) {
+        if (httpConfiguration.getProxyHost() != null) {
             _logger.info("Get proxy settings from Java ProxySelector.");
 
-            defineProxy(hostConfiguration.getProxyHost(), hostConfiguration.getProxyPort());
+            defineProxy(httpConfiguration.getProxyHost(), httpConfiguration.getProxyPort());
         } else {
+
+            // Try environment variables:
+            String envHttpProxy = System.getenv("http_proxy");
+            if (envHttpProxy == null) {
+                envHttpProxy = System.getenv("HTTP_PROXY");
+            }
+            URI uri = null;
+            if (envHttpProxy != null) {
+                try {
+                    uri = new URI(envHttpProxy);
+                } catch (URISyntaxException use) {
+                    _logger.info("Invalid http proxy: {}", envHttpProxy, use);
+                }
+            }
+            if (uri != null) {
+                _logger.info("Get proxy settings from environment variables: " + uri);
+
+                final String proxyHost = uri.getHost();
+                final int port = uri.getPort();
+                if (!StringUtils.isEmpty(uri.getHost()) && port != 0) {
+                    defineProxy(proxyHost, port);
+                    return;
+                }
+            }
+
             _logger.info("Get proxy settings from CommonPreferences.");
 
             final CommonPreferences prefs = CommonPreferences.getInstance();

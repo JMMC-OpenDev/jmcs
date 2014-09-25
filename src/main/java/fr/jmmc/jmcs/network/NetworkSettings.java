@@ -27,16 +27,18 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.network;
 
-import fr.jmmc.jmcs.network.http.Http;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.StringUtils;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Properties;
-import org.apache.commons.httpclient.HostConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,10 +70,10 @@ public final class NetworkSettings {
     public static final String PROPERTY_HTTP_PROXY_PORT = "http.proxyPort";
     /** HTTP non proxy hosts */
     public static final String PROPERTY_HTTP_NO_PROXY_HOSTS = "http.nonProxyHosts";
-    /** SOCKS proxy host */
-    public static final String PROPERTY_SOCKS_PROXY_HOST = "socksProxyHost";
-    /** SOCKS proxy port */
-    public static final String PROPERTY_SOCKS_PROXY_PORT = "socksProxyPort";
+    /** HTTPS proxy host */
+    public static final String PROPERTY_HTTPS_PROXY_HOST = "https.proxyHost";
+    /** HTTPS proxy port */
+    public static final String PROPERTY_HTTPS_PROXY_PORT = "https.proxyPort";
     /* JMMC standard values */
     /** Use system proxies (false by default) */
     public static final String USE_SYSTEM_PROXIES = "true";
@@ -83,6 +85,10 @@ public final class NetworkSettings {
     public static final int DEFAULT_MAX_HOST_CONNECTIONS = 5;
     /** The default maximum number of connections allowed overall */
     public static final int DEFAULT_MAX_TOTAL_CONNECTIONS = 10;
+    /** JMMC web to detect proxies */
+    private final static String JMMC_WEB = "http://www.jmmc.fr";
+    /** cached JMMC web URL */
+    private static URI JMMC_WEB_URI = null;
 
     /**
      * Forbidden constructor
@@ -145,14 +151,14 @@ public final class NetworkSettings {
                 netProperties.put(PROPERTY_HTTP_PROXY_PORT, value);
             }
 
-            // SOCKS Proxy:
-            value = getNetProperty(netPropertiesGetMethod, PROPERTY_SOCKS_PROXY_HOST);
+            // HTTPS Proxy:
+            value = getNetProperty(netPropertiesGetMethod, PROPERTY_HTTPS_PROXY_HOST);
             if (value != null) {
-                netProperties.put(PROPERTY_SOCKS_PROXY_HOST, value);
+                netProperties.put(PROPERTY_HTTPS_PROXY_HOST, value);
             }
-            value = getNetProperty(netPropertiesGetMethod, PROPERTY_SOCKS_PROXY_PORT);
+            value = getNetProperty(netPropertiesGetMethod, PROPERTY_HTTPS_PROXY_PORT);
             if (value != null) {
-                netProperties.put(PROPERTY_SOCKS_PROXY_PORT, value);
+                netProperties.put(PROPERTY_HTTPS_PROXY_PORT, value);
             }
 
             if (!netProperties.isEmpty() && _logger.isInfoEnabled()) {
@@ -166,25 +172,13 @@ public final class NetworkSettings {
         }
 
         // Get Http Proxy settings from ProxySelector:
-        final HostConfiguration httpConfiguration = Http.getHttpProxyConfiguration();
+        final ProxyConfig config = getProxyConfiguration(getJmmcHttpURI());
 
-        if (httpConfiguration.getProxyHost() != null) {
-            _logger.info("Found http proxy: {}:{}", httpConfiguration.getProxyHost(), httpConfiguration.getProxyPort());
-        }
-
-        // Get Socks Proxy settings from ProxySelector:
-        final HostConfiguration socksConfiguration = Http.getSocksProxyConfiguration();
-
-        if (socksConfiguration.getProxyHost() != null) {
-            _logger.info("Found socks proxy: {}:{}", socksConfiguration.getProxyHost(), socksConfiguration.getProxyPort());
-        }
-
-        if (httpConfiguration.getProxyHost() != null) {
+        if (config.getHostname() != null) {
             _logger.info("Get proxy settings from Java ProxySelector.");
 
-            defineProxy(httpConfiguration.getProxyHost(), httpConfiguration.getProxyPort());
+            defineProxy(config.getHostname(), config.getPort());
         } else {
-
             // Try environment variables:
             String envHttpProxy = System.getenv("http_proxy");
             if (envHttpProxy == null) {
@@ -203,7 +197,7 @@ public final class NetworkSettings {
 
                 final String proxyHost = uri.getHost();
                 final int port = uri.getPort();
-                if (!StringUtils.isEmpty(uri.getHost()) && port != 0) {
+                if ((proxyHost != null) && !proxyHost.isEmpty() && (port != 0)) {
                     defineProxy(proxyHost, port);
                     return;
                 }
@@ -239,6 +233,7 @@ public final class NetworkSettings {
     private static void defineProxy(final String proxyHost, final int proxyPort) {
         _logger.info("define http proxy to {}:{}", proxyHost, proxyPort);
 
+        // HTTP protocol:
         // # http.proxyHost
         System.setProperty(PROPERTY_HTTP_PROXY_HOST, proxyHost);
 
@@ -251,6 +246,54 @@ public final class NetworkSettings {
         // # http.proxyUser
         // # http.proxyPassword
         // # http.nonProxyHosts
+        // HTTPS protocol:
+        // # https.proxyHost
+        System.setProperty(PROPERTY_HTTPS_PROXY_HOST, proxyHost);
+
+        // # https.proxyPort
+        System.setProperty(PROPERTY_HTTPS_PROXY_PORT, Integer.toString(proxyPort));
+    }
+
+    /**
+     * This class returns the proxy configuration for the associated URI.
+     * @param uri reference URI used to get the proper proxy
+     * @return ProxyConfig instance or ProxyConfig.NONE
+     */
+    public static ProxyConfig getProxyConfiguration(final URI uri) {
+        if (uri != null) {
+            final ProxySelector proxySelector = ProxySelector.getDefault();
+            final List<Proxy> proxyList = proxySelector.select(uri);
+            final Proxy proxy = proxyList.get(0);
+
+            _logger.debug("using {}", proxy);
+
+            if (proxy.type() != Proxy.Type.DIRECT) {
+                final String hostname;
+                final InetSocketAddress epoint = (InetSocketAddress) proxy.address();
+                if (epoint.isUnresolved()) {
+                    hostname = epoint.getHostName();
+                } else {
+                    hostname = epoint.getAddress().getHostName();
+                }
+                final int port = epoint.getPort();
+
+                if ((hostname != null) && !hostname.isEmpty() && (port > 0)) {
+                    return new ProxyConfig(hostname, port);
+                }
+            }
+        }
+        return ProxyConfig.NONE;
+    }
+
+    /**
+     * Get JMMC HTTP URI
+     * @return JMMC HTTP URI
+     */
+    public static URI getJmmcHttpURI() {
+        if (JMMC_WEB_URI == null) {
+            JMMC_WEB_URI = URI.create(JMMC_WEB);
+        }
+        return JMMC_WEB_URI;
     }
 
     /**

@@ -29,18 +29,15 @@ package fr.jmmc.jmcs.network.http;
 
 import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.network.NetworkSettings;
+import static fr.jmmc.jmcs.network.NetworkSettings.getJmmcHttpURI;
+import fr.jmmc.jmcs.network.ProxyConfig;
 import fr.jmmc.jmcs.util.FileUtils;
-import fr.jmmc.jmcs.util.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -68,15 +65,7 @@ import org.slf4j.LoggerFactory;
 public final class Http {
 
     /** logger */
-    private final static Logger logger = LoggerFactory.getLogger(Http.class.getName());
-    /** JMMC web to detect proxies */
-    private final static String JMMC_WEB = "http://www.jmmc.fr";
-    /** JMMC socks to detect proxies */
-    private final static String JMMC_SOCKS = "socket://jmmc.fr";
-    /** cached JMMC web URL */
-    private static URI JMMC_WEB_URI = null;
-    /** cached JMMC socks URL */
-    private static URI JMMC_SOCKS_URI = null;
+    private final static Logger _logger = LoggerFactory.getLogger(Http.class.getName());
 
     /**
      * Forbidden constructor
@@ -136,7 +125,13 @@ public final class Http {
 
         setConfiguration(httpClient);
 
-        httpClient.setHostConfiguration(getProxyConfiguration(uri));
+        // Get Proxy settings for the given URI:
+        final ProxyConfig config = NetworkSettings.getProxyConfiguration(uri);
+        if (config.getHostname() != null) {
+            final HostConfiguration hostConfig = new HostConfiguration();
+            hostConfig.setProxy(config.getHostname(), config.getPort());
+            httpClient.setHostConfiguration(hostConfig);
+        }
 
         return httpClient;
     }
@@ -168,28 +163,6 @@ public final class Http {
     }
 
     /**
-     * Get JMMC HTTP URI
-     * @return JMMC HTTP URI
-     */
-    private static URI getJmmcHttpURI() {
-        if (JMMC_WEB_URI == null) {
-            JMMC_WEB_URI = validateURL(JMMC_WEB);
-        }
-        return JMMC_WEB_URI;
-    }
-
-    /**
-     * Get JMMC Socks URI
-     * @return JMMC Socks URI
-     */
-    private static URI getJmmcSocksURI() {
-        if (JMMC_SOCKS_URI == null) {
-            JMMC_SOCKS_URI = validateURL(JMMC_SOCKS);
-        }
-        return JMMC_SOCKS_URI;
-    }
-
-    /**
      * Transform the given URL in URI if valid.
      * @param url URL as string
      * @return URI instance
@@ -199,57 +172,8 @@ public final class Http {
         try {
             return new URI(url);
         } catch (URISyntaxException use) {
-            throw new IllegalStateException("Invalid URL:" + url, use);
+            throw new IllegalArgumentException("Invalid URL:" + url, use);
         }
-    }
-
-    /**
-     * This class returns the HTTP proxy configuration (based on http://www.jmmc.fr).
-     * @return HostConfiguration instance (proxy host and port only are defined)
-     */
-    public static HostConfiguration getHttpProxyConfiguration() {
-        return getProxyConfiguration(getJmmcHttpURI());
-    }
-
-    /**
-     * This class returns the socks proxy configuration (based on socks://jmmc.fr).
-     * @return HostConfiguration instance (proxy host and port only are defined)
-     */
-    public static HostConfiguration getSocksProxyConfiguration() {
-        return getProxyConfiguration(getJmmcSocksURI());
-    }
-
-    /**
-     * This class returns the proxy configuration for the associated URI.
-     * @param uri reference URI used to get the proper proxy
-     * @return HostConfiguration instance (proxy host and port only are defined)
-     */
-    public static HostConfiguration getProxyConfiguration(final URI uri) {
-        final HostConfiguration hostConfiguration = new HostConfiguration();
-
-        if (uri != null) {
-            final ProxySelector proxySelector = ProxySelector.getDefault();
-            final List<Proxy> proxyList = proxySelector.select(uri);
-            final Proxy proxy = proxyList.get(0);
-
-            logger.debug("using {} in proxyList = {}", proxy, proxyList);
-
-            if (proxy.type() != Proxy.Type.DIRECT) {
-                final String host;
-                final InetSocketAddress epoint = (InetSocketAddress) proxy.address();
-                if (epoint.isUnresolved()) {
-                    host = epoint.getHostName();
-                } else {
-                    host = epoint.getAddress().getHostName();
-                }
-                final int port = epoint.getPort();
-
-                if (!StringUtils.isTrimmedEmpty(host) && port > 0) {
-                    hostConfiguration.setProxy(host, port);
-                }
-            }
-        }
-        return hostConfiguration;
     }
 
     /**
@@ -276,7 +200,7 @@ public final class Http {
             @Override
             public void process(final InputStream in) throws IOException {
                 FileUtils.saveStream(in, outputFile);
-                logger.debug("File '{}' saved ({} bytes).", outputFile, outputFile.length());
+                _logger.debug("File '{}' saved ({} bytes).", outputFile, outputFile.length());
             }
         });
     }
@@ -401,12 +325,12 @@ public final class Http {
             state.setCredentials(AuthScope.ANY, credentials);
         }
 
-        logger.info("HTTP client and GET method have been created. doAuthentication = {}", method.getDoAuthentication());
+        _logger.info("HTTP client and GET method have been created. doAuthentication = {}", method.getDoAuthentication());
 
         try {
             // Send HTTP GET query:
             final int resultCode = client.executeMethod(method);
-            logger.debug("The query has been sent. Status code: {}", resultCode);
+            _logger.debug("The query has been sent. Status code: {}", resultCode);
 
             // If everything went fine
             if (resultCode == 200) {
@@ -429,10 +353,10 @@ public final class Http {
                     return download(uri, client, credentialForm.getCredentials(), resultProcessor);
                 }
                 MessagePane.showWarning("Sorry, your file '" + uri + "' can't be retrieved properly\nresult code :" + resultCode + "\n status :" + method.getStatusText(), "Remote file can't be dowloaded");
-                logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
+                _logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
 
             } else {
-                logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
+                _logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
                 return false;
             }
 
@@ -461,7 +385,7 @@ public final class Http {
                                 final PostQueryProcessor queryProcessor, final StreamProcessor resultProcessor) throws IOException {
 
         final PostMethod method = new PostMethod(uri.toString());
-        logger.debug("HTTP client and POST method have been created");
+        _logger.debug("HTTP client and POST method have been created");
 
         try {
             // Define HTTP POST parameters
@@ -469,7 +393,7 @@ public final class Http {
 
             // Send HTTP query
             final int resultCode = client.executeMethod(method);
-            logger.debug("The query has been sent. Status code: {}", resultCode);
+            _logger.debug("The query has been sent. Status code: {}", resultCode);
 
             // If everything went fine
             if (resultCode == 200) {
@@ -501,7 +425,7 @@ public final class Http {
         try {
             // Send HTTP query
             final int resultCode = client.executeMethod(method);
-            logger.debug("The query has been sent. Status code: {}", resultCode);
+            _logger.debug("The query has been sent. Status code: {}", resultCode);
 
             // If everything went fine
             if (resultCode == 200) {
@@ -534,10 +458,9 @@ public final class Http {
          */
         @Override
         public void process(final InputStream in) throws IOException {
-
             // TODO check if we can get response size from HTTP headers
             result = FileUtils.readStream(in);
-            logger.debug("String stored in memory ({} chars).", result.length());
+            _logger.debug("String stored in memory ({} chars).", result.length());
         }
 
         /**

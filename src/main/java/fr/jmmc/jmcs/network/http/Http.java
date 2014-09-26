@@ -340,9 +340,12 @@ public final class Http {
                 resultProcessor.process(in);
 
                 return true;
-
-            } else if (resultCode == 401) {
-
+            }
+            
+            if (resultCode == 401) {
+                // TODO: ensure EDT (Swing):
+                // Memorize the credentials into a session ... reuse login per host name ? or query part ?
+                
                 // Request user/login password and try again with given credential
                 final HttpCredentialForm credentialForm = new HttpCredentialForm(method);
                 credentialForm.setVisible(true);
@@ -353,17 +356,13 @@ public final class Http {
                     return download(uri, client, credentialForm.getCredentials(), resultProcessor);
                 }
                 MessagePane.showWarning("Sorry, your file '" + uri + "' can't be retrieved properly\nresult code :" + resultCode + "\n status :" + method.getStatusText(), "Remote file can't be dowloaded");
-                _logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
-
-            } else {
-                _logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
-                return false;
             }
+
+            _logger.warn("download didn't succeed, result code: {}, status: {}", resultCode, method.getStatusText());
 
         } finally {
             // Release the connection.
             method.releaseConnection();
-
         }
 
         return false;

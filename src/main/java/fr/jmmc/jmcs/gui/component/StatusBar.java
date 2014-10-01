@@ -34,12 +34,14 @@ import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.gui.util.ResourceImage;
 import fr.jmmc.jmcs.service.BrowserLauncher;
 import fr.jmmc.jmcs.util.ImageUtils;
+import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.ref.WeakReference;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -149,10 +151,7 @@ public final class StatusBar extends JPanel {
     private StatusBar() {
         super();
 
-        // Layed out horizontally
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-
-        final Border leftBorder = new EmptyBorder(0, 0, 4, 0);
+        setLayout(new BorderLayout());
 
         // Create logo
         final String logoURL = ApplicationDescription.getInstance().getCompanyLogoResourcePath();
@@ -161,19 +160,17 @@ public final class StatusBar extends JPanel {
         final JLabel logo = new JLabel();
         logo.setIcon(scaledImageIcon);
         logo.setVisible(true);
-        logo.setBorder(leftBorder);
 
         // Create text logo
         final JLabel textStatusBar = new JLabel();
-        textStatusBar.setText("Provided by ");
+        textStatusBar.setText(" Provided by ");
         textStatusBar.setFont(new Font("Comic Sans MS", 2, 10));
         textStatusBar.setVisible(true);
-        textStatusBar.setBorder(leftBorder);
 
         // Create status history button
         final ImageIcon historyIcon = ResourceImage.STATUS_HISTORY.icon();
         final JButton historyButton = new JButton(historyIcon);
-        final Border historyBorder = new EmptyBorder(0, 4, 4, 0);
+        final Border historyBorder = new EmptyBorder(0, 4, 0, 0);
         historyButton.setBorder(historyBorder);
         historyButton.setToolTipText("Click to view status history");
         historyButton.addActionListener(new ActionListener() {
@@ -183,24 +180,30 @@ public final class StatusBar extends JPanel {
             }
         });
 
-        // StatusBar elements placement
-        final Box hBox = Box.createHorizontalBox();
-        hBox.add(historyButton);
-        hBox.add(new JLabel(" Status : "));
-        hBox.add(_statusLabel);
-        hBox.add(Box.createHorizontalGlue());
-        hBox.add(textStatusBar);
-        hBox.add(logo);
+        // JVM Memory monitor
+        final MemoryMonitor mm = new MemoryMonitor();
+        mm.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
+        // StatusBar elements placement
+        final JPanel jpanelLeft = new JPanel();
+        jpanelLeft.setLayout(new BoxLayout(jpanelLeft, BoxLayout.X_AXIS));
+        jpanelLeft.add(historyButton);
+        jpanelLeft.add(new JLabel(" Status: "));
+
+        final JPanel jpanelRight = new JPanel();
+        jpanelRight.setLayout(new BoxLayout(jpanelRight, BoxLayout.X_AXIS));
+        jpanelRight.add(mm);
+        jpanelRight.add(textStatusBar);
+        jpanelRight.add(logo);
         /*
          * Add a space on the right bottom angle because Mac OS X corner is
          * already decored with its resize handle
          */
-        if (SystemUtils.IS_OS_MAC_OSX) {
-            hBox.add(Box.createHorizontalStrut(14));
-        }
+        jpanelRight.add(Box.createHorizontalStrut((SystemUtils.IS_OS_MAC_OSX) ? 14 : 4));
 
-        add(hBox);
+        add(jpanelLeft, BorderLayout.WEST); // fixed
+        add(_statusLabel, BorderLayout.CENTER); // free size
+        add(jpanelRight, BorderLayout.EAST); // fixed
 
         // Get application data model to launch the default browser with the given link
         final ApplicationDescription applicationDataModel = ApplicationDescription.getInstance();

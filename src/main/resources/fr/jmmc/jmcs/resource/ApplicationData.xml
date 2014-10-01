@@ -39,8 +39,8 @@
         <feedback_form_url>http://jmmc.fr/feedback/feedback.php</feedback_form_url>
     </company>
 
-    <program name="jMCS Framework" version="1.0.3b2"/>
-    <compilation date="25/9/2014" compiler="1.6"/>
+    <program name="jMCS Framework" version="1.0.3b3"/>
+    <compilation date="01/10/2014" compiler="1.6"/>
 
     <text>JMMC framework, enabling better user interface and platform integration across Mac, Linux and Windows through numerous third-party libraries and in-house code</text>
 
@@ -189,7 +189,11 @@
 
     <releasenotes>
         <release version="1.0.3">
-            <pubDate>Wed, 27 Aug 2014 11:00:00 GMT</pubDate>
+            <pubDate>Wed, 01 Oct 2014 17:00:00 GMT</pubDate>
+            <prerelease version="1.0.3b3" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.component.StatusBar.java : added a jvm memory monitor
+                    and fixed layout to truncate long messages but keep logo displayed</change>
+            </prerelease>
             <prerelease version="1.0.3b2" tag="UNKNOWN">
                 <change type="FEATURE">In fr.jmmc.jmcs.network.NetworkSettings.java : define https proxy identical to http proxy;
                     added parsing the 'http_proxy' environment variable at last</change>

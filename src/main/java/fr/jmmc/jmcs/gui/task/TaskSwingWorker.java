@@ -95,10 +95,10 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
     public final void executeTaskInEDT() {
         // increment running worker :
         TaskSwingWorkerExecutor.incRunningWorkerCounter();
-        
+
         // cancel other task:
         TaskSwingWorkerExecutor.cancelTask(this.getTask());
-        
+
         // Just execute this new task with EDT (synchronously) :
         SwingUtils.invokeEDT(this);
     }
@@ -114,6 +114,32 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
     @Override
     public final String toString() {
         return _logPrefix;
+    }
+
+    /**
+     * Custom cancel implementation to call beforeCancel() and then cancel(true) to interupt the thread
+     * @return true if the task was cancelled; false otherwise
+     */
+    public final boolean doCancel() {
+        if (DEBUG_FLAG) {
+            _logger.info("{}.doCancel: beforeCancel", _logPrefix);
+        }
+        beforeCancel();
+
+        if (DEBUG_FLAG) {
+            _logger.info("{}.doCancel: cancel(true)", _logPrefix);
+        }
+
+        // note : if the worker was previously cancelled, it has no effect.
+        // Interrupt the thread to have Thread.isInterrupted() == true :
+        return cancel(true);
+    }
+
+    /**
+     * Perform cancellation preparation (network ...)
+     */
+    public void beforeCancel() {
+        // empty implementation
     }
 
     /**
@@ -154,6 +180,7 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
             if (DEBUG_FLAG) {
                 _logger.info("{}.done : CANCELLED", _logPrefix);
             }
+            refreshNoData(true);
         } else {
             try {
                 // Get the computed results :
@@ -163,6 +190,7 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
                     if (DEBUG_FLAG) {
                         _logger.info("{}.done : NO DATA", _logPrefix);
                     }
+                    refreshNoData(false);
                 } else {
                     if (DEBUG_FLAG) {
                         _logger.info("{}.done : UI START", _logPrefix);
@@ -196,9 +224,17 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
     /**
      * Refresh GUI invoked by the Swing Event Dispatcher Thread (Swing EDT)
      * Called by @see #done()
-     * @param data computed data
+     * @param data computed data NOT NULL
      */
     public abstract void refreshUI(final T data);
+
+    /**
+     * Refresh GUI when no data (null returned or cancelled) invoked by the Swing Event Dispatcher Thread (Swing EDT)
+     * @param cancelled true if task cancelled; false if null returned by computeInBackground()
+     */
+    public void refreshNoData(final boolean cancelled) {
+        // empty implementation
+    }
 
     /**
      * Handle the execution exception that occurred in the compute operation : @see #computeInBackground()

@@ -336,20 +336,22 @@ public final class Http {
      * @param threadName thread name
      */
     public static void abort(final String threadName) {
-        final HttpMethodBase method = HttpMethodThreadMap.get().get(threadName);
+        if (threadName != null) {
+            final HttpMethodBase method = HttpMethodThreadMap.get().get(threadName);
 
-        _logger.debug("abort: {} = {}", threadName, method);
+            _logger.debug("abort: {} = {}", threadName, method);
 
-        if (method != null) {
-            // abort method:
-            try {
-                /* This closes the socket handling our blocking I/O, which will
-                 * interrupt the request immediately. */
-                method.abort();
+            if (method != null) {
+                // abort method:
+                try {
+                    /* This closes the socket handling our blocking I/O, which will
+                     * interrupt the request immediately. */
+                    method.abort();
 
-            } finally {
-                // To be sure to call relaseConnection altought the thread should do it (normally):
-                releaseConnection(method, threadName);
+                } finally {
+                    // To be sure to call relaseConnection altought the thread should do it (normally):
+                    releaseConnection(method, threadName);
+                }
             }
         }
     }

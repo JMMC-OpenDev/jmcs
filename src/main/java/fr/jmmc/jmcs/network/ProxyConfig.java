@@ -29,7 +29,8 @@ package fr.jmmc.jmcs.network;
 
 /**
  * Proxy settings
- * @author bourgesl
+ *
+ * @author Laurent BOURGES.
  */
 public final class ProxyConfig {
 

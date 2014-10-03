@@ -32,7 +32,8 @@ import javax.swing.SwingUtilities;
 
 /**
  * This class is dedicated to EDT invoke methods and simplify GUI code
- * @author bourgesl
+ *
+ * @author Laurent BOURGES.
  */
 public final class SwingUtils {
 

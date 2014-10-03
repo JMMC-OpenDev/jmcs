@@ -719,7 +719,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             boolean statusFlag = false;
 
             // Create an HTTP client to send report information to our PHP script
-            final HttpClient client = Http.getHttpClient(false);
+            final HttpClient client = Http.getHttpClient();
 
             final String feedbackReportUrl = ApplicationDescription.getInstance().getFeedbackReportFormURL();
             final PostMethod method = new PostMethod(feedbackReportUrl);

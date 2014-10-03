@@ -761,12 +761,11 @@ public final class FileUtils {
      * @throws URISyntaxException if given fileLocation  is invalid
      */
     public static File retrieveRemoteFile(final String remoteLocation,
-            final String parentDir,
-            final MimeType mimeType) throws IOException, URISyntaxException {
+                                          final String parentDir,
+                                          final MimeType mimeType) throws IOException, URISyntaxException {
 
         // TODO improve handling of existing files (do we have to warn the user ?)
         // TODO add other remote file scheme (ftp, ssh?)
-
         // assert that parentDir exist
         new File(parentDir).mkdirs();
 
@@ -782,10 +781,13 @@ public final class FileUtils {
         final File localFile = new File(parentDir, name.getName());
 
         if (!localFile.exists()) {
-            Http.download(new URI(remoteLocation), localFile, true);
+            if (!Http.download(new URI(remoteLocation), localFile, false)) {
+                // http status != 200
+                return null;
+            }
         } else {
             // TODO: use HEAD HTTP method to check remote file date / checksum ...
-            _logger.info("'{}' already present, do not download '{}' again ( please delete it first if it has changed or is not the same one and restart).", localFile, remoteLocation);
+            _logger.info("'{}' already present, do not download '{}' again ( please delete it first if it has changed and restart).", localFile, remoteLocation);
         }
 
         return localFile;

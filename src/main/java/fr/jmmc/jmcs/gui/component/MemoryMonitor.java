@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Simple JVM memory monitor
  *
- * @author bourgesl
+ * @author Laurent BOURGES.
  */
 public final class MemoryMonitor extends JPanel implements Disposable {
 

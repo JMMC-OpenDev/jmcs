@@ -54,6 +54,8 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
     private final Task _task;
     /** log prefix using the format 'SwingWorker[" + task.name + "]" + logSuffix + "@hashcode' used by debugging statements */
     protected final String _logPrefix;
+    /** running thread name (only defined during the background execution; null otherwise) */
+    private volatile String threadName = null;
 
     /**
      * Create a new TaskSwingWorker instance
@@ -117,10 +119,29 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
     }
 
     /**
+     * @return running thread name (only defined during the background execution; null otherwise)
+     */
+    protected final String getThreadName() {
+        return threadName;
+    }
+
+    /**
+     * Define the running thread name.
+     * Invoked by the TaskSwingWorkerExecutor
+     * @param threadName thread name running this job 
+     */
+    final void setThreadName(final String threadName) {
+        if (DEBUG_FLAG) {
+            _logger.info("{}.setThreadName: {}", _logPrefix, threadName);
+        }
+        this.threadName = threadName;
+    }
+
+    /**
      * Custom cancel implementation to call beforeCancel() and then cancel(true) to interupt the thread
      * @return true if the task was cancelled; false otherwise
      */
-    public final boolean doCancel() {
+    final boolean doCancel() {
         if (DEBUG_FLAG) {
             _logger.info("{}.doCancel: beforeCancel", _logPrefix);
         }
@@ -138,7 +159,7 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
     /**
      * Perform cancellation preparation (network ...)
      */
-    public void beforeCancel() {
+    protected void beforeCancel() {
         // empty implementation
     }
 

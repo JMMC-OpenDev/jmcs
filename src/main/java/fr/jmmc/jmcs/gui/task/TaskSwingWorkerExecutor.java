@@ -380,6 +380,11 @@ public final class TaskSwingWorkerExecutor {
             if (DEBUG_FLAG) {
                 _logger.info("beforeExecute: {}", r);
             }
+            if (r instanceof TaskSwingWorker<?>) {
+                final TaskSwingWorker<?> worker = (TaskSwingWorker<?>) r;
+                // define the thread name:
+                worker.setThreadName(t.getName());
+            }
         }
 
         /**
@@ -417,6 +422,9 @@ public final class TaskSwingWorkerExecutor {
             }
             if (r instanceof TaskSwingWorker<?>) {
                 final TaskSwingWorker<?> worker = (TaskSwingWorker<?>) r;
+                // reset the thread name:
+                worker.setThreadName(null);
+
                 if (!worker.isCancelled()) {
                     _executor.clearWorker(worker);
                 }

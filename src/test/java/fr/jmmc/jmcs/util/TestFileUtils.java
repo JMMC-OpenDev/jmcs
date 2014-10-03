@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import fr.jmmc.jmcs.data.MimeType;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.lang.SystemUtils;
@@ -620,16 +621,13 @@ public class TestFileUtils {
     @Test
     public void testRetrieveRemoteFile() throws Exception {
         System.out.println("retrieveRemoteFile");
-        /* TODO
 
-         String remoteLocation = "";
-         String parentDir = "";
-         MimeType mimeType = null;
-         File expResult = null;
-         File result = FileUtils.retrieveRemoteFile(remoteLocation, parentDir, mimeType);
-         Assert.assertEquals(expResult, result);
-         */
-
+        String remoteLocation = "http://jmmc.fr/stats/?detail=on";
+        String parentDir = "/tmp/";
+        MimeType mimeType = MimeType.PLAIN_TEXT;
+        File expResult = null;
+        File result = FileUtils.retrieveRemoteFile(remoteLocation, parentDir, mimeType);
+        Assert.assertEquals(expResult, result);
     }
 
     /**

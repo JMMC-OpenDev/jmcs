@@ -35,6 +35,7 @@ import fr.jmmc.jmcs.gui.util.ResourceImage;
 import fr.jmmc.jmcs.service.BrowserLauncher;
 import fr.jmmc.jmcs.util.ImageUtils;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,8 +49,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 
@@ -69,6 +68,8 @@ public final class StatusBar extends JPanel {
     /* members */
     /** Status label */
     private final JLabel _statusLabel = new JLabel();
+    /** custom panel container */
+    private final JPanel _container = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
     /**
      * Return the StatusBar singleton instance or create a new one
@@ -130,6 +131,28 @@ public final class StatusBar extends JPanel {
         }
     }
 
+    /**
+     * Add the given panel in the custom panel container
+     * @param panel JPanel to add (small component expected)
+     */
+    public static void addCustomPanel(final JPanel panel) {
+        final StatusBar instance = getExistingInstance();
+        if (instance != null) {
+            instance.addPanel(panel);
+        }
+    }
+
+    /**
+     * Remove the given panel from the custom panel container
+     * @param panel JPanel to remove
+     */
+    public static void removeCustomPanel(final JPanel panel) {
+        final StatusBar instance = getExistingInstance();
+        if (instance != null) {
+            instance.removePanel(panel);
+        }
+    }
+
     private static synchronized StatusBar getInstance(final boolean doCreate) {
         StatusBar instance = (_weakSingleton != null) ? _weakSingleton.get() : null;
         if ((instance == null) && doCreate) {
@@ -153,53 +176,63 @@ public final class StatusBar extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // Create logo
-        final String logoURL = ApplicationDescription.getInstance().getCompanyLogoResourcePath();
-        final ImageIcon imageIcon = ImageUtils.loadResourceIcon(logoURL);
-        final ImageIcon scaledImageIcon = ImageUtils.getScaledImageIcon(imageIcon, 17, 0);
-        final JLabel logo = new JLabel();
-        logo.setIcon(scaledImageIcon);
-        logo.setVisible(true);
+        // hide custom container by default:
+//        _container.setBorder(BorderFactory.createLineBorder(Color.red));
+        _container.setVisible(false);
 
-        // Create text logo
-        final JLabel textStatusBar = new JLabel();
-        textStatusBar.setText(" Provided by ");
-        textStatusBar.setFont(new Font("Comic Sans MS", 2, 10));
-        textStatusBar.setVisible(true);
+        final int spacer = 4;
+
+        // StatusBar elements placement
+        final JPanel jpanelLeft = new JPanel();
+        jpanelLeft.setLayout(new BoxLayout(jpanelLeft, BoxLayout.X_AXIS));
+        jpanelLeft.add(Box.createHorizontalStrut(spacer));
 
         // Create status history button
         final ImageIcon historyIcon = ResourceImage.STATUS_HISTORY.icon();
         final JButton historyButton = new JButton(historyIcon);
-        final Border historyBorder = new EmptyBorder(0, 4, 0, 0);
-        historyButton.setBorder(historyBorder);
         historyButton.setToolTipText("Click to view status history");
+        historyButton.setBorder(null);
         historyButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LogbackGui.showLogConsoleForLogger(LoggingService.JMMC_STATUS_LOG);
             }
         });
-
-        // JVM Memory monitor
-        final MemoryMonitor mm = new MemoryMonitor();
-        mm.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-
-        // StatusBar elements placement
-        final JPanel jpanelLeft = new JPanel();
-        jpanelLeft.setLayout(new BoxLayout(jpanelLeft, BoxLayout.X_AXIS));
         jpanelLeft.add(historyButton);
-        jpanelLeft.add(new JLabel(" Status: "));
+        jpanelLeft.add(Box.createHorizontalStrut(spacer));
+        // Add container:
+        jpanelLeft.add(_container);
+        jpanelLeft.add(Box.createHorizontalStrut(spacer));
 
         final JPanel jpanelRight = new JPanel();
         jpanelRight.setLayout(new BoxLayout(jpanelRight, BoxLayout.X_AXIS));
-        jpanelRight.add(mm);
-        jpanelRight.add(textStatusBar);
+
+        // Add the JVM Memory monitor:
+        final MemoryMonitor memoryMonitor = new MemoryMonitor();
+        memoryMonitor.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
+        jpanelRight.add(memoryMonitor);
+        jpanelRight.add(Box.createHorizontalStrut(spacer));
+
+        // Create text logo
+        final JLabel textLogo = new JLabel();
+        textLogo.setText("Provided by");
+        textLogo.setFont(new Font("Comic Sans MS", Font.ITALIC, 10));
+        jpanelRight.add(textLogo);
+        jpanelRight.add(Box.createHorizontalStrut(spacer));
+
+        // Create logo
+        final String logoURL = ApplicationDescription.getInstance().getCompanyLogoResourcePath();
+        final ImageIcon imageIcon = ImageUtils.loadResourceIcon(logoURL);
+        final ImageIcon scaledImageIcon = ImageUtils.getScaledImageIcon(imageIcon, 17, 0);
+        final JLabel logo = new JLabel();
+        logo.setIcon(scaledImageIcon);
         jpanelRight.add(logo);
+
         /*
          * Add a space on the right bottom angle because Mac OS X corner is
          * already decored with its resize handle
          */
-        jpanelRight.add(Box.createHorizontalStrut((SystemUtils.IS_OS_MAC_OSX) ? 14 : 4));
+        jpanelRight.add(Box.createHorizontalStrut((SystemUtils.IS_OS_MAC_OSX) ? 14 : spacer));
 
         add(jpanelLeft, BorderLayout.WEST); // fixed
         add(_statusLabel, BorderLayout.CENTER); // free size
@@ -235,6 +268,26 @@ public final class StatusBar extends JPanel {
      */
     private String getStatusLabel() {
         return _statusLabel.getText();
+    }
+
+    /**
+     * Add the given panel in the custom panel container
+     * @param panel JPanel to add (small component expected)
+     */
+    private void addPanel(final JPanel panel) {
+        _container.add(panel);
+        _container.setVisible(true);
+    }
+
+    /**
+     * Remove the given panel from the custom panel container
+     * @param panel JPanel to remove
+     */
+    private void removePanel(final JPanel panel) {
+        _container.remove(panel);
+        if (_container.getComponentCount() == 0) {
+            _container.setVisible(false);
+        }
     }
 }
 /*___oOo___*/

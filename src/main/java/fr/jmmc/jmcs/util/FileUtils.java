@@ -28,6 +28,7 @@
 package fr.jmmc.jmcs.util;
 
 import fr.jmmc.jmcs.data.MimeType;
+import fr.jmmc.jmcs.gui.component.StatusBar;
 import fr.jmmc.jmcs.network.http.Http;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -781,13 +782,15 @@ public final class FileUtils {
         final File localFile = new File(parentDir, name.getName());
 
         if (!localFile.exists()) {
+            StatusBar.show("downloading file: " + remoteLocation + " ...");
+
             if (!Http.download(new URI(remoteLocation), localFile, false)) {
                 // http status != 200
                 return null;
             }
         } else {
             // TODO: use HEAD HTTP method to check remote file date / checksum ...
-            _logger.info("'{}' already present, do not download '{}' again ( please delete it first if it has changed and restart).", localFile, remoteLocation);
+            _logger.info("Use local copy '{}', skip downloading '{}'", localFile, remoteLocation);
         }
 
         return localFile;

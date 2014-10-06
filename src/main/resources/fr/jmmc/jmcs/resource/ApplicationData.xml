@@ -189,8 +189,9 @@
 
     <releasenotes>
         <release version="1.0.3">
-            <pubDate>Wed, 01 Oct 2014 17:00:00 GMT</pubDate>
+            <pubDate>Mon, 06 Oct 2014 17:00:00 GMT</pubDate>
             <prerelease version="1.0.3b3" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.component.StatusBar.java : added custom panel support (add / remove)</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.gui.component.StatusBar.java : added a jvm memory monitor
                     and fixed layout to truncate long messages but keep logo displayed</change>
             </prerelease>

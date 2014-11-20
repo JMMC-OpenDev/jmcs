@@ -241,7 +241,8 @@ public final class NetworkSettings {
         System.setProperty(PROPERTY_HTTP_PROXY_PORT, Integer.toString(proxyPort));
 
         // # http.nonProxyHosts
-//        System.setProperty(PROPERTY_HTTP_NO_PROXY_HOSTS, "localhost|127.0.0.1");
+        System.setProperty(PROPERTY_HTTP_NO_PROXY_HOSTS, "localhost|127.0.0.1");
+        
         // TODO : support also advanced proxy settings (user, password ...)
         // # http.proxyUser
         // # http.proxyPassword

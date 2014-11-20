@@ -303,7 +303,7 @@ public class ResizableTextViewFactory {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            _logger.info("CloseWindowAction called.");
+            _logger.debug("CloseWindowAction called.");
 
             if (_window.isVisible()) {
                 // trigger standard closing action (@see JFrame.setDefaultCloseOperation)

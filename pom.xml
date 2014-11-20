@@ -158,11 +158,11 @@
         </dependency>
         <dependency>
             <!-- Requires you to install manually the artifact:
-            mvn install:install-file -Dfile=lib/jsamp-1.3-4+.jar -DgroupId=org.astrogrid -DartifactId=jsamp -Dversion=1.3-4+ -Dpackaging=jar
+            mvn install:install-file -Dfile=lib/jsamp-1.3.5.jar -DgroupId=org.astrogrid -DartifactId=jsamp -Dversion=1.3.5 -Dpackaging=jar
             -->
             <groupId>org.astrogrid</groupId>
             <artifactId>jsamp</artifactId>
-            <version>1.3-4+</version>
+            <version>1.3.5</version>
         </dependency>
 
         <dependency>

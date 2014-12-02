@@ -625,7 +625,8 @@ public class TestFileUtils {
         String remoteLocation = "http://jmmc.fr/stats/?detail=on";
         String parentDir = "/tmp/";
         MimeType mimeType = MimeType.PLAIN_TEXT;
-        File expResult = null;
+        File expResult = new File("/tmp/?detail=on.txt");
+        /* is the same behaviour as curl -O do but with an additional .txt suffix */
         File result = FileUtils.retrieveRemoteFile(remoteLocation, parentDir, mimeType);
         Assert.assertEquals(expResult, result);
     }

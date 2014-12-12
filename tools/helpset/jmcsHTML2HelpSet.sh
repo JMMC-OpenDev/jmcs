@@ -117,7 +117,8 @@ do
         # files in module co folder
         module_doc=$module"-doc"
         mv $module/$module $module"-doc"
-        rm -rf $module
+# testing
+#        rm -rf $module
 
     fi
 

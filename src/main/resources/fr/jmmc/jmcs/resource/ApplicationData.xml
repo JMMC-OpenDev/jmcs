@@ -39,8 +39,8 @@
         <feedback_form_url>http://jmmc.fr/feedback/feedback.php</feedback_form_url>
     </company>
 
-    <program name="jMCS Framework" version="1.0.3b3"/>
-    <compilation date="01/10/2014" compiler="1.6"/>
+    <program name="jMCS Framework" version="1.0.3"/>
+    <compilation date="15/12/2014" compiler="1.6"/>
 
     <text>JMMC framework, enabling better user interface and platform integration across Mac, Linux and Windows through numerous third-party libraries and in-house code</text>
 
@@ -56,10 +56,10 @@
         <package name="JSAMP"
                  description="JSAMP is a Java toolkit for use with the Simple Applications Messaging Protocol. Made by Mark Taylor, working in the Astrophysics Group at Bristol University."
                  link="http://software.astrogrid.org/doc/jsamp/"
-                 jars="jsamp-1.3.4+.jar"
+                 jars="jsamp-1.3.5.jar"
                  license="AFL v2.1"
                  file="JSAMP.txt"/>
-        <!--license="(at least) the Academic Free Licence and the BSD License."/>-->
+        <!--license="(at least) the Academic Free License and the BSD License."/>-->
 
 
         <!-- 2. Swing -->
@@ -192,7 +192,7 @@
             <pubDate>Mon, 06 Oct 2014 17:00:00 GMT</pubDate>
             <prerelease version="1.0.3b3" tag="UNKNOWN">
                 <change type="FEATURE">In fr.jmmc.jmcs.gui.component.StatusBar.java : added custom panel support (add / remove)</change>
-                <change type="FEATURE">In fr.jmmc.jmcs.gui.component.StatusBar.java : added a jvm memory monitor
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.component.StatusBar.java : added a JVM memory monitor
                     and fixed layout to truncate long messages but keep logo displayed</change>
             </prerelease>
             <prerelease version="1.0.3b2" tag="UNKNOWN">

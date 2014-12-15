@@ -30,7 +30,7 @@
 ********************************************************************************
 -->
 
-<ApplicationData link="http://www.jmmcs.fr/dev/jmcs/jae/" faqlink="http://trac.jmmc.fr/jmmc-jmcs/wiki/DevDoc" rsslink="http://trac.jmmc.fr/jmmc-jmcs/timeline?format=rss">
+<ApplicationData link="https://github.com/JMMC-OpenDev/jMCS" faqlink="https://github.com/JMMC-OpenDev/jMCS/wiki/jMCS-Developer-Documentation" rsslink="https://github.com/JMMC-OpenDev/jMCS/releases">
 
     <company>
         <short_name>YourCompany</short_name>
@@ -42,9 +42,9 @@
 
     <authors>Sylvain LAFRASSE</authors>
 
-    <program name="jMCS Demo" version="1.0.0"/>
+    <program name="jMCS Demo" version="1.0.1"/>
 
-    <compilation date="19/2/2014" compiler="1.6"/>
+    <compilation date="15/12/2014" compiler="1.6"/>
 
     <text>Description of your program should go here...</text>
 
@@ -112,6 +112,12 @@
     </menubar>
 
     <releasenotes>
+        <release version="1.0.1">
+            <pubDate>Mon, 15 Dec 2014 16:00:00 GMT</pubDate>
+            <prerelease version="1.0.1b1" tag="UNKNOWN">
+                <change type="BUGFIX">Fixed URLs.</change>
+            </prerelease>
+        </release>
         <release version="1.0.0">
             <prerelease version="1.0b3" tag="V1_0b3">
                 <change type="FEATURE">Added jMCS web site button.</change>

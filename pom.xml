@@ -44,7 +44,7 @@
 
     <packaging>jar</packaging>
     <name>jMCS</name>
-    <url>http://www.jmmc.fr/dev/jmcs</url>
+    <url>https://github.com/JMMC-OpenDev/jMCS</url>
 
     <properties>
         <!-- do make assembly and copy dependencies -->

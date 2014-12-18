@@ -216,7 +216,7 @@ public final class SampManager {
             meta.setDescriptionText(sampDescription);
         }
 
-        final String documentationUrl = applicationDataModel.getDocumetationUrl();
+        final String documentationUrl = applicationDataModel.getDocumentationLinkValue();
         if (documentationUrl != null) {
             meta.setDocumentationUrl(documentationUrl);
         }

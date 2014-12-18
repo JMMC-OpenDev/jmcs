@@ -405,6 +405,7 @@ public class InternalActionFactory {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1;
+        private String _documentationURL = null;
 
         /**
          * Public constructor
@@ -414,12 +415,18 @@ public class InternalActionFactory {
          */
         ShowHelpAction(String classPath, String fieldName) {
             super(classPath, fieldName, "User Manual");
-            setEnabled(HelpView.isAvailable());
 
             // Set Icon only if not under Mac OS X
             if (!SystemUtils.IS_OS_MAC_OSX) {
                 final ImageIcon helpIcon = ResourceImage.HELP_ICON.icon();
                 putValue(SMALL_ICON, helpIcon);
+            }
+
+            // If Documentation web page URL not provided
+            _documentationURL = ApplicationDescription.getInstance().getDocumentationLinkValue();
+            if (_documentationURL == null) {
+                // Try embedded HelpSet instead
+                setEnabled(HelpView.isAvailable());
             }
         }
 
@@ -429,7 +436,11 @@ public class InternalActionFactory {
          */
         @Override
         public void actionPerformed(ActionEvent evt) {
-            HelpView.setVisible(true);
+            if (_documentationURL != null) {
+                BrowserLauncher.openURL(_documentationURL);
+            } else {
+                HelpView.setVisible(true);
+            }
         }
     }
 

@@ -201,6 +201,8 @@ public final class ApplicationDescription {
     private String _hotNewsRSSFeedLink = null;
     /** FAQ URL */
     private String _faqLink = null;
+    /** Documentation URL */
+    private String _documentationLink = null;
 
     /**
      * Public constructor
@@ -262,6 +264,9 @@ public final class ApplicationDescription {
         }
         if (_applicationData.isSetRsslink()) {
             _hotNewsRSSFeedLink = _applicationData.getRsslink();
+        }
+        if (_applicationData.isSetDocumentationlink()) {
+            _documentationLink = _applicationData.getDocumentationlink();
         }
 
         _logger.debug("Application data model loaded.");
@@ -389,9 +394,18 @@ public final class ApplicationDescription {
      * @return the application Hot News RSS feed URL if any, null otherwise.
      */
     public String getHotNewsRSSFeedLinkValue() {
-        _logger.debug("HotNewsRSSFeedLink: {}", _hotNewsRSSFeedLink);
+        _logger.debug("HotNewsRSSFeedLink value is: {}", _hotNewsRSSFeedLink);
 
         return _hotNewsRSSFeedLink;
+    }
+
+    /**
+     * @return the application Documentation URL if any, null otherwise.
+     */
+    public String getDocumentationLinkValue() {
+        _logger.debug("DocumentationLink value is: {}", _documentationLink);
+
+        return _documentationLink;
     }
 
     /**
@@ -510,13 +524,6 @@ public final class ApplicationDescription {
      */
     public String getSampDescription() {
         return _applicationData.getSampdescription();
-    }
-
-    /**
-     * @return Application documentation URL if any, null otherwise.
-     */
-    public String getDocumetationUrl() {
-        return _applicationData.getDocumentationlink();
     }
 
     public String getJnlpUrl() {

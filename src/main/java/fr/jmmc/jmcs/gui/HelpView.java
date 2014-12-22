@@ -152,7 +152,7 @@ public class HelpView {
 
     /**
      * Ask the help view to show the page associated to the given helpID
-     * @param helpID
+     * @param helpID anchor identifier
      */
     public static void show(String helpID) {
         // show without move if it is already visible

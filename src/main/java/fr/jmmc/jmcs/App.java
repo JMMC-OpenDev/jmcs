@@ -403,7 +403,7 @@ public abstract class App {
 
         /**
          * For unit testing purpose only.
-         * @param args
+         * @param args CLI options and parameters
          */
         public static void main(String[] args) {
             for (ApplicationState s : ApplicationState.values()) {

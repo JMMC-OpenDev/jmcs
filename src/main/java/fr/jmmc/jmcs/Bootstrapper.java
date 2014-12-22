@@ -272,7 +272,7 @@ public final class Bootstrapper {
      * @param shouldShowSplashScreen show startup splash screen if true, nothing otherwise.
      *
      * @return true on success, false otherwise.
-     * @throws IllegalStateException
+     * @throws IllegalStateException TBD
      */
     public static boolean launchApp(final App application, final boolean waitBeforeExecution, final boolean exitWhenClosed,
                                     final boolean shouldShowSplashScreen) throws IllegalStateException {

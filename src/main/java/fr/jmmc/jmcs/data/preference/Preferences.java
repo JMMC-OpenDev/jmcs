@@ -891,6 +891,7 @@ public abstract class Preferences extends Observable {
      * @return one Dimension representing the preference value.
      * 
      * @throws MissingPreferenceException if the preference value is missing.
+     * @throws fr.jmmc.jmcs.data.preference.PreferencesException TBD
      */
     final public Dimension getPreferenceAsDimension(final Object preferenceName) throws MissingPreferenceException, PreferencesException {
         return getPreferenceAsDimension(preferenceName, false);
@@ -1092,10 +1093,9 @@ public abstract class Preferences extends Observable {
 
     /**
      * Returns an Enumeration (ordered if possible) of preference names which
-     * start with given string. One given empty string make all preference
-     * entries returned.
+     * start with given string. An empty string make all preference entries returned.
      *
-     * @param prefix 
+     * @param prefix sought preference name, or "" for all
      * @return Enumeration a string enumeration of preference names
      */
     final public Enumeration<String> getPreferences(final Object prefix) {

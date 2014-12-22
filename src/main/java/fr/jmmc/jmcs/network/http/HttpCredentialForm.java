@@ -50,7 +50,10 @@ public class HttpCredentialForm extends javax.swing.JDialog {
     /** Credential instance returned by getCredentials method */
     private Credentials _credentials = null;
 
-    /** Creates new form HttpCredentialForm */
+    /**
+     * Creates new form HttpCredentialForm.
+     * @param getMethod GetMethod instance
+     */
     public HttpCredentialForm(final GetMethod getMethod) {
         super(App.getFrame(), true);
         initComponents();

@@ -140,8 +140,8 @@ public final class PreferencedButtonModel extends DefaultButtonModel
 
     /**
      * Triggered if the preference shared instance has been modified.
-     * @param o
-     * @param arg  
+     * @param o the Observable object
+     * @param arg parameter
      */
     @Override
     public void update(final Observable o, final Object arg) {

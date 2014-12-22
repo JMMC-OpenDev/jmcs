@@ -63,7 +63,7 @@ public enum ResourceImage {
 
     /**
      * For unit testing purpose only.
-     * @param args
+     * @param args CLI options and parameters
      */
     public static void main(String[] args) {
         for (ResourceImage rsc : ResourceImage.values()) {

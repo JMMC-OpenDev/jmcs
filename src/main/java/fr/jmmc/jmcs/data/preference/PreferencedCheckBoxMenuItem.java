@@ -89,8 +89,8 @@ public class PreferencedCheckBoxMenuItem extends JCheckBoxMenuItem implements Ob
 
     /**
      * Triggered if the preference shared instance has been modified.
-     * @param o
-     * @param arg  
+     * @param o the Observable object
+     * @param arg parameter
      */
     @Override
     public void update(Observable o, Object arg) {

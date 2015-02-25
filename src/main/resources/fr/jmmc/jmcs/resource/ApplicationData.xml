@@ -39,8 +39,8 @@
         <feedback_form_url>http://jmmc.fr/feedback/feedback.php</feedback_form_url>
     </company>
 
-    <program name="jMCS Framework" version="1.0.4b1"/>
-    <compilation date="15/12/2014" compiler="1.6"/>
+    <program name="jMCS Framework" version="1.0.4b2"/>
+    <compilation date="25/02/2015" compiler="1.6"/>
 
     <text>JMMC framework, enabling better user interface and platform integration across Mac, Linux and Windows through numerous third-party libraries and in-house code</text>
 
@@ -189,6 +189,12 @@
 
     <releasenotes>
         <release version="1.0.4">
+            <prerelease version="1.0.4b2" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.util.WindowUtils.java : Improved multi-monitor support = use window's display instead of the primary display if possible to center windows on the appropriate display</change>
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.util.WindowUtils.java : Fix NPE when restoring window size in case of GraphicsDevice.getDisplayMode() returns null</change>
+                <change type="FEATURE">Head less mode handling: exit properly but log the message:
+                    "Unable to start the GUI application [...] (headless mode enabled)"</change>
+            </prerelease>
             <prerelease version="1.0.4b1" tag="UNKNOWN">
                 <change type="FEATURE">In the Help menu 'User Manual' action : Now open ApplicationData.xml 'documentation link' attribute (if present) in the user's default web browser.</change>
             </prerelease>

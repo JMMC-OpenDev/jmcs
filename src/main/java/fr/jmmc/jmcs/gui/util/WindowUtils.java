@@ -31,9 +31,11 @@ import fr.jmmc.jmcs.data.preference.SessionSettingsPreferences;
 import fr.jmmc.jmcs.gui.MainMenuBar;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,34 +63,64 @@ public final class WindowUtils {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(WindowUtils.class.getName());
-    /** Screen width */
-    private static int _screenWidth = 0;
-    /** Screen height */
-    private static int _screenHeight = 0;
+    /** jdk issue test: GraphicsDevice.getDisplayMode() returns null */
+    private static final boolean TEST_DISPLAY_MODE_NULL = false;
 
     /**
-     * Get screen properties
+     * Get the screen bounds of the given window's display otherwise of the primary display
+     * @param screenWindow root window to get the proper screen size
      * @throws NullPointerException on some platform (virtual box)
+     * @return rectangle corresponding to the given window's display otherwise of the primary display
      */
-    public static void getScreenProperties() throws NullPointerException {
-        // Get main screen size
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gs = ge.getDefaultScreenDevice();
-        DisplayMode dm = gs.getDisplayMode();
-        _screenWidth = dm.getWidth();
-        _screenHeight = dm.getHeight();
+    private static Rectangle getScreenBounds(final Window screenWindow) throws NullPointerException {
+        if (screenWindow != null) {
+            final GraphicsConfiguration gc = screenWindow.getGraphicsConfiguration();
+            if (gc != null) {
+                final Rectangle bounds = gc.getBounds();
+
+                _logger.debug("getScreenDimension: [{} x {}]", bounds);
+
+                return bounds;
+            }
+        }
+        return getDefaultScreenBounds();
+    }
+
+    /**
+     * Get the screen bounds of the primary display
+     * @throws NullPointerException on some platform (virtual box)
+     * @return rectangle corresponding to the primary display
+     */
+    private static Rectangle getDefaultScreenBounds() throws NullPointerException {
+        // Get the main screen size:
+        final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice gs = ge.getDefaultScreenDevice();
+
+        // note: check for null (virtual box / buggy openjdk / bad graphics driver or environment):
+        final DisplayMode dm = gs.getDisplayMode();
+
+        if (TEST_DISPLAY_MODE_NULL || (dm == null)) {
+            throw new NullPointerException("GraphicsDevice.displayMode is null !");
+        }
+
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("getDefaultScreenDimension: [{} x {}]", dm.getWidth(), dm.getHeight());
+        }
+
+        return new Rectangle(0, 0, dm.getWidth(), dm.getHeight());
     }
 
     /** 
      * Return the maximum viewable area or dimension if smaller. 
-     * @param dimension frame dimension
+     * @param screenBounds screen bounds to consider
+     * @param frameDimension frame dimension
      * @return dimension
      */
-    public static Dimension getMaximumArea(final Dimension dimension) {
-        Dimension max = new Dimension();
-        max.height = Math.min(_screenHeight, dimension.height);
-        max.width = Math.min(_screenWidth, dimension.width);
-        return max;
+    public static Dimension getMaximumArea(final Rectangle screenBounds, final Dimension frameDimension) {
+        return new Dimension(
+                Math.min(screenBounds.width, frameDimension.width),
+                Math.min(screenBounds.height, frameDimension.height)
+        );
     }
 
     /**
@@ -100,6 +132,8 @@ public final class WindowUtils {
      */
     public static void centerOnMainScreen(final Window windowToCenter) {
         if (windowToCenter != null) {
+            // TODO: use JDK 1.5 API GraphicsDevice.getCenterPoint() ...
+            
             // Using invokeAndWait to be in sync with this thread
             // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
             SwingUtils.invokeAndWaitEDT(new Runnable() {
@@ -108,16 +142,14 @@ public final class WindowUtils {
                  */
                 @Override
                 public void run() {
-                    // Next try catch is mandatory to catach null pointer excpetion that
+                    // Next try catch is mandatory to catch null pointer exception that
                     // can occure on some virtual machine emulation (at least virtualBox)
                     try {
-                        getScreenProperties();
-
                         // Dimension of the window
                         Dimension windowSize = windowToCenter.getSize();
 
                         // Get centering point
-                        Point point = getCenteringPoint(windowSize);
+                        Point point = getCenteringPoint(windowToCenter, windowSize);
 
                         windowToCenter.setLocation(point);
 
@@ -125,6 +157,7 @@ public final class WindowUtils {
 
                     } catch (NullPointerException npe) {
                         _logger.warn("Could not center window");
+                        // TODO: use JDK 1.5 API GraphicsConfiguration.getBounds() getCenterPoint() ...
                     }
                 }
             });
@@ -133,19 +166,17 @@ public final class WindowUtils {
 
     /**
      * Returns the centered point in order to center a frame on the screen
+     * @param screenWindow root window to get the proper screen size
      * @param frameDimension frame size
      * @return centered point
      * @throws NullPointerException on some platform (virtual box)
      */
-    public static Point getCenteringPoint(final Dimension frameDimension) throws NullPointerException {
+    public static Point getCenteringPoint(final Window screenWindow, final Dimension frameDimension) throws NullPointerException {
+        // refresh the screen dimensions (may throw NPE):
+        final Rectangle bounds = getScreenBounds(screenWindow);
 
-        getScreenProperties();
-
-        int x = (_screenWidth - frameDimension.width) / 2;
-        x = Math.max(x, 0);
-
-        int y = (_screenHeight - frameDimension.height) / 2;
-        y = Math.max(y, 0);
+        int x = Math.max(0, bounds.x) + Math.max(0, (bounds.width - frameDimension.width) / 2);
+        int y = Math.max(0, bounds.y) + Math.max(0, (bounds.height - frameDimension.height) / 2);
 
         return new Point(x, y);
     }
@@ -222,8 +253,17 @@ public final class WindowUtils {
                 if (loadedDimension == null) {
                     window.pack();
                 } else {
-                    getScreenProperties();
-                    window.setSize(getMaximumArea(loadedDimension));
+                    // Next try catch is mandatory to catch null pointer exception that
+                    // can occure on some virtual machine emulation (at least virtualBox)
+                    try {
+                        // refresh the screen dimensions (may throw NPE):
+                        final Rectangle bounds = getScreenBounds(window);
+
+                        // always in the primary display:
+                        window.setSize(getMaximumArea(bounds, loadedDimension));
+                    } catch (NullPointerException npe) {
+                        _logger.warn("Could not adjust window size");
+                    }
                 }
             }
         });

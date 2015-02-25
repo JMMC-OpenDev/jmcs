@@ -51,6 +51,7 @@ import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import fr.jmmc.jmcs.util.runner.LocalLauncher;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -291,62 +292,66 @@ public final class Bootstrapper {
         setState(ApplicationState.ENV_INIT);
         final long startTime = System.nanoTime();
         boolean launchDone = false;
+        
+        // Check headless mode:
+        if (GraphicsEnvironment.isHeadless()) {
+            _jmmcLogger.info("Unable to start the GUI application [{}] (headless mode enabled) !", application.getClass().getSimpleName());
+        } else {
+            _application = application;
+            _exitApplicationWhenClosed = exitWhenClosed;
+            _application.___internalSingletonInitialization();
 
-        _application = application;
-        _exitApplicationWhenClosed = exitWhenClosed;
-        _application.___internalSingletonInitialization();
+            try {
+                // Load jMCS and application data models
+                ApplicationDescription.init();
+                _jmmcLogger.debug("Application data loaded.");
 
-        try {
-            // Load jMCS and application data models
-            ApplicationDescription.init();
-            _jmmcLogger.debug("Application data loaded.");
+                _jmmcLogger.info("{} launching application '{}' ...",
+                        ApplicationDescription.getJmcsInstance().getProgramNameWithVersion(),
+                        ApplicationDescription.getInstance().getProgramNameWithVersion());
 
-            _jmmcLogger.info("{} launching application '{}' ...",
-                    ApplicationDescription.getJmcsInstance().getProgramNameWithVersion(),
-                    ApplicationDescription.getInstance().getProgramNameWithVersion());
+                _application.___internalStart();
 
-            _application.___internalStart();
+                // Build Acknowledgment, ShowRelease and ShowHelp Actions
+                // (the creation must be done after applicationModel instanciation)
+                ActionRegistrar.getInstance().createAllInternalActions();
 
-            // Build Acknowledgment, ShowRelease and ShowHelp Actions
-            // (the creation must be done after applicationModel instanciation)
-            ActionRegistrar.getInstance().createAllInternalActions();
+                setState(ApplicationState.APP_INIT);
+                application.initServices();
 
-            setState(ApplicationState.APP_INIT);
-            application.initServices();
+                SplashScreen.display(shouldShowSplashScreen);
 
-            SplashScreen.display(shouldShowSplashScreen);
+                ___internalRun();
 
-            ___internalRun();
+                launchDone = true;
 
-            launchDone = true;
+                final double elapsedTime = 1e-6d * (System.nanoTime() - startTime);
+                _jmmcLogger.info("Application startup done (duration = {} ms).", elapsedTime);
 
-            final double elapsedTime = 1e-6d * (System.nanoTime() - startTime);
-            _jmmcLogger.info("Application startup done (duration = {} ms).", elapsedTime);
+            } catch (Throwable th) {
+                final ApplicationState stateOnError = Bootstrapper.getState();
 
-        } catch (Throwable th) {
-            final ApplicationState stateOnError = Bootstrapper.getState();
+                setState(ApplicationState.APP_BROKEN);
 
-            setState(ApplicationState.APP_BROKEN);
+                // Show the feedback report (modal)
+                SplashScreen.close();
+                MessagePane.showErrorMessage("An error occured while initializing the application");
 
-            // Show the feedback report (modal)
-            SplashScreen.close();
-            MessagePane.showErrorMessage("An error occured while initializing the application");
+                // Add last chance tip if this exception appears in an inited state but before being ready. (cf. trac #458)
+                final Throwable throwable;
+                if (stateOnError.after(ApplicationState.ENV_INIT) && stateOnError.before(ApplicationState.APP_READY)) {
+                    final String warningMessage = "The application did not start properly. Please try first to start it again from the website:\n"
+                            + ApplicationDescription.getInstance().getLinkValue()
+                            + "\nIf this operation does not fix the problem, please send us a feedback report!\n\n";
 
-            // Add last chance tip if this exception appears in an inited state but before being ready. (cf. trac #458)
-            final Throwable throwable;
-            if (stateOnError.after(ApplicationState.ENV_INIT) && stateOnError.before(ApplicationState.APP_READY)) {
-                final String warningMessage = "The application did not start properly. Please try first to start it again from the website:\n"
-                        + ApplicationDescription.getInstance().getLinkValue()
-                        + "\nIf this operation does not fix the problem, please send us a feedback report!\n\n";
-
-                throwable = new Throwable(warningMessage, th);
-            } else {
-                throwable = th;
+                    throwable = new Throwable(warningMessage, th);
+                } else {
+                    throwable = th;
+                }
+                /* use invokeAndWaitEDT ie blocking the current thread */
+                FeedbackReport.openDialog(true, throwable);
             }
-            /* use invokeAndWaitEDT ie blocking the current thread */
-            FeedbackReport.openDialog(true, throwable);
         }
-
         return launchDone;
     }
 

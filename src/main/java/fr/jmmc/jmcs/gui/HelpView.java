@@ -27,7 +27,6 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.util.UrlUtils;
 import java.net.URL;
@@ -114,21 +113,23 @@ public class HelpView {
     /**
      * Show or hide the help view depending on the value of parameter b.
      *
-     * @param b if true, shows this component; otherwise, hides this componentShow or hide help view.
+     * @param visible if true, shows this component; otherwise, hides this componentShow or hide help view.
      */
-    public static void setVisible(boolean b) {
+    public static void setVisible(boolean visible) {
         if (isAvailable()) {
-            // see WindowUtils.centerOnMainScreen:
-            // Next try catch is mandatory to catch null pointer exception that
-            // can occure on some virtual machine emulation (at least virtualBox)
-            try {
-                _helpBroker.setLocation(WindowUtils.getCenteringPoint(App.getFrame(), _helpBroker.getSize()));
-            } catch (NullPointerException npe) {
-                _logger.warn("Could not center help window");
+            if (visible) {
+                // see WindowUtils.centerOnMainScreen:
+                // Next try catch is mandatory to catch null pointer exception that
+                // can occure on some virtual machine emulation (at least virtualBox)
+                try {
+                    _helpBroker.setLocation(WindowUtils.getCenteringPoint(_helpBroker.getSize()));
+                } catch (NullPointerException npe) {
+                    _logger.warn("Could not center help window");
+                }
             }
 
             // Show the window
-            _helpBroker.setDisplayed(b);
+            _helpBroker.setDisplayed(visible);
         }
     }
 

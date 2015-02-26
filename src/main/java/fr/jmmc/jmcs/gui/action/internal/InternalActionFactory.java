@@ -38,6 +38,7 @@ import fr.jmmc.jmcs.gui.action.ShowReleaseNotesAction;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.logging.LogbackGui;
 import fr.jmmc.jmcs.gui.util.ResourceImage;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.service.BrowserLauncher;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -213,7 +214,6 @@ public class InternalActionFactory {
          * @param fieldName the name of the field pointing to the action.
          */
         ShowAboutBoxAction(String classPath, String fieldName) {
-
             super(classPath, fieldName, "About...");
             _applicationData = ApplicationDescription.getInstance();
         }
@@ -226,12 +226,18 @@ public class InternalActionFactory {
         public void actionPerformed(ActionEvent evt) {
             if (_aboutBox != null) {
                 if (!_aboutBox.isVisible()) {
+                    // Center window on main screen
+                    WindowUtils.centerOnMainScreen(_aboutBox);
+                    
                     _aboutBox.setVisible(true);
                 } else {
                     _aboutBox.toFront();
                 }
             } else {
                 _aboutBox = new AboutBox();
+
+                // Center window on main screen
+                WindowUtils.centerOnMainScreen(_aboutBox);
             }
         }
     }

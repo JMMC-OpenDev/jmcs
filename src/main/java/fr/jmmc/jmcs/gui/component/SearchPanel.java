@@ -99,8 +99,11 @@ public final class SearchPanel extends javax.swing.JFrame {
 
         _searchDelegate = searchDelegate;
 
-        WindowUtils.centerOnMainScreen(this);
         WindowUtils.setClosingKeyboardShortcuts(this);
+    }
+    
+    private SearchPanel getSearchPanel() {
+        return this;
     }
 
     /** Create required actions */
@@ -257,6 +260,8 @@ public final class SearchPanel extends javax.swing.JFrame {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
+            WindowUtils.centerOnMainScreen(getSearchPanel());
+
             setVisible(true);
         }
     }

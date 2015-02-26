@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.util;
 
+import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.SessionSettingsPreferences;
 import fr.jmmc.jmcs.gui.MainMenuBar;
 import java.awt.Dimension;
@@ -116,7 +117,7 @@ public final class WindowUtils {
      * @param frameDimension frame dimension
      * @return dimension
      */
-    public static Dimension getMaximumArea(final Rectangle screenBounds, final Dimension frameDimension) {
+    private static Dimension getMaximumArea(final Rectangle screenBounds, final Dimension frameDimension) {
         return new Dimension(
                 Math.min(screenBounds.width, frameDimension.width),
                 Math.min(screenBounds.height, frameDimension.height)
@@ -132,13 +133,11 @@ public final class WindowUtils {
      */
     public static void centerOnMainScreen(final Window windowToCenter) {
         if (windowToCenter != null) {
-            // TODO: use JDK 1.5 API GraphicsDevice.getCenterPoint() ...
-            
             // Using invokeAndWait to be in sync with this thread
             // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
             SwingUtils.invokeAndWaitEDT(new Runnable() {
                 /**
-                 * Initializes Splash Screen in EDT
+                 * Move Window in EDT
                  */
                 @Override
                 public void run() {
@@ -149,7 +148,7 @@ public final class WindowUtils {
                         Dimension windowSize = windowToCenter.getSize();
 
                         // Get centering point
-                        Point point = getCenteringPoint(windowToCenter, windowSize);
+                        Point point = getCenteringPoint(windowSize);
 
                         windowToCenter.setLocation(point);
 
@@ -157,7 +156,6 @@ public final class WindowUtils {
 
                     } catch (NullPointerException npe) {
                         _logger.warn("Could not center window");
-                        // TODO: use JDK 1.5 API GraphicsConfiguration.getBounds() getCenterPoint() ...
                     }
                 }
             });
@@ -165,15 +163,15 @@ public final class WindowUtils {
     }
 
     /**
-     * Returns the centered point in order to center a frame on the screen
+     * Returns the centered point in order to center a frame on the screen where the application frame is present
      * @param screenWindow root window to get the proper screen size
      * @param frameDimension frame size
      * @return centered point
      * @throws NullPointerException on some platform (virtual box)
      */
-    public static Point getCenteringPoint(final Window screenWindow, final Dimension frameDimension) throws NullPointerException {
+    public static Point getCenteringPoint(final Dimension frameDimension) throws NullPointerException {
         // refresh the screen dimensions (may throw NPE):
-        final Rectangle bounds = getScreenBounds(screenWindow);
+        final Rectangle bounds = getScreenBounds(App.getFrame());
 
         int x = Math.max(0, bounds.x) + Math.max(0, (bounds.width - frameDimension.width) / 2);
         int y = Math.max(0, bounds.y) + Math.max(0, (bounds.height - frameDimension.height) / 2);

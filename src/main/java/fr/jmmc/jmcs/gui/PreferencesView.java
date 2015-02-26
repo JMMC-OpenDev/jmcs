@@ -127,10 +127,13 @@ public class PreferencesView extends JFrame implements ActionListener {
 
         _showPreferencesAction = new ShowPreferencesAction(getClass().getName(), "_showPreferencesAction");
     }
+    
+    private PreferencesView getPreferencesView() {
+        return this;
+    }
 
     public void init() {
 
-        WindowUtils.centerOnMainScreen(this);
         WindowUtils.setClosingKeyboardShortcuts(this);
 
         _restoreDefaultButton.addActionListener(this);
@@ -191,6 +194,8 @@ public class PreferencesView extends JFrame implements ActionListener {
         public void actionPerformed(java.awt.event.ActionEvent e) {
             _logger.trace("ShowPreferencesAction.actionPerformed");
 
+            WindowUtils.centerOnMainScreen(getPreferencesView());
+            
             // Show the Preferences window
             setVisible(true);
         }

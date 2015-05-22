@@ -68,13 +68,13 @@ public abstract class App {
     private static JFrame _applicationFrame = null;
 
     /**
-     * Execution mode (GUI or Shell mode)
+     * Execution mode (GUI or TTY mode)
      */
     public enum ExecMode {
 
         /** GUI */
         GUI,
-        /** TTY Mode (command line) */
+        /** TTY Mode (command-line) */
         TTY;
     }
 
@@ -206,6 +206,8 @@ public abstract class App {
      * Add a custom command line argument.
      * @param name argument's name.
      * @param hasArgument true if an argument value is required, false otherwise.
+     * @param help argument's description displayed in the command-line help.
+     * @param mode execution mode (GUI or TTY mode).
      */
     protected final void addCustomCommandLineArgument(final String name,
             final boolean hasArgument, final String help, final ExecMode mode) {

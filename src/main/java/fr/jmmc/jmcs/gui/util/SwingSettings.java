@@ -29,8 +29,8 @@ package fr.jmmc.jmcs.gui.util;
 
 import com.jidesoft.plaf.LookAndFeelFactory;
 import com.jidesoft.utils.ThreadCheckingRepaintManager;
+import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
-import java.awt.GraphicsEnvironment;
 import java.util.Locale;
 import javax.swing.JComponent;
 import javax.swing.RepaintManager;
@@ -68,12 +68,16 @@ public final class SwingSettings {
             return;
         }
         _alreadyDone = true;
-        
-        installJideLAFExtensions();
+
+        final boolean headless = Bootstrapper.isHeadless();
+
+        if (!headless) {
+            installJideLAFExtensions();
+        }
         setSwingDefaults();
 
         // Install exception handlers:
-        if (GraphicsEnvironment.isHeadless()) {
+        if (headless) {
             // Use logging exception handler:
             MCSExceptionHandler.installLoggingHandler();
         } else {

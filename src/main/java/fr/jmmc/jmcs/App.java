@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs;
 
+import fr.jmmc.jmcs.data.ArgumentDefinition;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
@@ -41,7 +42,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -65,13 +66,23 @@ public abstract class App {
     private static App _instance;
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
+
+    /**
+     * Execution mode (GUI or Shell mode)
+     */
+    public enum ExecMode {
+
+        /** GUI */
+        GUI,
+        /** TTY Mode (command line) */
+        TTY;
+    }
+
     // Members
     /** Command-line arguments */
     protected final String[] _args;
-    /** Command-line argument meta data */
-    private final Map<String, Boolean> _customArgumentsDefinition = new HashMap<String, Boolean>();
-    /** Command-line custom help */
-    private String _customHelp = null;
+    /** Command-line argument meta data (insertion order) */
+    private final Map<String, ArgumentDefinition> _customArgumentsDefinition = new LinkedHashMap<String, ArgumentDefinition>();
     /** Store the custom command line argument values (keyed by name) */
     private Map<String, String> _customArgumentValues = null;
 
@@ -108,7 +119,52 @@ public abstract class App {
         defineCustomCommandLineArgumentsAndHelp();
 
         // Interpret arguments
-        _customArgumentValues = CommandLineUtils.interpretArguments(_args, _customArgumentsDefinition, _customHelp);
+        _customArgumentValues = CommandLineUtils.interpretArguments(_args, _customArgumentsDefinition);
+    }
+
+    final void ___internalProcessCommandLine() {
+        if (_customArgumentValues != null) {
+            _logger.debug("___internalProcessCommandLine: {}", _customArgumentValues);
+
+            boolean shellAction = false;
+
+            for (String argumentName : _customArgumentValues.keySet()) {
+                final ArgumentDefinition def = _customArgumentsDefinition.get(argumentName);
+                if (def != null && def.getMode() == ExecMode.TTY) {
+                    shellAction = true;
+                    break;
+                }
+            }
+
+            // If shell mode:
+            if (shellAction) {
+                // Using thread main: must block until asynchronous task finishes !
+                try {
+                    processShellCommandLine();
+                } catch (IllegalArgumentException iae) {
+                    _logger.error("processShellCommandLine failed: {}", iae.getMessage());
+                    showArgumentsHelp();
+                } catch (Throwable th) {
+                    // unexpected errors:
+                    _logger.error("processShellCommandLine failed:", th);
+                } finally {
+                    // Exit the application
+                    Bootstrapper.stopApp(0);
+                }
+            }
+        }
+    }
+
+    /**
+     * Optional hook to override in your App, to perform command-line actions:
+     * Validate the arguments given by the command line (TTY mode)
+     * and performs the corresponding action ...
+     *
+     * Note: executed by the thread [main]: must block until asynchronous task finishes !
+     * @throws IllegalArgumentException if any argument is missing or is invalid
+     */
+    protected void processShellCommandLine() throws IllegalArgumentException {
+        //noop
     }
 
     /**
@@ -128,24 +184,35 @@ public abstract class App {
         // noop
     }
 
-    /** 
-     * Add custom command line argument help.
-     * @param help custom help text.
+    /**
+     * Show command-line arguments help.
      */
-    protected final void addCustomArgumentsHelp(final String help) {
-        _customHelp = help;
+    protected final void showArgumentsHelp() {
+        CommandLineUtils.showArgumentsHelp(_customArgumentsDefinition);
     }
 
     /**
-     * Add custom command line argument.
-     * @param name option name.
-     * @param hasArgument true if an argument is required, false otherwise.
+     * Add a custom command line argument.
+     * @param name argument's name.
+     * @param hasArgument true if an argument value is required, false otherwise.
+     * @param help argument's description displayed in the command-line help.
      */
-    protected final void addCustomCommandLineArgument(final String name, final boolean hasArgument) {
+    protected final void addCustomCommandLineArgument(final String name,
+            final boolean hasArgument, final String help) {
+        addCustomCommandLineArgument(name, hasArgument, help, ExecMode.GUI);
+    }
+
+    /**
+     * Add a custom command line argument.
+     * @param name argument's name.
+     * @param hasArgument true if an argument value is required, false otherwise.
+     */
+    protected final void addCustomCommandLineArgument(final String name,
+            final boolean hasArgument, final String help, final ExecMode mode) {
         if ((name == null) || (name.isEmpty())) {
             return;
         }
-        _customArgumentsDefinition.put(name, hasArgument);
+        _customArgumentsDefinition.put(name, new ArgumentDefinition(name, hasArgument, mode, help));
     }
 
     /**
@@ -166,7 +233,10 @@ public abstract class App {
         _logger.debug("Empty App.declareInteroperability() handler called.");
     }
 
-    final void openCommandLineFile() {
+    /**
+     * Open the file given by the user as a command-line argument (-open file)
+     */
+    public final void openCommandLineFile() {
 
         if ((_customArgumentValues == null) || (_customArgumentValues.isEmpty())) {
             return;
@@ -186,7 +256,9 @@ public abstract class App {
             public void run() {
                 final ActionRegistrar actionRegistrar = ActionRegistrar.getInstance();
                 final AbstractAction openAction = actionRegistrar.getOpenAction();
-                openAction.actionPerformed(new ActionEvent(actionRegistrar, 0, fileArgument));
+                if (openAction != null) {
+                    openAction.actionPerformed(new ActionEvent(actionRegistrar, 0, fileArgument));
+                }
             }
         });
     }
@@ -199,8 +271,8 @@ public abstract class App {
     /**
      * Define the application frame (singleton).
      *
-     * TODO : workaround to let App create the frame (getFrame)...
-     * Concrete applications must be later re-factored to initialize correctly the GUI using getFrame().
+     * Note: applications can also get directly the main GUI frame using getFrame().
+     * @see #getFrame()
      *
      * @param frame application frame.
      */
@@ -227,6 +299,13 @@ public abstract class App {
                 }
             });
         }
+    }
+
+    /**
+     * @return the application frame (singleton) if defined; null otherwise
+     */
+    public static JFrame getExistingFrame() {
+        return _applicationFrame;
     }
 
     /**
@@ -386,7 +465,7 @@ public abstract class App {
         /**
          * Return true if this state is after the given state
          * @param state state to compare with
-         * @return true if this state is after the given state 
+         * @return true if this state is after the given state
          */
         public boolean after(final ApplicationState state) {
             return _step > state.step();
@@ -395,7 +474,7 @@ public abstract class App {
         /**
          * Return true if this state is before the given state
          * @param state state to compare with
-         * @return true if this state is before the given state 
+         * @return true if this state is before the given state
          */
         public boolean before(final ApplicationState state) {
             return _step < state.step();

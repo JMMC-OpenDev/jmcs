@@ -30,7 +30,6 @@ package fr.jmmc.jmcs.gui;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.App.ApplicationState;
 import fr.jmmc.jmcs.Bootstrapper;
-import fr.jmmc.jmcs.util.JVMUtils;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.PreferencedDocument;
@@ -40,8 +39,9 @@ import fr.jmmc.jmcs.gui.task.JmcsTaskRegistry;
 import fr.jmmc.jmcs.gui.task.TaskSwingWorker;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
-import fr.jmmc.jmcs.network.http.Http;
 import fr.jmmc.jmcs.logging.LoggingService;
+import fr.jmmc.jmcs.network.http.Http;
+import fr.jmmc.jmcs.util.JVMUtils;
 import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  * called <b>FeedbackReportModel</b> to take the user informations,
  * the user system informations and the application logs and send all
  * using a HTTP POST request.
- * 
+ *
  * @author Brice COLUCCI, Guillaume MELLA, Sylvain LAFRASSE, Laurent BOURGES.
  */
 public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
@@ -106,23 +106,29 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void openDialog(final boolean modal, final Throwable exception) {
-        // Fallback if no application data:
-        if (ApplicationDescription.getInstance() != null
-                && ApplicationDescription.getInstance().getFeedbackReportFormURL() != null) {
-            // Create Gui using EDT:
-            SwingUtils.invokeAndWaitEDT(new Runnable() {
-                @Override
-                public void run() {
-                    // ensure window is visible (not iconified):
-                    App.showFrameToFront();
+        if (Bootstrapper.isHeadless()) {
+            _logger.info("[Headless] Unexpected exception:", exception);
 
-                    // Display a new feedback report dialog:
-                    new FeedbackReport(modal, exception).setVisible(true);
-                }
-            });
+            exit();
         } else {
-            // If no feedback report form is available, show a standard error dialog instead...
-            MessagePane.showErrorMessage("An unexpected error occured !", exception);
+            // Fallback if no application data:
+            if (ApplicationDescription.getInstance() != null
+                    && ApplicationDescription.getInstance().getFeedbackReportFormURL() != null) {
+                // Create Gui using EDT:
+                SwingUtils.invokeAndWaitEDT(new Runnable() {
+                    @Override
+                    public void run() {
+                        // ensure window is visible (not iconified):
+                        App.showFrameToFront();
+
+                        // Display a new feedback report dialog:
+                        new FeedbackReport(modal, exception).setVisible(true);
+                    }
+                });
+            } else {
+                // If no feedback report form is available, show a standard error dialog instead...
+                MessagePane.showErrorMessage("An unexpected error occured !", exception);
+            }
         }
     }
 
@@ -178,13 +184,13 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             _logger.error("An exception was given to the feedback report: ", _exception);
 
             final StringBuilder desc = new StringBuilder(1024);
-            
+
             desc.append("Following exception occured:\n");
             desc.append((_exception.getMessage() != null) ? _exception.getMessage() : "no message");
 
             // try to get cause if possible
             Throwable thCause = _exception.getCause();
-            
+
             if (thCause != null) {
                 // process all nested exceptions:
                 while (thCause != null) {
@@ -197,7 +203,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             desc.append("\n--\n");
             descriptionTextArea.setText(desc.toString());
             descriptionTextArea.setCaretPosition(0);
-            
+
             _feedbackTypeDataModel.setSelectedItem(BUG_REPORT);
         } else {
             _feedbackTypeDataModel.setSelectedItem(EVOLUTION_REQUEST);
@@ -347,13 +353,16 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     }
 
     /** Exit the application if there was a fatal error */
-    private void exit() {
+    private static void exit() {
         // If the application is not ready, exit now :
         final boolean ready = (Bootstrapper.isInState(ApplicationState.APP_READY));
 
         _logger.debug("Application is ready : {}", ready);
 
-        final boolean shouldExit = !ready || !App.getFrame().isVisible();
+        // Check if the existing application frame is visible:
+        final JFrame appFrame = App.getExistingFrame();
+
+        final boolean shouldExit = !ready || (appFrame == null) || !appFrame.isVisible();
 
         // Exit or not the application ?
         if (shouldExit) {
@@ -696,8 +705,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
          * @param comments user comments
          */
         private FeedbackReportWorker(final FeedbackReport feedbackReport,
-                                     final String config, final String log, final String stackTrace,
-                                     final String type, final String mail, final String summary, final String comments) {
+                final String config, final String log, final String stackTrace,
+                final String type, final String mail, final String summary, final String comments) {
             super(JmcsTaskRegistry.TASK_FEEDBACK_REPORT);
             this.feedbackReport = feedbackReport;
             this.config = config;

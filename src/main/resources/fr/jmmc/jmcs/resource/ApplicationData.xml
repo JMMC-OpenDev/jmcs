@@ -190,6 +190,7 @@
     <releasenotes>
         <release version="1.0.4">
             <prerelease version="1.0.4b4" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.data.MimeType.java : Added PNG and JPG mime types</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.App.java : force headless mode for command-line actions (ExecMode.TTY).</change>
             </prerelease>
             <prerelease version="1.0.4b3" tag="UNKNOWN">

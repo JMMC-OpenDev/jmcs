@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * Mime type registry that are used by multiples applications using jMCS.
  * It is also possible to register the mime types specific to one application.
- * 
+ *
  * @author Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
 public final class MimeType {
@@ -64,8 +64,12 @@ public final class MimeType {
     public final static MimeType OIFITS = MimeType.add("OIFITS", "application/oifits", "Optical Interferometry FITS", "fits", "fits.gz", "oifits", "oifits.gz");
     /** MimeType associated to FITS format */
     public final static MimeType FITS_IMAGE = MimeType.add("FITS_IMAGE", "application/fits", "FITS Image", "fits", "fits.gz");
+    /** MimeType associated to JPG documents */
+    public final static MimeType JPG = MimeType.add("JPG", "image/jpeg", "Joint Photographic Experts Group", "jpg");
     /** MimeType associated to PDF documents */
     public final static MimeType PDF = MimeType.add("PDF", "application/pdf", "Portable Document Format", "pdf");
+    /** MimeType associated to PNG documents */
+    public final static MimeType PNG = MimeType.add("PNG", "image/x-png", "Portable Network Graphics", "png");
     /** MimeType associated to VEGA Star Lists */
     public final static MimeType STAR_LIST = MimeType.add("STAR_LIST", "text/plain", "Star Lists", "txt");
     /** MimeType associated to Character-Separated Values format */
@@ -179,7 +183,7 @@ public final class MimeType {
         return _extensions;
     }
 
-    /** 
+    /**
      * @return first accepted extension
      */
     public String getExtension() {
@@ -204,7 +208,7 @@ public final class MimeType {
     }
 
     /**
-     * Check if the given file has an accepted extension. 
+     * Check if the given file has an accepted extension.
      * If not, return a new file with the first accepted extension
      * @param file file to check
      * @return given file or new file with the first accepted extension

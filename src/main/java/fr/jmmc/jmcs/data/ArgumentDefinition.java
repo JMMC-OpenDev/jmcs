@@ -41,6 +41,13 @@ public final class ArgumentDefinition {
     private final App.ExecMode mode;
     private final String help;
 
+    /**
+     * Constructor
+     * @param name argument's name.
+     * @param hasArgument true if an argument value is required, false otherwise.
+     * @param help argument's description displayed in the command-line help.
+     * @param mode execution mode (GUI or TTY mode).
+     */
     public ArgumentDefinition(String name, boolean hasArgument, App.ExecMode mode, String help) {
         this.name = name;
         this.hasArgument = hasArgument;
@@ -48,25 +55,38 @@ public final class ArgumentDefinition {
         this.help = help;
     }
 
+    /** Return a String
+     @return name
+     */
     public String getName() {
         return name;
     }
 
+    /** return true or false depending on hasArgument
+     * @return hasArgument
+     */
     public boolean hasArgument() {
         return hasArgument;
     }
 
+    /** Return the mode
+     * @return the mode
+     */
     public App.ExecMode getMode() {
         return mode;
     }
 
+    /** return the help
+     * @return help
+     */
     public String getHelp() {
         return help;
     }
 
     @Override
     public String toString() {
-        return "ArgumentDefinition{" + "name=" + name + ", hasArgument=" + hasArgument + ", mode=" + mode + ", help=" + help + '}';
+        return "ArgumentDefinition{" + "name=" + name + ", hasArgument=" + hasArgument
+                + ", mode=" + mode + ", help=" + help + '}';
     }
 
 }

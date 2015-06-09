@@ -232,6 +232,14 @@ public final class Bootstrapper {
     }
 
     /**
+     * Force the headless mode from API
+     */
+    public static void forceHeadless() {
+        _jmmcLogger.info("force Headless mode.");
+        _isHeadless = 1;
+    }
+
+    /**
      * Launch an application that will:
      * - execute directly after services initialization and GUI setup;
      * - trap and properly exit on main frame close button click;
@@ -307,9 +315,6 @@ public final class Bootstrapper {
         final long startTime = System.nanoTime();
         boolean launchDone = false;
 
-        // Check headless mode:
-        final boolean isHeadLess = isHeadless();
-
         _application = application;
         _exitApplicationWhenClosed = exitWhenClosed;
         _application.___internalSingletonInitialization();
@@ -332,7 +337,7 @@ public final class Bootstrapper {
             setState(ApplicationState.APP_INIT);
             _application.initServices();
 
-            SplashScreen.display(shouldShowSplashScreen && !isHeadLess);
+            SplashScreen.display(shouldShowSplashScreen && !isHeadless());
 
             ___internalRun();
 
@@ -365,7 +370,7 @@ public final class Bootstrapper {
             FeedbackReport.openDialog(true, throwable);
 
         } finally {
-            if (isHeadLess) {
+            if (isHeadless()) {
                 _jmmcLogger.info("Unable to start the GUI application [{}] (headless mode enabled) !",
                         _application.getClass().getSimpleName());
 

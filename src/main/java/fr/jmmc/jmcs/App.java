@@ -120,24 +120,32 @@ public abstract class App {
 
         // Interpret arguments
         _customArgumentValues = CommandLineUtils.interpretArguments(_args, _customArgumentsDefinition);
+
+        // Force headless mode if shell action:
+        if (isShellAction()) {
+            Bootstrapper.forceHeadless();
+        }
+    }
+
+    private final boolean isShellAction() {
+        if (_customArgumentValues != null) {
+            for (String argumentName : _customArgumentValues.keySet()) {
+                final ArgumentDefinition def = _customArgumentsDefinition.get(argumentName);
+                if (def != null && def.getMode() == ExecMode.TTY) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     final void ___internalProcessCommandLine() {
         if (_customArgumentValues != null) {
             _logger.debug("___internalProcessCommandLine: {}", _customArgumentValues);
 
-            boolean shellAction = false;
+            // If shell action:
+            if (isShellAction()) {
 
-            for (String argumentName : _customArgumentValues.keySet()) {
-                final ArgumentDefinition def = _customArgumentsDefinition.get(argumentName);
-                if (def != null && def.getMode() == ExecMode.TTY) {
-                    shellAction = true;
-                    break;
-                }
-            }
-
-            // If shell mode:
-            if (shellAction) {
                 // Using thread main: must block until asynchronous task finishes !
                 try {
                     processShellCommandLine();

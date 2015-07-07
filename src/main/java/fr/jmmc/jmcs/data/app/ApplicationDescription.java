@@ -35,10 +35,11 @@ import fr.jmmc.jmcs.data.app.model.Menubar;
 import fr.jmmc.jmcs.data.app.model.Package;
 import fr.jmmc.jmcs.data.app.model.Program;
 import fr.jmmc.jmcs.data.app.model.Release;
-import fr.jmmc.jmcs.util.jaxb.JAXBFactory;
-import fr.jmmc.jmcs.util.jaxb.XmlBindException;
 import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.SpecialChars;
+import fr.jmmc.jmcs.util.StringUtils;
+import fr.jmmc.jmcs.util.jaxb.JAXBFactory;
+import fr.jmmc.jmcs.util.jaxb.XmlBindException;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -174,6 +175,30 @@ public final class ApplicationDescription {
     public static boolean isBetaVersion() {
         return getInstance().getProgramVersion().contains("b");
     }
+
+    /**
+     * Parse the application's version string (0.9.4 beta 11 for example) as a float number to be comparable
+     * @param version version as string
+     * @return version number as float
+     */
+    public static float parseVersion(final String version) {
+        float res = 0f;
+
+        // Remove whitespace and '.' in "0.9.4 beta 11" => "094beta11":
+        String tmp = StringUtils.removeNonAlphaNumericChars(version);
+
+        // Replace chars by '.' in "094beta11" => "094.11":
+        tmp = StringUtils.replaceNonNumericChars(tmp, ".");
+
+        try {
+            // parse tmp => 94.11:
+            res = Float.parseFloat(tmp);
+        } catch (NumberFormatException nfe) {
+            _logger.info("Unable to parse version: {}", version);
+        }
+        return res;
+    }
+
     // Members
     /** internal JAXB Factory */
     private final JAXBFactory _jf;

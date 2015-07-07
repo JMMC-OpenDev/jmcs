@@ -39,7 +39,7 @@
         <feedback_form_url>http://jmmc.fr/feedback/feedback.php</feedback_form_url>
     </company>
 
-    <program name="jMCS Framework" version="1.0.4b4"/>
+    <program name="jMCS Framework" version="1.0.4b5"/>
     <compilation date="09/06/2015" compiler="1.6"/>
 
     <text>JMMC framework, enabling better user interface and platform integration across Mac, Linux and Windows through numerous third-party libraries and in-house code</text>
@@ -189,8 +189,12 @@
 
     <releasenotes>
         <release version="1.0.4">
+            <prerelease version="1.0.4b5" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.util.StringUtils : added removeUnderscores()</change>
+                <change type="FEATURE">In fr.jmmc.jmcs.data.app.ApplicationDescription : added parseVersion()</change>
+            </prerelease>
             <prerelease version="1.0.4b4" tag="UNKNOWN">
-                <change type="FEATURE">In fr.jmmc.jmcs.data.MimeType.java : Added PNG and JPG mime types</change>
+                <change type="FEATURE">In fr.jmmc.jmcs.data.MimeType.java : added PNG and JPG mime types</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.App.java : force headless mode for command-line actions (ExecMode.TTY).</change>
             </prerelease>
             <prerelease version="1.0.4b3" tag="UNKNOWN">

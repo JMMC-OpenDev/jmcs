@@ -44,6 +44,8 @@ public final class StringUtils {
     public final static String STRING_UNDERSCORE = "_";
     /** String constant containing 1 minus sign character '-' */
     public final static String STRING_MINUS_SIGN = "-";
+    /** RegExp expression to match the underscore character '_' */
+    private final static Pattern PATTERN_UNDERSCORE = Pattern.compile(STRING_UNDERSCORE);
     /** RegExp expression to match white spaces (1..n) */
     private final static Pattern PATTERN_WHITE_SPACE_MULTIPLE = Pattern.compile("\\s+");
     /** regular expression used to match characters different than alpha/numeric/_/+/- (1..n) */
@@ -135,6 +137,15 @@ public final class StringUtils {
         return replaceWhiteSpaces(value, STRING_EMPTY);
     }
 
+    /**
+     * Remove any underscore character
+     * @param value input value
+     * @return string value
+     */
+    public static String removeUnderscores(final String value) {
+        return PATTERN_UNDERSCORE.matcher(value).replaceAll(STRING_EMPTY);
+    }
+    
     /**
      * Remove redundant white space characters
      * @param value input value

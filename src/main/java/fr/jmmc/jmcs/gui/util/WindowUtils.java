@@ -164,7 +164,6 @@ public final class WindowUtils {
 
     /**
      * Returns the centered point in order to center a frame on the screen where the application frame is present
-     * @param screenWindow root window to get the proper screen size
      * @param frameDimension frame size
      * @return centered point
      * @throws NullPointerException on some platform (virtual box)

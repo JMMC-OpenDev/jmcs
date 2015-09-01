@@ -190,6 +190,7 @@
     <releasenotes>
         <release version="1.0.4">
             <prerelease version="1.0.4b6" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.FeedbackReport.java : always display Cancel and Submit buttons.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.util.MCSExceptionHandler : modified isFilteredException(th) to ignore XRender issue (linux) on JDK8 with multiple displays.</change>
             </prerelease>
             <prerelease version="1.0.4b5" tag="UNKNOWN">

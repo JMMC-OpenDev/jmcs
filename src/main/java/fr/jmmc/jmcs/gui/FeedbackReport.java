@@ -228,8 +228,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         logTextArea.setText(getApplicationLog());
         exceptionTextArea.setText(getExceptionTrace());
 
+        WindowUtils.setClosingKeyboardShortcuts(this);
         pack();
-
         WindowUtils.centerOnMainScreen(this);
     }
 
@@ -401,65 +401,34 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jTabbedPane = new javax.swing.JTabbedPane();
         sendReportPanel = new javax.swing.JPanel();
-        emailLabel = new javax.swing.JLabel();
-        typeLabel = new javax.swing.JLabel();
-        emailTextField = new javax.swing.JTextField();
-        typeComboBox = new javax.swing.JComboBox();
         headerLabel = new javax.swing.JLabel();
+        emailLabel = new javax.swing.JLabel();
+        emailTextField = new javax.swing.JTextField();
+        typeLabel = new javax.swing.JLabel();
+        typeComboBox = new javax.swing.JComboBox();
+        summaryLabel = new javax.swing.JLabel();
+        summaryTextField = new javax.swing.JTextField();
         descriptionScrollPane = new javax.swing.JScrollPane();
         descriptionTextArea = new javax.swing.JTextArea();
-        cancelButton = new javax.swing.JButton();
-        submitButton = new javax.swing.JButton();
-        loadProgressBar = new javax.swing.JProgressBar();
-        summaryTextField = new javax.swing.JTextField();
-        summaryLabel = new javax.swing.JLabel();
         detailPanel = new javax.swing.JPanel();
-        jTabbedPane2 = new javax.swing.JTabbedPane();
+        jTabbedPaneDetails = new javax.swing.JTabbedPane();
         logScrollPane = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
         exceptionScrollPane = new javax.swing.JScrollPane();
         exceptionTextArea = new javax.swing.JTextArea();
         systemScrollPane = new javax.swing.JScrollPane();
         systemTextArea = new javax.swing.JTextArea();
+        jPanelButtons = new javax.swing.JPanel();
+        cancelButton = new javax.swing.JButton();
+        loadProgressBar = new javax.swing.JProgressBar();
+        submitButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Feedback Report ");
 
         sendReportPanel.setLayout(new java.awt.GridBagLayout());
-
-        emailLabel.setText("E-Mail:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        sendReportPanel.add(emailLabel, gridBagConstraints);
-
-        typeLabel.setText("Type:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        sendReportPanel.add(typeLabel, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        sendReportPanel.add(emailTextField, gridBagConstraints);
-
-        typeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        sendReportPanel.add(typeComboBox, gridBagConstraints);
 
         headerLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         headerLabel.setText("<html>headerLabel<br> changed  by code</html>");
@@ -470,6 +439,53 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         sendReportPanel.add(headerLabel, gridBagConstraints);
+
+        emailLabel.setText("E-Mail:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        sendReportPanel.add(emailLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        sendReportPanel.add(emailTextField, gridBagConstraints);
+
+        typeLabel.setText("Type:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        sendReportPanel.add(typeLabel, gridBagConstraints);
+
+        typeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        sendReportPanel.add(typeComboBox, gridBagConstraints);
+
+        summaryLabel.setText("* Summary:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        sendReportPanel.add(summaryLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        sendReportPanel.add(summaryTextField, gridBagConstraints);
 
         descriptionScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("* Description:"));
 
@@ -487,14 +503,58 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         sendReportPanel.add(descriptionScrollPane, gridBagConstraints);
 
+        jTabbedPane.addTab("Send report", sendReportPanel);
+
+        detailPanel.setLayout(new java.awt.GridBagLayout());
+
+        logTextArea.setColumns(20);
+        logTextArea.setEditable(false);
+        logTextArea.setRows(5);
+        logScrollPane.setViewportView(logTextArea);
+
+        jTabbedPaneDetails.addTab("Log content", logScrollPane);
+
+        exceptionTextArea.setColumns(20);
+        exceptionTextArea.setEditable(false);
+        exceptionTextArea.setRows(5);
+        exceptionScrollPane.setViewportView(exceptionTextArea);
+
+        jTabbedPaneDetails.addTab("Exception message", exceptionScrollPane);
+
+        systemTextArea.setColumns(20);
+        systemTextArea.setEditable(false);
+        systemTextArea.setRows(5);
+        systemScrollPane.setViewportView(systemTextArea);
+
+        jTabbedPaneDetails.addTab("System properties", systemScrollPane);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        detailPanel.add(jTabbedPaneDetails, gridBagConstraints);
+
+        jTabbedPane.addTab("Details", detailPanel);
+
+        getContentPane().add(jTabbedPane, java.awt.BorderLayout.CENTER);
+
+        jPanelButtons.setLayout(new java.awt.GridBagLayout());
+
         cancelButton.setText("Cancel");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        sendReportPanel.add(cancelButton, gridBagConstraints);
+        jPanelButtons.add(cancelButton, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanelButtons.add(loadProgressBar, gridBagConstraints);
 
         submitButton.setText("Submit");
         submitButton.addActionListener(new java.awt.event.ActionListener() {
@@ -506,66 +566,11 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        sendReportPanel.add(submitButton, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 200.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        sendReportPanel.add(loadProgressBar, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        sendReportPanel.add(summaryTextField, gridBagConstraints);
+        jPanelButtons.add(submitButton, gridBagConstraints);
 
-        summaryLabel.setText("* Summary:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        sendReportPanel.add(summaryLabel, gridBagConstraints);
-
-        jTabbedPane1.addTab("Send report", sendReportPanel);
-
-        detailPanel.setLayout(new java.awt.GridBagLayout());
-
-        logTextArea.setColumns(20);
-        logTextArea.setEditable(false);
-        logTextArea.setRows(5);
-        logScrollPane.setViewportView(logTextArea);
-
-        jTabbedPane2.addTab("Log content", logScrollPane);
-
-        exceptionTextArea.setColumns(20);
-        exceptionTextArea.setEditable(false);
-        exceptionTextArea.setRows(5);
-        exceptionScrollPane.setViewportView(exceptionTextArea);
-
-        jTabbedPane2.addTab("Exception message", exceptionScrollPane);
-
-        systemTextArea.setColumns(20);
-        systemTextArea.setEditable(false);
-        systemTextArea.setRows(5);
-        systemScrollPane.setViewportView(systemTextArea);
-
-        jTabbedPane2.addTab("System properties", systemScrollPane);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        detailPanel.add(jTabbedPane2, gridBagConstraints);
-
-        jTabbedPane1.addTab("Details", detailPanel);
-
-        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jPanelButtons, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -652,8 +657,9 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     private javax.swing.JScrollPane exceptionScrollPane;
     private javax.swing.JTextArea exceptionTextArea;
     private javax.swing.JLabel headerLabel;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JPanel jPanelButtons;
+    private javax.swing.JTabbedPane jTabbedPane;
+    private javax.swing.JTabbedPane jTabbedPaneDetails;
     private javax.swing.JProgressBar loadProgressBar;
     private javax.swing.JScrollPane logScrollPane;
     private javax.swing.JTextArea logTextArea;

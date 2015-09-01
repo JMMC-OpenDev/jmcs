@@ -263,7 +263,7 @@ public class ResizableTextViewFactory {
 
             message += "<FONT COLOR='" + ((isOpenJDK7) ? "ORANGE" : "RED") + "'>WARNING</FONT> : ";
             message += "Your Java Virtual Machine is an OpenJDK JVM, which may have known bugs (SWING look and feel,"
-                    + " fonts, PDF issues...) on several Linux distributions." + "<BR><BR>";
+                    + " fonts, time zones, PDF issues...) on several Linux distributions." + "<BR><BR>";
 
             if (isOpenJDK7) {
                 // If OpenJDK 1.7+, set auto-hide delay to 5s:

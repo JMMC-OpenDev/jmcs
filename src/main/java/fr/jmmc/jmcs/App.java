@@ -279,10 +279,13 @@ public abstract class App {
     protected abstract void execute();
 
     /**
-     * Optional hook to override in your App, to log the application state to submit with the feedback report
+     * Optional hook to override in your App, to log or return the application state when submitting a feedback report
+     *
+     * @return application state as String
      */
-    public void getStateForFeedbackReport() {
+    public String getStateForFeedbackReport() {
         // nothing by default
+        return null;
     }
 
     /**

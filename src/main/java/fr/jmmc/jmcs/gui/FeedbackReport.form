@@ -181,8 +181,8 @@
                   <SubComponents>
                     <Component class="javax.swing.JTextArea" name="logTextArea">
                       <Properties>
-                        <Property name="columns" type="int" value="20"/>
                         <Property name="editable" type="boolean" value="false"/>
+                        <Property name="columns" type="int" value="20"/>
                         <Property name="rows" type="int" value="5"/>
                       </Properties>
                     </Component>
@@ -204,8 +204,8 @@
                   <SubComponents>
                     <Component class="javax.swing.JTextArea" name="exceptionTextArea">
                       <Properties>
-                        <Property name="columns" type="int" value="20"/>
                         <Property name="editable" type="boolean" value="false"/>
+                        <Property name="columns" type="int" value="20"/>
                         <Property name="rows" type="int" value="5"/>
                       </Properties>
                     </Component>
@@ -227,11 +227,42 @@
                   <SubComponents>
                     <Component class="javax.swing.JTextArea" name="systemTextArea">
                       <Properties>
-                        <Property name="columns" type="int" value="20"/>
                         <Property name="editable" type="boolean" value="false"/>
+                        <Property name="columns" type="int" value="20"/>
                         <Property name="rows" type="int" value="5"/>
                       </Properties>
                     </Component>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="statePanel">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                      <JTabbedPaneConstraints tabName="Application State">
+                        <Property name="tabTitle" type="java.lang.String" value="Application State"/>
+                      </JTabbedPaneConstraints>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                  <SubComponents>
+                    <Container class="javax.swing.JScrollPane" name="stateScrollPane">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                          <BorderConstraints direction="Center"/>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTextArea" name="stateTextArea">
+                          <Properties>
+                            <Property name="editable" type="boolean" value="false"/>
+                            <Property name="columns" type="int" value="20"/>
+                            <Property name="rows" type="int" value="5"/>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
                   </SubComponents>
                 </Container>
               </SubComponents>

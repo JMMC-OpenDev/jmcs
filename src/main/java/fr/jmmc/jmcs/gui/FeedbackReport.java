@@ -135,8 +135,6 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     /* members */
     /** flag indicating if the dialog is disposed (avoid reentrance) */
     private boolean disposed = false;
-    /** Any Throwable (Exception, RuntimeException and Error) */
-    private final Throwable _exception;
 
     /* Swing components */
     /** The default combo box model */
@@ -147,16 +145,22 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      * Do not exit on close.
      *
      * @param modal if true, this dialog is modal
-     * @param exception exception
+     * @param exception any Throwable (Exception, RuntimeException and Error)
      */
     private FeedbackReport(final boolean modal, final Throwable exception) {
         super(App.getFrame(), modal);
 
+        final Throwable wrappedException = prepareException(exception);
+        // Get logs early:
+        final String systemConfig = getSystemConfig();
+        // Note: must call getApplicationState() before to get the logs
+        final String applicationState = getApplicationState();
+        final String applicationLog = getApplicationLog();
+
         _feedbackTypeDataModel = new DefaultComboBoxModel(_feedbackTypes);
-        _exception = prepareException(exception);
 
         initComponents();
-        postInit();
+        postInit(systemConfig, applicationLog, applicationState, wrappedException);
 
         // Force to dispose when the dialog closes :
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -166,8 +170,14 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
     /**
      * This method is useful to set the models and specific features of initialized swing components :
+     * @param systemConfig system config as text
+     * @param applicationLog application log as text
+     * @param applicationState application state as text
+     * @param exception any Throwable (Exception, RuntimeException and Error)
      */
-    private void postInit() {
+    private void postInit(final String systemConfig, final String applicationLog,
+                          final String applicationState, final Throwable exception) {
+
         this.setMinimumSize(new Dimension(600, 600));
         this.setPreferredSize(new Dimension(600, 600));
 
@@ -180,16 +190,16 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             }
         });
 
-        if (_exception != null) {
-            _logger.error("An exception was given to the feedback report: ", _exception);
+        if (exception != null) {
+            _logger.error("An exception was given to the feedback report: ", exception);
 
             final StringBuilder desc = new StringBuilder(1024);
 
             desc.append("Following exception occured:\n");
-            desc.append((_exception.getMessage() != null) ? _exception.getMessage() : "no message");
+            desc.append((exception.getMessage() != null) ? exception.getMessage() : "no message");
 
             // try to get cause if possible
-            Throwable thCause = _exception.getCause();
+            Throwable thCause = exception.getCause();
 
             if (thCause != null) {
                 // process all nested exceptions:
@@ -224,9 +234,11 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         headerLabel.setText(headerMessage);
 
         typeComboBox.setModel(_feedbackTypeDataModel);
-        systemTextArea.setText(getSystemConfig());
-        logTextArea.setText(getApplicationLog());
-        exceptionTextArea.setText(getExceptionTrace());
+
+        logTextArea.setText(applicationLog);
+        exceptionTextArea.setText(getExceptionTrace(exception));
+        systemTextArea.setText(systemConfig);
+        stateTextArea.setText(applicationState);
 
         WindowUtils.setClosingKeyboardShortcuts(this);
         pack();
@@ -298,11 +310,38 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     }
 
     /**
+     * Return the system config as text
+     *
+     * @return system config as text
+     */
+    private final String getSystemConfigText() {
+        return systemTextArea.getText();
+    }
+
+    /**
+     * Return the application log and state as text
+     *
+     * @return application log and state as text
+     */
+    private final String getApplicationLogAndStateText() {
+        return logTextArea.getText() + "\n\nApplication State:\n" + stateTextArea.getText();
+    }
+
+    /**
+     * Return the exception trace as text
+     *
+     * @return exception trace as text
+     */
+    private final String getExceptionTraceText() {
+        return exceptionTextArea.getText();
+    }
+
+    /**
      * Return the mail value
      *
      * @return mail value
      */
-    public final String getMail() {
+    private final String getMail() {
         return emailTextField.getText();
     }
 
@@ -311,7 +350,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      *
      * @return description value
      */
-    public final String getDescription() {
+    private final String getDescription() {
         return descriptionTextArea.getText();
     }
 
@@ -320,7 +359,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      *
      * @return summary value
      */
-    public final String getSummary() {
+    private final String getSummary() {
         return summaryTextField.getText();
     }
 
@@ -337,15 +376,16 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     /**
      * Return exception trace as a string
      *
+     * @param exception any Throwable (Exception, RuntimeException and Error)
      * @return exception trace
      */
-    public final String getExceptionTrace() {
+    private static final String getExceptionTrace(final Throwable exception) {
         String exceptionTrace = "No stack trace";
 
         // Check if the exception is not null
-        if (_exception != null) {
+        if (exception != null) {
             final StringWriter stringWriter = new StringWriter(2048); // 2K buffer
-            _exception.printStackTrace(new PrintWriter(stringWriter));
+            exception.printStackTrace(new PrintWriter(stringWriter));
             exceptionTrace = stringWriter.toString();
         }
 
@@ -420,6 +460,9 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         exceptionTextArea = new javax.swing.JTextArea();
         systemScrollPane = new javax.swing.JScrollPane();
         systemTextArea = new javax.swing.JTextArea();
+        statePanel = new javax.swing.JPanel();
+        stateScrollPane = new javax.swing.JScrollPane();
+        stateTextArea = new javax.swing.JTextArea();
         jPanelButtons = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         loadProgressBar = new javax.swing.JProgressBar();
@@ -507,26 +550,37 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         detailPanel.setLayout(new java.awt.GridBagLayout());
 
-        logTextArea.setColumns(20);
         logTextArea.setEditable(false);
+        logTextArea.setColumns(20);
         logTextArea.setRows(5);
         logScrollPane.setViewportView(logTextArea);
 
         jTabbedPaneDetails.addTab("Log content", logScrollPane);
 
-        exceptionTextArea.setColumns(20);
         exceptionTextArea.setEditable(false);
+        exceptionTextArea.setColumns(20);
         exceptionTextArea.setRows(5);
         exceptionScrollPane.setViewportView(exceptionTextArea);
 
         jTabbedPaneDetails.addTab("Exception message", exceptionScrollPane);
 
-        systemTextArea.setColumns(20);
         systemTextArea.setEditable(false);
+        systemTextArea.setColumns(20);
         systemTextArea.setRows(5);
         systemScrollPane.setViewportView(systemTextArea);
 
         jTabbedPaneDetails.addTab("System properties", systemScrollPane);
+
+        statePanel.setLayout(new java.awt.BorderLayout());
+
+        stateTextArea.setEditable(false);
+        stateTextArea.setColumns(20);
+        stateTextArea.setRows(5);
+        stateScrollPane.setViewportView(stateTextArea);
+
+        statePanel.add(stateScrollPane, java.awt.BorderLayout.CENTER);
+
+        jTabbedPaneDetails.addTab("Application State", statePanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -584,9 +638,9 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         // launch a new worker
         new FeedbackReportWorker(this,
-                getSystemConfig(),
-                getApplicationLog(),
-                getExceptionTrace(),
+                getSystemConfigText(),
+                getApplicationLogAndStateText(),
+                getExceptionTraceText(),
                 (String) _feedbackTypeDataModel.getSelectedItem(),
                 getMail(),
                 getSummary(),
@@ -598,7 +652,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      *
      * @return sorted list of system properties
      */
-    private static final String getSystemConfig() {
+    private static String getSystemConfig() {
         final StringBuilder sb = new StringBuilder(16384);
         sb.append(JVMUtils.getMemoryInfo()).append("\n\n");
 
@@ -607,25 +661,36 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     }
 
     /**
-     * Return application log
-     * @return application log
+     * Return application state
+     * @return application state
      */
-    private static String getApplicationLog() {
-        
+    private static String getApplicationState() {
+        String appState = null;
+
         // If the application is ready, get its state :
         if (Bootstrapper.isInState(ApplicationState.APP_READY)) {
             final App application = App.getInstance();
-            
+
             if (application != null) {
                 try {
-                    // Get its state in logs:
-                    application.getStateForFeedbackReport();
+                    // Get state:
+                    appState = application.getStateForFeedbackReport();
                 } catch (Throwable th) {
                     _logger.error("Unexpected exception when getting the application state:", th);
                 }
             }
         }
-        
+
+        return (!StringUtils.isEmpty(appState)) ? appState : "None";
+    }
+
+    /**
+     * Return application log
+     * @return application log
+     */
+    private static String getApplicationLog() {
+        // Note: must call getApplicationState() before to get the logs
+
         final String logOutput = LoggingService.getInstance().getLogOutput().getContent();
 
         _logger.debug("logOutput length = {}", logOutput.length());
@@ -679,6 +744,9 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     private javax.swing.JScrollPane logScrollPane;
     private javax.swing.JTextArea logTextArea;
     private javax.swing.JPanel sendReportPanel;
+    private javax.swing.JPanel statePanel;
+    private javax.swing.JScrollPane stateScrollPane;
+    private javax.swing.JTextArea stateTextArea;
     private javax.swing.JButton submitButton;
     private javax.swing.JLabel summaryLabel;
     private javax.swing.JTextField summaryTextField;
@@ -726,8 +794,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
          * @param comments user comments
          */
         private FeedbackReportWorker(final FeedbackReport feedbackReport,
-                final String config, final String log, final String stackTrace,
-                final String type, final String mail, final String summary, final String comments) {
+                                     final String config, final String log, final String stackTrace,
+                                     final String type, final String mail, final String summary, final String comments) {
             super(JmcsTaskRegistry.TASK_FEEDBACK_REPORT);
             this.feedbackReport = feedbackReport;
             this.config = config;

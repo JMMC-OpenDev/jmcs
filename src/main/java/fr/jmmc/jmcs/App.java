@@ -206,7 +206,7 @@ public abstract class App {
      * @param help argument's description displayed in the command-line help.
      */
     protected final void addCustomCommandLineArgument(final String name,
-            final boolean hasArgument, final String help) {
+                                                      final boolean hasArgument, final String help) {
         addCustomCommandLineArgument(name, hasArgument, help, ExecMode.GUI);
     }
 
@@ -218,7 +218,7 @@ public abstract class App {
      * @param mode execution mode (GUI or TTY mode).
      */
     protected final void addCustomCommandLineArgument(final String name,
-            final boolean hasArgument, final String help, final ExecMode mode) {
+                                                      final boolean hasArgument, final String help, final ExecMode mode) {
         if ((name == null) || (name.isEmpty())) {
             return;
         }
@@ -277,6 +277,13 @@ public abstract class App {
      * Mandatory hook to override in your App, to execute application body.
      */
     protected abstract void execute();
+
+    /**
+     * Optional hook to override in your App, to log the application state to submit with the feedback report
+     */
+    public void getStateForFeedbackReport() {
+        // nothing by default
+    }
 
     /**
      * Define the application frame (singleton).

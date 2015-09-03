@@ -190,6 +190,7 @@
     <releasenotes>
         <release version="1.0.4">
             <prerelease version="1.0.4b6" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.App.java : added optional hook to log the application state when submitting a feedback report: getStateForFeedbackReport().</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.gui.FeedbackReport.java : always display Cancel and Submit buttons.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.util.MCSExceptionHandler : modified isFilteredException(th) to ignore XRender issue (linux) on JDK8 with multiple displays.</change>
             </prerelease>
@@ -202,7 +203,7 @@
                 <change type="FEATURE">In fr.jmmc.jmcs.App.java : force headless mode for command-line actions (ExecMode.TTY).</change>
             </prerelease>
             <prerelease version="1.0.4b3" tag="UNKNOWN">
-                <change type="FEATURE">In fr.jmmc.jmcs.App.java : added optional hook to override to perform command-line actions: processShellCommandLine().</change>
+                <change type="FEATURE">In fr.jmmc.jmcs.App.java : added optional hook to perform command-line actions: processShellCommandLine().</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.App.java : added argument help in addCustomCommandLineArgument() method parameters.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.App.java : removed addCustomArgumentsHelp(): use addCustomCommandLineArgument() instead.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.App.java : added execution mode (ExecMode.GUI or ExecMode.TTY) in addCustomCommandLineArgument() method parameters.</change>

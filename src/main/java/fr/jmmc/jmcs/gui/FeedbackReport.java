@@ -611,6 +611,21 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      * @return application log
      */
     private static String getApplicationLog() {
+        
+        // If the application is ready, get its state :
+        if (Bootstrapper.isInState(ApplicationState.APP_READY)) {
+            final App application = App.getInstance();
+            
+            if (application != null) {
+                try {
+                    // Get its state in logs:
+                    application.getStateForFeedbackReport();
+                } catch (Throwable th) {
+                    _logger.error("Unexpected exception when getting the application state:", th);
+                }
+            }
+        }
+        
         final String logOutput = LoggingService.getInstance().getLogOutput().getContent();
 
         _logger.debug("logOutput length = {}", logOutput.length());

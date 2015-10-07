@@ -202,7 +202,9 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
     @Override
     public void changedUpdate(final DocumentEvent evt) {
         // this event is not used
-        _logger.trace("changeUpdate:\n event: {}\n text: {}", evt, getMyText());
+        if (_logger.isTraceEnabled()) {
+            _logger.trace("changeUpdate:\n event: {}\n text: {}", evt, getMyText());
+        }
     }
 
     /**
@@ -212,8 +214,10 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      */
     @Override
     public void insertUpdate(final DocumentEvent evt) {
-        // Gives notification that there was an insert into the document.        
-        _logger.trace("insertUpdate:\n event: {}\n text: {}", evt, getMyText());
+        // Gives notification that there was an insert into the document.
+        if (_logger.isTraceEnabled()) {
+            _logger.trace("insertUpdate:\n event: {}\n text: {}", evt, getMyText());
+        }
         setPrefValue(getMyText());
     }
 
@@ -224,8 +228,10 @@ public final class PreferencedDocument extends javax.swing.text.PlainDocument
      */
     @Override
     public void removeUpdate(final DocumentEvent evt) {
-        // Gives notification that a portion of the document has been removed.        
-        _logger.trace("removeUpdate:\n event: {}\n text: {}", evt, getMyText());
+        // Gives notification that a portion of the document has been removed.    
+        if (_logger.isTraceEnabled()) {
+            _logger.trace("removeUpdate:\n event: {}\n text: {}", evt, getMyText());
+        }
         setPrefValue(getMyText());
     }
 

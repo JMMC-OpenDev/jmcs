@@ -29,6 +29,10 @@ package fr.jmmc.jmcs.service;
 
 import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
 import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
+import edu.stanford.ejalbert.exceptionhandler.BrowserLauncherErrorHandler;
+import fr.jmmc.jmcs.logging.LoggingService;
+import net.sf.wraplog.AbstractLogger;
+import net.sf.wraplog.Level;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +48,8 @@ public final class BrowserLauncher {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(BrowserLauncher.class.getName());
+    /** debugging flag */
+    private static final boolean DEBUG = true;
     /** system property "mrj.version" */
     private static final String PROP_MRJ_VERSION = "mrj.version";
     /** launcher instance */
@@ -65,7 +71,12 @@ public final class BrowserLauncher {
                 }
             }
             try {
-                _launcher = new edu.stanford.ejalbert.BrowserLauncher();
+                final LoggerAdapter loggerAdapter = new LoggerAdapter();
+
+                _launcher = new edu.stanford.ejalbert.BrowserLauncher(loggerAdapter, loggerAdapter);
+
+                _logger.info("BrowserList: {}", _launcher.getBrowserList());
+
             } catch (UnsupportedOperatingSystemException uose) {
                 _logger.warn("Cannot initialize browser launcher : ", uose);
             } catch (BrowserLaunchingInitializingException bie) {
@@ -100,5 +111,115 @@ public final class BrowserLauncher {
      */
     private BrowserLauncher() {
         super();
+    }
+
+    /*
+     public void DesktopLaunchBrowser(String url) {
+     final Desktop desktop = getDesktop();
+     if (desktop == null) {
+     _logger.warn("Cannot open '{}' in web browser", url);
+     } else {
+     try {
+     desktop.browse(new URI(url));
+     _logger.debug("URL '{}' opened in web browser", url);
+     } catch (IOException ioe) {
+     _logger.warn("Cannot open the web browser", ioe);
+     } catch (URISyntaxException use) {
+     _logger.warn("Cannot parse the given URL: " + url, use);
+     }
+     }
+     }
+
+     private Desktop getDesktop() {
+     // before any Desktop APIs are used, first check whether the API is
+     // supported by this particular VM on this particular host
+     if (desktop == null && Desktop.isDesktopSupported()) {
+     desktop = Desktop.getDesktop();
+     }
+     return desktop;
+     }
+     private Desktop desktop;
+     */
+    protected final static class LoggerAdapter extends AbstractLogger implements BrowserLauncherErrorHandler {
+
+        /** Logger */
+        private static final Logger _log = LoggerFactory.getLogger(edu.stanford.ejalbert.BrowserLauncher.class.getName());
+
+        LoggerAdapter() {
+            if (DEBUG) {
+                LoggingService.setLoggerLevel(_log, ch.qos.logback.classic.Level.DEBUG);
+            }
+        }
+
+        @Override
+        public boolean isEnabled(int logLevel) {
+            switch (logLevel) {
+                case Level.DEBUG:
+                    return _log.isDebugEnabled();
+                case Level.INFO:
+                    return _log.isInfoEnabled();
+                case Level.WARN:
+                    return _log.isWarnEnabled();
+                case Level.ERROR:
+                    return _log.isErrorEnabled();
+                default:
+            }
+            return true;
+        }
+
+        /**
+         * Logs a message and optional error details.
+         *
+         * @param logLevel one of: Level.DEBUG, Level.INFO, Level.WARN,
+         *   Level.ERROR
+         * @param message the actual message; this will never be
+         *   <code>null</code>
+         * @param error an error that is related to the message; unless
+         *   <code>null</code>, the name and stack trace of the error are logged
+         */
+        @Override
+        protected void reallyLog(int logLevel, String message, Throwable error) {
+            if (message == null) {
+                message = "";
+            }
+
+            if (error != null) {
+                switch (logLevel) {
+                    case Level.DEBUG:
+                        _log.debug(message, error);
+                        return;
+                    case Level.INFO:
+                        _log.info(message, error);
+                        return;
+                    case Level.WARN:
+                        _log.warn(message, error);
+                        return;
+                    default:
+                    case Level.ERROR:
+                        _log.error(message, error);
+                        return;
+                }
+            }
+            switch (logLevel) {
+                case Level.DEBUG:
+                    _log.debug(message);
+                    return;
+                case Level.INFO:
+                    _log.info(message);
+                    return;
+                case Level.WARN:
+                    _log.warn(message);
+                    return;
+                default:
+                case Level.ERROR:
+                    _log.error(message);
+            }
+        }
+
+        @Override
+        public void handleException(Exception e) {
+            _log.error("BrowserLauncher error: ", e);
+        }
+
     }
 }

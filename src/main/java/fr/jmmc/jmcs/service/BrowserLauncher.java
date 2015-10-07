@@ -27,10 +27,12 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.service;
 
+import edu.stanford.ejalbert.browserprefui.BrowserPrefAction;
 import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
 import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import edu.stanford.ejalbert.exceptionhandler.BrowserLauncherErrorHandler;
 import fr.jmmc.jmcs.logging.LoggingService;
+import javax.swing.JFrame;
 import net.sf.wraplog.AbstractLogger;
 import net.sf.wraplog.Level;
 import org.apache.commons.lang.SystemUtils;
@@ -104,6 +106,10 @@ public final class BrowserLauncher {
             launcher.openURLinBrowser(url);
             _logger.debug("URL '{}' opened in web browser", url);
         }
+    }
+
+    public static BrowserPrefAction getBrowserPrefAction(JFrame appFrame) {
+        return new BrowserPrefAction("Browser Pref.", getLauncher(), appFrame);
     }
 
     /**

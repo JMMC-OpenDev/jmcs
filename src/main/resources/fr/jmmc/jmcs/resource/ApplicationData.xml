@@ -40,7 +40,7 @@
     </company>
 
     <program name="jMCS Framework" version="1.0.4b7"/>
-    <compilation date="07/10/2015" compiler="1.6"/>
+    <compilation date="09/10/2015" compiler="1.6"/>
 
     <text>JMMC framework, enabling better user interface and platform integration across Mac, Linux and Windows through numerous third-party libraries and in-house code</text>
 
@@ -190,6 +190,9 @@
     <releasenotes>
         <release version="1.0.4">
             <prerelease version="1.0.4b7" tag="UNKNOWN">
+                <change type="FEATURE">In fr.jmmc.jmcs.service.BrowserLauncher.java : improved linux browser support and use the WEB_BROWSER preference.</change>
+                <change type="FEATURE">In fr.jmmc.jmcs.gui.component.CommonPreferencesView.java : added new embeddable JPanel to edit common preferences (web browser selector).</change>
+                <change type="FEATURE">In fr.jmmc.jmcs.data.preference.CommonPreferences.java : added the WEB_BROWSER preference.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.network.NetworkSettings.java : added method getHostIP(hostname) to resolve the IP address for the given hostname (or use CommonPreferences).</change>
             </prerelease>
             <prerelease version="1.0.4b6" tag="UNKNOWN">

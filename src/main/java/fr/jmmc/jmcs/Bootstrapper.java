@@ -602,6 +602,9 @@ public final class Bootstrapper {
     private static void ___internalStop() {
         _jmmcLogger.info("Stopping internal services ...");
         try {
+            // Save common settings if needed:
+            CommonPreferences.saveToFileIfNeeded();
+            
             // Save session settings if needed:
             SessionSettingsPreferences.saveToFileIfNeeded();
 

@@ -30,8 +30,10 @@ package fr.jmmc.jmcs.gui;
 import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.data.preference.PreferencesException;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
+import fr.jmmc.jmcs.gui.component.ComponentResizeAdapter;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
@@ -50,7 +52,7 @@ import org.slf4j.LoggerFactory;
 public class PreferencesView extends JFrame implements ActionListener {
 
     public static final int FRAME_WIDTH = 600;
-    public static final int FRAME_HEIGHT = 400;
+    public static final int FRAME_HEIGHT = 500;
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
     /** Logger */
@@ -69,18 +71,13 @@ public class PreferencesView extends JFrame implements ActionListener {
      * @param preferences your application Preferences instance.
      * @param panels a map of tab title (string) -> panel (JPanel).
      */
-    public PreferencesView(Preferences preferences, LinkedHashMap<String, JPanel> panels) {
-
+    public PreferencesView(final Preferences preferences, final LinkedHashMap<String, JPanel> panels) {
         super("Preferences");
 
         // Check arguments validity
         if ((preferences == null) || (panels == null) || (panels.isEmpty())) {
             throw new IllegalArgumentException();
         }
-
-        // Window size
-        setSize(FRAME_WIDTH, FRAME_HEIGHT);
-        setResizable(false);
 
         // Get and listen to data model modifications
         _preferences = preferences;
@@ -123,17 +120,21 @@ public class PreferencesView extends JFrame implements ActionListener {
         // only hide on close as this view is reused by the application:
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
+        final Dimension dim = new Dimension(FRAME_WIDTH, FRAME_HEIGHT);
+        setMinimumSize(dim);
+        addComponentListener(new ComponentResizeAdapter(dim));
+
+        // pack and center window
         pack();
 
         _showPreferencesAction = new ShowPreferencesAction(getClass().getName(), "_showPreferencesAction");
     }
-    
+
     private PreferencesView getPreferencesView() {
         return this;
     }
 
     public void init() {
-
         WindowUtils.setClosingKeyboardShortcuts(this);
 
         _restoreDefaultButton.addActionListener(this);
@@ -149,7 +150,6 @@ public class PreferencesView extends JFrame implements ActionListener {
         _logger.debug("dispose: {}", this);
 
         // @TODO add deleteObserver(this) to dispose() to dereference each subview properly
-
         super.dispose();
     }
 
@@ -195,7 +195,7 @@ public class PreferencesView extends JFrame implements ActionListener {
             _logger.trace("ShowPreferencesAction.actionPerformed");
 
             WindowUtils.centerOnMainScreen(getPreferencesView());
-            
+
             // Show the Preferences window
             setVisible(true);
         }

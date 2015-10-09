@@ -27,11 +27,21 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.service;
 
-import edu.stanford.ejalbert.browserprefui.BrowserPrefAction;
 import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
 import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import edu.stanford.ejalbert.exceptionhandler.BrowserLauncherErrorHandler;
+import static edu.stanford.ejalbert.BrowserLauncher.BROWSER_SYSTEM_PROPERTY;
+import edu.stanford.ejalbert.browserprefui.BrowserPrefDialog;
+import fr.jmmc.jmcs.data.preference.CommonPreferences;
+import fr.jmmc.jmcs.data.preference.PreferencesException;
+import fr.jmmc.jmcs.gui.action.RegisteredAction;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
+import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.logging.LoggingService;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import net.sf.wraplog.AbstractLogger;
 import net.sf.wraplog.Level;
@@ -51,7 +61,7 @@ public final class BrowserLauncher {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(BrowserLauncher.class.getName());
     /** debugging flag */
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     /** system property "mrj.version" */
     private static final String PROP_MRJ_VERSION = "mrj.version";
     /** launcher instance */
@@ -61,7 +71,7 @@ public final class BrowserLauncher {
      * Return the BrowserLauncher instance
      * @return BrowserLauncher instance
      */
-    private static edu.stanford.ejalbert.BrowserLauncher getLauncher() {
+    static edu.stanford.ejalbert.BrowserLauncher getLauncher() {
         if (_launcher == null) {
             boolean hackMRJ = false;
             if (SystemUtils.IS_OS_MAC_OSX) {
@@ -77,7 +87,8 @@ public final class BrowserLauncher {
 
                 _launcher = new edu.stanford.ejalbert.BrowserLauncher(loggerAdapter, loggerAdapter);
 
-                _logger.info("BrowserList: {}", _launcher.getBrowserList());
+                // Refresh the system property at startup:
+                refreshBrowserPref();
 
             } catch (UnsupportedOperatingSystemException uose) {
                 _logger.warn("Cannot initialize browser launcher : ", uose);
@@ -98,7 +109,7 @@ public final class BrowserLauncher {
      *
      * @param url URL to open in web browser.
      */
-    public static void openURL(String url) {
+    public static void openURL(final String url) {
         final edu.stanford.ejalbert.BrowserLauncher launcher = getLauncher();
         if (launcher == null) {
             _logger.warn("Cannot open '{}' in web browser", url);
@@ -108,8 +119,21 @@ public final class BrowserLauncher {
         }
     }
 
-    public static BrowserPrefAction getBrowserPrefAction(JFrame appFrame) {
-        return new BrowserPrefAction("Browser Pref.", getLauncher(), appFrame);
+    /**
+     * Return the browser selector action (based on the CommonPreferences.WEB_BROWSER preference)
+     * @param parent the parent component displaying the action (used to lookup Window owning the JDialog)
+     * @return browser selector action
+     */
+    public static Action getBrowserSelectorAction(final JComponent parent) {
+        return new BrowserSelectorAction(parent);
+    }
+
+    static void refreshBrowserPref() {
+        String prefBrowser = CommonPreferences.getInstance().getPreference(CommonPreferences.WEB_BROWSER);
+        _logger.debug("Browser from preference: {}", prefBrowser);
+
+        // Set system property before opening the browser dialog:
+        System.setProperty(BROWSER_SYSTEM_PROPERTY, prefBrowser);
     }
 
     /**
@@ -119,42 +143,81 @@ public final class BrowserLauncher {
         super();
     }
 
-    /*
-     public void DesktopLaunchBrowser(String url) {
-     final Desktop desktop = getDesktop();
-     if (desktop == null) {
-     _logger.warn("Cannot open '{}' in web browser", url);
-     } else {
-     try {
-     desktop.browse(new URI(url));
-     _logger.debug("URL '{}' opened in web browser", url);
-     } catch (IOException ioe) {
-     _logger.warn("Cannot open the web browser", ioe);
-     } catch (URISyntaxException use) {
-     _logger.warn("Cannot parse the given URL: " + url, use);
-     }
-     }
-     }
-
-     private Desktop getDesktop() {
-     // before any Desktop APIs are used, first check whether the API is
-     // supported by this particular VM on this particular host
-     if (desktop == null && Desktop.isDesktopSupported()) {
-     desktop = Desktop.getDesktop();
-     }
-     return desktop;
-     }
-     private Desktop desktop;
+    /**
+     * This action allows the user to select its web browser.
+     * @author Laurent BOURGES.
      */
+    final static class BrowserSelectorAction extends RegisteredAction {
+
+        /** default serial UID for Serializable interface */
+        private static final long serialVersionUID = 1;
+        /** Class name. This name is used to register to the ActionRegistrar */
+        public final static String _className = BrowserSelectorAction.class.getName();
+        // Members:
+        private final JComponent parent;
+
+        BrowserSelectorAction(final JComponent parent) {
+            super(_className, "BrowserSelectorAction", "Browser selector");
+            this.parent = parent;
+
+            setEnabled(getLauncher().getBrowserList().size() > 1);
+        }
+
+        /**
+         * Handle the action event
+         * @param evt action event
+         */
+        @Override
+        public void actionPerformed(final ActionEvent evt) {
+            // Refresh the system property before opening the browser dialog:
+            refreshBrowserPref();
+
+            // Get the parent frame:
+            final JFrame frame = SwingUtils.getParentFrame(parent);
+            // Create the browser dialog
+            final BrowserPrefDialog dialog = new BrowserPrefDialog(frame, getLauncher());
+
+            // Size the dialog.
+            final Dimension dim = new Dimension(400, 250);
+            dialog.setMinimumSize(dim);
+
+            WindowUtils.setClosingKeyboardShortcuts(dialog);
+            dialog.pack();
+
+            // Center it :
+            dialog.setLocationRelativeTo(dialog.getOwner());
+
+            // Show it and waits until dialog is not visible or disposed:
+            dialog.setVisible(true);
+
+            // Get the selected browser:
+            final String prefBrowser = dialog.getSelectedBrowser();
+
+            if (prefBrowser != null) {
+                _logger.debug("Browser selected: {}", prefBrowser);
+
+                // Update the selected browser:
+                System.setProperty(BROWSER_SYSTEM_PROPERTY, prefBrowser);
+                try {
+                    CommonPreferences.getInstance().setPreference(CommonPreferences.WEB_BROWSER, prefBrowser);
+                } catch (PreferencesException pe) {
+                    throw new RuntimeException(pe);
+                }
+            }
+        }
+    }
+
     protected final static class LoggerAdapter extends AbstractLogger implements BrowserLauncherErrorHandler {
 
         /** Logger */
         private static final Logger _log = LoggerFactory.getLogger(edu.stanford.ejalbert.BrowserLauncher.class.getName());
 
         LoggerAdapter() {
-            if (DEBUG) {
-                LoggingService.setLoggerLevel(_log, ch.qos.logback.classic.Level.DEBUG);
-            }
+            ch.qos.logback.classic.Level logLevel = (DEBUG)
+                    ? ch.qos.logback.classic.Level.DEBUG
+                    : ch.qos.logback.classic.Level.WARN;
+
+            LoggingService.setLoggerLevel(_log, logLevel);
         }
 
         @Override
@@ -226,6 +289,5 @@ public final class BrowserLauncher {
         public void handleException(Exception e) {
             _log.error("BrowserLauncher error: ", e);
         }
-
     }
 }

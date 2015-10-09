@@ -32,6 +32,7 @@ import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import edu.stanford.ejalbert.exceptionhandler.BrowserLauncherErrorHandler;
 import static edu.stanford.ejalbert.BrowserLauncher.BROWSER_SYSTEM_PROPERTY;
 import edu.stanford.ejalbert.browserprefui.BrowserPrefDialog;
+import edu.stanford.ejalbert.launching.IBrowserLaunching;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.PreferencesException;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
@@ -61,7 +62,7 @@ public final class BrowserLauncher {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(BrowserLauncher.class.getName());
     /** debugging flag */
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     /** system property "mrj.version" */
     private static final String PROP_MRJ_VERSION = "mrj.version";
     /** launcher instance */
@@ -81,6 +82,9 @@ public final class BrowserLauncher {
                     System.setProperty(PROP_MRJ_VERSION, "9999.999");
                     _logger.debug("Probably running Oracle JVM under Mac OS X, faking missing 'mrj.version' system property.");
                 }
+            } else if (SystemUtils.IS_OS_WINDOWS) {
+                System.getProperty(IBrowserLaunching.WINDOWS_BROWSER_DISC_POLICY_PROPERTY,
+                        IBrowserLaunching.WINDOWS_BROWSER_DISC_POLICY_REGISTRY);
             }
             try {
                 final LoggerAdapter loggerAdapter = new LoggerAdapter();

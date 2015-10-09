@@ -149,9 +149,10 @@ public abstract class Preferences extends Observable {
 
         loadFromFile();
 
-        // Parent class name must be given to register one action per inherited Preference class
-        _savePreferences = new SavePrefAction(this.getClass().getName());
-        _restoreDefaultPreferences = new RestoreDefaultPrefAction(this.getClass().getName());
+        // Concrete class name must be given to register one action per inherited Preference class
+        final String className = this.getClass().getName();
+        _savePreferences = new SavePrefAction(className);
+        _restoreDefaultPreferences = new RestoreDefaultPrefAction(className);
     }
 
     /**

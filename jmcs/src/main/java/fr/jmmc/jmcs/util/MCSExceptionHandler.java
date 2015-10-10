@@ -242,6 +242,25 @@ public final class MCSExceptionHandler {
                 }
             }
         }
+        // ignore XRender issue (linux) on JDK8 with multiple displays:
+        // java.lang.ClassCastException: sun.awt.image.BufImgSurfaceData cannot be cast to sun.java2d.xr.XRSurfaceData
+        // at sun.java2d.xr.XRPMBlitLoops.cacheToTmpSurface(XRPMBlitLoops.java:145)
+        // sun.java2d.xr.XrSwToPMBlit.Blit(XRPMBlitLoops.java:353)
+        // sun.java2d.pipe.DrawImage.blitSurfaceData(DrawImage.java:959)
+        // sun.java2d.pipe.DrawImage.renderImageCopy(DrawImage.java:577)
+        // sun.java2d.pipe.DrawImage.copyImage(DrawImage.java:67)
+        // sun.java2d.pipe.DrawImage.copyImage(DrawImage.java:1014)
+        // sun.java2d.pipe.ValidatePipe.copyImage(ValidatePipe.java:186)
+        // sun.java2d.SunGraphics2D.drawImage(SunGraphics2D.java:3318)
+        if (e instanceof ClassCastException) {
+            final String msg = e.getMessage();
+            if (!StringUtils.isEmpty(msg) && msg.contains("sun.java2d.xr.XRSurfaceData")) {
+                 // log it anyway:
+                _logger.info("Ignored xrender exception: ", e);
+                return true;
+            }
+        }
+        
         // Avoid reentrance:
         if (checkReentrance(e)) {
             // log it anyway:

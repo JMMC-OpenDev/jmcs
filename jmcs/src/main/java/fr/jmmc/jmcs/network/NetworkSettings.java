@@ -316,4 +316,50 @@ public final class NetworkSettings {
     private static Method getNetPropertiesGetMethod() {
         return IntrospectionUtils.getMethod("sun.net.NetProperties", "get", new Class<?>[]{String.class});
     }
+
+    /** Prefix of the preference which stores optional IP addresses */
+    public static final String PREFIX_PREFERENCE_IP = "ip.";
+
+    /**
+     * Return the IP address of the given host name
+     * @param hostname host name to lookup
+     * @param defaultIP (optional) default IP address (hard-coded)
+     * @return IP address
+     */
+    public static String getHostIP(final String hostname, final String defaultIP) {
+        String ipAddr = null;
+        if (!StringUtils.isTrimmedEmpty(hostname)) {
+            try {
+                // DNS query (if the network is available):
+                ipAddr = InetAddress.getByName(hostname).getHostAddress();
+
+            } catch (UnknownHostException uhe) {
+                _logger.error("Host resolution failed: {}", uhe.getMessage());
+            }
+
+            if (StringUtils.isEmpty(ipAddr)) {
+                _logger.info("Get the IP address from CommonPreferences.");
+
+                final CommonPreferences prefs = CommonPreferences.getInstance();
+
+                final String prefKey = PREFIX_PREFERENCE_IP + hostname;
+
+                // ignore if missing
+                final String addrPref = prefs.getPreference(prefKey, true);
+
+                if (!StringUtils.isTrimmedEmpty(addrPref)) {
+                    ipAddr = addrPref;
+                }
+            }
+
+            if (StringUtils.isEmpty(ipAddr) && !StringUtils.isEmpty(defaultIP)) {
+                _logger.info("Use the hard-coded IP address.");
+                ipAddr = defaultIP;
+            }
+
+            _logger.info("getHostIP[{}] = {}", hostname, ipAddr);
+        }
+        return ipAddr;
+    }
 }
+

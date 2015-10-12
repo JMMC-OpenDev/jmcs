@@ -32,11 +32,13 @@ import fr.jmmc.jmcs.data.preference.Preferences;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.StringUtils;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Properties;
 import org.slf4j.Logger;
@@ -85,10 +87,14 @@ public final class NetworkSettings {
     public static final int DEFAULT_MAX_HOST_CONNECTIONS = 5;
     /** The default maximum number of connections allowed overall */
     public static final int DEFAULT_MAX_TOTAL_CONNECTIONS = 10;
+    /** JMMC web host */
+    private final static String JMMC_WEB_HOST = "www.jmmc.fr";
     /** JMMC web to detect proxies */
-    private final static String JMMC_WEB = "http://www.jmmc.fr";
+    private final static String JMMC_WEB_URL = "http://" + JMMC_WEB_HOST;
     /** cached JMMC web URL */
     private static URI JMMC_WEB_URI = null;
+    /** Prefix of the preference which stores optional IP addresses */
+    public static final String PREFIX_PREFERENCE_IP = "ip.";
 
     /**
      * Forbidden constructor
@@ -103,6 +109,8 @@ public final class NetworkSettings {
      */
     public static void main(final String[] args) {
         defineDefaults();
+
+        getHostIP(JMMC_WEB_HOST);
     }
 
     /**
@@ -210,7 +218,7 @@ public final class NetworkSettings {
             final String proxyHost = prefs.getPreference(CommonPreferences.HTTP_PROXY_HOST);
             final String proxyPort = prefs.getPreference(CommonPreferences.HTTP_PROXY_PORT);
 
-            if (!StringUtils.isEmpty(proxyHost) && !StringUtils.isEmpty(proxyPort)) {
+            if (!StringUtils.isTrimmedEmpty(proxyHost) && !StringUtils.isTrimmedEmpty(proxyPort)) {
                 try {
                     final int port = Integer.valueOf(proxyPort);
                     if (port != 0) {
@@ -242,7 +250,7 @@ public final class NetworkSettings {
 
         // # http.nonProxyHosts
         System.setProperty(PROPERTY_HTTP_NO_PROXY_HOSTS, "localhost|127.0.0.1");
-        
+
         // TODO : support also advanced proxy settings (user, password ...)
         // # http.proxyUser
         // # http.proxyPassword
@@ -292,7 +300,7 @@ public final class NetworkSettings {
      */
     public static URI getJmmcHttpURI() {
         if (JMMC_WEB_URI == null) {
-            JMMC_WEB_URI = URI.create(JMMC_WEB);
+            JMMC_WEB_URI = URI.create(JMMC_WEB_URL);
         }
         return JMMC_WEB_URI;
     }
@@ -317,8 +325,14 @@ public final class NetworkSettings {
         return IntrospectionUtils.getMethod("sun.net.NetProperties", "get", new Class<?>[]{String.class});
     }
 
-    /** Prefix of the preference which stores optional IP addresses */
-    public static final String PREFIX_PREFERENCE_IP = "ip.";
+    /**
+     * Return the IP address of the given host name
+     * @param hostname host name to lookup
+     * @return IP address
+     */
+    public static String getHostIP(final String hostname) {
+        return getHostIP(hostname, null);
+    }
 
     /**
      * Return the IP address of the given host name
@@ -362,4 +376,3 @@ public final class NetworkSettings {
         return ipAddr;
     }
 }
-

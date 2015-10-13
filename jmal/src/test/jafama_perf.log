@@ -1,0 +1,584 @@
+run:
+java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+java.runtime.version=1.7.0_13-b20
+java.class.version=51.0
+os.name=Linux
+os.arch=amd64
+os.version=2.6.35.14-106.fc14.x86_64
+sun.arch.data.model=64
+availableProcessors: 4
+JVM input arguments: [-Dfile.encoding=UTF-8]
+
+--- FastMathPerf... ---
+number of calls = 10000000
+number of random values = 16384
+Loop overhead: 0.048 s
+
+--- testing FastMath class load (if not loaded already) ---
+FastMath class load took 0.454 s
+
+--- testing sin(double) ---
+Loop on     Math.sin(double), args in [0.0,2*PI], took 0.547 s
+Loop on FastMath.sin(double), args in [0.0,2*PI], took 0.136 s
+Loop on     Math.sin(double), args in [-10.0,10.0], took 0.63 s
+Loop on FastMath.sin(double), args in [-10.0,10.0], took 0.169 s
+Loop on     Math.sin(double), args in [-100.0,100.0], took 0.64 s
+Loop on FastMath.sin(double), args in [-100.0,100.0], took 0.17 s
+Loop on     Math.sin(double), args in [-1000000.0,1000000.0], took 0.706 s
+Loop on FastMath.sin(double), args in [-1000000.0,1000000.0], took 0.338 s
+Loop on     Math.sin(double), args in [-1.0E12,1.0E12], took 4.34 s
+Loop on FastMath.sin(double), args in [-1.0E12,1.0E12], took 1.136 s
+Loop on     Math.sin(double), args in all magnitudes, took 2.441 s
+Loop on FastMath.sin(double), args in all magnitudes, took 0.904 s
+
+--- testing sinQuick(double) ---
+Loop on          Math.sin(double), args in [-1000000.0,1000000.0], took 0.702 s
+Loop on FastMath.sinQuick(double), args in [-1000000.0,1000000.0], took 0.045 s
+
+--- testing cos(double) ---
+Loop on     Math.cos(double), args in [0.0,2*PI], took 0.524 s
+Loop on FastMath.cos(double), args in [0.0,2*PI], took 0.124 s
+Loop on     Math.cos(double), args in [-10.0,10.0], took 0.568 s
+Loop on FastMath.cos(double), args in [-10.0,10.0], took 0.121 s
+Loop on     Math.cos(double), args in [-100.0,100.0], took 0.625 s
+Loop on FastMath.cos(double), args in [-100.0,100.0], took 0.121 s
+Loop on     Math.cos(double), args in [-1000000.0,1000000.0], took 0.714 s
+Loop on FastMath.cos(double), args in [-1000000.0,1000000.0], took 0.275 s
+Loop on     Math.cos(double), args in [-1.0E12,1.0E12], took 4.327 s
+Loop on FastMath.cos(double), args in [-1.0E12,1.0E12], took 1.016 s
+Loop on     Math.cos(double), args in all magnitudes, took 2.438 s
+Loop on FastMath.cos(double), args in all magnitudes, took 0.974 s
+
+--- testing cosQuick(double) ---
+Loop on          Math.cos(double), args in [-1000000.0,1000000.0], took 0.709 s
+Loop on FastMath.cosQuick(double), args in [-1000000.0,1000000.0], took 0.042 s
+
+--- testing sinAndCos(double,DoubleWrapper) ---
+Loop on FastMath.sinAndCos(double,DoubleWrapper), args in [0.0,2*PI], took 0.156 s
+Loop on FastMath.sinAndCos(double,DoubleWrapper), args in [-10.0,10.0], took 0.188 s
+Loop on FastMath.sinAndCos(double,DoubleWrapper), args in [-100.0,100.0], took 0.18 s
+Loop on FastMath.sinAndCos(double,DoubleWrapper), args in [-1000000.0,1000000.0], took 0.378 s
+Loop on FastMath.sinAndCos(double,DoubleWrapper), args in [-1.0E12,1.0E12], took 1.137 s
+Loop on FastMath.sinAndCos(double,DoubleWrapper), args in all magnitudes, took 1.209 s
+
+--- testing tan(double) ---
+Loop on     Math.tan(double), args in [-PI/2,PI/2], took 0.576 s
+Loop on FastMath.tan(double), args in [-PI/2,PI/2], took 0.185 s
+Loop on     Math.tan(double), args in [-10.0,10.0], took 0.709 s
+Loop on FastMath.tan(double), args in [-10.0,10.0], took 0.216 s
+Loop on     Math.tan(double), args in [-100.0,100.0], took 0.772 s
+Loop on FastMath.tan(double), args in [-100.0,100.0], took 0.217 s
+Loop on     Math.tan(double), args in [-1000000.0,1000000.0], took 0.845 s
+Loop on FastMath.tan(double), args in [-1000000.0,1000000.0], took 0.359 s
+Loop on     Math.tan(double), args in [-1.0E12,1.0E12], took 4.431 s
+Loop on FastMath.tan(double), args in [-1.0E12,1.0E12], took 1.155 s
+Loop on     Math.tan(double), args in all magnitudes, took 2.492 s
+Loop on FastMath.tan(double), args in all magnitudes, took 0.915 s
+
+--- testing asin(double) ---
+Loop on     Math.asin(double) took 4.474 s
+Loop on FastMath.asin(double) took 0.188 s
+
+--- testing acos(double) ---
+Loop on     Math.acos(double) took 4.257 s
+Loop on FastMath.acos(double) took 0.19 s
+
+--- testing atan(double) ---
+Loop on     Math.atan(double) took 0.549 s
+Loop on FastMath.atan(double) took 0.182 s
+
+--- testing atan2(double,double) ---
+Loop on     Math.atan2(double,double), args in [-10.0,10.0], took 0.978 s
+Loop on FastMath.atan2(double,double), args in [-10.0,10.0], took 0.319 s
+Loop on     Math.atan2(double,double), args in all magnitudes, took 0.522 s
+Loop on FastMath.atan2(double,double), args in all magnitudes, took 0.577 s
+
+--- testing toRadians(double) ---
+Loop on     Math.toRadians(double), args in all magnitudes, took 0.085 s
+Loop on FastMath.toRadians(double), args in all magnitudes, took 0.034 s... 
+
+--- testing toDegrees(double) ---
+Loop on     Math.toDegrees(double), args in all magnitudes, took 0.082 s
+Loop on FastMath.toDegrees(double), args in all magnitudes, took 0.031 s... 
+
+--- testing isInClockwiseDomain(double,double,double) ---
+Loop on FastMath.isInClockwiseDomain(double,double,double), args in {[-PI,PI],[0.0,2*PI],[PI,PI]}, took 0.095 s
+Loop on FastMath.isInClockwiseDomain(double,double,double), args in {[-PI,PI],[0.0,2*PI],[-100.0,100.0]}, took 0.266 s
+Loop on FastMath.isInClockwiseDomain(double,double,double), args in {[-100.0,100.0],[0.0,2*PI],[PI,PI]}, took 0.265 s
+Loop on FastMath.isInClockwiseDomain(double,double,double), args in {[-100.0,100.0],[0.0,2*PI],[-100.0,100.0]}, took 0.262 s
+
+--- testing sinh(double) ---
+Loop on     Math.sinh(double), args in [-1.0,1.0], took 1.006 s
+Loop on FastMath.sinh(double), args in [-1.0,1.0], took 0.189 s
+Loop on     Math.sinh(double), args in [-10.0,10.0], took 1.184 s
+Loop on FastMath.sinh(double), args in [-10.0,10.0], took 0.248 s
+Loop on     Math.sinh(double), args in [-700.0,700.0], took 0.849 s
+Loop on FastMath.sinh(double), args in [-700.0,700.0], took 0.205 s
+Loop on     Math.sinh(double), args in [-750.0,720.0], took 0.834 s
+Loop on FastMath.sinh(double), args in [-750.0,720.0], took 0.209 s
+Loop on     Math.sinh(double), args in all magnitudes, took 0.282 s
+Loop on FastMath.sinh(double), args in all magnitudes, took 0.15 s
+
+--- testing cosh(double) ---
+Loop on     Math.cosh(double), args in [-1.0,1.0], took 0.848 s
+Loop on FastMath.cosh(double), args in [-1.0,1.0], took 0.199 s
+Loop on     Math.cosh(double), args in [-10.0,10.0], took 0.898 s
+Loop on FastMath.cosh(double), args in [-10.0,10.0], took 0.197 s
+Loop on     Math.cosh(double), args in [-700.0,700.0], took 0.831 s
+Loop on FastMath.cosh(double), args in [-700.0,700.0], took 0.192 s
+Loop on     Math.cosh(double), args in [-750.0,720.0], took 0.808 s
+Loop on FastMath.cosh(double), args in [-750.0,720.0], took 0.195 s
+Loop on     Math.cosh(double), args in all magnitudes, took 0.332 s
+Loop on FastMath.cosh(double), args in all magnitudes, took 0.145 s
+
+--- testing coshm1(double) ---
+Loop on FastMath.coshm1(double), args in [-1.0,1.0], took 0.206 s
+Loop on FastMath.coshm1(double), args in [-10.0,10.0], took 0.38 s
+Loop on FastMath.coshm1(double), args in [-700.0,700.0], took 0.223 s
+Loop on FastMath.coshm1(double), args in [-750.0,720.0], took 0.225 s
+Loop on FastMath.coshm1(double), args in all magnitudes, took 0.291 s
+
+--- testing sinhAndCosh(double,DoubleWrapper) ---
+Loop on FastMath.sinhAndCosh(double,DoubleWrapper), args in [-1.0,1.0], took 0.323 s
+Loop on FastMath.sinhAndCosh(double,DoubleWrapper), args in [-10.0,10.0], took 0.403 s
+Loop on FastMath.sinhAndCosh(double,DoubleWrapper), args in [-700.0,700.0], took 0.282 s
+Loop on FastMath.sinhAndCosh(double,DoubleWrapper), args in [-750.0,720.0], took 0.285 s
+Loop on FastMath.sinhAndCosh(double,DoubleWrapper), args in all magnitudes, took 0.207 s
+
+--- testing tanh(double) ---
+Loop on     Math.tanh(double), args in [-1.0,1.0], took 1.099 s
+Loop on FastMath.tanh(double), args in [-1.0,1.0], took 0.284 s
+Loop on     Math.tanh(double), args in [-10.0,10.0], took 1.19 s
+Loop on FastMath.tanh(double), args in [-10.0,10.0], took 0.3 s
+Loop on     Math.tanh(double), args in [-700.0,700.0], took 0.218 s
+Loop on FastMath.tanh(double), args in [-700.0,700.0], took 0.117 s
+Loop on     Math.tanh(double), args in [-750.0,720.0], took 0.215 s
+Loop on FastMath.tanh(double), args in [-750.0,720.0], took 0.117 s
+Loop on     Math.tanh(double), args in all magnitudes, took 0.233 s
+Loop on FastMath.tanh(double), args in all magnitudes, took 0.159 s
+
+--- testing asinh(double) ---
+Loop on FastMath.asinh(double), args in [-0.04,0.04], took 0.269 s
+Loop on FastMath.asinh(double), args in [-1000000.0,1000000.0], took 0.361 s
+Loop on FastMath.asinh(double), args in [-1.0E12,1.0E12], took 0.281 s
+Loop on FastMath.asinh(double), args in all magnitudes, took 0.465 s
+
+--- testing acosh(double) ---
+Loop on FastMath.acosh(double), args in [1.0,1000000.0], took 0.273 s
+Loop on FastMath.acosh(double), args in [1.0,1.0E12], took 0.232 s
+Loop on FastMath.acosh(double), args in [2^0.0,2^1000.0], took 0.234 s
+
+--- testing acosh1p(double) ---
+Loop on FastMath.acosh1p(double), args in [1.0,1000000.0], took 0.274 s
+Loop on FastMath.acosh1p(double), args in [1.0,1.0E12], took 0.244 s
+Loop on FastMath.acosh1p(double), args in [2^0.0,2^1000.0], took 0.248 s
+
+--- testing atanh(double) ---
+Loop on FastMath.atanh(double), args in [-1.0,1.0], took 0.277 s
+Loop on FastMath.atanh(double), args in {[-2^0.0,-2^-1000.0],[2^-1000.0,2^0.0]}, took 0.11 s
+
+--- testing exp(double) ---
+Loop on     Math.exp(double), args in [-1.0,1.0], took 0.36 s
+Loop on FastMath.exp(double), args in [-1.0,1.0], took 0.183 s
+Loop on     Math.exp(double), args in [-10.0,10.0], took 0.408 s
+Loop on FastMath.exp(double), args in [-10.0,10.0], took 0.182 s
+Loop on     Math.exp(double), args in [-700.0,700.0], took 0.408 s
+Loop on FastMath.exp(double), args in [-700.0,700.0], took 0.184 s
+Loop on     Math.exp(double), args in [-750.0,720.0], took 0.444 s
+Loop on FastMath.exp(double), args in [-750.0,720.0], took 0.211 s
+Loop on     Math.exp(double), args in all magnitudes, took 0.211 s
+Loop on FastMath.exp(double), args in all magnitudes, took 0.145 s
+
+--- testing expQuick(double) ---
+Loop on          Math.exp(double), args in [-1.0,1.0], took 0.362 s
+Loop on FastMath.expQuick(double), args in [-1.0,1.0], took 0.041 s
+Loop on          Math.exp(double), args in [-10.0,10.0], took 0.408 s
+Loop on FastMath.expQuick(double), args in [-10.0,10.0], took 0.039 s
+Loop on          Math.exp(double), args in [-700.0,700.0], took 0.408 s
+Loop on FastMath.expQuick(double), args in [-700.0,700.0], took 0.039 s
+
+--- testing expm1(double) ---
+Loop on     Math.expm1(double), args in [-1.0,1.0], took 0.588 s
+Loop on FastMath.expm1(double), args in [-1.0,1.0], took 0.105 s
+Loop on     Math.expm1(double), args in [-10.0,10.0], took 0.798 s
+Loop on FastMath.expm1(double), args in [-10.0,10.0], took 0.178 s
+Loop on     Math.expm1(double), args in [-700.0,700.0], took 0.539 s
+Loop on FastMath.expm1(double), args in [-700.0,700.0], took 0.178 s
+Loop on     Math.expm1(double), args in [-750.0,720.0], took 0.528 s
+Loop on FastMath.expm1(double), args in [-750.0,720.0], took 0.209 s
+Loop on     Math.expm1(double), args in all magnitudes, took 0.298 s
+Loop on FastMath.expm1(double), args in all magnitudes, took 0.155 s
+
+--- testing log(double) ---
+Loop on     Math.log(double), args in [0.1,10.0], took 0.204 s
+Loop on FastMath.log(double), args in [0.1,10.0], took 0.217 s
+Loop on     Math.log(double), args in all magnitudes (>=0), took 0.193 s
+Loop on FastMath.log(double), args in all magnitudes (>=0), took 0.214 s
+
+--- testing logQuick(double) ---
+Loop on          Math.log(double), args in [0.1,10.0], took 0.209 s
+Loop on FastMath.logQuick(double), args in [0.1,10.0], took 0.074 s
+Loop on          Math.log(double), args in all magnitudes (>0,normal), took 0.195 s
+Loop on FastMath.logQuick(double), args in all magnitudes (>0,normal), took 0.097 s
+
+--- testing log10(double) ---
+Loop on     Math.log10(double), args in [0.1,10.0], took 0.208 s
+Loop on FastMath.log10(double), args in [0.1,10.0], took 0.218 s
+Loop on     Math.log10(double), args in all magnitudes (>=0), took 0.195 s
+Loop on FastMath.log10(double), args in all magnitudes (>=0), took 0.214 s
+
+--- testing log1p(double) ---
+Loop on     Math.log1p(double), args in [-0.9,9.0], took 0.676 s
+Loop on FastMath.log1p(double), args in [-0.9,9.0], took 0.16 s
+Loop on     Math.log1p(double), args in all magnitudes (>=0), took 0.421 s
+Loop on FastMath.log1p(double), args in all magnitudes (>=0), took 0.148 s
+
+--- testing log2(int) ---
+Loop on FastMath.log2(int), args in [1,2147483647], took 0.036 s
+
+--- testing log2(long) ---
+Loop on FastMath.log2(long), args in [1,9223372036854775807], took 0.036 s
+
+--- testing pow(double,double) ---
+Loop on     Math.pow(double,double), args in {[0.1,10.0],[-100.0,100.0]}, took 2.059 s
+Loop on FastMath.pow(double,double), args in {[0.1,10.0],[-100.0,100.0]}, took 0.466 s
+Loop on     Math.pow(double,double), args in {[-100.0,100.0],[-100.0,100.0]}, took 1.161 s
+Loop on FastMath.pow(double,double), args in {[-100.0,100.0],[-100.0,100.0]}, took 0.311 s
+Loop on     Math.pow(double,double), args in {all magnitudes,all magnitudes}, took 1.034 s
+Loop on FastMath.pow(double,double), args in {all magnitudes,all magnitudes}, took 0.383 s
+
+--- testing powQuick(double,double) ---
+Loop on          Math.pow(double,double), args in {[0.1,10.0],[-100.0,100.0]}, took 2.058 s
+Loop on FastMath.powQuick(double,double), args in {[0.1,10.0],[-100.0,100.0]}, took 0.257 s
+Loop on          Math.pow(double,double), args in {[4.9E-324,1.7976931348623157E308],all magnitudes}, took 1.711 s
+Loop on FastMath.powQuick(double,double), args in {[4.9E-324,1.7976931348623157E308],all magnitudes}, took 0.213 s
+
+--- testing powFast(double,int) ---
+Loop on      Math.pow(double,double), args in {[-10.0,10.0],[0,10]}, took 1.655 s
+Loop on FastMath.powFast(double,int), args in {[-10.0,10.0],[0,10]}, took 0.15 s
+Loop on      Math.pow(double,double), args in {[-10.0,10.0],[-10,10]}, took 1.746 s
+Loop on FastMath.powFast(double,int), args in {[-10.0,10.0],[-10,10]}, took 0.179 s
+Loop on      Math.pow(double,double), args in {{[-2^10.0,-2^-10.0],[2^-10.0,2^10.0]},[-10,10]}, took 1.762 s
+Loop on FastMath.powFast(double,int), args in {{[-2^10.0,-2^-10.0],[2^-10.0,2^10.0]},[-10,10]}, took 0.179 s
+Loop on      Math.pow(double,double), args in {{[-2^100.0,-2^-100.0],[2^-100.0,2^100.0]},[-10,10]}, took 1.751 s
+Loop on FastMath.powFast(double,int), args in {{[-2^100.0,-2^-100.0],[2^-100.0,2^100.0]},[-10,10]}, took 0.178 s
+Loop on      Math.pow(double,double), args in {[-10.0,10.0],[-100,100]}, took 2.068 s
+Loop on FastMath.powFast(double,int), args in {[-10.0,10.0],[-100,100]}, took 0.288 s
+
+--- testing twoPow(int) ---
+Loop on Math.pow(2.0,double), args in [-1074,1023], took 1.995 s
+Loop on FastMath.twoPow(int), args in [-1074,1023], took 0.049 s
+Loop on Math.pow(2.0,double), args in all magnitudes, took 1.631 s
+Loop on FastMath.twoPow(int), args in all magnitudes, took 0.086 s
+
+--- testing sqrt(double) ---
+Loop on     Math.sqrt(double), args in [0.0,10.0], took 0.104 s
+Loop on FastMath.sqrt(double), args in [0.0,10.0], took 0.095 s
+Loop on     Math.sqrt(double), args in [0.0,1.0E12], took 0.093 s
+Loop on FastMath.sqrt(double), args in [0.0,1.0E12], took 0.093 s
+Loop on     Math.sqrt(double), args in all magnitudes (>=0), took 0.095 s
+Loop on FastMath.sqrt(double), args in all magnitudes (>=0), took 0.093 s
+
+--- testing sqrtQuick(double) ---
+Loop on          Math.sqrt(double), args in all magnitudes (>0,normal), took 0.108 s
+Loop on FastMath.sqrtQuick(double), args in all magnitudes (>0,normal), took 0.034 s
+
+--- testing invSqrtQuick(double) ---
+Loop on           1/Math.sqrt(double), args in all magnitudes (>0,normal), took 0.167 s
+Loop on FastMath.invSqrtQuick(double), args in all magnitudes (>0,normal), took 0.032 s
+
+--- testing cbrt(double) ---
+Loop on     Math.cbrt(double), args in [-10.0,10.0], took 0.877 s
+Loop on FastMath.cbrt(double), args in [-10.0,10.0], took 0.175 s
+Loop on     Math.cbrt(double), args in [-1.0E12,1.0E12], took 0.869 s
+Loop on FastMath.cbrt(double), args in [-1.0E12,1.0E12], took 0.171 s
+Loop on     Math.cbrt(double), args in all magnitudes, took 0.869 s
+Loop on FastMath.cbrt(double), args in all magnitudes, took 0.237 s
+
+--- testing hypot(double,double) ---
+Loop on     Math.hypot(double,double), args in all magnitudes (magnitudes varying together), took 0.625 s
+Loop on FastMath.hypot(double,double), args in all magnitudes (magnitudes varying together), took 0.097 s
+Loop on     Math.hypot(double,double), args in all magnitudes, took 6.479 s
+Loop on FastMath.hypot(double,double), args in all magnitudes, took 0.13 s
+
+--- testing abs(int) ---
+Loop on     Math.abs(int), args in all magnitudes, took 0.031 s
+Loop on FastMath.abs(int), args in all magnitudes, took 0.032 s
+
+--- testing abs(long) ---
+Loop on     Math.abs(long), args in all magnitudes, took 0.036 s
+Loop on FastMath.abs(long), args in all magnitudes, took 0.03 s
+
+--- testing floor(float) ---
+Loop on FastMath.floor(float), args in [-10.0,10.0], took 0.098 s
+Loop on FastMath.floor(float), args in [-1000000.0,1000000.0], took 0.076 s
+Loop on FastMath.floor(float), args in [-2.0E7,2.0E7], took 0.088 s
+Loop on FastMath.floor(float), args in all magnitudes, took 0.108 s
+
+--- testing floor(double) ---
+Loop on     Math.floor(double), args in [-10.0,10.0], took 0.108 s
+Loop on FastMath.floor(double), args in [-10.0,10.0], took 0.085 s
+Loop on     Math.floor(double), args in [-1000000.0,1000000.0], took 0.082 s
+Loop on FastMath.floor(double), args in [-1000000.0,1000000.0], took 0.086 s
+Loop on     Math.floor(double), args in [-1.0E16,1.0E16], took 0.066 s
+Loop on FastMath.floor(double), args in [-1.0E16,1.0E16], took 0.109 s
+Loop on     Math.floor(double), args in all magnitudes, took 0.089 s
+Loop on FastMath.floor(double), args in all magnitudes, took 0.109 s
+
+--- testing ceil(float) ---
+Loop on FastMath.ceil(float), args in [-10.0,10.0], took 0.095 s
+Loop on FastMath.ceil(float), args in [-1000000.0,1000000.0], took 0.076 s
+Loop on FastMath.ceil(float), args in [-2.0E7,2.0E7], took 0.094 s
+Loop on FastMath.ceil(float), args in all magnitudes, took 0.107 s
+
+--- testing ceil(double) ---
+Loop on     Math.ceil(double), args in [-10.0,10.0], took 0.097 s
+Loop on FastMath.ceil(double), args in [-10.0,10.0], took 0.088 s
+Loop on     Math.ceil(double), args in [-1000000.0,1000000.0], took 0.078 s
+Loop on FastMath.ceil(double), args in [-1000000.0,1000000.0], took 0.086 s
+Loop on     Math.ceil(double), args in [-1.0E16,1.0E16], took 0.067 s
+Loop on FastMath.ceil(double), args in [-1.0E16,1.0E16], took 0.12 s
+Loop on     Math.ceil(double), args in all magnitudes, took 0.093 s
+Loop on FastMath.ceil(double), args in all magnitudes, took 0.119 s
+
+--- testing round(float) ---
+Loop on     Math.round(float), args in [-10.0,10.0], took 0.128 s
+Loop on FastMath.round(float), args in [-10.0,10.0], took 0.121 s
+Loop on     Math.round(float), args in [-1000000.0,1000000.0], took 0.109 s
+Loop on FastMath.round(float), args in [-1000000.0,1000000.0], took 0.109 s
+Loop on     Math.round(float), args in [-2.0E7,2.0E7], took 0.11 s
+Loop on FastMath.round(float), args in [-2.0E7,2.0E7], took 0.098 s
+Loop on     Math.round(float), args in all magnitudes, took 0.154 s
+Loop on FastMath.round(float), args in all magnitudes, took 0.124 s
+
+--- testing round(double) ---
+Loop on     Math.round(double), args in [-10.0,10.0], took 0.132 s
+Loop on FastMath.round(double), args in [-10.0,10.0], took 0.116 s
+Loop on     Math.round(double), args in [-1000000.0,1000000.0], took 0.103 s
+Loop on FastMath.round(double), args in [-1000000.0,1000000.0], took 0.114 s
+Loop on     Math.round(double), args in [-1.0E16,1.0E16], took 0.115 s
+Loop on FastMath.round(double), args in [-1.0E16,1.0E16], took 0.094 s
+Loop on     Math.round(double), args in all magnitudes, took 0.133 s
+Loop on FastMath.round(double), args in all magnitudes, took 0.119 s
+
+--- testing roundEven(float) ---
+Loop on         Math.round(float), args in [-10.0,10.0], took 0.124 s
+Loop on FastMath.roundEven(float), args in [-10.0,10.0], took 0.047 s
+Loop on         Math.round(float), args in [-1000000.0,1000000.0], took 0.112 s
+Loop on FastMath.roundEven(float), args in [-1000000.0,1000000.0], took 0.044 s
+Loop on         Math.round(float), args in [-2.0E7,2.0E7], took 0.095 s
+Loop on FastMath.roundEven(float), args in [-2.0E7,2.0E7], took 0.09 s
+Loop on         Math.round(float), args in all magnitudes, took 0.152 s
+Loop on FastMath.roundEven(float), args in all magnitudes, took 0.11 s
+
+--- testing roundEven(double) ---
+Loop on         Math.round(double), args in [-10.0,10.0], took 0.123 s
+Loop on FastMath.roundEven(double), args in [-10.0,10.0], took 0.055 s
+Loop on         Math.round(double), args in [-1000000.0,1000000.0], took 0.101 s
+Loop on FastMath.roundEven(double), args in [-1000000.0,1000000.0], took 0.053 s
+Loop on         Math.round(double), args in [-1.0E16,1.0E16], took 0.115 s
+Loop on FastMath.roundEven(double), args in [-1.0E16,1.0E16], took 0.101 s
+Loop on         Math.round(double), args in all magnitudes, took 0.125 s
+Loop on FastMath.roundEven(double), args in all magnitudes, took 0.12 s
+
+--- testing rint(float) ---
+Loop on FastMath.rint(float), args in [-10.0,10.0], took 0.044 s
+Loop on FastMath.rint(float), args in [-1000000.0,1000000.0], took 0.03 s
+Loop on FastMath.rint(float), args in [-2.0E7,2.0E7], took 0.066 s
+Loop on FastMath.rint(float), args in all magnitudes, took 0.076 s
+
+--- testing rint(double) ---
+Loop on     Math.rint(double), args in [-10.0,10.0], took 0.043 s
+Loop on FastMath.rint(double), args in [-10.0,10.0], took 0.046 s
+Loop on     Math.rint(double), args in [-1000000.0,1000000.0], took 0.03 s
+Loop on FastMath.rint(double), args in [-1000000.0,1000000.0], took 0.044 s
+Loop on     Math.rint(double), args in [-1.0E16,1.0E16], took 0.073 s
+Loop on FastMath.rint(double), args in [-1.0E16,1.0E16], took 0.08 s
+Loop on     Math.rint(double), args in all magnitudes, took 0.073 s
+Loop on FastMath.rint(double), args in all magnitudes, took 0.083 s
+
+--- testing addExact(int,int) ---
+Loop on FastMath.addExact(int,int), args in [-1073741824,1073741823], took 0.038 s
+
+--- testing addExact(long,long) ---
+Loop on FastMath.addExact(long,long), args in [-4611686018427387904,4611686018427387903], took 0.039 s
+
+--- testing addBounded(int,int) ---
+Loop on FastMath.addBounded(int,int), args in [-1073741824,1073741823], took 0.036 s
+
+--- testing addBounded(long,long) ---
+Loop on FastMath.addBounded(long,long), args in [-4611686018427387904,4611686018427387903], took 0.037 s
+
+--- testing subtractExact(int,int) ---
+Loop on FastMath.subtractExact(int,int), args in [-1073741824,1073741823], took 0.042 s
+
+--- testing subtractExact(long,long) ---
+Loop on FastMath.subtractExact(long,long), args in [-4611686018427387904,4611686018427387903], took 0.037 s
+
+--- testing subtractBounded(int,int) ---
+Loop on FastMath.subtractBounded(int,int), args in [-1073741824,1073741823], took 0.032 s
+
+--- testing subtractBounded(long,long) ---
+Loop on FastMath.subtractBounded(long,long), args in [-4611686018427387904,4611686018427387903], took 0.038 s
+
+--- testing multiplyExact(int,int) ---
+Loop on FastMath.multiplyExact(int,int), args in [-46340,46340], took 0.033 s
+
+--- testing multiplyExact(long,long) ---
+Loop on FastMath.multiplyExact(long,long), args in [-3037000499,3037000499], took 0.14 s
+
+--- testing multiplyBounded(int,int) ---
+Loop on FastMath.multiplyBounded(int,int), args in [-46340,46340], took 0.038 s
+
+--- testing multiplyBounded(long,long) ---
+Loop on FastMath.multiplyBounded(long,long), args in [-3037000499,3037000499], took 0.142 s
+
+--- testing floorDiv(int,int) ---
+Loop on FastMath.floorDiv(int,int), args in {all magnitudes (>=0),all magnitudes (>0)}, took 0.068 s
+Loop on FastMath.floorDiv(int,int), args in {all magnitudes (<=0),all magnitudes (<0)}, took 0.047 s
+Loop on FastMath.floorDiv(int,int), args in {all magnitudes,all magnitudes (>0)}, took 0.085 s
+Loop on FastMath.floorDiv(int,int), args in {all magnitudes,all magnitudes (<0)}, took 0.099 s
+
+--- testing floorDiv(long,long) ---
+Loop on FastMath.floorDiv(long,long), args in {all magnitudes (>=0),all magnitudes (>0)}, took 0.132 s
+Loop on FastMath.floorDiv(long,long), args in {all magnitudes (<=0),all magnitudes (<0)}, took 0.133 s
+Loop on FastMath.floorDiv(long,long), args in {all magnitudes,all magnitudes (>0)}, took 0.147 s
+Loop on FastMath.floorDiv(long,long), args in {all magnitudes,all magnitudes (<0)}, took 0.146 s
+
+--- testing floorMod(int,int) ---
+Loop on FastMath.floorMod(int,int), args in {all magnitudes (>=0),all magnitudes (>0)}, took 0.06 s
+Loop on FastMath.floorMod(int,int), args in {all magnitudes (<=0),all magnitudes (<0)}, took 0.052 s
+Loop on FastMath.floorMod(int,int), args in {all magnitudes,all magnitudes (>0)}, took 0.086 s
+Loop on FastMath.floorMod(int,int), args in {all magnitudes,all magnitudes (<0)}, took 0.09 s
+
+--- testing floorMod(long,long) ---
+Loop on FastMath.floorMod(long,long), args in {all magnitudes (>=0),all magnitudes (>0)}, took 0.146 s
+Loop on FastMath.floorMod(long,long), args in {all magnitudes (<=0),all magnitudes (<0)}, took 0.138 s
+Loop on FastMath.floorMod(long,long), args in {all magnitudes,all magnitudes (>0)}, took 0.157 s
+Loop on FastMath.floorMod(long,long), args in {all magnitudes,all magnitudes (<0)}, took 0.16 s
+
+--- testing remainder(double,double) ---
+Loop on Math.IEEEremainder(double,double), args in [-10.0,10.0], took 0.745 s
+Loop on FastMath.remainder(double,double), args in [-10.0,10.0], took 0.23 s
+Loop on Math.IEEEremainder(double,double), args in [-1000000.0,1000000.0], took 0.743 s
+Loop on FastMath.remainder(double,double), args in [-1000000.0,1000000.0], took 0.228 s
+Loop on Math.IEEEremainder(double,double), args in [-1.0E12,1.0E12], took 0.736 s
+Loop on FastMath.remainder(double,double), args in [-1.0E12,1.0E12], took 0.229 s
+Loop on Math.IEEEremainder(double,double), args in all magnitudes, took 33.748 s
+Loop on FastMath.remainder(double,double), args in all magnitudes, took 1.196 s
+
+--- testing normalizeMinusPiPi(double) ---
+Loop on FastMath.normalizeMinusPiPi(double), args in [-PI,PI], took 0.04 s
+Loop on FastMath.normalizeMinusPiPi(double), args in [-2*PI,2*PI], took 0.09 s
+Loop on FastMath.normalizeMinusPiPi(double), args in [-100.0,100.0], took 0.104 s
+Loop on FastMath.normalizeMinusPiPi(double), args in [-1.0E12,1.0E12], took 0.967 s
+Loop on FastMath.normalizeMinusPiPi(double), args in all magnitudes, took 0.572 s
+
+--- testing normalizeMinusPiPiFast(double) ---
+Loop on FastMath.normalizeMinusPiPiFast(double), args in [-PI,PI], took 0.038 s
+Loop on FastMath.normalizeMinusPiPiFast(double), args in [-2*PI,2*PI], took 0.116 s
+Loop on FastMath.normalizeMinusPiPiFast(double), args in [-100.0,100.0], took 0.149 s
+Loop on FastMath.normalizeMinusPiPiFast(double), args in [-1.0E12,1.0E12], took 0.257 s
+Loop on FastMath.normalizeMinusPiPiFast(double), args in all magnitudes, took 0.115 s
+
+--- testing normalizeZeroTwoPi(double) ---
+Loop on FastMath.normalizeZeroTwoPi(double), args in [0.0,2*PI], took 0.038 s
+Loop on FastMath.normalizeZeroTwoPi(double), args in [-2*PI,2*PI], took 0.134 s
+Loop on FastMath.normalizeZeroTwoPi(double), args in [-100.0,100.0], took 0.208 s
+Loop on FastMath.normalizeZeroTwoPi(double), args in [-1.0E12,1.0E12], took 0.995 s
+Loop on FastMath.normalizeZeroTwoPi(double), args in all magnitudes, took 0.649 s
+
+--- testing normalizeZeroTwoPiFast(double) ---
+Loop on FastMath.normalizeZeroTwoPiFast(double), args in [0.0,2*PI], took 0.038 s
+Loop on FastMath.normalizeZeroTwoPiFast(double), args in [-2*PI,2*PI], took 0.126 s
+Loop on FastMath.normalizeZeroTwoPiFast(double), args in [-100.0,100.0], took 0.19 s
+Loop on FastMath.normalizeZeroTwoPiFast(double), args in [-1.0E12,1.0E12], took 0.304 s
+Loop on FastMath.normalizeZeroTwoPiFast(double), args in all magnitudes, took 0.149 s
+
+--- testing normalizeMinusHalfPiHalfPi(double) ---
+Loop on FastMath.normalizeMinusHalfPiHalfPi(double), args in [-PI/2,PI/2], took 0.038 s
+Loop on FastMath.normalizeMinusHalfPiHalfPi(double), args in [-2*PI,2*PI], took 0.219 s
+Loop on FastMath.normalizeMinusHalfPiHalfPi(double), args in [-100.0,100.0], took 0.233 s
+Loop on FastMath.normalizeMinusHalfPiHalfPi(double), args in [-1.0E12,1.0E12], took 1.043 s
+Loop on FastMath.normalizeMinusHalfPiHalfPi(double), args in all magnitudes, took 0.613 s
+
+--- testing normalizeMinusHalfPiHalfPiFast(double) ---
+Loop on FastMath.normalizeMinusHalfPiHalfPiFast(double), args in [-PI/2,PI/2], took 0.038 s
+Loop on FastMath.normalizeMinusHalfPiHalfPiFast(double), args in [-2*PI,2*PI], took 0.205 s
+Loop on FastMath.normalizeMinusHalfPiHalfPiFast(double), args in [-100.0,100.0], took 0.213 s
+Loop on FastMath.normalizeMinusHalfPiHalfPiFast(double), args in [-1.0E12,1.0E12], took 0.325 s
+Loop on FastMath.normalizeMinusHalfPiHalfPiFast(double), args in all magnitudes, took 0.118 s
+
+--- testing getExponent(float) ---
+Loop on     Math.getExponent(float), args in all magnitudes, took 0.026 s
+Loop on FastMath.getExponent(float), args in all magnitudes, took 0.03 s... 
+
+--- testing getExponent(double) ---
+Loop on     Math.getExponent(double), args in all magnitudes, took 0.027 s
+Loop on FastMath.getExponent(double), args in all magnitudes, took 0.033 s... 
+
+--- testing signum(float) ---
+Loop on     Math.signum(float), args in all magnitudes, took 0.048 s
+Loop on FastMath.signum(float), args in all magnitudes, took 0.04 s
+
+--- testing signum(double) ---
+Loop on     Math.signum(double), args in all magnitudes, took 0.044 s
+Loop on FastMath.signum(double), args in all magnitudes, took 0.042 s
+
+--- testing signFromBit(float) ---
+Loop on FastMath.signFromBit(float), args in all magnitudes, took 0.025 s
+
+--- testing signFromBit(double) ---
+Loop on FastMath.signFromBit(double), args in all magnitudes, took 0.021 s
+
+--- testing copySign(float,float) ---
+Loop on     Math.copySign(float,float), args in all magnitudes, took 0.039 s
+Loop on FastMath.copySign(float,float), args in all magnitudes, took 0.047 s
+
+--- testing copySign(double,double) ---
+Loop on     Math.copySign(double,double), args in all magnitudes, took 0.042 s
+Loop on FastMath.copySign(double,double), args in all magnitudes, took 0.042 s
+
+--- testing ulp(float) ---
+Loop on     Math.ulp(float), args in all magnitudes, took 0.105 s
+Loop on FastMath.ulp(float), args in all magnitudes, took 0.103 s
+
+--- testing ulp(double) ---
+Loop on     Math.ulp(double), args in all magnitudes, took 0.074 s
+Loop on FastMath.ulp(double), args in all magnitudes, took 0.063 s
+
+--- testing nextAfter(float,double) ---
+Loop on     Math.nextAfter(float,double), args in {all magnitudes,all magnitudes}, took 0.334 s
+Loop on FastMath.nextAfter(float,double), args in {all magnitudes,all magnitudes}, took 0.099 s
+
+--- testing nextAfter(double,double) ---
+Loop on     Math.nextAfter(double,double), args in all magnitudes, took 0.116 s
+Loop on FastMath.nextAfter(double,double), args in all magnitudes, took 0.109 s
+
+--- testing nextUp(float) ---
+Loop on     Math.nextUp(float), args in all magnitudes, took 0.055 s
+Loop on FastMath.nextUp(float), args in all magnitudes, took 0.049 s
+
+--- testing nextUp(double) ---
+Loop on     Math.nextUp(double), args in all magnitudes, took 0.045 s
+Loop on FastMath.nextUp(double), args in all magnitudes, took 0.046 s
+
+--- testing nextDown(float) ---
+Loop on FastMath.nextDown(float), args in all magnitudes, took 0.053 s
+
+--- testing nextDown(double) ---
+Loop on FastMath.nextDown(double), args in all magnitudes, took 0.05 s
+
+--- testing scalb(float,int) ---
+Loop on     Math.scalb(float,int), args in {all magnitudes,[-10,10]}, took 0.061 s
+Loop on FastMath.scalb(float,int), args in {all magnitudes,[-10,10]}, took 0.06 s
+Loop on     Math.scalb(float,int), args in {all magnitudes,[-50,50]}, took 0.066 s
+Loop on FastMath.scalb(float,int), args in {all magnitudes,[-50,50]}, took 0.079 s
+
+--- testing scalb(double,int) ---
+Loop on     Math.scalb(double,int), args in {all magnitudes,[-10,10]}, took 0.116 s
+Loop on FastMath.scalb(double,int), args in {all magnitudes,[-10,10]}, took 0.096 s
+Loop on     Math.scalb(double,int), args in {all magnitudes,[-500,500]}, took 0.138 s
+Loop on FastMath.scalb(double,int), args in {all magnitudes,[-500,500]}, took 0.13 s
+--- ...FastMathPerf ---
+BUILD SUCCESSFUL (total time: 3 minutes 25 seconds)

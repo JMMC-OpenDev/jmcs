@@ -330,14 +330,14 @@ public final class Bootstrapper {
 
             _application.___internalStart();
 
+            SplashScreen.display(shouldShowSplashScreen && !isHeadless());
+
             // Build Acknowledgment, ShowRelease and ShowHelp Actions
             // (the creation must be done after applicationModel instanciation)
             ActionRegistrar.getInstance().createAllInternalActions();
 
             setState(ApplicationState.APP_INIT);
             _application.initServices();
-
-            SplashScreen.display(shouldShowSplashScreen && !isHeadless());
 
             ___internalRun();
 

@@ -73,6 +73,13 @@ public final class MCSExceptionHandler {
     public static void installLoggingHandler() {
         setExceptionHandler(new LoggingExceptionHandler());
     }
+    
+    /**
+     * Public method to initialize the exception handler singleton with the ExitExceptionHandler
+     */
+    public static void installExitExceptionHandler() {
+        setExceptionHandler(new ExitExceptionHandler());
+    }
 
     /**
      * Public method to initialize the exception handler singleton with the SwingExceptionHandler
@@ -349,7 +356,7 @@ public final class MCSExceptionHandler {
     /**
      * Logging exception handler that delegates exception handling to logException(thread, throwable)
      */
-    private final static class LoggingExceptionHandler implements Thread.UncaughtExceptionHandler {
+    private static class LoggingExceptionHandler implements Thread.UncaughtExceptionHandler {
 
         /**
          * Method invoked when the given thread terminates due to the
@@ -367,6 +374,29 @@ public final class MCSExceptionHandler {
         }
     }
 
+    /**
+     * Exist exception handler that delegates exception handling to logException(thread, throwable)
+     * then exit() anyway
+     */
+    private final static class ExitExceptionHandler extends LoggingExceptionHandler {
+
+        /**
+         * Method invoked when the given thread terminates due to the
+         * given uncaught exception.
+         * <p>Any exception thrown by this method will be ignored by the
+         * Java Virtual Machine.
+         * @param thread the thread
+         * @param e the exception
+         */
+        @Override
+        public void uncaughtException(final Thread thread, final Throwable e) {
+            try {
+                super.uncaughtException(thread, e);
+            } finally {
+                System.exit(1);
+            }
+        }
+    }
     /**
      * Swing exception handler that delegates exception handling to showException(thread, throwable)
      * using EDT

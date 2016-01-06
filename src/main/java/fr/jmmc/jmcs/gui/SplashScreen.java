@@ -139,22 +139,22 @@ public class SplashScreen extends JFrame {
      * Close the splash screen
      */
     public static void close() {
-        SwingUtils.invokeAndWaitEDT(new Runnable() {
-            @Override
-            public void run() {
-                if (_instance == null) {
-                    return;
-                }
+        if (_instance != null) {
+            SwingUtils.invokeAndWaitEDT(new Runnable() {
+                @Override
+                public void run() {
+                    if (_instance != null) {
+                        if (_instance.isVisible()) {
+                            _instance.setVisible(false);
+                            _instance.dispose();
+                        }
 
-                if (_instance.isVisible()) {
-                    _instance.setVisible(false);
-                    _instance.dispose();
+                        // cleanup (helps GC):
+                        _instance = null;
+                    }
                 }
-
-                // cleanup (helps GC):
-                _instance = null;
-            }
-        });
+            });
+        }
     }
 
     /**

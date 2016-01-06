@@ -75,7 +75,7 @@ public class TestFileUtils {
         Assert.assertEquals(expResult, result);
 
         path = SystemUtils.USER_HOME;
-        expResult = new File(SystemUtils.USER_HOME);
+        expResult = new File(path);
         result = FileUtils.getDirectory(path);
         Assert.assertEquals(expResult, result);
     }

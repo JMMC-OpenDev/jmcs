@@ -126,6 +126,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.17</version>
                 <configuration>
+                    <!-- executes each test class in its own JVM process, one after another -->
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
                     <argLine>-Xms512m -Xmx1024m -XX:MaxPermSize=128m</argLine>
                 </configuration>
                 <dependencies>

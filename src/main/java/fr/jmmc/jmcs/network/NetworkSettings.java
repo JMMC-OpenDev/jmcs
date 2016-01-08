@@ -28,10 +28,7 @@
 package fr.jmmc.jmcs.network;
 
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
-import fr.jmmc.jmcs.data.preference.Preferences;
-import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.StringUtils;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -40,7 +37,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,42 +138,6 @@ public final class NetworkSettings {
         // NOTE: USE of SYSTEM_PROXIES can cause problems with SOCKS / HTTPS / Other protocols ?
         // unset env var all_proxy=socks://w and ALL_PROXY
         System.setProperty(PROPERTY_USE_SYSTEM_PROXIES, USE_SYSTEM_PROXIES);
-
-        // first, dump all known network properties:
-        final Method netPropertiesGetMethod = getNetPropertiesGetMethod();
-        if (netPropertiesGetMethod != null) {
-            final Properties netProperties = new Properties();
-            String value;
-
-            // HTTP Proxy:
-            value = getNetProperty(netPropertiesGetMethod, PROPERTY_HTTP_PROXY_HOST);
-            if (value != null) {
-                netProperties.put(PROPERTY_HTTP_PROXY_HOST, value);
-            }
-            value = getNetProperty(netPropertiesGetMethod, PROPERTY_HTTP_PROXY_PORT);
-            if (value != null) {
-                netProperties.put(PROPERTY_HTTP_PROXY_PORT, value);
-            }
-
-            // HTTPS Proxy:
-            value = getNetProperty(netPropertiesGetMethod, PROPERTY_HTTPS_PROXY_HOST);
-            if (value != null) {
-                netProperties.put(PROPERTY_HTTPS_PROXY_HOST, value);
-            }
-            value = getNetProperty(netPropertiesGetMethod, PROPERTY_HTTPS_PROXY_PORT);
-            if (value != null) {
-                netProperties.put(PROPERTY_HTTPS_PROXY_PORT, value);
-            }
-
-            if (!netProperties.isEmpty() && _logger.isInfoEnabled()) {
-                _logger.info("Java net properties:\n{}", Preferences.dumpProperties(netProperties));
-            }
-        }
-
-        final String proxyList = System.getProperty(PROPERTY_JAVA_PLUGIN_PROXY_LIST);
-        if (proxyList != null) {
-            _logger.info("Java plugin proxy list: {}", proxyList);
-        }
 
         // Get Http Proxy settings from ProxySelector:
         final ProxyConfig config = getProxyConfiguration(getJmmcHttpURI());
@@ -303,26 +263,6 @@ public final class NetworkSettings {
             JMMC_WEB_URI = URI.create(JMMC_WEB_URL);
         }
         return JMMC_WEB_URI;
-    }
-
-    /**
-     * Returns the sun.net.NetProperties specific property
-     *
-     * @param netPropertiesGetMethod sun.net.NetProperties.get(String)
-     * @param key the property key
-     * @return a networking system property. If no system property was defined
-     * returns the default value, if it exists, otherwise returns <code>null</code>.
-     */
-    private static String getNetProperty(final Method netPropertiesGetMethod, final String key) {
-        return (String) IntrospectionUtils.getMethodValue(netPropertiesGetMethod, new Object[]{key});
-    }
-
-    /**
-     * Return the sun.net.NetProperties.get(String) method
-     * @return NetProperties.get(String) method or null if unavailable
-     */
-    private static Method getNetPropertiesGetMethod() {
-        return IntrospectionUtils.getMethod("sun.net.NetProperties", "get", new Class<?>[]{String.class});
     }
 
     /**

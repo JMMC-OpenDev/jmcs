@@ -177,7 +177,6 @@ public final class StatusBar extends JPanel {
         setLayout(new BorderLayout());
 
         // hide custom container by default:
-//        _container.setBorder(BorderFactory.createLineBorder(Color.red));
         _container.setVisible(false);
 
         final int spacer = 4;

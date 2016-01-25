@@ -37,7 +37,7 @@
     <version>TRUNK</version>
 
     <packaging>pom</packaging>
-    <name>JMMC</name>
+    <name>jMCS parent-pom</name>
 
     <properties>
         <!-- do not make assembly and copy dependencies by default -->

@@ -44,8 +44,8 @@ import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -78,6 +78,8 @@ public final class Http {
     private static volatile HttpClient _sharedHttpClient = null;
     /** shared connection manager (thread safe) */
     private static volatile MultiThreadedHttpConnectionManager _sharedConnectionManager = null;
+    /** shared Http retry handler that disabled http retries */
+    private static final HttpMethodRetryHandler _httpNoRetryHandler = new DefaultHttpMethodRetryHandler(0, false);
 
     /**
      * Forbidden constructor
@@ -177,7 +179,7 @@ public final class Http {
         // encoding to UTF-8
         httpClientParams.setParameter(HttpClientParams.HTTP_CONTENT_CHARSET, "UTF-8");
         // avoid retries (3 by default):
-        httpClientParams.setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(0, false));
+        httpClientParams.setParameter(HttpMethodParams.RETRY_HANDLER, _httpNoRetryHandler);
     }
 
     /**

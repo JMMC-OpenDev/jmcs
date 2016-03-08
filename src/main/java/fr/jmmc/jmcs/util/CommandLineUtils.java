@@ -116,6 +116,10 @@ public final class CommandLineUtils {
      * @return the map of parsed custom arguments keyed by argument names if any, null otherwise.
      */
     public static Map<String, String> interpretArguments(final String[] args, final Map<String, ArgumentDefinition> customArguments) {
+        // Just leave method if no argument has been given
+        if (args == null) {
+            return null;
+        }
 
         // List received arguments
         if (_logger.isDebugEnabled()) {
@@ -123,12 +127,7 @@ public final class CommandLineUtils {
                 _logger.debug("args[{}] = '{}'.", i, args[i]);
             }
         }
-
-        // Just leave method if no argument has been given
-        if (args == null) {
-            return null;
-        }
-
+        
         // Define default arguments (help, version, log, open file)
         final List<LongOpt> longOpts = new ArrayList<LongOpt>();
         longOpts.clear();

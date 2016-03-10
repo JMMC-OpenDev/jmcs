@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>fr.jmmc</groupId>
+        <artifactId>jmmc</artifactId>
+        <version>TRUNK</version>
+        <!--  please install first parent pom from jMCS/parent-pom directory -->
+    </parent>
+
+    <groupId>fr.jmmc.jmal</groupId>
+    <artifactId>jmal</artifactId>
+
+    <packaging>jar</packaging>
+    <name>jMAL</name>
+
+    <properties>
+        <!-- do copy dependencies (JNLP) -->
+        <mdep.skip>false</mdep.skip>
+
+        <!-- disable tests (jtransforms tests are very long) -->
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>fr.jmmc.jmcs</groupId>
+            <artifactId>jmcs</artifactId>
+            <version>TRUNK</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jafama</groupId>
+            <artifactId>jafama</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cds</groupId>
+            <artifactId>sptype</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <!-- Requires you to install manually the artifact:
+                       mvn install:install-file -Dfile=lib/jafama-2.0.jar -DgroupId=jafama -DartifactId=jafama -Dversion=2.0 -Dpackaging=jar
+                        -->
+                        <id>Jafama</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <phase>process-resources</phase> <!-- just before compilation -->
+                        <configuration>
+                            <file>lib/jafama-2.0.jar</file>
+                            <groupId>jafama</groupId>
+                            <artifactId>jafama</artifactId>
+                            <version>2.0</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Requires you to install manually the artifact:
+                       mvn install:install-file -Dfile=lib/sptype.jar -DgroupId=cds -DartifactId=sptype -Dversion=1.0 -Dpackaging=jar
+                        -->
+                        <id>CdsSpType</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <phase>process-resources</phase> <!-- just before compilation -->
+                        <configuration>
+                            <file>lib/sptype.jar</file>
+                            <groupId>cds</groupId>
+                            <artifactId>sptype</artifactId>
+                            <version>1.0</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

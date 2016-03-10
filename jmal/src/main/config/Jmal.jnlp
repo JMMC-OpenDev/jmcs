@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<jnlp spec="1.0+" codebase="@GENERATED@" href="Jmal.jnlp">
+    <information>
+        <title>jMAL Framework</title>
+        <vendor>JMMC (Jean-Marie MARIOTTI Center)</vendor>
+        <homepage href="http://www.jmmc.fr/dev/jmal/"/>
+        <description>JMMC Astronomical library</description>
+        <offline-allowed/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <!-- MANUALLY EDITED - Should be generated with maven ASAP ! -->
+
+        <!-- Module code -->
+        <jar href="jar/jmal-TRUNK.jar"/>
+
+
+        <!-- Libraries -->
+
+        <!-- Jafama (FastMath) -->
+        <jar href="@SHARED@/jafama-2.0.jar"/>
+
+        <!-- CDS Used by ld2ud computation (fr.jmmc.mcs.astro) -->
+        <jar href="@SHARED@/sptype-1.0.jar"/>
+
+    </resources>
+
+    <component-desc/>
+</jnlp>

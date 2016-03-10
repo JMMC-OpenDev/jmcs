@@ -184,14 +184,28 @@ public final class ApplicationDescription {
     public static float parseVersion(final String version) {
         float res = 0f;
 
-        // Remove whitespace and '.' in "0.9.4 beta 11" => "094beta11":
-        String tmp = StringUtils.removeNonAlphaNumericChars(version);
+        // Extract first numeric part '0.'
+        String tmp = version;
+        final String first;
+        
+        int pos = tmp.indexOf('.');
+        if (pos != -1) {
+            pos++;
+            first = tmp.substring(0, pos);
+            tmp = tmp.substring(pos);
+        } else {
+            first = "0.";
+        }
+        
+        // Remove whitespace and '.' in "9.4 beta 11" => "94beta11":
+        tmp = StringUtils.removeNonAlphaNumericChars(tmp);
 
-        // Replace chars by '.' in "094beta11" => "094.11":
-        tmp = StringUtils.replaceNonNumericChars(tmp, ".");
+        // Replace chars by '' in "94beta11" => "9411":
+        tmp = StringUtils.replaceNonNumericChars(tmp, "");
 
         try {
-            // parse tmp => 94.11:
+            tmp = first + tmp;
+            // parse tmp => 0.9411:
             res = Float.parseFloat(tmp);
         } catch (NumberFormatException nfe) {
             _logger.info("Unable to parse version: {}", version);

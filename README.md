@@ -31,9 +31,13 @@ jMCS uses `maven` to build from sources. Please type the following commands:
 ```
 git clone https://github.com/JMMC-OpenDev/jMCS.git
 
-cd jMCS
-# first time only: install missing libraries in maven repositories:
+
+# first time only: install parent-pom and missing libraries in maven repositories:
+cd jMCS/parent-pom
+mvn -Dassembly.skipAssembly -Djarsigner.skip=true clean install
+cd ..
 mvn process-resources
+# build jMCS jar files
 mvn clean package
 ```
 

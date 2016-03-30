@@ -88,7 +88,8 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-
+	    
+	    <!-- disabled since it requires java8+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jdeps-plugin</artifactId>
@@ -96,12 +97,12 @@
                 <executions>
                     <execution>
                         <goals>
-                            <!-- verify main classes -->
+                            <!- - verify main classes - ->
                             <goal>jdkinternals</goal>
-                            <!-- verify test classes -->
-                            <!--
+                            <!- - verify test classes - ->
+                            <!- -
                                 <goal>test-jdkinternals</goal>
-                            -->
+                            - ->
                         </goals>
                     </execution>
                 </executions>
@@ -109,6 +110,7 @@
                     <failOnWarning>true</failOnWarning>
                 </configuration>
             </plugin>
+	    -->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

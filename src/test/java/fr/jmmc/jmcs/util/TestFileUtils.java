@@ -617,9 +617,9 @@ public class TestFileUtils {
 
     /**
      * Test of retrieveRemoteFile method, of class FileUtils.
+     * Disabled too jmmc specific tests @Test
      */
-    @Test
-    public void testRetrieveRemoteFile() throws Exception {
+    public void couldtestRetrieveRemoteFile() throws Exception {
         System.out.println("retrieveRemoteFile");
 
         String remoteLocation = "http://jmmc.fr/stats/?detail=on";

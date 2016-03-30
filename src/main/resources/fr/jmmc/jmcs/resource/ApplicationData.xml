@@ -189,6 +189,12 @@
 
     <releasenotes>
         <release version="1.0.4">
+          <!--
+            <prerelease version="1.0.4b8" tag="UNKNOWN">
+              <change type="CHANGE">In Readme.md : updated build procedure (mainly add support for process-resources maven target).</change>
+              <change type="CHANGE">In fr.jmmc.jmcs.util.TestFileUtils.java : disabled too specific test.</change>
+            </prerelease>
+           --> 
             <prerelease version="1.0.4b7" tag="UNKNOWN">
                 <change type="FEATURE">In fr.jmmc.jmcs.service.BrowserLauncher.java : improved linux browser support and use the WEB_BROWSER preference.</change>
                 <change type="FEATURE">In fr.jmmc.jmcs.gui.component.CommonPreferencesView.java : added new embeddable JPanel to edit common preferences (web browser selector).</change>

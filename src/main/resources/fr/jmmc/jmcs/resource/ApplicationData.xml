@@ -39,8 +39,8 @@
         <feedback_form_url>http://jmmc.fr/feedback/feedback.php</feedback_form_url>
     </company>
 
-    <program name="jMCS Framework" version="1.0.4b7"/>
-    <compilation date="09/10/2015" compiler="1.6"/>
+    <program name="jMCS Framework" version="1.0.4"/>
+    <compilation date="30/03/2016" compiler="1.6"/>
 
     <text>JMMC framework, enabling better user interface and platform integration across Mac, Linux and Windows through numerous third-party libraries and in-house code</text>
 

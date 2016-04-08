@@ -95,6 +95,7 @@ public final class JnlpStarter {
         final RootContext jobContext = LocalLauncher.prepareMainJob(APP_NAME, USER_NAME, FileUtils.getTempDirPath(), null);
 
         // command line: 'javaws -Xnosplash <jnlpUrl>'
+        // Xnosplash seems not usefull in recent oracle but throw an error with openjdk/netx
         final String[] cmd;
         if (JNLP_VERBOSE) {
             //cmd = new String[]{JAVAWS_CMD, "-verbose", "-Xnosplash", jnlpUrl};

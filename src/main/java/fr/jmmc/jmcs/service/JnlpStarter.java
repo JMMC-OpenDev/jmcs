@@ -97,9 +97,11 @@ public final class JnlpStarter {
         // command line: 'javaws -Xnosplash <jnlpUrl>'
         final String[] cmd;
         if (JNLP_VERBOSE) {
-            cmd = new String[]{JAVAWS_CMD, "-verbose", "-Xnosplash", jnlpUrl};
+            //cmd = new String[]{JAVAWS_CMD, "-verbose", "-Xnosplash", jnlpUrl};
+            cmd = new String[]{JAVAWS_CMD, "-verbose", jnlpUrl};
         } else {
-            cmd = new String[]{JAVAWS_CMD, "-Xnosplash", jnlpUrl};
+            //cmd = new String[]{JAVAWS_CMD, "-Xnosplash", jnlpUrl};
+            cmd = new String[]{JAVAWS_CMD, jnlpUrl};
         }
 
         LocalLauncher.prepareChildJob(jobContext, TASK_NAME, cmd);

@@ -29,6 +29,9 @@ package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.Bootstrapper;
+import fr.jmmc.jmcs.data.preference.CommonPreferences;
+import fr.jmmc.jmcs.data.preference.Preferences;
+import fr.jmmc.jmcs.data.preference.PreferencesException;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.service.BrowserLauncher;
@@ -41,9 +44,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import javax.swing.event.HyperlinkEvent;
@@ -68,6 +73,8 @@ public class ResizableTextViewFactory {
     private static final int MINIMUM_HEIGHT = 300;
     private static final int MAXIMUM_HEIGHT = 550;
     private static final int BUTTON_HEIGHT = 20;
+
+    private static final String SHOW_UNSUPPORTED_JDK_WARNING_PREFERENCE_NAME = "showUnsupportedJdkWarning";
 
     /**
      * Create a window containing the given plain text with the given title.
@@ -94,7 +101,7 @@ public class ResizableTextViewFactory {
                 final JEditorPane editorPane = startLayout(dialog);
 
                 // if modal, blocks until the dialog is closed:
-                finishLayout(editorPane, dialog, text, modal, timeoutMillis);
+                finishLayout(editorPane, dialog, text, modal, timeoutMillis, null, null);
             }
         });
     }
@@ -117,7 +124,23 @@ public class ResizableTextViewFactory {
      * @param timeoutMillis timeout in milliseconds to wait before the window is hidden (auto-hide)
      */
     public static void createHtmlWindow(final String html, final String title, final boolean modal, final int timeoutMillis) {
-        if (Bootstrapper.isHeadless()) {
+        createHtmlWindow(html, title, modal, timeoutMillis, null, null);
+    }
+
+    /**
+     * Create a window containing the given HTML text with the given title.
+     * @param html HTML text to show.
+     * @param title window title
+     * @param modal true to make the window modal, false otherwise.
+     * @param timeoutMillis timeout in milliseconds to wait before the window is hidden (auto-hide)
+     * @param preferences null or reference to the dedicated Preferences singleton
+     * @param dismissablePreferenceName null or preference name to store
+     */
+    public static void createHtmlWindow(final String html, final String title, final boolean modal,
+            final int timeoutMillis, final Preferences preferences, final String dismissablePreferenceName) {
+        if (preferences != null && dismissablePreferenceName != null && DismissableMessagePane.getPreferenceState(preferences, dismissablePreferenceName)) {
+            //nop
+        } else if (Bootstrapper.isHeadless()) {
             _logger.info("[Headless] Html Message: {}", html);
         } else {
             SwingUtils.invokeAndWaitEDT(new Runnable() {
@@ -125,7 +148,6 @@ public class ResizableTextViewFactory {
                 public void run() {
                     final JDialog dialog = new JDialog(App.getFrame(), title, modal);
                     final JEditorPane editorPane = startLayout(dialog);
-
                     editorPane.setContentType("text/html");
                     editorPane.addHyperlinkListener(new HyperlinkListener() {
                         @Override
@@ -149,9 +171,9 @@ public class ResizableTextViewFactory {
                             }
                         }
                     });
-
+                   
                     // if modal, blocks until the dialog is closed:
-                    finishLayout(editorPane, dialog, html, modal, timeoutMillis);
+                    finishLayout(editorPane, dialog, html, modal, timeoutMillis, preferences, dismissablePreferenceName);
                 }
             });
         }
@@ -179,9 +201,12 @@ public class ResizableTextViewFactory {
      * @param text text to display
      * @param modal true to make the window modal, false otherwise.
      * @param timeoutMillis timeout in milliseconds to wait before the window is hidden (auto-hide)
+     * @param preferences null or reference to the dedicated Preferences singleton
+     * @param dismissablePreferenceName null or preference name to store
      */
     private static void finishLayout(final JEditorPane editorPane, final JDialog dialog, final String text,
-            final boolean modal, final int timeoutMillis) {
+            final boolean modal, final int timeoutMillis, final Preferences preferences,
+            final String dismissablePreferenceName) {
 
         final JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(editorPane);
@@ -197,7 +222,31 @@ public class ResizableTextViewFactory {
         if (modal) {
             final JButton button = new JButton("OK");
             button.addActionListener(new CloseWindowAction(dialog));
-            contentPane.add(button, BorderLayout.SOUTH);
+            
+
+            if (dismissablePreferenceName != null) {
+                JPanel p = new JPanel();
+                final JButton button2 = new JButton(DismissableMessagePane.DO_NOT_SHOW_THIS_MESSAGE_AGAIN);
+                button2.addActionListener(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        DismissableMessagePane.setPreferenceState(preferences, dismissablePreferenceName, true);
+                        try {
+                            preferences.saveToFile();
+                        } catch (PreferencesException ex) {
+                            _logger.warn("Can't store on disk following preferences " + dismissablePreferenceName, ex);
+                        }
+                    }
+                });
+                button2.addActionListener(new CloseWindowAction(dialog));
+
+                p.add(button2);
+                p.add(button);
+                contentPane.add(p, BorderLayout.SOUTH);
+            } else {
+                contentPane.add(button, BorderLayout.SOUTH);
+            }
+
             // Set as default button with focus activated
             dialog.getRootPane().setDefaultButton(button);
 
@@ -241,7 +290,9 @@ public class ResizableTextViewFactory {
      * Check the JVM version and show a warning message if it is unsupported
      */
     public static void showUnsupportedJdkWarning() {
-
+        if (DismissableMessagePane.getPreferenceState(CommonPreferences.getInstance(), SHOW_UNSUPPORTED_JDK_WARNING_PREFERENCE_NAME)) {
+            return;
+        }
         final float requiredRuntime = 1.6f;
         final float javaRuntime = SystemUtils.JAVA_VERSION_FLOAT;
 
@@ -278,7 +329,7 @@ public class ResizableTextViewFactory {
             message += "<FONT COLOR='RED'>WARNING</FONT> : ";
             message += "Your Java Virtual Machine is too old and not supported anymore.<BR><BR>";
         }
-        if (shouldWarn) {
+        if (shouldWarn || true) {
             final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
 
             message += "<BR>" + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version '" + requiredRuntime
@@ -292,9 +343,11 @@ public class ResizableTextViewFactory {
                     + "Java Home:<BR>'" + jvmHome + "'" + "</TT>";
             message += "</BODY></HTML>";
 
-            ResizableTextViewFactory.createHtmlWindow(message, "Deprecated Java environment detected !", true, timeoutMillis);
+            ResizableTextViewFactory.createHtmlWindow(message, "Deprecated Java environment detected !",
+                    true, timeoutMillis, CommonPreferences.getInstance(), SHOW_UNSUPPORTED_JDK_WARNING_PREFERENCE_NAME);
         }
     }
+
 
     /** Action to close the given window by sending a window closing event */
     private final static class CloseWindowAction implements ActionListener {

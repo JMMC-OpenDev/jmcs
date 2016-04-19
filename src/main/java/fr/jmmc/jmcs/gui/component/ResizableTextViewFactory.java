@@ -329,7 +329,7 @@ public class ResizableTextViewFactory {
             message += "<FONT COLOR='RED'>WARNING</FONT> : ";
             message += "Your Java Virtual Machine is too old and not supported anymore.<BR><BR>";
         }
-        if (shouldWarn || true) {
+        if (shouldWarn) {
             final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
 
             message += "<BR>" + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version '" + requiredRuntime

@@ -345,6 +345,11 @@ public final class Bootstrapper {
 
             final double elapsedTime = 1e-6d * (System.nanoTime() - startTime);
             _jmmcLogger.info("Application startup done (duration = {} ms).", elapsedTime);
+            
+            if (!isHeadless()) {
+                // Check Application updates
+                ApplicationDescription.checkUpdates();
+            }
 
         } catch (Throwable th) {
             final ApplicationState stateOnError = Bootstrapper.getState();

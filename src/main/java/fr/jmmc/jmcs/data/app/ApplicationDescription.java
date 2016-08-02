@@ -31,17 +31,26 @@ import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.app.model.ApplicationData;
 import fr.jmmc.jmcs.data.app.model.Company;
 import fr.jmmc.jmcs.data.app.model.Compilation;
+import fr.jmmc.jmcs.data.app.model.Distribution;
 import fr.jmmc.jmcs.data.app.model.Menubar;
 import fr.jmmc.jmcs.data.app.model.Package;
 import fr.jmmc.jmcs.data.app.model.Program;
 import fr.jmmc.jmcs.data.app.model.Release;
+import fr.jmmc.jmcs.gui.component.MessagePane;
+import fr.jmmc.jmcs.network.http.Http;
+import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.SpecialChars;
 import fr.jmmc.jmcs.util.StringUtils;
+import fr.jmmc.jmcs.util.concurrent.ThreadExecutors;
 import fr.jmmc.jmcs.util.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.util.jaxb.XmlBindException;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -79,6 +88,8 @@ public final class ApplicationDescription {
     private static ApplicationDescription _appDataModel = null;
     /** jMCS application data model */
     private static ApplicationDescription _defaultDataModel = null;
+    /** Flag indicating that loading the application data model happened */
+    private static boolean _loadAppDataModel = false;
 
     /**
      * ApplicationDescription instance initialization.
@@ -91,7 +102,7 @@ public final class ApplicationDescription {
     /**
      * @return jMCS ApplicationDescription instance.
      */
-    public static ApplicationDescription getJmcsInstance() {
+    public static synchronized ApplicationDescription getJmcsInstance() {
         if (_defaultDataModel == null) {
             loadJMcsData();
         }
@@ -101,9 +112,13 @@ public final class ApplicationDescription {
     /**
      * @return ApplicationDescription instance.
      */
-    public static ApplicationDescription getInstance() {
+    public static synchronized ApplicationDescription getInstance() {
         if (_appDataModel == null) {
-            loadApplicationData();
+            if (!_loadAppDataModel) {
+                // only try once:
+                _loadAppDataModel = true;
+                loadApplicationData();
+            }
             // if application is undefined: _appDataModel is still null and uses the default ApplicationData.xml.
             if (_appDataModel == null) {
                 return getJmcsInstance();
@@ -113,15 +128,107 @@ public final class ApplicationDescription {
     }
 
     /**
-     * Custom loader to load an ApplicationDescription from any URL (module for example)
-     * @param filePath path to any file included in the application class loader like 
+     * Check application updates (program version) using the optional Distribution information
+     */
+    public static synchronized void checkUpdates() {
+        if ((_appDataModel == null) || isAlphaVersion()) {
+            // do not check updates on alpha version
+            return;
+        }
+        final Distribution dist = _appDataModel.getDistribution();
+
+        if (dist != null && dist.isSetApplicationDataFile()) {
+            // Note: check updates at every application launch to gather better usage statistics (jnlp & java launchers)
+
+            final String distURL = isBetaVersion() ? (dist.isSetBetaUrl() ? dist.getBetaUrl() : null) : dist.getPublicUrl();
+
+            if (distURL != null) {
+                // Make all the network stuff run in the background
+                ThreadExecutors.getGenericExecutor().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        final String appDataFile = dist.getApplicationDataFile();
+
+                        final String currentName = _appDataModel.getProgramName();
+                        _logger.info("currentName: {}", currentName);
+
+                        final String currentVersion = _appDataModel.getProgramVersion();
+                        final float currentVersionNum = parseVersion(currentVersion);
+
+                        _logger.info("currentVersion: {} = {}", currentVersion, currentVersionNum);
+
+                        final File tmpFile = FileUtils.getTempFile(currentName + '-', ".xml");
+
+                        try {
+                            final URI uri = new URI(distURL + appDataFile);
+
+                            _logger.info("downloading {} to {}", uri, tmpFile);
+
+                            if (Http.download(uri, tmpFile, false)) {
+                                // check version and release notes ...
+                                _logger.info("download done: {} bytes", tmpFile.length());
+
+                                final ApplicationDescription remoteAppDataModel = loadDescription(tmpFile);
+
+                                _logger.info("Remote version: {}", remoteAppDataModel.getProgramNameWithVersion());
+
+                                // Check program name and version increment
+                                final String remoteName = remoteAppDataModel.getProgramName();
+                                _logger.info("remoteName: {}", remoteName);
+
+                                if (currentName.equalsIgnoreCase(remoteName)) {
+                                    final String remoteVersion = remoteAppDataModel.getProgramVersion();
+                                    final float remoteVersionNum = parseVersion(remoteVersion);
+
+                                    _logger.info("remoteVersion: {} = {}", remoteVersion, remoteVersionNum);
+
+                                    // TODO: check also releases and dates ?
+                                    if (remoteVersionNum > currentVersionNum) {
+                                        final String msg = "A new release of the " + currentName + " application is available: ("
+                                                + remoteVersion + " > " + currentVersion + ").\n\n Please use the following link: "
+                                                + distURL;
+                                        MessagePane.showWarning(msg, currentName + " update available");
+                                    } else {
+                                        _logger.info("Application is up-to-date: {} >= {}", currentVersion, remoteVersion);
+                                    }
+                                }
+                            }
+                        } catch (URISyntaxException use) {
+                            _logger.warn("bad URI:", use);
+                        } catch (IOException ioe) {
+                            _logger.info("IO exception:", ioe);
+                        } catch (RuntimeException re) {
+                            _logger.info("Runtime exception occured:", re);
+                        } finally {
+                            tmpFile.delete();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Custom loader to load an ApplicationDescription from any classpath URL (module for example)
+     * @param classLoaderPath path to any file included in the application class loader 
      * @return new loaded and parsed ApplicationDescription instance
      * @throws IllegalStateException if the given URL can not be loaded
      */
-    public static ApplicationDescription loadDescription(final String filePath) throws IllegalStateException {
+    public static ApplicationDescription loadDescription(final String classLoaderPath) throws IllegalStateException {
         // TODO: fix that code : To be discussed
-        final URL fileURL = ResourceUtils.getResource(filePath);
+        final URL fileURL = ResourceUtils.getResource(classLoaderPath);
         return new ApplicationDescription(fileURL);
+    }
+
+    /**
+     * Custom loader to load an ApplicationDescription from any File
+     * @param filePath file path
+     * @return new loaded and parsed ApplicationDescription instance
+     * @throws IllegalStateException if the given file can not be loaded
+     * @throws MalformedURLException if the given file path can not be converted to an URL
+     */
+    public static ApplicationDescription loadDescription(final File filePath) throws IllegalStateException, MalformedURLException {
+        return new ApplicationDescription(filePath.toURI().toURL());
     }
 
     /**
@@ -187,7 +294,7 @@ public final class ApplicationDescription {
         // Extract first numeric part '0.'
         String tmp = version;
         final String first;
-        
+
         int pos = tmp.indexOf('.');
         if (pos != -1) {
             pos++;
@@ -196,7 +303,7 @@ public final class ApplicationDescription {
         } else {
             first = "0.";
         }
-        
+
         // Remove whitespace and '.' in "9.4 beta 11" => "94beta11":
         tmp = StringUtils.removeNonAlphaNumericChars(tmp);
 
@@ -214,8 +321,6 @@ public final class ApplicationDescription {
     }
 
     // Members
-    /** internal JAXB Factory */
-    private final JAXBFactory _jf;
     /** The JAVA class which JAXB has generated with the XSD file */
     private ApplicationData _applicationData = null;
     /** The JAVA class which JAXB has generated with the XSD file */
@@ -250,11 +355,6 @@ public final class ApplicationDescription {
      */
     private ApplicationDescription(final URL dataModelURL) throws IllegalStateException {
         _logger.debug("Loading Application data model from {}", dataModelURL);
-
-        // Start JAXB
-        _jf = JAXBFactory.getInstance(APP_DATA_MODEL_JAXB_PATH);
-
-        _logger.debug("JAXBFactory: {}", _jf);
 
         // Load application data
         _applicationData = loadData(dataModelURL);
@@ -311,12 +411,19 @@ public final class ApplicationDescription {
         _logger.debug("Application data model loaded.");
     }
 
-    /** Invoke JAXB to load ApplicationData.xml file */
-    private ApplicationData loadData(final URL dataModelURL) throws XmlBindException, IllegalArgumentException, IllegalStateException {
+    /** 
+     * Invoke JAXB to load ApplicationData.xml file
+     * @param dataModelURL url pointing to the ApplicationData.xml file
+     * @return ApplicationData instance
+     */
+    private static ApplicationData loadData(final URL dataModelURL) throws XmlBindException, IllegalArgumentException, IllegalStateException {
+
+        final JAXBFactory jf = JAXBFactory.getInstance(APP_DATA_MODEL_JAXB_PATH);
+        _logger.debug("JAXBFactory: {}", jf);
 
         // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
         try {
-            final Unmarshaller u = _jf.createUnMarshaller();
+            final Unmarshaller u = jf.createUnMarshaller();
             return (ApplicationData) u.unmarshal(new BufferedInputStream(dataModelURL.openStream()));
         } catch (IOException ioe) {
             throw new IllegalStateException("Load failure on " + dataModelURL, ioe);
@@ -567,6 +674,10 @@ public final class ApplicationDescription {
 
     public String getJnlpUrl() {
         return _applicationData.getJnlp();
+    }
+
+    public Distribution getDistribution() {
+        return _applicationData.getDistribution();
     }
 
     /**

@@ -296,11 +296,15 @@ public class ResizableTextViewFactory {
         final float requiredRuntime = 1.6f;
         final float javaRuntime = SystemUtils.JAVA_VERSION_FLOAT;
 
-        final String javaVersion = SystemUtils.JAVA_VERSION;
         final String jvmVendor = SystemUtils.JAVA_VM_VENDOR;
         final String jvmName = SystemUtils.JAVA_VM_NAME;
+        final String javaVersion = SystemUtils.JAVA_VERSION;
         final String jvmVersion = SystemUtils.JAVA_VM_VERSION;
+        final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
 
+        _logger.info("JVM runtime environment: {} {} ({} {}) [{}]", jvmVendor, jvmName, javaVersion, jvmVersion, jvmHome);
+        
+        
         int timeoutMillis = 0; // disabled by default
         boolean shouldWarn = false;
         String message = "<HTML><BODY>";
@@ -330,8 +334,6 @@ public class ResizableTextViewFactory {
             message += "Your Java Virtual Machine is too old and not supported anymore.<BR><BR>";
         }
         if (shouldWarn) {
-            final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
-
             message += "<BR>" + "<B>JMMC strongly recommends</B> Sun Java Runtime Environments version '" + requiredRuntime
                     + "' or newer, available at:" + "<BR><CENTER><A HREF='http://java.sun.com/javase/downloads/'>"
                     + "http://java.sun.com/javase/downloads/</A></CENTER>" + "<BR><BR>"

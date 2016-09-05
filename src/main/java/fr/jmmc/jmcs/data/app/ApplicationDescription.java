@@ -394,11 +394,11 @@ public final class ApplicationDescription {
         String level = null;
         if (roundUp) {
             if (isBetaVersion(tmp)) {
-                level = "09";
+                level = "009";
             } else if (isAlphaVersion(tmp)) {
-                level = "01";
+                level = "001";
             } else {
-                level = "99";
+                level = "099";
             }
         }
 

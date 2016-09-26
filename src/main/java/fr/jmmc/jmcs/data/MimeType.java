@@ -80,6 +80,8 @@ public final class MimeType {
     public final static MimeType PLAIN_TEXT = MimeType.add("PLAIN_TEXT", "text/plain", "Text files", "txt");
     /** MimeType associated to URL */
     public final static MimeType URL = MimeType.add("URL", "text/plain", "URL", "url");
+    /** MimeType associated to PAL format */
+    public final static MimeType PAL = MimeType.add("PAL", "text/palette", "Color palette files (hex or RGB triplets)", "pal");
     // Members
     /** mime-type identifier */
     private final String _id;

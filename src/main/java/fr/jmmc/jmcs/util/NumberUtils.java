@@ -162,6 +162,33 @@ public final class NumberUtils {
      * @param b double to compare.
      * @return true true if two doubles are considered equal.
      */
+    public static boolean equals(final float a, final float b) {
+        return equals(a, b, EPSILON);
+    }
+
+    /**
+     * Returns true if two doubles are considered equal. 
+     * 
+     * Test if the absolute difference between the two doubles has a difference less then a given
+     * double (epsilon).
+     *
+     * @param a double to compare.
+     * @param b double to compare
+     * @param epsilon double which is compared to the absolute difference.
+     * @return true if a is considered equal to b.
+     */
+    public static boolean equals(final float a, final float b, final float epsilon) {
+        return (a == b) ? true : (Math.abs(a - b) < epsilon);
+    }
+
+    /**
+     * Returns true if two doubles are considered equal.  
+     * Test if the absolute difference between two doubles has a difference less than EPSILON.
+     *
+     * @param a double to compare.
+     * @param b double to compare.
+     * @return true true if two doubles are considered equal.
+     */
     public static boolean equals(final double a, final double b) {
         return equals(a, b, EPSILON);
     }

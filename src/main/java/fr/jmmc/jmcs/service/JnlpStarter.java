@@ -69,7 +69,7 @@ public final class JnlpStarter {
      * @throws IllegalStateException if the job can not be submitted to the job queue
      */
     public static Long launch(final String jnlpUrl) throws IllegalStateException {
-        return launch(jnlpUrl, new EmptyJobListener());
+        return launch(jnlpUrl, EmptyJobListener.INSTANCE);
     }
 
     /**
@@ -126,7 +126,7 @@ public final class JnlpStarter {
 
         // puts the job in the job queue :
         // can throw IllegalStateException if job not queued :
-        LocalLauncher.startJob(jobContext, new EmptyJobListener());
+        LocalLauncher.startJob(jobContext);
     }
 
     /**

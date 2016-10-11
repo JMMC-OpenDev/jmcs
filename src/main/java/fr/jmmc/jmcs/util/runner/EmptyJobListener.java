@@ -39,6 +39,13 @@ public final class EmptyJobListener implements JobListener {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(EmptyJobListener.class.getName());
 
+    /** Listener singleton */
+    public static final EmptyJobListener INSTANCE = new EmptyJobListener();
+
+    private EmptyJobListener() {
+        // forbidden
+    }
+
     /**
      * Perform the job event from the given root context.
      * Called when the job has the following transitions : pending / running / finished

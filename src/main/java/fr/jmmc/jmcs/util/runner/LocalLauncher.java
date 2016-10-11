@@ -278,10 +278,11 @@ public final class LocalLauncher {
         rootCtx.setState(RunState.STATE_PENDING);
 
         // Get the registered job listener :
-        final JobListener listener = JOB_LISTENER.get(rootCtx.getName());
+        JobListener listener = JOB_LISTENER.get(rootCtx.getName());
 
         if (listener == null) {
-            throw new IllegalStateException("No Job listener for application [" + rootCtx.getName() + "] !");
+            // No Job listener for application [ rootCtx.getName() ] !
+            listener = EmptyJobListener.INSTANCE;
         }
 
         queueJob(rootCtx, listener);
@@ -669,7 +670,6 @@ public final class LocalLauncher {
                     _logger.error("JobRunner.run : runtime exception : ", re);
                     ok = false;
                 } finally {
-
                     _rootCtx.getRing().add("Job '" + _rootCtx.getName() + "' Ended.");
 
                     // handle states :
@@ -692,6 +692,8 @@ public final class LocalLauncher {
                     if (!QUEUE_MANUAL_REMOVE_JOBS) {
                         removeFromQueue(_rootCtx.getId());
                     }
+                    // anyway close the context:
+                    _rootCtx.close();
                 }
 
                 // decrement live counter :

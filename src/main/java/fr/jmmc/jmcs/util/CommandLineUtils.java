@@ -73,7 +73,7 @@ public final class CommandLineUtils {
      * @throws IllegalStateException if the job can not be submitted to the job queue
      */
     public static Long exec(final String cliPath) throws IllegalStateException {
-        return exec(cliPath, new EmptyJobListener());
+        return exec(cliPath, EmptyJobListener.INSTANCE);
     }
 
     /**

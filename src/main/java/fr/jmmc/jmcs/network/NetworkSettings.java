@@ -131,10 +131,8 @@ public final class NetworkSettings {
 
         final String osName = SystemUtils.OS_NAME;
         final String osVersion = StringUtils.replaceNonAlphaNumericCharsByUnderscore(SystemUtils.OS_VERSION);
-        
-        final String userName = System.getProperty("user.name");
 
-        System.setProperty(PROPERTY_USER_AGENT, "Java/" + version + " (" + jvmName + ") [" + osName + '-' + osVersion + "] (" + userName + ") (JMMC)");
+        System.setProperty(PROPERTY_USER_AGENT, "Java/" + version + " (" + jvmName + ") [" + osName + '-' + osVersion + "] (JMMC)");
     }
 
     /**

@@ -778,6 +778,7 @@ public final class FileUtils {
      * Warning: calling this method may block the current thread for long time (slow transfer or big file or timeout)
      * Please take care of using it properly using a cancellable SwingWorker (Cancellable background task)
      *
+     * @see #download(fr.jmmc.jmcs.network.http.Http)
      * @param remoteLocation remote location
      * @param parentDir destination directory
      * @param mimeType mime type to fix missing file extension

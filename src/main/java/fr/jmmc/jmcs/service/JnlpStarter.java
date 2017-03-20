@@ -53,7 +53,6 @@ public final class JnlpStarter {
     public final static String TASK_NAME = "JavaWebStart";
     /** javaws command */
     public final static String JAVAWS_CMD = "javaws";
-//    public final static String JAVAWS_CMD = "/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/bin/javaws";
     /** flag to execute javaws with -verbose option */
     private static boolean JNLP_VERBOSE = false;
 
@@ -94,14 +93,11 @@ public final class JnlpStarter {
         // create the execution context without log file:
         final RootContext jobContext = LocalLauncher.prepareMainJob(APP_NAME, USER_NAME, FileUtils.getTempDirPath(), null);
 
-        // command line: 'javaws -Xnosplash <jnlpUrl>'
-        // Xnosplash seems not usefull in recent oracle but throw an error with openjdk/netx
+        // command line: 'javaws <jnlpUrl>'
         final String[] cmd;
         if (JNLP_VERBOSE) {
-            //cmd = new String[]{JAVAWS_CMD, "-verbose", "-Xnosplash", jnlpUrl};
             cmd = new String[]{JAVAWS_CMD, "-verbose", jnlpUrl};
         } else {
-            //cmd = new String[]{JAVAWS_CMD, "-Xnosplash", jnlpUrl};
             cmd = new String[]{JAVAWS_CMD, jnlpUrl};
         }
 
@@ -115,7 +111,6 @@ public final class JnlpStarter {
 
     /** Start Java WebStart viewer */
     public static void launchJavaWebStartViewer() {
-
         _logger.info("launch 'javaws -viewer'");
 
         // create the execution context without log file:

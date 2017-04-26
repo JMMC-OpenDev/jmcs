@@ -29,7 +29,6 @@ package fr.jmmc.jmcs.gui;
 
 import com.jidesoft.plaf.LookAndFeelFactory;
 import fr.jmmc.jmcs.App;
-import fr.jmmc.jmcs.util.JVMUtils;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.app.model.Menu;
 import fr.jmmc.jmcs.data.app.model.Menubar;
@@ -38,9 +37,10 @@ import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
+import fr.jmmc.jmcs.service.RecentFilesManager;
 import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
-import fr.jmmc.jmcs.service.RecentFilesManager;
+import fr.jmmc.jmcs.util.JVMUtils;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -79,7 +79,7 @@ import org.slf4j.LoggerFactory;
  * To access to the XML informations, this class uses <b>ApplicationDescription</b>
  * class. It's a class which has got getters in order to do that and which has
  * been written to abstract the way to access to these informations.
- * 
+ *
  * @author Brice COLUCCI, Sylvain LAFRASSE, Guillaume MELLA, Laurent BOURGES.
  */
 public class MainMenuBar extends JMenuBar {
@@ -482,7 +482,7 @@ public class MainMenuBar extends JMenuBar {
      * @return the instantiated JComponent according to the XML menu hierarchy.
      */
     private JComponent recursiveParser(Menu menu,
-                                       JComponent parent, boolean createMenu, ButtonGroup buttonGroup) {
+            JComponent parent, boolean createMenu, ButtonGroup buttonGroup) {
         // Create the current component
         JComponent component = createComponent(menu, createMenu, buttonGroup);
 
@@ -638,6 +638,15 @@ public class MainMenuBar extends JMenuBar {
     private void setAttributes(Menu menu, Action action) {
         if ((menu == null) || (action == null)) {
             return;
+        }
+
+        // Set action name
+        // This set the label of any button associated to any menu item's action
+        String xmlLabel = menu.getLabel();
+        String actionLabel = (String) action.getValue(Action.NAME);
+
+        if ((actionLabel == null) && (xmlLabel != null)) {
+            action.putValue(Action.NAME, xmlLabel);
         }
 
         // Set action accelerator

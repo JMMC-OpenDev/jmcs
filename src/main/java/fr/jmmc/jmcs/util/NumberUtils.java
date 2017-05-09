@@ -130,6 +130,15 @@ public final class NumberUtils {
     }
 
     /**
+     * Adjust the given double value to keep only 9 decimal digits
+     * @param value value to adjust
+     * @return double value with only 9 decimal digits
+     */
+    public static double trimTo9Digits(final double value) {
+        return ((long) (1e9d * value)) / 1e9d;
+    }
+
+    /**
      * Format the given double value using custom formaters:
      * - '0'     if abs(val) < 1e-9
      * - 0.000   if 1e-3 < abs(val) < 1e6

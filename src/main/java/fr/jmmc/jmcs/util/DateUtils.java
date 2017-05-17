@@ -43,7 +43,7 @@ public final class DateUtils {
      * Get current datetime in ISO8601 format.
     @return datetime string in ISO8601 format.
      */
-    public final String now() {
+    public static final String now() {
         return DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date());
     }
 

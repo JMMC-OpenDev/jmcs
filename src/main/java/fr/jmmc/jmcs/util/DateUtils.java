@@ -41,7 +41,7 @@ public final class DateUtils {
     //private static final Logger _logger = LoggerFactory.getLogger(DateUtils.class.getName());
     /**
      * Get current datetime in ISO8601 format.
-    @return datetime string in ISO8601 format.
+     * @return datetime string in ISO8601 format.
      */
     public static final String now() {
         return DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date());

@@ -28,10 +28,12 @@
 package fr.jmmc.jmcs.gui.util;
 
 import fr.jmmc.jmcs.App;
+import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
 /**
@@ -126,5 +128,23 @@ public final class SwingUtils {
                 }
             }
         }
+    }
+
+    /**
+     * Adjust the row height of the given JTable according to the UI scale
+     * @param jTable table to adjust
+     */
+    public static void adjustRowHeight(final JTable jTable) {
+        final float uiScale = CommonPreferences.getInstance().getUIScale();
+        jTable.setRowHeight(adjustUISize(jTable.getRowHeight()));
+    }
+
+    /**
+     * Adjust the given size according to the UI scale
+     * @param size to adjust
+     */
+    public static int adjustUISize(final int size) {
+        final float uiScale = CommonPreferences.getInstance().getUIScale();
+        return Math.round(uiScale * size);
     }
 }

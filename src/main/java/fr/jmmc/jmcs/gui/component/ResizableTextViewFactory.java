@@ -74,8 +74,6 @@ public class ResizableTextViewFactory {
     private static final int MAXIMUM_HEIGHT = 550;
     private static final int BUTTON_HEIGHT = 20;
 
-    private static final String SHOW_UNSUPPORTED_JDK_WARNING_PREFERENCE_NAME = "showUnsupportedJdkWarning";
-
     /**
      * Create a window containing the given plain text with the given title.
      * @param text plain text to show.
@@ -137,7 +135,7 @@ public class ResizableTextViewFactory {
      * @param dismissablePreferenceName null or preference name to store
      */
     public static void createHtmlWindow(final String html, final String title, final boolean modal,
-            final int timeoutMillis, final Preferences preferences, final String dismissablePreferenceName) {
+                                        final int timeoutMillis, final Preferences preferences, final String dismissablePreferenceName) {
         if (preferences != null && dismissablePreferenceName != null && DismissableMessagePane.getPreferenceState(preferences, dismissablePreferenceName)) {
             //nop
         } else if (Bootstrapper.isHeadless()) {
@@ -171,7 +169,7 @@ public class ResizableTextViewFactory {
                             }
                         }
                     });
-                   
+
                     // if modal, blocks until the dialog is closed:
                     finishLayout(editorPane, dialog, html, modal, timeoutMillis, preferences, dismissablePreferenceName);
                 }
@@ -205,8 +203,8 @@ public class ResizableTextViewFactory {
      * @param dismissablePreferenceName null or preference name to store
      */
     private static void finishLayout(final JEditorPane editorPane, final JDialog dialog, final String text,
-            final boolean modal, final int timeoutMillis, final Preferences preferences,
-            final String dismissablePreferenceName) {
+                                     final boolean modal, final int timeoutMillis, final Preferences preferences,
+                                     final String dismissablePreferenceName) {
 
         final JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(editorPane);
@@ -222,7 +220,6 @@ public class ResizableTextViewFactory {
         if (modal) {
             final JButton button = new JButton("OK");
             button.addActionListener(new CloseWindowAction(dialog));
-            
 
             if (dismissablePreferenceName != null) {
                 JPanel p = new JPanel();
@@ -290,7 +287,7 @@ public class ResizableTextViewFactory {
      * Check the JVM version and show a warning message if it is unsupported
      */
     public static void showUnsupportedJdkWarning() {
-        if (DismissableMessagePane.getPreferenceState(CommonPreferences.getInstance(), SHOW_UNSUPPORTED_JDK_WARNING_PREFERENCE_NAME)) {
+        if (DismissableMessagePane.getPreferenceState(CommonPreferences.getInstance(), CommonPreferences.SHOW_UNSUPPORTED_JDK_WARNING)) {
             return;
         }
         final float requiredRuntime = 1.6f;
@@ -303,8 +300,7 @@ public class ResizableTextViewFactory {
         final String jvmHome = SystemUtils.getJavaHome().getAbsolutePath();
 
         _logger.info("JVM runtime environment: {} {} ({} {}) [{}]", jvmVendor, jvmName, javaVersion, jvmVersion, jvmHome);
-        
-        
+
         int timeoutMillis = 0; // disabled by default
         boolean shouldWarn = false;
         String message = "<HTML><BODY>";
@@ -346,10 +342,9 @@ public class ResizableTextViewFactory {
             message += "</BODY></HTML>";
 
             ResizableTextViewFactory.createHtmlWindow(message, "Deprecated Java environment detected !",
-                    true, timeoutMillis, CommonPreferences.getInstance(), SHOW_UNSUPPORTED_JDK_WARNING_PREFERENCE_NAME);
+                    true, timeoutMillis, CommonPreferences.getInstance(), CommonPreferences.SHOW_UNSUPPORTED_JDK_WARNING);
         }
     }
-
 
     /** Action to close the given window by sending a window closing event */
     private final static class CloseWindowAction implements ActionListener {

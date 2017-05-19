@@ -27,22 +27,19 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui;
 
-import com.jidesoft.plaf.LookAndFeelFactory;
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.app.model.Menu;
 import fr.jmmc.jmcs.data.app.model.Menubar;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
+import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.service.RecentFilesManager;
 import fr.jmmc.jmcs.util.ImageUtils;
-import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.JVMUtils;
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -61,10 +58,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultEditorKit;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
@@ -171,7 +165,7 @@ public class MainMenuBar extends JMenuBar {
         createInteropMenu();
 
         final String lafMenu = System.getProperty(JVMUtils.SYSTEM_PROPERTY_LAF_MENU);
-        if (lafMenu != null && "true".equals(lafMenu)) {
+        if (lafMenu != null && "true".equalsIgnoreCase(lafMenu)) {
             createLAFMenu();
         }
 
@@ -355,29 +349,7 @@ public class MainMenuBar extends JMenuBar {
              */
             @Override
             public void actionPerformed(final ActionEvent ae) {
-                final String className = ae.getActionCommand();
-                final String currentClassName = UIManager.getLookAndFeel().getClass().getName();
-
-                if (!className.equals(currentClassName)) {
-                    try {
-                        _logger.info("use Look and Feel : {}", className);
-
-                        final LookAndFeel newLaf = (LookAndFeel) IntrospectionUtils.getInstance(className);
-
-                        UIManager.setLookAndFeel(newLaf);
-
-                        // To ensure the use of TriStateCheckBoxes in the Jide CheckBoxTree
-                        LookAndFeelFactory.installJideExtension();
-
-                        final Frame mainFrame = App.getFrame();
-
-                        SwingUtilities.updateComponentTreeUI(mainFrame);
-                        mainFrame.pack();
-
-                    } catch (UnsupportedLookAndFeelException ulafe) {
-                        throw new RuntimeException("Change LAF failed : " + className, ulafe);
-                    }
-                }
+                SwingSettings.setLookAndFeel(ae.getActionCommand());
             }
         };
 
@@ -482,7 +454,7 @@ public class MainMenuBar extends JMenuBar {
      * @return the instantiated JComponent according to the XML menu hierarchy.
      */
     private JComponent recursiveParser(Menu menu,
-            JComponent parent, boolean createMenu, ButtonGroup buttonGroup) {
+                                       JComponent parent, boolean createMenu, ButtonGroup buttonGroup) {
         // Create the current component
         JComponent component = createComponent(menu, createMenu, buttonGroup);
 

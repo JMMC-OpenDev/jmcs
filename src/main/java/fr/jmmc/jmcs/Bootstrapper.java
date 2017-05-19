@@ -131,6 +131,9 @@ public final class Bootstrapper {
         _jmmcLogger.info("jMCS environment bootstrapping...");
         setState(ApplicationState.ENV_BOOTSTRAP);
 
+        // Early load common preferences (jmcs):
+        CommonPreferences.getInstance();
+        
         // Define swing settings (laf, defaults...) before any Swing usage
         SwingSettings.setup();
 

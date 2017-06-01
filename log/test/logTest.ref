@@ -1,0 +1,195 @@
+ERROR: 2013-08-02T11:44:49.705474 - default - logTest - - log - socket initialized to 'jmmc.obs.ujf-grenoble.fr'
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched OFF
+Stdout logging switched OFF
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+*** Stdout logging verbosity level is : 2
+*** Stdout logging verbosity level is : 3
+*** Stdout logging verbosity level is : 4
+*** Stdout logging verbosity level is : 5
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched ON
+Stdout logging switched OFF
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+*** Stdout logging verbosity level is : 2
+*** Stdout logging verbosity level is : 3
+*** Stdout logging verbosity level is : 4
+*** Stdout logging verbosity level is : 5
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched ON
+Stdout logging switched ON
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+Warn  - 2013-08-02T11:44:49.705689 - logTest.c:26 - logging warning
+*** Stdout logging verbosity level is : 2
+Warn  - 2013-08-02T11:44:49.705706 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.705720 - logTest.c:27 - logging info
+*** Stdout logging verbosity level is : 3
+Warn  - 2013-08-02T11:44:49.705734 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.705747 - logTest.c:27 - logging info
+Test  - 2013-08-02T11:44:49.705760 - logTest.c:28 - logging test
+*** Stdout logging verbosity level is : 4
+Warn  - 2013-08-02T11:44:49.705773 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.705786 - logTest.c:27 - logging info
+Test  - 2013-08-02T11:44:49.705799 - logTest.c:28 - logging test
+Debug - 2013-08-02T11:44:49.705812 - logTest.c:29 - logging debug
+*** Stdout logging verbosity level is : 5
+Warn  - 2013-08-02T11:44:49.705825 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.705838 - logTest.c:27 - logging info
+Test  - 2013-08-02T11:44:49.705850 - logTest.c:28 - logging test
+Debug - 2013-08-02T11:44:49.705863 - logTest.c:29 - logging debug
+Trace - 2013-08-02T11:44:49.705876 - logTest.c:30 - logging trace
+Trace - 2013-08-02T11:44:49.705889 - logTest.c:110 - EXIT_FUNC test1
+Trace - 2013-08-02T11:44:49.705902 - logTest.c:79 - ENTER_FUNC test1
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched OFF
+Stdout logging switched ON
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+Warn  - 2013-08-02T11:44:49.705924 - logTest.c:26 - logging warning
+*** Stdout logging verbosity level is : 2
+Warn  - 2013-08-02T11:44:49.705930 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.705934 - logTest.c:27 - logging info
+*** Stdout logging verbosity level is : 3
+Warn  - 2013-08-02T11:44:49.705938 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.705942 - logTest.c:27 - logging info
+Test  - 2013-08-02T11:44:49.705946 - logTest.c:28 - logging test
+*** Stdout logging verbosity level is : 4
+Warn  - 2013-08-02T11:44:49.705951 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.705955 - logTest.c:27 - logging info
+Test  - 2013-08-02T11:44:49.705959 - logTest.c:28 - logging test
+Debug - 2013-08-02T11:44:49.705963 - logTest.c:29 - logging debug
+*** Stdout logging verbosity level is : 5
+Warn  - 2013-08-02T11:44:49.705967 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.705971 - logTest.c:27 - logging info
+Test  - 2013-08-02T11:44:49.705975 - logTest.c:28 - logging test
+Debug - 2013-08-02T11:44:49.705979 - logTest.c:29 - logging debug
+Trace - 2013-08-02T11:44:49.705983 - logTest.c:30 - logging trace
+Trace - 2013-08-02T11:44:49.705987 - logTest.c:110 - EXIT_FUNC test1
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+Accept log messages from 'mcs' module only 
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched OFF
+Stdout logging switched ON
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+*** Stdout logging verbosity level is : 2
+*** Stdout logging verbosity level is : 3
+*** Stdout logging verbosity level is : 4
+*** Stdout logging verbosity level is : 5
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+Clear list of allowed modules. All modules can log messages!!
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+Trace - 2013-08-02T11:44:49.706020 - logTest.c:79 - ENTER_FUNC test1
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+File logging switched OFF
+Stdout logging switched ON
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+###############################################################
+Testing File Logging
+###############################################################
+*** File logging verbosity level is : 0
+*** File logging verbosity level is : 1
+*** File logging verbosity level is : 2
+*** File logging verbosity level is : 3
+*** File logging verbosity level is : 4
+*** File logging verbosity level is : 5
+###############################################################
+Testing Stdout Logging
+###############################################################
+*** Stdout logging verbosity level is : 0
+*** Stdout logging verbosity level is : 1
+Warn  - 2013-08-02T11:44:49.706026 - logTest.c:26 - logging warning
+*** Stdout logging verbosity level is : 2
+Warn  - 2013-08-02T11:44:49.706038 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.706043 - logTest.c:27 - logging info
+*** Stdout logging verbosity level is : 3
+Warn  - 2013-08-02T11:44:49.706047 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.706051 - logTest.c:27 - logging info
+Test  - 2013-08-02T11:44:49.706055 - logTest.c:28 - logging test
+*** Stdout logging verbosity level is : 4
+Warn  - 2013-08-02T11:44:49.706059 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.706063 - logTest.c:27 - logging info
+Test  - 2013-08-02T11:44:49.706067 - logTest.c:28 - logging test
+Debug - 2013-08-02T11:44:49.706071 - logTest.c:29 - logging debug
+*** Stdout logging verbosity level is : 5
+Warn  - 2013-08-02T11:44:49.706075 - logTest.c:26 - logging warning
+Info  - 2013-08-02T11:44:49.706079 - logTest.c:27 - logging info
+Test  - 2013-08-02T11:44:49.706083 - logTest.c:28 - logging test
+Debug - 2013-08-02T11:44:49.706087 - logTest.c:29 - logging debug
+Trace - 2013-08-02T11:44:49.706091 - logTest.c:30 - logging trace
+Trace - 2013-08-02T11:44:49.706095 - logTest.c:110 - EXIT_FUNC test1
+Test  - 2013-08-02T11:44:49.706099 - logTest.c:116 - ENTER_FUNC testNoFileLineOrDate
+Test  - 2013-08-02T11:44:49.706105 - FileLine must not appear (FileLine mode is 'OFF')
+Test  - 2013-08-02T11:44:49.706109 - logTest.c:122 - FileLine must appear (FileLine mode is 'ON')
+Test  - logTest.c:125 - Date must not appear (Date mode is 'OFF')
+Test  - 2013-08-02T11:44:49.706118 - logTest.c:128 - Date must appear (Date mode is 'ON')
+Test  - 2013-08-02T11:44:49.706122 - logTest.c:130 - EXIT_FUNC testNoFileLineOrDate

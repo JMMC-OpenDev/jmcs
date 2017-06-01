@@ -1,0 +1,106 @@
+1 - 
+1 - miscHashAddElement() Function Test :
+1 -    alpha      added
+1 -    bravo      added
+1 -    charlie    added
+1 -    delta      added
+1 -    echo       added
+1 -    foxtrot    added
+1 -    golf       added
+1 -    hotel      added
+1 -    india      added
+1 -    juliet     added
+1 -    kilo       added
+1 -    lima       added
+1 -    mike       added
+1 -    november   added
+1 -    oscar      added
+1 -    papa       added
+1 -    quebec     added
+1 -    romeo      added
+1 -    sierra     added
+1 -    tango      added
+1 -    uniform    added
+1 -    victor     added
+1 -    whisky     added
+1 -    x-ray      added
+1 - 
+1 - miscHashDisplay() Function Test :
+1 - Content of the hash table :
+1 - 
+1 -       6 - november
+1 -      10 - papa
+1 -      12 - oscar
+1 -      14 - bravo
+1 -      15 - lima
+1 -      18 - delta
+1 -      19 - whisky
+1 -      22 - romeo
+1 -      26 - sierra
+1 -      30 - mike
+1 -      37 - india tango
+1 -      49 - quebec
+1 -      52 - golf
+1 -      53 - x-ray
+1 -      54 - alpha foxtrot
+1 -      67 - victor
+1 -      72 - charlie
+1 -      76 - hotel uniform
+1 -      91 - kilo
+1 -      93 - juliet
+1 -      95 - echo
+1 - 
+1 - miscHashGetElement() Function Test :
+1 -   key = delta - data = delta
+1 - 
+1 - miscHashDeleteElement() Function Test :
+1 -   delta      deleted
+1 - 
+1 - miscHashDisplay() Function Test :
+1 - Content of the hash table :
+1 - 
+1 -       6 - november
+1 -      10 - papa
+1 -      12 - oscar
+1 -      14 - bravo
+1 -      15 - lima
+1 -      19 - whisky
+1 -      22 - romeo
+1 -      26 - sierra
+1 -      30 - mike
+1 -      37 - india tango
+1 -      49 - quebec
+1 -      52 - golf
+1 -      53 - x-ray
+1 -      54 - alpha foxtrot
+1 -      67 - victor
+1 -      72 - charlie
+1 -      76 - hotel uniform
+1 -      91 - kilo
+1 -      93 - juliet
+1 -      95 - echo
+1 - 
+1 - miscHashGetNextElement() Function Test :
+1 -   november  
+1 -   papa      
+1 -   oscar     
+1 -   bravo     
+1 -   lima      
+1 -   whisky    
+1 -   romeo     
+1 -   sierra    
+1 -   mike      
+1 -   india     
+1 -   tango     
+1 -   quebec    
+1 -   golf      
+1 -   x-ray     
+1 -   alpha     
+1 -   foxtrot   
+1 -   victor    
+1 -   charlie   
+1 -   hotel     
+1 -   uniform   
+1 -   kilo      
+1 -   juliet    
+1 -   echo      

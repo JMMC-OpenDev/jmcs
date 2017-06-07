@@ -101,6 +101,7 @@ public final class ApplicationDescription {
      */
     public static void init() {
         getJmcsInstance();
+        resetInstance();
         getInstance();
     }
 
@@ -112,6 +113,14 @@ public final class ApplicationDescription {
             loadJMcsData();
         }
         return _defaultDataModel;
+    }
+
+    /**
+     * Reset the application ApplicationDescription instance.
+     */
+    private static synchronized void resetInstance() {
+        _appDataModel = null;
+        _loadAppDataModel = false;
     }
 
     /**

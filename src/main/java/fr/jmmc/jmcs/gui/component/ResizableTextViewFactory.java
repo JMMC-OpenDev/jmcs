@@ -144,7 +144,7 @@ public class ResizableTextViewFactory {
             SwingUtils.invokeAndWaitEDT(new Runnable() {
                 @Override
                 public void run() {
-                    final JDialog dialog = new JDialog(App.getFrame(), title, modal);
+                    final JDialog dialog = new JDialog(App.getExistingFrame(), title, modal);
                     final JEditorPane editorPane = startLayout(dialog);
                     editorPane.setContentType("text/html");
                     editorPane.addHyperlinkListener(new HyperlinkListener() {

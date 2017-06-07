@@ -33,15 +33,11 @@ import fr.jmmc.jmcs.data.app.model.Menubar;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.action.RegisteredPreferencedBooleanAction;
 import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
-import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.network.interop.SampCapabilityAction;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.service.RecentFilesManager;
 import fr.jmmc.jmcs.util.ImageUtils;
-import fr.jmmc.jmcs.util.JVMUtils;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +54,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
@@ -163,11 +158,6 @@ public class MainMenuBar extends JMenuBar {
 
         // Create Interop menu :
         createInteropMenu();
-
-        final String lafMenu = System.getProperty(JVMUtils.SYSTEM_PROPERTY_LAF_MENU);
-        if (lafMenu != null && "true".equalsIgnoreCase(lafMenu)) {
-            createLAFMenu();
-        }
 
         createHelpMenu();
     }
@@ -336,35 +326,6 @@ public class MainMenuBar extends JMenuBar {
         // Keep this menu invisible until (at least) one capability is registered
         SampManager.hookMenu(interopMenu);
         _logger.debug("Add 'Interop' into the menubar.");
-    }
-
-    /** Create the 'Look & Feel' menu. */
-    private void createLAFMenu() {
-        // Create menu
-        final JMenu lafMenu = new JMenu("Look & Feel");
-
-        final ActionListener lafActionListener = new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             */
-            @Override
-            public void actionPerformed(final ActionEvent ae) {
-                SwingSettings.setLookAndFeel(ae.getActionCommand());
-            }
-        };
-
-        JMenuItem menuItem;
-
-        for (UIManager.LookAndFeelInfo lookAndFeelInfo : UIManager.getInstalledLookAndFeels()) {
-
-            menuItem = new JMenuItem(lookAndFeelInfo.getName());
-            menuItem.setActionCommand(lookAndFeelInfo.getClassName());
-            menuItem.addActionListener(lafActionListener);
-
-            lafMenu.add(menuItem);
-        }
-
-        add(lafMenu);
     }
 
     /** Create the 'Help' menu. */

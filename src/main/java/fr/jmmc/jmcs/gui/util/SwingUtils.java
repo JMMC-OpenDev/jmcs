@@ -34,7 +34,10 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JTable;
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is dedicated to EDT invoke methods and simplify GUI code
@@ -42,6 +45,9 @@ import javax.swing.SwingUtilities;
  * @author Laurent BOURGES.
  */
 public final class SwingUtils {
+
+    /** logger */
+    private final static Logger _logger = LoggerFactory.getLogger(SwingUtils.class.getName());
 
     /**
      * Forbidden constructor
@@ -135,8 +141,27 @@ public final class SwingUtils {
      * @param jTable table to adjust
      */
     public static void adjustRowHeight(final JTable jTable) {
-        final float uiScale = CommonPreferences.getInstance().getUIScale();
-        jTable.setRowHeight(adjustUISize(jTable.getRowHeight()));
+        // note: the given table is just created to avoid reentrance issues:
+        final int initialRowHeight = SwingSettings.setAndGetInitialRowHeight(jTable.getRowHeight());
+        adjustRowHeight(jTable, initialRowHeight);
+    }
+
+    /**
+     * Adjust the row height of the given JTable according to the UI scale
+     * @param jTable table to adjust
+     * @param initialRowHeight initial row height to use in computations
+     */
+    public static void adjustRowHeight(final JTable jTable, final int initialRowHeight) {
+        jTable.setRowHeight(adjustUISize(initialRowHeight));
+    }
+
+    /**
+     * Adjust the row height of the given JTable according to the UI scale
+     * @param jTree tree to adjust
+     * @param initialRowHeight initial row height to use in computations
+     */
+    public static void adjustRowHeight(final JTree jTree, final int initialRowHeight) {
+        jTree.setRowHeight(adjustUISize(initialRowHeight));
     }
 
     /**

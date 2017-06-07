@@ -40,10 +40,8 @@ public final class MemoryMonitor extends JPanel implements Disposable {
     MemoryMonitor() {
         super(new BorderLayout());
 
-        final Dimension dim = new Dimension(80, 25);
+        final Dimension dim = new Dimension(100, 25);
         setMinimumSize(dim);
-        setPreferredSize(dim);
-        setMaximumSize(dim);
 
         progressBar = new JProgressBar();
         progressBar.setStringPainted(true);

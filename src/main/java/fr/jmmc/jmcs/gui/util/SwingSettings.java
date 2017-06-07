@@ -34,13 +34,26 @@ import fr.jmmc.jmcs.Bootstrapper;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Window;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JTree;
+import javax.swing.JViewport;
 import javax.swing.LookAndFeel;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
@@ -69,6 +82,8 @@ public final class SwingSettings {
     private static boolean _alreadyDone = false;
     /** cache for initial font sizes */
     private final static Map<Object, Integer> INITIAL_FONT_SIZES = new HashMap<Object, Integer>(64);
+    /** cached initial row height */
+    private static int INITIAL_ROW_HEIGHT = 0;
 
     /** Hidden constructor */
     private SwingSettings() {
@@ -87,14 +102,6 @@ public final class SwingSettings {
 
         setSwingDefaults();
 
-        // Fix font defaults:
-        fixUIFonts(UIManager.getDefaults());
-
-        // Apply LAF defaults:
-        setLAFDefaults();
-
-        setDefaultLookAndFeel();
-
         if (DEBUG_EDT_VIOLATIONS) {
             RepaintManager.setCurrentManager(new ThreadCheckingRepaintManager());
         }
@@ -108,6 +115,11 @@ public final class SwingSettings {
             MCSExceptionHandler.installSwingHandler();
         }
 
+        // Apply UI scale & LaF settings:
+        setLAFDefaults();
+
+        setDefaultLookAndFeel();
+
         _logger.info("Swing settings set.");
     }
 
@@ -116,13 +128,13 @@ public final class SwingSettings {
         _logger.debug("LAF class: {}", className);
 
         // Note: use the main thread (not EDT) to avoid any deadlock during bootstrapping:
-        setLookAndFeel(className);
+        setLookAndFeel(className, false);
     }
 
-    public static void setLookAndFeel(final String className) {
+    public static void setLookAndFeel(final String className, final boolean force) {
         if (className != null
-                && !className.isEmpty()
-                && !className.equals(UIManager.getLookAndFeel().getClass().getName())) {
+                && (force
+                || (!className.isEmpty() && !className.equals(UIManager.getLookAndFeel().getClass().getName())))) {
 
             _logger.info("Use Look & Feel: {}", className);
             try {
@@ -132,15 +144,39 @@ public final class SwingSettings {
                 // Re-apply LAF defaults:
                 setLAFDefaults();
 
-                final Frame mainFrame = App.getExistingFrame();
-                if (mainFrame != null) {
-                    SwingUtilities.updateComponentTreeUI(mainFrame);
-                    mainFrame.pack();
+                if (force) {
+                    // Only update existing Frames if the force flag is true
+                    // to avoid bootstrap issues:
+                    final Frame mainFrame = App.getExistingFrame();
+                    if (mainFrame != null) {
+                        final float uiScale = CommonPreferences.getInstance().getUIScale();
+
+                        updateComponentTree(mainFrame, uiScale);
+
+                        updateComponentTreeLAF(mainFrame);
+                    }
                 }
             } catch (UnsupportedLookAndFeelException ulafe) {
                 throw new RuntimeException(ulafe);
             }
         }
+    }
+
+    private static void updateComponentTreeLAF(final Frame f) {
+        if (f != null) {
+            f.requestFocus();
+            updateComponentTreeRecurseLAF(f);
+
+            for (Window window : f.getOwnedWindows()) {
+                _logger.debug("updateComponentTreeLAF: Window: {}", window.getName());
+                updateComponentTreeRecurseLAF(window);
+            }
+        }
+    }
+
+    private static void updateComponentTreeRecurseLAF(final Window w) {
+        SwingUtilities.updateComponentTreeUI(w);
+        w.pack();
     }
 
     /**
@@ -166,54 +202,188 @@ public final class SwingSettings {
      * - install JIDE extensions
      */
     static void setLAFDefaults() {
-        // Fix font for the current LAF:
-        fixUIFonts(UIManager.getLookAndFeelDefaults());
+        _logger.debug("setLAFDefaults: begin");
+
+        // Fix fonts for the current LAF:
+        final float uiScale = CommonPreferences.getInstance().getUIScale();
+        _logger.info("UI scale: {}", uiScale);
+
+        fixUIFonts(UIManager.getLookAndFeelDefaults(), uiScale);
+        fixUIFonts(UIManager.getDefaults(), uiScale);
 
         if (!Bootstrapper.isHeadless()) {
             installJideLAFExtensions();
         }
+        _logger.debug("setLAFDefaults: end");
     }
 
-    private static synchronized void fixUIFonts(final UIDefaults uidef) {
-        final float fontSizeScale = CommonPreferences.getInstance().getUIScale();
-        _logger.debug("Font scale: {}", fontSizeScale);
-
+    private static synchronized void fixUIFonts(final UIDefaults uidef, final float uiScale) {
         for (Entry<Object, Object> e : uidef.entrySet()) {
             final Object key = e.getKey();
 
             if (key instanceof String) {
                 final String strKey = ((String) key);
 
-//                _logger.info("{} = {}", strKey, e.getValue());
+                _logger.debug("ui default: {} = {}", strKey, e.getValue());
 
                 if (strKey.contains("font") || strKey.contains("Font")) {
                     Font font = uidef.getFont(key);
 
-                    _logger.debug("default: {} = {}", key, font);
+                    _logger.debug("font default: {} = {}", key, font);
 
                     if (font != null) {
-                        final int size = font.getSize();
-                        final Integer fixedSize = INITIAL_FONT_SIZES.get(key);
+                        int size = font.getSize();
+                        final Integer initialSize = INITIAL_FONT_SIZES.get(key);
 
-                        if (fixedSize == null || size == fixedSize.intValue()) {
+                        if (initialSize == null) {
                             INITIAL_FONT_SIZES.put(key, Integer.valueOf(size));
-
-                            final int newSize = Math.round(fontSizeScale * size);
-                            final int newStyle = (fontSizeScale > 1.2f) ? Font.PLAIN : font.getStyle();
-                            final String name = font.getName();
-
-                            // Force using Monospaced font for Tree & TextArea:
-                            final String newName = ("Tree.font".equals(strKey)
-                                    || "TextArea.font".equals(strKey)) ? "Monospaced" : name;
-
-                            // Derive new font:
-                            final Font newFont = new Font(newName, newStyle, newSize);
-                            _logger.debug("fixed: {} = {}", key, newFont);
-
-                            uidef.put(key, new FontUIResource(newFont));
+                        } else {
+                            size = initialSize.intValue();
                         }
+
+                        final int newSize = Math.round(uiScale * size);
+                        final int newStyle = (uiScale > 1.2f) ? (font.isItalic() ? Font.ITALIC : Font.PLAIN) : font.getStyle();
+                        final String name = font.getName();
+
+                        // Force using Monospaced font for Tree & TextArea:
+                        final String newName = ("Tree.font".equals(strKey)
+                                || "TextArea.font".equals(strKey)) ? "Monospaced" : name;
+
+                        // Derive new font:
+                        final Font newFont = new Font(newName, newStyle, newSize);
+                        _logger.debug("font fixed: {} = {}", key, newFont);
+
+                        uidef.put(key, new FontUIResource(newFont));
                     }
                 }
+            }
+        }
+    }
+
+    public static int setAndGetInitialRowHeight(final int height) {
+        if (INITIAL_ROW_HEIGHT == 0) {
+            _logger.debug("INITIAL_ROW_HEIGHT: {}", height);
+            INITIAL_ROW_HEIGHT = height;
+        }
+        return INITIAL_ROW_HEIGHT;
+    }
+
+    public static int getInitialRowHeight() {
+        return INITIAL_ROW_HEIGHT;
+    }
+
+    private static void updateComponentTree(final Frame f, final float uiScale) {
+        if (f != null) {
+            _logger.debug("updateComponentTree: begin {}", f.getName());
+            updateWindowTree(f, uiScale);
+            for (Window window : f.getOwnedWindows()) {
+                updateWindowTree(window, uiScale);
+            }
+            _logger.debug("updateComponentTree: end");
+        }
+    }
+
+    private static void updateWindowTree(final Window w, final float uiScale) {
+        _logger.debug("Window: {}", w.getName());
+        updateComponentTreeRecurse(w, uiScale);
+        w.pack();
+    }
+
+    private static void updateComponentTreeRecurse(final Component c, final float uiScale) {
+        if (c instanceof JComponent) {
+            updateJComponent((JComponent) c, uiScale);
+        }
+
+        Component[] children = null;
+        if (c instanceof Container) {
+            children = ((Container) c).getComponents();
+        }
+        if (children != null) {
+            for (Component child : children) {
+                updateComponentTreeRecurse(child, uiScale);
+            }
+        }
+    }
+
+    private static void updateJComponent(final JComponent c, final float uiScale) {
+        if (c instanceof JTable) {
+            final JTable table = (JTable) c;
+            _logger.debug("table[{}] : {}", table.getName(), table.getRowHeight());
+
+            if (INITIAL_ROW_HEIGHT != 0) {
+                SwingUtils.adjustRowHeight(table, INITIAL_ROW_HEIGHT);
+
+                _logger.debug("table[{}] fixed : {}", table.getName(), table.getRowHeight());
+            }
+        }
+        if (c instanceof JTree) {
+            final JTree tree = (JTree) c;
+            _logger.debug("tree[{}] : {}", tree.getName(), tree.getRowHeight());
+
+            if (INITIAL_ROW_HEIGHT != 0) {
+                SwingUtils.adjustRowHeight(tree, INITIAL_ROW_HEIGHT);
+
+                _logger.debug("tree[{}] fixed : {}", tree.getName(), tree.getRowHeight());
+            }
+        }
+
+        if (c instanceof JList) {
+            final JList list = (JList) c;
+            _logger.debug("list[{}] : {}", list.getName(), list.getFixedCellHeight());
+
+            // for core: force cache invalidation by temporarily setting fixed height
+            list.setFixedCellHeight(10);
+            list.setFixedCellHeight(-1);
+        }
+
+        if (c.isFontSet()) {
+            final Font font = c.getFont();
+            _logger.debug("component[{} @ {}] : {}", c.getName(), c.getClass().getSimpleName(), font);
+
+            String key = c.getClass().getSimpleName();
+
+            if (c instanceof JPanel) {
+                key = "Panel";
+            } else if (c instanceof JButton) {
+                key = "Button";
+            } else if (c instanceof JTextField) {
+                key = "TextField";
+            } else if (c instanceof JLabel) {
+                key = "Label";
+            } else if (c instanceof JList) {
+                key = "List";
+            } else if (c instanceof JPopupMenu) {
+                key = "PopupMenu";
+            } else if (c instanceof JMenuBar) {
+                key = "MenuBar";
+            } else if (c instanceof JViewport) {
+                key = "Viewport";
+            }
+
+            if (key.length() == 0) {
+                key = c.getClass().getName();
+            }
+            if (key.startsWith("J")) {
+                key = key.substring(1);
+            }
+            key += ".font";
+
+            final Integer initialSize = INITIAL_FONT_SIZES.get(key);
+
+            if (initialSize != null) {
+                final int newSize = Math.round(uiScale * initialSize);
+                final int newStyle = (uiScale > 1.2f) ? (font.isItalic() ? Font.ITALIC : Font.PLAIN) : font.getStyle();
+                final String name = font.getName();
+
+                // Derive new font:
+                final Font newFont = new Font(name, newStyle, newSize);
+                _logger.debug("font fixed: {} = {}", key, newFont);
+
+                // Fix font:
+                c.setFont(newFont);
+
+            } else {
+                _logger.warn("font[{}]: {}", key, initialSize);
             }
         }
     }

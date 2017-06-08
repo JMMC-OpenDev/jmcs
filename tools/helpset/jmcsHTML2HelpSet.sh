@@ -2,7 +2,7 @@
 ################################################################################
 #                  jMCS project ( http://www.jmmc.fr/dev/jmcs )
 ################################################################################
-#  Copyright (c) 2013, CNRS. All rights reserved.
+#  Copyright (c) 2017, CNRS. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are met:
@@ -33,9 +33,9 @@
 # a HTML folder. This shell script uses java script jmcsGenerateHelpsetFromHtml and jhelpdev software.
 #
 # @synopsis
-# jmcsHTML2HelpSet CVS_documentation_module_name...
+# jmcsHTML2HelpSet documentation_module_name...
 #
-# @param CVS_documentation_module_name : One (or several) name(s) of CVS module(s) that contains Latex documentation
+# @param documentation_module_name : One (or several) name(s) of module(s) that contains Latex documentation
 # 
 # @details
 # =>>>>>>>>>>>>>>>>>>>>>decrire precisement checkout modul tmp/ make jhelpdev jar lib/[module_name]-doc.jar
@@ -71,7 +71,7 @@ if [ ! -f ./$HELP_TOOL_JAR ]; then
     exit 1
 fi
 
-# Latex tempory folder, we checkout all CVS modules into it
+# Latex tempory folder, we checkout all modules into it
 latex_tempory_folder=$1-latex-tmp
 
 # Name of the current module
@@ -92,7 +92,7 @@ fi
 # Create Latex tempory folder
 mkdir $latex_tempory_folder
 
-# Go into this folder because CVS checkout
+# Go into this folder because SVN export
 # doesn't accept an absolute path and 
 # path like ../xx/ too...
 cd $latex_tempory_folder
@@ -112,8 +112,8 @@ do
     else
         echo "Configuring $module ..."
 
-        # CVS export
-        svn co "$repos/$module"
+        # SVN export
+        svn export "$repos/$module"
         # Exit if export failed
         if [ $? -eq 1 ]; then
             exit 1;

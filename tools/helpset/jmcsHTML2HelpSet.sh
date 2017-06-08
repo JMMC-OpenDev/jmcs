@@ -58,7 +58,13 @@ footer="</projectdir><startpage>index.html</startpage><popupicon></popupicon></c
 
 # Check that there is 1 argument at least
 if [ $# -le 0 ]; then
-    echo "Error : Please specify at least one documentation reference to get associted module..."
+    echo "Error : Please specify at least one documentation reference to get associated module..."
+    exit 1
+fi
+
+# Check if the jmcs Helpset tool is built:
+if [ ! -f ./target/helpset-TRUNK-jar-with-dependencies.jar ]; then
+    echo "Error: please build the jmcs Helpset tool by using mvn clean install first."
     exit 1
 fi
 
@@ -122,7 +128,7 @@ do
 
     fi
 
-    # Remove all unsed file to avoid generated
+    # Remove all unused file to avoid generated
     # errors with jhelpdev
     rm $module_doc/*.css $module_doc/*.aux $module_doc/*.log
     rm $module_doc/*.tex $module_doc/*.pl $module_doc/*.eps

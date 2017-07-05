@@ -167,9 +167,26 @@ public final class SwingUtils {
     /**
      * Adjust the given size according to the UI scale
      * @param size to adjust
+     * @return rounded integer value of the scaled input size
      */
     public static int adjustUISize(final int size) {
-        final float uiScale = CommonPreferences.getInstance().getUIScale();
-        return Math.round(uiScale * size);
+        return Math.round(adjustUISize((float)size));
     }
-}
+
+    /**
+     * Adjust the given size according to the UI scale
+     * @param size to adjust
+     * @return float value of the scaled input size
+     */
+    public static float adjustUISize(final float size) {
+        return size * CommonPreferences.getInstance().getUIScale();
+    }
+
+    /**
+     * Adjust the given size according to the UI scale
+     * @param size to adjust
+     * @return float value of the scaled input size
+     */
+    public static double adjustUISize(final double size) {
+        return size * CommonPreferences.getInstance().getUIScale();
+    }}

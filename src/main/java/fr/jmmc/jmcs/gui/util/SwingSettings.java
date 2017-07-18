@@ -113,12 +113,12 @@ public final class SwingSettings {
         } else {
             // Use Swing exception handler:
             MCSExceptionHandler.installSwingHandler();
+
+            // Apply UI scale & LaF settings:
+            setLAFDefaults();
+
+            setDefaultLookAndFeel();
         }
-
-        // Apply UI scale & LaF settings:
-        setLAFDefaults();
-
-        setDefaultLookAndFeel();
 
         _logger.info("Swing settings set.");
     }
@@ -211,9 +211,8 @@ public final class SwingSettings {
         fixUIFonts(UIManager.getLookAndFeelDefaults(), uiScale);
         fixUIFonts(UIManager.getDefaults(), uiScale);
 
-        if (!Bootstrapper.isHeadless()) {
-            installJideLAFExtensions();
-        }
+        installJideLAFExtensions();
+
         _logger.debug("setLAFDefaults: end");
     }
 

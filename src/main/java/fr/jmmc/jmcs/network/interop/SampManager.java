@@ -495,7 +495,8 @@ public final class SampManager {
 
         for (Iterator<?> it = getClientMap().values().iterator(); it.hasNext();) {
             final Client client = (Client) it.next();
-            if (client.getMetadata().getName().matches(name)) {
+            final Metadata metadata = client.getMetadata();
+            if (metadata != null && metadata.getName().matches(name)) {
                 clientIdList.add(client.getId());
             }
         }

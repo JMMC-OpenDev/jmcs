@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="JMAL" default="about" basedir=".">
+
+  <description>
+  	JMAL ant build file
+  </description>
+
+  <property name="root" location=".."/>
+
+  <!-- NOTE: jmcs is supposed to be in the parent folder -->
+  <property name="jmcs" location="${root}/../jmcs"/>
+
+  <property name="libs" location="${jmcs}/lib"/>
+  <property name="sources" location="${root}/src"/>
+
+
+  <!-- custom macro to enhance XJC -->
+  <macrodef name="xjc">
+    <attribute name="destdir"/>
+    <attribute name="schema"/>
+
+    <sequential>
+      <java jar="${libs}/jaxb-xjc.jar" fork="true" failonerror="true">
+        <arg value="-classpath"/>
+        <arg value="${libs}/simple-regenerator-1.0.jar"/>
+
+        <arg value="-no-header"/>
+
+        <arg value="-extension"/>
+        <!-- preserve code extension -->
+        <arg value="-simple-preserve"/>
+
+        <arg value="-d"/>
+        <arg value="@{destdir}"/>
+
+        <arg value="@{schema}"/>
+      </java>
+
+      <!-- remove backup files -->
+      <delete includeemptydirs="false">
+        <fileset dir="@{destdir}">
+          <include name="**/*.java.backup" />
+        </fileset>
+      </delete>
+    </sequential>
+  </macrodef>
+
+
+  <!-- targets -->
+
+  <!-- target about : -->
+  <target name="about" description="show information for public targets">
+    <echo>available ant targets : </echo>
+    <echo>-------------------------------------------------------------------------------</echo>
+    <echo>  - genXsdCode         : generates the java code from xml schemas (xsd)</echo>
+    <echo>-------------------------------------------------------------------------------</echo>
+  </target>
+
+
+
+
+  <!-- target about : -->
+  <target name="checkJMCS">
+    <echo>-------------------------------------------------------------------------------</echo>
+    <echo>JMCS Path: ${jmcs}</echo>
+    <echo>-------------------------------------------------------------------------------</echo>
+ 
+    <!-- check jmcs path -->
+    <available property="jmcs.check" file="${jmcs}/src/jmcs.doc" />
+    <fail unless="jmcs.check" message="jmcs project does not exist in ${jmcs} !" />
+
+  </target>
+
+
+
+
+  <target name="genXsdCode" depends="checkJMCS" description="generates the java code from xml schemas (xsd)">
+    
+    <echo>generating java code for targetModel.xsd</echo>
+
+    <mkdir dir="${sources}/fr/jmmc/jmal/model/targetmodel" />
+
+    <xjc destdir="${sources}" schema="${sources}/fr/jmmc/jmal/model/targetModel.xsd" />
+
+  </target>
+
+</project>

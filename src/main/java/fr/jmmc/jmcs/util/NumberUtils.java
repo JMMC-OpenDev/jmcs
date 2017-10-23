@@ -48,9 +48,14 @@ public final class NumberUtils {
     /** shared Double = 1 instance */
     public final static Double DBL_ONE = Double.valueOf(1d);
     /** default formatter */
-    private final static NumberFormat _fmtDef = NumberFormat.getInstance();
+    private final static NumberFormat _fmtDef;
     /** scientific formatter */
     private final static NumberFormat _fmtScience = new DecimalFormat("0.0##E0");
+    
+    static {
+        _fmtDef = NumberFormat.getInstance();
+        _fmtDef.setGroupingUsed(false);
+    }
 
     /**
      * Private constructor

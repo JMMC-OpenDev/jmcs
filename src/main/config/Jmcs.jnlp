@@ -36,11 +36,11 @@
         <homepage href="http://www.jmmc.fr/dev/jmcs/"/>
         <description>JMMC GUI Framework</description>
         <offline-allowed/>
-        <update check="background"/>
     </information>
     <security>
         <all-permissions/>
     </security>
+    <update check="background" policy="prompt-update"/>
     <resources>
         <!-- MANUALLY EDITED - Should be generated with maven ASAP ! -->
 

@@ -29,13 +29,14 @@
 ********************************************************************************
 -->
 
-<jnlp spec="1.0+" codebase="@GENERATED@" href="Jmcs.jnlp">
+<jnlp spec="6.0+" codebase="@GENERATED@" href="Jmcs.jnlp">
     <information>
         <title>jMCS Framework</title>
         <vendor>JMMC (Jean-Marie MARIOTTI Center)</vendor>
         <homepage href="http://www.jmmc.fr/dev/jmcs/"/>
         <description>JMMC GUI Framework</description>
         <offline-allowed/>
+        <update check="background"/>
     </information>
     <security>
         <all-permissions/>

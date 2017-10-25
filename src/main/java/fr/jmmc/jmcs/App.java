@@ -195,7 +195,7 @@ public abstract class App {
     /**
      * Show command-line arguments help.
      */
-    protected final void showArgumentsHelp() {
+    public final void showArgumentsHelp() {
         CommandLineUtils.showArgumentsHelp(_customArgumentsDefinition);
     }
 
@@ -205,8 +205,8 @@ public abstract class App {
      * @param hasArgument true if an argument value is required, false otherwise.
      * @param help argument's description displayed in the command-line help.
      */
-    protected final void addCustomCommandLineArgument(final String name,
-                                                      final boolean hasArgument, final String help) {
+    public final void addCustomCommandLineArgument(final String name,
+                                                   final boolean hasArgument, final String help) {
         addCustomCommandLineArgument(name, hasArgument, help, ExecMode.GUI);
     }
 
@@ -217,8 +217,8 @@ public abstract class App {
      * @param help argument's description displayed in the command-line help.
      * @param mode execution mode (GUI or TTY mode).
      */
-    protected final void addCustomCommandLineArgument(final String name,
-                                                      final boolean hasArgument, final String help, final ExecMode mode) {
+    public final void addCustomCommandLineArgument(final String name,
+                                                   final boolean hasArgument, final String help, final ExecMode mode) {
         if ((name == null) || (name.isEmpty())) {
             return;
         }

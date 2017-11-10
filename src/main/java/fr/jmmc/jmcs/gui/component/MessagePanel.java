@@ -81,6 +81,7 @@ public final class MessagePanel extends javax.swing.JPanel {
                     // TODO add error_icon in resources
                     icon = ResourceImage.WARNING_ICON.icon();
                     break;
+                default:
             }
 
             // update text content
@@ -101,6 +102,7 @@ public final class MessagePanel extends javax.swing.JPanel {
                         switch (m.getLevel()) {
                             case Debug:
                                 logger.debug(msg);
+                                break;
                             case Information:
                                 logger.info(msg);
                                 break;

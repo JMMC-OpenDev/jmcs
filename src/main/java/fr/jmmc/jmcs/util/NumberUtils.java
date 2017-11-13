@@ -369,7 +369,7 @@ public final class NumberUtils {
             cache = new Integer[(high - low) + 1];
             int j = low;
             for (int k = 0, len = cache.length; k < len; k++) {
-                cache[k] = new Integer(j++);
+                cache[k] = Integer.valueOf(j++);
             }
         }
 
@@ -382,7 +382,7 @@ public final class NumberUtils {
             if (i >= low && i <= high) {
                 return cache[i + (-low)];
             }
-            return new Integer(i);
+            return Integer.valueOf(i);
         }
 
         /**

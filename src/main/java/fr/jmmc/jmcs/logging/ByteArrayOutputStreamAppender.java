@@ -31,6 +31,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.OutputStreamAppender;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * ByteArrayOutputStreamAppender is a custom OutputStreamAppender that stores log events into a memory byte buffer.
@@ -94,7 +95,7 @@ public final class ByteArrayOutputStreamAppender extends OutputStreamAppender<IL
         } finally {
             lock.unlock();
         }
-        return new LogOutput(size, (buffer != null) ? new String(buffer, 0, buffer.length) : "");
+        return new LogOutput(size, (buffer != null) ? new String(buffer, 0, buffer.length, StandardCharsets.UTF_8) : "");
     }
 
     /**

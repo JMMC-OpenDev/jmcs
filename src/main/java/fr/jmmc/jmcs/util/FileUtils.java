@@ -49,6 +49,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang.SystemUtils;
@@ -66,8 +67,6 @@ public final class FileUtils {
     private static final Logger _logger = LoggerFactory.getLogger(FileUtils.class.getName());
     /** Platform dependent line separator */
     public static final String LINE_SEPARATOR = SystemUtils.LINE_SEPARATOR;
-    /** File encoding use UTF-8 */
-    public static final String FILE_ENCODING = "UTF-8";
     /** Default read buffer capacity: 8K */
     public static final int DEFAULT_BUFFER_CAPACITY = 8192;
 
@@ -291,7 +290,7 @@ public final class FileUtils {
         String result = null;
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(inputStream, FILE_ENCODING));
+            reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
             // Use one string buffer with the best guessed initial capacity:
             final StringBuilder sb = new StringBuilder(bufferCapacity);
@@ -378,7 +377,7 @@ public final class FileUtils {
         try {
             // Should define UTF-8 encoding for cross platform compatibility
             // but we must stay compatible with existing files (windows vs unix)
-            return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)), bufferSize);
+            return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8), bufferSize);
         } catch (final IOException ioe) {
             _logger.error("IO failure : ", ioe);
         }
@@ -386,22 +385,6 @@ public final class FileUtils {
         return null;
     }
 
-    /**
-     * Returns a Writer for the given file
-     *
-     * @param file file to write
-     * @return Writer (buffered)
-     *
-     * @throws IOException if an I/O exception occurred
-     */
-    /*
-     public static Writer openFile(final File file) throws IOException {
-     // Should define UTF-8 encoding for cross platform compatibility
-     // but we must stay compatible with existing files (windows vs unix)
-     return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-     // return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), FILE_ENCODING));
-     }
-     */
     /**
      * Close the given reader
      *

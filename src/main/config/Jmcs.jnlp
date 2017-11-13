@@ -40,7 +40,7 @@
     <security>
         <all-permissions/>
     </security>
-    <update check="timeout" policy="always"/>
+    <update check="always" policy="always"/>
     <resources>
         <!-- MANUALLY EDITED - Should be generated with maven ASAP ! -->
 

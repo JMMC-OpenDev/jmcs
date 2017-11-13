@@ -49,7 +49,6 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang.SystemUtils;
@@ -69,6 +68,8 @@ public final class FileUtils {
     public static final String LINE_SEPARATOR = SystemUtils.LINE_SEPARATOR;
     /** Default read buffer capacity: 8K */
     public static final int DEFAULT_BUFFER_CAPACITY = 8192;
+    /** File encoding use UTF-8 */
+    public static final String FILE_ENCODING = "UTF-8";
 
     /**
      * Returns an existing File for the given path
@@ -290,7 +291,7 @@ public final class FileUtils {
         String result = null;
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            reader = new BufferedReader(new InputStreamReader(inputStream, FILE_ENCODING));
 
             // Use one string buffer with the best guessed initial capacity:
             final StringBuilder sb = new StringBuilder(bufferCapacity);
@@ -377,7 +378,7 @@ public final class FileUtils {
         try {
             // Should define UTF-8 encoding for cross platform compatibility
             // but we must stay compatible with existing files (windows vs unix)
-            return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8), bufferSize);
+            return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), FILE_ENCODING), bufferSize);
         } catch (final IOException ioe) {
             _logger.error("IO failure : ", ioe);
         }

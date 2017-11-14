@@ -66,10 +66,10 @@ public final class FileUtils {
     private static final Logger _logger = LoggerFactory.getLogger(FileUtils.class.getName());
     /** Platform dependent line separator */
     public static final String LINE_SEPARATOR = SystemUtils.LINE_SEPARATOR;
-    /** Default read buffer capacity: 8K */
-    public static final int DEFAULT_BUFFER_CAPACITY = 8192;
     /** File encoding use UTF-8 */
     public static final String FILE_ENCODING = "UTF-8";
+    /** Default read buffer capacity: 8K */
+    public static final int DEFAULT_BUFFER_CAPACITY = 8192;
 
     /**
      * Returns an existing File for the given path

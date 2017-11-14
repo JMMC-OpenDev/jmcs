@@ -60,10 +60,17 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class App {
 
+    /**
+     * Static jMCS environment startup.
+     */
+    static {
+        Bootstrapper.bootstrap();
+    }
+
     /** Class Logger */
     private static final Logger _logger = LoggerFactory.getLogger(App.class.getName());
     /** Singleton reference */
-    private static App _instance;
+    private static App _instance = null;
     /** Main frame of the application (singleton) */
     private static JFrame _applicationFrame = null;
 
@@ -85,13 +92,6 @@ public abstract class App {
     private final Map<String, ArgumentDefinition> _customArgumentsDefinition = new LinkedHashMap<String, ArgumentDefinition>();
     /** Store the custom command line argument values (keyed by name) */
     private Map<String, String> _customArgumentValues = null;
-
-    /**
-     * Static jMCS environment startup.
-     */
-    static {
-        Bootstrapper.bootstrap();
-    }
 
     /**
      * Creates a new App object.

@@ -155,6 +155,9 @@ public final class NumberUtils {
      * @return formatted value
      */
     public static String format(final double val) {
+        if (Double.isNaN(val)) {
+            return "NaN";
+        }
         final double abs = Math.abs(val);
 
         if (abs < 1e-9d) {

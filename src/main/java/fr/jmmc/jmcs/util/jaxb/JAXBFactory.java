@@ -111,20 +111,30 @@ public final class JAXBFactory {
     private JAXBContext getContext(final String path) throws XmlBindException {
         JAXBContext context = null;
 
-        logger.debug("JAXB implementation: {}", System.getProperty(javax.xml.bind.JAXBContext.JAXB_CONTEXT_FACTORY));
+        if (logger.isDebugEnabled()) {
+            logger.debug("JAXB implementation: {}", System.getProperty(javax.xml.bind.JAXBContext.JAXB_CONTEXT_FACTORY));
+        }
 
         try {
             // create a JAXBContext capable of handling classes generated into
             // package given by path:
-            context = JAXBContext.newInstance(path, JAXBFactory.class.getClassLoader());
+            context = JAXBContext.newInstance(path);
+
+            if (logger.isInfoEnabled()) {
+                if (context instanceof com.sun.xml.bind.v2.runtime.JAXBContextImpl) {
+                    logger.info("JAXB Version: " + ((com.sun.xml.bind.v2.runtime.JAXBContextImpl) context).getBuildId());
+                } else {
+                    logger.info("JAXB unknown implementation: " + context.getClass().getName());
+                }
+            }
 
         } catch (JAXBException je) {
             // Can happen if either JAXB library can not be loaded (classloader) or if ObjectFactory can not be loaded (classloader)
             // put stack trace in netbeans IDE logs:
-            je.printStackTrace();
-            System.err.println("ClassLoader (Jmcs): "+ JAXBFactory.class.getClassLoader());
-            System.err.println("ClassLoader (thread): "+ Thread.currentThread().getContextClassLoader());
-            
+            je.printStackTrace(System.err);
+            System.err.println("ClassLoader (Jmcs): " + JAXBFactory.class.getClassLoader());
+            System.err.println("ClassLoader (thread): " + Thread.currentThread().getContextClassLoader());
+
             throw new XmlBindException("JAXBFactory.getContext : Unable to create JAXBContext : " + path, je);
         }
 

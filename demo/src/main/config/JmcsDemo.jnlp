@@ -17,7 +17,7 @@
     </security>
     <update check="background" policy="always"/>
     <resources>
-        <j2se version="1.6+" initial-heap-size="64m" max-heap-size="128m"/>
+        <j2se version="1.7+" initial-heap-size="64m" max-heap-size="128m"/>
 
         <!-- Application module first (main class) -->
         <jar href="jar/jmcs-demo-TRUNK.jar" main="true"/>

@@ -113,9 +113,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             _logger.info("[Headless] Unexpected exception:", exception);
 
             exit();
-        } else {
-            // Fallback if no application data:
-            if (ApplicationDescription.getInstance() != null
+        } else // Fallback if no application data:
+         if (ApplicationDescription.getInstance() != null
                     && ApplicationDescription.getInstance().getFeedbackReportFormURL() != null) {
                 // Create Gui using EDT:
                 SwingUtils.invokeAndWaitEDT(new Runnable() {
@@ -132,7 +131,6 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
                 // If no feedback report form is available, show a standard error dialog instead...
                 MessagePane.showErrorMessage("An unexpected error occured !", exception);
             }
-        }
     }
 
     /* members */
@@ -159,11 +157,12 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         // Note: must call getApplicationState() before to get the logs
         final String applicationState = getApplicationState();
         final String applicationLog = getApplicationLog();
+        final String preferences = getPreferences();
 
         _feedbackTypeDataModel = new DefaultComboBoxModel(_feedbackTypes);
 
         initComponents();
-        postInit(systemConfig, applicationLog, applicationState, wrappedException);
+        postInit(systemConfig, applicationLog, applicationState, preferences, wrappedException);
 
         // Force to dispose when the dialog closes :
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -179,7 +178,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      * @param exception any Throwable (Exception, RuntimeException and Error)
      */
     private void postInit(final String systemConfig, final String applicationLog,
-                          final String applicationState, final Throwable exception) {
+            final String applicationState, final String preferences, final Throwable exception) {
 
         this.setMinimumSize(new Dimension(600, 600));
         this.setPreferredSize(new Dimension(600, 600));
@@ -242,6 +241,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         exceptionTextArea.setText(getExceptionTrace(exception));
         systemTextArea.setText(systemConfig);
         stateTextArea.setText(applicationState);
+        preferencesTextArea.setText(preferences);
 
         WindowUtils.setClosingKeyboardShortcuts(this);
         pack();
@@ -319,6 +319,15 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      */
     private final String getSystemConfigText() {
         return systemTextArea.getText();
+    }
+
+    /**
+     * Return the preferences text
+     *
+     * @return preferences as text
+     */
+    private final String getPreferencesText() {
+        return preferencesTextArea.getText();
     }
 
     /**
@@ -466,6 +475,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         statePanel = new javax.swing.JPanel();
         stateScrollPane = new javax.swing.JScrollPane();
         stateTextArea = new javax.swing.JTextArea();
+        preferencesScrollPane = new javax.swing.JScrollPane();
+        preferencesTextArea = new javax.swing.JTextArea();
         jPanelButtons = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         loadProgressBar = new javax.swing.JProgressBar();
@@ -585,6 +596,13 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         jTabbedPaneDetails.addTab("Application State", statePanel);
 
+        preferencesTextArea.setEditable(false);
+        preferencesTextArea.setColumns(20);
+        preferencesTextArea.setRows(5);
+        preferencesScrollPane.setViewportView(preferencesTextArea);
+
+        jTabbedPaneDetails.addTab("Preferences", preferencesScrollPane);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
@@ -641,7 +659,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         // launch a new worker
         new FeedbackReportWorker(this,
-                getSystemConfigText(),
+                getSystemConfigText() + getPreferencesText(),
                 getApplicationLogAndStateText(),
                 getExceptionTraceText(),
                 (String) _feedbackTypeDataModel.getSelectedItem(),
@@ -665,20 +683,6 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
 
         sb.append("\n\nEnvironment settings:\n");
         Preferences.dumpProperties(System.getenv(), sb);
-
-        // Add preferences:
-        final Map<String, Preferences> registrar = Preferences.getRegistrar();
-
-        final ArrayList<String> fileNames = new ArrayList<String>(registrar.keySet());
-        Collections.sort(fileNames);
-
-        for (String fileName : fileNames) {
-            sb.append("\n\nPreferences [").append(fileName).append("]:\n");
-            final Preferences prefs = registrar.get(fileName);
-            if (prefs != null) {
-                prefs.dumpCurrentProperties(sb);
-            }
-        }
 
         return sb.toString();
     }
@@ -719,6 +723,29 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         _logger.debug("logOutput length = {}", logOutput.length());
 
         return (!StringUtils.isEmpty(logOutput)) ? logOutput : "None";
+    }
+
+    /**
+     * Return application state
+     * @return application state
+     */
+    private static String getPreferences() {
+        StringBuilder sb = new StringBuilder(2048);
+
+        // Add preferences:
+        final Map<String, Preferences> registrar = Preferences.getRegistrar();
+
+        final ArrayList<String> fileNames = new ArrayList<String>(registrar.keySet());
+        Collections.sort(fileNames);
+
+        for (String fileName : fileNames) {
+            sb.append("\n\nPreferences [").append(fileName).append("]:\n");
+            final Preferences prefs = registrar.get(fileName);
+            if (prefs != null) {
+                prefs.dumpCurrentProperties(sb);
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -766,6 +793,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
     private javax.swing.JProgressBar loadProgressBar;
     private javax.swing.JScrollPane logScrollPane;
     private javax.swing.JTextArea logTextArea;
+    private javax.swing.JScrollPane preferencesScrollPane;
+    private javax.swing.JTextArea preferencesTextArea;
     private javax.swing.JPanel sendReportPanel;
     private javax.swing.JPanel statePanel;
     private javax.swing.JScrollPane stateScrollPane;
@@ -817,8 +846,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
          * @param comments user comments
          */
         private FeedbackReportWorker(final FeedbackReport feedbackReport,
-                                     final String config, final String log, final String stackTrace,
-                                     final String type, final String mail, final String summary, final String comments) {
+                final String config, final String log, final String stackTrace,
+                final String type, final String mail, final String summary, final String comments) {
             super(JmcsTaskRegistry.TASK_FEEDBACK_REPORT);
             this.feedbackReport = feedbackReport;
             this.config = config;

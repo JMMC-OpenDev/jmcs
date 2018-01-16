@@ -51,6 +51,9 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.Timer;
@@ -659,10 +662,24 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         sb.append("\n\n\nSystem properties:\n");
         // Get all informations about the system running the application
         Preferences.dumpProperties(System.getProperties(), sb);
-        
+
         sb.append("\n\nEnvironment settings:\n");
         Preferences.dumpProperties(System.getenv(), sb);
-        
+
+        // Add preferences:
+        final Map<String, Preferences> registrar = Preferences.getRegistrar();
+
+        final ArrayList<String> fileNames = new ArrayList<String>(registrar.keySet());
+        Collections.sort(fileNames);
+
+        for (String fileName : fileNames) {
+            sb.append("\n\nPreferences [").append(fileName).append("]:\n");
+            final Preferences prefs = registrar.get(fileName);
+            if (prefs != null) {
+                prefs.dumpCurrentProperties(sb);
+            }
+        }
+
         return sb.toString();
     }
 

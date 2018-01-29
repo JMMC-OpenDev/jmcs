@@ -32,7 +32,6 @@ import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import edu.stanford.ejalbert.exceptionhandler.BrowserLauncherErrorHandler;
 import static edu.stanford.ejalbert.BrowserLauncher.BROWSER_SYSTEM_PROPERTY;
 import edu.stanford.ejalbert.browserprefui.BrowserPrefDialog;
-import edu.stanford.ejalbert.launching.IBrowserLaunching;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.PreferencesException;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
@@ -63,8 +62,6 @@ public final class BrowserLauncher {
     private static final Logger _logger = LoggerFactory.getLogger(BrowserLauncher.class.getName());
     /** debugging flag */
     private static final boolean DEBUG = false;
-    /** system property "mrj.version" */
-    private static final String PROP_MRJ_VERSION = "mrj.version";
     /** launcher instance */
     private static edu.stanford.ejalbert.BrowserLauncher _launcher = null;
 
@@ -74,15 +71,6 @@ public final class BrowserLauncher {
      */
     static edu.stanford.ejalbert.BrowserLauncher getLauncher() {
         if (_launcher == null) {
-            boolean hackMRJ = false;
-            if (SystemUtils.IS_OS_MAC_OSX) {
-                // Circumvent BrowserLauncher NPE when running under Oracle 1.7u4 (and later ???) release for Mac OS X
-                if (System.getProperty(PROP_MRJ_VERSION) == null) {
-                    hackMRJ = true;
-                    System.setProperty(PROP_MRJ_VERSION, "9999.999");
-                    _logger.debug("Probably running Oracle JVM under Mac OS X, faking missing 'mrj.version' system property.");
-                }
-            }
             try {
                 final LoggerAdapter loggerAdapter = new LoggerAdapter();
 
@@ -95,11 +83,8 @@ public final class BrowserLauncher {
                 _logger.warn("Cannot initialize browser launcher : ", uose);
             } catch (BrowserLaunchingInitializingException bie) {
                 _logger.warn("Cannot initialize browser launcher : ", bie);
-            } finally {
-                if (hackMRJ) {
-                    // Circumvent BrowserLauncher NPE when running under Oracle 1.7u4 (and later ???) release for Mac OS X
-                    System.clearProperty(PROP_MRJ_VERSION);
-                }
+            } catch (RuntimeException re) {
+                _logger.warn("Cannot initialize browser launcher : ", re);
             }
         }
         return _launcher;
@@ -161,7 +146,13 @@ public final class BrowserLauncher {
             super(_className, "BrowserSelectorAction", "Browser selector");
             this.parent = parent;
 
-            setEnabled(getLauncher().getBrowserList().size() > 1);
+            final edu.stanford.ejalbert.BrowserLauncher launcher = getLauncher();
+            if (launcher == null) {
+                _logger.warn("Cannot get BrowserLauncher");
+                setEnabled(false);
+            } else {
+                setEnabled(launcher.getBrowserList().size() > 1);
+            }
         }
 
         /**

@@ -76,7 +76,7 @@
         <package name="BrowserLauncher2"
                  description="Permit to use the default web browser."
                  link="http://browserlaunch2.sourceforge.net/"
-                 jars="BrowserLauncher2-1_3.jar"
+                 jars="BrowserLauncher2-1.4.jar"
                  license="LGPL"/>
 
         <!-- Documentation reader -->

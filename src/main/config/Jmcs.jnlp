@@ -63,7 +63,7 @@
         <jar href="@SHARED@/jsamp-1.3.5.jar"/>
 
         <!-- Open URLs in user's default web browser -->
-        <jar href="@SHARED@/BrowserLauncher2.orig-1.3.jar"/>
+        <jar href="@SHARED@/BrowserLauncher2-1.4.jar"/>
 
         <!-- Missing Swing Widgets -->
         <jar href="@SHARED@/jide-oss-3.6.18.jar"/>

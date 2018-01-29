@@ -94,6 +94,8 @@ public final class Bootstrapper {
     private static App _application = null;
     /** Flag to indicate headless mode */
     private static int _isHeadless = -1;
+    /** Flag to indicate if the MAC OS X integration was done successfully */
+    private static boolean macIntegrationDone = false;
 
     /**
      * Static Logger initialization and Network settings
@@ -469,10 +471,19 @@ public final class Bootstrapper {
             } else {
                 final Method registerMethod = IntrospectionUtils.getMethod(osxAdapter, "registerMacOSXApplication", null);
                 if (registerMethod != null) {
-                    IntrospectionUtils.executeMethod(registerMethod, null);
+                    if (IntrospectionUtils.executeMethod(registerMethod, null)) {
+                        macIntegrationDone = true;
+                    }
                 }
             }
         }
+    }
+
+    /**
+    * @return true if if the MAC OS X integration was done successfully, false otherwise.
+    */
+    public static boolean isMacIntegrationDone() {
+        return macIntegrationDone;
     }
 
     /**

@@ -28,7 +28,6 @@
 package fr.jmmc.jmcs;
 
 import ch.qos.logback.classic.Logger;
-import com.apple.eawt.QuitResponse;
 import fr.jmmc.jmcs.App.ApplicationState;
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
@@ -41,6 +40,7 @@ import fr.jmmc.jmcs.gui.component.MessagePane;
 import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.gui.task.TaskSwingWorkerExecutor;
 import fr.jmmc.jmcs.gui.util.MacOSXAdapter;
+import fr.jmmc.jmcs.gui.util.MacOSXQuitCallback;
 import fr.jmmc.jmcs.gui.util.SwingSettings;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
@@ -135,7 +135,7 @@ public final class Bootstrapper {
 
         // Early load common preferences (jmcs):
         CommonPreferences.getInstance();
-        
+
         // Define swing settings (laf, defaults...) before any Swing usage
         SwingSettings.setup();
 
@@ -480,8 +480,8 @@ public final class Bootstrapper {
     }
 
     /**
-    * @return true if if the MAC OS X integration was done successfully, false otherwise.
-    */
+     * @return true if if the MAC OS X integration was done successfully, false otherwise.
+     */
     public static boolean isMacIntegrationDone() {
         return macIntegrationDone;
     }
@@ -511,20 +511,20 @@ public final class Bootstrapper {
     public static void quitApp(final ActionEvent evt) {
         _jmmcLogger.info("Quitting the application ...");
 
-        // Mac OS X Quit action handler
-        final QuitResponse response;
-        if (evt != null && evt.getSource() instanceof QuitResponse) {
-            response = (QuitResponse) evt.getSource();
+        // Mac OS X Quit action callback:
+        final MacOSXQuitCallback callback;
+        if (evt != null && evt.getSource() instanceof MacOSXQuitCallback) {
+            callback = (MacOSXQuitCallback) evt.getSource();
         } else {
-            response = null;
+            callback = null;
         }
 
         // Check if user is OK to kill SAMP hub (if any)
         if (!SampManager.getInstance().allowHubKilling()) {
             _jmmcLogger.debug("SAMP cancelled application kill.");
             // Otherwise cancel quit
-            if (response != null) {
-                response.cancelQuit();
+            if (callback != null) {
+                callback.cancelQuit();
             }
             return;
         }
@@ -539,7 +539,7 @@ public final class Bootstrapper {
                 setState(ApplicationState.APP_STOP);
 
                 // Max OS X quit
-                if (response != null) {
+                if (callback != null) {
                     disableSystemExit(true);
                 }
 
@@ -547,8 +547,8 @@ public final class Bootstrapper {
                 stopApp(0);
 
                 // Max OS X quit
-                if (response != null) {
-                    response.performQuit();
+                if (callback != null) {
+                    callback.performQuit();
                 }
                 return;
 
@@ -558,8 +558,8 @@ public final class Bootstrapper {
         } else {
             _jmmcLogger.debug("Application quit cancelled.");
         }
-        if (response != null) {
-            response.cancelQuit();
+        if (callback != null) {
+            callback.cancelQuit();
         }
     }
 

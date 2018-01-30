@@ -63,6 +63,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>fr.jmmc.jmcs</groupId>
+            <artifactId>mac-integration</artifactId>
+            <version>TRUNK</version>
+        </dependency>
+        
+        <dependency>
             <groupId>apple</groupId>
             <artifactId>AppleJavaExtensions</artifactId>
             <version>1.6</version>
@@ -172,6 +178,24 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <!-- Requires you to install manually the artifact:
+                       mvn install:install-file -Dfile=lib/mac-integration-TRUNK.jar -DgroupId=fr.jmmc.jmcs -DartifactId=mac-integration -Dversion=TRUNK -Dpackaging=jar
+                        -->
+                        <id>Java9Desktop</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <phase>process-resources</phase> <!-- just before compilation -->
+                        <configuration>
+                            <file>lib/mac-integration-TRUNK.jar</file>
+                            <groupId>fr.jmmc.jmcs</groupId>
+                            <artifactId>mac-integration</artifactId>
+                            <version>TRUNK</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
                     <execution>
                         <!-- Requires you to install manually the artifact:
                        mvn install:install-file -Dfile=lib/AppleJavaExtensions-1.6.jar -DgroupId=apple -DartifactId=AppleJavaExtensions -Dversion=1.6 -Dpackaging=jar

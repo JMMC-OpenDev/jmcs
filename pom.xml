@@ -63,7 +63,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>fr.jmmc.jmcs</groupId>
+            <groupId>oss.jmcs</groupId>
             <artifactId>mac-integration</artifactId>
             <version>TRUNK</version>
         </dependency>
@@ -180,9 +180,9 @@
                 <executions>
                     <execution>
                         <!-- Requires you to install manually the artifact:
-                       mvn install:install-file -Dfile=lib/mac-integration-TRUNK.jar -DgroupId=fr.jmmc.jmcs -DartifactId=mac-integration -Dversion=TRUNK -Dpackaging=jar
+                       mvn install:install-file -Dfile=lib/mac-integration-TRUNK.jar -DgroupId=oss.jmcs -DartifactId=mac-integration -Dversion=TRUNK -Dpackaging=jar
                         -->
-                        <id>Java9Desktop</id>
+                        <id>Java9MacIntegration</id>
                         <goals>
                             <goal>install-file</goal>
                         </goals>
@@ -190,7 +190,7 @@
                         <phase>process-resources</phase> <!-- just before compilation -->
                         <configuration>
                             <file>lib/mac-integration-TRUNK.jar</file>
-                            <groupId>fr.jmmc.jmcs</groupId>
+                            <groupId>oss.jmcs</groupId> <!-- script issue with fr.jmmc.* -->
                             <artifactId>mac-integration</artifactId>
                             <version>TRUNK</version>
                             <packaging>jar</packaging>

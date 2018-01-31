@@ -47,6 +47,9 @@
         <!-- Module code -->
         <jar href="jar/jmcs-TRUNK.jar"/>
 
+        <!-- Mac OS X Desktop integration (jdk9) -->
+        <jar href="@SHARED@/jmcs-MacOSX-9-TRUNK.jar"/>
+
 
         <!-- Libraries -->
 
@@ -72,7 +75,6 @@
         <jar href="@SHARED@/jhall-2.0.jar "/>
 
         <!-- Mac OS X Desktop integration -->
-        <jar href="@SHARED@/mac-integration-TRUNK.jar"/>
         <jar href="@SHARED@/AppleJavaExtensions-1.6.jar"/>
 
         <!-- JAXB Xml binding -->

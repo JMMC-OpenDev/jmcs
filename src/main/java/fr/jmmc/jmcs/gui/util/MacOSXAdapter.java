@@ -59,16 +59,16 @@ public final class MacOSXAdapter implements MacOSXInterface {
     /* members */
     /** Store a proxy to the shared ActionRegistrar facility */
     private final ActionRegistrar _registrar;
-    /** application instance */
-    private final Object _application;
 
     /**
      * Creates a new OSXAdapter object.
-     * @param application wrapped Application
      */
-    private MacOSXAdapter(final Object application) {
+    private MacOSXAdapter() {
         _registrar = ActionRegistrar.getInstance();
-        _application = application;
+    }
+
+    ActionRegistrar getRegistrar() {
+        return _registrar;
     }
 
     /**
@@ -100,121 +100,46 @@ public final class MacOSXAdapter implements MacOSXInterface {
             });
         }
 
+        // Create singleton once:
+        _instance = new MacOSXAdapter();
+
         try {
             // Java 7/8 handlers:
-            registerUsingAppleApplication();
+            registerMacOSXAdapter(_instance, "MacOSXAdapter8");
         } catch (Throwable th) {
-            _logger.info("registerMacOSXApplication: failure", th);
+            _logger.info("registerMacOSXAdapter(8): failure", th);
             // Java 9 handlers
-            registerUsingAwtDesktop();
+            registerMacOSXAdapter(_instance, "MacOSXAdapter9");
         }
-    }
-
-    /**
-     * Register this adapter using com.apple.eawt.Application
-     */
-    private static void registerUsingAppleApplication() {
-        // Get Application instance:
-        // May throw exceptions on non-mac or JVM >= 9
-        final com.apple.eawt.Application application = com.apple.eawt.Application.getApplication();
-
-        if (application == null) {
-            _logger.warn("com.apple.eawt.Application is null");
-            return;
-        }
-
-        // Create singleton:
-        final MacOSXAdapter instance = new MacOSXAdapter(application);
-
-        // Link 'About...' menu entry
-        application.setAboutHandler(new com.apple.eawt.AboutHandler() {
-            @Override
-            public void handleAbout(final com.apple.eawt.AppEvent.AboutEvent ae) {
-                instance.handleAbout();
-            }
-        });
-
-        // Set up quitting behaviour
-        application.setQuitHandler(new com.apple.eawt.QuitHandler() {
-            @Override
-            public void handleQuitRequestWith(final com.apple.eawt.AppEvent.QuitEvent qe,
-                                              final com.apple.eawt.QuitResponse qr) {
-
-                instance.handleQuitRequestWith(new MacOSXQuitCallback() {
-                    @Override
-                    public void performQuit() {
-                        qr.performQuit();
-                    }
-
-                    @Override
-                    public void cancelQuit() {
-                        qr.cancelQuit();
-                    }
-                });
-            }
-        });
-        application.disableSuddenTermination();
-        application.setQuitStrategy(com.apple.eawt.QuitStrategy.SYSTEM_EXIT_0);
-
-        // Set up double-clicked file opening handler
-        application.setOpenFileHandler(new com.apple.eawt.OpenFilesHandler() {
-            @Override
-            public void openFiles(final com.apple.eawt.AppEvent.OpenFilesEvent ofe) {
-                instance.openFiles(ofe.getFiles());
-            }
-        });
-
-        // Link 'Preferences' menu entry (if any)
-        final com.apple.eawt.PreferencesHandler preferencesHandler;
-        if (ActionRegistrar.getInstance().getPreferenceAction() == null) {
-            preferencesHandler = null;
-        } else {
-            preferencesHandler = new com.apple.eawt.PreferencesHandler() {
-                @Override
-                public void handlePreferences(final com.apple.eawt.AppEvent.PreferencesEvent pe) {
-                    instance.handlePreferences();
-                }
-            };
-        }
-        application.setPreferencesHandler(preferencesHandler);
-
-        // Store singleton if everything succeeded:
-        _instance = instance;
     }
 
     /**
      * Register this adapter using java.awt.Desktop (java 9+)
-     * See JOSM:
-     * https://josm.openstreetmap.de/browser/trunk/src/org/openstreetmap/josm/tools/PlatformHookOsx.java
+     * @param instance MacOSXInterface implementation
+     * @param MacOSXAdapterName MacOSXAdapter class name (8 or 9)
      */
-    private static void registerUsingAwtDesktop() {
+    private static void registerMacOSXAdapter(final MacOSXAdapter instance, final String MacOSXAdapterName) {
         boolean done = false;
 
-        // Create singleton:
-        final MacOSXAdapter instance = new MacOSXAdapter(null);
-
-        final Class<?> osxAdapter9 = IntrospectionUtils.getClass("fr.jmmc.jmcs.gui.util.MacOSXAdapter9");
-        if (osxAdapter9 == null) {
-            // This will be thrown first if the MacOSXAdapter9 is loaded on a system without JDK9 Desktop
-            _logger.error("This version of Mac OS X does not support the Apple Desktop integration (JDK9). Application Menu handling has been disabled.");
+        final Class<?> osxAdapter = IntrospectionUtils.getClass("fr.jmmc.jmcs.gui.util." + MacOSXAdapterName);
+        if (osxAdapter == null) {
+            // This will be thrown first if the MacOSXAdapter is loaded on a system without required (apple or java9 classes)
+            _logger.info("This version of Mac OS X does not support the jmcs [" + MacOSXAdapterName + "] integration.");
         } else {
-            final Method registerMethod = IntrospectionUtils.getMethod(osxAdapter9, "registerMacOSXApplication",
+            final Method registerMethod = IntrospectionUtils.getMethod(osxAdapter, "registerMacOSXApplication",
                     new Class<?>[]{MacOSXInterface.class, boolean.class});
 
             if (registerMethod != null) {
                 if (IntrospectionUtils.executeMethod(registerMethod,
-                        new Object[]{instance, (ActionRegistrar.getInstance().getPreferenceAction() != null)})) {
+                        new Object[]{instance, (instance.getRegistrar().getPreferenceAction() != null)})) {
                     done = true;
                 }
             }
         }
 
         if (!done) {
-            throw new IllegalStateException("Unable to register MacOSX Desktop application !");
+            throw new IllegalStateException("Unable to register " + MacOSXAdapterName + " integration !");
         }
-
-        // Store singleton if everything succeeded:
-        _instance = instance;
     }
 
     /**

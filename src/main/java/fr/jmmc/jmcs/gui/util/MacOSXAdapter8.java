@@ -27,17 +27,6 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.util;
 
-import java.awt.Desktop;
-import java.awt.desktop.AboutEvent;
-import java.awt.desktop.AboutHandler;
-import java.awt.desktop.OpenFilesEvent;
-import java.awt.desktop.OpenFilesHandler;
-import java.awt.desktop.PreferencesEvent;
-import java.awt.desktop.PreferencesHandler;
-import java.awt.desktop.QuitEvent;
-import java.awt.desktop.QuitHandler;
-import java.awt.desktop.QuitResponse;
-import java.awt.desktop.QuitStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,39 +35,39 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Brice COLUCCI, Sylvain LAFRASSE, Laurent BOURGES.
  */
-public final class MacOSXAdapter9 {
+public final class MacOSXAdapter8 {
 
     /** Class logger */
-    private static final Logger _logger = LoggerFactory.getLogger(MacOSXAdapter9.class.getName());
+    private static final Logger _logger = LoggerFactory.getLogger(MacOSXAdapter8.class.getName());
 
     /**
-     * Register the given adapter using java.awt.Desktop (java 9+)
+     * Register the given adapter com.apple.eawt.Application (java <= 8)
      * @param instance MacOSXInterface implementation
      * @param usePreferences true to register Preferences handler
      */
     public static void registerMacOSXApplication(final MacOSXInterface instance, final boolean usePreferences) {
-        // Get Desktop instance:
-        final Desktop desktop = Desktop.getDesktop();
+        // Get Application instance:
+        // May throw exceptions on non-mac or JVM >= 9
+        final com.apple.eawt.Application application = com.apple.eawt.Application.getApplication();
 
-        if (desktop == null) {
-            _logger.warn("java.awt.Desktop is null");
+        if (application == null) {
+            _logger.warn("com.apple.eawt.Application is null");
             return;
         }
 
-        // May throw exceptions on non-mac or JVM < 9
         // Link 'About...' menu entry
-        desktop.setAboutHandler(new AboutHandler() {
+        application.setAboutHandler(new com.apple.eawt.AboutHandler() {
             @Override
-            public void handleAbout(final AboutEvent ae) {
+            public void handleAbout(final com.apple.eawt.AppEvent.AboutEvent ae) {
                 instance.handleAbout();
             }
         });
 
         // Set up quitting behaviour
-        desktop.setQuitHandler(new QuitHandler() {
+        application.setQuitHandler(new com.apple.eawt.QuitHandler() {
             @Override
-            public void handleQuitRequestWith(final QuitEvent qe,
-                                              final QuitResponse qr) {
+            public void handleQuitRequestWith(final com.apple.eawt.AppEvent.QuitEvent qe,
+                                              final com.apple.eawt.QuitResponse qr) {
 
                 instance.handleQuitRequestWith(new MacOSXQuitCallback() {
                     @Override
@@ -93,31 +82,31 @@ public final class MacOSXAdapter9 {
                 });
             }
         });
-        desktop.disableSuddenTermination();
-        desktop.setQuitStrategy(QuitStrategy.NORMAL_EXIT);
+        application.disableSuddenTermination();
+        application.setQuitStrategy(com.apple.eawt.QuitStrategy.SYSTEM_EXIT_0);
 
         // Set up double-clicked file opening handler
-        desktop.setOpenFileHandler(new OpenFilesHandler() {
+        application.setOpenFileHandler(new com.apple.eawt.OpenFilesHandler() {
             @Override
-            public void openFiles(final OpenFilesEvent ofe) {
+            public void openFiles(final com.apple.eawt.AppEvent.OpenFilesEvent ofe) {
                 instance.openFiles(ofe.getFiles());
             }
         });
 
         // Link 'Preferences' menu entry (if any)
-        PreferencesHandler preferencesHandler = null;
+        com.apple.eawt.PreferencesHandler preferencesHandler = null;
         if (usePreferences) {
-            preferencesHandler = new PreferencesHandler() {
+            preferencesHandler = new com.apple.eawt.PreferencesHandler() {
                 @Override
-                public void handlePreferences(final PreferencesEvent pe) {
+                public void handlePreferences(final com.apple.eawt.AppEvent.PreferencesEvent pe) {
                     instance.handlePreferences();
                 }
             };
         }
-        desktop.setPreferencesHandler(preferencesHandler);
+        application.setPreferencesHandler(preferencesHandler);
     }
 
-    private MacOSXAdapter9() {
+    private MacOSXAdapter8() {
     }
 
 }

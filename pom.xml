@@ -63,8 +63,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>oss.jmcs</groupId>
-            <artifactId>mac-integration</artifactId>
+            <groupId>oss.jmcs</groupId> <!-- script issue with fr.jmmc.* -->
+            <artifactId>jmcs-MacOSX-9</artifactId>
             <version>TRUNK</version>
         </dependency>
         

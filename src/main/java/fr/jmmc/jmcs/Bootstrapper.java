@@ -37,7 +37,6 @@ import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.SplashScreen;
 import fr.jmmc.jmcs.gui.action.ActionRegistrar;
 import fr.jmmc.jmcs.gui.component.MessagePane;
-import fr.jmmc.jmcs.gui.component.ResizableTextViewFactory;
 import fr.jmmc.jmcs.gui.task.TaskSwingWorkerExecutor;
 import fr.jmmc.jmcs.gui.util.MacOSXAdapter;
 import fr.jmmc.jmcs.gui.util.MacOSXQuitCallback;
@@ -48,6 +47,7 @@ import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
+import fr.jmmc.jmcs.util.JVMUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import fr.jmmc.jmcs.util.concurrent.ParallelJobExecutor;
 import fr.jmmc.jmcs.util.runner.LocalLauncher;
@@ -153,14 +153,6 @@ public final class Bootstrapper {
      * @see MacOSXAdapter
      */
     private static void setSystemProperties() {
-        // Force anti-aliasing
-        if (SystemUtils.IS_JAVA_1_6) {
-            final String old = System.getProperty("awt.useSystemAAFontSettings");
-            if (old == null) {
-                System.setProperty("awt.useSystemAAFontSettings", "on");
-            }
-        }
-
         if (SystemUtils.IS_OS_MAC_OSX) {
             // Always use screen menuBar on MacOS X
             System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -325,6 +317,12 @@ public final class Bootstrapper {
         _application.___internalSingletonInitialization();
 
         try {
+            // check JVM FIRST:
+            if (!JVMUtils.showUnsupportedJdkWarning()) {
+                // Exit the application anyway:
+                Bootstrapper.stopApp(-1);
+            }
+
             // Load jMCS and application data models
             ApplicationDescription.init();
             _jmmcLogger.debug("Application data loaded.");
@@ -429,7 +427,7 @@ public final class Bootstrapper {
 
                     // Define the JFrame associated to the application which will get the JMenuBar
                     final JFrame frame = App.getExistingFrame();
-                    
+
                     if (frame != null) {
                         // Define OSXAdapter (menu bar integration)
                         macOSXRegistration();
@@ -443,8 +441,6 @@ public final class Bootstrapper {
                 }
             }
         });
-
-        ResizableTextViewFactory.showUnsupportedJdkWarning();
 
         // Indicate that the application is ready (visible)
         setState(ApplicationState.APP_READY);

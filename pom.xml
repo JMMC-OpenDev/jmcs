@@ -73,6 +73,7 @@
             <artifactId>AppleJavaExtensions</artifactId>
             <version>1.6</version>
         </dependency>
+        <!-- browser launcher needs java 1.7 -->
         <dependency>
             <groupId>edu.stanford.ejalbert</groupId>
             <artifactId>BrowserLauncher2</artifactId>
@@ -110,6 +111,7 @@
         </dependency>
         
         <!-- JAXB -->
+        <!-- jaxb 2.3 needs java 1.7 -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>

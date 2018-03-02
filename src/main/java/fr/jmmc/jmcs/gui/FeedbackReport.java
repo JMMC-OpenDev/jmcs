@@ -113,24 +113,44 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
             _logger.info("[Headless] Unexpected exception:", exception);
 
             exit();
-        } else // Fallback if no application data:
-         if (ApplicationDescription.getInstance() != null
-                    && ApplicationDescription.getInstance().getFeedbackReportFormURL() != null) {
-                // Create Gui using EDT:
-                SwingUtils.invokeAndWaitEDT(new Runnable() {
-                    @Override
-                    public void run() {
-                        // ensure window is visible (not iconified):
-                        App.showFrameToFront();
+        } else {
+            boolean shown = false;
+            try {
+                if (ApplicationDescription.getInstance() != null
+                        && ApplicationDescription.getInstance().getFeedbackReportFormURL() != null) {
+                    // Create Gui using EDT:
+                    SwingUtils.invokeAndWaitEDT(new Runnable() {
+                        @Override
+                        public void run() {
+                            // ensure window is visible (not iconified):
+                            App.showFrameToFront();
 
-                        // Display a new feedback report dialog:
-                        new FeedbackReport(modal, exception).setVisible(true);
-                    }
-                });
-            } else {
-                // If no feedback report form is available, show a standard error dialog instead...
-                MessagePane.showErrorMessage("An unexpected error occured !", exception);
+                            // Display a new feedback report dialog:
+                            new FeedbackReport(modal, exception).setVisible(true);
+                        }
+                    });
+
+                    // feedback report is displayed:
+                    shown = true;
+                }
+            } catch (Throwable th) {
+                _logger.error("openDialog: unable to get ApplicationDescription: ", th);
             }
+
+            if (!shown) {
+                // Get logs early (fail safe):
+                final String systemConfig = getSystemConfig();
+                final String applicationLog = getApplicationLog();
+
+                // If no feedback report form is available, show a standard error dialog instead...
+                MessagePane.showErrorMessage("An unexpected error occured !"
+                        + "\n\nPlease contact your application provider "
+                        + "to submit a bug report with this information."
+                        + MessagePane.getExceptionMessage(exception)
+                        + "Application Log:\n" + applicationLog
+                        + "\n\nSystem Config:\n" + systemConfig);
+            }
+        }
     }
 
     /* members */
@@ -149,7 +169,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      * @param exception any Throwable (Exception, RuntimeException and Error)
      */
     private FeedbackReport(final boolean modal, final Throwable exception) {
-        super(App.getFrame(), modal);
+        super(App.getExistingFrame(), modal);
 
         final Throwable wrappedException = prepareException(exception);
         // Get logs early:
@@ -178,7 +198,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      * @param exception any Throwable (Exception, RuntimeException and Error)
      */
     private void postInit(final String systemConfig, final String applicationLog,
-            final String applicationState, final String preferences, final Throwable exception) {
+                          final String applicationState, final String preferences, final Throwable exception) {
 
         this.setMinimumSize(new Dimension(600, 600));
         this.setPreferredSize(new Dimension(600, 600));
@@ -846,8 +866,8 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
          * @param comments user comments
          */
         private FeedbackReportWorker(final FeedbackReport feedbackReport,
-                final String config, final String log, final String stackTrace,
-                final String type, final String mail, final String summary, final String comments) {
+                                     final String config, final String log, final String stackTrace,
+                                     final String type, final String mail, final String summary, final String comments) {
             super(JmcsTaskRegistry.TASK_FEEDBACK_REPORT);
             this.feedbackReport = feedbackReport;
             this.config = config;

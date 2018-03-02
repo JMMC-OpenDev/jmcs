@@ -428,16 +428,18 @@ public final class Bootstrapper {
                     ActionRegistrar.getInstance().performDeferedInitialization();
 
                     // Define the JFrame associated to the application which will get the JMenuBar
-                    final JFrame frame = App.getFrame();
-
-                    // Define OSXAdapter (menu bar integration)
-                    macOSXRegistration();
-                    // Create menus including the Interop menu (SAMP required)
-                    frame.setJMenuBar(new MainMenuBar());
-                    // Set application frame ideal size
-                    frame.pack();
-                    // Restore, then automatically save window size changes
-                    WindowUtils.rememberWindowSize(frame, MAIN_FRAME_DIMENSION_KEY);
+                    final JFrame frame = App.getExistingFrame();
+                    
+                    if (frame != null) {
+                        // Define OSXAdapter (menu bar integration)
+                        macOSXRegistration();
+                        // Create menus including the Interop menu (SAMP required)
+                        frame.setJMenuBar(new MainMenuBar());
+                        // Set application frame ideal size
+                        frame.pack();
+                        // Restore, then automatically save window size changes
+                        WindowUtils.rememberWindowSize(frame, MAIN_FRAME_DIMENSION_KEY);
+                    }
                 }
             }
         });

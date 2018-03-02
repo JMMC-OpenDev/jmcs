@@ -374,7 +374,7 @@ public abstract class App {
      */
     public static void showFrameToFront() {
         // may create a new JFrame when displaying messages during application startup
-        final JFrame frame = getFrame();
+        final JFrame frame = getExistingFrame();
 
         if (frame != null) {
             // Ensure window is visible (not iconified)

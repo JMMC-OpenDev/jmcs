@@ -51,7 +51,7 @@ public final class JAXBFactory {
     public static final String JAXB_CONTEXT_FACTORY_IMPLEMENTATION = "com.sun.xml.bind.v2.ContextFactory";
 
     static {
-        // Define the system property to define which JAXB implementation to use :
+        // Define the system property to define which JAXB implementation to use:
         System.setProperty(JAXBContext.JAXB_CONTEXT_FACTORY, JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
 
         logger.info("JAXB ContextFactory: {}", System.getProperty(JAXBContext.JAXB_CONTEXT_FACTORY));
@@ -125,7 +125,7 @@ public final class JAXBFactory {
         try {
             // create a JAXBContext capable of handling classes generated into
             // package given by path:
-            context = JAXBContext.newInstance(path);
+            context = JAXBContext.newInstance(path, JAXBFactory.class.getClassLoader());
 
             if (logger.isInfoEnabled()) {
                 if (context instanceof com.sun.xml.bind.v2.runtime.JAXBContextImpl) {

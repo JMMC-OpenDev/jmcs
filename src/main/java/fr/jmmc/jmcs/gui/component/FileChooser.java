@@ -317,7 +317,7 @@ public final class FileChooser {
                 fileDialog.setFilenameFilter(mimeType.getFileFilter());
             }
             if (defaultFileName != null) {
-                fileDialog.setFile(defaultFileName);
+                fileDialog.setFile(FileUtils.cleanupFileName(defaultFileName));
             }
 
             hookFileDialog(fileDialog);
@@ -342,7 +342,7 @@ public final class FileChooser {
             }
 
             if (defaultFileName != null) {
-                fileChooser.setSelectedFile(new File(fileChooser.getCurrentDirectory(), defaultFileName));
+                fileChooser.setSelectedFile(new File(fileChooser.getCurrentDirectory(), FileUtils.cleanupFileName(defaultFileName)));
             }
 
             fileChooser.setDialogTitle(title);

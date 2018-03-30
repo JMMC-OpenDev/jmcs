@@ -138,7 +138,7 @@ public abstract class GenericJTree<E> extends JTree {
      * Fire node structure changed on the given tree node
      * @param node changed tree node
      */
-    public final void fireNodeChanged(final TreeNode node) {
+    public void fireNodeChanged(final TreeNode node) {
         // fire node structure changed :
         getTreeModel().nodeStructureChanged(node);
     }

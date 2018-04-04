@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JAXBFactory is an utility class to configure JAXB context & properties
+ * JAXBFactory is an utility class to configure JAXB context &amp; properties
  *
  * @author Laurent BOURGES.
  */

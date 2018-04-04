@@ -185,8 +185,7 @@ public abstract class App {
 
     /**
      * Optional hook to override in your App, to add support for custom command-line argument(s) and help using:
-     * @see #addCustomCommandLineArgument(java.lang.String, boolean)
-     * @see #addCustomArgumentsHelp(java.lang.String)
+     * @see #addCustomCommandLineArgument(java.lang.String, boolean, java.lang.String)
      */
     protected void defineCustomCommandLineArgumentsAndHelp() {
         // noop

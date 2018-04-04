@@ -145,8 +145,8 @@ public final class NumberUtils {
 
     /**
      * Format the given double value using custom formaters:
-     * - '0'     if abs(val) < 1e-9
-     * - 0.000   if 1e-3 < abs(val) < 1e6
+     * - '0'     if abs(val) &lt; 1e-9
+     * - 0.000   if 1e-3 &lt; abs(val) &lt; 1e6
      * - 0.0##E0 else
      * 
      * Note: this method is not thread safe (synchronization must be performed by callers)

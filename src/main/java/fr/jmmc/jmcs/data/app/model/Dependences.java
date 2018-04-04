@@ -83,7 +83,7 @@ public class Dependences {
      * Objects of the following type(s) are allowed in the list
      * {@link Package }
      * 
-     * 
+     * @return: list of package
      */
     public List<Package> getPackages() {
         if (packages == null) {

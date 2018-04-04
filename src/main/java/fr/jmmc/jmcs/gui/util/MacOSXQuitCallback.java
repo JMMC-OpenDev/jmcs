@@ -35,7 +35,7 @@ package fr.jmmc.jmcs.gui.util;
 public interface MacOSXQuitCallback {
 
     /**
-     * Notifies the external quit requester that the quit will proceed, and performs the default {@link java.awt.desktop.QuitStrategy}.
+     * Notifies the external quit requester that the quit will proceed, and performs the default {@link com.apple.eawt.QuitStrategy}.
      */
     public void performQuit();
 

@@ -944,10 +944,10 @@ public abstract class Preferences extends Observable {
      *
      * @param preferenceName the preference name.
      *
-     * @return one List<String> object representing the preference value.
+     * @return one List&lt;String&gt; object representing the preference value.
      *
      * @throws MissingPreferenceException if the preference value is missing
-     * @throws PreferencesException if the preference value is not a List<String>
+     * @throws PreferencesException if the preference value is not a List&lt;String&gt;
      */
     final public List<String> getPreferenceAsStringList(final Object preferenceName) throws MissingPreferenceException, PreferencesException {
 

@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Job Management (queue & execution) on local machine
+ * Job Management (queue &amp; execution) on local machine
  *
  * @author Laurent BOURGES (voparis).
  */

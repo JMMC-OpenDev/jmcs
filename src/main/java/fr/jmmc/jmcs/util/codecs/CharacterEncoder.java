@@ -93,9 +93,7 @@ import java.nio.ByteBuffer;
  * referenced in the See Also list below.
  *
  * @author      Chuck McManis
- * @see         CharacterDecoder;
- * @see         UCEncoder
- * @see         UUEncoder
+ * @see         CharacterDecoder
  * @see         BASE64Encoder
  */
 public abstract class CharacterEncoder {
@@ -132,7 +130,7 @@ public abstract class CharacterEncoder {
 
     /**
      * Encode the suffix that ends every output line. By default
-     * this method just prints a <newline> into the output stream.
+     * this method just prints a &lt;newline&gt; into the output stream.
      */
     protected void encodeLineSuffix(OutputStream aStream) throws IOException {
         pStream.println();

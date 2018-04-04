@@ -106,8 +106,6 @@ import java.nio.ByteBuffer;
  * @author      Chuck McManis
  * @see         CEFormatException
  * @see         CharacterEncoder
- * @see         UCDecoder
- * @see         UUDecoder
  * @see         BASE64Decoder
  */
 public abstract class CharacterDecoder {
@@ -118,11 +116,18 @@ public abstract class CharacterDecoder {
     /** Return the maximum number of bytes that can be encoded per line */
     abstract protected int bytesPerLine();
 
-    /** decode the beginning of the buffer, by default this is a NOP. */
+    /** decode the beginning of the buffer, by default this is a NOP.
+     * @param aStream: input stream
+     * @param bStream: output stream
+     * @throws java.io.IOException 
+     */
     protected void decodeBufferPrefix(PushbackInputStream aStream, OutputStream bStream) throws IOException {
     }
 
-    /** decode the buffer suffix, again by default it is a NOP. */
+    /** decode the buffer suffix, again by default it is a NOP.
+     * @param aStream input stream
+     * @param bStream output stream
+     * @throws java.io.IOException */
     protected void decodeBufferSuffix(PushbackInputStream aStream, OutputStream bStream) throws IOException {
     }
 
@@ -148,7 +153,7 @@ public abstract class CharacterDecoder {
     /**
      * This method does an actual decode. It takes the decoded bytes and
      * writes them to the OutputStream. The integer <i>l</i> tells the
-     * method how many bytes are required. This is always <= bytesPerAtom().
+     * method how many bytes are required. This is always &lt;= bytesPerAtom().
      */
     protected void decodeAtom(PushbackInputStream aStream, OutputStream bStream, int l) throws IOException {
         throw new CEStreamExhausted();

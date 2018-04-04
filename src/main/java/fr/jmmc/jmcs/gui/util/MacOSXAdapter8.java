@@ -41,7 +41,7 @@ public final class MacOSXAdapter8 {
     private static final Logger _logger = LoggerFactory.getLogger(MacOSXAdapter8.class.getName());
 
     /**
-     * Register the given adapter com.apple.eawt.Application (java <= 8)
+     * Register the given adapter com.apple.eawt.Application (java &lt;= 8)
      * @param instance MacOSXInterface implementation
      * @param usePreferences true to register Preferences handler
      */

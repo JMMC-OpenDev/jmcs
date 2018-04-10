@@ -57,7 +57,7 @@
         <!-- jMCS is an open source project -->
         <maven.javadoc.skip>false</maven.javadoc.skip>
         <source.skip>false</source.skip>
-        
+
         <jaxb-api.version>2.3.0</jaxb-api.version>
         <slf4j.version>1.7.25</slf4j.version>
     </properties>
@@ -68,7 +68,7 @@
             <artifactId>jmcs-MacOSX-9</artifactId>
             <version>TRUNK</version>
         </dependency>
-        
+
         <dependency>
             <groupId>apple</groupId>
             <artifactId>AppleJavaExtensions</artifactId>
@@ -80,7 +80,7 @@
             <artifactId>BrowserLauncher2</artifactId>
             <version>1.4</version>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
@@ -110,7 +110,7 @@
             <artifactId>java-getopt</artifactId>
             <version>1.0.13</version>
         </dependency>
-        
+
         <!-- JAXB -->
         <!-- jaxb 2.3 needs java 1.7 -->
         <dependency>
@@ -129,7 +129,7 @@
             <artifactId>javax.activation-api</artifactId>
             <version>1.2.0</version>
         </dependency>
-        
+
         <!-- SLF4J -->
         <dependency>
             <groupId>org.slf4j</groupId>

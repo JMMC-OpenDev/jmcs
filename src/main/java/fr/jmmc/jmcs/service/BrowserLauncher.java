@@ -32,6 +32,7 @@ import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 import edu.stanford.ejalbert.exceptionhandler.BrowserLauncherErrorHandler;
 import static edu.stanford.ejalbert.BrowserLauncher.BROWSER_SYSTEM_PROPERTY;
 import edu.stanford.ejalbert.browserprefui.BrowserPrefDialog;
+import edu.stanford.ejalbert.launching.IBrowserLaunching;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.PreferencesException;
 import fr.jmmc.jmcs.gui.action.RegisteredAction;
@@ -72,6 +73,16 @@ public final class BrowserLauncher {
     static edu.stanford.ejalbert.BrowserLauncher getLauncher() {
         if (_launcher == null) {
             try {
+                if (SystemUtils.IS_OS_WINDOWS && SystemUtils.JAVA_VERSION_FLOAT >= 9.0f) {
+                    _logger.info("Fallback on windows OS (no registry) with java {}", SystemUtils.JAVA_VERSION_FLOAT);
+                    
+                    // disable registry access (module java.prefs does not "opens java.util.prefs" to unnamed module @662e5afd)
+                    System.setProperty(IBrowserLaunching.WINDOWS_BROWSER_DISC_POLICY_PROPERTY, 
+                            IBrowserLaunching.WINDOWS_BROWSER_DISC_POLICY_DISK);
+                    
+                    // or force using awt.Desktop: BrowserLauncher.BROWSER_USE_DESKTOP
+                }
+                
                 final LoggerAdapter loggerAdapter = new LoggerAdapter();
 
                 _launcher = new edu.stanford.ejalbert.BrowserLauncher(loggerAdapter, loggerAdapter);

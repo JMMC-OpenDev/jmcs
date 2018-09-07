@@ -78,8 +78,7 @@ public final class MessagePanel extends javax.swing.JPanel {
                     icon = ResourceImage.WARNING_ICON.icon();
                     break;
                 case Error:
-                    // TODO add error_icon in resources
-                    icon = ResourceImage.WARNING_ICON.icon();
+                    icon = ResourceImage.ERROR_ICON.icon();
                     break;
                 default:
             }

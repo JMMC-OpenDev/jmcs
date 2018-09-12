@@ -40,7 +40,6 @@
     <security>
         <all-permissions/>
     </security>
-    <update check="background" policy="always"/>
     <resources>
         <!-- MANUALLY EDITED - Should be generated with maven ASAP ! -->
 
@@ -81,7 +80,7 @@
         <jar href="@SHARED@/jaxb-api-2.3.0.jar"/>
         <jar href="@SHARED@/jaxb-runtime-2.3.0.jar"/>
         <jar href="@SHARED@/jaxb-core-2.3.0.jar"/>
-        
+
         <!-- JAXB dependencies -->
         <jar href="@SHARED@/javax.activation-api-1.2.0.jar"/>
         <jar href="@SHARED@/FastInfoset-1.2.13.jar"/>

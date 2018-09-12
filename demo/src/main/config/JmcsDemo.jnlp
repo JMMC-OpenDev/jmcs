@@ -7,7 +7,7 @@
         <description kind="tooltip">JmcsAppExample</description>
         <description kind="short">jMCS Application Example</description>
         <icon href="com/yourcompany/example/resource/AppIcon.jpg"/>
-        <offline-allowed/> 
+        <offline-allowed/>
         <shortcut>
             <desktop/>
         </shortcut>
@@ -15,7 +15,6 @@
     <security>
         <all-permissions/>
     </security>
-    <update check="background" policy="always"/>
     <resources>
         <j2se version="1.7+" initial-heap-size="64m" max-heap-size="128m"/>
 
@@ -24,7 +23,7 @@
 
         <!-- JMMC modules -->
         <extension href="../jmcs/Jmcs.jnlp"/>
-        
+
     </resources>
     <application-desc main-class="com.yourcompany.example.Main"/>
 </jnlp>

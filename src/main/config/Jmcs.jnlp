@@ -68,7 +68,7 @@
         <jar href="@SHARED@/BrowserLauncher2-1.4.jar"/>
 
         <!-- Missing Swing Widgets -->
-        <jar href="@SHARED@/jide-oss-3.6.18.jar"/>
+        <jar href="@SHARED@/jide-oss-3.7.4.jar"/>
 
         <!-- Documentation reader -->
         <jar href="@SHARED@/jhall-2.0.jar "/>

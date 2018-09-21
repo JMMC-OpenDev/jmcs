@@ -66,10 +66,19 @@ public final class LoggingService {
      * Get the singleton instance or create a new one if needed
      * @return singleton instance
      */
-    public static synchronized LoggingService getInstance() {
+    public static LoggingService getInstance() {
+        return getInstance(false);
+    }
+
+    /**
+     * Get the singleton instance or create a new one if needed
+     * @param createMappers true to create log mappers
+     * @return singleton instance
+     */
+    public static synchronized LoggingService getInstance(final boolean createMappers) {
         if (_instance == null) {
             init();
-            _instance = new LoggingService();
+            _instance = new LoggingService(createMappers);
         }
         return _instance;
     }
@@ -154,13 +163,16 @@ public final class LoggingService {
      * </configuration>
      * 
      * - created here and attached to the root logger
+     * @param createMappers true to create log mappers
      */
-    private LoggingService() {
+    private LoggingService(final boolean createMappers) {
         super();
 
-        // define Log Mappers:
-        addLogMapper("Status history", JMMC_STATUS_LOG, "STATUSLOG");
-        addLogMapper("Execution log", JMMC_APP_LOG, "APPLOG");
+        if (createMappers) {
+            // define Log Mappers:
+            addLogMapper("Status history", JMMC_STATUS_LOG, "STATUSLOG");
+            addLogMapper("Execution log", JMMC_APP_LOG, "APPLOG");
+        }
     }
 
     /**

@@ -67,7 +67,7 @@ public final class LoggingService {
      * @return singleton instance
      */
     public static LoggingService getInstance() {
-        return getInstance(false);
+        return getInstance(true);
     }
 
     /**

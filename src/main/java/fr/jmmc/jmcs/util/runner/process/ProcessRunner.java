@@ -199,13 +199,13 @@ public final class ProcessRunner {
                 _logger.debug("ProcessRunner.stop : stop process: {}", process);
             }
 
+            // kills unix process & close all streams (stdin, stdout, stderr) :
+            process.destroy();
+
             // workaround to closing bugs:
             FileUtils.closeStream(process.getOutputStream());
             FileUtils.closeStream(process.getErrorStream());
             FileUtils.closeStream(process.getInputStream());
-
-            // kills unix process & close all streams (stdin, stdout, stderr) :
-            process.destroy();
 
             if (kill) {
                 _logger.info("ProcessRunner.stop : process stopped.");

@@ -194,9 +194,9 @@ public final class ProcessRunner {
         final Process process = runCtx.getProcess();
         if (process != null) {
             if (kill) {
-                _logger.info("ProcessRunner.stop : stop process: {}", process);
+                _logger.info("ProcessRunner.stop : killing process: {}", process);
             } else {
-                _logger.debug("ProcessRunner.stop : stop process: {}", process);
+                _logger.debug("ProcessRunner.stop : stopping process: {}", process);
             }
 
             // kills unix process & close all streams (stdin, stdout, stderr) :
@@ -208,7 +208,7 @@ public final class ProcessRunner {
             FileUtils.closeStream(process.getInputStream());
 
             if (kill) {
-                _logger.info("ProcessRunner.stop : process stopped.");
+                _logger.info("ProcessRunner.stop : process killed.");
             } else {
                 _logger.debug("ProcessRunner.stop : process stopped.");
             }

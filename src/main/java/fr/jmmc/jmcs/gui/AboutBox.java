@@ -362,7 +362,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
         _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programNameLabel.setText(name);
-        _programNameLabel.setFont(new Font("Dialog", 1, 23));
+        _programNameLabel.setFont(new Font(Font.DIALOG, 1, 23));
 
         _logger.debug("All the program info label properties have been initialized");
     }

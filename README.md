@@ -39,7 +39,7 @@ cd ..
 mvn process-resources
 
 # build jMCS jar files
-mvn clean package
+mvn clean install 
 ```
 
 Jar files are then available in `target` directory !

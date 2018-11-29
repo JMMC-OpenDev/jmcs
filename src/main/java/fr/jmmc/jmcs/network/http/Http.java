@@ -73,6 +73,8 @@ public final class Http {
 
     /** logger */
     private final static Logger _logger = LoggerFactory.getLogger(Http.class.getName());
+    /** HTTP GET value for the read timeout in milliseconds (30 seconds) */
+    public static final int GET_SOCKET_READ_TIMEOUT = 30 * 1000;
 
     /** shared HTTP Client (thread safe) */
     private static volatile HttpClient _sharedHttpClient = null;
@@ -180,7 +182,7 @@ public final class Http {
         httpClientParams.setParameter(HttpClientParams.HTTP_CONTENT_CHARSET, "UTF-8");
         // avoid retries (3 by default):
         httpClientParams.setParameter(HttpMethodParams.RETRY_HANDLER, _httpNoRetryHandler);
-        
+
         // Customize the user agent:
         httpClientParams.setParameter(HttpMethodParams.USER_AGENT, System.getProperty(NetworkSettings.PROPERTY_USER_AGENT));
     }
@@ -423,6 +425,8 @@ public final class Http {
 
         final String url = uri.toString();
         final GetMethod method = new GetMethod(url);
+        // customize timeouts:
+        method.getParams().setSoTimeout(GET_SOCKET_READ_TIMEOUT);
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("HTTP client and GET method have been created. doAuthentication = {}", method.getDoAuthentication());

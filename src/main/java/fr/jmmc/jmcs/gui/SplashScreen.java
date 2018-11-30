@@ -196,7 +196,7 @@ public class SplashScreen extends JFrame {
 
     /** Sets program name label properties */
     private void setProgramNameLabelProperties() {
-        _programNameLabel.setFont(new Font(Font.SANS_SERIF, 1, 28));
+        _programNameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, SwingUtils.adjustUISize(28)));
         _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programNameLabel.setText(_applicationDataModel.getProgramName());
 

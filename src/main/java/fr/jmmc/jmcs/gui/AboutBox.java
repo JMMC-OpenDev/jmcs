@@ -29,6 +29,7 @@ package fr.jmmc.jmcs.gui;
 
 import fr.jmmc.jmcs.data.app.ApplicationDescription;
 import fr.jmmc.jmcs.data.app.model.Package;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.service.BrowserLauncher;
 import fr.jmmc.jmcs.util.ImageUtils;
@@ -362,7 +363,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
         _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programNameLabel.setText(name);
-        _programNameLabel.setFont(new Font(Font.DIALOG, 1, 23));
+        _programNameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, SwingUtils.adjustUISize(23)));
 
         _logger.debug("All the program info label properties have been initialized");
     }

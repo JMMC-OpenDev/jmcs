@@ -80,8 +80,10 @@ public final class Http {
     private static volatile HttpClient _sharedHttpClient = null;
     /** shared connection manager (thread safe) */
     private static volatile MultiThreadedHttpConnectionManager _sharedConnectionManager = null;
-    /** shared Http retry handler that disabled http retries */
+    /** shared Http retry handler that disables http retries */
     private static final HttpMethodRetryHandler _httpNoRetryHandler = new DefaultHttpMethodRetryHandler(0, false);
+    /** shared Http retry handler that uses 3 http retries */
+    private static final HttpMethodRetryHandler _httpRetryHandler = new DefaultHttpMethodRetryHandler(3, false);
 
     /**
      * Forbidden constructor
@@ -180,7 +182,7 @@ public final class Http {
         httpClientParams.setConnectionManagerTimeout(NetworkSettings.DEFAULT_CONNECT_TIMEOUT);
         // encoding to UTF-8
         httpClientParams.setParameter(HttpClientParams.HTTP_CONTENT_CHARSET, "UTF-8");
-        // avoid retries (3 by default):
+        // avoid any http retries (POST):
         httpClientParams.setParameter(HttpMethodParams.RETRY_HANDLER, _httpNoRetryHandler);
 
         // Customize the user agent:
@@ -425,8 +427,12 @@ public final class Http {
 
         final String url = uri.toString();
         final GetMethod method = new GetMethod(url);
+
+        final HttpMethodParams httpMethodParams = method.getParams();
         // customize timeouts:
-        method.getParams().setSoTimeout(GET_SOCKET_READ_TIMEOUT);
+        httpMethodParams.setSoTimeout(GET_SOCKET_READ_TIMEOUT);
+        // allow http retries (GET):
+        httpMethodParams.setParameter(HttpMethodParams.RETRY_HANDLER, _httpRetryHandler);
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("HTTP client and GET method have been created. doAuthentication = {}", method.getDoAuthentication());

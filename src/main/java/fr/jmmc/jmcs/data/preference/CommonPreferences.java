@@ -147,6 +147,15 @@ public final class CommonPreferences extends Preferences {
         return (float) getPreferenceAsDouble(CommonPreferences.UI_SCALE);
     }
 
+    public void setSystemUiScale(Float uiScale) {
+        Float value = Float.NaN;
+        if (uiScale.floatValue() > 0.0f) {
+            value = uiScale;
+        }
+        _logger.info("UI scale: {}", uiScale);
+        this.systemUiScale = value;
+    }
+
     private Float getSystemUiScale() {
         if (this.systemUiScale == null) {
             final String uiScale = System.getProperty(SYSTEM_UI_SCALE);
@@ -154,14 +163,11 @@ public final class CommonPreferences extends Preferences {
             if (uiScale != null) {
                 try {
                     parsedValue = Float.valueOf(uiScale);
-                    if (parsedValue.floatValue() <= 0.0f) {
-                        parsedValue = Float.NaN;
-                    }
                 } catch (NumberFormatException nfe) {
                     _logger.error("Invalid float value: '{}'", uiScale);
                 }
             }
-            this.systemUiScale = parsedValue;
+            setSystemUiScale(parsedValue);
         }
         return this.systemUiScale;
     }

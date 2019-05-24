@@ -468,7 +468,7 @@ public final class TaskSwingWorkerExecutor {
             final StringBuilder name = new StringBuilder("SwingWorker-pool-");
             name.append(threadNumber.getAndIncrement());
 
-            final Thread thread = new Thread(r, name.toString());
+            final Thread thread = new InterruptableThread(r, name.toString());
             if (thread.isDaemon()) {
                 thread.setDaemon(false);
             }

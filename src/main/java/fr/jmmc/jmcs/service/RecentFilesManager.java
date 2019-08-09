@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -68,8 +67,8 @@ public final class RecentFilesManager {
     boolean _enabled = true;
     /** Hook to the "Open Recent" sub-menu */
     final JMenu _menu;
-    /** thread safe recent file repository */
-    private final Map<String, String> _repository = Collections.synchronizedMap(new FixedSizeLinkedHashMap<String, String>(MAXIMUM_HISTORY_ENTRIES));
+    /** recent file repository */
+    private final Map<String, String> _repository = new FixedSizeLinkedHashMap<String, String>(MAXIMUM_HISTORY_ENTRIES);
 
     /**
      * Return the singleton instance
@@ -132,14 +131,9 @@ public final class RecentFilesManager {
         }
 
         final RecentFilesManager rfm = getInstance();
-        if (!rfm.isEnabled()) {
+        if (!rfm.isEnabled() || !rfm.storeFile(file)) {
             return;
         }
-
-        if (!rfm.storeFile(file)) {
-            return;
-        }
-
         rfm.refreshMenu();
         rfm.flushRecentFileListToPreferences();
     }
@@ -177,8 +171,10 @@ public final class RecentFilesManager {
         }
 
         // Store file (at first position if already referenced)
-        _repository.remove(path);
-        _repository.put(path, name);
+        synchronized (_repository) {
+            _repository.remove(path);
+            _repository.put(path, name);
+        }
         return true;
     }
 
@@ -186,16 +182,17 @@ public final class RecentFilesManager {
      * Refresh content of "Open Recent" File menu entry.
      */
     private void refreshMenu() {
-
         // Clean, then re-fill sub-menu
         _menu.removeAll();
         _menu.setEnabled(false);
 
         // For each registered files
-        final ListIterator<Map.Entry<String, String>> iter = new ArrayList<Map.Entry<String, String>>(_repository.entrySet()).listIterator(_repository.size());
+        final ListIterator<Map.Entry<String, String>> iter;
+        synchronized (_repository) {
+            iter = new ArrayList<Map.Entry<String, String>>(_repository.entrySet()).listIterator(_repository.size());
+        }
 
         while (iter.hasPrevious()) {
-
             final Map.Entry<String, String> entry = iter.previous();
             final String currentName = entry.getValue();
             final String currentPath = entry.getKey();
@@ -211,12 +208,11 @@ public final class RecentFilesManager {
                     _registrar.getOpenAction().actionPerformed(new ActionEvent(_registrar, 0, currentPath));
                 }
             };
-            
+
             final JMenuItem menuItem = new JMenuItem(currentAction);
             menuItem.setToolTipText(currentPath);
             _menu.add(menuItem);
         }
-
         if (_menu.getItemCount() > 0) {
             addCleanAction();
             _menu.setEnabled(true);
@@ -227,22 +223,20 @@ public final class RecentFilesManager {
      * Add a "Clear" item at end below a separator
      */
     private void addCleanAction() {
-
         final AbstractAction cleanAction = new AbstractAction("Clear History") {
             /** default serial UID for Serializable interface */
             private static final long serialVersionUID = 1;
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                _repository.clear();
-
-                flushRecentFileListToPreferences();
-
+            public void actionPerformed(final ActionEvent ae) {
+                synchronized (_repository) {
+                    _repository.clear();
+                    flushRecentFileListToPreferences();
+                }
                 _menu.removeAll();
                 _menu.setEnabled(false);
             }
         };
-
         _menu.add(new JSeparator());
         _menu.add(new JMenuItem(cleanAction));
     }
@@ -251,17 +245,14 @@ public final class RecentFilesManager {
      * Grab recent files from shared preference.
      */
     private void populateMenuFromPreferences() {
-
         final List<String> recentFilePaths = SessionSettingsPreferences.getRecentFilePaths();
         if (recentFilePaths == null) {
             _logger.warn("No recent file path found.");
             return;
         }
-
         for (String path : recentFilePaths) {
             storeFile(new File(path));
         }
-
         refreshMenu();
     }
 
@@ -270,13 +261,11 @@ public final class RecentFilesManager {
      */
     private void flushRecentFileListToPreferences() {
         // Create list of paths
-        if (_repository == null) {
-            _logger.debug("Could not get recent file paths.");
-            return;
+        final List<String> paths;
+        synchronized (_repository) {
+            paths = new ArrayList<String>(_repository.keySet());
         }
-        final List<String> pathsList = new ArrayList<String>(_repository.keySet());
-
         // Put this to prefs
-        SessionSettingsPreferences.setRecentFilePaths(pathsList);
+        SessionSettingsPreferences.setRecentFilePaths(paths);
     }
 }

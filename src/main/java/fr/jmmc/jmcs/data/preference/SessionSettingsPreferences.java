@@ -59,8 +59,10 @@ public final class SessionSettingsPreferences extends Preferences {
     private static final String FILENAME_SUFFIX = ".properties";
     /** Recent directory for MIME type preference key prefix */
     private static final String RECENT_DIRECTORY_PREFIX = "recent_directory_for_MIME_type.";
+    /** Recent preference prefix */
+    private static final String RECENT_PREFIX = "recent_";
     /** Recent file list preference key */
-    private static final String RECENT_FILE_KEY = "recent_files";
+    private static final String RECENT_FILE_SUFFIX = "files";
     /** Dimension preference key prefix */
     private static final String DIMENSION_PREFIX = "dimension.";
     /** Application file storage preference */
@@ -69,7 +71,7 @@ public final class SessionSettingsPreferences extends Preferences {
     // members
     /** cached preference file name */
     private String preferenceFilename = null;
-    
+
     /**
      * Private constructor that must be empty.
      */
@@ -117,8 +119,7 @@ public final class SessionSettingsPreferences extends Preferences {
             setDefaultPreference(computeMimeTypeRecentDirectoryKey(mimeType), defaultDirectory);
         }
 
-        final List<String> emptyList = Collections.emptyList();
-        setDefaultPreference(RECENT_FILE_KEY, emptyList);
+        setDefaultPreference(getRecentPreferenceName(RECENT_FILE_SUFFIX), Collections.emptyList());
 
         // Default File storage location:
         final String fileStorageLocation = FileUtils.getPlatformDocumentsPath();
@@ -142,7 +143,7 @@ public final class SessionSettingsPreferences extends Preferences {
             String fileName = FILENAME_PREFIX + shortCompanyName + "." + programName + FILENAME_SUFFIX;
             fileName = fileName.replace(" ", "");
             fileName = fileName.toLowerCase();
-            
+
             this.preferenceFilename = fileName;
         }
 
@@ -206,42 +207,74 @@ public final class SessionSettingsPreferences extends Preferences {
      * @return the recent file list, or null if none found.
      */
     public static List<String> getRecentFilePaths() {
-        // Try to read paths list from preference
-        List<String> paths = null;
-        try {
-            paths = getInstance().getPreferenceAsStringList(RECENT_FILE_KEY);
-        } catch (MissingPreferenceException mpe) {
-            _logger.info("No recent files found.", mpe);
-        } catch (PreferencesException pe) {
-            _logger.warn("Could not read preference for recent files", pe);
-        }
-
-        if ((paths == null) || (paths.isEmpty())) {
-            _logger.debug("No recent files stored.");
-            return null;
-        }
-
-        // Deserialize paths to recent file list
-        _logger.debug("Found recent files '{}'.", CollectionUtils.toString(paths));
-        return paths;
+        return getRecentValues(RECENT_FILE_SUFFIX);
     }
 
     /**
      * @param paths path list to store in preferences
      */
     public static void setRecentFilePaths(final List<String> paths) {
-        if (paths == null) {
-            _logger.error("Null recent file list received");
+        setRecentValues(RECENT_FILE_SUFFIX, paths);
+    }
+
+    /**
+     * @param suffix preference key suffix
+     * @return list of recent values, or null if none found.
+     */
+    public static List<String> getRecentValues(final String suffix) {
+        if (suffix == null || suffix.isEmpty()) {
+            _logger.error("Empty suffix given");
+            return null;
+        }
+        // Try to read values from preference
+        final String preferenceName = getRecentPreferenceName(suffix);
+        List<String> values = null;
+        try {
+            values = getInstance().getPreferenceAsStringList(preferenceName);
+        } catch (MissingPreferenceException mpe) {
+            _logger.debug("No recent values found in the preference '{}'", preferenceName, mpe);
+        } catch (PreferencesException pe) {
+            _logger.warn("Could not read recent values in the preference '{}'", preferenceName, pe);
+        }
+
+        if ((values == null) || (values.isEmpty())) {
+            _logger.debug("No recent values stored.");
+            return null;
+        }
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Found recent values '{}'.", CollectionUtils.toString(values));
+        }
+        return values;
+    }
+
+    /**
+     * @param suffix preference key suffix
+     * @param values list of recent values to store in preferences
+     */
+    public static void setRecentValues(final String suffix, final List<String> values) {
+        if (suffix == null || suffix.isEmpty()) {
+            _logger.error("Empty suffix given");
+            return;
+        }
+        if (values == null) {
+            _logger.error("Null values given");
             return;
         }
 
         // Try to store paths list to preference
-        final SessionSettingsPreferences instance = getInstance();
+        final String preferenceName = getRecentPreferenceName(suffix);
         try {
-            instance.setPreference(RECENT_FILE_KEY, paths);
+            getInstance().setPreference(preferenceName, values);
         } catch (PreferencesException pe) {
-            _logger.error("Could not store recent file list in preference", pe);
+            _logger.error("Could not store recent values in the preference '{}'", preferenceName, pe);
         }
+    }
+
+    /**
+     * @param suffix preference key suffix
+     */
+    public static String getRecentPreferenceName(final String suffix) {
+        return RECENT_PREFIX + suffix;
     }
 
     /**

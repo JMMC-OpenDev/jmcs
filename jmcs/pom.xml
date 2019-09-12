@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+********************************************************************************
+*                  jMCS project ( http://www.jmmc.fr/dev/jmcs )
+********************************************************************************
+*  Copyright (c) 2014, CNRS. All rights reserved.
+*
+*  Redistribution and use in source and binary forms, with or without
+*  modification, are permitted provided that the following conditions are met:
+*      - Redistributions of source code must retain the above copyright
+*        notice, this list of conditions and the following disclaimer.
+*      - Redistributions in binary form must reproduce the above copyright
+*        notice, this list of conditions and the following disclaimer in the
+*        documentation and/or other materials provided with the distribution.
+*      - Neither the name of the CNRS nor the names of its contributors may be
+*        used to endorse or promote products derived from this software without
+*        specific prior written permission.
+*
+*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+*  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+*  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+*  ARE DISCLAIMED. IN NO EVENT SHALL CNRS BE LIABLE FOR ANY DIRECT, INDIRECT,
+*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+*  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+*  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+*  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+*  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+*  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+********************************************************************************
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>fr.jmmc</groupId>
+        <artifactId>jmmc</artifactId>
+        <version>TRUNK</version>
+        <!--  please install first parent pom from jMCS/parent-pom directory -->
+    </parent>
+
+    <groupId>fr.jmmc.jmcs</groupId>
+    <artifactId>jmcs</artifactId>
+
+    <packaging>jar</packaging>
+    <name>jMCS</name>
+    <url>https://github.com/JMMC-OpenDev/jMCS</url>
+
+    <properties>
+        <!-- do make assembly and copy dependencies -->
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+        <mdep.skip>false</mdep.skip>
+
+        <!-- do not sign libraries only applications -->
+        <jarsigner.skip>true</jarsigner.skip>
+
+        <!-- jMCS is an open source project -->
+        <maven.javadoc.skip>false</maven.javadoc.skip>
+        <source.skip>false</source.skip>
+
+        <jaxb-api.version>2.3.0</jaxb-api.version>
+        <slf4j.version>1.7.25</slf4j.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>oss.jmcs</groupId> <!-- script issue with fr.jmmc.* -->
+            <artifactId>jmcs-MacOSX-9</artifactId>
+            <version>TRUNK</version>
+        </dependency>
+
+        <dependency>
+            <groupId>apple</groupId>
+            <artifactId>AppleJavaExtensions</artifactId>
+            <version>1.6</version>
+        </dependency>
+        <!-- browser launcher needs java 1.7 -->
+        <dependency>
+            <groupId>edu.stanford.ejalbert</groupId>
+            <artifactId>BrowserLauncher2</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+            <exclusions>
+                <!-- Commons Logging is implemented by jcl-over-slf4j module -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- HttpClient dependency -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>gnu.getopt</groupId>
+            <artifactId>java-getopt</artifactId>
+            <version>1.0.13</version>
+        </dependency>
+
+        <!-- JAXB -->
+        <!-- jaxb 2.3 needs java 1.7 -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+        <!-- JAXB needs javax.activation module (jdk9) -->
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>javax.activation-api</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+        <!-- SLF4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- logback -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <!-- Java Help -->
+        <dependency>
+            <groupId>com.sun.woodstock.dependlibs</groupId>
+            <artifactId>jhall</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <!-- JIDE -->
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-oss</artifactId>
+            <version>3.7.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.astrogrid</groupId>
+            <artifactId>jsamp</artifactId>
+            <version>1.3.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Requires you to install manually the artifact:
+                       mvn install:install-file -Dfile=lib/jmcs-MacOSX-9-TRUNK.jar -DgroupId=oss.jmcs -DartifactId=jmcs-MacOSX-9 -Dversion=TRUNK -Dpackaging=jar
+                        -->
+                        <id>Java9MacIntegration</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <phase>process-resources</phase> <!-- just before compilation -->
+                        <configuration>
+                            <file>lib/jmcs-MacOSX-9-TRUNK.jar</file>
+                            <groupId>oss.jmcs</groupId> <!-- script issue with fr.jmmc.* -->
+                            <artifactId>jmcs-MacOSX-9</artifactId>
+                            <version>TRUNK</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Requires you to install manually the artifact:
+                       mvn install:install-file -Dfile=lib/AppleJavaExtensions-1.6.jar -DgroupId=apple -DartifactId=AppleJavaExtensions -Dversion=1.6 -Dpackaging=jar
+                        -->
+                        <id>AppleJavaExtensions</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <phase>process-resources</phase> <!-- just before compilation -->
+                        <configuration>
+                            <file>lib/AppleJavaExtensions-1.6.jar</file>
+                            <groupId>apple</groupId>
+                            <artifactId>AppleJavaExtensions</artifactId>
+                            <version>1.6</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Requires you to install manually the artifact:
+                       mvn install:install-file -Dfile=lib/BrowserLauncher2-1_4.jar -DgroupId=edu.stanford.ejalbert -DartifactId=BrowserLauncher2 -Dversion=1.4 -Dpackaging=jar
+                        -->
+                        <id>BrowserLauncher</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <phase>process-resources</phase> <!-- just before compilation -->
+                        <configuration>
+                            <file>lib/BrowserLauncher2-1_4.jar</file>
+                            <groupId>edu.stanford.ejalbert</groupId>
+                            <artifactId>BrowserLauncher2</artifactId>
+                            <version>1.4</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Requires you to install manually the artifact:
+                        mvn install:install-file -Dfile=lib/jsamp-1.3.5.jar -DgroupId=org.astrogrid -DartifactId=jsamp -Dversion=1.3.5 -Dpackaging=jar
+                        -->
+                        <id>JSamp</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <phase>process-resources</phase> <!-- just before compilation -->
+                        <configuration>
+                            <file>lib/jsamp-1.3.5.jar</file>
+                            <groupId>org.astrogrid</groupId>
+                            <artifactId>jsamp</artifactId>
+                            <version>1.3.5</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Requires you to install manually the artifact:
+                        mvn install:install-file -Dfile=lib/jide-oss-3.7.4.jar -DgroupId=com.jidesoft -DartifactId=jide-oss -Dversion=3.7.4 -Dpackaging=jar
+                        -->
+                        <id>Jide-OSS</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <phase>process-resources</phase> <!-- just before compilation -->
+                        <configuration>
+                            <file>lib/jide-oss-3.7.4.jar</file>
+                            <groupId>com.jidesoft</groupId>
+                            <artifactId>jide-oss</artifactId>
+                            <version>3.7.4</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

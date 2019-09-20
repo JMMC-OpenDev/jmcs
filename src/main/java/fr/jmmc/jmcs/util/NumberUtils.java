@@ -50,11 +50,10 @@ public final class NumberUtils {
     /** default formatter */
     private final static NumberFormat _fmtDef;
     /** scientific formatter */
-    private final static NumberFormat _fmtScience = new DecimalFormat("0.0##E0");
+    private final static NumberFormat _fmtScience = new DecimalFormat("0.000E0");
     
     static {
-        _fmtDef = NumberFormat.getInstance();
-        _fmtDef.setGroupingUsed(false);
+        _fmtDef = new DecimalFormat("0.000");
     }
 
     /**

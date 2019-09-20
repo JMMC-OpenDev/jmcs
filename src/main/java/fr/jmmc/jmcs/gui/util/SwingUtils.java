@@ -189,4 +189,5 @@ public final class SwingUtils {
      */
     public static double adjustUISize(final double size) {
         return size * CommonPreferences.getInstance().getUIScale();
-    }}
+    }
+}

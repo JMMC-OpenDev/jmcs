@@ -275,10 +275,14 @@ public final class WindowUtils {
         super();
     }
 
-    private static final class WindowSizeAdapter extends ComponentAdapter {
+    private static final class WindowSizeAdapter extends ComponentAdapter implements Runnable {
 
-        /** component resize timer to avoid repeated calls */
-        private final Timer _timer;
+        /** defered event handler to avoid repeated calls */
+        private final EDTDelayedEventHandler deferedHandler = new EDTDelayedEventHandler(1000);
+
+        // Weak to let window deallocation occur gracefully
+        private final WeakReference<Window> _weakWindow;
+        private final String _key;
 
         /**
          * Constructor
@@ -286,43 +290,26 @@ public final class WindowUtils {
          * @param key the window identifier.
          */
         WindowSizeAdapter(final Window window, final String key) {
-
-            // Triggered once timer definitly expires
-            final ActionListener frameSizeChangedAction = new ActionListener() {
-                // Weak to let window deallocation occur gracefully
-                private final WeakReference<Window> _weakWindow = new WeakReference<Window>(window);
-                private final String _key = key;
-
-                @Override
-                public void actionPerformed(ActionEvent evt) {
-                    final Window window = _weakWindow.get();
-                    if (window == null) {
-                        return;
-                    }
-
-                    if (_logger.isDebugEnabled()) {
-                        _logger.debug("Store window[{}] size = {}.", _key, window.getSize());
-                    }
-
-                    SessionSettingsPreferences.storeDimension(_key, window.getSize());
-                }
-            };
-
-            // 1 second grace periods:
-            _timer = new Timer(1000, frameSizeChangedAction);
-            _timer.setRepeats(false);
+            _weakWindow = new WeakReference<Window>(window);
+            _key = key;
         }
 
         @Override
         public void componentResized(final ComponentEvent e) {
-            // Start timer once
-            if (!_timer.isRunning()) {
-                _timer.start();
+            deferedHandler.runLater(this);
+        }
+
+        @Override
+        public void run() {
+            final Window window = _weakWindow.get();
+            if (window == null) {
                 return;
             }
 
-            // Or restart it until there is no more resizing events for at least the timer duration
-            _timer.restart();
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Store window[{}] size = {}.", _key, window.getSize());
+            }
+            SessionSettingsPreferences.storeDimension(_key, window.getSize());
         }
     }
 }

@@ -67,17 +67,28 @@ public final class LoggingService {
      * @return singleton instance
      */
     public static LoggingService getInstance() {
-        return getInstance(true);
+        return getInstance(JMMC_LOGBACK_CONFIG_RESOURCE, true, true);
     }
 
     /**
      * Get the singleton instance or create a new one if needed
+     * @param logbackConfigResource logback configuration file given as a class path resource
+     * @return singleton instance
+     */
+    public static LoggingService getInstanceForWebService(final String logbackConfigResource) {
+        return getInstance(logbackConfigResource, false, false);
+    }
+
+    /**
+     * Get the singleton instance or create a new one if needed
+     * @param logbackConfigResource logback configuration file given as a class path resource
+     * @param resetJUL true to reset JUL at initialization (see SLF4JBridgeHandler)
      * @param createMappers true to create log mappers
      * @return singleton instance
      */
-    public static synchronized LoggingService getInstance(final boolean createMappers) {
+    public static synchronized LoggingService getInstance(final String logbackConfigResource, final boolean resetJUL, final boolean createMappers) {
         if (_instance == null) {
-            init();
+            init(logbackConfigResource, resetJUL);
             _instance = new LoggingService(createMappers);
         }
         return _instance;
@@ -98,7 +109,7 @@ public final class LoggingService {
     }
 
     /**
-     * Set given logger's level (if it is a logback logger)
+     * Set the given logger's level (if it is a logback logger)
      * @param logger slf4j logger
      * @param level Logback level
      */
@@ -107,7 +118,12 @@ public final class LoggingService {
             ((ch.qos.logback.classic.Logger) logger).setLevel(level);
         }
     }
-    
+
+    /**
+     * Return the given logger's level (if it is a logback logger)
+     * @param logger slf4j logger
+     * @return Logback level or null
+     */
     public static ch.qos.logback.classic.Level getLoggerEffectiveLevel(Logger logger) {
         if (logger instanceof ch.qos.logback.classic.Logger) {
             return ((ch.qos.logback.classic.Logger) logger).getEffectiveLevel();
@@ -115,11 +131,15 @@ public final class LoggingService {
         return null;
     }
 
-    /** slf4j / Logback initialization */
-    private static void init() throws SecurityException, IllegalStateException {
+    /** 
+     * Slf4j / Logback initialization
+     * @param logbackConfigResource logback configuration file given as a class path resource
+     * @param resetJUL true to reset JUL at initialization (see SLF4JBridgeHandler)
+     */
+    private static void init(final String logbackConfigResource, final boolean resetJUL) throws SecurityException, IllegalStateException {
         if (LoggerFactory.getILoggerFactory() instanceof LoggerContext) {
             final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-            final URL logConf = ResourceUtils.getResource(JMMC_LOGBACK_CONFIG_RESOURCE);
+            final URL logConf = ResourceUtils.getResource(logbackConfigResource);
             try {
                 final JoranConfigurator configurator = new JoranConfigurator();
                 configurator.setContext(loggerContext);
@@ -131,13 +151,14 @@ public final class LoggingService {
                 StatusPrinter.printInCaseOfErrorsOrWarnings((LoggerContext) LoggerFactory.getILoggerFactory());
             }
         }
+        if (resetJUL) {
+            // Remove existing handlers attached to j.u.l root logger
+            SLF4JBridgeHandler.removeHandlersForRootLogger();  // (since SLF4J 1.6.5)
 
-        // Remove existing handlers attached to j.u.l root logger
-        SLF4JBridgeHandler.removeHandlersForRootLogger();  // (since SLF4J 1.6.5)
-
-        // add SLF4JBridgeHandler to j.u.l's root logger, should be done once during
-        // the initialization phase of your application
-        SLF4JBridgeHandler.install();
+            // add SLF4JBridgeHandler to j.u.l's root logger, should be done once during
+            // the initialization phase of your application
+            SLF4JBridgeHandler.install();
+        }
     }
     // Members
     /** Mapper collection keyed by logger path */

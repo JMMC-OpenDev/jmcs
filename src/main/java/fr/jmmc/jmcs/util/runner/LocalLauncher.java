@@ -198,7 +198,7 @@ public final class LocalLauncher {
         final int live = JOBS_LIVE.get();
         final int total = JOBS_TOTAL.get();
 
-        if ((live > _lastLive) || (total > _lastTotal)) {
+        if ((live != _lastLive) || (total > _lastTotal)) {
             // fast simple barrier :
             _lastLive = live;
             _lastTotal = total;

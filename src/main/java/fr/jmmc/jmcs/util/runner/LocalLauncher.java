@@ -75,10 +75,13 @@ public final class LocalLauncher {
     public static final int ILLEGAL_STATE_ERROR_CODE = -1000;
     /** limit of lines in ring buffer */
     public final static int MAX_LINES = 100;
-    /** last total logged */
-    private static int _lastTotal = -1;
+    /* stats */
     /** last live logged */
     private static int _lastLive = -1;
+    /** last queued logged */
+    private static int _lastQueued = -1;
+    /** last total logged */
+    private static int _lastTotal = -1;
 
     /**
      * Forbidden Constructor
@@ -196,15 +199,17 @@ public final class LocalLauncher {
      */
     public static void dumpStats() {
         final int live = JOBS_LIVE.get();
+        final int queued = JOBS_QUEUED.get();
         final int total = JOBS_TOTAL.get();
 
-        if ((live != _lastLive) || (total > _lastTotal)) {
+        if ((live != _lastLive) || (queued != _lastQueued) || (total != _lastTotal)) {
             // fast simple barrier :
             _lastLive = live;
+            _lastQueued = queued;
             _lastTotal = total;
 
             if (_logger.isInfoEnabled()) {
-                _logger.info("LocalLauncher: Live Jobs: {} / Total Jobs: {}", live, total);
+                _logger.info("LocalLauncher: Live Jobs: {} / Queued Jobs: {} / Total Jobs: {}", live, queued, total);
             }
         }
     }

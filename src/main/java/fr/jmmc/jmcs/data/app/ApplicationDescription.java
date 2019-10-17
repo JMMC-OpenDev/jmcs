@@ -229,7 +229,7 @@ public final class ApplicationDescription {
                                                 .append("\">download</a><br><br><h2>Changes:</h2>");
 
                                         // Show all changes since currentVersion:
-                                        ShowReleaseNotesAction.generateReleaseNotesHtml(_appDataModel, currentVersion, html);
+                                        ShowReleaseNotesAction.generateReleaseNotesHtml(remoteAppDataModel, currentVersion, html);
 
                                         html.append("</body></html>");
 

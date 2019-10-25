@@ -100,8 +100,8 @@ public final class StatLong implements ToStringable {
         _counter = 0;
         _acc = 0d;
         _average = 0d;
-        _min = Double.MAX_VALUE;
-        _max = Double.MIN_VALUE;
+        _min = Double.POSITIVE_INFINITY;
+        _max = Double.NEGATIVE_INFINITY;
         _counterHigh = 0;
         _accDeltaHigh = 0d;
         _counterLow = 0;

@@ -52,6 +52,7 @@ public final class JAXBFactory {
 
     static {
         // Define the system property to define which JAXB implementation to use:
+        System.setProperty("javax.xml.bind.JAXBContextFactory", JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
         System.setProperty(JAXBContext.JAXB_CONTEXT_FACTORY, JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
 
         logger.info("JAXB ContextFactory: {}", System.getProperty(JAXBContext.JAXB_CONTEXT_FACTORY));

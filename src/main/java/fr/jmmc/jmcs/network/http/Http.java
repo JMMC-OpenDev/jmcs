@@ -40,8 +40,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -451,11 +453,8 @@ public final class Http {
 
             // If everything went fine
             if (resultCode == HttpStatus.SC_OK) {
-
                 // Get response
-                final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
-                resultProcessor.process(in);
-
+                consumeResponse(method, resultProcessor);
                 return true;
             }
 
@@ -576,9 +575,7 @@ public final class Http {
             // If everything went fine
             if (resultCode == HttpStatus.SC_OK) {
                 // Get response
-                final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
-                resultProcessor.process(in);
-
+                consumeResponse(method, resultProcessor);
                 return true;
             }
         } finally {
@@ -613,9 +610,7 @@ public final class Http {
             // If everything went fine
             if (resultCode == HttpStatus.SC_OK) {
                 // Get response
-                final InputStream in = new BufferedInputStream(method.getResponseBodyAsStream());
-                resultProcessor.process(in);
-
+                consumeResponse(method, resultProcessor);
                 return true;
             }
         } finally {
@@ -624,6 +619,20 @@ public final class Http {
         }
 
         return false;
+    }
+    
+    private static void consumeResponse(final HttpMethodBase method, final StreamProcessor resultProcessor) throws IOException {
+        // Check content encoding:
+        final Header encoding = method.getResponseHeader("Content-Encoding");
+
+        InputStream in = method.getResponseBodyAsStream();
+        
+        if ((encoding != null) && "gzip".equals(encoding.getValue())) {
+            in = new GZIPInputStream(in);
+        } else {
+            in = new BufferedInputStream(in);
+        }
+        resultProcessor.process(in);
     }
 
     /**

@@ -580,7 +580,13 @@ public final class Bootstrapper {
             _jmmcLogger.info("Stopping the application ...");
             try {
                 setState(ApplicationState.APP_CLEANUP);
-                _application.cleanup();
+                // Dispose Gui using EDT:
+                SwingUtils.invokeAndWaitEDT(new Runnable() {
+                    @Override
+                    public void run() {
+                        _application.cleanup();
+                    }
+                });
 
             } catch (Throwable th) {
                 appCleanupFailed = true;

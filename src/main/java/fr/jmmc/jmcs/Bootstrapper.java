@@ -397,7 +397,6 @@ public final class Bootstrapper {
         // Using invokeAndWait to be in sync with this thread :
         // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
         SwingUtils.invokeAndWaitEDT(new Runnable() {
-            private static final String MAIN_FRAME_DIMENSION_KEY = "___JMCS_INTERNAL_MAIN_FRAME_DIMENSION";
 
             /**
              * Initializes Splash Screen in EDT
@@ -437,14 +436,11 @@ public final class Bootstrapper {
                         // Set application frame ideal size
                         frame.pack();
                         // Restore, then automatically save window size changes
-                        WindowUtils.rememberWindowSize(frame, MAIN_FRAME_DIMENSION_KEY);
+                        WindowUtils.rememberWindowSize(frame, WindowUtils.MAIN_FRAME_DIMENSION_KEY);
                     }
                 }
             }
         });
-
-        // Indicate that the application is ready (visible)
-        setState(ApplicationState.APP_READY);
 
         // Delegate execution to daughter class through abstract execute() call
         _application.execute();
@@ -454,6 +450,9 @@ public final class Bootstrapper {
 
         // Optionally Open given File:
         _application.openCommandLineFile();
+
+        // Indicate that the application is ready (visible)
+        setState(ApplicationState.APP_READY);
     }
 
     /**

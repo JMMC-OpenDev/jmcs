@@ -42,6 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.lang.ref.WeakReference;
@@ -64,6 +65,10 @@ public final class WindowUtils {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(WindowUtils.class.getName());
+
+    /** Key for the main frame */
+    public static final String MAIN_FRAME_DIMENSION_KEY = "___JMCS_INTERNAL_MAIN_FRAME_DIMENSION";
+
     /** jdk issue test: GraphicsDevice.getDisplayMode() returns null */
     private static final boolean TEST_DISPLAY_MODE_NULL = false;
 
@@ -265,7 +270,17 @@ public final class WindowUtils {
             }
         });
 
-        window.addComponentListener(new WindowSizeAdapter(window, key));
+        // avoid adding twice the component listener:
+        boolean present = false;
+        for (ComponentListener listener : window.getComponentListeners()) {
+            if (listener instanceof WindowSizeAdapter) {
+                present = true;
+                break;
+            }
+        }
+        if (!present) {
+            window.addComponentListener(new WindowSizeAdapter(window, key));
+        }
     }
 
     /**

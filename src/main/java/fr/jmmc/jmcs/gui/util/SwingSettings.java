@@ -76,6 +76,8 @@ public final class SwingSettings {
 
     /** logger */
     private final static Logger _logger = LoggerFactory.getLogger(SwingSettings.class.getName());
+    /** enable/disable Flat LAF */
+    private final static boolean ENABLE_FLAT_LAF = false;
     /** enable/disable EDT violation detection */
     private final static boolean DEBUG_EDT_VIOLATIONS = false;
     /** flag to prevent multiple code execution */
@@ -139,7 +141,9 @@ public final class SwingSettings {
             _logger.info("Use Look & Feel: {}", className);
             try {
                 final LookAndFeel newLaf = (LookAndFeel) IntrospectionUtils.getInstance(className);
-                UIManager.setLookAndFeel(newLaf);
+                if (newLaf != null) {
+                    UIManager.setLookAndFeel(newLaf);
+                }
 
                 // Re-apply LAF defaults:
                 setLAFDefaults();
@@ -203,6 +207,11 @@ public final class SwingSettings {
      */
     static void setLAFDefaults() {
         _logger.debug("setLAFDefaults: begin");
+
+        if (ENABLE_FLAT_LAF) {
+            // Loads FlatLAF:
+            IntrospectionUtils.executeMethod("com.formdev.flatlaf.FlatIntelliJLaf", "install");
+        }
 
         // Fix fonts for the current LAF:
         final float uiScale = CommonPreferences.getInstance().getUIScale();
@@ -398,8 +407,8 @@ public final class SwingSettings {
             @Override
             public void run() {
                 try {
-                // Install JIDE extensions (Swing workaround):
-                LookAndFeelFactory.installJideExtension();
+                    // Install JIDE extensions (Swing workaround):
+                    LookAndFeelFactory.installJideExtension();
                 } catch (Throwable th) {
                     _logger.warn("installJideLAFExtensions failed: ", th);
                 }

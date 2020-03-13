@@ -144,6 +144,14 @@ public abstract class GenericJTree<E> extends JTree {
     }
 
     /**
+     * Return true if the root node is a leaf: no child node (tree is empty)
+     * @return true if the root node is a leaf
+     */
+    public final boolean isRootNodeLeaf() {
+        return getRootNode().isLeaf();
+    }
+
+    /**
      * Return the root node
      * @return root node
      */
@@ -208,15 +216,15 @@ public abstract class GenericJTree<E> extends JTree {
 
     /**
      * Select the first child node
-     * @param rootNode root node
+     * @param node node
      */
-    public final void selectFirstChildNode(final DefaultMutableTreeNode rootNode) {
-        if (rootNode.isLeaf()) {
+    public final void selectFirstChildNode(final DefaultMutableTreeNode node) {
+        if (node.isLeaf()) {
             return;
         }
 
         // first child = target :
-        final DefaultMutableTreeNode firstChild = (DefaultMutableTreeNode) rootNode.getFirstChild();
+        final DefaultMutableTreeNode firstChild = (DefaultMutableTreeNode) node.getFirstChild();
         selectPath(new TreePath(firstChild.getPath()));
 
         // expand node if there is at least one child node :

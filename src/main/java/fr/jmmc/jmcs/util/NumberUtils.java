@@ -116,6 +116,15 @@ public final class NumberUtils {
     }
 
     /**
+     * Adjust the given double value to keep only 1 decimal digit
+     * @param value value to adjust
+     * @return double value with only 1 decimal digit
+     */
+    public static double trimTo1Digits(final double value) {
+        return ((long) (10.0 * value)) / 10.0;
+    }
+
+    /**
      * Adjust the given double value to keep only 3 decimal digits
      * @param value value to adjust
      * @return double value with only 3 decimal digits

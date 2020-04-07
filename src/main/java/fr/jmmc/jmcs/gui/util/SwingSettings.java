@@ -198,6 +198,19 @@ public final class SwingSettings {
         ToolTipManager.sharedInstance().setDismissDelay(60000);
 
         _logger.debug("Make tooltips appear more quickly and stay longer");
+        
+        // Show which renderer is tested:
+        // JDK9 only:
+        System.setProperty("sun.java2d.renderer.verbose", "true");
+        // Other JDK:
+        String renderer = "unknown";
+        try {
+            renderer = sun.java2d.pipe.RenderingEngine.getInstance().getClass().getName();
+        } catch (Throwable th) {
+            // may fail with JDK9 jigsaw (jake)
+            _logger.debug("Unable to get RenderingEngine.getInstance()", th);
+        }
+        _logger.info("Java2D renderer: {}", renderer);
     }
 
     /**

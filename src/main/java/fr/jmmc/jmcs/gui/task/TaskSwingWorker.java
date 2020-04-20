@@ -81,8 +81,20 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
      * @see TaskSwingWorkerExecutor#executeTask(TaskSwingWorker)
      */
     public final void executeTask() {
-        // increment running worker :
-        TaskSwingWorkerExecutor.incRunningWorkerCounter();
+        this.executeTask(false);
+    }
+
+    /**
+     * Schedules this {@code TaskSwingWorker} for execution on a <i>worker</i>
+     * thread.
+     * @param ignoreCounter true to ignore this task in stats
+     * @see TaskSwingWorkerExecutor#executeTask(TaskSwingWorker)
+     */
+    public final void executeTask(final boolean ignoreCounter) {
+        if (!ignoreCounter) {
+            // increment running worker:
+            TaskSwingWorkerExecutor.incRunningWorkerCounter();
+        }
 
         // Cancel other task and execute this new task :
         TaskSwingWorkerExecutor.executeTask(this);

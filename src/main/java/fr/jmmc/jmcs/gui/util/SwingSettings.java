@@ -404,7 +404,7 @@ public final class SwingSettings {
                 c.setFont(newFont);
 
             } else {
-                _logger.warn("font[{}]: {}", key, initialSize);
+                _logger.debug("font[{}]: {}", key, initialSize);
             }
         }
     }

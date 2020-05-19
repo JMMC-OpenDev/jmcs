@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tm:model name="composite" xmlns:tm="http://www.jmmc.fr/jmcs/models/0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <tm:model name="punct1" type="punct">
+        <desc>Returns the Fourier transform of a punctual object (Dirac function) at coordinates (X,Y) 
+            (milliarcsecond). 
+
+            FLUX_WEIGHT is the intensity coefficient. FLUX_WEIGHT=1 means total energy is 1.
+        </desc>
+        <tm:parameter name="flux_weight1" type="flux_weight">
+            <value>1.0</value>
+            <hasFixedValue>false</hasFixedValue>
+        </tm:parameter>
+        <tm:parameter name="x1" type="x">
+            <units>mas</units>
+            <value>0.0</value>
+            <hasFixedValue>true</hasFixedValue>
+        </tm:parameter>
+        <tm:parameter name="y1" type="y">
+            <units>mas</units>
+            <value>0.0</value>
+            <hasFixedValue>true</hasFixedValue>
+        </tm:parameter>
+    </tm:model>
+</tm:model>

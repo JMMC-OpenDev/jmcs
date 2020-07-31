@@ -56,6 +56,8 @@ public final class AutofitTableColumns {
     private static final boolean DEBUG = false;
     /** maximum width for a column header */
     private static final int MAX_WIDTH_HEADER = 50;
+    /** maximum width for any column */
+    private static final int MAX_WIDTH = 2000;
     /** header padding */
     private static final int DEFAULT_COLUMN_PADDING_HEADER = 20;
     /** padding */
@@ -123,7 +125,8 @@ public final class AutofitTableColumns {
             final int columnWidth[] = new int[columnCount];
 
             for (int i = 0; i < columnCount; i++) {
-                columnWidth[i] = getMaxColumnWidth(aTable, i, includeColumnHeaderWidth, columnPadding, useRendererText);
+                final int width = getMaxColumnWidth(aTable, i, includeColumnHeaderWidth, columnPadding, useRendererText);
+                columnWidth[i] = Math.min(width, MAX_WIDTH);
                 tableWidth += columnWidth[i];
             }
 

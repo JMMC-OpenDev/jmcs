@@ -465,6 +465,8 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
         setLayout(new java.awt.BorderLayout());
 
+        jTabbedPane.setFont(jTabbedPane.getFont().deriveFont((jTabbedPane.getFont().getStyle() | java.awt.Font.ITALIC)));
+
         jPanelConf.setLayout(new java.awt.GridBagLayout());
 
         jPanelConfButtons.setOpaque(false);

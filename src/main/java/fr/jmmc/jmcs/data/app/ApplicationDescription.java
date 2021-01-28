@@ -215,11 +215,18 @@ public final class ApplicationDescription {
 
                                     dumpVersions(remoteAppDataModel);
 
-                                    if (remoteVersionNum > currentVersionNum
-                                            || (remotePubDate != null && currentPubDate != null && remotePubDate.after(currentPubDate))) {
+                                    boolean newer = false;
+                                    if (remoteVersionNum > currentVersionNum) {
+                                        _logger.info("Application update available: versions {} < {}", currentVersion, remoteVersion);
+                                        newer = true;
+                                    }
+                                    if ((remotePubDate != null) && (currentPubDate != null) && remotePubDate.after(currentPubDate)) {
+                                        _logger.info("Application update available: versions {} <=> {}, dates {} < {}", currentVersion, remoteVersion,
+                                                currentPubDate, remotePubDate);
+                                        newer = true;
+                                    }
 
-                                        _logger.info("Application update available: {} < {}", currentVersion, remoteVersion);
-
+                                    if (newer) {
                                         final StringBuilder html = new StringBuilder(4 * 1024);
                                         html.append("<html><body><h1>New <b>").append(appName).append("</b> release available:</h1><br>")
                                                 .append(remoteVersion).append(" > ").append(currentVersion)

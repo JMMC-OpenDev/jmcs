@@ -57,7 +57,7 @@ public final class RecentFilesManager {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(RecentFilesManager.class.getName());
     /** Maximum number of recent files by MIME type */
-    private static final int MAXIMUM_HISTORY_ENTRIES = 10;
+    private static final int MAXIMUM_HISTORY_ENTRIES = 50;
     /** Singleton instance */
     private static volatile RecentFilesManager _instance = null;
     /* Members */

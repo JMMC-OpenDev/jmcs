@@ -35,6 +35,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,13 +55,10 @@ public final class StatUtils {
     /** number of samples */
     public final static int N_SAMPLES = Integer.getInteger("StatsUtils.samples", 1024 * SUPER_SAMPLING);
 
-    /** precision expected on stddev */
-    private final static double EPSILON_VARIANCE = Math.pow(5e-3, 2.0);
-    /** precision expected on mean */
-    private final static double EPSILON_MEAN = Math.pow(2e-2, 2.0);
-
-    /** complex error scaling on re/im (1/2 1/2) on variances */
-    private final static double COMPLEX_ERROR_SCALE = 1.0 / Math.sqrt(2.0);
+    /** max error on squared mean / variance */
+    private final static double GOOD_THRESHOLD = 1e-2;
+    /** convergence threshold on distribution quality */
+    private final static double QUALITY_THRESHOLD = 4e-2;
 
     /** normalization factor = 1/N_SAMPLES */
     public final static double SAMPLING_FACTOR_MEAN = 1d / N_SAMPLES;
@@ -96,12 +95,10 @@ public final class StatUtils {
     public synchronized void prepare(final int count) {
         final int needed = count - cache.size();
         if (needed > 0) {
-            logger.info("prepare: {} needed distributions", needed);
+            logger.info("prepare: {} needed distributions ({} samples)", needed, N_SAMPLES);
             final long start = System.nanoTime();
 
-            for (int i = 0; i < needed; i++) {
-                cache.add(ComplexDistribution.create());
-            }
+            ComplexDistribution.create(needed, cache);
 
             logger.info("prepare done: {} ms.", 1e-6d * (System.nanoTime() - start));
         }
@@ -123,9 +120,12 @@ public final class StatUtils {
 
         private final static double[][] ANGLES_COS_SIN;
 
+        private static int countIteration = 0;
+
         static {
             logger.debug("N_SAMPLES: {}", N_SAMPLES);
-            logger.debug("EPSILON_VARIANCE: {}", EPSILON_VARIANCE);
+            logger.debug("GOOD_THRESHOLD: {}", GOOD_THRESHOLD);
+            logger.debug("QUALITY_THRESHOLD: {}", QUALITY_THRESHOLD);
 
             ANG_STEP = 30.0; // 30 deg
 
@@ -144,35 +144,42 @@ public final class StatUtils {
             }
         }
 
+        /* members */
+        private int numIter = -1;
         /** samples (re,im) */
         private final double[][] samples = new double[2][N_SAMPLES];
-
-        public static ComplexDistribution create() {
-            /* create a new random generator to have different seed (single thread) */
-            final Random random = new Random();
-
-            final ComplexDistribution distrib = new ComplexDistribution();
-
-            final long start = System.nanoTime();
-
-            int n = 0;
-            do {
-                distrib.generate(random);
-                n++;
-            } while (!distrib.test());
-
-            logger.info("done: {} ms ({} iterations).", 1e-6d * (System.nanoTime() - start), n);
-
-            return distrib;
-        }
+        /** moments */
+        private final double[] qualityMoments = new double[3];
 
         private ComplexDistribution() {
             super();
         }
 
+        public double[][] getSamples() {
+            return this.samples;
+        }
+
+        public double[] getQualityMoments() {
+            return this.qualityMoments;
+        }
+
+        public double[][] getMoments() {
+            final double[][] moments = new double[2][4];
+            moments(this.samples[0], moments[0]);
+            moments(this.samples[1], moments[1]);
+            return moments;
+        }
+
+        @Override
+        public String toString() {
+            return "ComplexDistribution{" + "numIter=" + numIter + " quality=" + qualityMoments[2] + '}';
+        }
+
         private void generate(final Random random) {
-            final double[] distRe = samples[0];
-            final double[] distIm = samples[1];
+            this.numIter = countIteration++;
+
+            final double[] distRe = this.samples[0];
+            final double[] distIm = this.samples[1];
 
             // bivariate distribution (complex normal):
             for (int n = 0; n < N_SAMPLES; n++) {
@@ -182,22 +189,122 @@ public final class StatUtils {
             }
         }
 
+        public static void create(final int nDistribs, final ArrayList<ComplexDistribution> distributions) {
+            int prevIter = countIteration;
+
+            /* create a new random generator to have different seed (single thread) */
+            final Random random = new Random();
+
+            final int MIN_ITER = 5;
+            final int MAX_ITER = 25;
+            final int N = nDistribs * 5;
+
+            final ArrayList<ComplexDistribution> iterDistribs = new ArrayList<ComplexDistribution>(N);
+            ComplexDistribution d = new ComplexDistribution();
+
+            final Comparator<ComplexDistribution> cmpQual = new Comparator<ComplexDistribution>() {
+                @Override
+                public int compare(ComplexDistribution d1, ComplexDistribution d2) {
+                    return Double.compare(d1.getQualityMoments()[2], d2.getQualityMoments()[2]);
+                }
+            };
+
+            final long start = System.nanoTime();
+
+            int i = 1;
+            double minq = Double.MAX_VALUE;
+            double maxq = Double.MAX_VALUE;
+            int nStale = 0;
+
+            do {
+                // Iteration: prepare good distributions (first quality pass)
+                do {
+                    d.generate(random);
+
+                    if (d.test()) {
+                        iterDistribs.add(d);
+                        d = new ComplexDistribution(); // TODO: reuse instances
+                    }
+                } while (iterDistribs.size() < N);
+
+                // Final scoring:
+                Collections.sort(iterDistribs, cmpQual);
+
+                // only keep first distribs (better quality):
+                distributions.clear();
+                for (int j = 0; j < nDistribs; j++) {
+                    distributions.add(iterDistribs.get(j));
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Iteration[{}] best distribs: {}", i, distributions);
+                }
+
+                // check convergence:
+                final double qLo = distributions.get(0).getQualityMoments()[2];
+                final double qHi = distributions.get(nDistribs - 1).getQualityMoments()[2];
+
+                final double ratio_q = (maxq - qHi) / maxq;
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("qLo: " + qLo + " qHi: " + qHi + " maxq: " + maxq + " ratio_q: " + ratio_q);
+                }
+
+                minq = qLo;
+                maxq = qHi;
+
+                if (i >= MIN_ITER) {
+                    // check stale or low progression:
+                    if ((ratio_q < QUALITY_THRESHOLD) && (++nStale == 2)) {
+                        break;
+                    }
+                }
+
+                // TODO: recycle
+                iterDistribs.clear();
+                // keep best distribs:
+                iterDistribs.addAll(distributions);
+
+            } while (i++ <= MAX_ITER);
+
+            logger.debug("distributions: {}", distributions);
+
+            logger.info("distributions quality: ({} - {})", minq, maxq);
+
+            // log test details:
+            for (i = 0; i < nDistribs; i++) {
+                d = distributions.get(i);
+                d.test(null, true);
+            }
+
+            logger.info("done: {} ms ({} iterations).", 1e-6d * (System.nanoTime() - start), (countIteration - prevIter));
+        }
+
         private boolean test() {
+            return test(null, false);
+        }
+
+        private boolean test(final double[] data, final boolean log) {
             final double snr = 100.0;
 
             final double ref_amp = 0.5; // middle of [0-1]
             final double err_amp = ref_amp / snr;
 
-            final double err_dist = err_amp * COMPLEX_ERROR_SCALE;
+            final double err_dist = err_amp; // use circular symetric error
 
-            final double[] distRe = samples[0];
-            final double[] distIm = samples[1];
+            final double sq_amp = ref_amp * ref_amp;
+            final double var_amp = err_amp * err_amp;
 
-            double mean_sq_acc = 0.0, var_acc = 0.0;
+            final double[] distRe = this.samples[0];
+            final double[] distIm = this.samples[1];
+
+            double mean_chi2_acc = 0.0, mean_sq_acc = 0.0, var_acc = 0.0;
+            double mean_sq_diff_acc = 0.0, var_diff_acc = 0.0;
 
             for (int i = 0; i < NUM_ANGLES; i++) {
-                final double ref_re = ref_amp * ANGLES_COS_SIN[i][0];
-                final double ref_im = ref_amp * ANGLES_COS_SIN[i][1];
+                final double cos_phi = ANGLES_COS_SIN[i][0];
+                final double sin_phi = ANGLES_COS_SIN[i][1];
+                final double ref_re = ref_amp * cos_phi;
+                final double ref_im = ref_amp * sin_phi;
 
                 double re, im, diff;
                 double y, t;
@@ -234,66 +341,89 @@ public final class StatUtils {
                 final double mean_sq = avg_re * avg_re + avg_im * avg_im; // Use V^2 like variance epsilon
 
                 // pass 2: stddev:
-                double re_diff_acc = 0.0;
-                double re_sq_diff_acc = 0.0;
-                double im_diff_acc = 0.0;
-                double im_sq_diff_acc = 0.0;
+                double sample;
+                double amp_sum_diff = 0.0;
+                double amp_sum_diff_square = 0.0;
+                double chi2_amp_sum = 0.0;
 
                 for (int n = 0; n < N_SAMPLES; n++) {
                     // update nth sample:
                     re = ref_re + (err_dist * distRe[n]);
                     im = ref_im + (err_dist * distIm[n]);
 
-                    // New: compute stddev on re/im
-                    // Compensated-summation variant for better numeric precision:
-                    diff = re - avg_re;
-                    re_diff_acc += diff;
-                    re_sq_diff_acc += diff * diff;
+                    // Correct amplitude by pure phase:
+                    // Amp = Re { C * phasor(-phi) }
+                    sample = re * cos_phi + im * sin_phi; // -phi => + imaginary part in complex mult
+                    if (data != null) {
+                        data[n] = sample;
+                    }
 
-                    diff = im - avg_im;
-                    im_diff_acc += diff;
-                    im_sq_diff_acc += diff * diff;
+                    // Compensated-summation variant for better numeric precision:
+                    diff = sample - ref_amp;
+                    amp_sum_diff += diff;
+                    amp_sum_diff_square += diff * diff;
+
+                    // chi2 vs pure mean / error:
+                    diff = (sample - ref_amp) / err_amp;
+                    chi2_amp_sum += diff * diff;
                 }
 
-                // variance on complex values:
+                // variance on amplitude:
                 // note: this algorithm ensures correctness (stable) even if the mean used in diff is wrong !
-                final double re_stddev = SAMPLING_FACTOR_VARIANCE * (re_sq_diff_acc - (SAMPLING_FACTOR_MEAN * (re_diff_acc * re_diff_acc)));
-                final double im_stddev = SAMPLING_FACTOR_VARIANCE * (im_sq_diff_acc - (SAMPLING_FACTOR_MEAN * (im_diff_acc * im_diff_acc)));
+                final double variance = SAMPLING_FACTOR_VARIANCE * (amp_sum_diff_square - (SAMPLING_FACTOR_MEAN * (amp_sum_diff * amp_sum_diff)));
 
-                final double variance = re_stddev + im_stddev; // sum of variances (re,im)
+                final double chi2 = SAMPLING_FACTOR_VARIANCE * chi2_amp_sum;
 
-                // average mean/variance estimations:
+                // average chi2/mean/variance estimations:
+                mean_chi2_acc += chi2;
                 mean_sq_acc += mean_sq;
                 var_acc += variance;
-            }
 
-            final double mean_sq = mean_sq_acc / NUM_ANGLES;
-            final double variance = var_acc / NUM_ANGLES;
+                // sum of relative delta:
+                mean_sq_diff_acc += Math.abs(mean_sq / sq_amp - 1.0); // versus 1 (normal law)
+                var_diff_acc += Math.abs(variance / var_amp - 1.0); // versus 1 (normal law)
 
-            // relative difference: delta = (x - est) / x
-            final double ratio_mean = mean_sq / (ref_amp * ref_amp);
-            final double ratio_variance = variance / (err_amp * err_amp);
+                if (data != null) {
+                    logger.info("quality: mean: " + (mean_sq / sq_amp - 1.0) + " variance: " + (variance / var_amp - 1.0) + " chi2: " + chi2);
+                    final File file = new File("data_" + N_SAMPLES + "_it_" + this.numIter + "_ang_" + (ANG_STEP * i) + ".txt");
+                    try {
+                        saveArray(file, data);
+                    } catch (IOException ioe) {
+                        logger.info("IO failure: ", ioe);
+                    }
+                }
 
-            final boolean good = (Math.abs(ratio_mean - 1.0) < EPSILON_VARIANCE) && (Math.abs(ratio_variance - 1.0) < EPSILON_VARIANCE);
+            } // loop (angles)
 
-            if (good && logger.isDebugEnabled()) {
-                logger.debug("Sampling[" + N_SAMPLES + "] snr=" + snr + " (err(re,im)= " + err_dist + ")"
+            final double diff_mean_sq = mean_sq_diff_acc / NUM_ANGLES;
+            final double diff_var = var_diff_acc / NUM_ANGLES;
+
+            // set quality moments:
+            this.qualityMoments[0] = diff_mean_sq; // mean quality
+            this.qualityMoments[1] = diff_var; // var quality
+            // overall quality = sum(quality moments)
+            final double score = diff_mean_sq + diff_var;
+            this.qualityMoments[2] = score;
+
+            final boolean good = (score < GOOD_THRESHOLD);
+
+            if (good && log) {
+                final double chi2 = mean_chi2_acc / NUM_ANGLES;
+                final double mean_sq = mean_sq_acc / NUM_ANGLES;
+                final double variance = var_acc / NUM_ANGLES;
+
+                // relative difference: delta = (x - est) / x
+                final double ratio_mean = mean_sq / sq_amp;
+                final double ratio_variance = variance / var_amp;
+
+                logger.info("Sampling[" + N_SAMPLES + "] snr=" + snr + " (err(re,im)= " + err_dist + ") chi2= " + chi2
                         + " avg= " + Math.sqrt(mean_sq) + " norm= " + ref_amp + " ratio: " + Math.sqrt(ratio_mean)
                         + " stddev= " + Math.sqrt(variance) + " err(norm)= " + err_amp + " ratio: " + Math.sqrt(ratio_variance)
+                        + " diff_mean_sq= " + diff_mean_sq + " diff_var= " + diff_var
+                        + " quality= " + this.qualityMoments[2]
                         + " good = " + good);
             }
             return good;
-        }
-
-        public double[][] getSamples() {
-            return samples;
-        }
-
-        public double[][] getMoments() {
-            final double[][] moments = new double[2][4];
-            moments(samples[0], moments[0]);
-            moments(samples[1], moments[1]);
-            return moments;
         }
     }
 
@@ -401,8 +531,10 @@ public final class StatUtils {
 
         if (DO_DUMP) {
             // dump all distributions:
+            final double[] data = new double[N_SAMPLES];
+
             for (int n = 0; n < INITIAL_CAPACITY; n++) {
-                ComplexDistribution d = StatUtils.getInstance().get();
+                final ComplexDistribution d = StatUtils.getInstance().get();
                 System.out.println("get(): " + d);
 
                 // Get the complex distribution for this row:
@@ -414,6 +546,10 @@ public final class StatUtils {
 
                 final File file = new File("dist_" + N_SAMPLES + "_" + n + ".txt");
                 saveComplexDistribution(file, distRe, distIm);
+
+                // dump all test samples:
+                System.out.println("quality moments: " + Arrays.toString(d.getQualityMoments()));
+                d.test(data, true);
             }
         }
 
@@ -440,7 +576,7 @@ public final class StatUtils {
         System.out.println("moments(variance) (re): " + Arrays.toString(moments(vars[0])));
         System.out.println("moments(variance) (im): " + Arrays.toString(moments(vars[1])));
 
-        final double[][] ratios = new double[2][INITIAL_CAPACITY]; // mean, stddev
+        final double[][] ratios = new double[3][INITIAL_CAPACITY]; // mean, stddev, chi2
 
         for (double snr = 5.0; snr > 0.01;) {
             // fix snr rounding:
@@ -452,7 +588,7 @@ public final class StatUtils {
             {
                 System.out.println("--- SNR: " + snr + " @ AMP = " + amp + "---");
 
-                if (false) {
+                if (true) {
                     System.out.println("VISAMP");
 
                     final double angle = 3.0;
@@ -466,9 +602,9 @@ public final class StatUtils {
                                 test(amp, snr, true, ratios, i);
                             }
                         }
-                        System.out.println("SNR: " + snr + " angle: " + angle + " VISAMP: Ratio mean moments: " + Arrays.toString(moments(ratios[0])));
-                        System.out.println("SNR: " + snr + " angle: " + angle + " VISAMP: Ratio err moments : " + Arrays.toString(moments(ratios[1])));
-                        System.out.println("SNR: " + snr + " angle: " + angle + " VISAMP: score:\t" + mean(ratios[0]) + "\t" + mean(ratios[1]));
+                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " VISAMP Ratio mean moments: " + Arrays.toString(moments(ratios[0])));
+                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " VISAMP Ratio err moments : " + Arrays.toString(moments(ratios[1])));
+                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " VISAMP score:\t" + mean(ratios[0]) + "\t" + mean(ratios[1]) + "\t" + mean(ratios[2]));
                     }
                 }
                 if (true) {
@@ -485,9 +621,9 @@ public final class StatUtils {
                                 test(amp, snr, false, ratios, i);
                             }
                         }
-                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " VIS2 SNR: " + (snr / 2) + " Ratio mean moments: " + Arrays.toString(moments(ratios[0])));
-                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " VIS2 SNR: " + (snr / 2) + " Ratio err moments : " + Arrays.toString(moments(ratios[1])));
-                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " VIS2 SNR: " + (snr / 2) + " Score:\t" + mean(ratios[0]) + "\t" + mean(ratios[1]));
+                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " C2 SNR: " + (snr / 2) + " VIS2 Ratio mean moments: " + Arrays.toString(moments(ratios[0])));
+                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " C2 SNR: " + (snr / 2) + " VIS2 Ratio err moments : " + Arrays.toString(moments(ratios[1])));
+                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " C2 SNR: " + (snr / 2) + " VIS2 Score:\t" + mean(ratios[0]) + "\t" + mean(ratios[1]) + "\t" + mean(ratios[2]));
                     }
                 }
             }
@@ -513,28 +649,28 @@ public final class StatUtils {
     }
 
     /*
-SNR: 5.0(C) angle: 3.0 VIS2 SNR: 2.5 Score:	1.0004869845893785	1.0100900449645016
-SNR: 4.0(C) angle: 3.0 VIS2 SNR: 2.0 Score:	1.000561663990723	1.015680255003912
-SNR: 3.0(C) angle: 3.0 VIS2 SNR: 1.5 Score:	1.0006437432385085	1.0276385127216798
-SNR: 2.0(C) angle: 3.0 VIS2 SNR: 1.0 Score:	1.0006495572482226	1.0610208995073855
-SNR: 1.8(C) angle: 3.0 VIS2 SNR: 0.9 Score:	1.000605295837188	1.0747964754406276
-SNR: 1.6(C) angle: 3.0 VIS2 SNR: 0.8 Score:	1.0005183539355007	1.093760356453842
-SNR: 1.4(C) angle: 3.0 VIS2 SNR: 0.7 Score:	1.0003564861167475	1.1208404066855626
-SNR: 1.2(C) angle: 3.0 VIS2 SNR: 0.6 Score:	1.0000575099625348	1.16132152882296
-SNR: 1.0(C) angle: 3.0 VIS2 SNR: 0.5 Score:	0.9994947476067958	1.2255044344613526
-SNR: 0.8(C) angle: 3.0 VIS2 SNR: 0.4 Score:	0.9984025572684322	1.3356057241179202
-SNR: 0.6(C) angle: 3.0 VIS2 SNR: 0.3 Score:	0.9963609416914155	1.5469332567790361
-SNR: 0.399(C) angle: 3.0 VIS2 SNR: 0.1995 Score:	0.998773576275753	2.0369074938722767
-SNR: 0.199(C) angle: 3.0 VIS2 SNR: 0.0995 Score:	1.463926592309453	3.6953008579923483
-SNR: 0.179(C) angle: 3.0 VIS2 SNR: 0.0895 Score:	1.676712348367298	4.079295009684587
-SNR: 0.159(C) angle: 3.0 VIS2 SNR: 0.0795 Score:	1.9845681624006706	4.563125282774453
-SNR: 0.139(C) angle: 3.0 VIS2 SNR: 0.0695 Score:	2.4508945662741155	5.189957728385803
-SNR: 0.119(C) angle: 3.0 VIS2 SNR: 0.0595 Score:	3.1957329192454744	6.031970005390596
-SNR: 0.098(C) angle: 3.0 VIS2 SNR: 0.049 Score:	4.574296650264673	7.291910820521746
-SNR: 0.078(C) angle: 3.0 VIS2 SNR: 0.039 Score:	7.1292905333114485	9.129798786733915
-SNR: 0.057(C) angle: 3.0 VIS2 SNR: 0.0285 Score:	13.264714629684272	12.458133922618687
-SNR: 0.037(C) angle: 3.0 VIS2 SNR: 0.0185 Score:	31.424387299684664	19.155983622874608
-SNR: 0.016(C) angle: 3.0 VIS2 SNR: 0.008 Score:	168.25320644878747	44.24792987512209
+SNR: 5.0(C) angle: 3.0 C2 SNR: 2.5 VIS2 Score:	1.0010045298742483	1.0227438073895267	1.0000000000000002
+SNR: 4.0(C) angle: 3.0 C2 SNR: 2.0 VIS2 Score:	1.0012765243198278	1.034138545888004	1.0
+SNR: 3.0(C) angle: 3.0 C2 SNR: 1.5 VIS2 Score:	1.0017483277680366	1.057939450242428	1.0000000000000002
+SNR: 2.0(C) angle: 3.0 C2 SNR: 1.0 VIS2 Score:	1.0027610574895454	1.122080710029527	1.0000000000000002
+SNR: 1.8(C) angle: 3.0 C2 SNR: 0.9 VIS2 Score:	1.0031190712536069	1.1478669415912104	0.9999999999999997
+SNR: 1.6(C) angle: 3.0 C2 SNR: 0.8 VIS2 Score:	1.0035809354229324	1.182856118800273	0.9999999999999999
+SNR: 1.4(C) angle: 3.0 C2 SNR: 0.7 VIS2 Score:	1.0041981645156703	1.231943562478189	0.9999999999999999
+SNR: 1.2(C) angle: 3.0 C2 SNR: 0.6 VIS2 Score:	1.005062062946277	1.303718640326104	0.9999999999999999
+SNR: 1.0(C) angle: 3.0 C2 SNR: 0.5 VIS2 Score:	1.0063500714379556	1.414374664150271	1.0000000000000002
+SNR: 0.8(C) angle: 3.0 C2 SNR: 0.4 VIS2 Score:	1.0084540433199518	1.5975542543269703	1.0000000000000004
+SNR: 0.6(C) angle: 3.0 C2 SNR: 0.3 VIS2 Score:	1.012421073145649	1.9338722493668803	0.9999999999999998
+SNR: 0.399(C) angle: 3.0 C2 SNR: 0.1995 VIS2 Score:	1.0221904915301658	2.6741486127911767	0.9999999999999998
+SNR: 0.199(C) angle: 3.0 C2 SNR: 0.0995 VIS2 Score:	1.0668942956555465	5.053369593332251	0.9999999999999999
+SNR: 0.179(C) angle: 3.0 C2 SNR: 0.0895 VIS2 Score:	1.0803687092150416	5.594313632160225	1.0000000000000004
+SNR: 0.159(C) angle: 3.0 C2 SNR: 0.0795 VIS2 Score:	1.0992749662829189	6.273393846276565	1.0000000000000002
+SNR: 0.139(C) angle: 3.0 C2 SNR: 0.0695 VIS2 Score:	1.1272617695249763	7.150089149638841	1.0
+SNR: 0.119(C) angle: 3.0 C2 SNR: 0.0595 VIS2 Score:	1.1719267154180815	8.324413053932211	1.0000000000000004
+SNR: 0.098(C) angle: 3.0 C2 SNR: 0.049 VIS2 Score:	1.2579953189078907	10.09196814804471	0.9999999999999997
+SNR: 0.078(C) angle: 3.0 C2 SNR: 0.039 VIS2 Score:	1.4410567104661591	12.719703793211266	1.0
+SNR: 0.057(C) angle: 3.0 C2 SNR: 0.0285 VIS2 Score:	1.938981779453928	17.391932669762614	0.9999999999999994
+SNR: 0.037(C) angle: 3.0 C2 SNR: 0.0185 VIS2 Score:	3.553717709600981	26.926227203332353	0.9999999999999999
+SNR: 0.016(C) angle: 3.0 C2 SNR: 0.008 VIS2 Score:	17.449905852613874	62.13034186209619	1.0
      */
     private static void testV2(final double angle, final double visRef, final double snr, final boolean amp, double[][] samples, final double[][] ratios, final int pos) {
         if (amp) {
@@ -567,7 +703,7 @@ SNR: 0.016(C) angle: 3.0 VIS2 SNR: 0.008 Score:	168.25320644878747	44.2479298751
         final double visRe = visRef * cos_angle;
         final double visIm = visRef * sin_angle;
 
-        final double visCErr = visErr * COMPLEX_ERROR_SCALE;
+        final double visCErr = visErr;
         System.out.println("vis re: " + visRe + " im: " + visIm + " err: " + visCErr);
 
         double sample, diff;
@@ -622,20 +758,11 @@ SNR: 0.016(C) angle: 3.0 VIS2 SNR: 0.008 Score:	168.25320644878747	44.2479298751
         sin_phi = im_sum / s_camp_mean;
 
         // true average on averaged complex samples:
-        double avg = SAMPLING_FACTOR_MEAN * s_camp_mean;
-
-        // true average on averaged complex distribution:
-        final double avg_re = SAMPLING_FACTOR_MEAN * re_sum;
-        final double avg_im = SAMPLING_FACTOR_MEAN * im_sum;
+        final double avg = SAMPLING_FACTOR_MEAN * s_camp_mean;
 
         // pass 2: stddev:
         double diff_acc = 0.0;
         double sq_diff_acc = 0.0;
-
-        double re_diff_acc = 0.0;
-        double re_sq_diff_acc = 0.0;
-        double im_diff_acc = 0.0;
-        double im_sq_diff_acc = 0.0;
 
         for (n = 0; n < N_SAMPLES; n++) {
             // Correct amplitude by estimated phase:
@@ -646,40 +773,31 @@ SNR: 0.016(C) angle: 3.0 VIS2 SNR: 0.008 Score:	168.25320644878747	44.2479298751
             diff = sample - avg;
             diff_acc += diff;
             sq_diff_acc += diff * diff;
-
-            // New: compute stddev on re/im
-            // Compensated-summation variant for better numeric precision:
-            diff = re_samples[n] - avg_re;
-            re_diff_acc += diff;
-            re_sq_diff_acc += diff * diff;
-
-            diff = im_samples[n] - avg_im;
-            im_diff_acc += diff;
-            im_sq_diff_acc += diff * diff;
         }
 
         // standard deviation on amplitude:
         // note: this algorithm ensures correctness (stable) even if the mean used in diff is wrong !
-        double stddev = Math.sqrt(SAMPLING_FACTOR_VARIANCE * (sq_diff_acc - (SAMPLING_FACTOR_MEAN * (diff_acc * diff_acc))))
-                / COMPLEX_ERROR_SCALE; // single dimension only !
+        final double stddev = Math.sqrt(SAMPLING_FACTOR_VARIANCE * (sq_diff_acc - (SAMPLING_FACTOR_MEAN * (diff_acc * diff_acc))));
 
-        // standard deviation on complex values:
-        // note: this algorithm ensures correctness (stable) even if the mean used in diff is wrong !
-        final double re_stddev = Math.sqrt(SAMPLING_FACTOR_VARIANCE * (re_sq_diff_acc - (SAMPLING_FACTOR_MEAN * (re_diff_acc * re_diff_acc))));
-        final double im_stddev = Math.sqrt(SAMPLING_FACTOR_VARIANCE * (im_sq_diff_acc - (SAMPLING_FACTOR_MEAN * (im_diff_acc * im_diff_acc))));
+        double chi2_amp_sum = 0.0;
 
-        System.out.println("Complex stddev re: " + re_stddev + " im: " + im_stddev);
+        for (n = 0; n < N_SAMPLES; n++) {
+            // Correct amplitude by estimated phase:
+            // Amp = Re { C * phasor(-phi) }
+            sample = re_samples[n] * cos_phi + im_samples[n] * sin_phi; // -phi => + imaginary part in complex mult
 
-        final double est_sigma = Math.sqrt(re_stddev * re_stddev + im_stddev * im_stddev); // sum of variances (re,im)
-        System.out.println("Est2 est_sigma = " + est_sigma + " stddev = " + stddev + " ratio: " + (est_sigma / stddev));
+            // chi2 vs pure mean / error:
+            diff = (sample - avg) / stddev;
+            chi2_amp_sum += diff * diff;
+        }
 
-        // consider est_sigma is better accuracy:
-        stddev = est_sigma;
+        final double chi2 = SAMPLING_FACTOR_VARIANCE * chi2_amp_sum;
 
         ratios[0][pos] = (avg / exp_ref);
         ratios[1][pos] = (stddev / exp_err);
+        ratios[2][pos] = chi2;
 
-        System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] avg= " + avg + " vs expected ref= " + exp_ref + " ratio: " + ratios[0][pos]);
+        System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] avg= " + avg + " vs expected ref= " + exp_ref + " ratio: " + ratios[0][pos] + " chi2: " + chi2);
         System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] stddev= " + stddev + " vs expected Err= " + exp_err + " ratio: " + ratios[1][pos]);
     }
 
@@ -699,6 +817,30 @@ SNR: 0.016(C) angle: 3.0 VIS2 SNR: 0.008 Score:	168.25320644878747	44.2479298751
         test(45.0, visRef, snr, amp, samples, ratios, pos);
     }
 
+    /*
+SNR: 5.0(C) angle: 3.0 VISAMP score:	1.0004756945672886	1.0002647045562154	1.0000000000000002
+SNR: 4.0(C) angle: 3.0 VISAMP score:	1.00059677659021	1.0002644163119558	1.0000000000000002
+SNR: 3.0(C) angle: 3.0 VISAMP score:	1.000800498254227	1.000263935931527	1.0000000000000004
+SNR: 2.0(C) angle: 3.0 VISAMP score:	1.001215134611274	1.0002629751559866	1.0000000000000004
+SNR: 1.8(C) angle: 3.0 VISAMP score:	1.001355477899223	1.000262654859044	1.0000000000000002
+SNR: 1.6(C) angle: 3.0 VISAMP score:	1.0015324054720895	1.0002622544383537	0.9999999999999999
+SNR: 1.4(C) angle: 3.0 VISAMP score:	1.0017623302941037	1.000261739504399	1.0000000000000002
+SNR: 1.2(C) angle: 3.0 VISAMP score:	1.0020731783459524	1.0002610526786972	1.0000000000000002
+SNR: 1.0(C) angle: 3.0 VISAMP score:	1.0025165873364066	1.0002600904979662	1.0000000000000002
+SNR: 0.8(C) angle: 3.0 VISAMP score:	1.0031996908244962	1.0002586454045561	1.0
+SNR: 0.6(C) angle: 3.0 VISAMP score:	1.004386202406063	1.000256230255331	1.0000000000000004
+SNR: 0.399(C) angle: 3.0 VISAMP score:	1.0069597147948257	1.0002513270789979	0.9999999999999996
+SNR: 0.199(C) angle: 3.0 VISAMP score:	1.0161592581582337	1.0002361509899491	1.0
+SNR: 0.179(C) angle: 3.0 VISAMP score:	1.018516657135068	1.000232648466847	1.0
+SNR: 0.159(C) angle: 3.0 VISAMP score:	1.0216276444986283	1.000228197616387	1.0
+SNR: 0.139(C) angle: 3.0 VISAMP score:	1.0259002361883058	1.000222356135221	0.9999999999999993
+SNR: 0.119(C) angle: 3.0 VISAMP score:	1.0320859222598509	1.0002143659513443	0.9999999999999998
+SNR: 0.098(C) angle: 3.0 VISAMP score:	1.0423395580589179	1.0002021130262635	0.9999999999999998
+SNR: 0.078(C) angle: 3.0 VISAMP score:	1.059564141538027	1.0001836307291063	1.0000000000000004
+SNR: 0.057(C) angle: 3.0 VISAMP score:	1.0982020398906587	1.00014642670414	0.9999999999999999
+SNR: 0.037(C) angle: 3.0 VISAMP score:	1.208528189048131	1.0000180403701673	1.0000000000000004
+SNR: 0.016(C) angle: 3.0 VISAMP score:	1.9534791991245422	0.9997740687377148	1.0000000000000002
+     */
     private static void testV(final double angle, final double visRef, final double snr, final boolean amp, double[][] samples, final double[][] ratios, final int pos) {
         if (!amp) {
             throw new IllegalStateException("only amp=true supported !");
@@ -725,7 +867,7 @@ SNR: 0.016(C) angle: 3.0 VIS2 SNR: 0.008 Score:	168.25320644878747	44.2479298751
         final double visRe = visRef * cos_angle;
         final double visIm = visRef * sin_angle;
 
-        final double visCErr = visErr * COMPLEX_ERROR_SCALE;
+        final double visCErr = visErr;
         System.out.println("vis re: " + visRe + " im: " + visIm + " err: " + visCErr);
 
         double sample, diff;
@@ -776,10 +918,6 @@ SNR: 0.016(C) angle: 3.0 VIS2 SNR: 0.008 Score:	168.25320644878747	44.2479298751
 
         // true average on averaged complex samples:
         double avg = SAMPLING_FACTOR_MEAN * s_camp_mean;
-        /*        
-        final double est_sigma_c = Math.sqrt(dc.getStddevReal() * dc.getStddevReal() + dc.getStddevIm() * dc.getStddevIm());
-            System.out.println("Est C: mu = " + est_mu_c + " sigma = " + est_sigma_c);        
-         */
 
         // pass 2: stddev:
         double diff_acc = 0.0;
@@ -798,13 +936,27 @@ SNR: 0.016(C) angle: 3.0 VIS2 SNR: 0.008 Score:	168.25320644878747	44.2479298751
 
         // standard deviation on amplitude:
         // note: this algorithm ensures correctness (stable) even if the mean used in diff is wrong !
-        final double stddev = Math.sqrt(SAMPLING_FACTOR_VARIANCE * (sq_diff_acc - (SAMPLING_FACTOR_MEAN * (diff_acc * diff_acc))))
-                / COMPLEX_ERROR_SCALE; // single dimension only !
+        final double stddev = Math.sqrt(SAMPLING_FACTOR_VARIANCE * (sq_diff_acc - (SAMPLING_FACTOR_MEAN * (diff_acc * diff_acc))));
+
+        double chi2_amp_sum = 0.0;
+
+        for (n = 0; n < N_SAMPLES; n++) {
+            // Correct amplitude by estimated phase:
+            // Amp = Re { C * phasor(-phi) }
+            sample = re_samples[n] * cos_phi + im_samples[n] * sin_phi; // -phi => + imaginary part in complex mult
+
+            // chi2 vs pure mean / error:
+            diff = (sample - avg) / stddev;
+            chi2_amp_sum += diff * diff;
+        }
+
+        final double chi2 = SAMPLING_FACTOR_VARIANCE * chi2_amp_sum;
 
         ratios[0][pos] = (avg / exp_ref);
         ratios[1][pos] = (stddev / exp_err);
+        ratios[2][pos] = chi2;
 
-        System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] avg= " + avg + " vs expected ref= " + exp_ref + " ratio: " + ratios[0][pos]);
+        System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] avg= " + avg + " vs expected ref= " + exp_ref + " ratio: " + ratios[0][pos] + " chi2: " + chi2);
         System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] stddev= " + stddev + " vs expected Err= " + exp_err + " ratio: " + ratios[1][pos]);
     }
 
@@ -843,18 +995,36 @@ SNR: 0.016(C) angle: 3.0 VIS2 SNR: 0.008 Score:	168.25320644878747	44.2479298751
     }
 
     // --- utility functions ---
+    private static void saveArray(final File file, final double[] array) throws IOException {
+        if (file != null) {
+            final int len = array.length;
+            final int capacity = (len + 1) * 40;
+
+            final StringBuilder sb = new StringBuilder(capacity);
+            sb.append("# X\n");
+
+            for (int i = 0; i < len; i++) {
+                sb.append(array[i]).append('\n');
+            }
+
+            logger.debug("Writing file: {}", file.getAbsolutePath());
+            writeFile(file, sb.toString());
+        }
+    }
+
     private static void saveComplexDistribution(final File file, final double[] distRe, final double[] distIm) throws IOException {
         if (file != null) {
-            final int capacity = (N_SAMPLES + 1) * 40;
+            final int len = distRe.length;
+            final int capacity = (len + 1) * 40;
 
             final StringBuilder sb = new StringBuilder(capacity);
             sb.append("# RE\tIM\n");
 
-            for (int i = 0; i < N_SAMPLES; i++) {
+            for (int i = 0; i < len; i++) {
                 sb.append(distRe[i]).append('\t').append(distIm[i]).append('\n');
             }
 
-            System.out.println("Writing file: " + file.getAbsolutePath());
+            logger.debug("Writing file: {}", file.getAbsolutePath());
             writeFile(file, sb.toString());
         }
     }

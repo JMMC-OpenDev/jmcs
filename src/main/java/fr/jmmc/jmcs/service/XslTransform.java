@@ -27,9 +27,11 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.service;
 
+import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.jmcs.util.StringUtils;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -66,10 +68,18 @@ public final class XslTransform {
     public static final String ENCODING = "UTF-8";
     /** Default buffer size for XSLT result document */
     public static final int DEFAULT_BUFFER_SIZE = 16384;
+    /** flag to trace xslt executions */
+    public static final boolean TRACE_XSLT = false;
     /** Inner XSLT factory */
     private static TransformerFactory _transformerFactory = null;
     /** Cache for XSL templates */
     private static final Map<String, Templates> _cachedTemplates = new HashMap<String, Templates>(32);
+
+    static {
+        if (TRACE_XSLT) {
+            System.out.println("XslTransform.TRACE_XSLT enabled (dev only) !");
+        }
+    }
 
     /** Forbidden constructor */
     private XslTransform() {
@@ -245,9 +255,40 @@ public final class XslTransform {
 
         final StringWriter out = new StringWriter(DEFAULT_BUFFER_SIZE);
 
+        final String prefixFile;
+        final long start;
+        if (TRACE_XSLT) {
+            prefixFile = "xslt_" + System.currentTimeMillis() + "_";
+            final File inputFile = new File(prefixFile + "in.xml");
+            try {
+                FileUtils.writeFile(inputFile, xmlSource);
+            } catch (IOException ioe) {
+                logger.warn("IO Failure", ioe);
+            }
+            logger.info("transform({}) start. Input = {}", xslFilePath, inputFile.getAbsolutePath());
+            start = System.nanoTime();
+        } else {
+            prefixFile = null;
+            start = 0L;
+        }
+
         transform(xmlSource, xslFilePath, params, doCacheXsl, out);
 
-        return out.toString();
+        final String result = out.toString();
+
+        if (TRACE_XSLT) {
+            final long elapsed = System.nanoTime() - start;
+            final File outputFile = new File(prefixFile + "out.xml");
+            try {
+                FileUtils.writeFile(outputFile, result);
+            } catch (IOException ioe) {
+                logger.warn("IO Failure", ioe);
+            }
+            logger.info("transform({}) done: duration = {} ms. Output = {} ({} chars)",
+                    xslFilePath, 1e-6 * elapsed, outputFile.getAbsolutePath(), result.length());
+        }
+
+        return result;
     }
 
     /**
@@ -261,7 +302,7 @@ public final class XslTransform {
      * @throws IllegalArgumentException if transformation failure or the XSL file path is empty or I/O exception occurs while reading XSLT
      */
     public static void transform(final InputStream sourceStream, final String xslFilePath,
-            final OutputStream resultStream)
+                                 final OutputStream resultStream)
             throws IllegalStateException, IllegalArgumentException {
 
         transform(new StreamSource(sourceStream), xslFilePath, null, true, new StreamResult(resultStream));
@@ -279,7 +320,7 @@ public final class XslTransform {
      * @throws IllegalArgumentException if transformation failure or the XSL file path is empty or I/O exception occurs while reading XSLT
      */
     public static void transform(final InputStream sourceStream, final String xslFilePath, final Map<String, Object> params,
-            final OutputStream resultStream)
+                                 final OutputStream resultStream)
             throws IllegalStateException, IllegalArgumentException {
 
         transform(new StreamSource(sourceStream), xslFilePath, params, true, new StreamResult(resultStream));
@@ -298,7 +339,7 @@ public final class XslTransform {
      * @throws IllegalArgumentException if transformation failure or the XSL file path is empty or I/O exception occurs while reading XSLT
      */
     public static void transform(final InputStream sourceStream, final String xslFilePath,
-            final OutputStream resultStream, final boolean doCacheXsl)
+                                 final OutputStream resultStream, final boolean doCacheXsl)
             throws IllegalStateException, IllegalArgumentException {
 
         transform(new StreamSource(sourceStream), xslFilePath, null, doCacheXsl, new StreamResult(resultStream));
@@ -318,7 +359,7 @@ public final class XslTransform {
      * @throws IllegalArgumentException if transformation failure or the XSL file path is empty or I/O exception occurs while reading XSLT
      */
     public static void transform(final InputStream sourceStream, final String xslFilePath, final Map<String, Object> params,
-            final OutputStream resultStream, final boolean doCacheXsl)
+                                 final OutputStream resultStream, final boolean doCacheXsl)
             throws IllegalStateException, IllegalArgumentException {
 
         transform(new StreamSource(sourceStream), xslFilePath, params, doCacheXsl, new StreamResult(resultStream));
@@ -338,7 +379,7 @@ public final class XslTransform {
      * @throws IllegalArgumentException if transformation failure or the XSL file path is empty or I/O exception occurs while reading XSLT
      */
     private static void transform(final String xmlSource, final String xslFilePath, final Map<String, Object> params,
-            final boolean doCacheXsl, final Writer out)
+                                  final boolean doCacheXsl, final Writer out)
             throws IllegalStateException, IllegalArgumentException {
 
         logger.debug("XmlFactory.transform : enter : xslFilePath : {}", xslFilePath);
@@ -377,7 +418,7 @@ public final class XslTransform {
      * @throws IllegalArgumentException if transformation failure or the XSL file path is empty or I/O exception occurs while reading XSLT
      */
     private static void transform(final Source source, final String xslFilePath, final Map<String, Object> params,
-            final boolean doCacheXsl, final Result result)
+                                  final boolean doCacheXsl, final Result result)
             throws IllegalStateException, IllegalArgumentException {
 
         logger.debug("XmlFactory.transform : enter : xslFilePath : {}", xslFilePath);

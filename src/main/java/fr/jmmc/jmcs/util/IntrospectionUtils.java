@@ -47,9 +47,9 @@ public final class IntrospectionUtils {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(IntrospectionUtils.class.getName());
     /** empty class array */
-    private final static Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[]{};
+    private final static Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[0];
     /** empty object array */
-    private final static Object[] EMPTY_OBJECT_ARRAY = new Object[]{};
+    private final static Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 
     /**
      * Returns a class object according to a given class path.
@@ -202,6 +202,18 @@ public final class IntrospectionUtils {
         }
 
         return null;
+    }
+
+    /**
+     * Returns the sought method with EMPTY argument list in the given class.
+     *
+     * @param clazz class.
+     * @param methodName sought method name.
+     *
+     * @return sought method in class, null otherwise.
+     */
+    public static Method getMethod(final Class<?> clazz, final String methodName) {
+        return getMethod(clazz, methodName, EMPTY_CLASS_ARRAY);
     }
 
     /**
@@ -369,6 +381,19 @@ public final class IntrospectionUtils {
     }
 
     /**
+     * Execute a method in the class identified by their own names, without
+     * returning the result.
+     *
+     * @param clazz class.
+     * @param methodName sought method name.
+     *
+     * @return true if invocation succeeded, false otherwise.
+     */
+    public static boolean executeMethod(final Class<?> clazz, final String methodName) {
+        return executeMethod(clazz, methodName, EMPTY_CLASS_ARRAY);
+    }
+
+    /**
      * Execute a method with given parameters in the class identified by their
      * own names, without returning the result.
      *
@@ -381,6 +406,21 @@ public final class IntrospectionUtils {
     public static boolean executeMethod(final String classPath, final String methodName,
                                         final Class<?>[] parameters) {
         return executeMethod(classPath, methodName, parameters, EMPTY_OBJECT_ARRAY);
+    }
+
+    /**
+     * Execute a method with given parameters in the class identified by their
+     * own names, without returning the result.
+     *
+     * @param clazz class.
+     * @param methodName sought method name.
+     * @param parameters parameters array.
+     *
+     * @return true if invocation succeeded, false otherwise.
+     */
+    public static boolean executeMethod(final Class<?> clazz, final String methodName,
+                                        final Class<?>[] parameters) {
+        return executeMethod(clazz, methodName, parameters, EMPTY_OBJECT_ARRAY);
     }
 
     /**
@@ -397,6 +437,24 @@ public final class IntrospectionUtils {
     public static boolean executeMethod(final String classPath, final String methodName,
                                         final Class<?>[] parameters, final Object[] arguments) {
         final Method method = getMethod(classPath, methodName, parameters);
+
+        return executeMethod(method, null, arguments);
+    }
+
+    /**
+     * Execute a method with given parameters and argument values in the class
+     * identified by their own names, without returning the result.
+     *
+     * @param clazz class.
+     * @param methodName sought method name.
+     * @param parameters parameters array.
+     * @param arguments arguments array.
+     *
+     * @return true if invocation succeeded, false otherwise.
+     */
+    public static boolean executeMethod(final Class<?> clazz, final String methodName,
+                                        final Class<?>[] parameters, final Object[] arguments) {
+        final Method method = getMethod(clazz, methodName, parameters);
 
         return executeMethod(method, null, arguments);
     }
@@ -423,13 +481,9 @@ public final class IntrospectionUtils {
      * @return true if invocation succeeded, false otherwise.
      */
     public static boolean executeMethod(final Method method, final Object instance, final Object[] arguments) {
-        boolean ok = false;
         if (method != null) {
             try {
-                method.invoke(instance, arguments);
-
-                ok = true;
-
+                return executeMethodWithThrows(method, instance, arguments);
             } catch (IllegalAccessException iae) {
                 _logger.warn("Cannot invoke method '{}'", method.getName(), iae);
             } catch (IllegalArgumentException iae) {
@@ -438,7 +492,44 @@ public final class IntrospectionUtils {
                 _logger.warn("Cannot invoke method '{}'", method.getName(), ite);
             }
         }
-        return ok;
+        return false;
+    }
+
+    /**
+     * Execute the given method with given argument values, without returning the result.
+     *
+     * @param method method to invoke.
+     * @param instance class instance to use
+     *
+     * @return true if invocation succeeded, false otherwise.
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     */
+    public static boolean executeMethodWithThrows(final Method method, final Object instance)
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        return executeMethodWithThrows(method, instance, EMPTY_OBJECT_ARRAY);
+    }
+
+    /**
+     * Execute the given method with given argument values, without returning the result.
+     *
+     * @param method method to invoke.
+     * @param instance class instance to use
+     * @param arguments arguments array.
+     *
+     * @return true if invocation succeeded, false otherwise.
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     */
+    public static boolean executeMethodWithThrows(final Method method, final Object instance, final Object[] arguments)
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        if (method != null) {
+            method.invoke(instance, arguments);
+            return true;
+        }
+        return false;
     }
 
     /**

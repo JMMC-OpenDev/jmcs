@@ -265,7 +265,7 @@ public final class XslTransform {
             } catch (IOException ioe) {
                 logger.warn("IO Failure", ioe);
             }
-            logger.info("transform({}) start. Input = {}", xslFilePath, inputFile.getAbsolutePath());
+            logger.info("transform({}) start. Input = {} Params = {}", xslFilePath, inputFile.getAbsolutePath(), params);
             start = System.nanoTime();
         } else {
             prefixFile = null;

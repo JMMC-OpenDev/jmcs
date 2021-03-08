@@ -70,6 +70,8 @@ public final class XslTransform {
     public static final int DEFAULT_BUFFER_SIZE = 16384;
     /** flag to trace xslt executions */
     public static final boolean TRACE_XSLT = false;
+    /** flag to dump xslt executions (input / output files) */
+    public static final boolean DUMP_XSLT = false && TRACE_XSLT;
     /** Inner XSLT factory */
     private static TransformerFactory _transformerFactory = null;
     /** Cache for XSL templates */
@@ -259,13 +261,17 @@ public final class XslTransform {
         final long start;
         if (TRACE_XSLT) {
             prefixFile = "xslt_" + System.currentTimeMillis() + "_";
-            final File inputFile = new File(prefixFile + "in.xml");
-            try {
-                FileUtils.writeFile(inputFile, xmlSource);
-            } catch (IOException ioe) {
-                logger.warn("IO Failure", ioe);
+            String inputPath = null;
+            if (DUMP_XSLT) {
+                final File inputFile = new File(prefixFile + "in.xml");
+                inputPath = inputFile.getAbsolutePath();
+                try {
+                    FileUtils.writeFile(inputFile, xmlSource);
+                } catch (IOException ioe) {
+                    logger.warn("IO Failure", ioe);
+                }
             }
-            logger.info("transform({}) start. Input = {} Params = {}", xslFilePath, inputFile.getAbsolutePath(), params);
+            logger.info("transform({}) start. Input = {} Params = {}", xslFilePath, inputPath, params);
             start = System.nanoTime();
         } else {
             prefixFile = null;
@@ -278,14 +284,18 @@ public final class XslTransform {
 
         if (TRACE_XSLT) {
             final long elapsed = System.nanoTime() - start;
-            final File outputFile = new File(prefixFile + "out.xml");
-            try {
-                FileUtils.writeFile(outputFile, result);
-            } catch (IOException ioe) {
-                logger.warn("IO Failure", ioe);
+            String outputPath = null;
+            if (DUMP_XSLT) {
+                final File outputFile = new File(prefixFile + "out.xml");
+                outputPath = outputFile.getAbsolutePath();
+                try {
+                    FileUtils.writeFile(outputFile, result);
+                } catch (IOException ioe) {
+                    logger.warn("IO Failure", ioe);
+                }
             }
             logger.info("transform({}) done: duration = {} ms. Output = {} ({} chars)",
-                    xslFilePath, 1e-6 * elapsed, outputFile.getAbsolutePath(), result.length());
+                    xslFilePath, 1e-6 * elapsed, outputPath, result.length());
         }
 
         return result;

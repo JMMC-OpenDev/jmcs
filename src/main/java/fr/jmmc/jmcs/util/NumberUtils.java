@@ -51,7 +51,7 @@ public final class NumberUtils {
     private final static NumberFormat _fmtDef;
     /** scientific formatter */
     private final static NumberFormat _fmtScience = new DecimalFormat("0.000E0");
-    
+
     static {
         _fmtDef = new DecimalFormat("0.000");
     }
@@ -121,6 +121,9 @@ public final class NumberUtils {
      * @return double value with only 1 decimal digit
      */
     public static double trimTo1Digits(final double value) {
+        if (!Double.isFinite(value)) {
+            return value;
+        }
         return ((long) (10.0 * value)) / 10.0;
     }
 
@@ -130,6 +133,9 @@ public final class NumberUtils {
      * @return double value with only 3 decimal digits
      */
     public static double trimTo3Digits(final double value) {
+        if (!Double.isFinite(value)) {
+            return value;
+        }
         return ((long) (1e3d * value)) / 1e3d;
     }
 
@@ -139,6 +145,9 @@ public final class NumberUtils {
      * @return double value with only 5 decimal digits
      */
     public static double trimTo5Digits(final double value) {
+        if (!Double.isFinite(value)) {
+            return value;
+        }
         return ((long) (1e5d * value)) / 1e5d;
     }
 
@@ -148,6 +157,9 @@ public final class NumberUtils {
      * @return double value with only 9 decimal digits
      */
     public static double trimTo9Digits(final double value) {
+        if (!Double.isFinite(value)) {
+            return value;
+        }
         return ((long) (1e9d * value)) / 1e9d;
     }
 
@@ -368,19 +380,19 @@ public final class NumberUtils {
     private static final class IntegerCache {
 
         /** lower value */
-        static final int low = -1024;
+        static final int LOW = -1024;
         /** higher value */
-        static final int high = 128 * 1024;
+        static final int HIGH = 128 * 1024;
         /** Integer cache */
-        static final Integer cache[];
+        static final Integer[] CACHE;
 
         static {
             // high value may be configured by system property (NumberUtils.IntegerCache.high)
 
-            cache = new Integer[(high - low) + 1];
-            int j = low;
-            for (int k = 0, len = cache.length; k < len; k++) {
-                cache[k] = Integer.valueOf(j++);
+            CACHE = new Integer[(HIGH - LOW) + 1];
+            int j = LOW;
+            for (int k = 0, len = CACHE.length; k < len; k++) {
+                CACHE[k] = Integer.valueOf(j++);
             }
         }
 
@@ -390,8 +402,8 @@ public final class NumberUtils {
          * @return cached Integer instance or new one 
          */
         static Integer get(final int i) {
-            if (i >= low && i <= high) {
-                return cache[i + (-low)];
+            if (i >= LOW && i <= HIGH) {
+                return CACHE[i + (-LOW)];
             }
             return Integer.valueOf(i);
         }

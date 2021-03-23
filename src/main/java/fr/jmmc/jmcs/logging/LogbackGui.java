@@ -73,6 +73,8 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
     private static final Logger _rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     /** Class logger */
     private static final Logger _logger = (Logger) LoggerFactory.getLogger(LogbackGui.class.getName());
+    /** Logback GUI key to remember file dialog dimensions */
+    private final static String LOGBACK_DIALOG_DIMENSION_KEY = "___JMCS_INTERNAL_LOGBACK_DIALOG_DIMENSION";
     /** Single instance GUI Frame */
     private static JFrame _guiFrameSingleton = null;
     /** Single instance GUI */
@@ -155,6 +157,9 @@ public final class LogbackGui extends javax.swing.JPanel implements TreeSelectio
 
             // 4. Size the frame.
             _guiFrameSingleton.pack();
+
+            // Restore, then automatically save window size changes:
+            WindowUtils.rememberWindowSize(_guiFrameSingleton, LOGBACK_DIALOG_DIMENSION_KEY);
 
             // Center it :
             WindowUtils.centerOnMainScreen(_guiFrameSingleton);

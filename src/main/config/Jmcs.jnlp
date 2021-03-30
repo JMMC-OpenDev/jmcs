@@ -77,16 +77,16 @@
         <jar href="@SHARED@/AppleJavaExtensions-1.6.jar"/>
 
         <!-- JAXB Xml binding -->
-        <jar href="@SHARED@/jaxb-api-2.3.0.jar"/>
-        <jar href="@SHARED@/jaxb-runtime-2.3.0.jar"/>
-        <jar href="@SHARED@/jaxb-core-2.3.0.jar"/>
+        <jar href="@SHARED@/jakarta.xml.bind-api-2.3.3.jar"/>
+        <jar href="@SHARED@/jaxb-runtime-2.3.3.jar"/>
 
         <!-- JAXB dependencies -->
-        <jar href="@SHARED@/javax.activation-api-1.2.0.jar"/>
-        <jar href="@SHARED@/FastInfoset-1.2.13.jar"/>
-        <jar href="@SHARED@/istack-commons-runtime-3.0.5.jar"/>
-        <jar href="@SHARED@/stax-ex-1.7.8.jar"/>
-        <jar href="@SHARED@/txw2-2.3.0.jar"/>
+        <jar href="@SHARED@/jakarta.activation-api-1.2.2.jar"/>
+        <jar href="@SHARED@/jakarta.activation-1.2.2.jar"/>
+        <jar href="@SHARED@/FastInfoset-1.2.18.jar"/>
+        <jar href="@SHARED@/istack-commons-runtime-3.0.11.jar"/>
+        <jar href="@SHARED@/stax-ex-1.8.3.jar"/>
+        <jar href="@SHARED@/txw2-2.3.3.jar"/>
 
         <!-- HttpClient -->
         <jar href="@SHARED@/commons-httpclient-3.1.jar "/>

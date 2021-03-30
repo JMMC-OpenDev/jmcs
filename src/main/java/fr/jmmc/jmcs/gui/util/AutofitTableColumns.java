@@ -142,10 +142,9 @@ public final class AutofitTableColumns {
             tableHeader.setPreferredSize(headerDim);
 
             final TableColumnModel tableColumnModel = aTable.getColumnModel();
-            TableColumn tableColumn;
 
             for (int i = 0; i < columnCount; i++) {
-                tableColumn = tableColumnModel.getColumn(i);
+                final TableColumn tableColumn = tableColumnModel.getColumn(i);
                 tableColumn.setPreferredWidth(columnWidth[i]);
             }
 
@@ -177,7 +176,6 @@ public final class AutofitTableColumns {
         int maxWidth = 0;
         int textWidth = 0;
 
-        TableCellRenderer tableCellRenderer;
         Component comp;
         JTextComponent jtextComp;
         JLabel jLabelComp;
@@ -187,6 +185,7 @@ public final class AutofitTableColumns {
 
         if (includeColumnHeaderWidth) {
             final TableCellRenderer headerRenderer = column.getHeaderRenderer();
+
             if (headerRenderer != null) {
                 comp = headerRenderer.getTableCellRendererComponent(aTable, column.getHeaderValue(), false, false, 0, columnNo);
 
@@ -198,7 +197,7 @@ public final class AutofitTableColumns {
 
                         textWidth = getHeaderWidth(fontMetrics, jtextComp.getText());
                     }
-                } else {
+                } else if (comp != null) {
                     textWidth = comp.getPreferredSize().width;
                 }
             } else {
@@ -246,7 +245,7 @@ public final class AutofitTableColumns {
         }
 
         // cache cell renderer :
-        tableCellRenderer = null;
+        TableCellRenderer tableCellRenderer = null;
         // cache fontMetrics :
         fontMetrics = null;
 
@@ -258,10 +257,9 @@ public final class AutofitTableColumns {
             if (tableCellRenderer == null) {
                 tableCellRenderer = aTable.getCellRenderer(i, columnNo);
             }
-
             cellValue = aTable.getValueAt(i, columnNo);
-            if (cellValue != null) {
 
+            if (cellValue != null) {
                 comp = tableCellRenderer.getTableCellRendererComponent(aTable, cellValue, false, false, i, columnNo);
 
                 if (comp instanceof DefaultTableCellRenderer) {
@@ -299,7 +297,7 @@ public final class AutofitTableColumns {
 
                     maxWidth = Math.max(maxWidth, textWidth);
 
-                } else {
+                } else if (comp != null) {
                     cellWidth = comp.getPreferredSize().width;
 
                     maxWidth = Math.max(maxWidth, cellWidth);

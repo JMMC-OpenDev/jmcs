@@ -27,11 +27,14 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util.jaxb;
 
+import fr.jmmc.jmcs.util.IntrospectionUtils;
+import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,13 +51,31 @@ public final class JAXBFactory {
     private static final ConcurrentHashMap<String, JAXBFactory> managedInstances = new ConcurrentHashMap<String, JAXBFactory>(4);
 
     /** JAXB implementation 2.3.0 provided in JMCS libraries */
-    public static final String JAXB_CONTEXT_FACTORY_IMPLEMENTATION = "com.sun.xml.bind.v2.ContextFactory";
+    private static final String JAXB_CONTEXT_FACTORY_IMPLEMENTATION = "com.sun.xml.bind.v2.ContextFactory";
 
     static {
-        // Define the system property to define which JAXB implementation to use:
-        System.setProperty("javax.xml.bind.JAXBContextFactory", JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
-        System.setProperty(JAXBContext.JAXB_CONTEXT_FACTORY, JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
-
+        if (true) {
+            // Define the system property to define which JAXB implementation to use:
+            System.setProperty("javax.xml.bind.JAXBContextFactory", JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
+            System.setProperty(JAXBContext.JAXB_CONTEXT_FACTORY, JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
+            
+            if (SystemUtils.JAVA_VERSION_FLOAT >= 16.0f) {
+                // JDK16 support fix:
+                /*
+                    ERROR [main] com.sun.xml.bind.v2.runtime.reflect.opt.Injector - null
+                    java.security.PrivilegedActionException: null
+                    Caused by: java.lang.NoSuchMethodException: sun.misc.Unsafe.defineClass(java.lang.String,[B,int,int,java.lang.ClassLoader,java.security.ProtectionDomain)
+                        at java.base/java.lang.Class.getMethod(Class.java:2195)
+                        at com.sun.xml.bind.v2.runtime.reflect.opt.Injector$3.run(Injector.java:170)
+                        at com.sun.xml.bind.v2.runtime.reflect.opt.Injector$3.run(Injector.java:166)
+                        at java.base/java.security.AccessController.doPrivileged(AccessController.java:554)
+                */
+                final String key = "com.sun.xml.bind.v2.runtime.reflect.opt.OptimizedAccessorFactory.noOptimization";
+                // or alternatively: com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true
+                System.setProperty(key, "true");
+                logger.info("Fix JDK-16+ support: version = {} (set {} = true)", SystemUtils.JAVA_VERSION_FLOAT, key);
+            }
+        }
         logger.info("JAXB ContextFactory: {}", System.getProperty(JAXBContext.JAXB_CONTEXT_FACTORY));
     }
 
@@ -67,10 +88,10 @@ public final class JAXBFactory {
     /**
      * Creates a new JPAFactory object
      *
-     * @param pJaxbPath JAXB context path
+     * @param jaxbPath JAXB context path
      */
-    private JAXBFactory(final String pJaxbPath) {
-        _jaxbPath = pJaxbPath;
+    private JAXBFactory(final String jaxbPath) {
+        _jaxbPath = jaxbPath;
     }
 
     //~ Methods ----------------------------------------------------------------------------------------------------------
@@ -128,12 +149,29 @@ public final class JAXBFactory {
             // package given by path:
             context = JAXBContext.newInstance(path, JAXBFactory.class.getClassLoader());
 
+            if (context == null) {
+                throw new JAXBException("JAXBFactory.getContext: Unable to create JAXBContext : " + path);
+            }
+
             if (logger.isInfoEnabled()) {
-                if (context instanceof com.sun.xml.bind.v2.runtime.JAXBContextImpl) {
-                    logger.info("JAXBContext[{}] Version: {}", path, ((com.sun.xml.bind.v2.runtime.JAXBContextImpl) context).getBuildId());
-                } else {
-                    logger.info("JAXBContext[{}] unknown implementation: {}", path, context.getClass().getName());
+                final String className = context.getClass().getName();
+
+                String buildId = "unknown";
+
+                if (className.equals("com.sun.xml.internal.bind.v2.runtime.JAXBContextImpl")) {
+                    // former JAXB 2.2 (1.8)
+                    final Method method = IntrospectionUtils.getMethod("com.sun.xml.internal.bind.v2.runtime.JAXBContextImpl", "getBuildId");
+                    buildId = (String) IntrospectionUtils.getMethodValue(method, context);
+                } else if (className.equals("com.sun.xml.bind.v2.runtime.JAXBContextImpl")) {
+                    // JAXB 2.3.3
+                    final Method method = IntrospectionUtils.getMethod("com.sun.xml.bind.v2.runtime.JAXBContextImpl", "getBuildId");
+                    buildId = (String) IntrospectionUtils.getMethodValue(method, context);
+                } else if (className.equals("org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl")) {
+                    // JAXB 3.0
+                    final Method method = IntrospectionUtils.getMethod("org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl", "getBuildId");
+                    buildId = (String) IntrospectionUtils.getMethodValue(method, context);
                 }
+                logger.info("JAXBContext[{}] ({}) Version: {}", path, className, buildId);
             }
 
         } catch (JAXBException je) {

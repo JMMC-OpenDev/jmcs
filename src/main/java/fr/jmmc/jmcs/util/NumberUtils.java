@@ -79,14 +79,14 @@ public final class NumberUtils {
 
     /**
      * Returns {@code true} if the argument is a finite floating-point
-     * value and greater or equals to 0; returns {@code false} otherwise (for negative and NaN and infinity
+     * value and greater than +0.0; returns {@code false} otherwise (for negative and NaN and infinity
      * arguments).
      * @param value the {@code double} value to be tested
      * @return {@code true} if the argument is a finite positive
      * floating-point value, {@code false} otherwise.
      */
     public static boolean isFinitePositive(final float value) {
-        return isFinite(value) && (value >= 0f);
+        return isFinite(value) && (value > +0.0f);
     }
 
     /**
@@ -105,14 +105,14 @@ public final class NumberUtils {
 
     /**
      * Returns {@code true} if the argument is a finite floating-point
-     * value and greater or equals to 0; returns {@code false} otherwise (for negative and NaN and infinity
+     * value and greater than +0.0; returns {@code false} otherwise (for negative and NaN and infinity
      * arguments).
      * @param value the {@code double} value to be tested
      * @return {@code true} if the argument is a finite positive
      * floating-point value, {@code false} otherwise.
      */
     public static boolean isFinitePositive(final double value) {
-        return isFinite(value) && (value >= 0d);
+        return isFinite(value) && (value > +0.0);
     }
 
     /**

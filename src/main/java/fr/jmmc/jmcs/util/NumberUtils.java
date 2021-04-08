@@ -185,7 +185,7 @@ public final class NumberUtils {
             return "0";
         }
 
-        if (abs < 1e-3d || abs > 1e6d) {
+        if ((abs < 1e-3d) || (abs > 1e6d)) {
             return FormatterUtils.format(_fmtScience, val);
         }
         return FormatterUtils.format(_fmtDef, val);

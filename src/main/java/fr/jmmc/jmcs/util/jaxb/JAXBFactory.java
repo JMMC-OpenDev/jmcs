@@ -34,6 +34,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,21 @@ public final class JAXBFactory {
         System.setProperty("javax.xml.bind.JAXBContextFactory", JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
         System.setProperty(JAXBContext.JAXB_CONTEXT_FACTORY, JAXB_CONTEXT_FACTORY_IMPLEMENTATION);
 
+        if (SystemUtils.JAVA_VERSION_FLOAT >= 16.0f) {
+            // JDK16 support fix (for java web start i.e. icedtea-web support):
+            /*
+                ERROR [main] com.sun.xml.bind.v2.runtime.reflect.opt.Injector - null
+                java.security.PrivilegedActionException: null
+                Caused by: java.lang.NoSuchMethodException: sun.misc.Unsafe.defineClass(java.lang.String,[B,int,int,java.lang.ClassLoader,java.security.ProtectionDomain)
+                    at java.base/java.lang.Class.getMethod(Class.java:2195)
+                    at com.sun.xml.bind.v2.runtime.reflect.opt.Injector$3.run(Injector.java:170)
+                    at com.sun.xml.bind.v2.runtime.reflect.opt.Injector$3.run(Injector.java:166)
+                    at java.base/java.security.AccessController.doPrivileged(AccessController.java:554)
+            */
+            final String key = "com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize";
+            System.setProperty(key, "true");
+            logger.info("Fix JDK-16+ support: version = {} (set {} = true)", SystemUtils.JAVA_VERSION_FLOAT, key);
+        }
         logger.info("JAXB ContextFactory: {}", System.getProperty(JAXBContext.JAXB_CONTEXT_FACTORY));
     }
 

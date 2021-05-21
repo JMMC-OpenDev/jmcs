@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.util;
 
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.ParseException;
@@ -46,6 +47,8 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
 
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(FieldSliderAdapter.class.getName());
+    /** text field foreground color for default values */
+    private static final Color DEF_FOREGROUND = Color.GRAY;
 
     /* members */
     /** minimum limit */
@@ -62,11 +65,14 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
     private final JFormattedTextField field;
     /** slider */
     private final JSlider slider;
+    /** initial ie standard text field foreground color */
+    private final Color stdForeground;
     /* event handling */
     /** flag to indicate that an event handling is in progress */
     private boolean isEventHandling = false;
     /** A list of event listeners for this component. */
-    private EventListenerList listenerList = new EventListenerList();
+    private final EventListenerList listenerList = new EventListenerList();
+
     /**
      * Only one <code>ChangeEvent</code> is needed per instance since the
      * event's only (read-only) state is the source property.  The source
@@ -88,6 +94,7 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
     public FieldSliderAdapter(final JSlider slider, final JFormattedTextField field, final double min, final double max, final double def) {
         this.slider = slider;
         this.field = field;
+        this.stdForeground = field.getForeground();
 
         initListeners();
 
@@ -101,17 +108,17 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
      * @param def default value
      */
     public void reset(final double min, final double max, final double def) {
-
+        final boolean wasDef = isDefValue();
         this.minLimit = min;
         this.minValue = min;
-
         this.maxValue = max;
-
         this.defValue = def;
-
         this.sliderRatio = (max - min) / (this.slider.getModel().getMaximum() - this.slider.getModel().getMinimum());
-
-        this.field.setValue(Double.valueOf(this.defValue));
+        // only reset value if it was default or value is not within [min; max]:
+        final double oldValue = getValue();
+        if (wasDef || Double.isNaN(oldValue) || (oldValue < min) || (oldValue > max)) {
+            setValue(this.defValue);
+        }
     }
 
     /**
@@ -119,7 +126,6 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
      */
     private void initListeners() {
         this.slider.addChangeListener(this);
-
         this.field.addPropertyChangeListener("value", this);
     }
 
@@ -151,12 +157,10 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
                 // done adjusting
                 try {
                     this.isEventHandling = true;
-
-                    this.field.setValue(value);
+                    setValue(value);
                 } finally {
                     this.isEventHandling = false;
                 }
-
                 this.fireStateChanged();
 
             } else {
@@ -180,7 +184,7 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
 
             if (value < this.minValue || value > this.maxValue) {
                 // invalid value :
-                this.field.setValue(this.defValue);
+                setValue(this.defValue);
                 return;
             }
 
@@ -194,7 +198,7 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
             } finally {
                 this.isEventHandling = false;
             }
-
+            fixFieldUI();
             this.fireStateChanged();
         }
     }
@@ -249,10 +253,14 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
 
     /**
      * Return the public double value
-     * @return double value
+     * @return double value or NaN if undefined
      */
     public double getValue() {
-        return ((Number) this.field.getValue()).doubleValue();
+        final Object value = this.field.getValue();
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+        return Double.NaN;
     }
 
     /**
@@ -261,6 +269,11 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
      */
     public void setValue(final double value) {
         this.field.setValue(value);
+        fixFieldUI();
+    }
+
+    private void fixFieldUI() {
+        this.field.setForeground((isDefValue()) ? DEF_FOREGROUND : stdForeground);
     }
 
     /**
@@ -315,6 +328,13 @@ public final class FieldSliderAdapter implements ChangeListener, PropertyChangeL
      */
     public void setDefValue(double defValue) {
         this.defValue = defValue;
+    }
+
+    /**
+     * @return true if the current value (stored in text field) corresponds to the default value; false otherwise
+     */
+    public boolean isDefValue() {
+        return getValue() == getDefValue();
     }
 
     /**

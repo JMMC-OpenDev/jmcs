@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * Generic action dedicated to SAMP capability handling.
  *
  * Your action should extends SampCapabilityAction, implementing composeMessage() to forge the message to be sent by SAMP.
+ * Set proper action command to any Swing button  you would associate to this action. It may be BROADCAST_MENU_LABEL.
  * 
  * @author Sylvain LAFRASSE, Laurent BOURGES, Guillaume MELLA.
  */
@@ -61,7 +62,7 @@ public abstract class SampCapabilityAction extends RegisteredAction {
     /** Flag to enable/disable broadcast action */
     public final static boolean BROADCAST_ENABLED = false;
     /** Label for broadcast to all */
-    private final static String BROADCAST_MENU_LABEL = "All Applications";
+    public final static String BROADCAST_MENU_LABEL = "All Applications";
     /** Flag to enable/disable broadcast action */
     public final static boolean SHOW_CLIENT_ID = "true".equalsIgnoreCase(System.getProperty("SampCapabilityAction.showClientId", "true"));
     // Members

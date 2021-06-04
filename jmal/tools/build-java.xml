@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*******************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+*******************************************************************************
+-->
+
+<project name="JMAL" default="about" basedir=".">
+
+    <description>
+        JMAL ant build file, mainly dedicated to generate code from xsd using jaxb.
+    </description>
+
+
+    <!--
+    Get build properties (general).
+    Should only contain the location of the JMCS module where JAXB libraries can be found.
+    -->
+    <property file="build.properties" />
+
+    <!-- NOTE: jmcs is supposed to be in the parent folder -->
+    <include file="${jmcs.path}/tools/build-include.xml"/>
+
+
+    <property name="root" location=".."/>
+
+    <!-- Maven folders -->
+    <property name="resources" location="${root}/src/main/resources"/>
+    <property name="sources"   location="${root}/src/main/java"/>
+
+
+
+
+    <!-- targets -->
+
+    <!-- target about : -->
+    <target name="about" description="show information for public targets">
+        <echo>available ant targets : </echo>
+        <echo>-------------------------------------------------------------------------------</echo>
+        <echo>  - genXsdCode         : generates the java code from xml schemas (xsd)</echo>
+        <echo>-------------------------------------------------------------------------------</echo>
+    </target>
+
+
+
+
+    <target name="genXsdCode" description="generates the java code from xml schemas (xsd)">
+
+        <echo>generating java code for targetModel.xsd</echo>
+
+        <mkdir dir="${sources}/fr/jmmc/jmal/model/targetmodel" />
+
+        <xjc destdir="${sources}"
+             schema="${resources}/fr/jmmc/jmal/model/targetModel.xsd" />
+
+    </target>
+
+</project>

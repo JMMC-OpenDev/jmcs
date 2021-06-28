@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--  please install first parent pom from jMCS/parent-pom directory -->
+    <parent>
+        <groupId>fr.jmmc</groupId>
+        <artifactId>jmmc</artifactId>
+        <version>TRUNK</version>
+        <relativePath />
+    </parent>
+
+    <groupId>fr.jmmc.testgui</groupId>
+    <artifactId>testgui</artifactId>
+
+    <packaging>jar</packaging>
+    <name>TestGui</name>
+
+    <dependencies>
+
+	<dependency>
+	    <groupId>fr.jmmc.jmcs</groupId>
+	    <artifactId>jmcs</artifactId>
+	    <version>TRUNK</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.easytesting</groupId>
+		<artifactId>fest-swing-junit-4.5</artifactId>
+		<version>1.2.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.jhlabs</groupId>
+		<artifactId>filters</artifactId>
+		<version>2.0.235-1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.mortennobel</groupId>
+		<artifactId>java-image-scaling</artifactId>
+		<version>0.8.5</version>
+	</dependency>
+    </dependencies>
+
+</project>

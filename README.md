@@ -39,11 +39,16 @@ cd ..
 mvn process-resources
 
 # build jMCS jar files
-mvn clean install 
+mvn clean install
+
+# build testgui jar files (if needed)
+cd testgui
+mvn clean install
+
 ```
 
 Jar files are then available in `target` directory !
-You also get the option to use prepared jar under the 'Download' section of prepared [releases](releases).   
+You also get the option to use prepared jar under the 'Download' section of prepared [releases](releases).
 
 
 Notes

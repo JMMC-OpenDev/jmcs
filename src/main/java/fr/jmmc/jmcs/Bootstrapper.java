@@ -160,7 +160,7 @@ public final class Bootstrapper {
         }
 
         // JDK 1.7 settings
-        if (SystemUtils.isJavaVersionAtLeast(1.7f)) {
+        if (false && SystemUtils.isJavaVersionAtLeast(1.7f)) {
             // Fix JDK 1.7 - Swing Focus : java.lang.IllegalArgumentException: Comparison method violates its general contract!
             // bug in SortingFocusTraversalPolicy.enumerateAndSortCycle() related to LayoutComparator
             // See also JIDE: @see com.jidesoft.plaf.LookAndFeelFactory#workAroundSwingIssues()
@@ -168,6 +168,7 @@ public final class Bootstrapper {
              * http://stackoverflow.com/questions/13575224/comparison-method-violates-its-general-contract-timsort-and-gridlayout
              * https://forums.oracle.com/forums/thread.jspa?threadID=2455538
              */
+            System.out.println("java.util.Arrays.useLegacyMergeSort=true");
             System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
         }
     }

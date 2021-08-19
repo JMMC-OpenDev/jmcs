@@ -93,12 +93,11 @@ public final class StatUtils {
     }
 
     public synchronized void prepare(final int count) {
-        final int needed = count - cache.size();
-        if (needed > 0) {
-            logger.info("prepare: {} needed distributions ({} samples)", needed, N_SAMPLES);
+        if (count > cache.size()) {
+            logger.info("prepare: {} needed distributions ({} samples)", count, N_SAMPLES);
             final long start = System.nanoTime();
 
-            ComplexDistribution.create(needed, cache);
+            ComplexDistribution.create(count, cache);
 
             logger.info("prepare done: {} ms.", 1e-6d * (System.nanoTime() - start));
         }
@@ -121,6 +120,9 @@ public final class StatUtils {
         private final static double[][] ANGLES_COS_SIN;
 
         private static int countIteration = 0;
+        
+        private static int MIN_ITER = 5;
+        private static int MAX_ITER = 25;        
 
         static {
             logger.debug("N_SAMPLES: {}", N_SAMPLES);
@@ -195,12 +197,11 @@ public final class StatUtils {
             /* create a new random generator to have different seed (single thread) */
             final Random random = new Random();
 
-            final int MIN_ITER = 5;
-            final int MAX_ITER = 25;
             final int N = nDistribs * 5;
 
             final ArrayList<ComplexDistribution> iterDistribs = new ArrayList<ComplexDistribution>(N);
-            ComplexDistribution d = new ComplexDistribution();
+            // keep (previous) best distribs:
+            iterDistribs.addAll(distributions);
 
             final Comparator<ComplexDistribution> cmpQual = new Comparator<ComplexDistribution>() {
                 @Override
@@ -208,6 +209,8 @@ public final class StatUtils {
                     return Double.compare(d1.getQualityMoments()[2], d2.getQualityMoments()[2]);
                 }
             };
+            
+            ComplexDistribution d = new ComplexDistribution();
 
             final long start = System.nanoTime();
 
@@ -223,7 +226,7 @@ public final class StatUtils {
 
                     if (d.test()) {
                         iterDistribs.add(d);
-                        d = new ComplexDistribution(); // TODO: reuse instances
+                        d = new ComplexDistribution();
                     }
                 } while (iterDistribs.size() < N);
 
@@ -259,7 +262,6 @@ public final class StatUtils {
                     }
                 }
 
-                // TODO: recycle
                 iterDistribs.clear();
                 // keep best distribs:
                 iterDistribs.addAll(distributions);

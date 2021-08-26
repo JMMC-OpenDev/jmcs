@@ -115,9 +115,6 @@ public final class Bootstrapper {
             return true;
         }
 
-        // Disable security checks
-        disableSecurityManager();
-
         // Set System properties
         // note: it calls: System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
         // Must be set before any call to Collections or Arrays.sort(Object[]) that use that property once
@@ -170,20 +167,6 @@ public final class Bootstrapper {
              */
             System.out.println("java.util.Arrays.useLegacyMergeSort=true");
             System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-        }
-    }
-
-    /**
-     * Disable the security manager to be able to use System.setProperty ...
-     */
-    private static void disableSecurityManager() {
-        try {
-            // Disable security checks:
-            System.setSecurityManager(null);
-        } catch (SecurityException se) {
-            // This case occurs with java netx and
-            // OpenJDK Runtime Environment (IcedTea6 1.6) (rhel-1.13.b16.el5-x86_64)
-            _jmmcLogger.warn("Can't set security manager to null", se);
         }
     }
 

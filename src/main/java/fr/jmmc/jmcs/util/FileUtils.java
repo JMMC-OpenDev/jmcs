@@ -656,11 +656,6 @@ public final class FileUtils {
      * @return An abstract pathname denoting a newly-created empty file
      *
      * @throws IllegalStateException If a file could not be created
-     *
-     * @throws SecurityException If a security manager exists and its
-     * <code>{@link
-     *          java.lang.SecurityManager#checkWrite(java.lang.String)}</code> method
-     * does not allow a file to be created
      */
     public static File getTempFile(final String prefix, final String suffix) {
         // Prevent exception thrown by createTempFile that requires one prefix and

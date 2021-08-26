@@ -85,8 +85,6 @@ public final class MCSExceptionHandler {
      * Public method to initialize the exception handler singleton with the SwingExceptionHandler
      */
     public static void installSwingHandler() {
-        // Requires SecurityManager disabled: @see Bootstrapper.disableSecurityManager()
-
         // AWT exception handler for modal dialogs :
         System.setProperty("sun.awt.exception.handler", MCSExceptionHandler.class.getName());
 

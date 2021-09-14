@@ -115,10 +115,10 @@ public final class Bootstrapper {
             return true;
         }
 
+        // Disable security checks
+        disableSecurityManager();
+
         // Set System properties
-        // note: it calls: System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-        // Must be set before any call to Collections or Arrays.sort(Object[]) that use that property once
-        // ie before initializing Logs because it calls Collections.sort in LoggerContext.getLoggerList:195
         setSystemProperties();
 
         // Initialize Locale.US
@@ -150,6 +150,7 @@ public final class Bootstrapper {
      * Called by bootstrap() before anything
      * @see MacOSXAdapter
      */
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private static void setSystemProperties() {
         if (SystemUtils.IS_OS_MAC_OSX) {
             // Always use screen menuBar on MacOS X
@@ -165,8 +166,29 @@ public final class Bootstrapper {
              * http://stackoverflow.com/questions/13575224/comparison-method-violates-its-general-contract-timsort-and-gridlayout
              * https://forums.oracle.com/forums/thread.jspa?threadID=2455538
              */
+
+            // Must be set before any call to Collections or Arrays.sort(Object[]) that use that property once
+            // ie before initializing Logs because it calls Collections.sort in LoggerContext.getLoggerList:195
             System.out.println("java.util.Arrays.useLegacyMergeSort=true");
             System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+        }
+    }
+
+    /**
+     * Disable the security manager to be able to use System.setProperty, XSLT without secure processing feature ...
+     */
+    @SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToPrintStackTrace"})
+    private static void disableSecurityManager() {
+        // TODO: Fix in future when the System.setSecurityManager() method will be removed
+        try {
+            // Disable security checks:
+            System.setSecurityManager(null);
+        } catch (SecurityException se) {
+            // This case occurs with java netx and
+            // OpenJDK Runtime Environment (IcedTea6 1.6) (rhel-1.13.b16.el5-x86_64)
+            // note: logger are not yet initialized:
+            System.err.println("Can't set security manager to null");
+            se.printStackTrace();
         }
     }
 

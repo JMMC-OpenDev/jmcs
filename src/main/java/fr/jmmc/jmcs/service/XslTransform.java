@@ -104,8 +104,13 @@ public final class XslTransform {
             } catch (TransformerFactoryConfigurationError tfce) {
                 throw new IllegalStateException("XmlFactory.getTransformerFactory : failure on TransformerFactory initialisation : ", tfce);
             }
+            try {
+                // allow use of XSLT extensions (secure processing feature set to False in JNLP mode)
+                _transformerFactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, false);
+            } catch (TransformerConfigurationException tce) {
+                throw new IllegalStateException("XmlFactory.getTransformerFactory : failure on TransformerFactory initialisation : ", tce);
+            }
         }
-
         return _transformerFactory;
     }
 

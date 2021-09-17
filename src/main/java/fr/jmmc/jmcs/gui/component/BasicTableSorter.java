@@ -1,24 +1,32 @@
 package fr.jmmc.jmcs.gui.component;
 
+import fr.jmmc.jmcs.util.CollectionUtils;
+import fr.jmmc.jmcs.util.NumberUtils;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import org.slf4j.Logger;
@@ -107,13 +115,27 @@ public final class BasicTableSorter extends AbstractTableModel {
     };
 
     /* members */
+    /** source data model */
     private TableModel tableModel;
+    /** sorted rows mapping the view to the source model */
     private Row[] viewToModel;
+    /** mapping from the source model index to the view index */
     private int[] modelToView;
+    /** table header */
     private JTableHeader tableHeader;
-    private final MouseListener mouseListener;
-    private final TableModelListener tableModelListener;
+    private MouseHandler mouseListener = null;
+    private DragColumnHandler dragHandler = null;
+    private final TableModelHandler tableModelListener;
     private final List<Directive> sortingColumns = new ArrayList<Directive>(4);
+    /** optional table header customizer */
+    private BasicTableColumnModel tableHeaderCustomizer = null;
+    /** optional visible column names (ordered) */
+    private List<String> visibleColumnNames = null;
+    /** unique column names that are missing (avoid repeated messages in logs) */
+    private final HashSet<String> _ignoreMissingColumns = new HashSet<String>(32);
+    /** optional table column moved listener */
+    private BasicTableColumnMovedListener tableColumnMovedListener = null;
+
     /**
      * Indirection array.
      *
@@ -129,8 +151,23 @@ public final class BasicTableSorter extends AbstractTableModel {
      * @param tableHeader
      */
     public BasicTableSorter(TableModel tableModel, JTableHeader tableHeader) {
-        this.mouseListener = new MouseHandler();
+        this(tableModel, tableHeader, null);
+    }
+
+    /**
+     * Creates a new TableSorter object.
+     *
+     * @param tableModel
+     * @param tableHeader
+     * @param tableHeaderCustomizer
+     */
+    public BasicTableSorter(TableModel tableModel, JTableHeader tableHeader, BasicTableColumnModel tableHeaderCustomizer) {
         this.tableModelListener = new TableModelHandler();
+        if (tableModel instanceof BasicTableColumnModel) {
+            this.tableHeaderCustomizer = (BasicTableColumnModel) tableModel;
+        } else {
+            this.tableHeaderCustomizer = tableHeaderCustomizer;
+        }
 
         tableModel.addTableModelListener(tableModelListener);
         setTableHeader(tableHeader);
@@ -144,10 +181,17 @@ public final class BasicTableSorter extends AbstractTableModel {
         modelToView = null;
     }
 
+    /**
+     * @return the source table model
+     */
     public TableModel getTableModel() {
         return tableModel;
     }
 
+    /**
+     * Defines the source data model
+     * @param tableModel source data model
+     */
     public void setTableModel(TableModel tableModel) {
         this.tableModel = tableModel;
 
@@ -156,29 +200,70 @@ public final class BasicTableSorter extends AbstractTableModel {
         fireTableStructureChanged();
     }
 
+    private int findModelColumnByName(final String columnName) {
+        for (int i = 0, len = tableModel.getColumnCount(); i < len; i++) {
+            if (columnName.equals(tableModel.getColumnName(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * @return table header
+     */
     public JTableHeader getTableHeader() {
         return tableHeader;
     }
 
+    /**
+     * Define the table header (to customize)
+     * @param tableHeader table header
+     */
     public void setTableHeader(JTableHeader tableHeader) {
         if (this.tableHeader != null) {
-            this.tableHeader.removeMouseListener(mouseListener);
-
-            TableCellRenderer defaultRenderer = this.tableHeader.getDefaultRenderer();
-
-            if (defaultRenderer instanceof SortableHeaderRenderer) {
-                this.tableHeader.setDefaultRenderer(((SortableHeaderRenderer) defaultRenderer).tableCellRenderer);
+            if (mouseListener != null) {
+                this.tableHeader.removeMouseListener(mouseListener);
+            }
+            if (this.dragHandler != null) {
+                this.tableHeader.getColumnModel().removeColumnModelListener(dragHandler);
             }
         }
-
         this.tableHeader = tableHeader;
 
         if (this.tableHeader != null) {
+            final TableColumnModel columnModel = tableHeader.getColumnModel();
+
+            this.dragHandler = new DragColumnHandler(columnModel);
+            this.mouseListener = new MouseHandler(dragHandler);
+
+            columnModel.addColumnModelListener(dragHandler);
+
             this.tableHeader.addMouseListener(mouseListener);
-            this.tableHeader.setDefaultRenderer(new SortableHeaderRenderer(this.tableHeader.getDefaultRenderer()));
+            this.tableHeader.setDefaultRenderer(
+                    new SortableHeaderRenderer(this.tableHeader.getDefaultRenderer(), this.tableHeaderCustomizer));
         }
     }
 
+    /**
+     * @return optional table header customizer
+     */
+    public BasicTableColumnModel getTableHeaderCustomizer() {
+        return tableHeaderCustomizer;
+    }
+
+    /**
+     * Define the optional table header customizer
+     * @param headerCustomizer optional table header customizer
+     */
+    public void setTableHeaderCustomizer(final BasicTableColumnModel headerCustomizer) {
+        this.tableHeaderCustomizer = headerCustomizer;
+        setTableHeader(getTableHeader());
+    }
+
+    /**
+     * @return true if sorting is enabled
+     */
     public boolean isSorting() {
         return !sortingColumns.isEmpty();
     }
@@ -193,8 +278,35 @@ public final class BasicTableSorter extends AbstractTableModel {
         return EMPTY_DIRECTIVE;
     }
 
+    /**
+     * @param column column index
+     * @return integer value in (ASCENDING = 1, NOT_SORTED = 0, DESCENDING = -1)
+     */
     public int getSortingStatus(int column) {
         return getDirective(columnModelIndex(column)).direction;
+    }
+
+    /**
+     * Defines the column sorting
+    @param column column index
+    @param status integer value in (ASCENDING = 1, NOT_SORTED = 0, DESCENDING = -1)
+     */
+    public void setSortingStatus(final int column, final int status) {
+        final int modelColumn = columnModelIndex(column);
+
+        final Directive directive = getDirective(modelColumn);
+
+        if (directive != EMPTY_DIRECTIVE) {
+            sortingColumns.remove(directive);
+        }
+
+        if (status != NOT_SORTED) {
+            sortingColumns.add(createDirective(modelColumn, status));
+        }
+
+        _logger.debug("setSortingStatus: {}", sortingColumns);
+
+        sortingStatusChanged();
     }
 
     private void sortingStatusChanged() {
@@ -204,22 +316,6 @@ public final class BasicTableSorter extends AbstractTableModel {
         if (tableHeader != null) {
             tableHeader.repaint();
         }
-    }
-
-    public void setSortingStatus(final int column, final int status) {
-        final int realColumn = columnModelIndex(column);
-
-        final Directive directive = getDirective(realColumn);
-
-        if (directive != EMPTY_DIRECTIVE) {
-            sortingColumns.remove(directive);
-        }
-
-        if (status != NOT_SORTED) {
-            sortingColumns.add(createDirective(realColumn, status));
-        }
-
-        sortingStatusChanged();
     }
 
     Icon getHeaderRendererIcon(final int column, final int size) {
@@ -242,13 +338,8 @@ public final class BasicTableSorter extends AbstractTableModel {
             Directive directive = it.next();
 
             // Get the current column index given its name:
-            int columnId = -1;
-            for (int i = 0, len = tableModel.getColumnCount(); i < len; i++) {
-                if (directive.colName.equals(tableModel.getColumnName(i))) {
-                    columnId = i;
-                    break;
-                }
-            }
+            // TODO: check view or model ?
+            final int columnId = findModelColumnByName(directive.colName);
 
             // check column indexes:
             if (columnId != directive.column) {
@@ -278,6 +369,10 @@ public final class BasicTableSorter extends AbstractTableModel {
     private Comparator<Object> getComparator(final int realColumn) {
         final Class<?> columnType = tableModel.getColumnClass(realColumn);
 
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("getComparator({}): {}", tableModel.getColumnName(realColumn), columnType);
+        }
+
         if (String.class == columnType) {
             return LEXICAL_COMPARATOR;
         }
@@ -305,7 +400,7 @@ public final class BasicTableSorter extends AbstractTableModel {
                 Arrays.sort(newModel);
 
                 if (_logger.isDebugEnabled()) {
-                    _logger.debug("sort ({} stars) processed in {} ms.", tableModelRowCount, 1e-6d * (System.nanoTime() - start));
+                    _logger.debug("sort ({} rows) processed in {} ms.", tableModelRowCount, 1e-6d * (System.nanoTime() - start));
                 }
             }
 
@@ -316,6 +411,10 @@ public final class BasicTableSorter extends AbstractTableModel {
         return viewToModel;
     }
 
+    /**
+     * @param viewIndex row index in the view
+     * @return row index in the source model
+     */
     public int modelIndex(final int viewIndex) {
         return getViewToModel()[viewIndex].modelIndex;
     }
@@ -335,10 +434,18 @@ public final class BasicTableSorter extends AbstractTableModel {
         return modelToView;
     }
 
+    /**
+     * @param modelIndex row index in the source model
+     * @return row index in the view
+     */
     public int viewIndex(final int modelIndex) {
         return getModelToView()[modelIndex];
     }
 
+    /**
+     * @param column column index in the view
+     * @return model column index in the source model
+     */
     public int columnModelIndex(final int column) {
         return _viewIndex[column];
     }
@@ -403,19 +510,139 @@ public final class BasicTableSorter extends AbstractTableModel {
     }
 
     /**
+     * @return visible column names (ordered)
+     */
+    public List<String> getVisibleColumnNames() {
+        return visibleColumnNames;
+    }
+
+    /**
+     * Defines the visible column names (ordered)
+     * @param visibleColumnNames list of column names
+     */
+    public void setVisibleColumnNames(final List<String> visibleColumnNames) {
+        this.visibleColumnNames = visibleColumnNames;
+
+        computeColumnsIndirectionArray();
+
+        fireTableStructureChanged();
+    }
+
+    /**
+     * @return visible column names (ordered) as String (| separator)
+     */
+    public String getVisibleColumnNamesAsString() {
+        if (visibleColumnNames == null) {
+            return null;
+        }
+        final StringBuilder sb = new StringBuilder(256);
+        for (String c : visibleColumnNames) {
+            sb.append(c).append('|');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Defines the visible column names (ordered)
+     * @param visibleColumnNamesString visible column names (ordered) as String (| separator)
+     */
+    public void setVisibleColumnNamesAsString(final String visibleColumnNamesString) {
+        final List<String> columnNames;
+        if (StringUtils.isEmpty(visibleColumnNamesString)) {
+            columnNames = null;
+        } else {
+            columnNames = Arrays.asList(visibleColumnNamesString.split("\\|"));
+        }
+        setVisibleColumnNames(columnNames);
+    }
+
+    void handleDraggedColumnMoved(final TableColumnModel columnModel) {
+        // ColumnModel corresponds to the JTable view (over its view model):
+        final int len = columnModel.getColumnCount();
+        final List<String> viewColumnNames = new ArrayList<String>(len);
+
+        for (int i = 0; i < len; i++) {
+            final TableColumn tc = columnModel.getColumn(i);
+            viewColumnNames.add(tc.getIdentifier().toString());
+        }
+        _logger.debug("handleDraggedColumnMoved: columns: {}", viewColumnNames);
+
+        setVisibleColumnNames(viewColumnNames);
+
+        // invoke to the optional listener:
+        if (tableColumnMovedListener != null) {
+            tableColumnMovedListener.tableColumnMoved(this);
+        }
+    }
+
+    /**
+     * @return optional table column moved listener
+     */
+    public BasicTableColumnMovedListener getTableHeaderChangeListener() {
+        return tableColumnMovedListener;
+    }
+
+    /**
+     * Defines the optional table column moved listener
+     * @param tableHeaderChangeListener optional table column moved listener
+     */
+    public void setTableHeaderChangeListener(final BasicTableColumnMovedListener tableHeaderChangeListener) {
+        this.tableColumnMovedListener = tableHeaderChangeListener;
+    }
+
+    /**
      * Automatically called whenever the observed model changed
      */
-    public void computeColumnsIndirectionArray() {
+    void computeColumnsIndirectionArray() {
         // Get column count in the model:
         final int nbOfModelColumns = tableModel.getColumnCount();
 
-        // Full view, with all columns
-        // allocate corresponding memory for the indirection array
-        _viewIndex = new int[nbOfModelColumns];
+        // Either simple or detailed views
+        if (!CollectionUtils.isEmpty(visibleColumnNames) && (nbOfModelColumns != 0)) {
+            _logger.debug("Columns = {}", visibleColumnNames);
 
-        // Generate a 'one to one' indirection array to show every single column
-        for (int i = 0; i < nbOfModelColumns; i++) {
-            _viewIndex[i] = i;
+            // Get the selected ordered column name table
+            final int nbOfColumns = visibleColumnNames.size();
+
+            // Use list to keep only valid columns:
+            final List<Integer> viewIndex = new ArrayList<Integer>(nbOfColumns);
+
+            for (String columnName : visibleColumnNames) {
+                if (!StringUtils.isEmpty(columnName)) {
+                    // Get the current column index given its name:
+                    final int columnId = findModelColumnByName(columnName);
+
+                    // If no column Id was found for the given column name
+                    if (columnId == -1) {
+                        if (_ignoreMissingColumns.add(columnName)) {
+                            _logger.warn("No column named '{}'.", columnName);
+                        }
+                    } else {
+                        viewIndex.add(NumberUtils.valueOf(columnId));
+                        if (_logger.isDebugEnabled()) {
+                            _logger.debug("viewIndex[{}] = '{}' -> '{}'.", (viewIndex.size() - 1), columnId, columnName);
+                        }
+                    }
+                }
+            }
+
+            // Create a new array of this with the right size
+            final int rightSize = viewIndex.size();
+            _viewIndex = new int[rightSize];
+
+            // Copy back all the meaningfull result in the rightly sized array
+            for (int i = 0; i < rightSize; i++) {
+                _viewIndex[i] = viewIndex.get(i).intValue();
+            }
+        } else { // Full view, with all columns
+
+            // allocate corresponding memory for the indirection array
+            _viewIndex = new int[nbOfModelColumns];
+
+            // Generate a 'one to one' indirection array to show every single column
+            for (int i = 0; i < nbOfModelColumns; i++) {
+                _viewIndex[i] = i;
+            }
         }
     }
 
@@ -529,6 +756,12 @@ public final class BasicTableSorter extends AbstractTableModel {
 
     private final class MouseHandler extends MouseAdapter {
 
+        private final DragColumnHandler dragHandler;
+
+        MouseHandler(DragColumnHandler dragHandler) {
+            this.dragHandler = dragHandler;
+        }
+
         @Override
         public void mouseClicked(MouseEvent e) {
             JTableHeader h = (JTableHeader) e.getSource();
@@ -549,6 +782,20 @@ public final class BasicTableSorter extends AbstractTableModel {
                 status = ((status + 4) % 3) - 1; // signed mod, returning {-1, 0, 1}
                 setSortingStatus(column, status);
             }
+        }
+
+        @Override
+        public void mousePressed(final MouseEvent e) {
+            // enable column dragging monitoring:
+            this.dragHandler.setEnabled(true);
+        }
+
+        @Override
+        public void mouseReleased(final MouseEvent e) {
+            // handle potential event:
+            this.dragHandler.handleChanged();
+            // disable column dragging monitoring:
+            this.dragHandler.setEnabled(false);
         }
     }
 
@@ -618,15 +865,17 @@ public final class BasicTableSorter extends AbstractTableModel {
         /* members */
         /** parent table cell header renderer */
         final TableCellRenderer tableCellRenderer;
-        /** internal string buffer */
-        final StringBuilder _buffer = new StringBuilder(128);
+        /** optional header customizer */
+        private BasicTableColumnModel tableHeaderCustomizer = null;
 
         /**
          * Protected constructor
          * @param tableCellRenderer parent  table cell header renderer
+         * @param tableHeaderCustomizer
          */
-        SortableHeaderRenderer(final TableCellRenderer tableCellRenderer) {
+        SortableHeaderRenderer(final TableCellRenderer tableCellRenderer, final BasicTableColumnModel tableHeaderCustomizer) {
             this.tableCellRenderer = tableCellRenderer;
+            this.tableHeaderCustomizer = tableHeaderCustomizer;
         }
 
         @Override
@@ -637,38 +886,27 @@ public final class BasicTableSorter extends AbstractTableModel {
             final Component c = tableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             if (c instanceof JLabel) {
-                final JLabel label = (JLabel) c;
-                label.setHorizontalTextPosition(JLabel.LEFT);
+                final JLabel jLabel = (JLabel) c;
+                jLabel.setHorizontalTextPosition(JLabel.LEFT);
 
                 final int colIndex = table.convertColumnIndexToModel(column);
 
                 if (colIndex != -1) {
-                    label.setIcon(getHeaderRendererIcon(colIndex, label.getFont().getSize()));
+                    jLabel.setIcon(getHeaderRendererIcon(colIndex, jLabel.getFont().getSize()));
 
-                    if (false) {
+                    if (tableHeaderCustomizer != null) {
                         // Set the column header tooltip (with unit if any)
-                        final int viewColumn = columnModelIndex(colIndex);
+                        final int modelColumn = columnModelIndex(colIndex);
 
-                        // TODO: use a column metadata provider to get such information
-                        String tooltip = "";
-                        final String unit = "";
-
-                        // If a unit was found
-                        if (unit.length() != 0) {
-                            final StringBuilder sb = _buffer;
-
-                            // If a description was found
-                            if (tooltip.length() != 0) {
-                                // Add a space separator between description and unit
-                                sb.append(tooltip).append(' ');
-                            }
-
-                            // Append the unit
-                            tooltip = sb.append('(').append(unit).append(')').toString();
-
-                            sb.setLength(0); // recycle buffer
+                        // use the column header customizer to get such information
+                        String label = tableHeaderCustomizer.getColumnLabel(modelColumn);
+                        if (!StringUtils.isEmpty(label)) {
+                            jLabel.setText(label);
                         }
-                        label.setToolTipText(tooltip);
+                        String tooltip = tableHeaderCustomizer.getColumnTooltipText(modelColumn);
+                        if (!StringUtils.isEmpty(tooltip)) {
+                            jLabel.setToolTipText(tooltip);
+                        }
                     }
                 }
             }
@@ -698,4 +936,87 @@ public final class BasicTableSorter extends AbstractTableModel {
             return "Directive{" + "column=" + column + ", colName=" + colName + ", direction=" + direction + '}';
         }
     }
+
+    private final class DragColumnHandler implements TableColumnModelListener {
+
+        /* members */
+        private final TableColumnModel columnModel;
+        private int lastFrom;
+        private int lastTo;
+        private boolean enabled = false;
+        private boolean changed = false;
+
+        DragColumnHandler(final TableColumnModel columnModel) {
+            this.columnModel = columnModel;
+        }
+
+        private void reset() {
+            lastFrom = -1;
+            lastTo = -1;
+            changed = false;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("setEnabled: {}", enabled);
+            }
+            if (!enabled) {
+                reset();
+            }
+        }
+
+        private void setChanged(boolean changed) {
+            this.changed = changed;
+        }
+
+        public void handleChanged() {
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("handleChanged: {}", changed);
+            }
+            if (changed) {
+                changed = false;
+                handleDraggedColumnMoved(columnModel);
+            }
+        }
+
+        private void verifyChange(int from, int to) {
+            // ignore repeated events:
+            if ((from != to) && ((from != lastFrom) || (to != lastTo))) {
+                lastFrom = from;
+                lastTo = to;
+
+                // mark changed state:
+                setChanged(true);
+            }
+        }
+
+        @Override
+        public void columnMoved(final TableColumnModelEvent e) {
+            if (enabled) {
+                verifyChange(e.getFromIndex(), e.getToIndex());
+            }
+        }
+
+        @Override
+        public void columnAdded(TableColumnModelEvent e) {
+        }
+
+        @Override
+        public void columnRemoved(TableColumnModelEvent e) {
+        }
+
+        @Override
+        public void columnMarginChanged(ChangeEvent e) {
+        }
+
+        @Override
+        public void columnSelectionChanged(ListSelectionEvent e) {
+        }
+    }
+
 }

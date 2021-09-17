@@ -12,9 +12,9 @@ Your app then feels better to the end user (by truly respecting its platform of 
 Documentation
 =============
 
-Lets get started by browsing the [developer documentation](https://github.com/JMMC-OpenDev/jMCS/wiki/jMCS-Developer-Documentation) to further discover what jMCS provides...
+Lets get started by browsing the [developer documentation](https://github.com/JMMC-OpenDev/jMCS_old/wiki/jMCS-Developer-Documentation) to further discover what jMCS provides...
 
-The `javadoc` is also included in our [releases](https://github.com/JMMC-OpenDev/jMCS/releases).
+The `javadoc` is also included in our [releases](https://github.com/JMMC-OpenDev/jMCS_old/releases).
 
 License
 =======
@@ -29,7 +29,7 @@ Build
 jMCS uses `maven` to build from sources. Please type the following commands:
 
 ```
-git clone https://github.com/JMMC-OpenDev/jMCS.git
+git clone https://github.com/JMMC-OpenDev/jmcs.git
 
 
 # first time only: install parent-pom and missing libraries in maven repositories:

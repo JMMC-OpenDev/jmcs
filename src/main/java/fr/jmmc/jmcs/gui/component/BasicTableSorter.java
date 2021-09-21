@@ -615,7 +615,7 @@ public final class BasicTableSorter extends AbstractTableModel {
                     // If no column Id was found for the given column name
                     if (columnId == -1) {
                         if (_ignoreMissingColumns.add(columnName)) {
-                            _logger.warn("No column named '{}'.", columnName);
+                            _logger.debug("No column named '{}'.", columnName);
                         }
                     } else {
                         viewIndex.add(NumberUtils.valueOf(columnId));

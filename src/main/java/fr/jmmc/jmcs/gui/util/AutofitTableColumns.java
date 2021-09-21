@@ -55,7 +55,7 @@ public final class AutofitTableColumns {
     /** internal debug flag */
     private static final boolean DEBUG = false;
     /** maximum width for a column header */
-    private static final int MAX_WIDTH_HEADER = 50;
+    private static final int MAX_WIDTH_HEADER = 200;
     /** maximum width for any column */
     private static final int MAX_WIDTH = 2000;
     /** header padding */

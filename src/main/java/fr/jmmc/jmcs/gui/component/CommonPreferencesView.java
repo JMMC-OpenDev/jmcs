@@ -288,14 +288,24 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
     Vector<String> generateLAF() {
         final UIManager.LookAndFeelInfo[] lafInfos = UIManager.getInstalledLookAndFeels();
 
-        final Vector<String> model = new Vector<String>(lafInfos.length);
+        final Vector<String> model = new Vector<String>(lafInfos.length + 1);
 
         for (UIManager.LookAndFeelInfo lookAndFeelInfo : lafInfos) {
             model.add(lookAndFeelInfo.getName());
-            lafNames.put(lookAndFeelInfo.getClassName(), lookAndFeelInfo.getName());
-            lafClassNames.put(lookAndFeelInfo.getName(), lookAndFeelInfo.getClassName());
+            addLaf(lookAndFeelInfo.getName(), lookAndFeelInfo.getClassName());
+        }
+        
+        // Always add current LAF:
+        final LookAndFeel laf = UIManager.getLookAndFeel();
+        if (!model.contains(laf.getName())) {
+            model.add(0, laf.getName());
+            addLaf(laf.getName(), laf.getClass().getName());
         }
         return model;
     }
 
+    private void addLaf(final String name, final String className) {
+        lafNames.put(className, name);
+        lafClassNames.put(name, className);
+    }
 }

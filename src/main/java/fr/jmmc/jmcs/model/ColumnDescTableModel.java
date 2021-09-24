@@ -39,6 +39,7 @@ public abstract class ColumnDescTableModel extends AbstractTableModel implements
         return this.listColumnDesc.get(columnIndex);
     }
 
+    /* TableModel interface implementation */
     @Override
     public final int getColumnCount() {
         return listColumnDesc.size();
@@ -54,7 +55,7 @@ public abstract class ColumnDescTableModel extends AbstractTableModel implements
         return getColumnDesc(columnIndex).getDataClass();
     }
 
-    // BasicTableColumnModel impl    
+    /* BasicTableColumnModel interface implementation */
     @Override
     public final String getColumnLabel(final int columnIndex) {
         return getColumnDesc(columnIndex).getLabel();

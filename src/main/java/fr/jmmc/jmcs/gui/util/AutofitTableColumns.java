@@ -124,14 +124,21 @@ public final class AutofitTableColumns {
             // STEP ONE : Work out the column widths
             final int columnWidth[] = new int[columnCount];
 
+            int visibleCount = 0;
+
             for (int i = 0; i < columnCount; i++) {
                 final int width = getMaxColumnWidth(aTable, i, includeColumnHeaderWidth, columnPadding, useRendererText);
                 columnWidth[i] = Math.min(width, MAX_WIDTH);
-                tableWidth += columnWidth[i];
+                if (columnWidth[i] != 0) {
+                    visibleCount++;
+                    tableWidth += columnWidth[i];
+                }
             }
 
-            // account for cell spacing too
-            tableWidth += ((columnCount - 1) * interCellSpacing.width);
+            if (visibleCount > 1) {
+                // account for cell spacing too
+                tableWidth += ((visibleCount - 1) * interCellSpacing.width);
+            }
 
             // STEP TWO : Dynamically resize each column
             // try changing the size of the column names area
@@ -174,52 +181,6 @@ public final class AutofitTableColumns {
                                          final boolean includeColumnHeaderWidth, final int columnPadding, final boolean useRendererText) {
 
         int maxWidth = 0;
-        int textWidth = 0;
-
-        Component comp;
-        JTextComponent jtextComp;
-        JLabel jLabelComp;
-        FontMetrics fontMetrics;
-
-        final TableColumn column = aTable.getColumnModel().getColumn(columnNo);
-
-        if (includeColumnHeaderWidth) {
-            final TableCellRenderer headerRenderer = column.getHeaderRenderer();
-
-            if (headerRenderer != null) {
-                comp = headerRenderer.getTableCellRendererComponent(aTable, column.getHeaderValue(), false, false, 0, columnNo);
-
-                if (comp instanceof JTextComponent) {
-                    jtextComp = (JTextComponent) comp;
-
-                    if (!StringUtils.isEmpty(jtextComp.getText())) {
-                        fontMetrics = jtextComp.getFontMetrics(jtextComp.getFont());
-
-                        textWidth = getHeaderWidth(fontMetrics, jtextComp.getText());
-                    }
-                } else if (comp != null) {
-                    textWidth = comp.getPreferredSize().width;
-                }
-            } else {
-                try {
-                    final String text = (String) column.getHeaderValue();
-
-                    if (!StringUtils.isEmpty(text)) {
-                        final JTableHeader tableHeader = aTable.getTableHeader();
-
-                        fontMetrics = tableHeader.getFontMetrics(tableHeader.getFont());
-
-                        textWidth = getHeaderWidth(fontMetrics, text);
-                    }
-                } catch (ClassCastException ce) {
-                    // Can't work out the header column width.
-                    textWidth = 0;
-                }
-            }
-            maxWidth = textWidth;
-        }
-
-        int cellWidth;
 
         final int size = aTable.getRowCount();
 
@@ -247,66 +208,101 @@ public final class AutofitTableColumns {
         // cache cell renderer :
         TableCellRenderer tableCellRenderer = null;
         // cache fontMetrics :
-        fontMetrics = null;
-
-        Object cellValue;
-        String text;
+        FontMetrics fontMetrics = null;
 
         // skip first cell :
         for (int i = start; i < size; i += step) {
             if (tableCellRenderer == null) {
                 tableCellRenderer = aTable.getCellRenderer(i, columnNo);
             }
-            cellValue = aTable.getValueAt(i, columnNo);
+            Object cellValue = aTable.getValueAt(i, columnNo);
 
             if (cellValue != null) {
-                comp = tableCellRenderer.getTableCellRendererComponent(aTable, cellValue, false, false, i, columnNo);
+                Component comp = tableCellRenderer.getTableCellRendererComponent(aTable, cellValue, false, false, i, columnNo);
 
                 if (comp instanceof DefaultTableCellRenderer) {
-                    jLabelComp = ((DefaultTableCellRenderer) comp);
+                    JLabel jLabelComp = ((DefaultTableCellRenderer) comp);
 
                     if (fontMetrics == null) {
                         fontMetrics = jLabelComp.getFontMetrics(jLabelComp.getFont());
                     }
 
-                    text = (useRendererText) ? jLabelComp.getText() : cellValue.toString();
+                    String text = (useRendererText) ? jLabelComp.getText() : cellValue.toString();
 
                     if (useRendererText && (text != null) && (text.length() != 0) && (text.charAt(0) == '<') && (text.startsWith("<html>"))) {
                         text = cellValue.toString();
                     }
 
                     // Hack for double values (truncated):
-                    textWidth = SwingUtilities.computeStringWidth(fontMetrics, text);
+                    int textWidth = SwingUtilities.computeStringWidth(fontMetrics, text);
 
                     maxWidth = Math.max(maxWidth, textWidth);
 
                 } else if (comp instanceof JTextComponent) {
-                    jtextComp = (JTextComponent) comp;
+                    JTextComponent jtextComp = (JTextComponent) comp;
 
                     if (fontMetrics == null) {
                         fontMetrics = jtextComp.getFontMetrics(jtextComp.getFont());
                     }
 
-                    text = (useRendererText) ? jtextComp.getText() : cellValue.toString();
+                    String text = (useRendererText) ? jtextComp.getText() : cellValue.toString();
 
                     if (useRendererText && (text != null) && (text.length() != 0) && (text.charAt(0) == '<') && (text.startsWith("<html>"))) {
                         text = cellValue.toString();
                     }
 
-                    textWidth = SwingUtilities.computeStringWidth(fontMetrics, text);
+                    int textWidth = SwingUtilities.computeStringWidth(fontMetrics, text);
 
                     maxWidth = Math.max(maxWidth, textWidth);
 
                 } else if (comp != null) {
-                    cellWidth = comp.getPreferredSize().width;
+                    int cellWidth = comp.getPreferredSize().width;
 
                     maxWidth = Math.max(maxWidth, cellWidth);
                 }
             }
         }
-
         maxWidth += columnPadding;
 
+        if (includeColumnHeaderWidth) {
+            final TableColumn column = aTable.getColumnModel().getColumn(columnNo);
+
+            final TableCellRenderer headerRenderer = column.getHeaderRenderer();
+
+            int textWidth = 0;
+
+            if (headerRenderer != null) {
+                Component comp = headerRenderer.getTableCellRendererComponent(aTable, column.getHeaderValue(), false, false, 0, columnNo);
+
+                if (comp instanceof JTextComponent) {
+                    JTextComponent jtextComp = (JTextComponent) comp;
+
+                    if (!StringUtils.isEmpty(jtextComp.getText())) {
+                        fontMetrics = jtextComp.getFontMetrics(jtextComp.getFont());
+
+                        textWidth = getHeaderWidth(fontMetrics, jtextComp.getText());
+                    }
+                } else if (comp != null) {
+                    textWidth = comp.getPreferredSize().width;
+                }
+            } else {
+                try {
+                    String text = (String) column.getHeaderValue();
+
+                    if (!StringUtils.isEmpty(text)) {
+                        final JTableHeader tableHeader = aTable.getTableHeader();
+
+                        fontMetrics = tableHeader.getFontMetrics(tableHeader.getFont());
+
+                        textWidth = getHeaderWidth(fontMetrics, text);
+                    }
+                } catch (ClassCastException ce) {
+                    // Can't work out the header column width.
+                    textWidth = 0;
+                }
+            }
+            maxWidth = Math.max(maxWidth, textWidth);
+        }
         return maxWidth;
     }
 

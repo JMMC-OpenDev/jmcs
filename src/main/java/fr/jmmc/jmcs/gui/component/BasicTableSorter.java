@@ -169,7 +169,9 @@ public final class BasicTableSorter extends AbstractTableModel {
             this.tableHeaderCustomizer = tableHeaderCustomizer;
         }
 
-        tableModel.addTableModelListener(tableModelListener);
+        if (tableModel != null) {
+            tableModel.addTableModelListener(tableModelListener);
+        }
         setTableHeader(tableHeader);
         setTableModel(tableModel);
 
@@ -526,34 +528,6 @@ public final class BasicTableSorter extends AbstractTableModel {
         computeColumnsIndirectionArray();
 
         fireTableStructureChanged();
-    }
-
-    /**
-     * @return visible column names (ordered) as String (| separator)
-     */
-    public String getVisibleColumnNamesAsString() {
-        if (visibleColumnNames == null) {
-            return null;
-        }
-        final StringBuilder sb = new StringBuilder(256);
-        for (String c : visibleColumnNames) {
-            sb.append(c).append('|');
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Defines the visible column names (ordered)
-     * @param visibleColumnNamesString visible column names (ordered) as String (| separator)
-     */
-    public void setVisibleColumnNamesAsString(final String visibleColumnNamesString) {
-        final List<String> columnNames;
-        if (StringUtils.isEmpty(visibleColumnNamesString)) {
-            columnNames = null;
-        } else {
-            columnNames = Arrays.asList(visibleColumnNamesString.split("\\|"));
-        }
-        setVisibleColumnNames(columnNames);
     }
 
     void handleDraggedColumnMoved(final TableColumnModel columnModel) {

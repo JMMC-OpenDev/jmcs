@@ -546,6 +546,24 @@ public abstract class Preferences extends Observable {
     }
 
     /**
+     * Set a preference value and save preferences state to file
+     * The listeners are notified only for preference changes (multiple calls with
+     * the same value does NOT trigger notifications).
+     *
+     * @param preferenceName the preference name.
+     * @param preferenceValue the preference value.
+     */
+    final public void setPreferenceAndSaveToFile(Object preferenceName, Object preferenceValue) {
+        try {
+            setPreference(preferenceName, preferenceValue);
+            // force persistence:
+            saveToFile();
+        } catch (PreferencesException pe) {
+            _logger.error("Could not store preference '{}' :", preferenceName, pe);
+        }
+    }
+
+    /**
      * Set a default preference value.
      * The listeners are notified only for preference changes (multiple calls with
      * the same value does NOT trigger notifications).
@@ -947,15 +965,14 @@ public abstract class Preferences extends Observable {
      * @return one List&lt;String&gt; object representing the preference value.
      *
      * @throws MissingPreferenceException if the preference value is missing
-     * @throws PreferencesException if the preference value is not a List&lt;String&gt;
      */
-    final public List<String> getPreferenceAsStringList(final Object preferenceName) throws MissingPreferenceException, PreferencesException {
+    final public List<String> getPreferenceAsStringList(final Object preferenceName) throws MissingPreferenceException {
 
         final String value = getPreference(preferenceName);
 
         /* ignore empty string */
         if (StringUtils.isEmpty(value)) {
-            return Collections.emptyList();
+            return new ArrayList<String>(0);
         }
         return Arrays.asList(value.split(LIST_SPLITTER));
     }

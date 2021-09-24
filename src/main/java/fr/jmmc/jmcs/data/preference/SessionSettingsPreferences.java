@@ -233,8 +233,6 @@ public final class SessionSettingsPreferences extends Preferences {
             values = getInstance().getPreferenceAsStringList(preferenceName);
         } catch (MissingPreferenceException mpe) {
             _logger.debug("No recent values found in the preference '{}'", preferenceName, mpe);
-        } catch (PreferencesException pe) {
-            _logger.warn("Could not read recent values in the preference '{}'", preferenceName, pe);
         }
 
         if ((values == null) || (values.isEmpty())) {

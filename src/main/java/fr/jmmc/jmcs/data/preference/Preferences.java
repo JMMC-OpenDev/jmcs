@@ -972,7 +972,7 @@ public abstract class Preferences extends Observable {
 
         /* ignore empty string */
         if (StringUtils.isEmpty(value)) {
-            return new ArrayList<String>(0);
+            return Collections.emptyList();
         }
         return Arrays.asList(value.split(LIST_SPLITTER));
     }

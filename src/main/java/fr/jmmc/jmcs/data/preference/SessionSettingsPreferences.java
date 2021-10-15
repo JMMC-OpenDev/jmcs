@@ -83,7 +83,7 @@ public final class SessionSettingsPreferences extends Preferences {
      * Return the singleton instance of SessionPersistencePreferences.
      * @return the singleton instance
      */
-    synchronized static SessionSettingsPreferences getInstance() {
+    public synchronized static SessionSettingsPreferences getInstance() {
         // Build new reference if singleton does not already exist
         // or return previous reference
         if (_singleton == null) {
@@ -294,7 +294,11 @@ public final class SessionSettingsPreferences extends Preferences {
         }
 
         try {
-            return getInstance().getPreferenceAsDimension(computeDimensionKey(key), true);
+            final Dimension dimension = getInstance().getPreferenceAsDimension(computeDimensionKey(key), true);
+
+            _logger.debug("loadDimension('{}') = {}", key, dimension);
+
+            return dimension;
         } catch (MissingPreferenceException mpe) {
             _logger.debug("No dimension found for window key '{}'", key, mpe);
         } catch (PreferencesException pe) {

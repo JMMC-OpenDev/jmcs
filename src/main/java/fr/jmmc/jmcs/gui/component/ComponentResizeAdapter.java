@@ -31,12 +31,18 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component adapter to force a resize-able component to have a minimal dimension.
  * @author Laurent BOURGES.
  */
 public final class ComponentResizeAdapter extends ComponentAdapter {
+
+    private final static boolean DO_TRACE = "true".equalsIgnoreCase(System.getProperty("jmcs.component.resize", "false"));
+    /** Logger */
+    private static final Logger _logger = LoggerFactory.getLogger(ComponentResizeAdapter.class.getName());
 
     /** minimal dimension to respect */
     private final Dimension _dimension;
@@ -47,6 +53,9 @@ public final class ComponentResizeAdapter extends ComponentAdapter {
      */
     public ComponentResizeAdapter(final Dimension dim) {
         _dimension = dim;
+        if (DO_TRACE) {
+            _logger.info("ComponentResizeAdapter: new {}", dim);
+        }
     }
 
     /**
@@ -65,6 +74,9 @@ public final class ComponentResizeAdapter extends ComponentAdapter {
         final int nh = (h < _dimension.height) ? _dimension.height : h;
 
         if (nw != w || nh != h) {
+            if (DO_TRACE) {
+                _logger.info("ComponentResizeAdapter: setSize {} x {}", nw, nh);
+            }
             c.setSize(nw, nh);
         }
     }

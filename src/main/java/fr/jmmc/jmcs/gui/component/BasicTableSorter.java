@@ -741,6 +741,12 @@ public final class BasicTableSorter extends AbstractTableModel {
             JTableHeader h = (JTableHeader) e.getSource();
             TableColumnModel columnModel = h.getColumnModel();
             int viewColumn = columnModel.getColumnIndexAtX(e.getX());
+            
+            if (viewColumn == -1) {
+                // ignore click out of a table column
+                return;
+            }
+            
             int column = columnModel.getColumn(viewColumn).getModelIndex();
 
             if (column != -1) {

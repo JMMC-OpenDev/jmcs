@@ -26,14 +26,21 @@ public class TableEditorPanel extends javax.swing.JPanel {
 
     /**
      * Display the table editor using the given target name as the initial selected target
-     * @param allColumns all available columns (visible + hidden)
-     * @param visibleColumns visible columns
+     * @param prevAllColumns all available columns (visible + hidden)
+     * @param prevVisibleColumns visible columns
+     * @param defaultColumns default columns for reset button
+     * @param newAllColumns empty list that will store updated allColumns.
+     * @param newVisibleColumns empty list that will store updated visibleColumns
      * @param dialogSizePref optional preference key to restore dialog size
-     * @return updated visible column names or null
+     * @return void, the return values are in params newAllColumns & newVisibleColumns.
      */
-    public static List<String> showEditor(final List<String> allColumns,
-                                          final List<String> visibleColumns,
-                                          final String dialogSizePref) {
+    public static void showEditor(
+            final List<String> prevAllColumns,
+            final List<String> prevVisibleColumns,
+            final List<String> defaultColumns,
+            final List<String> newAllColumns,
+            final List<String> newVisibleColumns,
+            final String dialogSizePref) {
 
         // 1. Create the dialog (modal):
         final JDialog dialog = new JDialog(App.getFrame(), "Edit table columns", true);
@@ -46,7 +53,8 @@ public class TableEditorPanel extends javax.swing.JPanel {
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // 3. Create components and put them in the dialog
-        final TableEditorPanel tableEditorPanel = new TableEditorPanel(dialog, allColumns, visibleColumns);
+        final TableEditorPanel tableEditorPanel = 
+                new TableEditorPanel(dialog, prevAllColumns, prevVisibleColumns, defaultColumns);
         dialog.add(tableEditorPanel);
 
         // 4. Size the dialog.
@@ -65,9 +73,9 @@ public class TableEditorPanel extends javax.swing.JPanel {
 
         // when dialog returns OK, set the chosen columns
         if (tableEditorPanel.isResult()) {
-            return tableEditorPanel.getVisibleColumns();
+            newAllColumns.addAll(tableEditorPanel.getNewAllColumns());
+            newVisibleColumns.addAll(tableEditorPanel.getNewVisibleColumns());
         }
-        return null;
     }
 
     /* members */
@@ -82,17 +90,23 @@ public class TableEditorPanel extends javax.swing.JPanel {
     private boolean result = false;
     /** list of all columns (used by reset) */
     private final List<String> allColumns;
+    
+     /** default columns for reset button. */
+    private final List<String> defaultColumns;
 
     /**
      * Constructor
      * @param dialog Reference to the parent dialog box to handle its events
      * @param allColumns all available columns (visible + hidden)
      * @param visibleColumns visible columns
+     * @param defaultColumns default columns for reset button
      */
-    private TableEditorPanel(final JDialog dialog, final List<String> allColumns, final List<String> visibleColumns) {
+    private TableEditorPanel(final JDialog dialog, final List<String> allColumns, final List<String> visibleColumns,
+            final List<String> defaultColumns) {
         initComponents();
         this.dialog = dialog;
         this.allColumns = allColumns;
+        this.defaultColumns = defaultColumns;
 
         // Fill with available columns, but remove the ones already displayed
         allColumns.forEach(modelHidden::addElement);
@@ -291,7 +305,7 @@ public class TableEditorPanel extends javax.swing.JPanel {
     private void jButtonResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonResetActionPerformed
         modelHidden.clear();
         modelVisible.clear();
-        allColumns.forEach(modelVisible::addElement);
+        defaultColumns.forEach(modelVisible::addElement);
     }//GEN-LAST:event_jButtonResetActionPerformed
 
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
@@ -369,7 +383,17 @@ public class TableEditorPanel extends javax.swing.JPanel {
         jListHidden.clearSelection();
     }//GEN-LAST:event_jListVisibleFocusGained
 
-    List<String> getVisibleColumns() {
+    List<String> getNewAllColumns() {
+        // getting all visibles
+        List<String> newAllColumns = getNewVisibleColumns();
+        // adding all hiddens
+        for (Enumeration<String> e = this.modelHidden.elements(); e.hasMoreElements();) {
+            newAllColumns.add(e.nextElement());
+        }
+        return newAllColumns;
+    }
+    
+    List<String> getNewVisibleColumns() {
         List<String> availableColumns = new ArrayList<>(modelVisible.getSize());
         for (Enumeration<String> e = modelVisible.elements(); e.hasMoreElements();) {
             availableColumns.add(e.nextElement());

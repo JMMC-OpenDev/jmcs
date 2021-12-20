@@ -1,6 +1,5 @@
 package fr.jmmc.jmcs.gui.component;
 
-import fr.jmmc.jmcs.util.CollectionUtils;
 import fr.jmmc.jmcs.util.NumberUtils;
 import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Color;
@@ -572,7 +571,22 @@ public final class BasicTableSorter extends AbstractTableModel {
         final int nbOfModelColumns = tableModel.getColumnCount();
 
         // Either simple or detailed views
-        if (!CollectionUtils.isEmpty(visibleColumnNames) && (nbOfModelColumns != 0)) {
+        if (visibleColumnNames == null) {
+            // Full view, with all columns
+
+            // allocate corresponding memory for the indirection array
+            _viewIndex = new int[nbOfModelColumns];
+
+            // Generate a 'one to one' indirection array to show every single column
+            for (int i = 0; i < nbOfModelColumns; i++) {
+                _viewIndex[i] = i;
+            }
+        }
+        else if (nbOfModelColumns == 0 || visibleColumnNames.isEmpty()) {
+            // empty view
+            _viewIndex = new int[0];
+        }
+        else {
             _logger.debug("Columns = {}", visibleColumnNames);
 
             // Get the selected ordered column name table
@@ -607,15 +621,6 @@ public final class BasicTableSorter extends AbstractTableModel {
             // Copy back all the meaningfull result in the rightly sized array
             for (int i = 0; i < rightSize; i++) {
                 _viewIndex[i] = viewIndex.get(i).intValue();
-            }
-        } else { // Full view, with all columns
-
-            // allocate corresponding memory for the indirection array
-            _viewIndex = new int[nbOfModelColumns];
-
-            // Generate a 'one to one' indirection array to show every single column
-            for (int i = 0; i < nbOfModelColumns; i++) {
-                _viewIndex[i] = i;
             }
         }
     }

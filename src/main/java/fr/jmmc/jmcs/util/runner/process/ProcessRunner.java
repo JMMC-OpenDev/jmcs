@@ -107,17 +107,14 @@ public final class ProcessRunner {
                 // capture stderr :
                 errorRedirect.setInputStream(process.getErrorStream());
 
-                Future<?> outputFuture = null;
-                Future<?> errorFuture = null;
-
                 // start StreamRedirectors and place in runnable state :
                 _logger.debug("ProcessRunner.execute : starting outputRedirect task ...");
 
-                outputFuture = ThreadExecutors.getGenericExecutor().submit(outputRedirect);
+                Future<?> outputFuture = ThreadExecutors.getGenericExecutor().submit(outputRedirect);
 
                 _logger.debug("ProcessRunner.execute : starting errorRedirect task ...");
 
-                errorFuture = ThreadExecutors.getGenericExecutor().submit(errorRedirect);
+                Future<?> errorFuture = ThreadExecutors.getGenericExecutor().submit(errorRedirect);
 
                 _logger.debug("ProcessRunner.execute : waitFor process to end ...");
 
@@ -127,7 +124,6 @@ public final class ProcessRunner {
                 // calls thread.join to be sure that other threads finish before leaving from here :
                 // note: this thread is waiting FOR EVER until stdout/stderr streams are closed 
                 // by the child process itself
-
                 _logger.debug("ProcessRunner.execute : join output Redirect ...");
 
                 if (USE_TIMEOUT) {

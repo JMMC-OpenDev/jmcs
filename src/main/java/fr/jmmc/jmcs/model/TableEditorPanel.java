@@ -79,6 +79,11 @@ public class TableEditorPanel extends javax.swing.JPanel {
             newAllColumns.addAll(tableEditorPanel.getNewAllColumns());
             newVisibleColumns.addAll(tableEditorPanel.getNewVisibleColumns());
         }
+        else {
+            // return the initial lists
+            newAllColumns.addAll(prevAllColumns);
+            newVisibleColumns.addAll(prevVisibleColumns);
+        }
     }
 
     /* members */
@@ -91,8 +96,6 @@ public class TableEditorPanel extends javax.swing.JPanel {
 
     /** editor result = true if the user validates the inputs */
     private boolean result = false;
-    /** list of all columns (used by reset) */
-    private final List<String> allColumns;
     
      /** default all columns for reset button. */
     private final List<String> defaultAllColumns;
@@ -104,24 +107,24 @@ public class TableEditorPanel extends javax.swing.JPanel {
     /**
      * Constructor
      * @param dialog Reference to the parent dialog box to handle its events
-     * @param allColumns all available columns (visible + hidden)
-     * @param visibleColumns visible columns
+     * @param initialAllColumns all available columns (visible + hidden)
+     * @param initialVisibleColumns visible columns
      * @param defaultAllColumns default all columns (reset button)
      * @param defaultVisibleColumns default visible columns (reset button)
      */
-    private TableEditorPanel(final JDialog dialog, final List<String> allColumns, final List<String> visibleColumns,
+    private TableEditorPanel(final JDialog dialog, 
+            final List<String> initialAllColumns, final List<String> initialVisibleColumns,
             final List<String> defaultAllColumns, final List<String> defaultVisibleColumns) {
         initComponents();
         this.dialog = dialog;
-        this.allColumns = allColumns;
+        
         this.defaultAllColumns = defaultAllColumns;
         this.defaultVisibleColumns = defaultVisibleColumns;
 
         // Fill with available columns, but remove the ones already displayed
-        allColumns.forEach(modelHidden::addElement);
-        visibleColumns.forEach(modelHidden::removeElement);
-
-        visibleColumns.forEach(modelVisible::addElement);
+        initialAllColumns.forEach(modelHidden::addElement);
+        initialVisibleColumns.forEach(modelHidden::removeElement);
+        initialVisibleColumns.forEach(modelVisible::addElement);
 
         jListHidden.setModel(modelHidden);
         jListVisible.setModel(modelVisible);

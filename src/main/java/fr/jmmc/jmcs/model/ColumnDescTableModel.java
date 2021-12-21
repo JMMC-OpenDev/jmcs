@@ -19,6 +19,7 @@ public abstract class ColumnDescTableModel extends AbstractTableModel implements
     /** temporary buffer */
     protected final StringBuilder sbTmp = new StringBuilder(256);
 
+    @SuppressWarnings("CollectionWithoutInitialCapacity")
     public ColumnDescTableModel() {
         super();
         listColumnDesc = new ArrayList<>();

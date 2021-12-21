@@ -33,7 +33,6 @@ public class TableEditorPanel extends javax.swing.JPanel {
      * @param newAllColumns empty list that will store updated allColumns.
      * @param newVisibleColumns empty list that will store updated visibleColumns
      * @param dialogSizePref optional preference key to restore dialog size
-     * @return void, the return values are in params newAllColumns & newVisibleColumns.
      */
     public static void showEditor(
             final List<String> prevAllColumns,

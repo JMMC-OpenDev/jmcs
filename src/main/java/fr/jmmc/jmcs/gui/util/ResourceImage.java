@@ -44,7 +44,9 @@ public enum ResourceImage {
     WARNING_ICON("warning_icon.png"),
     ERROR_ICON("error-icon.png"),
     UP_ARROW("up_arrow.png"),
-    DOWN_ARROW("down_arrow.png");
+    DOWN_ARROW("down_arrow.png"),
+    OK_MARK("ok-mark.png"),
+    KO_MARK("x-mark.png");
     /** Common resource directory containing icon files */
     private final static String IMAGE_RESOURCE_COMMON_PATH = "fr/jmmc/jmcs/resource/image/";
     /** Loaded icon resource */
@@ -71,7 +73,7 @@ public enum ResourceImage {
      */
     public static void main(String[] args) {
         for (ResourceImage rsc : ResourceImage.values()) {
-            System.out.println("Resource '" + rsc.name() + "' -> '" + rsc.icon() 
+            System.out.println("Resource '" + rsc.name() + "' -> '" + rsc.icon()
                     + "': (" + rsc.icon().getIconWidth() + " x " + rsc.icon().getIconHeight() + ").");
         }
     }

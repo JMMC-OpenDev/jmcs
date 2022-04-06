@@ -485,7 +485,7 @@ public class MainMenuBar extends JMenuBar {
             action = _registrar.get(menu.getClasspath(), menu.getAction());
             if (action == null) {
                 // Open a feeback report if an action is not found
-                throw new IllegalStateException("Action [" + menu.getClasspath() + "," + menu.getAction() + "] not found !");
+                throw new IllegalStateException("Action [" + menu.getClasspath() + "." + menu.getAction() + "] not found !");
             }
 
             // If the current action is the one dedicated to file opening

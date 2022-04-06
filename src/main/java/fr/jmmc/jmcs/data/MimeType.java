@@ -54,6 +54,8 @@ public final class MimeType {
     public final static MimeType SEARCHCAL_CALIBRATORLIST = MimeType.add("SEARCHCAL_CALIBRATORLIST", "application/x-searchcal+votable+xml", "SearchCal Calibrator List", "scvot.gz", "scvot");
     /** MimeType associated to Observation settings */
     public final static MimeType ASPRO_OBSERVATION = MimeType.add("ASPRO_OBSERVATION", "application/x-aspro+xml", "Aspro Observation Settings", "asprox");
+    /** MimeType associated to Interferometer settings */
+    public final static MimeType ASPRO_CONFIGURATION = MimeType.add("ASPRO_CONFIGURATION", "application/x-aspro+conf+xml", "Aspro Interferometer Settings", "xml");
     /** MimeType associated to Observing Block definition */
     public final static MimeType ASPRO_OB_XML = MimeType.add("ASPRO_OBSERVING_BLOCK", "application/x-aspro+ob+xml", "Aspro Observing Blocks", "obxml");
     /** MimeType associated to XML LITpro settings */

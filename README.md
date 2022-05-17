@@ -1,4 +1,4 @@
-jMCS
+jMCS    ![JMMC logo](doc/JMMC-logo.jpg)
 ====
 
 Java framework from [JMMC](http://www.jmmc.fr), to homogenize your GUI across all the 3 main desktop OS, and further integrates your app to them.
@@ -59,5 +59,10 @@ To skip tests, just run:
 mvn clean install -DskipTests
 ```
 
-[![Build Status](https://travis-ci.org/gmella/jMCS.svg?branch=master)](https://travis-ci.org/gmella/jMCS)
+Requirements:
+- OpenJDK 8+
+- Maven 3.6+
+
+See [JMMC Java Build](https://github.com/JMMC-OpenDev/jmmc-java-build)
+See [CI nightly builds](https://github.com/JMMC-OpenDev/jmmc-java-build/actions/workflows/build.yml)
 

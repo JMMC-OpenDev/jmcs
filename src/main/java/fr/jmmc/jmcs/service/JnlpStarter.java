@@ -96,9 +96,9 @@ public final class JnlpStarter {
         // command line: 'javaws <jnlpUrl>'
         final String[] cmd;
         if (JNLP_VERBOSE) {
-            cmd = new String[]{JAVAWS_CMD, "-verbose", jnlpUrl};
+            cmd = new String[]{JAVAWS_CMD, "-verbose", "-Xtrustall", "-allowredirect", "-xml", jnlpUrl};
         } else {
-            cmd = new String[]{JAVAWS_CMD, jnlpUrl};
+            cmd = new String[]{JAVAWS_CMD, "-Xtrustall", "-allowredirect", "-xml", jnlpUrl};
         }
 
         LocalLauncher.prepareChildJob(jobContext, TASK_NAME, cmd);

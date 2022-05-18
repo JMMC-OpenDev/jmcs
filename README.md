@@ -12,9 +12,21 @@ Your app then feels better to the end user (by truly respecting its platform of 
 Documentation
 =============
 
-Lets get started by browsing the [developer documentation](https://github.com/JMMC-OpenDev/jMCS_old/wiki/jMCS-Developer-Documentation) to further discover what jMCS provides...
+The `javadoc` is included in our [releases](https://github.com/JMMC-OpenDev/jMCS_old/releases).
 
-The `javadoc` is also included in our [releases](https://github.com/JMMC-OpenDev/jMCS_old/releases).
+But let's get started by browsing next sections to further discover what jMCS provides:
+* [Application Description](doc/Application-Description.md)
+* [Application Startup](doc/Application-Startup.md)
+* [GUI Facilities](doc/GUI-Facilities.md)
+* [jMCS Developer Documentation](doc/jMCS-Developer-Documentation.md)
+* [JMMC logo.jpg](doc/JMMC-logo.jpg)
+* [Logging Facilities](doc/Logging-Facilities.md)
+* [Menu Bar Description](doc/Menu-Bar-Description.md)
+* [Networking Facilities](doc/Networking-Facilities.md)
+* [others software](doc/others-software.md)
+* [User Preferences Facilities](doc/User-Preferences-Facilities.md)
+* [Utility Classes](doc/Utility-Classes.md)
+
 
 License
 =======

@@ -91,6 +91,8 @@ public enum SampCapability {
     LITPRO_START_SETTING("fr.jmmc.litpro.start.setting"),
     /** JMMC LITpro load usermodel MType */
     LITPRO_LOAD_USERMODEL("fr.jmmc.litpro.load.usermodel"),
+    /** JMMC OIFitsExplorer load collection MType */
+    OIFITSEXPLORER_LOAD_COLLECTION("fr.jmmc.oiexplorer.load.collection"),    
     /** JMMC SearchCal Start Query MType */
     SEARCHCAL_START_QUERY("fr.jmmc.searchcal.start.query"),
     /** OCA Pivot load star list MType */

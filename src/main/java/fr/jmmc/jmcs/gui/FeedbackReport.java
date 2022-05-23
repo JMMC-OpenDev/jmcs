@@ -458,9 +458,10 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
      */
     @Override
     public final void keyReleased(final KeyEvent e) {
+        final boolean hasEmail = !StringUtils.isEmpty(emailTextField.getText());
         final boolean hasDesc = !StringUtils.isEmpty(descriptionTextArea.getText());
         final boolean hasSummary = !StringUtils.isEmpty(summaryTextField.getText());
-        submitButton.setEnabled(hasDesc && hasSummary);
+        submitButton.setEnabled(hasEmail && hasDesc && hasSummary);
     }
 
     /** This method is called from within the constructor to
@@ -517,7 +518,7 @@ public class FeedbackReport extends javax.swing.JDialog implements KeyListener {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         sendReportPanel.add(headerLabel, gridBagConstraints);
 
-        emailLabel.setText("E-Mail:");
+        emailLabel.setText("* E-Mail:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;

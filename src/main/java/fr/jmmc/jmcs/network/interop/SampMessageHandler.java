@@ -54,8 +54,21 @@ public abstract class SampMessageHandler extends AbstractMessageHandler {
      */
     public SampMessageHandler(final String mType) {
         super(mType);
-
         _mType = mType;
+
+        /*
+        x-samp.mostly-harmless : A subscribing client can use this to note that an MType it subscribes to is known 
+        to be (in)capable of causing security breaches if invoked by a potentially untrusted client. 
+        A value of "1" means that it is safe for untrusted invocation, and "0" means it is unsafe. 
+        Any other value (or absence of the key) makes no comment. 
+        Hub implementations may use this information to modify their policies about whether untrusted 
+        or marginally trusted clients are blocked from sending the MType(s) so annotated to that client, 
+        but they should not rely on its presence (should fall back to some default policy if it is not supplied). 
+         */
+        final Object subMap = getSubscriptions().get(mType);
+        if (subMap instanceof Map) {
+            ((Map) subMap).put("x-samp.mostly-harmless", "1"); // safe messages
+        }
 
         SampManager.registerCapability(this);
     }

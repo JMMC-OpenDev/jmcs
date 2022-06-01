@@ -2,9 +2,7 @@ package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.util.NumberUtils;
 import fr.jmmc.jmcs.util.StringUtils;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -326,7 +324,7 @@ public final class BasicTableSorter extends AbstractTableModel {
             return null;
         }
 
-        return new Arrow(directive.direction == DESCENDING, size, sortingColumns.indexOf(directive));
+        return new ArrowIcon(directive.direction == DESCENDING, size, sortingColumns.indexOf(directive));
     }
 
     private void cancelSorting() {
@@ -391,8 +389,10 @@ public final class BasicTableSorter extends AbstractTableModel {
             final int tableModelRowCount = tableModel.getRowCount();
             final Row[] newModel = new Row[tableModelRowCount];
 
+            final Row.RowState state = new Row.RowState(tableModel, sortingColumns);
+
             for (int row = 0; row < tableModelRowCount; row++) {
-                newModel[row] = new Row(row);
+                newModel[row] = new Row(state, row);
             }
 
             if (isSorting()) {
@@ -581,12 +581,10 @@ public final class BasicTableSorter extends AbstractTableModel {
             for (int i = 0; i < nbOfModelColumns; i++) {
                 _viewIndex[i] = i;
             }
-        }
-        else if (nbOfModelColumns == 0 || visibleColumnNames.isEmpty()) {
+        } else if (nbOfModelColumns == 0 || visibleColumnNames.isEmpty()) {
             // empty view
             _viewIndex = new int[0];
-        }
-        else {
+        } else {
             _logger.debug("Columns = {}", visibleColumnNames);
 
             // Get the selected ordered column name table
@@ -626,50 +624,6 @@ public final class BasicTableSorter extends AbstractTableModel {
     }
 
     // Helper classes
-    private final class Row implements Comparable<Row> {
-
-        final int modelIndex;
-
-        Row(final int index) {
-            this.modelIndex = index;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public int compareTo(final Row other) {
-            final int row1 = modelIndex;
-            final int row2 = other.modelIndex;
-
-            int column, comparison;
-            Object o1, o2;
-            Directive directive;
-
-            for (int i = 0, len = sortingColumns.size(); i < len; i++) {
-                directive = sortingColumns.get(i);
-                column = directive.column;
-                o1 = tableModel.getValueAt(row1, column);
-                o2 = tableModel.getValueAt(row2, column);
-
-                // Define null less than everything, except null.
-                if ((o1 == null) && (o2 == null)) {
-                    comparison = 0;
-                } else if (o1 == null) {
-                    comparison = -1;
-                } else if (o2 == null) {
-                    comparison = 1;
-                } else {
-                    comparison = directive.comparator.compare(o1, o2);
-                }
-
-                if (comparison != 0) {
-                    return (directive.direction == DESCENDING) ? -comparison : comparison;
-                }
-            }
-
-            return 0;
-        }
-    }
-
     private final class TableModelHandler implements TableModelListener {
 
         @Override
@@ -781,67 +735,6 @@ public final class BasicTableSorter extends AbstractTableModel {
         }
     }
 
-    private final static class Arrow implements Icon {
-
-        private final boolean descending;
-        private final int size;
-        private final int priority;
-
-        Arrow(final boolean descending, final int size, final int priority) {
-            this.descending = descending;
-            this.size = size;
-            this.priority = priority;
-        }
-
-        @Override
-        public void paintIcon(final Component c, final Graphics g, final int x, int y) {
-            final Color color = (c == null) ? Color.red : c.getBackground();
-
-            // In a compound sort, make each succesive triangle 20%
-            // smaller than the previous one.
-            final int dx = (int) (size / 2d * Math.pow(0.8d, priority));
-            final int dy = descending ? dx : (-dx);
-
-            // Align icon (roughly) with font baseline.
-            final int bl = y + ((5 * size) / 6) + (descending ? (-dy) : 0);
-
-            final int shift = descending ? 1 : (-1);
-            g.translate(x, bl);
-
-            // Right diagonal.
-            g.setColor(color.darker());
-            g.drawLine(dx / 2, dy, 0, 0);
-            g.drawLine(dx / 2, dy + shift, 0, shift);
-
-            // Left diagonal.
-            g.setColor(color.brighter());
-            g.drawLine(dx / 2, dy, dx, 0);
-            g.drawLine(dx / 2, dy + shift, dx, shift);
-
-            // Horizontal line.
-            if (descending) {
-                g.setColor(color.darker().darker());
-            } else {
-                g.setColor(color.brighter().brighter());
-            }
-
-            g.drawLine(dx, 0, 0, 0);
-
-            g.setColor(color);
-            g.translate(-x, -bl);
-        }
-
-        @Override
-        public int getIconWidth() {
-            return size;
-        }
-
-        @Override
-        public int getIconHeight() {
-            return size;
-        }
-    }
-
     private final class SortableHeaderRenderer implements TableCellRenderer {
 
         /* members */
@@ -895,27 +788,6 @@ public final class BasicTableSorter extends AbstractTableModel {
 
             // Return the component
             return c;
-        }
-    }
-
-    private final static class Directive {
-
-        final int column;
-        /* column name used to ensure consistency */
-        final String colName;
-        final int direction;
-        final Comparator<Object> comparator;
-
-        Directive(final int column, final int direction, final Comparator<Object> comparator, final String colName) {
-            this.column = column;
-            this.colName = colName;
-            this.direction = direction;
-            this.comparator = comparator;
-        }
-
-        @Override
-        public String toString() {
-            return "Directive{" + "column=" + column + ", colName=" + colName + ", direction=" + direction + '}';
         }
     }
 

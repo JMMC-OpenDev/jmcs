@@ -54,8 +54,17 @@ public abstract class GenericJTree<E> extends JTree {
     private final Class<E> _classType;
 
     /**
-     * Public constructor changing default values : TreeSelectionModel
-       *
+     * Public constructor changing default values : TreeSelectionModel = SINGLE_TREE_SELECTION
+     *
+     * @param classType class corresponding to &lt;E&gt; generic type
+     */
+    public GenericJTree(final Class<E> classType) {
+        this(classType, TreeSelectionModel.SINGLE_TREE_SELECTION);
+    }
+
+    /**
+     * Public constructor changing default values
+     *
      * @param classType class corresponding to &lt;E&gt; generic type
      * @param treeSelectionModel the TreeSelectionModel value to set
      */
@@ -66,15 +75,6 @@ public abstract class GenericJTree<E> extends JTree {
 
         // Single tree selection
         getSelectionModel().setSelectionMode(treeSelectionModel);
-    }
-
-    /**
-     * Public constructor changing default values : TreeSelectionModel = SINGLE_TREE_SELECTION
-     *
-     * @param classType class corresponding to &lt;E&gt; generic type
-     */
-    public GenericJTree(final Class<E> classType) {
-        this(classType, TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
 
     /**

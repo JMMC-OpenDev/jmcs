@@ -54,17 +54,27 @@ public abstract class GenericJTree<E> extends JTree {
     private final Class<E> _classType;
 
     /**
-     * Public constructor changing default values : SINGLE_TREE_SELECTION
-     * 
+     * Public constructor changing default values : TreeSelectionModel
+       *
      * @param classType class corresponding to &lt;E&gt; generic type
+     * @param treeSelectionModel the TreeSelectionModel value to set
      */
-    public GenericJTree(final Class<E> classType) {
+    public GenericJTree(final Class<E> classType, int treeSelectionModel) {
         super(new DefaultMutableTreeNode("GenericJTree"), false);
 
         _classType = (classType == Object.class) ? null : classType;
 
         // Single tree selection
-        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        getSelectionModel().setSelectionMode(treeSelectionModel);
+    }
+
+    /**
+     * Public constructor changing default values : TreeSelectionModel = SINGLE_TREE_SELECTION
+     *
+     * @param classType class corresponding to &lt;E&gt; generic type
+     */
+    public GenericJTree(final Class<E> classType) {
+        this(classType, TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
 
     /**
@@ -244,6 +254,18 @@ public abstract class GenericJTree<E> extends JTree {
     public final void selectPath(final TreePath path) {
         this.setSelectionPath(path);
         this.scrollPathToVisible(path);
+    }
+
+    /**
+     * Change the selected paths in the tree This will send a selection event changed that will refresh the UI
+     *
+     * @param paths tree paths
+     */
+    public final void selectPaths(final TreePath[] paths) {
+        this.setSelectionPaths(paths);
+        if (paths.length > 0) {
+            this.scrollPathToVisible(paths[0]);
+        }
     }
 
     /**

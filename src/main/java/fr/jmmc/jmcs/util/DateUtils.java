@@ -47,4 +47,11 @@ public final class DateUtils {
         return DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date());
     }
 
+    public static final String now_datetime() {
+        return DateFormatUtils.ISO_DATETIME_FORMAT.format(new Date());
+    }
+
+    private DateUtils() {
+        super();
+    }
 }

@@ -87,7 +87,7 @@ public final class ProcessContext extends RunContext {
      */
     @Override
     public String toString() {
-        return super.toString() + " " + getCommand();
+        return super.toString() + " " + getCommand() + " => " + getExitCode();
     }
 
     /**

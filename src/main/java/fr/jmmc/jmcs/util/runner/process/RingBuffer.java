@@ -103,7 +103,6 @@ public final class RingBuffer {
      * Clear temporary line &amp; output buffers &amp; file writer
      */
     public void close() {
-        _buffer = null;
         _lineBuffer = null;
         _fw = FileUtils.closeFile(_fw);
     }
@@ -207,7 +206,7 @@ public final class RingBuffer {
      *
      * @return buffer content
      */
-    public final String getContent(final String startLine, final String lineSep) {
+    public String getContent(final String startLine, final String lineSep) {
         String res = null;
 
         final StringBuilder sb = _buffer;

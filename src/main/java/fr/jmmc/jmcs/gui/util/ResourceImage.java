@@ -46,7 +46,9 @@ public enum ResourceImage {
     UP_ARROW("up_arrow.png"),
     DOWN_ARROW("down_arrow.png"),
     OK_MARK("ok-mark.png"),
-    KO_MARK("x-mark.png");
+    KO_MARK("x-mark.png"),
+    LIST_ADD("list-add.png"),
+    LIST_DEL("list-remove.png");
     /** Common resource directory containing icon files */
     private final static String IMAGE_RESOURCE_COMMON_PATH = "fr/jmmc/jmcs/resource/image/";
     /** Loaded icon resource */

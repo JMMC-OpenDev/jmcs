@@ -675,7 +675,7 @@ public final class FileUtils {
 
         File file = null;
         try {
-            file = File.createTempFile(p, s);
+            file = File.createTempFile(p, cleanupFileName(s));
             file.deleteOnExit();
         } catch (IOException ioe) {
             throw new IllegalStateException("unable to create a temporary file", ioe);
@@ -693,7 +693,7 @@ public final class FileUtils {
      * @return the temporary filename
      */
     public static File getTempFile(final String filename) {
-        final File file = new File(getTempDirPath(), filename);
+        final File file = new File(getTempDirPath(), cleanupFileName(filename));
         file.deleteOnExit();
         return file;
     }
@@ -766,8 +766,8 @@ public final class FileUtils {
      * @throws URISyntaxException if given fileLocation  is invalid
      */
     public static File retrieveRemoteFile(final String remoteLocation,
-            final String parentDir,
-            final MimeType mimeType) throws IOException, URISyntaxException {
+                                          final String parentDir,
+                                          final MimeType mimeType) throws IOException, URISyntaxException {
 
         // TODO improve handling of existing files (do we have to warn the user ?)
         // TODO add other remote file scheme (ftp, ssh?)
@@ -781,9 +781,9 @@ public final class FileUtils {
         }
 
         // fix file extension if missing:
-        final File name = mimeType.checkFileExtension(new File(fileName));
+        final File newFile = mimeType.checkFileExtension(new File(fileName));
 
-        final File localFile = new File(parentDir, name.getName());
+        final File localFile = new File(parentDir, cleanupFileName(newFile.getName()));
 
         if (!localFile.exists()) {
             StatusBar.show("downloading file: " + remoteLocation + " ...");

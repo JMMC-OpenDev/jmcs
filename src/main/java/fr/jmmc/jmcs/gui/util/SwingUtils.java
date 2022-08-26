@@ -49,6 +49,10 @@ public final class SwingUtils {
     /** logger */
     private final static Logger _logger = LoggerFactory.getLogger(SwingUtils.class.getName());
 
+    public enum ComponentSizeVariant {
+        mini, small, regular, large;
+    }
+
     /**
      * Forbidden constructor
      */
@@ -170,7 +174,7 @@ public final class SwingUtils {
      * @return rounded integer value of the scaled input size
      */
     public static int adjustUISize(final int size) {
-        return Math.round(adjustUISize((float)size));
+        return Math.round(adjustUISize((float) size));
     }
 
     /**
@@ -189,5 +193,9 @@ public final class SwingUtils {
      */
     public static double adjustUISize(final double size) {
         return size * CommonPreferences.getInstance().getUIScale();
+    }
+
+    public static void adjustSize(final JComponent com, final ComponentSizeVariant variant) {
+        com.putClientProperty("JComponent.sizeVariant", variant.name());
     }
 }

@@ -44,8 +44,8 @@ public final class ByteArrayOutputStreamAppender extends OutputStreamAppender<IL
     /* members */
     /** charset used by String buffers */
     private final Charset cs = Charset.forName("UTF-8");
-    /** ByteArrayOutputStream which keeps log (128K by default) */
-    private final CopyableByteArrayOutputStream _byteArrayOutputStream = new CopyableByteArrayOutputStream(128 * 1024);
+    /** ByteArrayOutputStream which keeps log (8K by default) */
+    private final CopyableByteArrayOutputStream _byteArrayOutputStream = new CopyableByteArrayOutputStream(8 * 1024);
 
     /**
      * Public constructor used for Joran (xml configurator); does nothing

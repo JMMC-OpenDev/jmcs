@@ -29,8 +29,10 @@ package fr.jmmc.jmcs.gui.util;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
+import java.awt.Insets;
 import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -48,9 +50,15 @@ public final class SwingUtils {
 
     /** logger */
     private final static Logger _logger = LoggerFactory.getLogger(SwingUtils.class.getName());
+    
+    public final static Insets NO_MARGIN = new Insets(0, 0, 0, 0);
 
     public enum ComponentSizeVariant {
         mini, small, regular, large;
+
+        public boolean isLower(final ComponentSizeVariant other) {
+            return (this.ordinal() < other.ordinal());
+        }
     }
 
     /**
@@ -196,6 +204,16 @@ public final class SwingUtils {
     }
 
     public static void adjustSize(final JComponent com, final ComponentSizeVariant variant) {
-        com.putClientProperty("JComponent.sizeVariant", variant.name());
+        if (variant != null) {
+            com.putClientProperty("JComponent.sizeVariant", variant.name());
+
+            if (com instanceof JButton && variant.isLower(ComponentSizeVariant.regular)) {
+                // ensure no margin
+                ((JButton)com).setMargin(NO_MARGIN);
+                
+                // or use "square" button with smaller margin on macos:
+                com.putClientProperty("JButton.buttonType", "square");
+            }
+        }
     }
 }

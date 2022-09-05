@@ -50,6 +50,7 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import javax.swing.Timer;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -68,9 +69,9 @@ public class ResizableTextViewFactory {
     private static final Logger _logger = LoggerFactory.getLogger(ResizableTextViewFactory.class.getName());
     // Constants
     private static final int MARGIN = 35;
-    private static final int MINIMUM_WIDTH = 400;
+    private static final int MINIMUM_WIDTH = 600;
     private static final int MAXIMUM_WIDTH = 1000;
-    private static final int MINIMUM_HEIGHT = 300;
+    private static final int MINIMUM_HEIGHT = 500;
     private static final int MAXIMUM_HEIGHT = 750;
     private static final int BUTTON_HEIGHT = 20;
 
@@ -96,7 +97,7 @@ public class ResizableTextViewFactory {
             @Override
             public void run() {
                 final JDialog dialog = new JDialog(App.getExistingFrame(), title, modal);
-                final JEditorPane editorPane = startLayout(dialog);
+                final JEditorPane editorPane = startLayout(dialog, false);
 
                 // if modal, blocks until the dialog is closed:
                 finishLayout(editorPane, dialog, text, modal, timeoutMillis, null, null);
@@ -145,7 +146,7 @@ public class ResizableTextViewFactory {
                 @Override
                 public void run() {
                     final JDialog dialog = new JDialog(App.getExistingFrame(), title, modal);
-                    final JEditorPane editorPane = startLayout(dialog);
+                    final JEditorPane editorPane = startLayout(dialog, true);
                     editorPane.setContentType("text/html");
                     editorPane.addHyperlinkListener(new HyperlinkListener() {
                         @Override
@@ -185,11 +186,11 @@ public class ResizableTextViewFactory {
      * @param dialog frame to layout
      * @return editor pane
      */
-    private static JEditorPane startLayout(final JDialog dialog) {
+    private static JEditorPane startLayout(final JDialog dialog, final boolean html) {
         dialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         dialog.setAlwaysOnTop(true);
 
-        final JEditorPane editorPane = new JEditorPane();
+        final JEditorPane editorPane = (html) ? new JEditorPane() : new JTextPane();
         // Use default fonts (hi-dpi) if no font defined in html:
         editorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
         editorPane.setEditable(false);

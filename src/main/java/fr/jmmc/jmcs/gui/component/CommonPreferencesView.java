@@ -138,6 +138,7 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanelMisc.add(jButtonBrowserSelector, gridBagConstraints);
 
@@ -191,6 +192,7 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanelMisc.add(jButtonRefreshUI, gridBagConstraints);
 

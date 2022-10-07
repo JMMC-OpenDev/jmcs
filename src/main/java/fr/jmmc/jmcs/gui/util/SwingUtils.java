@@ -188,6 +188,15 @@ public final class SwingUtils {
     /**
      * Adjust the given size according to the UI scale
      * @param size to adjust
+     * @return rounded integer value of the scaled input size
+     */
+    public static int adjustUISizeCeil(final int size) {
+        return (int)(adjustUISize((float) size));
+    }
+
+    /**
+     * Adjust the given size according to the UI scale
+     * @param size to adjust
      * @return float value of the scaled input size
      */
     public static float adjustUISize(final float size) {

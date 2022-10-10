@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.component;
 
+import java.util.Collection;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.MutableComboBoxModel;
@@ -211,7 +212,7 @@ public final class GenericListModel<K> extends AbstractListModel implements Muta
      * @param   objs   the list of component to be added
      * @see List#add(Object)
      */
-    public void add(final List<K> objs) {
+    public void addAll(final Collection<K> objs) {
         final int index = size();
         for (K k : objs) {
             _model.add(k);

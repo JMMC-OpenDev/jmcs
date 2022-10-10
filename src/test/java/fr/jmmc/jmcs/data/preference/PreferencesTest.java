@@ -30,7 +30,6 @@ package fr.jmmc.jmcs.data.preference;
 import fr.jmmc.jmcs.Bootstrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -221,7 +220,7 @@ public class PreferencesTest {
         }
         if (true) {
             Object preferenceName = PREF_STR_LIST;
-            List<String> expResult = new LinkedList<String>(Arrays.asList(new String[]{"guillaume", "sylvain", "laurent"}));
+            List<String> expResult = Arrays.asList(new String[]{"guillaume", "sylvain", "laurent"});
             instance.setPreference(preferenceName, expResult);
             List<String> result = instance.getPreferenceAsStringList(preferenceName);
             assertEquals(expResult, result);

@@ -34,13 +34,15 @@ public final class FormatterFactoryUtils {
 
         /** default serial UID for Serializable interface */
         private static final long serialVersionUID = 1L;
+        /* formatter prefix with up to 9 digits (MJD needs precision up to 1 min) */
+        private static final String FMT_PREFIX = "0.0########";
 
         ScientificNumberFormatter() {
-            super(new DecimalFormat("0.0####E00"));
+            super(new DecimalFormat(FMT_PREFIX + "E00")); // MJD needs 
             setValueClass(Double.class);
         }
 
-        private final NumberFormat fmtDef = new DecimalFormat("0.0####");
+        private final NumberFormat fmtDef = new DecimalFormat(FMT_PREFIX);
 
         @Override
         public Object stringToValue(final String text) throws ParseException {

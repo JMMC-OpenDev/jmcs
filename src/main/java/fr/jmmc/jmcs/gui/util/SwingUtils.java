@@ -50,7 +50,7 @@ public final class SwingUtils {
 
     /** logger */
     private final static Logger _logger = LoggerFactory.getLogger(SwingUtils.class.getName());
-    
+
     public final static Insets NO_MARGIN = new Insets(0, 0, 0, 0);
 
     public enum ComponentSizeVariant {
@@ -186,12 +186,12 @@ public final class SwingUtils {
     }
 
     /**
-     * Adjust the given size according to the UI scale
+     * Adjust the given size according to the UI scale (if greater than 1.0)
      * @param size to adjust
-     * @return rounded integer value of the scaled input size
+     * @return rounded integer value of the scaled input size (>= given size)
      */
     public static int adjustUISizeCeil(final int size) {
-        return (int)(adjustUISize((float) size));
+        return Math.max(size, (int) (adjustUISize((float) size)));
     }
 
     /**
@@ -218,8 +218,8 @@ public final class SwingUtils {
 
             if (com instanceof AbstractButton && variant.isLower(ComponentSizeVariant.regular)) {
                 // ensure no margin
-                ((AbstractButton)com).setMargin(NO_MARGIN);
-                
+                ((AbstractButton) com).setMargin(NO_MARGIN);
+
                 // or use "square" button with smaller margin on macos:
                 com.putClientProperty("JButton.buttonType", "square");
             }

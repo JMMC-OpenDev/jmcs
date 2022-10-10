@@ -78,6 +78,8 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     private static final Logger _logger = LoggerFactory.getLogger(AboutBox.class.getName());
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1L;
+
+    /* members */
     /** Model of the about box */
     private ApplicationDescription _applicationDataModel = null;
     /** Company Logo label */
@@ -200,7 +202,9 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         setupProgramNameLabel();
         setupProgramVersionLabel();
         setupLinkLabel();
-        //setupCompilationInfoLabel();
+        if (false) {
+            setupCompilationInfoLabel();
+        }
         setupDescriptionTextarea();
         setupCopyrightLabel();
 
@@ -226,7 +230,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
             // Get and scale image
             final ImageIcon companyLogo = ImageUtils.getScaledImageIcon(
                     ImageUtils.loadResourceIcon(logoURL),
-                    100, 400
+                    SwingUtils.adjustUISizeCeil(100), SwingUtils.adjustUISizeCeil(400)
             );
             _companyLogoLabel.setIcon(companyLogo);
             _companyLogoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
@@ -266,9 +270,11 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
         final String applicationLogoResourcePath = _applicationDataModel.getApplicationLogoResourcePath();
         if (applicationLogoResourcePath != null) {
+            final int scaleInt = SwingUtils.adjustUISizeCeil(400);
+
             final ImageIcon applicationLogo = ImageUtils.getScaledImageIcon(
                     ImageUtils.loadResourceIcon(applicationLogoResourcePath),
-                    400, 400
+                    scaleInt, scaleInt
             );
             _applicationLogoLabel.setVerticalAlignment(SwingConstants.TOP);
             _applicationLogoLabel.setIcon(applicationLogo);
@@ -287,13 +293,15 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /** Sets text area (SWING HTML) properties */
     private void setupDescriptionTextarea() {
         // Set properties
-        _descriptionEditorPane.setEditable(false);
+        setupEditorPane(_descriptionEditorPane);
         _descriptionEditorPane.setMargin(new Insets(5, 5, 5, 5));
-        _descriptionEditorPane.setContentType("text/html");
         _descriptionEditorPane.addHyperlinkListener(this);
 
         // The textarea should have the same width than the logo
-        final Dimension textareaDimension = new Dimension(400, 200);
+        final Dimension textareaDimension = new Dimension(
+                SwingUtils.adjustUISizeCeil(400),
+                SwingUtils.adjustUISizeCeil(200)
+        );
         _descriptionEditorPane.setPreferredSize(textareaDimension);
         _logger.debug("All the textarea properties have been initialized");
 
@@ -320,6 +328,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         final String jMcsDescription = data.getTextValue();
         generatedHtml.append("<a href='").append(jMcsUrl).append("'>").append(jMcsName).append("</a>");
         generatedHtml.append(" : <i>").append(jMcsDescription).append("</i><br>");
+
         // For each dependency
         final List<Package> packageList = _applicationDataModel.getPackages();
         for (fr.jmmc.jmcs.data.app.model.Package p : packageList) {
@@ -370,16 +379,14 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /** Sets link label properties */
     private void setupLinkLabel() {
         // Set properties
-        _linkLabel.setEditable(false);
+        setupEditorPane(_linkLabel);
         _linkLabel.setOpaque(false);
         _linkLabel.addHyperlinkListener(this);
-        _linkLabel.setContentType("text/html");
 
         final String link = _applicationDataModel.getLinkValue();
         final String linkHTML = "<a href='" + link + "'>" + link + "</a>";
 
-        _linkLabel.setText("<html><body><center>" + linkHTML
-                + "</center></body></html>");
+        _linkLabel.setText("<html><body><center>" + linkHTML + "</center></body></html>");
 
         _logger.debug("All the link label properties have been initialized");
     }
@@ -391,7 +398,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
         _programNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _programNameLabel.setText(name);
-        _programNameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, SwingUtils.adjustUISize(23)));
+        _programNameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, SwingUtils.adjustUISize(22)));
 
         _logger.debug("All the program info label properties have been initialized");
     }
@@ -504,8 +511,8 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         final String windowTitle = "About " + programName + "...";
         setTitle(windowTitle);
 
-        // Disable window resizing
-        setResizable(false);
+        // Enable window resizing
+        setResizable(true);
 
         // Window layout
         final Container contentPane = getContentPane();
@@ -522,6 +529,13 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         WindowUtils.setClosingKeyboardShortcuts(this);
 
         _logger.debug("All the frame properties have been initialized");
+    }
+
+    private static void setupEditorPane(final JEditorPane editorPane) {
+        editorPane.setEditable(false);
+        editorPane.setContentType("text/html");
+        // Use default fonts (hi-dpi) if no font defined in html:
+        editorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
     }
 }
 /*___oOo___*/

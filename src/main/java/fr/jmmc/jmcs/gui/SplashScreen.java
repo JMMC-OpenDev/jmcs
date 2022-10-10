@@ -198,9 +198,11 @@ public class SplashScreen extends JFrame {
 
         final String applicationLogoResourcePath = _applicationDataModel.getApplicationLogoResourcePath();
         if (applicationLogoResourcePath != null) {
+            final int scaleInt = SwingUtils.adjustUISizeCeil(400);
+
             final ImageIcon applicationLogo = ImageUtils.getScaledImageIcon(
                     ImageUtils.loadResourceIcon(applicationLogoResourcePath),
-                    400, 400
+                    scaleInt, scaleInt
             );
             _applicationLogoLabel.setIcon(applicationLogo);
             _applicationLogoLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));

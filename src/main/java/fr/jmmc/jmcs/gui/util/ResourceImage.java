@@ -52,22 +52,34 @@ public enum ResourceImage {
     REFRESH_ICON("refresh.png");
     /** Common resource directory containing icon files */
     private final static String IMAGE_RESOURCE_COMMON_PATH = "fr/jmmc/jmcs/resource/image/";
+
+    /* members */
+    private final String fileName;
     /** Loaded icon resource */
-    private final ImageIcon _icon;
+    private ImageIcon icon = null;
 
     /** 
      * Constructor
-     * @param iconName
+     * @param fileName
      */
-    private ResourceImage(String iconName) {
-        _icon = ImageUtils.loadResourceIcon(IMAGE_RESOURCE_COMMON_PATH + iconName);
+    private ResourceImage(final String fileName) {
+        this.fileName = fileName;
     }
 
     /**
      * @return the resource image icon
      */
     public ImageIcon icon() {
-        return _icon;
+        if (icon == null) {
+            loadImage();
+        }
+        return icon;
+    }
+
+    private synchronized void loadImage() {
+        if (icon == null) {
+            icon = ImageUtils.loadResourceIcon(IMAGE_RESOURCE_COMMON_PATH + fileName);
+        }
     }
 
     /**

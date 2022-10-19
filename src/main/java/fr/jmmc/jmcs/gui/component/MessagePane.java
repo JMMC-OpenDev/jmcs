@@ -75,7 +75,7 @@ public final class MessagePane {
     /** overwrite file dialog options */
     private final static Object[] FILE_OVERWRITE_OPTIONS = {"Cancel", "Replace"};
     /** save changes dialog options */
-    private final static Object[] SAVE_CHANGES_OPTIONS = {"Save", "Cancel", "Don't Save"};
+    private final static Object[] SAVE_CHANGES_OPTIONS = {"Cancel", "Don't Save", "Save"};
     /** save changes dialog options */
     private final static Object[] KILL_HUB_OPTIONS = {"Cancel", "Quit"};
 
@@ -314,26 +314,24 @@ public final class MessagePane {
         final int result = JOptionPane.showOptionDialog(getApplicationFrame(),
                 getMessageComponent(message),
                 null, JOptionPane.DEFAULT_OPTION,
-                JOptionPane.WARNING_MESSAGE, null, SAVE_CHANGES_OPTIONS, SAVE_CHANGES_OPTIONS[0]);
+                JOptionPane.WARNING_MESSAGE, null, SAVE_CHANGES_OPTIONS, SAVE_CHANGES_OPTIONS[2]);
 
         // Handle user choice
         switch (result) {
-            // If the user clicked the "Save" button
-            case 0: // options[0] = "Save" button
-                // Save the current data if no cancel occured
-                return ConfirmSaveChanges.Save;
-
-            // If the user clicked the "Don't Save" button
-            case 2: // options[2] = "Don't Save" button
-                // Exit
-                return ConfirmSaveChanges.Ignore;
-
             // If the user clicked the "Cancel" button or pressed 'esc' key
-            case 1: // options[1] = "Cancel" button
+            case 0: // options[0] = "Cancel" button
             case JOptionPane.CLOSED_OPTION: // 'esc' key
             default: // Any other case
                 // Cancel the exit
                 return ConfirmSaveChanges.Cancel;
+            // If the user clicked the "Don't Save" button
+            case 1: // options[1] = "Don't Save" button
+                // Exit
+                return ConfirmSaveChanges.Ignore;
+            // If the user clicked the "Save" button
+            case 2: // options[2] = "Save" button
+                // Save the current data if no cancel occured
+                return ConfirmSaveChanges.Save;
         }
     }
 

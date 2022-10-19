@@ -27,6 +27,7 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.util;
 
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -62,15 +63,25 @@ public final class ImageUtils {
     }
 
     /**
-     * Try to load the given resource path as ImageIcon.
+     * Try to load the given resource path as ImageIcon and scale up the image using GUI scaling ratio
      *
      * @param url the image icon resource path
      *
      * @return the retrieved image icon if found, null otherwise.
      */
     public static ImageIcon loadResourceIcon(final String url) {
+        return loadResourceIcon(url, true);
+    }
 
-        // TODO : Maybe cache previously loaded icon
+    /**
+     * Try to load the given resource path as ImageIcon and scale up the image.
+     *
+     * @param url the image icon resource path
+     * @param upScale true to scale up the image using GUI scaling ratio
+     *
+     * @return the retrieved image icon if found, null otherwise.
+     */
+    public static ImageIcon loadResourceIcon(final String url, final boolean upScale) {
         if (url == null) {
             _logger.debug(CANNOT_LOAD_ICON_MESSAGE, url);
             return null;
@@ -97,6 +108,18 @@ public final class ImageUtils {
             imageIcon = new ImageIcon(imageUrl);
         } catch (IllegalStateException ise) {
             _logger.warn(CANNOT_LOAD_ICON_MESSAGE, imageUrl);
+        }
+        if ((imageIcon != null) && upScale) {
+            final int max = Math.max(imageIcon.getIconWidth(), imageIcon.getIconHeight());
+
+            if (max <= 128) {
+                final int scaleInt = SwingUtils.adjustUISizeCeil(1);
+
+                if (scaleInt > 1) {
+                    final int newSize = max * scaleInt;
+                    imageIcon = ImageUtils.getUpScaledImageIcon(imageIcon, newSize, newSize);
+                }
+            }
         }
         return imageIcon;
     }
@@ -134,6 +157,49 @@ public final class ImageUtils {
         }
         if (maxWidth > 0) {
             newWidth = Math.min(iconWidth, maxWidth);
+            newHeight = (int) Math.ceil(((double) newWidth / (double) iconWidth) * iconHeight);
+        }
+
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Scaling image from {} x {} to {} x {}.",
+                    iconWidth, iconHeight, newWidth, newHeight);
+        }
+        return new ImageIcon(imageIcon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_AREA_AVERAGING));
+    }
+
+    /**
+     * Scales up a given image to given maximum width and height.
+     *
+     * @param imageIcon the image to scale
+     * @param maxHeight the maximum height of the scaled image, or automatic proportional scaling if less than or equal to 0
+     * @param maxWidth the maximum width of the scaled image, or automatic proportional scaling if less than or equal to 0
+     *
+     * @return the scaled image
+     */
+    public static ImageIcon getUpScaledImageIcon(final ImageIcon imageIcon, final int maxHeight, final int maxWidth) {
+        // Give up if params messed up
+        if ((maxHeight == 0) && (maxWidth == 0)) {
+            return imageIcon;
+        }
+
+        final int iconWidth = imageIcon.getIconWidth();
+        final int iconHeight = imageIcon.getIconHeight();
+
+        // If no resizing required
+        if ((maxHeight <= iconHeight) && (maxWidth <= iconWidth)) {
+            // Return early
+            return imageIcon;
+        }
+
+        int newHeight = iconHeight;
+        int newWidth = iconWidth;
+
+        if (maxHeight > 0) {
+            newHeight = Math.max(iconHeight, maxHeight);
+            newWidth = (int) Math.ceil(((double) newHeight / (double) iconHeight) * iconWidth);
+        }
+        if (maxWidth > 0) {
+            newWidth = Math.max(iconWidth, maxWidth);
             newHeight = (int) Math.ceil(((double) newWidth / (double) iconWidth) * iconHeight);
         }
 

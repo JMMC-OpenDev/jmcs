@@ -228,8 +228,8 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         final String logoURL = _applicationDataModel.getCompanyLogoResourcePath();
         if (logoURL != null) {
             // Get and scale image
-            final ImageIcon companyLogo = ImageUtils.getScaledImageIcon(
-                    ImageUtils.loadResourceIcon(logoURL),
+            final ImageIcon companyLogo = ImageUtils.getUpScaledImageIcon(
+                    ImageUtils.loadResourceIcon(logoURL, false),
                     SwingUtils.adjustUISizeCeil(100), SwingUtils.adjustUISizeCeil(400)
             );
             _companyLogoLabel.setIcon(companyLogo);
@@ -272,8 +272,8 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         if (applicationLogoResourcePath != null) {
             final int scaleInt = SwingUtils.adjustUISizeCeil(400);
 
-            final ImageIcon applicationLogo = ImageUtils.getScaledImageIcon(
-                    ImageUtils.loadResourceIcon(applicationLogoResourcePath),
+            final ImageIcon applicationLogo = ImageUtils.getUpScaledImageIcon(
+                    ImageUtils.loadResourceIcon(applicationLogoResourcePath, false),
                     scaleInt, scaleInt
             );
             _applicationLogoLabel.setVerticalAlignment(SwingConstants.TOP);

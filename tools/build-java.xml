@@ -72,7 +72,7 @@
             <replacetoken><![CDATA[
 package fr.jmmc.jmcs.data.app.model;]]></replacetoken>
             <replacevalue><![CDATA[/*******************************************************************************
- *                 jMCS project ( http://www.jmmc.fr/dev/jmcs )
+ *                 jMCS project ( https://github.com/JMMC-OpenDev/jmcs )
  *******************************************************************************
  * Copyright (c) 2016, CNRS. All rights reserved.
  *

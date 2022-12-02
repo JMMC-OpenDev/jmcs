@@ -1,5 +1,6 @@
 package fr.jmmc.jmcs.gui.component;
 
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.NumberUtils;
 import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Component;
@@ -323,7 +324,6 @@ public final class BasicTableSorter extends AbstractTableModel {
         if (directive == EMPTY_DIRECTIVE) {
             return null;
         }
-
         return new ArrowIcon(directive.direction == DESCENDING, size, sortingColumns.indexOf(directive));
     }
 
@@ -742,6 +742,8 @@ public final class BasicTableSorter extends AbstractTableModel {
         final TableCellRenderer tableCellRenderer;
         /** optional header customizer */
         private BasicTableColumnModel tableHeaderCustomizer = null;
+        /** text icon gap scaled */
+        private final int textSpacing = SwingUtils.adjustUISizeCeil(4);
 
         /**
          * Protected constructor
@@ -763,11 +765,13 @@ public final class BasicTableSorter extends AbstractTableModel {
             if (c instanceof JLabel) {
                 final JLabel jLabel = (JLabel) c;
                 jLabel.setHorizontalTextPosition(JLabel.LEFT);
+                jLabel.setHorizontalAlignment(JLabel.CENTER);
+                jLabel.setIconTextGap(textSpacing);
 
                 final int colIndex = table.convertColumnIndexToModel(column);
 
                 if (colIndex != -1) {
-                    jLabel.setIcon(getHeaderRendererIcon(colIndex, jLabel.getFont().getSize()));
+                    jLabel.setIcon(getHeaderRendererIcon(colIndex, table.getRowHeight()));
 
                     if (tableHeaderCustomizer != null) {
                         // Set the column header tooltip (with unit if any)

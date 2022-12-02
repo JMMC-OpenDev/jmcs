@@ -304,17 +304,19 @@ public final class Bootstrapper {
     public static boolean launchApp(final App application, final boolean waitBeforeExecution, final boolean exitWhenClosed,
                                     final boolean shouldShowSplashScreen) throws IllegalStateException {
 
-        return ___internalLaunch(application, exitWhenClosed, shouldShowSplashScreen);
+        return ___internalLaunch(application, waitBeforeExecution, exitWhenClosed, shouldShowSplashScreen);
     }
 
     /**
      * Internal: launch given application instance
      * @param application application instance to launch
+     * @param waitBeforeExecution if true, do not launch App.execute() automatically.
      * @param exitWhenClosed flag indicating if application should be quit when main frame close box clicked.
      * @param shouldShowSplashScreen true to effectively show the splash screen, false otherwise.
      * @return true if launch succeeded; false otherwise
      */
-    private static boolean ___internalLaunch(final App application, final boolean exitWhenClosed, final boolean shouldShowSplashScreen) {
+    private static boolean ___internalLaunch(final App application, final boolean waitBeforeExecution,
+                                             final boolean exitWhenClosed, final boolean shouldShowSplashScreen) {
         setState(ApplicationState.ENV_INIT);
         final long startTime = System.nanoTime();
         boolean launchDone = false;
@@ -349,7 +351,7 @@ public final class Bootstrapper {
             setState(ApplicationState.APP_INIT);
             _application.initServices();
 
-            ___internalRun();
+            ___internalRun(waitBeforeExecution);
 
             launchDone = true;
 
@@ -398,8 +400,9 @@ public final class Bootstrapper {
 
     /**
      * Describe the life cycle of the application.
+     * @param waitBeforeExecution if true, do not launch App.execute() automatically.
      */
-    private static void ___internalRun() {
+    private static void ___internalRun(final boolean waitBeforeExecution) {
         // Using invokeAndWait to be in sync with this thread :
         // note: invokeAndWaitEDT throws an IllegalStateException if any exception occurs
         SwingUtils.invokeAndWaitEDT(new Runnable() {
@@ -422,7 +425,7 @@ public final class Bootstrapper {
                 setState(ApplicationState.GUI_SETUP);
                 _application.setupGui();
 
-                if (!isHeadless()) {
+                if (!isHeadless() && !waitBeforeExecution) {
                     // Disabled SAMP in shell mode: (runHub needs GUI):
                     // Initialize SampManager as needed by MainMenuBar:
                     SampManager.getInstance();
@@ -448,14 +451,16 @@ public final class Bootstrapper {
             }
         });
 
-        // Delegate execution to daughter class through abstract execute() call
-        _application.execute();
+        if (!waitBeforeExecution) {
+            // Delegate execution to daughter class through abstract execute() call
+            _application.execute();
 
-        // Process command line:
-        _application.___internalProcessCommandLine();
+            // Process command line:
+            _application.___internalProcessCommandLine();
 
-        // Optionally Open given File:
-        _application.openCommandLineFile();
+            // Optionally Open given File:
+            _application.openCommandLineFile();
+        }
 
         // Indicate that the application is ready (visible)
         setState(ApplicationState.APP_READY);

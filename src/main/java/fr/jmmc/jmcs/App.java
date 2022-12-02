@@ -145,7 +145,6 @@ public abstract class App {
 
             // If shell action:
             if (isShellAction()) {
-
                 // Using thread main: must block until asynchronous task finishes !
                 try {
                     processShellCommandLine();

@@ -76,4 +76,20 @@ public abstract class ColumnDescTableModel extends AbstractTableModel implements
         return sbTmp.toString();
     }
 
+    /**
+     * Sets the value in the cell at
+     * <code>columnIndex</code> and
+     * <code>rowIndex</code> to
+     * <code>aValue</code>.
+     *
+     * @param	aValue	the new value
+     * @param	rowIndex	the row whose value is to be changed
+     * @param	columnIndex the column whose value is to be changed
+     * @see #getValueAt
+     * @see #isCellEditable
+     */
+    @Override
+    public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
+        // no-op
+    }
 }

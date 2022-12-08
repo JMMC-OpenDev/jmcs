@@ -40,10 +40,18 @@ public final class StringUtils {
     public final static String STRING_EMPTY = "";
     /** String constant containing 1 space character ' ' */
     public final static String STRING_SPACE = " ";
-    /** String constant containing 1 underscore character '_' */
-    public final static String STRING_UNDERSCORE = "_";
+    /** String constant containing 1 new line character '\n' */
+    public final static String STRING_LF = "\n";
     /** String constant containing 1 minus sign character '-' */
     public final static String STRING_MINUS_SIGN = "-";
+    /** String constant containing 1 underscore character '_' */
+    public final static String STRING_UNDERSCORE = "_";
+    /** String constant containing 1 ampersand character '&' */
+    public final static String STRING_AMPERSAND = "&";
+    /** String constant containing 1 left bracket character '<' */
+    public final static String STRING_LT = "<";
+    /** String constant containing 1 right bracket character '>' */
+    public final static String STRING_GT = ">";
     /** RegExp expression to match the underscore character '_' */
     private final static Pattern PATTERN_UNDERSCORE = Pattern.compile(STRING_UNDERSCORE);
     /** RegExp expression to match white spaces (1..n) */
@@ -57,15 +65,17 @@ public final class StringUtils {
     /** regular expression used to match characters different than numeric (1..n) */
     private final static Pattern PATTERN_NON_NUM = Pattern.compile("[^0-9]+");
     /** RegExp expression to match carriage return */
-    private final static Pattern PATTERN_CR = Pattern.compile("\n");
+    private final static Pattern PATTERN_LF = Pattern.compile(STRING_LF);
     /** RegExp expression to match tags */
     private final static Pattern PATTERN_TAGS = Pattern.compile("\\<.*?\\>");
+    /** RegExp expression to match &nbsp; */
+    private final static Pattern PATTERN_NBSP = Pattern.compile("&nbsp;");
     /** RegExp expression to SGML entities */
-    private final static Pattern PATTERN_AMP = Pattern.compile("&");
+    private final static Pattern PATTERN_AMP = Pattern.compile(STRING_AMPERSAND);
     /** RegExp expression to start tag */
-    private final static Pattern PATTERN_LT = Pattern.compile("<");
+    private final static Pattern PATTERN_LT = Pattern.compile(STRING_LT);
     /** RegExp expression to end tag */
-    private final static Pattern PATTERN_GT = Pattern.compile(">");
+    private final static Pattern PATTERN_GT = Pattern.compile(STRING_GT);
 
     /**
      * Forbidden constructor
@@ -118,7 +128,6 @@ public final class StringUtils {
     }
 
     /* --- common white space helper methods -------------------------------- */
-
     /**
      * Trim and remove redundant white space characters
      * @param value input value
@@ -145,7 +154,7 @@ public final class StringUtils {
     public static String removeUnderscores(final String value) {
         return PATTERN_UNDERSCORE.matcher(value).replaceAll(STRING_EMPTY);
     }
-    
+
     /**
      * Remove redundant white space characters
      * @param value input value
@@ -259,16 +268,29 @@ public final class StringUtils {
      * @return string value
      */
     public static String replaceCR(final String value, final String replaceBy) {
-        return PATTERN_CR.matcher(value).replaceAll(replaceBy);
+        if ((value != null) && (value.contains(STRING_LF))) {
+            return PATTERN_LF.matcher(value).replaceAll(replaceBy);
+        }
+        return value;
     }
 
     /**
-     * Remove any tag
+     * Remove any tag and replace '&nbsp;' by ' '
      * @param value input value
      * @return string value
      */
     public static String removeTags(final String value) {
-        return PATTERN_TAGS.matcher(value).replaceAll(STRING_EMPTY);
+        if (value == null) {
+            return null;
+        }
+        String out = value;
+        if (out.contains(STRING_LT)) {
+            out = PATTERN_TAGS.matcher(out).replaceAll(STRING_EMPTY);
+        }
+        if (out.contains(STRING_AMPERSAND)) {
+            out = PATTERN_NBSP.matcher(out).replaceAll(STRING_SPACE);
+        }
+        return out;
     }
 
     /**
@@ -277,9 +299,13 @@ public final class StringUtils {
      * @return encoded value
      */
     public static String encodeTagContent(final String src) {
-        String out = PATTERN_AMP.matcher(src).replaceAll("&amp;"); // Character [&] (xml restriction)
-        out = PATTERN_LT.matcher(out).replaceAll("&lt;"); // Character [<] (xml restriction)
-        out = PATTERN_GT.matcher(out).replaceAll("&gt;"); // Character [>] (xml restriction)
-        return out;
+        if (src != null) {
+            String out = src;
+            out = PATTERN_AMP.matcher(out).replaceAll("&amp;"); // Character [&] (xml restriction)
+            out = PATTERN_LT.matcher(out).replaceAll("&lt;"); // Character [<] (xml restriction)
+            out = PATTERN_GT.matcher(out).replaceAll("&gt;"); // Character [>] (xml restriction)
+            return out;
+        }
+        return src;
     }
 }

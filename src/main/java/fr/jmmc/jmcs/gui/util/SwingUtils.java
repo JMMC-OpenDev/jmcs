@@ -29,6 +29,8 @@ package fr.jmmc.jmcs.gui.util;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
+import fr.jmmc.jmcs.util.StringUtils;
+import java.awt.FontMetrics;
 import java.awt.Insets;
 import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
@@ -38,6 +40,7 @@ import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicHTML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,12 +53,17 @@ public final class SwingUtils {
 
     /** logger */
     private final static Logger _logger = LoggerFactory.getLogger(SwingUtils.class.getName());
-
+    /** default Insets for no margins */
     public final static Insets NO_MARGIN = new Insets(0, 0, 0, 0);
 
     public enum ComponentSizeVariant {
         mini, small, regular, large;
 
+        /**
+         * Compares ComponentSizeVariant
+         * @param other instance
+         * @return true if (this.ordinal() < other.ordinal())
+         */
         public boolean isLower(final ComponentSizeVariant other) {
             return (this.ordinal() < other.ordinal());
         }
@@ -66,6 +74,52 @@ public final class SwingUtils {
      */
     private SwingUtils() {
         super();
+    }
+
+    /**
+     * @param c component
+     * @return true if the given component has an HTML view (swing); false otherwise
+     */
+    public static boolean isHTML(final JComponent c) {
+        return c.getClientProperty(BasicHTML.propertyKey) != null;
+    }
+
+    /**
+     * Compute the width of the string using a font with the specified
+     * "metrics" (sizes). It ignores any HTML tag.
+     *
+     * @param fontMetrics a FontMetrics object to compute with
+     * @param text the String to compute
+     * @return an int containing the string width
+     */
+    @SuppressWarnings("StringEquality")
+    public static int getTextWidth(final FontMetrics fontMetrics, final String text) {
+        if (StringUtils.isEmpty(text)) {
+            return 0;
+        }
+        final String rawText;
+
+        // Get rid of html tags:
+        if ((text.charAt(0) == '<') && (text.startsWith("<html>"))) {
+            rawText = StringUtils.removeTags(text);
+
+            if (_logger.isDebugEnabled() && (rawText != text)) {
+                _logger.debug("text:    [[{}]]", text);
+                _logger.debug("rawText: [[{}]]", rawText);
+            }
+            if (StringUtils.isEmpty(rawText)) {
+                return 0;
+            }
+        } else {
+            rawText = text;
+        }
+        // May be costly:
+        final int textWidth = SwingUtilities.computeStringWidth(fontMetrics, rawText);
+
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("getTextWidth('{}') = {}", rawText, textWidth);
+        }
+        return textWidth;
     }
 
     /**

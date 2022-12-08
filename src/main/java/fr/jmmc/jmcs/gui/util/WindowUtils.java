@@ -30,6 +30,7 @@ package fr.jmmc.jmcs.gui.util;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.SessionSettingsPreferences;
 import fr.jmmc.jmcs.gui.MainMenuBar;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;
@@ -51,7 +52,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
-import javax.swing.Timer;
+import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,10 +74,26 @@ public final class WindowUtils {
     private static final boolean TEST_DISPLAY_MODE_NULL = false;
 
     /**
+     * Get the screen bounds of the window containing the given component otherwise of the primary display
+     * @param component component to extract its root window and get the proper screen size
+     * @return rectangle corresponding to the given window's display otherwise of the primary display
+     * @throws NullPointerException on some platform (virtual box)
+     */
+    public static Rectangle getScreenBounds(final JComponent component) throws NullPointerException {
+        final Component root = SwingUtilities.getRoot(component);
+
+        if (root instanceof Window) {
+            // get the screen dimensions (may throw NPE):
+            return WindowUtils.getScreenBounds((Window) root);
+        }
+        throw new NullPointerException("Unable to get root window for component: " + component + " !");
+    }
+
+    /**
      * Get the screen bounds of the given window's display otherwise of the primary display
      * @param screenWindow root window to get the proper screen size
-     * @throws NullPointerException on some platform (virtual box)
      * @return rectangle corresponding to the given window's display otherwise of the primary display
+     * @throws NullPointerException on some platform (virtual box)
      */
     public static Rectangle getScreenBounds(final Window screenWindow) throws NullPointerException {
         if (screenWindow != null) {
@@ -85,7 +102,6 @@ public final class WindowUtils {
                 final Rectangle bounds = gc.getBounds();
 
                 _logger.debug("getScreenDimension: [{} x {}]", bounds);
-
                 return bounds;
             }
         }
@@ -94,8 +110,8 @@ public final class WindowUtils {
 
     /**
      * Get the screen bounds of the primary display
-     * @throws NullPointerException on some platform (virtual box)
      * @return rectangle corresponding to the primary display
+     * @throws NullPointerException on some platform (virtual box)
      */
     private static Rectangle getDefaultScreenBounds() throws NullPointerException {
         // Get the main screen size:

@@ -31,9 +31,9 @@ import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -52,16 +52,22 @@ public final class AutofitTableColumns {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(AutofitTableColumns.class.getName());
+    /** internal stats flag */
+    private static final boolean STATS = false;
     /** internal debug flag */
     private static final boolean DEBUG = false;
     /** maximum width for a column header */
     private static final int MAX_WIDTH_HEADER = 100;
-    /** maximum width for any column */
-    private static final int MAX_WIDTH = 2000;
+    /** default maximum width for any column */
+    private static final int DEFAULT_MAX_WIDTH = 800;
     /** header padding */
     private static final int DEFAULT_COLUMN_PADDING_HEADER = 20;
     /** padding */
     private static final int DEFAULT_COLUMN_PADDING = 20;
+    /** max samples to estimate the column width */
+    private static final int MAX_SAMPLES = 200;
+    /** threhsold used to switch to sampling */
+    private static final int THRESHOLD_SAMPLES = MAX_SAMPLES * 2;
 
     /**
      * Hidden constructor
@@ -121,14 +127,25 @@ public final class AutofitTableColumns {
         if (columnCount > 0) {
             final Dimension interCellSpacing = aTable.getIntercellSpacing();
 
+            int maxWidth = 0;
+            // Get the parent frame:
+            final JFrame frame = SwingUtils.getParentFrame(aTable);
+
+            if (frame != null) {
+                maxWidth = (int) Math.ceil(0.60 * frame.getWidth());
+            }
+            if (maxWidth < DEFAULT_MAX_WIDTH) {
+                maxWidth = DEFAULT_MAX_WIDTH;
+            }
+
             // STEP ONE : Work out the column widths
             final int columnWidth[] = new int[columnCount];
-
             int visibleCount = 0;
 
             for (int i = 0; i < columnCount; i++) {
                 final int width = getMaxColumnWidth(aTable, i, includeColumnHeaderWidth, columnPadding, useRendererText);
-                columnWidth[i] = Math.min(width, MAX_WIDTH);
+
+                columnWidth[i] = Math.min(width, maxWidth);
                 if (columnWidth[i] != 0) {
                     visibleCount++;
                     tableWidth += columnWidth[i];
@@ -160,7 +177,9 @@ public final class AutofitTableColumns {
             aTable.repaint();
         }
 
-        if (_logger.isDebugEnabled()) {
+        if (STATS) {
+            _logger.info("autoResizeTable done in {} ms.", 1e-6d * (System.nanoTime() - startTime));
+        } else if (_logger.isDebugEnabled()) {
             _logger.debug("autoResizeTable done in {} ms.", 1e-6d * (System.nanoTime() - startTime));
         }
 
@@ -187,15 +206,10 @@ public final class AutofitTableColumns {
         final int step;
         final int start;
 
-        // only few values are evaluated for performance reasons:
-        if (size > 100) {
-            if (size > 5000) {
-                step = size / 25;
-                start = 13;
-            } else {
-                step = size / 10;
-                start = 3;
-            }
+        // only small number of values are evaluated for performance reasons:
+        if (size > THRESHOLD_SAMPLES) {
+            step = (int) Math.ceil((size * 1.0) / MAX_SAMPLES); // rounded up
+            start = (size > 5000) ? 13 : 3;
         } else {
             step = 1;
             start = 0;
@@ -215,49 +229,41 @@ public final class AutofitTableColumns {
             if (tableCellRenderer == null) {
                 tableCellRenderer = aTable.getCellRenderer(i, columnNo);
             }
-            Object cellValue = aTable.getValueAt(i, columnNo);
+            final Object cellValue = aTable.getValueAt(i, columnNo);
 
             if (cellValue != null) {
-                Component comp = tableCellRenderer.getTableCellRendererComponent(aTable, cellValue, false, false, i, columnNo);
+                final Component comp = tableCellRenderer.getTableCellRendererComponent(aTable, cellValue, false, false, i, columnNo);
 
                 if (comp instanceof DefaultTableCellRenderer) {
-                    JLabel jLabelComp = ((DefaultTableCellRenderer) comp);
+                    final JLabel jLabelComp = ((DefaultTableCellRenderer) comp);
 
                     if (fontMetrics == null) {
                         fontMetrics = jLabelComp.getFontMetrics(jLabelComp.getFont());
                     }
+                    // Is HTML content ?
+                    final String text = (useRendererText && !SwingUtils.isHTML(jLabelComp)) ? jLabelComp.getText() : cellValue.toString();
 
-                    String text = (useRendererText) ? jLabelComp.getText() : cellValue.toString();
-
-                    if (useRendererText && (text != null) && (text.length() != 0) && (text.charAt(0) == '<') && (text.startsWith("<html>"))) {
-                        text = cellValue.toString();
+                    if (!StringUtils.isEmpty(text)) {
+                        // Hack for double values (truncated):
+                        final int textWidth = SwingUtils.getTextWidth(fontMetrics, text);
+                        maxWidth = Math.max(maxWidth, textWidth);
                     }
-
-                    // Hack for double values (truncated):
-                    int textWidth = SwingUtilities.computeStringWidth(fontMetrics, text);
-
-                    maxWidth = Math.max(maxWidth, textWidth);
-
                 } else if (comp instanceof JTextComponent) {
-                    JTextComponent jtextComp = (JTextComponent) comp;
+                    final JTextComponent jtextComp = (JTextComponent) comp;
 
                     if (fontMetrics == null) {
                         fontMetrics = jtextComp.getFontMetrics(jtextComp.getFont());
                     }
+                    // Is HTML content ?
+                    final String text = (useRendererText && !SwingUtils.isHTML(jtextComp)) ? jtextComp.getText() : cellValue.toString();
 
-                    String text = (useRendererText) ? jtextComp.getText() : cellValue.toString();
-
-                    if (useRendererText && (text != null) && (text.length() != 0) && (text.charAt(0) == '<') && (text.startsWith("<html>"))) {
-                        text = cellValue.toString();
+                    if (!StringUtils.isEmpty(text)) {
+                        // Hack for double values (truncated):
+                        final int textWidth = SwingUtils.getTextWidth(fontMetrics, text);
+                        maxWidth = Math.max(maxWidth, textWidth);
                     }
-
-                    int textWidth = SwingUtilities.computeStringWidth(fontMetrics, text);
-
-                    maxWidth = Math.max(maxWidth, textWidth);
-
                 } else if (comp != null) {
-                    int cellWidth = comp.getPreferredSize().width;
-
+                    final int cellWidth = comp.getPreferredSize().width;
                     maxWidth = Math.max(maxWidth, cellWidth);
                 }
             }
@@ -266,34 +272,30 @@ public final class AutofitTableColumns {
 
         if (includeColumnHeaderWidth) {
             final TableColumn column = aTable.getColumnModel().getColumn(columnNo);
-
             final TableCellRenderer headerRenderer = column.getHeaderRenderer();
-
             int textWidth = 0;
 
             if (headerRenderer != null) {
-                Component comp = headerRenderer.getTableCellRendererComponent(aTable, column.getHeaderValue(), false, false, 0, columnNo);
+                final Component comp = headerRenderer.getTableCellRendererComponent(aTable, column.getHeaderValue(), false, false, 0, columnNo);
 
                 if (comp instanceof JTextComponent) {
-                    JTextComponent jtextComp = (JTextComponent) comp;
+                    final JTextComponent jtextComp = (JTextComponent) comp;
+                    final String text = jtextComp.getText();
 
-                    if (!StringUtils.isEmpty(jtextComp.getText())) {
+                    if (!StringUtils.isEmpty(text)) {
                         fontMetrics = jtextComp.getFontMetrics(jtextComp.getFont());
-
-                        textWidth = getHeaderWidth(fontMetrics, jtextComp.getText());
+                        textWidth = getHeaderWidth(fontMetrics, text);
                     }
                 } else if (comp != null) {
                     textWidth = comp.getPreferredSize().width;
                 }
             } else {
                 try {
-                    String text = (String) column.getHeaderValue();
+                    final String text = (String) column.getHeaderValue();
 
                     if (!StringUtils.isEmpty(text)) {
                         final JTableHeader tableHeader = aTable.getTableHeader();
-
                         fontMetrics = tableHeader.getFontMetrics(tableHeader.getFont());
-
                         textWidth = getHeaderWidth(fontMetrics, text);
                     }
                 } catch (ClassCastException ce) {
@@ -313,10 +315,10 @@ public final class AutofitTableColumns {
      * @return largest line width
      */
     private static int getHeaderWidth(final FontMetrics fontMetrics, final String text) {
-        // note: text must not contain html code as it will be interpreted as text not code:
-        int maxWidth = SwingUtilities.computeStringWidth(fontMetrics, text);
+        int maxWidth = SwingUtils.getTextWidth(fontMetrics, text);
 
         maxWidth += DEFAULT_COLUMN_PADDING_HEADER;
+
         if (maxWidth > MAX_WIDTH_HEADER) {
             maxWidth = MAX_WIDTH_HEADER;
         }

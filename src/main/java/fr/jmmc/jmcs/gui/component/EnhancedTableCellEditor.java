@@ -64,7 +64,10 @@ public final class EnhancedTableCellEditor extends AbstractCellEditor implements
             final int modelColumn = tableSorter.columnModelIndex(colIndex);
 
             if (tableModel.hasURL(modelColumn)) {
-                final int modelRow = tableSorter.modelIndex(row);
+                // use row sorter (filter):
+                final int rowIndex = table.convertRowIndexToModel(row);
+                // use table sorter:
+                final int modelRow = tableSorter.modelIndex(rowIndex);
                 final String url = tableModel.getURL(modelColumn, modelRow);
 
                 if (url != null) {

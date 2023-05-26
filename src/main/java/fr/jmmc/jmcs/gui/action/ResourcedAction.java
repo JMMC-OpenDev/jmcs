@@ -42,6 +42,8 @@ public abstract class ResourcedAction extends AbstractAction {
 
     /** default serial UID for Serializable interface */
     private static final long serialVersionUID = 1;
+    /** initial action name value retrieved from Properties */
+    private String text ;
 
     /**
      * This constructor use the resource file to get text description and icon of action.
@@ -50,7 +52,7 @@ public abstract class ResourcedAction extends AbstractAction {
     public ResourcedAction(final String actionName) {
 
         // Collect action info
-        String text = PropertyUtils.getActionText(actionName);
+        this.text = PropertyUtils.getActionText(actionName);
         String desc = PropertyUtils.getActionDescription(actionName);
         ImageIcon icon = PropertyUtils.getActionIcon(actionName);
         KeyStroke accelerator = PropertyUtils.getActionAccelerator(actionName);
@@ -72,5 +74,15 @@ public abstract class ResourcedAction extends AbstractAction {
             putValue(Action.ACCELERATOR_KEY, accelerator);
         }
     }
+    
+    /**
+     * Put action name back to its value defined in property bundle.
+     */
+    public void restoreActionName(){        
+        if (text != null) {
+            putValue(Action.NAME, text);
+        }
+    }
+    
 }
 /*___oOo___*/

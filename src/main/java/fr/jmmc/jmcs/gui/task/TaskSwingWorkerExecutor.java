@@ -120,6 +120,15 @@ public final class TaskSwingWorkerExecutor {
     }
 
     /**
+     * This code returns the existing singleton instance.
+     *
+     * @return TaskSwingWorkerExecutor or null if not initialized
+     */
+    private static synchronized TaskSwingWorkerExecutor getExistingInstance() {
+        return _instance;
+    }
+
+    /**
      * Schedules the given {@code TaskSwingWorker} for execution on a
      * <i>worker</i> thread.
      *
@@ -138,7 +147,11 @@ public final class TaskSwingWorkerExecutor {
      * @return true if one task was canceled
      */
     public static boolean cancelTask(final Task task) {
-        return getInstance().cancel(task);
+        final TaskSwingWorkerExecutor executor = getExistingInstance();
+        if (executor != null) {
+            return executor.cancel(task);
+        }
+        return false;
     }
 
     /**
@@ -149,7 +162,11 @@ public final class TaskSwingWorkerExecutor {
      * @return true if one task was canceled
      */
     public static boolean cancelTaskAndRelated(final Task task) {
-        return getInstance().cancelRelatedTasks(task);
+        final TaskSwingWorkerExecutor executor = getExistingInstance();
+        if (executor != null) {
+            return executor.cancelRelatedTasks(task);
+        }
+        return false;
     }
 
     /**
@@ -243,14 +260,14 @@ public final class TaskSwingWorkerExecutor {
             _logger.info("cancel related tasks for = {}", task);
         }
         boolean cancelled = false;
-        
+
         // cancel first any busy worker related to any child task :
         for (Task child : task.getChildTasks()) {
             cancelled |= cancel(child);
         }
         // cancel any busy worker related to the given task :
         cancelled |= cancel(task);
-        
+
         return cancelled;
     }
 

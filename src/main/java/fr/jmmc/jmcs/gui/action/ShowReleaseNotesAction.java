@@ -175,7 +175,7 @@ public final class ShowReleaseNotesAction extends RegisteredAction {
             generatedHtml.append("<ul>\n");
 
             for (Change c : changeList) {
-                generatedHtml.append("<li>").append(c.getValue()).append("</li>\n");
+                generatedHtml.append("<li>").append(StringUtils.encodeTagContent(c.getValue())).append("</li>\n");
             }
             generatedHtml.append("</ul>\n");
         }

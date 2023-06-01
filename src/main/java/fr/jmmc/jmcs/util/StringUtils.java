@@ -76,6 +76,8 @@ public final class StringUtils {
     private final static Pattern PATTERN_LT = Pattern.compile(STRING_LT);
     /** RegExp expression to end tag */
     private final static Pattern PATTERN_GT = Pattern.compile(STRING_GT);
+    /** Max length to insert <br> in tooltips */
+    public final static int MAX_TOOLTIP_LINE = 80;
 
     /**
      * Forbidden constructor
@@ -308,4 +310,34 @@ public final class StringUtils {
         }
         return src;
     }
+
+    public static String formatTooltip(final String input, final StringBuilder sb) {
+        if ((input != null) && input.length() > MAX_TOOLTIP_LINE) {
+            sb.setLength(0); // recycle buffer
+            sb.append("<html>");
+
+            final String[] tokens = input.split(" ");
+
+            final int len = tokens.length;
+
+            for (int i = 0, n = 0; i < len; i++) {
+                final String word = tokens[i];
+                final int wl = word.length();
+
+                if (n + wl > MAX_TOOLTIP_LINE) {
+                    sb.append("<br>");
+                    n = 0;
+                } else {
+                    sb.append(" ");
+                    n++;
+                }
+                sb.append(word);
+                n += wl;
+            }
+            sb.append("</html>");
+            return sb.toString();
+        }
+        return input;
+    }
+
 }

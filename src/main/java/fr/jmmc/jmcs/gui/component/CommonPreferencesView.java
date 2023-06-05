@@ -99,6 +99,7 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        buttonGroupFileChooser = new javax.swing.ButtonGroup();
         jPanelMisc = new javax.swing.JPanel();
         jLabelBrowser = new javax.swing.JLabel();
         jTextFieldBrowser = new javax.swing.JTextField();
@@ -108,6 +109,9 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
         jLabelLAF = new javax.swing.JLabel();
         jFieldUiScale = new javax.swing.JFormattedTextField();
         jButtonRefreshUI = new javax.swing.JButton();
+        jLabelFileChooser = new javax.swing.JLabel();
+        jRadioButtonNativeFileChooserYes = new javax.swing.JRadioButton();
+        jRadioButtonNativeFileChooserNo = new javax.swing.JRadioButton();
         filler = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         setLayout(new java.awt.GridBagLayout());
@@ -176,7 +180,7 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanelMisc.add(jFieldUiScale, gridBagConstraints);
@@ -195,6 +199,43 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanelMisc.add(jButtonRefreshUI, gridBagConstraints);
+
+        jLabelFileChooser.setText("Native file chooser:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 6);
+        jPanelMisc.add(jLabelFileChooser, gridBagConstraints);
+
+        buttonGroupFileChooser.add(jRadioButtonNativeFileChooserYes);
+        jRadioButtonNativeFileChooserYes.setText("yes");
+        jRadioButtonNativeFileChooserYes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonNativeFileChooserActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jPanelMisc.add(jRadioButtonNativeFileChooserYes, gridBagConstraints);
+
+        buttonGroupFileChooser.add(jRadioButtonNativeFileChooserNo);
+        jRadioButtonNativeFileChooserNo.setText("no");
+        jRadioButtonNativeFileChooserNo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonNativeFileChooserActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jPanelMisc.add(jRadioButtonNativeFileChooserNo, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -237,6 +278,15 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
         }
     }//GEN-LAST:event_jComboBoxLAFActionPerformed
 
+    private void jRadioButtonNativeFileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonNativeFileChooserActionPerformed
+        try {
+            // will fire triggerObserversNotification so update() will be called
+            this.myPreferences.setPreference(CommonPreferences.FILECHOOSER_NATIVE, Boolean.valueOf(this.jRadioButtonNativeFileChooserYes.isSelected()));
+        } catch (PreferencesException pe) {
+            _logger.error("property failure : ", pe);
+        }
+    }//GEN-LAST:event_jRadioButtonNativeFileChooserActionPerformed
+
     private void jFieldUiScaleValuePropertyChanged(PropertyChangeEvent evt) {
         if (!ObjectUtils.areEquals(evt.getNewValue(), evt.getOldValue())) {
             final double uiScaleNew = ((Number) jFieldUiScale.getValue()).doubleValue();
@@ -254,15 +304,19 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroupFileChooser;
     private javax.swing.Box.Filler filler;
     private javax.swing.JButton jButtonBrowserSelector;
     private javax.swing.JButton jButtonRefreshUI;
     private javax.swing.JComboBox jComboBoxLAF;
     private javax.swing.JFormattedTextField jFieldUiScale;
     private javax.swing.JLabel jLabelBrowser;
+    private javax.swing.JLabel jLabelFileChooser;
     private javax.swing.JLabel jLabelLAF;
     private javax.swing.JLabel jLabelScaleUI;
     private javax.swing.JPanel jPanelMisc;
+    private javax.swing.JRadioButton jRadioButtonNativeFileChooserNo;
+    private javax.swing.JRadioButton jRadioButtonNativeFileChooserYes;
     private javax.swing.JTextField jTextFieldBrowser;
     // End of variables declaration//GEN-END:variables
 
@@ -285,6 +339,10 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
         }
 
         jFieldUiScale.setValue(myPreferences.getUIScale());
+
+        final boolean useNativeFileChooser = this.myPreferences.getPreferenceAsBoolean(CommonPreferences.FILECHOOSER_NATIVE);
+        this.jRadioButtonNativeFileChooserYes.setSelected(useNativeFileChooser);
+        this.jRadioButtonNativeFileChooserNo.setSelected(!useNativeFileChooser);
     }
 
     Vector<String> generateLAF() {
@@ -296,7 +354,7 @@ public final class CommonPreferencesView extends javax.swing.JPanel implements O
             model.add(lookAndFeelInfo.getName());
             addLaf(lookAndFeelInfo.getName(), lookAndFeelInfo.getClassName());
         }
-        
+
         // Always add current LAF:
         final LookAndFeel laf = UIManager.getLookAndFeel();
         if (!model.contains(laf.getName())) {

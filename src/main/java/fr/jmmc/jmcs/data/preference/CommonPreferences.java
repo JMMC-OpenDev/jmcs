@@ -49,6 +49,8 @@ public final class CommonPreferences extends Preferences {
     public static final String PREFERENCES_FILENAME = "fr.jmmc.jmcs.properties";
     /** Name of the preference which stores the user email in the feedback report */
     public static final String FEEDBACK_REPORT_USER_EMAIL = "feedback_report.user_email";
+    /** Name of the preference which stores the flag to use the native file chooser (true) or swing (false) */
+    public static final String FILECHOOSER_NATIVE = "filechooser.native";
     /** Name of the preference which stores the flag to display or not the splash screen */
     public static final String SHOW_STARTUP_SPLASHSCREEN = "startup.splashscreen.show";
     /** Name of the preference which stores the user selected browser */
@@ -112,6 +114,7 @@ public final class CommonPreferences extends Preferences {
         // Display the splash screen during app launch.
         setDefaultPreference(SHOW_STARTUP_SPLASHSCREEN, true);
         setDefaultPreference(FEEDBACK_REPORT_USER_EMAIL, "");
+        setDefaultPreference(FILECHOOSER_NATIVE, true);
         setDefaultPreference(WEB_BROWSER, IBrowserLaunching.BROWSER_DEFAULT);
         setDefaultPreference(SHOW_UNSUPPORTED_JDK_WARNING, true);
         setDefaultPreference(UI_SCALE, 1.0);

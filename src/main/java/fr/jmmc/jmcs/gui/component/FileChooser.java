@@ -29,6 +29,7 @@ package fr.jmmc.jmcs.gui.component;
 
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.MimeType;
+import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.data.preference.SessionSettingsPreferences;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.util.FileUtils;
@@ -56,8 +57,6 @@ public final class FileChooser {
     private static final Logger _logger = LoggerFactory.getLogger(FileChooser.class.getName());
     /** Apple specific property to force AWT FileDialog work on directories only */
     public final static String MAC_FILE_DIALOG_DIRECTORY = "apple.awt.fileDialogForDirectories";
-    /** Use native file chooser i.e. AWT FileDialog (Mac OS X) */
-    private final static boolean USE_DIALOG_FOR_FILE_CHOOSER = SystemUtils.IS_OS_MAC_OSX;
     /** File Dialog key to remember file dialog dimensions */
     private final static String FILE_DIALOG_DIMENSION_KEY = "___JMCS_INTERNAL_FILE_DIALOG_DIMENSION";
 
@@ -191,8 +190,9 @@ public final class FileChooser {
 
         File[] selectedFiles = null;
 
-        if (USE_DIALOG_FOR_FILE_CHOOSER && !multiSelectionFlag) {
+        if (useNativeFileChooser()) {
             final FileDialog fileDialog = new FileDialog(App.getExistingFrame(), title, FileDialog.LOAD);
+            fileDialog.setMultipleMode(multiSelectionFlag);
 
             if (preselectedDirectory != null) {
                 fileDialog.setDirectory(preselectedDirectory.getAbsolutePath());
@@ -206,16 +206,25 @@ public final class FileChooser {
 
             hookFileDialog(fileDialog);
 
+            fileDialog.setTitle(title);
+
             // waits for dialog inputs:
             fileDialog.setVisible(true);
 
-            if (fileDialog.getFile() != null && fileDialog.getDirectory() != null) {
-                selectedFiles = new File[]{new File(fileDialog.getDirectory(), fileDialog.getFile())};
+            if (fileDialog.getDirectory() != null) {
+                if (multiSelectionFlag) {
+                    selectedFiles = fileDialog.getFiles();
+                    if (selectedFiles.length == 0) {
+                        selectedFiles = null;
+                    }
+                } else {
+                    selectedFiles = new File[]{new File(fileDialog.getDirectory(), fileDialog.getFile())};
+                }
             }
-
         } else {
             final JFileChooser fileChooser = new JmcsFileChooser();
             fileChooser.setMultiSelectionEnabled(multiSelectionFlag);
+
             if (preselectedDirectory != null) {
                 fileChooser.setCurrentDirectory(preselectedDirectory);
             }
@@ -308,7 +317,7 @@ public final class FileChooser {
 
         File selectedFile = null;
 
-        if (USE_DIALOG_FOR_FILE_CHOOSER) {
+        if (useNativeFileChooser()) {
             final FileDialog fileDialog = new FileDialog(App.getExistingFrame(), title, FileDialog.SAVE);
             if (preselectedDirectory != null) {
                 fileDialog.setDirectory(preselectedDirectory.getAbsolutePath());
@@ -402,6 +411,10 @@ public final class FileChooser {
      */
     private FileChooser() {
         super();
+    }
+
+    private static boolean useNativeFileChooser() {
+        return CommonPreferences.getInstance().getPreferenceAsBoolean(CommonPreferences.FILECHOOSER_NATIVE);
     }
 
     private static void hookFileDialog(final Window fileDialog) {

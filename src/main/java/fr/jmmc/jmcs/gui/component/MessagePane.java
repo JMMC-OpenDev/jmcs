@@ -166,8 +166,8 @@ public final class MessagePane {
                 thCause = thCause.getCause();
             }
 
-            // Add exception name to improve given information e.g. ArrayOutOfBound just returned a number as message...
-            return "\n\nExplanation (" + th.getClass().getName() + "): " + cause + "\n\n";
+            // Add exception name to improve given information e.g. ArrayOutOfBounds just returned a number as message...
+            return "\n\nExplanation (" + th.getClass().getSimpleName() + "): " + cause + "\n\n";
         }
         return "";
     }

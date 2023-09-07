@@ -90,12 +90,12 @@ public final class ByteArrayOutputStreamAppender extends OutputStreamAppender<IL
         final int size;
         // the synchronization prevents the OutputStream from being closed or written while we
         // are getting its content.
-        lock.lock();
+        streamWriteLock.lock();
         try {
             size = _byteArrayOutputStream.size();
             buffer = (from < size) ? _byteArrayOutputStream.toByteArray(from) : null;
         } finally {
-            lock.unlock();
+            streamWriteLock.unlock();
         }
         return new LogOutput(size, (buffer != null) ? new String(buffer, 0, buffer.length, cs) : "");
     }

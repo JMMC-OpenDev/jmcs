@@ -84,7 +84,7 @@ public final class ApplicationDescription {
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(ApplicationDescription.class.getName());
     /** flag to dump release versions and dates */
-    private static boolean DUMP_RELEASES = false;
+    private static final boolean DUMP_RELEASES = false;
     /** Package name for JAXB generated code */
     private static final String APP_DATA_MODEL_JAXB_PATH = "fr.jmmc.jmcs.data.app.model";
     /** Application data file i.e. "ApplicationData.xml" */
@@ -180,7 +180,7 @@ public final class ApplicationDescription {
                             dumpVersions(_appDataModel);
 
                             final String appName = _appDataModel.getProgramName();
-                            final float currentVersionNum = parseVersion(currentVersion, true);
+                            final double currentVersionNum = parseVersion(currentVersion, true);
 
                             _logger.debug("currentName: {}", appName);
                             _logger.debug("currentVersion: {} = {}", currentVersion, currentVersionNum);
@@ -209,7 +209,7 @@ public final class ApplicationDescription {
 
                                 if (appName.equalsIgnoreCase(remoteName)) {
 
-                                    final float remoteVersionNum = parseVersion(remoteVersion, true);
+                                    final double remoteVersionNum = parseVersion(remoteVersion, true);
 
                                     _logger.debug("remoteVersion: {} = {}", remoteVersion, remoteVersionNum);
 
@@ -375,22 +375,22 @@ public final class ApplicationDescription {
     }
 
     /**
-     * Parse the application's version string (0.9.4 beta 11 for example) as a float number to be comparable
+     * Parse the application's version string (0.9.4 beta 11 for example) as a double number to be comparable
      * @param version version as string
-     * @return version number as float
+     * @return version number as double
      */
-    public static float parseVersion(final String version) {
+    public static double parseVersion(final String version) {
         return parseVersion(version, false);
     }
 
     /**
-     * Parse the application's version string (0.9.4 beta 11 for example) as a float number to be comparable
+     * Parse the application's version string (0.9.4 beta 11 for example) as a double number to be comparable
      * @param version version as string
      * @param roundUp true to round up for major release (not beta nor alpha)
-     * @return version number as float
+     * @return version number as double
      */
-    public static float parseVersion(final String version, final boolean roundUp) {
-        float res = 0f;
+    public static double parseVersion(final String version, final boolean roundUp) {
+        double res = 0.0;
 
         // Extract first numeric part '0.'
         String tmp = version;
@@ -433,6 +433,7 @@ public final class ApplicationDescription {
                     parts[i] = "0" + part;
                     break;
                 default:
+                // leave part unmodified
             }
         }
 
@@ -450,13 +451,13 @@ public final class ApplicationDescription {
         tmp = sb.toString();
 
         _logger.debug("parse: {}", tmp);
-
         try {
             // parse tmp => 0.9411:
-            res = Float.parseFloat(tmp);
+            res = Double.parseDouble(tmp);
         } catch (NumberFormatException nfe) {
-            _logger.info("Unable to parse version: {}", version);
+            _logger.info("Unable to parse version: {} ({})", tmp, version);
         }
+        _logger.debug("version: {}", res);
         return res;
     }
 

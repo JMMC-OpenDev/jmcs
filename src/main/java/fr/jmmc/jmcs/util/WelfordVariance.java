@@ -11,9 +11,11 @@ package fr.jmmc.jmcs.util;
 public final class WelfordVariance {
 
     private long nSamples;
-    private double min, max, mean, squaredError;
+    private double min, max, squaredError;
+    private final ValueError meanValue;
 
     public WelfordVariance() {
+        this.meanValue = new ValueError();
         reset();
     }
 
@@ -21,7 +23,7 @@ public final class WelfordVariance {
         nSamples = 0L;
         min = Double.POSITIVE_INFINITY;
         max = Double.NEGATIVE_INFINITY;
-        mean = 0.0;
+        meanValue.reset();
         squaredError = 0.0;
     }
 
@@ -29,20 +31,28 @@ public final class WelfordVariance {
         nSamples = other.nSamples;
         min = other.min;
         max = other.max;
-        mean = other.mean;
+        meanValue.copy(other.meanValue);
         squaredError = other.squaredError;
     }
 
     public void add(final double x) {
-        if (x < min) {
-            min = x;
+        if (Double.isFinite(x)) {
+            if (x < min) {
+                min = x;
+            }
+            if (x > max) {
+                max = x;
+            }
+            nSamples++;
+
+            final double deltaOldMean = (x - meanValue.value);
+            meanValue.add(deltaOldMean / nSamples);
+            squaredError += (x - meanValue.value) * deltaOldMean;
         }
-        if (x > max) {
-            max = x;
-        }
-        final double oldMean = mean;
-        mean += (x - mean) / (++nSamples);
-        squaredError += (x - mean) * (x - oldMean);
+    }
+
+    public boolean isSet() {
+        return (nSamples != 0L);
     }
 
     public long nSamples() {
@@ -50,56 +60,56 @@ public final class WelfordVariance {
     }
 
     public double min() {
-        if (nSamples != 0L) {
+        if (isSet()) {
             return min;
         }
         return Double.NaN;
     }
 
     public double max() {
-        if (nSamples != 0L) {
+        if (isSet()) {
             return max;
         }
         return Double.NaN;
     }
 
     public double mean() {
-        if (nSamples != 0L) {
-            return mean;
+        if (isSet()) {
+            return meanValue.value;
         }
         return Double.NaN;
     }
 
     public double variance() {
-        if (nSamples != 0L) {
+        if (isSet()) {
             return squaredError / (nSamples - 1L);
         }
         return Double.NaN;
     }
 
     public double stddev() {
-        if (nSamples != 0L) {
+        if (isSet()) {
             return Math.sqrt(variance());
         }
         return Double.NaN;
     }
 
     public double rms() {
-        if (nSamples != 0L) {
+        if (isSet()) {
             return mean() + stddev();
         }
         return Double.NaN;
     }
 
     public double rawErrorPercent() {
-        if (nSamples != 0L) {
+        if (isSet()) {
             return (100.0 * stddev() / mean());
         }
         return Double.NaN;
     }
 
     public double total() {
-        if (nSamples != 0L) {
+        if (isSet()) {
             return mean() * nSamples;
         }
         return Double.NaN;
@@ -110,6 +120,7 @@ public final class WelfordVariance {
         return "[" + nSamples()
                 + ": µ=" + mean()
                 + " σ=" + stddev()
+                + " var=" + variance()
                 + " (" + rawErrorPercent()
                 + " %) rms=" + rms()
                 + " min=" + min()
@@ -118,13 +129,47 @@ public final class WelfordVariance {
                 + "]";
     }
 
+    private final static class ValueError {
+
+        // fields:
+        double value;
+        double error;
+
+        protected ValueError() {
+            reset();
+        }
+
+        protected void reset() {
+            this.value = 0.0;
+            this.error = 0.0;
+        }
+
+        protected void copy(final ValueError other) {
+            this.value = other.value;
+            this.error = other.error;
+        }
+
+        protected void add(final double val) {
+            final double y = val - error;
+            final double t = value + y;
+            error = (t - value) - y;
+            value = t;
+        }
+    }
+
+    /**
+     * Unit test
+     * @param args 
+     */
     public static void main(String[] args) {
         double[] values;
 
         values = new double[]{1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 5, 5, 6, 6, 7, 8, 89, 10000, 100001, 00, 101};
         test(values);
+        System.out.println("---");
 
-        final int N = 1000;
+        final int N = 1000 * 1000;
+        final int N_HALF = N / 2;
 
         double nHigh = 1E15;
         double nLow = 1;
@@ -134,8 +179,9 @@ public final class WelfordVariance {
             values[i] = (i % 2 == 0) ? nHigh : nLow;
         }
         test(values);
-        System.out.println("Excepted mean = " + (nHigh + nLow) / 2.0);
-        System.out.println("Excepted total = " + (nHigh + nLow) * (N / 2));
+        System.out.println("Excepted mean = " + (nHigh / 2.0 + nLow / 2.0));
+        System.out.println("Excepted total = " + (nHigh * N_HALF + nLow * N_HALF));
+        System.out.println("---");
 
         nHigh = 1.0;
         nLow = 1E-15;
@@ -145,8 +191,9 @@ public final class WelfordVariance {
             values[i] = (i % 2 == 0) ? nHigh : nLow;
         }
         test(values);
-        System.out.println("Excepted mean = " + (nHigh + nLow) / 2.0);
-        System.out.println("Excepted total = " + (nHigh + nLow) * (N / 2));
+        System.out.println("Excepted mean = " + (nHigh / 2.0 + nLow / 2.0));
+        System.out.println("Excepted total = " + (nHigh * N_HALF + nLow * N_HALF));
+        System.out.println("---");
     }
 
     private static void test(final double[] values) {
@@ -159,30 +206,29 @@ public final class WelfordVariance {
         System.out.println("v.stdev() = " + v.stddev());
         System.out.println("stats() = " + v);
 
-        System.out.println("naiveSum = " + naiveSum(values));
-        System.out.println("kahanSum = " + kahanSum(values));
-        System.out.println("---");
+        testSum(values);
+    }
+
+    private static void testSum(final double[] values) {
+        System.out.println("naiveSum    = " + naiveSum(values));
+        System.out.println("kahanSum    = " + kahanSum(values));
     }
 
     private static double naiveSum(double[] values) {
-        final double[] state = new double[1]; // sum
-        state[0] = 0.0;
+        final ValueError v = new ValueError();
+
         for (int i = 0; i < values.length; i++) {
-            state[0] += values[i];
+            v.value += values[i];
         }
-        return state[0];
+        return v.value;
     }
 
     private static double kahanSum(double[] values) {
-        final double[] state = new double[2]; // sum | error
-        state[0] = 0.0;
-        state[1] = 0.0;
+        final ValueError v = new ValueError();
+
         for (int i = 0; i < values.length; i++) {
-            final double y = values[i] - state[1];
-            final double t = state[0] + y;
-            state[1] = (t - state[0]) - y;
-            state[0] = t;
+            v.add(values[i]);
         }
-        return state[0];
+        return v.value;
     }
 }

@@ -265,10 +265,13 @@ public final class CustomScreenshotTaker {
      * @throws ImageException if the given file path belongs to a non-empty directory.
      * @throws ImageException if an I/O error prevents the image from being saved as a file.
      */
-    public void saveImage(BufferedImage image, String filePath, final int mouseX, final int mouseY) {
+    public void saveImage(BufferedImage image, String filePath, int mouseX, int mouseY) {
         validate(filePath);
         try {
             if ((mouseX >= 0) && (mouseY >= 0)) {
+                mouseX -= MARGINS.x;
+                mouseY -= MARGINS.y;
+                
                 // draw mouse pointer image:
                 // System.out.println("draw mouse pointer at (" + mouseX + ", " + mouseY + ")");
                 image.getGraphics().drawImage(getMousePointer(), mouseX, mouseY, null);

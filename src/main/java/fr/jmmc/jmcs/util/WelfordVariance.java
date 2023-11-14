@@ -1,5 +1,7 @@
 package fr.jmmc.jmcs.util;
 
+import java.util.Locale;
+
 /**
  * Simple implementation of Welford's algorithm for
  * online-computation of the variance of a stream.
@@ -117,21 +119,28 @@ public final class WelfordVariance {
 
     @Override
     public String toString() {
-        return "[" + nSamples()
-                + ": µ=" + mean()
-                + " σ=" + stddev()
-                + " var=" + variance()
-                + " (" + rawErrorPercent()
-                + " %) rms=" + rms()
-                + " min=" + min()
-                + " max=" + max()
-                + " sum=" + total()
-                + "]";
+        return new StringBuilder(128)
+                .append("[").append(nSamples())
+                .append(": µ=").append(NumberUtils.format(mean()))
+                .append(" σ=").append(NumberUtils.format(stddev()))
+                .append(" (").append(NumberUtils.format(rawErrorPercent()))
+                .append(" %) min=").append(NumberUtils.format(min()))
+                .append(" max=").append(NumberUtils.format(max()))
+                .append(" sum=").append(NumberUtils.format(total()))
+                .append("]").toString();
     }
 
+    public String toString(final boolean full) {
+        return (full) ? toString() : new StringBuilder(64)
+                .append("[µ=").append(NumberUtils.format(mean()))
+                .append(" σ=").append(NumberUtils.format(stddev()))
+                .append(" min=").append(NumberUtils.format(min()))
+                .append(" max=").append(NumberUtils.format(max()))
+                .append("]").toString();
+    }
+    
     private final static class ValueError {
 
-        // fields:
         double value;
         double error;
 
@@ -162,6 +171,9 @@ public final class WelfordVariance {
      * @param args 
      */
     public static void main(String[] args) {
+        // Set the default locale to en-US locale (for Numerical Fields "." ",")
+        Locale.setDefault(Locale.US);
+
         double[] values;
 
         values = new double[]{1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 5, 5, 6, 6, 7, 8, 89, 10000, 100001, 00, 101};

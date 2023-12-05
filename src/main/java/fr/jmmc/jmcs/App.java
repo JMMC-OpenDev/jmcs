@@ -34,7 +34,9 @@ import fr.jmmc.jmcs.gui.action.internal.InternalActionFactory;
 import fr.jmmc.jmcs.gui.util.ResourceImage;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
+import fr.jmmc.jmcs.service.RecentFilesManager;
 import fr.jmmc.jmcs.util.CommandLineUtils;
+import fr.jmmc.jmcs.util.StringUtils;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -245,16 +247,14 @@ public abstract class App {
      * Open the file given by the user as a command-line argument (-open file)
      */
     public final void openCommandLineFile() {
+        String fileArgument = null;
 
-        if ((_customArgumentValues == null) || (_customArgumentValues.isEmpty())) {
-            return;
+        if ((_customArgumentValues != null) && (!_customArgumentValues.isEmpty())) {
+            // If any file argument exists, open that file using the registered open action
+            fileArgument = _customArgumentValues.get(CommandLineUtils.CLI_OPEN_KEY);
         }
 
-        // If any file argument exists, open that file using the registered open action
-        final String fileArgument = _customArgumentValues.get(CommandLineUtils.CLI_OPEN_KEY);
-        if (fileArgument == null) {
-            return;
-        }
+        final String finalFileArgument = fileArgument;
 
         SwingUtils.invokeLaterEDT(new Runnable() {
             /**
@@ -262,10 +262,18 @@ public abstract class App {
              */
             @Override
             public void run() {
-                final ActionRegistrar actionRegistrar = ActionRegistrar.getInstance();
-                final AbstractAction openAction = actionRegistrar.getOpenAction();
-                if (openAction != null) {
-                    openAction.actionPerformed(new ActionEvent(actionRegistrar, 0, fileArgument));
+                if (StringUtils.isEmpty(finalFileArgument)) {
+                    // Use most recent file:
+                    final AbstractAction openAction = RecentFilesManager.getFirstFileAction();
+                    if (openAction != null) {
+                        openAction.actionPerformed(null);
+                    }
+                } else {
+                    final ActionRegistrar actionRegistrar = ActionRegistrar.getInstance();
+                    final AbstractAction openAction = actionRegistrar.getOpenAction();
+                    if (openAction != null) {
+                        openAction.actionPerformed(new ActionEvent(actionRegistrar, 0, finalFileArgument));
+                    }
                 }
             }
         });

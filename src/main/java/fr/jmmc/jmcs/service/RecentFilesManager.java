@@ -122,6 +122,19 @@ public final class RecentFilesManager {
     }
 
     /**
+     * Get First Open File action
+     * @return File action or null if no recent file
+     */
+    public static AbstractAction getFirstFileAction() {
+        // most recent action:
+        final JMenu menu = getMenu();
+        if ((menu != null) && (menu.getItemCount() > 0)) {
+            return (AbstractAction) menu.getItem(0).getAction();
+        }
+        return null;
+    }
+
+    /**
      * Add the given recent file for MIME type.
      * @param file file object or null
      */

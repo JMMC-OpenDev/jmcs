@@ -263,10 +263,12 @@ public abstract class App {
             @Override
             public void run() {
                 if (StringUtils.isEmpty(finalFileArgument)) {
-                    // Use most recent file:
-                    final AbstractAction openAction = RecentFilesManager.getFirstFileAction();
-                    if (openAction != null) {
-                        openAction.actionPerformed(null);
+                    if (shouldOpenFirstFileAtStartup()) {
+                        // Use most recent file:
+                        final AbstractAction openAction = RecentFilesManager.getFirstFileAction();
+                        if (openAction != null) {
+                            openAction.actionPerformed(null);
+                        }
                     }
                 } else {
                     final ActionRegistrar actionRegistrar = ActionRegistrar.getInstance();
@@ -277,6 +279,14 @@ public abstract class App {
                 }
             }
         });
+    }
+
+    /**
+     * Optional hook to override in your App, to tell App to open last recent file at startup.
+     * @return true to open last recent file at startup; false otherwise
+     */
+    protected boolean shouldOpenFirstFileAtStartup() {
+        return false;
     }
 
     /**

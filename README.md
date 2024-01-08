@@ -69,6 +69,9 @@ To skip tests, just run:
 ```
 # build jMCS jar files without any test:
 mvn clean install -DskipTests
+
+# check updates on dependencies:
+mvn versions:display-dependency-updates
 ```
 
 Requirements:

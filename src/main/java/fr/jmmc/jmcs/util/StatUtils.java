@@ -32,11 +32,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +52,13 @@ public final class StatUtils {
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(StatUtils.class.getName());
 
+    /** local folder storing cached files */
+    public final static String FOLDER_CACHE_JMCS = FileUtils.getPlatformCachesPath() + "jmcs" + File.separatorChar;
+
     /** supersampling factor: x1 (normal), x16 (high quality) */
     private final static int SUPER_SAMPLING = 1;
+    /** number of dimensios */
+    public final static int N_DIMS = 2;
     /** number of samples */
     public final static int N_SAMPLES = Integer.getInteger("StatsUtils.samples", 1024 * SUPER_SAMPLING);
 
@@ -64,6 +71,13 @@ public final class StatUtils {
     public final static double SAMPLING_FACTOR_MEAN = 1d / N_SAMPLES;
     /** normalization factor for variance = 1 / (N_SAMPLES - 1) (bessel correction) */
     public final static double SAMPLING_FACTOR_VARIANCE = 1d / (N_SAMPLES - 1);
+
+    public final static int MOMENT_MEAN = 0;
+    public final static int MOMENT_VARIANCE = 1;
+    public final static int MOMENT_ASYMETRY = 2;
+    public final static int MOMENT_KURTOSIS = 3;
+
+    public final static int QUALITY_SCORE = 2;
 
     /** initial cache size = number of baselines (15 for 6 telescopes) */
     private final static int INITIAL_CAPACITY = 15;
@@ -94,11 +108,55 @@ public final class StatUtils {
 
     public synchronized void prepare(final int count) {
         if (count > cache.size()) {
-            logger.info("prepare: {} needed distributions ({} samples)", count, N_SAMPLES);
             final long start = System.nanoTime();
 
-            ComplexDistribution.create(count, cache);
+            // assert that parent directory exist
+            new File(FOLDER_CACHE_JMCS).mkdirs();
 
+            final File cacheFile = new File(FOLDER_CACHE_JMCS, StatUtils.class.getSimpleName() + ".ser");
+
+            logger.debug("prepare: cacheFile = '{}'", cacheFile);
+
+            if (cacheFile.canRead()) {
+                @SuppressWarnings("unchecked")
+                final ArrayList<ComplexDistribution> loadedCache = (ArrayList<ComplexDistribution>) FileUtils.readObject(cacheFile);
+
+                if ((loadedCache != null) && (count <= loadedCache.size())) {
+                    // Check array dimensions:
+                    for (final Iterator<ComplexDistribution> it = loadedCache.iterator(); it.hasNext();) {
+                        final ComplexDistribution d = it.next();
+
+                        if (!d.checkDims()) {
+                            logger.debug("prepare: bad dimensions: {}", d);
+                            it.remove();
+                        }
+                    }
+
+                    if (count <= loadedCache.size()) {
+                        // loaded cache is valid => adopt it:
+                        cache.clear();
+                        cache.addAll(loadedCache);
+
+                        logger.info("prepare: {} loaded distributions", cache.size());
+                    }
+                }
+            }
+
+            if (count > cache.size()) {
+                logger.info("prepare: {} needed distributions ({} samples)", count, N_SAMPLES);
+
+                ComplexDistribution.create(count, cache);
+
+                // update cache:
+                if (!cacheFile.exists() || cacheFile.canWrite()) {
+                    FileUtils.writeObject(cacheFile, cache);
+                }
+            }
+
+            // finally log test details:
+            for (final ComplexDistribution d : cache) {
+                d.test(null, true);
+            }
             logger.info("prepare done: {} ms.", 1e-6d * (System.nanoTime() - start));
         }
     }
@@ -112,31 +170,33 @@ public final class StatUtils {
         return distrib;
     }
 
-    public static final class ComplexDistribution {
+    public static final class ComplexDistribution implements Serializable {
 
-        private final static double ANG_STEP;
+        private static final long serialVersionUID = 1L;
+
+        private final static int ANG_STEP;
         private final static int NUM_ANGLES;
 
         private final static double[][] ANGLES_COS_SIN;
 
         private static int countIteration = 0;
-        
-        private static int MIN_ITER = 5;
-        private static int MAX_ITER = 25;        
+
+        private static int MIN_ITER = 10;
+        private static int MAX_ITER = 25;
 
         static {
-            logger.debug("N_SAMPLES: {}", N_SAMPLES);
-            logger.debug("GOOD_THRESHOLD: {}", GOOD_THRESHOLD);
+            logger.debug("N_SAMPLES:         {}", N_SAMPLES);
+            logger.debug("GOOD_THRESHOLD:    {}", GOOD_THRESHOLD);
             logger.debug("QUALITY_THRESHOLD: {}", QUALITY_THRESHOLD);
 
-            ANG_STEP = 30.0; // 30 deg
+            ANG_STEP = 30; // deg
 
-            NUM_ANGLES = (int) Math.round(360.0 / ANG_STEP);
+            NUM_ANGLES = 360 / ANG_STEP;
 
-            logger.debug("ANG_STEP: {}", ANG_STEP);
-            logger.debug("NUM_ANGLES: {}", NUM_ANGLES);
+            logger.debug("ANG_STEP:          {}", ANG_STEP);
+            logger.debug("NUM_ANGLES:        {}", NUM_ANGLES);
 
-            ANGLES_COS_SIN = new double[NUM_ANGLES][2];
+            ANGLES_COS_SIN = new double[NUM_ANGLES][N_DIMS];
 
             for (int i = 0; i < NUM_ANGLES; i++) {
                 final double angRad = Math.toRadians(ANG_STEP * i);
@@ -149,12 +209,19 @@ public final class StatUtils {
         /* members */
         private int numIter = -1;
         /** samples (re,im) */
-        private final double[][] samples = new double[2][N_SAMPLES];
+        private final double[][] samples = new double[N_DIMS][N_SAMPLES];
         /** moments */
-        private final double[] qualityMoments = new double[3];
+        private final double[] qualityMoments = new double[QUALITY_SCORE + 1];
 
         private ComplexDistribution() {
             super();
+        }
+
+        public boolean checkDims() {
+            return (this.samples.length == N_DIMS)
+                    && (this.samples[0].length == N_SAMPLES)
+                    && (this.samples[1].length == N_SAMPLES)
+                    && (this.qualityMoments.length == (QUALITY_SCORE + 1));
         }
 
         public double[][] getSamples() {
@@ -166,7 +233,8 @@ public final class StatUtils {
         }
 
         public double[][] getMoments() {
-            final double[][] moments = new double[2][4];
+            // not cached, only for debugging purposes:
+            final double[][] moments = new double[N_DIMS][MOMENT_KURTOSIS + 1];
             moments(this.samples[0], moments[0]);
             moments(this.samples[1], moments[1]);
             return moments;
@@ -174,7 +242,12 @@ public final class StatUtils {
 
         @Override
         public String toString() {
-            return "ComplexDistribution{" + "numIter=" + numIter + " quality=" + qualityMoments[2] + '}';
+            return "ComplexDistribution[" + this.samples[0].length + "]{"
+                    + "numIter=" + numIter
+                    + ", diff_mean_sq=" + qualityMoments[MOMENT_MEAN]
+                    + ", diff_var=" + qualityMoments[MOMENT_VARIANCE]
+                    + ", quality=" + qualityMoments[QUALITY_SCORE]
+                    + "}";
         }
 
         private void generate(final Random random) {
@@ -206,13 +279,11 @@ public final class StatUtils {
             final Comparator<ComplexDistribution> cmpQual = new Comparator<ComplexDistribution>() {
                 @Override
                 public int compare(ComplexDistribution d1, ComplexDistribution d2) {
-                    return Double.compare(d1.getQualityMoments()[2], d2.getQualityMoments()[2]);
+                    return Double.compare(d1.getQualityMoments()[QUALITY_SCORE], d2.getQualityMoments()[QUALITY_SCORE]);
                 }
             };
-            
-            ComplexDistribution d = new ComplexDistribution();
 
-            final long start = System.nanoTime();
+            ComplexDistribution d = new ComplexDistribution();
 
             int i = 1;
             double minq = Double.MAX_VALUE;
@@ -243,13 +314,13 @@ public final class StatUtils {
                 }
 
                 // check convergence:
-                final double qLo = distributions.get(0).getQualityMoments()[2];
-                final double qHi = distributions.get(nDistribs - 1).getQualityMoments()[2];
+                final double qLo = distributions.get(0).getQualityMoments()[QUALITY_SCORE];
+                final double qHi = distributions.get(nDistribs - 1).getQualityMoments()[QUALITY_SCORE];
 
                 final double ratio_q = (maxq - qHi) / maxq;
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug("qLo: " + qLo + " qHi: " + qHi + " maxq: " + maxq + " ratio_q: " + ratio_q);
+                    logger.debug("Iteration[{}] qLo: {} qHi: {} maxq: {} ratio_q: {}", i, qLo, qHi, maxq, ratio_q);
                 }
 
                 minq = qLo;
@@ -257,7 +328,7 @@ public final class StatUtils {
 
                 if (i >= MIN_ITER) {
                     // check stale or low progression:
-                    if ((ratio_q < QUALITY_THRESHOLD) && (++nStale == 2)) {
+                    if ((ratio_q < QUALITY_THRESHOLD) && (++nStale == 3)) {
                         break;
                     }
                 }
@@ -272,13 +343,7 @@ public final class StatUtils {
 
             logger.info("distributions quality: ({} - {})", minq, maxq);
 
-            // log test details:
-            for (i = 0; i < nDistribs; i++) {
-                d = distributions.get(i);
-                d.test(null, true);
-            }
-
-            logger.info("done: {} ms ({} iterations).", 1e-6d * (System.nanoTime() - start), (countIteration - prevIter));
+            logger.info("create done: {} iterations.", (countIteration - prevIter));
         }
 
         private boolean test() {
@@ -401,11 +466,12 @@ public final class StatUtils {
             final double diff_var = var_diff_acc / NUM_ANGLES;
 
             // set quality moments:
-            this.qualityMoments[0] = diff_mean_sq; // mean quality
-            this.qualityMoments[1] = diff_var; // var quality
+            this.qualityMoments[MOMENT_MEAN] = diff_mean_sq; // mean quality
+            this.qualityMoments[MOMENT_VARIANCE] = diff_var; // var quality
+
             // overall quality = sum(quality moments)
             final double score = diff_mean_sq + diff_var;
-            this.qualityMoments[2] = score;
+            this.qualityMoments[QUALITY_SCORE] = score;
 
             final boolean good = (score < GOOD_THRESHOLD);
 
@@ -422,7 +488,7 @@ public final class StatUtils {
                         + " avg= " + Math.sqrt(mean_sq) + " norm= " + ref_amp + " ratio: " + Math.sqrt(ratio_mean)
                         + " stddev= " + Math.sqrt(variance) + " err(norm)= " + err_amp + " ratio: " + Math.sqrt(ratio_variance)
                         + " diff_mean_sq= " + diff_mean_sq + " diff_var= " + diff_var
-                        + " quality= " + this.qualityMoments[2]
+                        + " quality= " + this.qualityMoments[QUALITY_SCORE]
                         + " good = " + good);
             }
             return good;
@@ -508,16 +574,15 @@ public final class StatUtils {
         final double kurtosis = (sum_diff4 / array.length) - 3.0; // normalised
 
         // output:
-        moments[0] = mean;
-        moments[1] = variance;
-        moments[2] = asymetry;
-        moments[3] = kurtosis;
+        moments[MOMENT_MEAN] = mean;
+        moments[MOMENT_VARIANCE] = variance;
+        moments[MOMENT_ASYMETRY] = asymetry;
+        moments[MOMENT_KURTOSIS] = kurtosis;
     }
 
     // --- TEST ---
     public static void main(String[] args) throws IOException {
         final boolean TEST_SUM = false;
-        final boolean TEST_DIST = true;
         final boolean DO_DUMP = false;
 
         // Test kahan sum:
@@ -543,8 +608,9 @@ public final class StatUtils {
                 final double[] distRe = d.getSamples()[0];
                 final double[] distIm = d.getSamples()[1];
 
-                System.out.println("moments(re): " + Arrays.toString(d.getMoments()[0]));
-                System.out.println("moments(im): " + Arrays.toString(d.getMoments()[1]));
+                final double[][] moments = d.getMoments();
+                System.out.println("moments(re): " + Arrays.toString(moments[0]));
+                System.out.println("moments(im): " + Arrays.toString(moments[1]));
 
                 final File file = new File("dist_" + N_SAMPLES + "_" + n + ".txt");
                 saveComplexDistribution(file, distRe, distIm);
@@ -555,21 +621,22 @@ public final class StatUtils {
             }
         }
 
-        final double[][] means = new double[2][INITIAL_CAPACITY];
-        final double[][] vars = new double[2][INITIAL_CAPACITY];
+        final double[][] means = new double[N_DIMS][INITIAL_CAPACITY];
+        final double[][] vars = new double[N_DIMS][INITIAL_CAPACITY];
 
         for (int n = 0; n < INITIAL_CAPACITY; n++) {
             ComplexDistribution d = StatUtils.getInstance().get();
             System.out.println("get(): " + d);
 
-            System.out.println("moments(re): " + Arrays.toString(d.getMoments()[0]));
-            System.out.println("moments(im): " + Arrays.toString(d.getMoments()[1]));
+            final double[][] moments = d.getMoments();
+            System.out.println("moments(re): " + Arrays.toString(moments[0]));
+            System.out.println("moments(im): " + Arrays.toString(moments[1]));
 
-            means[0][n] = d.getMoments()[0][0];
-            means[1][n] = d.getMoments()[1][0];
+            means[0][n] = moments[0][MOMENT_MEAN];
+            means[1][n] = moments[1][MOMENT_MEAN];
 
-            vars[0][n] = d.getMoments()[0][1];
-            vars[1][n] = d.getMoments()[1][1];
+            vars[0][n] = moments[0][MOMENT_VARIANCE];
+            vars[1][n] = moments[1][MOMENT_VARIANCE];
         }
 
         System.out.println("moments(mean) (re): " + Arrays.toString(moments(means[0])));
@@ -577,389 +644,6 @@ public final class StatUtils {
 
         System.out.println("moments(variance) (re): " + Arrays.toString(moments(vars[0])));
         System.out.println("moments(variance) (im): " + Arrays.toString(moments(vars[1])));
-
-        final double[][] ratios = new double[3][INITIAL_CAPACITY]; // mean, stddev, chi2
-
-        for (double snr = 5.0; snr > 0.01;) {
-            // fix snr rounding:
-            snr = NumberUtils.trimTo3Digits(snr);
-
-            // TODO: check amplitude effect (ie x/y complex position impact on mean /stddev estimations) */
-            /* for (double amp = 1.0; amp > 5e-6; amp /= 10.0) */
-            final double amp = 0.1;
-            {
-                System.out.println("--- SNR: " + snr + " @ AMP = " + amp + "---");
-
-                if (true) {
-                    System.out.println("VISAMP");
-
-                    final double angle = 3.0;
-                    //for (double angle = 3.0 - 90.0; angle < 95.0; angle += 10.0)
-                    {
-                        for (int i = 0; i < INITIAL_CAPACITY; i++) {
-                            ComplexDistribution d = StatUtils.getInstance().get();
-                            if (TEST_DIST) {
-                                test(angle, amp, snr, true, d.getSamples(), ratios, i);
-                            } else {
-                                test(amp, snr, true, ratios, i);
-                            }
-                        }
-                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " VISAMP Ratio mean moments: " + Arrays.toString(moments(ratios[0])));
-                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " VISAMP Ratio err moments : " + Arrays.toString(moments(ratios[1])));
-                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " VISAMP score:\t" + mean(ratios[0]) + "\t" + mean(ratios[1]) + "\t" + mean(ratios[2]));
-                    }
-                }
-                if (true) {
-                    System.out.println("VIS2:");
-
-                    final double angle = 3.0;
-                    //for (double angle = 3.0 - 90.0; angle < 95.0; angle += 10.0)
-                    {
-                        for (int i = 0; i < INITIAL_CAPACITY; i++) {
-                            ComplexDistribution d = StatUtils.getInstance().get();
-                            if (TEST_DIST) {
-                                test(angle, amp, snr, false, d.getSamples(), ratios, i);
-                            } else {
-                                test(amp, snr, false, ratios, i);
-                            }
-                        }
-                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " C2 SNR: " + (snr / 2) + " VIS2 Ratio mean moments: " + Arrays.toString(moments(ratios[0])));
-                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " C2 SNR: " + (snr / 2) + " VIS2 Ratio err moments : " + Arrays.toString(moments(ratios[1])));
-                        System.out.println("SNR: " + snr + "(C) angle: " + angle + " C2 SNR: " + (snr / 2) + " VIS2 Score:\t" + mean(ratios[0]) + "\t" + mean(ratios[1]) + "\t" + mean(ratios[2]));
-                    }
-                }
-            }
-
-            if (snr > 25) {
-                snr -= 10.0;
-            } else if (snr > 2.5) {
-                snr -= 1.0;
-            } else if (snr > 0.25) {
-                snr -= 0.2;
-            } else {
-                snr -= 0.02;
-            }
-        }
-    }
-
-    private static void test(final double angle, final double visRef, final double snr, final boolean amp, double[][] samples, final double[][] ratios, final int pos) {
-        if (amp) {
-            testV(angle, visRef, snr, true, samples, ratios, pos);
-        } else {
-            testV2(angle, visRef, snr, false, samples, ratios, pos);
-        }
-    }
-
-    /*
-SNR: 5.0(C) angle: 3.0 C2 SNR: 2.5 VIS2 Score:	1.0010045298742483	1.0227438073895267	1.0000000000000002
-SNR: 4.0(C) angle: 3.0 C2 SNR: 2.0 VIS2 Score:	1.0012765243198278	1.034138545888004	1.0
-SNR: 3.0(C) angle: 3.0 C2 SNR: 1.5 VIS2 Score:	1.0017483277680366	1.057939450242428	1.0000000000000002
-SNR: 2.0(C) angle: 3.0 C2 SNR: 1.0 VIS2 Score:	1.0027610574895454	1.122080710029527	1.0000000000000002
-SNR: 1.8(C) angle: 3.0 C2 SNR: 0.9 VIS2 Score:	1.0031190712536069	1.1478669415912104	0.9999999999999997
-SNR: 1.6(C) angle: 3.0 C2 SNR: 0.8 VIS2 Score:	1.0035809354229324	1.182856118800273	0.9999999999999999
-SNR: 1.4(C) angle: 3.0 C2 SNR: 0.7 VIS2 Score:	1.0041981645156703	1.231943562478189	0.9999999999999999
-SNR: 1.2(C) angle: 3.0 C2 SNR: 0.6 VIS2 Score:	1.005062062946277	1.303718640326104	0.9999999999999999
-SNR: 1.0(C) angle: 3.0 C2 SNR: 0.5 VIS2 Score:	1.0063500714379556	1.414374664150271	1.0000000000000002
-SNR: 0.8(C) angle: 3.0 C2 SNR: 0.4 VIS2 Score:	1.0084540433199518	1.5975542543269703	1.0000000000000004
-SNR: 0.6(C) angle: 3.0 C2 SNR: 0.3 VIS2 Score:	1.012421073145649	1.9338722493668803	0.9999999999999998
-SNR: 0.399(C) angle: 3.0 C2 SNR: 0.1995 VIS2 Score:	1.0221904915301658	2.6741486127911767	0.9999999999999998
-SNR: 0.199(C) angle: 3.0 C2 SNR: 0.0995 VIS2 Score:	1.0668942956555465	5.053369593332251	0.9999999999999999
-SNR: 0.179(C) angle: 3.0 C2 SNR: 0.0895 VIS2 Score:	1.0803687092150416	5.594313632160225	1.0000000000000004
-SNR: 0.159(C) angle: 3.0 C2 SNR: 0.0795 VIS2 Score:	1.0992749662829189	6.273393846276565	1.0000000000000002
-SNR: 0.139(C) angle: 3.0 C2 SNR: 0.0695 VIS2 Score:	1.1272617695249763	7.150089149638841	1.0
-SNR: 0.119(C) angle: 3.0 C2 SNR: 0.0595 VIS2 Score:	1.1719267154180815	8.324413053932211	1.0000000000000004
-SNR: 0.098(C) angle: 3.0 C2 SNR: 0.049 VIS2 Score:	1.2579953189078907	10.09196814804471	0.9999999999999997
-SNR: 0.078(C) angle: 3.0 C2 SNR: 0.039 VIS2 Score:	1.4410567104661591	12.719703793211266	1.0
-SNR: 0.057(C) angle: 3.0 C2 SNR: 0.0285 VIS2 Score:	1.938981779453928	17.391932669762614	0.9999999999999994
-SNR: 0.037(C) angle: 3.0 C2 SNR: 0.0185 VIS2 Score:	3.553717709600981	26.926227203332353	0.9999999999999999
-SNR: 0.016(C) angle: 3.0 C2 SNR: 0.008 VIS2 Score:	17.449905852613874	62.13034186209619	1.0
-     */
-    private static void testV2(final double angle, final double visRef, final double snr, final boolean amp, double[][] samples, final double[][] ratios, final int pos) {
-        if (amp) {
-            throw new IllegalStateException("only amp=false supported !");
-        }
-
-        System.out.println("-----");
-        System.out.println("angle: " + angle);
-
-        final double angRad = Math.toRadians(angle);
-
-        final double cos_angle = Math.cos(angRad);
-        final double sin_angle = Math.sin(angRad);
-
-        final double visErr = visRef / snr;
-        System.out.println("vis ref: " + visRef);
-        System.out.println("circular err: " + visErr);
-
-        // v2 = v * v
-        final double exp_ref = visRef * visRef;
-        // d(v2) = 2v * dv si dv petit, sinon il faut suivre les lois de distributions !
-        // ie abaque (erreur expected) => erreur corrigée sur CVis
-        final double exp_err = 2.0 * visRef * visErr;
-
-        final double exp_snr = exp_ref / exp_err;
-
-        System.out.println("expected mean: " + exp_ref + ", stddev: " + exp_err + " SNR = " + exp_snr);
-
-        // add angle:
-        final double visRe = visRef * cos_angle;
-        final double visIm = visRef * sin_angle;
-
-        final double visCErr = visErr;
-        System.out.println("vis re: " + visRe + " im: " + visIm + " err: " + visCErr);
-
-        double sample, diff;
-        int n;
-        double re, im;
-        double y, t;
-
-        final double[] re_samples = new double[N_SAMPLES];
-        final double[] im_samples = new double[N_SAMPLES];
-
-        double re_sum, re_sum_err, im_sum, im_sum_err, cos_phi, sin_phi;
-        re_sum = re_sum_err = im_sum = im_sum_err = 0.0;
-        double cRe, cIm;
-
-        // bivariate distribution (complex normal):
-        // pass 1: numeric mean:
-        for (n = 0; n < N_SAMPLES; n++) {
-            // update nth sample:
-            re = visRe + visCErr * samples[0][n];
-            im = visIm + visCErr * samples[1][n];
-
-            // compute C2=C*C
-            // (a + bi)(c + di) = (ac - bd) + (ad + bc)i
-            cRe = re * re - im * im;
-            cIm = 2.0 * re * im;
-
-            // average complex value:
-            re_samples[n] = cRe;
-            im_samples[n] = cIm;
-
-            // kahan sum
-            // re_sum += cRe;
-            y = cRe - re_sum_err;
-            t = re_sum + y;
-            re_sum_err = (t - re_sum) - y;
-            re_sum = t;
-
-            // im_sum += cIm;
-            y = cIm - im_sum_err;
-            t = im_sum + y;
-            im_sum_err = (t - im_sum) - y;
-            im_sum = t;
-        }
-
-        // mean(vphi):
-        final double s_camp_mean = Math.sqrt(re_sum * re_sum + im_sum * im_sum);
-        // double s_cphi_mean = (im_sum != 0.0) ? Math.atan2(im_sum, re_sum) : 0.0;
-        // System.out.println("angle:"+Math.toDegrees(s_cphi_mean));
-
-        // rotate by -phi:
-        cos_phi = re_sum / s_camp_mean;
-        sin_phi = im_sum / s_camp_mean;
-
-        // true average on averaged complex samples:
-        final double avg = SAMPLING_FACTOR_MEAN * s_camp_mean;
-
-        // pass 2: stddev:
-        double diff_acc = 0.0;
-        double sq_diff_acc = 0.0;
-
-        for (n = 0; n < N_SAMPLES; n++) {
-            // Correct amplitude by estimated phase:
-            // Amp = Re { C * phasor(-phi) }
-            sample = re_samples[n] * cos_phi + im_samples[n] * sin_phi; // -phi => + imaginary part in complex mult
-
-            // Compensated-summation variant for better numeric precision:
-            diff = sample - avg;
-            diff_acc += diff;
-            sq_diff_acc += diff * diff;
-        }
-
-        // standard deviation on amplitude:
-        // note: this algorithm ensures correctness (stable) even if the mean used in diff is wrong !
-        final double stddev = Math.sqrt(SAMPLING_FACTOR_VARIANCE * (sq_diff_acc - (SAMPLING_FACTOR_MEAN * (diff_acc * diff_acc))));
-
-        double chi2_amp_sum = 0.0;
-
-        for (n = 0; n < N_SAMPLES; n++) {
-            // Correct amplitude by estimated phase:
-            // Amp = Re { C * phasor(-phi) }
-            sample = re_samples[n] * cos_phi + im_samples[n] * sin_phi; // -phi => + imaginary part in complex mult
-
-            // chi2 vs pure mean / error:
-            diff = (sample - avg) / stddev;
-            chi2_amp_sum += diff * diff;
-        }
-
-        final double chi2 = SAMPLING_FACTOR_VARIANCE * chi2_amp_sum;
-
-        ratios[0][pos] = (avg / exp_ref);
-        ratios[1][pos] = (stddev / exp_err);
-        ratios[2][pos] = chi2;
-
-        System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] avg= " + avg + " vs expected ref= " + exp_ref + " ratio: " + ratios[0][pos] + " chi2: " + chi2);
-        System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] stddev= " + stddev + " vs expected Err= " + exp_err + " ratio: " + ratios[1][pos]);
-    }
-
-    private static void test(final double visRef, final double snr, final boolean amp, final double[][] ratios, final int pos) {
-        /* create a new random generator to have different seed (single thread) */
-        final Random random = new Random();
-
-        final double[][] samples = new double[2][];
-        samples[0] = new double[N_SAMPLES];
-        samples[1] = new double[N_SAMPLES];
-
-        for (int n = 0; n < N_SAMPLES; n++) {
-            // update nth sample:
-            samples[0][n] = random.nextGaussian();
-            samples[1][n] = random.nextGaussian();
-        }
-        test(45.0, visRef, snr, amp, samples, ratios, pos);
-    }
-
-    /*
-SNR: 5.0(C) angle: 3.0 VISAMP score:	1.0004756945672886	1.0002647045562154	1.0000000000000002
-SNR: 4.0(C) angle: 3.0 VISAMP score:	1.00059677659021	1.0002644163119558	1.0000000000000002
-SNR: 3.0(C) angle: 3.0 VISAMP score:	1.000800498254227	1.000263935931527	1.0000000000000004
-SNR: 2.0(C) angle: 3.0 VISAMP score:	1.001215134611274	1.0002629751559866	1.0000000000000004
-SNR: 1.8(C) angle: 3.0 VISAMP score:	1.001355477899223	1.000262654859044	1.0000000000000002
-SNR: 1.6(C) angle: 3.0 VISAMP score:	1.0015324054720895	1.0002622544383537	0.9999999999999999
-SNR: 1.4(C) angle: 3.0 VISAMP score:	1.0017623302941037	1.000261739504399	1.0000000000000002
-SNR: 1.2(C) angle: 3.0 VISAMP score:	1.0020731783459524	1.0002610526786972	1.0000000000000002
-SNR: 1.0(C) angle: 3.0 VISAMP score:	1.0025165873364066	1.0002600904979662	1.0000000000000002
-SNR: 0.8(C) angle: 3.0 VISAMP score:	1.0031996908244962	1.0002586454045561	1.0
-SNR: 0.6(C) angle: 3.0 VISAMP score:	1.004386202406063	1.000256230255331	1.0000000000000004
-SNR: 0.399(C) angle: 3.0 VISAMP score:	1.0069597147948257	1.0002513270789979	0.9999999999999996
-SNR: 0.199(C) angle: 3.0 VISAMP score:	1.0161592581582337	1.0002361509899491	1.0
-SNR: 0.179(C) angle: 3.0 VISAMP score:	1.018516657135068	1.000232648466847	1.0
-SNR: 0.159(C) angle: 3.0 VISAMP score:	1.0216276444986283	1.000228197616387	1.0
-SNR: 0.139(C) angle: 3.0 VISAMP score:	1.0259002361883058	1.000222356135221	0.9999999999999993
-SNR: 0.119(C) angle: 3.0 VISAMP score:	1.0320859222598509	1.0002143659513443	0.9999999999999998
-SNR: 0.098(C) angle: 3.0 VISAMP score:	1.0423395580589179	1.0002021130262635	0.9999999999999998
-SNR: 0.078(C) angle: 3.0 VISAMP score:	1.059564141538027	1.0001836307291063	1.0000000000000004
-SNR: 0.057(C) angle: 3.0 VISAMP score:	1.0982020398906587	1.00014642670414	0.9999999999999999
-SNR: 0.037(C) angle: 3.0 VISAMP score:	1.208528189048131	1.0000180403701673	1.0000000000000004
-SNR: 0.016(C) angle: 3.0 VISAMP score:	1.9534791991245422	0.9997740687377148	1.0000000000000002
-     */
-    private static void testV(final double angle, final double visRef, final double snr, final boolean amp, double[][] samples, final double[][] ratios, final int pos) {
-        if (!amp) {
-            throw new IllegalStateException("only amp=true supported !");
-        }
-
-        System.out.println("-----");
-        System.out.println("angle: " + angle);
-
-        final double angRad = Math.toRadians(angle);
-
-        final double cos_angle = Math.cos(angRad);
-        final double sin_angle = Math.sin(angRad);
-
-        final double visErr = visRef / snr;
-        System.out.println("vis ref: " + visRef);
-        System.out.println("circular err: " + visErr);
-
-        final double exp_ref = visRef;
-        final double exp_err = visErr;
-
-        System.out.println("expected mean: " + exp_ref + ", stddev: " + exp_err + " SNR = " + (exp_ref / exp_err));
-
-        // add angle:
-        final double visRe = visRef * cos_angle;
-        final double visIm = visRef * sin_angle;
-
-        final double visCErr = visErr;
-        System.out.println("vis re: " + visRe + " im: " + visIm + " err: " + visCErr);
-
-        double sample, diff;
-        int n;
-        double re, im;
-        double y, t;
-
-        double re_sum, re_sum_err, im_sum, im_sum_err, cos_phi, sin_phi;
-
-        final double[] re_samples = new double[N_SAMPLES];
-        final double[] im_samples = new double[N_SAMPLES];
-
-        re_sum = re_sum_err = im_sum = im_sum_err = 0.0;
-
-        // bivariate distribution (complex normal):
-        // pass 1: numeric mean:
-        for (n = 0; n < N_SAMPLES; n++) {
-            // update nth sample:
-            re = visRe + visCErr * samples[0][n];
-            im = visIm + visCErr * samples[1][n];
-
-            // average complex value:
-            re_samples[n] = re;
-            im_samples[n] = im;
-
-            // kahan sums:
-            // re_sum += cRe;
-            y = re - re_sum_err;
-            t = re_sum + y;
-            re_sum_err = (t - re_sum) - y;
-            re_sum = t;
-
-            // im_sum += cIm;
-            y = im - im_sum_err;
-            t = im_sum + y;
-            im_sum_err = (t - im_sum) - y;
-            im_sum = t;
-        }
-
-        // mean(vphi):
-        final double s_camp_mean = Math.sqrt(re_sum * re_sum + im_sum * im_sum);
-        // double s_cphi_mean = (im_sum != 0.0) ? Math.atan2(im_sum, re_sum) : 0.0;
-        // System.out.println("angle:"+Math.toDegrees(s_cphi_mean));
-
-        // rotate by -phi:
-        cos_phi = re_sum / s_camp_mean;
-        sin_phi = im_sum / s_camp_mean;
-
-        // true average on averaged complex samples:
-        double avg = SAMPLING_FACTOR_MEAN * s_camp_mean;
-
-        // pass 2: stddev:
-        double diff_acc = 0.0;
-        double sq_diff_acc = 0.0;
-
-        for (n = 0; n < N_SAMPLES; n++) {
-            // Correct amplitude by estimated phase:
-            // Amp = Re { C * phasor(-phi) }
-            sample = re_samples[n] * cos_phi + im_samples[n] * sin_phi; // -phi => + imaginary part in complex mult
-
-            // Compensated-summation variant for better numeric precision:
-            diff = sample - avg;
-            diff_acc += diff;
-            sq_diff_acc += diff * diff;
-        }
-
-        // standard deviation on amplitude:
-        // note: this algorithm ensures correctness (stable) even if the mean used in diff is wrong !
-        final double stddev = Math.sqrt(SAMPLING_FACTOR_VARIANCE * (sq_diff_acc - (SAMPLING_FACTOR_MEAN * (diff_acc * diff_acc))));
-
-        double chi2_amp_sum = 0.0;
-
-        for (n = 0; n < N_SAMPLES; n++) {
-            // Correct amplitude by estimated phase:
-            // Amp = Re { C * phasor(-phi) }
-            sample = re_samples[n] * cos_phi + im_samples[n] * sin_phi; // -phi => + imaginary part in complex mult
-
-            // chi2 vs pure mean / error:
-            diff = (sample - avg) / stddev;
-            chi2_amp_sum += diff * diff;
-        }
-
-        final double chi2 = SAMPLING_FACTOR_VARIANCE * chi2_amp_sum;
-
-        ratios[0][pos] = (avg / exp_ref);
-        ratios[1][pos] = (stddev / exp_err);
-        ratios[2][pos] = chi2;
-
-        System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] avg= " + avg + " vs expected ref= " + exp_ref + " ratio: " + ratios[0][pos] + " chi2: " + chi2);
-        System.out.println("[" + pos + "] Sampling[" + N_SAMPLES + "] stddev= " + stddev + " vs expected Err= " + exp_err + " ratio: " + ratios[1][pos]);
     }
 
     // sum tests

@@ -291,7 +291,7 @@ public class TestJide extends JFrame {
         return panel;
     }
 
-    static public void main(String[] s) {
+    public static void main(String[] s) {
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override

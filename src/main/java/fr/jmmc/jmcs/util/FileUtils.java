@@ -42,9 +42,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.InvalidClassException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -807,7 +811,7 @@ public final class FileUtils {
      * @return a string containing the full folder path to the preference file,
      * according to execution platform.
      */
-    static public String getPlatformPreferencesPath() {
+    public static String getPlatformPreferencesPath() {
         // [USER_HOME]/
         String fullPreferencesPath = SystemUtils.USER_HOME + File.separatorChar;
 
@@ -838,7 +842,7 @@ public final class FileUtils {
      * @return a string containing the full file path for caches,
      * according to the execution platform.
      */
-    static public String getPlatformCachesPath() {
+    public static String getPlatformCachesPath() {
         // [USER_HOME]/
         String fullCachesPath = SystemUtils.USER_HOME + File.separatorChar;
 
@@ -869,7 +873,7 @@ public final class FileUtils {
      * @return a string containing the full file path for documents,
      * according to the execution platform.
      */
-    static public String getPlatformDocumentsPath() {
+    public static String getPlatformDocumentsPath() {
         // [USER_HOME]/
         String fullDocumentsPath = SystemUtils.USER_HOME + File.separatorChar;
 
@@ -884,6 +888,57 @@ public final class FileUtils {
         // Linux (and anything else) : [USER_HOME]/
         _logger.debug("Computed documents folder path = '{}'.", fullDocumentsPath);
         return fullDocumentsPath;
+    }
+
+    /**
+     * De-serialize the given input file to a Serializable instance
+     * @param file serialized file to load
+     * @return Serializable instance or null if any failure occured
+     */
+    public static Serializable readObject(final File file) {
+        Serializable o = null;
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+            // read object:
+            o = (Serializable) ois.readObject();
+
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Loaded object from '{}': {}", file.getAbsolutePath(), o);
+            }
+        } catch (final InvalidClassException ice) {
+            // happens when serialVersionUID differs between Class and serialized data
+            _logger.debug("Invalid class: ", ice);
+        } catch (final ClassNotFoundException cnfe) {
+            _logger.error("Class failure: ", cnfe);
+        } catch (final IOException ioe) {
+            _logger.error("IO failure: ", ioe);
+        } finally {
+            closeStream(ois);
+        }
+        return o;
+    }
+
+    /**
+     * Serialize the given Serializable instance to the given output file
+     * @param file file to write into
+     * @param o Serializable instance to write
+     */
+    public static void writeObject(final File file, final Serializable o) {
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(new FileOutputStream(file));
+            // write object:
+            oos.writeObject(o);
+
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Written object to '{}': {}", file.getAbsolutePath(), o);
+            }
+        } catch (final IOException ioe) {
+            _logger.error("IO failure : ", ioe);
+        } finally {
+            closeStream(oos);
+        }
     }
 
     /** Forbidden constructor */

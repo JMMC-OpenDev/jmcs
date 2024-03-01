@@ -52,7 +52,7 @@ public final class StatUtils {
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(StatUtils.class.getName());
 
-    private final static boolean USE_CACHE = false;
+    private final static boolean USE_CACHE = true;
 
     /** local folder storing cached files */
     public final static String FOLDER_CACHE_JMCS = FileUtils.getPlatformCachesPath() + "jmcs" + File.separatorChar;
@@ -118,6 +118,9 @@ public final class StatUtils {
     private final ArrayList<ComplexDistribution> cache;
 
     private StatUtils() {
+        if (!USE_CACHE) {
+            logger.warn("WARNING: USE_CACHE=false (dev) - DO NOT USE IN PRODUCTION !");
+        }
         this.cache = new ArrayList<ComplexDistribution>(INITIAL_CAPACITY);
         prepare(INITIAL_CAPACITY);
     }

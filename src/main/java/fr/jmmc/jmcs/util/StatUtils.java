@@ -52,7 +52,7 @@ public final class StatUtils {
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(StatUtils.class.getName());
 
-    private final static boolean USE_CACHE = true;
+    private final static boolean USE_CACHE = false;
 
     /** local folder storing cached files */
     public final static String FOLDER_CACHE_JMCS = FileUtils.getPlatformCachesPath() + "jmcs" + File.separatorChar;
@@ -68,16 +68,18 @@ public final class StatUtils {
 
     private final static int MIN_ITER = 20;
     private final static int MAX_ITER = 10 * MIN_ITER;
-    private final static int STALE_ITER = (3 * MIN_ITER) / 2;
+
+    private final static int STALE_ITER = MIN_ITER;
 
     private final static int RND_ITER_MAX = 250; // 500,000 doubles
 
     /** max error on squared mean / variance */
-    private final static double GOOD_THRESHOLD = 0.3;
+    private final static double GOOD_THRESHOLD = 0.5;
     /** convergence threshold on distribution quality */
     private final static double QUALITY_THRESHOLD = 0.01;
 
-    public final static double QUALITY_SCORE_WEIGHT_VAR = 16.0;
+    public final static double QUALITY_SCORE_WEIGHT_MEAN = 1.0;
+    public final static double QUALITY_SCORE_WEIGHT_VAR = 36.0;
 
     /** normalization factor = 1/N_SAMPLES */
     public final static double SAMPLING_FACTOR_MEAN = 1d / N_SAMPLES;
@@ -186,7 +188,8 @@ public final class StatUtils {
 
     public static final class ComplexDistribution implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+        /** UID used to reset cache by changing its value accross releases (if needed) */
+        private static final long serialVersionUID = 13L;
 
         private final static int NUM_ANGLES;
 
@@ -476,7 +479,6 @@ public final class StatUtils {
                 // variance on amplitude:
                 // note: this algorithm ensures correctness (stable) even if the mean used in diff is wrong !
                 final double variance = SAMPLING_FACTOR_VARIANCE * (amp_sum_diff_square - (SAMPLING_FACTOR_MEAN * (amp_sum_diff * amp_sum_diff)));
-
                 final double chi2 = SAMPLING_FACTOR_VARIANCE * chi2_amp_sum;
 
                 // average chi2/mean/variance estimations:
@@ -485,11 +487,8 @@ public final class StatUtils {
                 var_acc += variance;
 
                 // sum of relative delta:
-                ratio = (mean_sq > sq_amp) ? (mean_sq / sq_amp) : (sq_amp / mean_sq);
-                mean_sq_diff_acc += Math.abs(ratio - 1.0); // versus 1 (normal law)
-
-                ratio = (variance > var_amp) ? (variance / var_amp) : (var_amp / variance);
-                var_diff_acc += Math.abs(ratio - 1.0); // versus 1 (normal law)
+                mean_sq_diff_acc += Math.abs((mean_sq / sq_amp) - 1.0); // versus 1 (normal law)
+                var_diff_acc += Math.abs((variance / var_amp) - 1.0); // versus 1 (normal law)
 
                 if (data != null) {
                     logger.info("quality: mean: " + (mean_sq / sq_amp - 1.0) + " variance: " + (variance / var_amp - 1.0) + " chi2: " + chi2);
@@ -511,7 +510,7 @@ public final class StatUtils {
             this.qualityMoments[MOMENT_VARIANCE] = diff_var;
 
             // overall quality = sum(squared diff mean, diff variance):
-            final double score = diff_mean2 + QUALITY_SCORE_WEIGHT_VAR * diff_var;
+            final double score = QUALITY_SCORE_WEIGHT_MEAN * diff_mean2 + QUALITY_SCORE_WEIGHT_VAR * diff_var;
             this.qualityMoments[QUALITY_SCORE] = score;
 
             final boolean good = (score < GOOD_THRESHOLD);
@@ -525,15 +524,15 @@ public final class StatUtils {
                 final double stddev = Math.sqrt(variance);
 
                 // relative difference: delta = (x - est) / x
-                final double ratio_mean = (mean2 > sq_amp) ? (mean2 / sq_amp) : (sq_amp / mean2);
-                final double ratio_variance = (variance > var_amp) ? (variance / var_amp) : (var_amp / variance);
+                final double ratio_mean = (mean / ref_amp);
+                final double ratio_stddev = (stddev / err_amp);
 
                 logger.info("Sampling[" + N_SAMPLES + "]"
                         + " snr=" + snr + " (err(re,im)=" + err_dist + ") chi2=" + chi2
                         + " mean=" + mean + " norm=" + ref_amp
                         + " stddev=" + stddev + " err_norm=" + err_amp
                         + " diff_mean=" + (mean - ref_amp) + " diff_stddev=" + (stddev - err_amp)
-                        + " ratio_mean=" + Math.sqrt(ratio_mean) + " ratio_stddev=" + Math.sqrt(ratio_variance)
+                        + " ratio_mean=" + ratio_mean + " ratio_stddev=" + ratio_stddev
                         + " diff_mean2=" + diff_mean2 + " diff_var=" + diff_var
                         + " max_abs_diff=" + Math.max(Math.abs(mean - ref_amp), Math.abs(stddev - err_amp))
                         + " quality=" + score

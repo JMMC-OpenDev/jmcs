@@ -52,6 +52,8 @@ public final class StatUtils {
     /** Class logger */
     private static final Logger logger = LoggerFactory.getLogger(StatUtils.class.getName());
 
+    private final static boolean USE_CACHE = true;
+
     /** local folder storing cached files */
     public final static String FOLDER_CACHE_JMCS = FileUtils.getPlatformCachesPath() + "jmcs" + File.separatorChar;
 
@@ -62,10 +64,19 @@ public final class StatUtils {
     /** number of samples */
     public final static int N_SAMPLES = Integer.getInteger("StatsUtils.samples", 1024 * SUPER_SAMPLING);
 
+    private final static int ANG_STEP = 15; // deg
+
+    private final static int MIN_ITER = 5;
+    private final static int MAX_ITER = 25;
+
+    private final static int STALE_ITER = 4;
+
+    private final static int RND_ITER_MAX = 250; // 500,000 doubles
+
     /** max error on squared mean / variance */
     private final static double GOOD_THRESHOLD = 1e-2;
     /** convergence threshold on distribution quality */
-    private final static double QUALITY_THRESHOLD = 4e-2;
+    private final static double QUALITY_THRESHOLD = 2e-2;
 
     /** normalization factor = 1/N_SAMPLES */
     public final static double SAMPLING_FACTOR_MEAN = 1d / N_SAMPLES;
@@ -117,7 +128,7 @@ public final class StatUtils {
 
             logger.debug("prepare: cacheFile = '{}'", cacheFile);
 
-            if (cacheFile.canRead()) {
+            if (USE_CACHE && cacheFile.canRead()) {
                 @SuppressWarnings("unchecked")
                 final ArrayList<ComplexDistribution> loadedCache = (ArrayList<ComplexDistribution>) FileUtils.readObject(cacheFile);
 
@@ -174,22 +185,39 @@ public final class StatUtils {
 
         private static final long serialVersionUID = 1L;
 
-        private final static int ANG_STEP;
         private final static int NUM_ANGLES;
 
         private final static double[][] ANGLES_COS_SIN;
 
         private static int countIteration = 0;
 
-        private static int MIN_ITER = 10;
-        private static int MAX_ITER = 25;
+        private static int startIter = 0;
+
+        private static Random createRandom(final Random prevRandom) {
+            final int rndIter = countIteration - startIter;
+
+            if ((prevRandom != null) && (rndIter < RND_ITER_MAX)) {
+                return prevRandom;
+            }
+
+            if (logger.isTraceEnabled()) {
+                logger.trace("Create new Random after iter: {}", rndIter);
+            }
+            /* create a new random generator to have different seed (single thread) */
+            startIter = countIteration;
+            return new Random();
+        }
 
         static {
             logger.debug("N_SAMPLES:         {}", N_SAMPLES);
+
+            logger.debug("MIN_ITER:          {}", MIN_ITER);
+            logger.debug("MAX_ITER:          {}", MAX_ITER);
+            logger.debug("STALE_ITER:        {}", STALE_ITER);
+            logger.debug("RND_ITER_MAX:      {}", RND_ITER_MAX);
+
             logger.debug("GOOD_THRESHOLD:    {}", GOOD_THRESHOLD);
             logger.debug("QUALITY_THRESHOLD: {}", QUALITY_THRESHOLD);
-
-            ANG_STEP = 30; // deg
 
             NUM_ANGLES = 360 / ANG_STEP;
 
@@ -251,7 +279,7 @@ public final class StatUtils {
         }
 
         private void generate(final Random random) {
-            this.numIter = countIteration++;
+            this.numIter = countIteration++ - startIter;
 
             final double[] distRe = this.samples[0];
             final double[] distIm = this.samples[1];
@@ -267,10 +295,7 @@ public final class StatUtils {
         public static void create(final int nDistribs, final ArrayList<ComplexDistribution> distributions) {
             int prevIter = countIteration;
 
-            /* create a new random generator to have different seed (single thread) */
-            final Random random = new Random();
-
-            final int N = nDistribs * 5;
+            final int N = nDistribs * 3;
 
             final ArrayList<ComplexDistribution> iterDistribs = new ArrayList<ComplexDistribution>(N);
             // keep (previous) best distribs:
@@ -288,11 +313,17 @@ public final class StatUtils {
             int i = 1;
             double minq = Double.MAX_VALUE;
             double maxq = Double.MAX_VALUE;
+
+            Random random = null;
             int nStale = 0;
 
             do {
                 // Iteration: prepare good distributions (first quality pass)
+
                 do {
+                    /* create a new random generator to have different seed (single thread) when needed */
+                    random = createRandom(random);
+
                     d.generate(random);
 
                     if (d.test()) {
@@ -320,16 +351,19 @@ public final class StatUtils {
                 final double ratio_q = (maxq - qHi) / maxq;
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Iteration[{}] qLo: {} qHi: {} maxq: {} ratio_q: {}", i, qLo, qHi, maxq, ratio_q);
+                    logger.debug("Iteration[{}] qLo: {} qHi: {} maxq: {} ratio_q: {} nStale: {}",
+                            i, qLo, qHi, maxq, ratio_q, nStale);
                 }
 
                 minq = qLo;
                 maxq = qHi;
 
                 if (i >= MIN_ITER) {
-                    // check stale or low progression:
-                    if ((ratio_q < QUALITY_THRESHOLD) && (++nStale == 3)) {
-                        break;
+                    // check stale (0.0) or low progression (below quality threshold):
+                    if (ratio_q < QUALITY_THRESHOLD) {
+                        if (++nStale == STALE_ITER) {
+                            break;
+                        }
                     }
                 }
 
@@ -480,16 +514,23 @@ public final class StatUtils {
                 final double mean_sq = mean_sq_acc / NUM_ANGLES;
                 final double variance = var_acc / NUM_ANGLES;
 
+                final double mean = Math.sqrt(mean_sq);
+                final double stddev = Math.sqrt(variance);
+
                 // relative difference: delta = (x - est) / x
                 final double ratio_mean = mean_sq / sq_amp;
                 final double ratio_variance = variance / var_amp;
 
-                logger.info("Sampling[" + N_SAMPLES + "] snr=" + snr + " (err(re,im)= " + err_dist + ") chi2= " + chi2
-                        + " avg= " + Math.sqrt(mean_sq) + " norm= " + ref_amp + " ratio: " + Math.sqrt(ratio_mean)
-                        + " stddev= " + Math.sqrt(variance) + " err(norm)= " + err_amp + " ratio: " + Math.sqrt(ratio_variance)
-                        + " diff_mean_sq= " + diff_mean_sq + " diff_var= " + diff_var
-                        + " quality= " + this.qualityMoments[QUALITY_SCORE]
-                        + " good = " + good);
+                logger.info("Sampling[" + N_SAMPLES + "]"
+                        + " snr=" + snr + " (err(re,im)=" + err_dist + ") chi2=" + chi2
+                        + " mean=" + mean + " norm=" + ref_amp
+                        + " diff_mean=" + (mean - ref_amp) + " ratio=" + Math.sqrt(ratio_mean)
+                        + " stddev=" + stddev + " err(norm)=" + err_amp
+                        + " diff_stddev=" + (stddev - err_amp) + " ratio=" + Math.sqrt(ratio_variance)
+                        + " diff_mean_sq=" + diff_mean_sq + " diff_var=" + diff_var
+                        + " max_abs_diff=" + Math.max(Math.abs(mean - ref_amp), Math.abs(stddev - err_amp))
+                        + " quality=" + this.qualityMoments[QUALITY_SCORE]
+                        + " good: " + good);
             }
             return good;
         }

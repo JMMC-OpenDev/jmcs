@@ -64,19 +64,20 @@ public final class StatUtils {
     /** number of samples */
     public final static int N_SAMPLES = Integer.getInteger("StatsUtils.samples", 1024 * SUPER_SAMPLING);
 
-    private final static int ANG_STEP = 15; // deg
+    private final static int RATIO_GEN = 3;
 
-    private final static int MIN_ITER = 5;
-    private final static int MAX_ITER = 25;
-
-    private final static int STALE_ITER = 4;
+    private final static int MIN_ITER = 20;
+    private final static int MAX_ITER = 10 * MIN_ITER;
+    private final static int STALE_ITER = (3 * MIN_ITER) / 2;
 
     private final static int RND_ITER_MAX = 250; // 500,000 doubles
 
     /** max error on squared mean / variance */
-    private final static double GOOD_THRESHOLD = 1e-2;
+    private final static double GOOD_THRESHOLD = 0.3;
     /** convergence threshold on distribution quality */
-    private final static double QUALITY_THRESHOLD = 2e-2;
+    private final static double QUALITY_THRESHOLD = 0.01;
+
+    public final static double QUALITY_SCORE_WEIGHT_VAR = 16.0;
 
     /** normalization factor = 1/N_SAMPLES */
     public final static double SAMPLING_FACTOR_MEAN = 1d / N_SAMPLES;
@@ -89,6 +90,8 @@ public final class StatUtils {
     public final static int MOMENT_KURTOSIS = 3;
 
     public final static int QUALITY_SCORE = 2;
+
+    private final static int ANG_STEP = 15; // deg
 
     /** initial cache size = number of baselines (15 for 6 telescopes) */
     private final static int INITIAL_CAPACITY = 15;
@@ -295,7 +298,7 @@ public final class StatUtils {
         public static void create(final int nDistribs, final ArrayList<ComplexDistribution> distributions) {
             int prevIter = countIteration;
 
-            final int N = nDistribs * 3;
+            final int N = nDistribs * RATIO_GEN;
 
             final ArrayList<ComplexDistribution> iterDistribs = new ArrayList<ComplexDistribution>(N);
             // keep (previous) best distribs:
@@ -312,7 +315,7 @@ public final class StatUtils {
 
             int i = 1;
             double minq = Double.MAX_VALUE;
-            double maxq = Double.MAX_VALUE;
+            double lastq = Double.MAX_VALUE;
 
             Random random = null;
             int nStale = 0;
@@ -347,16 +350,17 @@ public final class StatUtils {
                 // check convergence:
                 final double qLo = distributions.get(0).getQualityMoments()[QUALITY_SCORE];
                 final double qHi = distributions.get(nDistribs - 1).getQualityMoments()[QUALITY_SCORE];
+                final double qLa = iterDistribs.get(N - 1).getQualityMoments()[QUALITY_SCORE];
 
-                final double ratio_q = (maxq - qHi) / maxq;
+                final double ratio_q = (lastq - qHi) / lastq;
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Iteration[{}] qLo: {} qHi: {} maxq: {} ratio_q: {} nStale: {}",
-                            i, qLo, qHi, maxq, ratio_q, nStale);
+                    logger.debug("Iteration[{}] qLo: {} qHi: {} lastq: {}  qLa: {} ratio_q: {} nStale: {}",
+                            i, qLo, qHi, lastq, qLa, ratio_q, nStale);
                 }
 
                 minq = qLo;
-                maxq = qHi;
+                lastq = qHi;
 
                 if (i >= MIN_ITER) {
                     // check stale (0.0) or low progression (below quality threshold):
@@ -375,7 +379,7 @@ public final class StatUtils {
 
             logger.debug("distributions: {}", distributions);
 
-            logger.info("distributions quality: ({} - {})", minq, maxq);
+            logger.info("distributions quality: ({} - {})", minq, lastq);
 
             logger.info("create done: {} iterations.", (countIteration - prevIter));
         }
@@ -442,7 +446,7 @@ public final class StatUtils {
                 final double mean_sq = avg_re * avg_re + avg_im * avg_im; // Use V^2 like variance epsilon
 
                 // pass 2: stddev:
-                double sample;
+                double sample, ratio;
                 double amp_sum_diff = 0.0;
                 double amp_sum_diff_square = 0.0;
                 double chi2_amp_sum = 0.0;
@@ -481,8 +485,11 @@ public final class StatUtils {
                 var_acc += variance;
 
                 // sum of relative delta:
-                mean_sq_diff_acc += Math.abs(mean_sq / sq_amp - 1.0); // versus 1 (normal law)
-                var_diff_acc += Math.abs(variance / var_amp - 1.0); // versus 1 (normal law)
+                ratio = (mean_sq > sq_amp) ? (mean_sq / sq_amp) : (sq_amp / mean_sq);
+                mean_sq_diff_acc += Math.abs(ratio - 1.0); // versus 1 (normal law)
+
+                ratio = (variance > var_amp) ? (variance / var_amp) : (var_amp / variance);
+                var_diff_acc += Math.abs(ratio - 1.0); // versus 1 (normal law)
 
                 if (data != null) {
                     logger.info("quality: mean: " + (mean_sq / sq_amp - 1.0) + " variance: " + (variance / var_amp - 1.0) + " chi2: " + chi2);
@@ -496,40 +503,40 @@ public final class StatUtils {
 
             } // loop (angles)
 
-            final double diff_mean_sq = mean_sq_diff_acc / NUM_ANGLES;
+            final double diff_mean2 = mean_sq_diff_acc / NUM_ANGLES;
             final double diff_var = var_diff_acc / NUM_ANGLES;
 
             // set quality moments:
-            this.qualityMoments[MOMENT_MEAN] = diff_mean_sq; // mean quality
-            this.qualityMoments[MOMENT_VARIANCE] = diff_var; // var quality
+            this.qualityMoments[MOMENT_MEAN] = diff_mean2;
+            this.qualityMoments[MOMENT_VARIANCE] = diff_var;
 
-            // overall quality = sum(quality moments)
-            final double score = diff_mean_sq + diff_var;
+            // overall quality = sum(squared diff mean, diff variance):
+            final double score = diff_mean2 + QUALITY_SCORE_WEIGHT_VAR * diff_var;
             this.qualityMoments[QUALITY_SCORE] = score;
 
             final boolean good = (score < GOOD_THRESHOLD);
 
             if (good && log) {
                 final double chi2 = mean_chi2_acc / NUM_ANGLES;
-                final double mean_sq = mean_sq_acc / NUM_ANGLES;
+                final double mean2 = mean_sq_acc / NUM_ANGLES;
                 final double variance = var_acc / NUM_ANGLES;
 
-                final double mean = Math.sqrt(mean_sq);
+                final double mean = Math.sqrt(mean2);
                 final double stddev = Math.sqrt(variance);
 
                 // relative difference: delta = (x - est) / x
-                final double ratio_mean = mean_sq / sq_amp;
-                final double ratio_variance = variance / var_amp;
+                final double ratio_mean = (mean2 > sq_amp) ? (mean2 / sq_amp) : (sq_amp / mean2);
+                final double ratio_variance = (variance > var_amp) ? (variance / var_amp) : (var_amp / variance);
 
                 logger.info("Sampling[" + N_SAMPLES + "]"
                         + " snr=" + snr + " (err(re,im)=" + err_dist + ") chi2=" + chi2
                         + " mean=" + mean + " norm=" + ref_amp
-                        + " diff_mean=" + (mean - ref_amp) + " ratio=" + Math.sqrt(ratio_mean)
-                        + " stddev=" + stddev + " err(norm)=" + err_amp
-                        + " diff_stddev=" + (stddev - err_amp) + " ratio=" + Math.sqrt(ratio_variance)
-                        + " diff_mean_sq=" + diff_mean_sq + " diff_var=" + diff_var
+                        + " stddev=" + stddev + " err_norm=" + err_amp
+                        + " diff_mean=" + (mean - ref_amp) + " diff_stddev=" + (stddev - err_amp)
+                        + " ratio_mean=" + Math.sqrt(ratio_mean) + " ratio_stddev=" + Math.sqrt(ratio_variance)
+                        + " diff_mean2=" + diff_mean2 + " diff_var=" + diff_var
                         + " max_abs_diff=" + Math.max(Math.abs(mean - ref_amp), Math.abs(stddev - err_amp))
-                        + " quality=" + this.qualityMoments[QUALITY_SCORE]
+                        + " quality=" + score
                         + " good: " + good);
             }
             return good;

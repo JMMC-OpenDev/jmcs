@@ -148,6 +148,37 @@ public final class SwingUtils {
     }
 
     /**
+     * Commit pending edition in any text fields present in parent frame of the given component.
+     * @param c <code>Component</code> to get <code>JFrame</code> ancestor of.
+     */
+    public static void commitChanges(final JComponent c) {
+        final Window window = SwingUtils.getParentWindow(c);
+        if (window != null) {
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("commitChangesAndInvokeLaterEDT: Parent Window: {}", window);
+            }
+            final Component com = window.getFocusOwner();
+            if (com != null) {
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("commitChangesAndInvokeLaterEDT: Focus owner: {}", com);
+                }
+                if (com instanceof JFormattedTextField) {
+                    final JFormattedTextField jTextField = (JFormattedTextField) com;
+                    try {
+                        if (_logger.isDebugEnabled()) {
+                            _logger.debug("commitChangesAndInvokeLaterEDT: JFormattedTextField.commitEdit on: {}", com);
+                        }
+                        // Convert and commit changes:
+                        jTextField.commitEdit();
+                    } catch (ParseException pe) {
+                        _logger.info("commitChangesAndInvokeLaterEDT: Could not handle input: {}", jTextField.getText(), pe);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Returns true if the current thread is the Event Dispatcher Thread (EDT)
      *
      * @return true if the current thread is the Event Dispatcher Thread (EDT)
@@ -185,30 +216,7 @@ public final class SwingUtils {
      * @param runnable runnable code dedicated to Swing
      */
     public static void commitChangesAndInvokeLaterEDT(final JComponent c, final Runnable runnable) {
-        final Window window = SwingUtils.getParentWindow(c);
-        if (window != null) {
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("commitChangesAndInvokeLaterEDT: Parent Window: {}", window);
-            }
-            final Component com = window.getFocusOwner();
-            if (com != null) {
-                if (_logger.isDebugEnabled()) {
-                    _logger.debug("commitChangesAndInvokeLaterEDT: Focus owner: {}", com);
-                }
-                if (com instanceof JFormattedTextField) {
-                    final JFormattedTextField jTextField = (JFormattedTextField) com;
-                    try {
-                        if (_logger.isDebugEnabled()) {
-                            _logger.debug("commitChangesAndInvokeLaterEDT: JFormattedTextField.commitEdit on: {}", com);
-                        }
-                        // Convert and commit changes:
-                        jTextField.commitEdit();
-                    } catch (ParseException pe) {
-                        _logger.info("commitChangesAndInvokeLaterEDT: Could not handle input: {}", jTextField.getText(), pe);
-                    }
-                }
-            }
-        }
+        commitChanges(c);
         // current Thread is NOT EDT, simply invoke later runnable using EDT:
         SwingUtilities.invokeLater(runnable);
     }

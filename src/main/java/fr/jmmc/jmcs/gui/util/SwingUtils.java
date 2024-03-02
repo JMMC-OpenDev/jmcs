@@ -30,12 +30,15 @@ package fr.jmmc.jmcs.gui.util;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.util.StringUtils;
+import java.awt.Component;
 import java.awt.FontMetrics;
 import java.awt.Insets;
 import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.JTree;
@@ -126,19 +129,22 @@ public final class SwingUtils {
      * Returns the first <code>JFrame</code> ancestor of <code>c</code>, or
      * App.getFrame() if <code>c</code> is not contained inside a <code>JFrame</code>.
      *
-     * @param c <code>Component</code> to get <code>JFrame</code> ancestor
-     *        of.
+     * @param c <code>Component</code> to get <code>JFrame</code> ancestor of.
      * @return the first <code>JFrame</code> ancestor of <code>c</code>, or
      *         App.getFrame() if <code>c</code> is not contained inside a
      *         <code>JFrame</code>.
      */
     public static JFrame getParentFrame(final JComponent c) {
-        final Window w = SwingUtilities.getWindowAncestor(c);
+        final Window w = getParentWindow(c);
         if (w instanceof JFrame) {
             return (JFrame) w;
         }
-        // null or not JFrame
+        // null or JFrame
         return App.getExistingFrame();
+    }
+
+    private static Window getParentWindow(final JComponent c) {
+        return SwingUtilities.getWindowAncestor(c);
     }
 
     /**
@@ -168,6 +174,41 @@ public final class SwingUtils {
      * @param runnable runnable code dedicated to Swing
      */
     public static void invokeLaterEDT(final Runnable runnable) {
+        // current Thread is NOT EDT, simply invoke later runnable using EDT:
+        SwingUtilities.invokeLater(runnable);
+    }
+
+    /**
+     * Commit pending edition in any text fields present in parent frame of the given component.
+     * Execute LATER the given runnable code dedicated to Swing using the Event Dispatcher Thread (EDT)
+     * @param c <code>Component</code> to get <code>JFrame</code> ancestor of.
+     * @param runnable runnable code dedicated to Swing
+     */
+    public static void commitChangesAndInvokeLaterEDT(final JComponent c, final Runnable runnable) {
+        final Window window = SwingUtils.getParentWindow(c);
+        if (window != null) {
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("commitChangesAndInvokeLaterEDT: Parent Window: {}", window);
+            }
+            final Component com = window.getFocusOwner();
+            if (com != null) {
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("commitChangesAndInvokeLaterEDT: Focus owner: {}", com);
+                }
+                if (com instanceof JFormattedTextField) {
+                    final JFormattedTextField jTextField = (JFormattedTextField) com;
+                    try {
+                        if (_logger.isDebugEnabled()) {
+                            _logger.debug("commitChangesAndInvokeLaterEDT: JFormattedTextField.commitEdit on: {}", com);
+                        }
+                        // Convert and commit changes:
+                        jTextField.commitEdit();
+                    } catch (ParseException pe) {
+                        _logger.info("commitChangesAndInvokeLaterEDT: Could not handle input: {}", jTextField.getText(), pe);
+                    }
+                }
+            }
+        }
         // current Thread is NOT EDT, simply invoke later runnable using EDT:
         SwingUtilities.invokeLater(runnable);
     }

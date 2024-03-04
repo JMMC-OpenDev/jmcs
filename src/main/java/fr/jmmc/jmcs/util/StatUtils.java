@@ -452,7 +452,7 @@ public final class StatUtils {
                 final double mean_sq = avg_re * avg_re + avg_im * avg_im; // Use V^2 like variance epsilon
 
                 // pass 2: stddev:
-                double sample, ratio;
+                double sample;
                 double amp_sum_diff = 0.0;
                 double amp_sum_diff_square = 0.0;
                 double chi2_amp_sum = 0.0;
@@ -493,7 +493,7 @@ public final class StatUtils {
                 mean_sq_diff_acc += Math.abs((mean_sq / sq_amp) - 1.0); // versus 1 (normal law)
                 var_diff_acc += Math.abs((variance / var_amp) - 1.0); // versus 1 (normal law)
 
-                if (data != null) {
+                if ((data != null) && log) {
                     logger.info("quality: mean: " + (mean_sq / sq_amp - 1.0) + " variance: " + (variance / var_amp - 1.0) + " chi2: " + chi2);
                     final File file = new File("data_" + N_SAMPLES + "_it_" + this.numIter + "_ang_" + (ANG_STEP * i) + ".txt");
                     try {
@@ -633,7 +633,8 @@ public final class StatUtils {
     // --- TEST ---
     public static void main(String[] args) throws IOException {
         final boolean TEST_SUM = false;
-        final boolean DO_DUMP = false;
+        final boolean DO_DUMP = true;
+        final boolean DO_LOG = false;
 
         // Test kahan sum:
         if (TEST_SUM) {
@@ -667,7 +668,7 @@ public final class StatUtils {
 
                 // dump all test samples:
                 System.out.println("quality moments: " + Arrays.toString(d.getQualityMoments()));
-                d.test(data, true);
+                d.test(data, DO_LOG);
             }
         }
 

@@ -95,8 +95,6 @@ public enum SampCapability {
     OIFITSEXPLORER_LOAD_COLLECTION("fr.jmmc.oiexplorer.load.collection"),    
     /** JMMC SearchCal Start Query MType */
     SEARCHCAL_START_QUERY("fr.jmmc.searchcal.start.query"),
-    /** OCA Pivot load star list MType */
-    LOAD_STAR_LIST("starlist.load"),
     /** A2P2 load OB MType */
     LOAD_OB_DATA("ob.load.data"),
     /** Aladin script loading MType */

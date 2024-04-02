@@ -113,8 +113,35 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
         // cancel other task:
         TaskSwingWorkerExecutor.cancelTask(this.getTask());
 
-        // Just execute this new task with EDT (synchronously) :
-        SwingUtils.invokeEDT(this);
+        // Can not use SwingUtils.invokeEDT(this) in JDK21+
+        // as EDT is frozen waiting on FutureTask.get() as caller.call() encapsulates doneEDT()  => chicken-egg issue !
+        try {
+            // compute the data :
+            final T data = doInBackground();
+
+            if (data == null) {
+                if (DEBUG_FLAG) {
+                    _logger.info("{}.done : NO DATA", _logPrefix);
+                }
+                refreshNoData(false);
+            } else {
+                if (DEBUG_FLAG) {
+                    _logger.info("{}.done : UI START", _logPrefix);
+                }
+
+                // refresh UI with data :
+                this.refreshUI(data);
+
+                if (DEBUG_FLAG) {
+                    _logger.info("{}.done : UI DONE", _logPrefix);
+                }
+            }
+        } catch (RuntimeException re) {
+            handleException(new ExecutionException(re));
+        } finally {
+            // decrement running worker :
+            TaskSwingWorkerExecutor.decRunningWorkerCounter();
+        }
     }
 
     /**

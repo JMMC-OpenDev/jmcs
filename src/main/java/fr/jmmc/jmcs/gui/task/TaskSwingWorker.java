@@ -27,7 +27,6 @@
  ******************************************************************************/
 package fr.jmmc.jmcs.gui.task;
 
-import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
@@ -235,43 +234,45 @@ public abstract class TaskSwingWorker<T> extends SwingWorker<T, Void> {
      */
     @Override
     public final void done() {
-        // check if the worker was cancelled :
-        if (isCancelled()) {
-            if (DEBUG_FLAG) {
-                _logger.info("{}.done : CANCELLED", _logPrefix);
-            }
-            refreshNoData(true);
-        } else {
-            try {
-                // Get the computed results :
-                final T data = get();
-
-                if (data == null) {
-                    if (DEBUG_FLAG) {
-                        _logger.info("{}.done : NO DATA", _logPrefix);
-                    }
-                    refreshNoData(false);
-                } else {
-                    if (DEBUG_FLAG) {
-                        _logger.info("{}.done : UI START", _logPrefix);
-                    }
-
-                    // refresh UI with data :
-                    this.refreshUI(data);
-
-                    if (DEBUG_FLAG) {
-                        _logger.info("{}.done : UI DONE", _logPrefix);
-                    }
+        try {
+            // check if the worker was cancelled :
+            if (isCancelled()) {
+                if (DEBUG_FLAG) {
+                    _logger.info("{}.done : CANCELLED", _logPrefix);
                 }
+                refreshNoData(true);
+            } else {
+                try {
+                    // Get the computed results :
+                    final T data = get();
 
-            } catch (InterruptedException ie) {
-                _logger.debug("{}.done : interrupted failure :", _logPrefix, ie);
-            } catch (ExecutionException ee) {
-                handleException(ee);
+                    if (data == null) {
+                        if (DEBUG_FLAG) {
+                            _logger.info("{}.done : NO DATA", _logPrefix);
+                        }
+                        refreshNoData(false);
+                    } else {
+                        if (DEBUG_FLAG) {
+                            _logger.info("{}.done : UI START", _logPrefix);
+                        }
+                        // refresh UI with data :
+                        this.refreshUI(data);
+
+                        if (DEBUG_FLAG) {
+                            _logger.info("{}.done : UI DONE", _logPrefix);
+                        }
+                    }
+
+                } catch (InterruptedException ie) {
+                    _logger.debug("{}.done : interrupted failure :", _logPrefix, ie);
+                } catch (ExecutionException ee) {
+                    handleException(ee);
+                }
             }
+        } finally {
+            // decrement running worker :
+            TaskSwingWorkerExecutor.decRunningWorkerCounter();
         }
-        // decrement running worker :
-        TaskSwingWorkerExecutor.decRunningWorkerCounter();
     }
 
     /**

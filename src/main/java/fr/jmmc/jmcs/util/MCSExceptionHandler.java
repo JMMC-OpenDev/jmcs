@@ -73,7 +73,7 @@ public final class MCSExceptionHandler {
     public static void installLoggingHandler() {
         setExceptionHandler(new LoggingExceptionHandler());
     }
-    
+
     /**
      * Public method to initialize the exception handler singleton with the ExitExceptionHandler
      */
@@ -247,6 +247,21 @@ public final class MCSExceptionHandler {
                 }
             }
         }
+        // ignore Wayland issue (linux) with SystemTray:
+        // from java.lang.UnsupportedOperationException: The system tray is not supported on the current platform.
+        //      at java.awt.SystemTray.getSystemTray(SystemTray.java:186)
+        //      at sun.awt.X11.XTrayIconPeer$4$1.run(XTrayIconPeer.java:225)
+        if (e instanceof UnsupportedOperationException) {
+            final StackTraceElement lastStack = getLastStackElement(e);
+            if (lastStack != null) {
+                if ("java.awt.SystemTray".equalsIgnoreCase(lastStack.getClassName())
+                        && "getSystemTray".equalsIgnoreCase(lastStack.getMethodName())) {
+                    // log it anyway:
+                    _logger.info("Ignored SystemTray exception: ", e);
+                    return true;
+                }
+            }
+        }
         // ignore XRender issue (linux) on JDK8 with multiple displays:
         // java.lang.ClassCastException: sun.awt.image.BufImgSurfaceData cannot be cast to sun.java2d.xr.XRSurfaceData
         // at sun.java2d.xr.XRPMBlitLoops.cacheToTmpSurface(XRPMBlitLoops.java:145)
@@ -260,12 +275,12 @@ public final class MCSExceptionHandler {
         if (e instanceof ClassCastException) {
             final String msg = e.getMessage();
             if (!StringUtils.isEmpty(msg) && msg.contains("sun.java2d.xr.XRSurfaceData")) {
-                 // log it anyway:
+                // log it anyway:
                 _logger.info("Ignored xrender exception: ", e);
                 return true;
             }
         }
-        
+
         // Avoid reentrance:
         if (checkReentrance(e)) {
             // log it anyway:
@@ -395,6 +410,7 @@ public final class MCSExceptionHandler {
             }
         }
     }
+
     /**
      * Swing exception handler that delegates exception handling to showException(thread, throwable)
      * using EDT

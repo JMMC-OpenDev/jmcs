@@ -346,10 +346,14 @@ public final class ApplicationDescription {
      * @param version value of the "program version" element
      * @return true if it is a alpha, false otherwise.
      */
-    public static boolean isAlphaVersion(final String version) {
+    private static boolean isAlphaVersion(final String version) {
         if (isBetaVersion(version)) {
             return false;
         }
+        return isOnlyAlphaVersion(version);
+    }
+
+    private static boolean isOnlyAlphaVersion(final String version) {
         return (version != null) && version.contains("a");
     }
 
@@ -370,8 +374,18 @@ public final class ApplicationDescription {
      * @param version value of the "program version" element
      * @return true if it is a beta, false otherwise.
      */
-    public static boolean isBetaVersion(final String version) {
+    private static boolean isBetaVersion(final String version) {
         return (version != null) && version.contains("b");
+    }
+
+    /**
+     * Tell if the application is a (alpha or beta version) or public.
+     *
+     * @return true if it is a (alpha or beta), false otherwise.
+     */
+    public static boolean isAlphaOrBetaVersion() {
+        final String version = getInstance().getProgramVersion();
+        return isBetaVersion(version) || isOnlyAlphaVersion(version);
     }
 
     /**

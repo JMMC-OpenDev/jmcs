@@ -138,7 +138,12 @@ public final class WelfordVariance {
                 .append(" max=").append(NumberUtils.format(max()))
                 .append("]").toString();
     }
-    
+
+    public String toStringFull() {
+        return String.format("[%d: µ=%.18e σ=%.18e min=%.18e max=%.18e]",
+                nSamples, mean(), stddev(), min(), max());
+    }
+
     private final static class ValueError {
 
         double value;
@@ -175,24 +180,24 @@ public final class WelfordVariance {
         Locale.setDefault(Locale.US);
 
         double[] values;
-
-        values = new double[]{1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 5, 5, 6, 6, 7, 8, 89, 10000, 100001, 00, 101};
-        test(values);
-        System.out.println("---");
+        if (false) {
+            values = new double[]{1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 5, 5, 6, 6, 7, 8, 89, 10000, 100001, 00, 101};
+            test(values);
+            System.out.println("---");
+        }
 
         final int N = 1000 * 1000;
         final int N_HALF = N / 2;
 
         double nHigh = 1E15;
-        double nLow = 1;
+        double nLow = 1.0;
         values = new double[N];
 
         for (int i = 0; i < N; i++) {
             values[i] = (i % 2 == 0) ? nHigh : nLow;
         }
+        System.out.format("Expected mean  = %.18e\n", (nHigh / 2.0 + nLow / 2.0));
         test(values);
-        System.out.println("Excepted mean = " + (nHigh / 2.0 + nLow / 2.0));
-        System.out.println("Excepted total = " + (nHigh * N_HALF + nLow * N_HALF));
         System.out.println("---");
 
         nHigh = 1.0;
@@ -202,9 +207,8 @@ public final class WelfordVariance {
         for (int i = 0; i < N; i++) {
             values[i] = (i % 2 == 0) ? nHigh : nLow;
         }
+        System.out.format("Expected mean  = %.18e\n", (nHigh / 2.0 + nLow / 2.0));
         test(values);
-        System.out.println("Excepted mean = " + (nHigh / 2.0 + nLow / 2.0));
-        System.out.println("Excepted total = " + (nHigh * N_HALF + nLow * N_HALF));
         System.out.println("---");
     }
 
@@ -213,17 +217,16 @@ public final class WelfordVariance {
         for (double val : values) {
             v.add(val);
         }
-        System.out.println("v.mean() = " + v.mean());
-        System.out.println("v.variance() = " + v.variance());
-        System.out.println("v.stdev() = " + v.stddev());
-        System.out.println("stats() = " + v);
+        System.out.format("v.mean()  =      %.18e\n", v.mean());
+        System.out.format("v.stdev() =      %.18e\n", v.stddev());
+        System.out.println("stats()  =       " + v.toStringFull());
 
         testSum(values);
     }
 
     private static void testSum(final double[] values) {
-        System.out.println("naiveSum    = " + naiveSum(values));
-        System.out.println("kahanSum    = " + kahanSum(values));
+        System.out.format("naiveSum =       %.18e\n", naiveSum(values));
+        System.out.format("kahanSum =       %.18e\n", kahanSum(values));
     }
 
     private static double naiveSum(double[] values) {

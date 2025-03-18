@@ -183,12 +183,13 @@ public final class Bootstrapper {
         try {
             // Disable security checks:
             System.setSecurityManager(null);
-        } catch (SecurityException se) {
+        } catch (SecurityException | UnsupportedOperationException e) {
             // This case occurs with java netx and
             // OpenJDK Runtime Environment (IcedTea6 1.6) (rhel-1.13.b16.el5-x86_64)
+            // Note: 2025.03: Java 24 throws UnsupportedOperationException when calling deprecated setSecurityManager()
             // note: logger are not yet initialized:
             System.err.println("Can't set security manager to null");
-            se.printStackTrace();
+            e.printStackTrace();
         }
     }
 

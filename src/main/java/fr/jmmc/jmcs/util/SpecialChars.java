@@ -52,7 +52,7 @@ public final class SpecialChars {
     /** micron unit (µm) (lower case) */
     public final static String UNIT_MICRO_METER = MU_LOWER + "m";
     /** Mega lambda unit (Ml) (lower case) */
-    public final static String UNIT_MEGA_LAMBDA = "M" + LAMBDA_LOWER + " - 10^6/rad";
+    public final static String UNIT_MEGA_LAMBDA = "M" + LAMBDA_LOWER + " - 10^6 cycles/rad";
 
     /**
      * Private constructor (utility class)

@@ -45,6 +45,7 @@ import fr.jmmc.jmcs.gui.util.WindowUtils;
 import fr.jmmc.jmcs.logging.LoggingService;
 import fr.jmmc.jmcs.network.NetworkSettings;
 import fr.jmmc.jmcs.network.interop.SampManager;
+import fr.jmmc.jmcs.service.XmlFactory;
 import fr.jmmc.jmcs.util.IntrospectionUtils;
 import fr.jmmc.jmcs.util.JVMUtils;
 import fr.jmmc.jmcs.util.MCSExceptionHandler;
@@ -156,22 +157,6 @@ public final class Bootstrapper {
             // Always use screen menuBar on MacOS X
             System.setProperty("apple.laf.useScreenMenuBar", "true");
         }
-
-        // JDK 1.7 settings
-        if (false && SystemUtils.isJavaVersionAtLeast(1.7f)) {
-            // Fix JDK 1.7 - Swing Focus : java.lang.IllegalArgumentException: Comparison method violates its general contract!
-            // bug in SortingFocusTraversalPolicy.enumerateAndSortCycle() related to LayoutComparator
-            // See also JIDE: @see com.jidesoft.plaf.LookAndFeelFactory#workAroundSwingIssues()
-            /*
-             * http://stackoverflow.com/questions/13575224/comparison-method-violates-its-general-contract-timsort-and-gridlayout
-             * https://forums.oracle.com/forums/thread.jspa?threadID=2455538
-             */
-
-            // Must be set before any call to Collections or Arrays.sort(Object[]) that use that property once
-            // ie before initializing Logs because it calls Collections.sort in LoggerContext.getLoggerList:195
-            System.out.println("java.util.Arrays.useLegacyMergeSort=true");
-            System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-        }
     }
 
     /**
@@ -179,18 +164,21 @@ public final class Bootstrapper {
      */
     @SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToPrintStackTrace"})
     private static void disableSecurityManager() {
-        // TODO: Fix in future when the System.setSecurityManager() method will be removed
-        try {
-            // Disable security checks:
-            System.setSecurityManager(null);
-        } catch (SecurityException | UnsupportedOperationException e) {
-            // This case occurs with java netx and
-            // OpenJDK Runtime Environment (IcedTea6 1.6) (rhel-1.13.b16.el5-x86_64)
-            // Note: 2025.03: Java 24 throws UnsupportedOperationException when calling deprecated setSecurityManager()
-            // note: logger are not yet initialized:
-            System.err.println("Can't set security manager to null");
-            e.printStackTrace();
+        if (!SystemUtils.isJavaVersionAtLeast(24.0f)) {
+            try {
+                // Disable security checks:
+                System.setSecurityManager(null);
+            } catch (SecurityException | UnsupportedOperationException e) {
+                // This case occurs with java netx and
+                // OpenJDK Runtime Environment (IcedTea6 1.6) (rhel-1.13.b16.el5-x86_64)
+                // Note: 2025.03: Java 24 throws UnsupportedOperationException when calling deprecated setSecurityManager()
+                // note: logger are not yet initialized:
+                System.err.println("Can't set security manager to null");
+                e.printStackTrace();
+            }
         }
+        // Anyway disable JAXP limits (jdk 24+):
+        XmlFactory.disableJAXPLimitsUsingSystemProperties();
     }
 
     /**

@@ -120,7 +120,7 @@ public final class XmlFactory {
         SP_GENERAL_ENTITY_SIZE_LIMIT,
         SP_ENTITY_REPLACEMENT_LIMIT,
         SP_PARAMETER_ENTITY_SIZE_LIMIT,
-        SP_XML_NAME_LIMIT,
+        /* SP_XML_NAME_LIMIT, (disabled as buggy) */
         SP_MAX_ELEMENT_DEPTH
     };
 
@@ -319,6 +319,8 @@ public final class XmlFactory {
                 System.out.println("[" + key + "]=" + System.getProperty(key));
             }
         }
+        // Note: Do not set SP_XML_NAME_LIMIT as 0 do not disable it (bug in jdk8) !
+        // System.setProperty(SP_XML_NAME_LIMIT, "1000");
     }
 
 }

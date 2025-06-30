@@ -260,7 +260,10 @@ public final class CommandLineUtils {
                 final ArgumentDefinition def = customArguments.get(argumentName);
                 System.out.print("| [-");
                 System.out.print(def.getName());
-                System.out.print("]                    ");
+                System.out.print("] ");
+                for (int i = 25 - def.getName().length() - 1; i >= 0; i--) {
+                    System.out.print(" ");
+                }
                 System.out.print(def.getHelp());
                 if (def.getMode() == App.ExecMode.TTY) {
                     System.out.print(" [SHELL]");

@@ -85,7 +85,7 @@ public final class Http {
     /** shared Http retry handler that disables http retries */
     private static final HttpMethodRetryHandler _httpNoRetryHandler = new DefaultHttpMethodRetryHandler(0, false);
     /** shared Http retry handler that uses 3 http retries */
-    private static final HttpMethodRetryHandler _httpRetryHandler = new DefaultHttpMethodRetryHandler(3, false);
+    public static final HttpMethodRetryHandler HTTP_RETRY_HANDLER = new DefaultHttpMethodRetryHandler(3, false);
 
     /**
      * Forbidden constructor
@@ -434,7 +434,7 @@ public final class Http {
         // customize timeouts:
         httpMethodParams.setSoTimeout(GET_SOCKET_READ_TIMEOUT);
         // allow http retries (GET):
-        httpMethodParams.setParameter(HttpMethodParams.RETRY_HANDLER, _httpRetryHandler);
+        httpMethodParams.setParameter(HttpMethodParams.RETRY_HANDLER, HTTP_RETRY_HANDLER);
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("HTTP client and GET method have been created. doAuthentication = {}", method.getDoAuthentication());

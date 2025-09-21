@@ -60,7 +60,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
-import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +84,8 @@ public class SearchField extends JTextField {
     /** disarm color */
     private static final Color DISARMED_GRAY = new Color(0.7f, 0.7f, 0.7f);
     /** Mac flag, true if running on a Mac OS X computer, false otherwise */
-    private static final boolean MACOSX_RUNTIME = SystemUtils.IS_OS_MAC_OSX;
+    /** 2025.09 search text field do not work on macOS 15 / 26 (disabled) */
+    private static final boolean MACOSX_RUNTIME_DISABLED = false /* was SystemUtils.IS_OS_MAC_OSX */;
     /** debug flag to draw border area */
     private static final boolean DEBUG_AREA = false;
     /** default newline replacement character = ' ' */
@@ -156,7 +156,7 @@ public class SearchField extends JTextField {
      */
     private void initBorder() {
         // On Mac OS X, simply use the OS specific search textfield widget
-        if (MACOSX_RUNTIME) {
+        if (MACOSX_RUNTIME_DISABLED) {
             // http://developer.apple.com/mac/library/technotes/tn2007/tn2196.html
             putClientProperty("JTextField.variant", "search");
 
@@ -213,7 +213,7 @@ public class SearchField extends JTextField {
         final long start = System.nanoTime();
 
         // On anything but Mac OS X
-        if (!MACOSX_RUNTIME) {
+        if (!MACOSX_RUNTIME_DISABLED) {
             final int width = getWidth();
             final int height = getHeight();
 

@@ -32,6 +32,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -304,8 +305,30 @@ public class SearchField extends JTextField {
         if (_optionsPopupMenu != null) {
             // revalidate / repaint (support LAF change) because this component is created elsewhere:
             SwingUtilities.updateComponentTreeUI(_optionsPopupMenu);
+
+            final String label = getSelectedOption();
+            if (!StringUtils.isEmpty(label)) {
+                final Font origFont = _optionsPopupMenu.getFont();
+                final Font boldFont = origFont.deriveFont(Font.BOLD);
+
+                for (int i = 0, len = _optionsPopupMenu.getComponentCount(); i < len; i++) {
+                    Object comp = _optionsPopupMenu.getComponent(i);
+                    if (comp instanceof JMenuItem) {
+                        final JMenuItem menuItem = (JMenuItem) comp;
+
+                        menuItem.setFont(
+                                (label.equals(menuItem.getText())) ? boldFont : origFont
+                        );
+                    }
+                }
+            }
+
             _optionsPopupMenu.show(this, me.getX() + 5, me.getY() + 10);
         }
+    }
+
+    public String getSelectedOption() {
+        return null;
     }
 
     /**

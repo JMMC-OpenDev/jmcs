@@ -39,7 +39,8 @@ interface StreamProcessor {
     /**
      * Process the given input stream and CLOSE it anyway (try/finally)
      * @param in input stream to process
+     * @param httpResult http result to use
      * @throws IOException if any IO error occurs
      */
-    public void process(final InputStream in) throws IOException;
+    public void process(final InputStream in, final HttpResult httpResult) throws IOException;
 }

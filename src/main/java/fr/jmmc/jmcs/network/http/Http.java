@@ -49,7 +49,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -78,14 +77,16 @@ public final class Http {
     /** HTTP GET value for the read timeout in milliseconds (30 seconds) */
     public static final int GET_SOCKET_READ_TIMEOUT = 30 * 1000;
 
+    public static final StringStreamProcessor STRING_PROCESSOR = new StringStreamProcessor();
+
     /** shared HTTP Client (thread safe) */
     private static volatile HttpClient _sharedHttpClient = null;
     /** shared connection manager (thread safe) */
     private static volatile MultiThreadedHttpConnectionManager _sharedConnectionManager = null;
     /** shared Http retry handler that disables http retries */
-    private static final HttpMethodRetryHandler _httpNoRetryHandler = new DefaultHttpMethodRetryHandler(0, false);
+    private static final HttpMethodRetryHandler HTTP_NO_RETRY_HANDLER = new DefaultHttpMethodRetryHandler(0, false);
     /** shared Http retry handler that uses 3 http retries */
-    public static final HttpMethodRetryHandler HTTP_RETRY_HANDLER = new DefaultHttpMethodRetryHandler(3, false);
+    private static final HttpMethodRetryHandler HTTP_RETRY_HANDLER = new DefaultHttpMethodRetryHandler(3, false);
 
     /**
      * Forbidden constructor
@@ -159,7 +160,6 @@ public final class Http {
             hostConfig.setProxy(config.getHostname(), config.getPort());
             httpClient.setHostConfiguration(hostConfig);
         }
-
         return httpClient;
     }
 
@@ -185,7 +185,7 @@ public final class Http {
         // encoding to UTF-8
         httpClientParams.setParameter(HttpClientParams.HTTP_CONTENT_CHARSET, "UTF-8");
         // avoid any http retries (POST):
-        httpClientParams.setParameter(HttpMethodParams.RETRY_HANDLER, _httpNoRetryHandler);
+        httpClientParams.setParameter(HttpMethodParams.RETRY_HANDLER, HTTP_NO_RETRY_HANDLER);
 
         // Customize the user agent:
         httpClientParams.setParameter(HttpMethodParams.USER_AGENT, System.getProperty(NetworkSettings.PROPERTY_USER_AGENT));
@@ -220,28 +220,34 @@ public final class Http {
         // Create an HTTP client for the given URI to detect proxies for this host or use common one depending of given flag
         final HttpClient client = (useDedicatedClient) ? Http.createNewHttpClient(uri) : Http.getHttpClient();
 
-        return download(uri, client, new StreamProcessor() {
+        final HttpResult httpResult = download(uri, client, new StreamProcessor() {
+
             /**
              * Process the given input stream and CLOSE it anyway (try/finally)
              * @param in input stream to process
+             * @param httpResult http result to use
              * @throws IOException if any IO error occurs
              */
             @Override
-            public void process(final InputStream in) throws IOException {
-                try {
-                    FileUtils.saveStream(in, outputFile);
-                    if (_logger.isDebugEnabled()) {
-                        _logger.debug("File '{}' saved ({} bytes).", outputFile, outputFile.length());
+            public void process(final InputStream in, final HttpResult httpResult) throws IOException {
+                if (httpResult.isHttpResultOK()) {
+                    try {
+                        FileUtils.saveStream(in, outputFile);
+                        if (_logger.isDebugEnabled()) {
+                            _logger.debug("File '{}' saved ({} bytes).", outputFile, outputFile.length());
+                        }
+                    } catch (IOException ioe) {
+                        if (outputFile.exists()) {
+                            _logger.debug("File '{}' deleted (partial download).", outputFile);
+                            outputFile.delete();
+                        }
+                        throw ioe;
                     }
-                } catch (IOException ioe) {
-                    if (outputFile.exists()) {
-                        _logger.debug("File '{}' deleted (partial download).", outputFile);
-                        outputFile.delete();
-                    }
-                    throw ioe;
                 }
             }
         });
+
+        return (httpResult.isHttpResultOK());
     }
 
     /**
@@ -271,12 +277,11 @@ public final class Http {
      */
     public static String download(final URI uri, final HttpClient client) throws IOException {
 
-        final StringStreamProcessor stringProcessor = new StringStreamProcessor();
+        final HttpResult httpResult = download(uri, client, STRING_PROCESSOR);
 
-        if (download(uri, client, stringProcessor)) {
-            return stringProcessor.getResult();
+        if (httpResult.isHttpResultOK()) {
+            return httpResult.getResponse();
         }
-
         return null;
     }
 
@@ -312,12 +317,22 @@ public final class Http {
     public static String post(final URI uri, final HttpClient client,
                               final PostQueryProcessor queryProcessor) throws IOException {
 
-        final StringStreamProcessor stringProcessor = new StringStreamProcessor();
+        final PostMethod method = new PostMethod(uri.toString());
+        _logger.debug("HTTP client and POST method have been created");
 
-        if (post(uri, client, queryProcessor, stringProcessor)) {
-            return stringProcessor.getResult();
+        try {
+            // Define HTTP POST parameters
+            queryProcessor.process(method);
+
+            final HttpResult httpResult = execute(client, method);
+
+            if ((httpResult != null) && httpResult.isHttpResultOK()) {
+                return httpResult.getResponse();
+            }
+        } finally {
+            // Release the connection.
+            releaseConnection(method);
         }
-
         return null;
     }
 
@@ -326,19 +341,12 @@ public final class Http {
      *
      * @param client HttpClient to use
      * @param method http method to execute
-     * @return result as string or null if no result
+     * @return httpResult http result
      *
      * @throws IOException if an I/O exception occurred
      */
-    public static String execute(final HttpClient client, final HttpMethodBase method) throws IOException {
-
-        final StringStreamProcessor stringProcessor = new StringStreamProcessor();
-
-        if (execute(client, method, stringProcessor)) {
-            return stringProcessor.getResult();
-        }
-
-        return null;
+    public static HttpResult execute(final HttpClient client, final HttpMethodBase method) throws IOException {
+        return execute(client, method, STRING_PROCESSOR);
     }
 
     /**
@@ -402,11 +410,11 @@ public final class Http {
      * @param uri URI to download
      * @param resultProcessor stream processor to use to consume HTTP response
      * @param client http client to use
-     * @return true if successful
+     * @return httpResult http result
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
-    private static boolean download(final URI uri, final HttpClient client,
-                                    final StreamProcessor resultProcessor) throws IOException {
+    private static HttpResult download(final URI uri, final HttpClient client,
+                                       final StreamProcessor resultProcessor) throws IOException {
         return download(uri, client, resultProcessor, 0);
     }
 
@@ -419,49 +427,31 @@ public final class Http {
      * @param resultProcessor stream processor to use to consume HTTP response
      * @param client http client to use
      * @param level recursion level (authentication attempt)
-     * @return true if successful
+     * @return httpResult http result
      * @throws IOException if any I/O operation fails (HTTP or file) 
      * @throws AuthenticationException if authentication failed
      */
-    private static boolean download(final URI uri, final HttpClient client,
-                                    final StreamProcessor resultProcessor,
-                                    final int level) throws IOException {
+    private static HttpResult download(final URI uri, final HttpClient client,
+                                       final StreamProcessor resultProcessor,
+                                       final int level) throws IOException {
 
-        final String url = uri.toString();
-        final GetMethod method = new GetMethod(url);
+        final GetMethod method = new GetMethod(uri.toString());
 
         final HttpMethodParams httpMethodParams = method.getParams();
         // customize timeouts:
         httpMethodParams.setSoTimeout(GET_SOCKET_READ_TIMEOUT);
-        // allow http retries (GET):
-        httpMethodParams.setParameter(HttpMethodParams.RETRY_HANDLER, HTTP_RETRY_HANDLER);
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("HTTP client and GET method have been created. doAuthentication = {}", method.getDoAuthentication());
         }
 
-        int resultCode = -1;
-        try {
-            // memorize HTTPMethodBase associated to the current thread:
-            HttpMethodThreadMap.setCurrentThread(method);
+        final HttpResult httpResult = execute(client, method, resultProcessor);
 
-            // Send HTTP GET query:
-            resultCode = client.executeMethod(method);
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("The query has been sent. Status code: {}", resultCode);
-            }
-
-            // If everything went fine
-            if (resultCode == HttpStatus.SC_OK) {
-                // Get response
-                consumeResponse(method, resultProcessor);
-                return true;
-            }
-
-        } finally {
-            // Release the connection.
-            releaseConnection(method);
+        if (httpResult.isHttpResultOK()) {
+            return httpResult;
         }
+
+        final int resultCode = httpResult.getHttpResultCode();
 
         if (resultCode == 401) {
             // Memorize the credentials into a session ... reuse login per host name ? or query part ?
@@ -482,9 +472,8 @@ public final class Http {
                 host = uri.getHost();
             }
 
-            final String realm = method.getHostAuthState().getRealm();
-
-            final AuthScope authScope = new AuthScope(host, AuthScope.ANY_PORT, realm, AuthScope.ANY_SCHEME);
+            final AuthScope authScope = new AuthScope(host, AuthScope.ANY_PORT,
+                    method.getHostAuthState().getRealm(), AuthScope.ANY_SCHEME);
 
             // check if already credentials ?
             Credentials credentials = client.getState().getCredentials(authScope);
@@ -527,10 +516,9 @@ public final class Http {
             }
             throw new AuthenticationException("Authentication failed for url:" + uri);
         }
-
         _logger.info("download failed [{}]: result code: {}, status: {}", uri, resultCode, method.getStatusText());
 
-        return false;
+        return null;
     }
 
     private static boolean shouldSkip(final Credentials credentials) {
@@ -542,97 +530,62 @@ public final class Http {
     }
 
     /**
-     * Push the post form to the given URI and use the given processor to get the result.
-     * Requests with dedicatedClient will instance one new client (with automatic proxies compatible with given URI). 
-     * Other requests will use the common multi-threaded HttpClient.
-     * 
-     * @param uri URI to download
-     * @param queryProcessor post query processor to define query parameters
-     * @param resultProcessor stream processor to use to consume HTTP response
-     * @param client HttpClient to use
-     * @return true if successful
-     * @throws IOException if any I/O operation fails (HTTP or file) 
-     */
-    private static boolean post(final URI uri, final HttpClient client,
-                                final PostQueryProcessor queryProcessor, final StreamProcessor resultProcessor) throws IOException {
-
-        final PostMethod method = new PostMethod(uri.toString());
-        _logger.debug("HTTP client and POST method have been created");
-
-        try {
-            // Define HTTP POST parameters
-            queryProcessor.process(method);
-
-            // memorize HTTPMethodBase associated to the current thread:
-            HttpMethodThreadMap.setCurrentThread(method);
-
-            // Send HTTP query
-            final int resultCode = client.executeMethod(method);
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("The query has been sent. Status code: {}", resultCode);
-            }
-
-            // If everything went fine
-            if (resultCode == HttpStatus.SC_OK) {
-                // Get response
-                consumeResponse(method, resultProcessor);
-                return true;
-            }
-        } finally {
-            // Release the connection.
-            releaseConnection(method);
-        }
-
-        return false;
-    }
-
-    /**
      * Execute the given Http method (GET, POST...) to the given URI and use the given processor to get the result.
      * 
      * @param client HttpClient to use
      * @param method http method to execute
      * @param resultProcessor stream processor to use to consume HTTP response
-     * @return true if successful
+     * @return httpResult http result
      * @throws IOException if any I/O operation fails (HTTP or file) 
      */
-    private static boolean execute(final HttpClient client,
-                                   final HttpMethodBase method, final StreamProcessor resultProcessor) throws IOException {
-        try {
-            // memorize HTTPMethodBase associated to the current thread:
-            HttpMethodThreadMap.setCurrentThread(method);
+    private static HttpResult execute(final HttpClient client,
+                                      final HttpMethodBase method, final StreamProcessor resultProcessor) throws IOException {
+        if (method != null) {
+            try {
+                if (method instanceof GetMethod) {
+                    // allow http retries (GET):
+                    final HttpMethodParams httpMethodParams = method.getParams();
+                    httpMethodParams.setParameter(HttpMethodParams.RETRY_HANDLER, HTTP_RETRY_HANDLER);
+                }
 
-            // Send HTTP query
-            final int resultCode = client.executeMethod(method);
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("The query has been sent. Status code: {}", resultCode);
-            }
+                // memorize HTTPMethodBase associated to the current thread:
+                HttpMethodThreadMap.setCurrentThread(method);
 
-            // If everything went fine
-            if (resultCode == HttpStatus.SC_OK) {
+                // Send HTTP query
+                final int resultCode = client.executeMethod(method);
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("The query has been sent. Status code: {}", resultCode);
+                }
+
+                final HttpResult httpResult = new HttpResult(method.getURI().toString(), resultCode);
+
                 // Get response
-                consumeResponse(method, resultProcessor);
-                return true;
-            }
-        } finally {
-            // Release the connection.
-            releaseConnection(method);
-        }
+                consumeResponse(method, resultProcessor, httpResult);
 
-        return false;
+                return httpResult;
+            } finally {
+                // Release the connection.
+                releaseConnection(method);
+            }
+        }
+        return null;
     }
-    
-    private static void consumeResponse(final HttpMethodBase method, final StreamProcessor resultProcessor) throws IOException {
+
+    private static void consumeResponse(final HttpMethodBase method,
+                                        final StreamProcessor resultProcessor,
+                                        final HttpResult httpResult) throws IOException {
         // Check content encoding:
         final Header encoding = method.getResponseHeader("Content-Encoding");
 
         InputStream in = method.getResponseBodyAsStream();
-        
-        if ((encoding != null) && "gzip".equals(encoding.getValue())) {
-            in = new GZIPInputStream(in);
-        } else {
-            in = new BufferedInputStream(in);
+        if (in != null) {
+            if ((encoding != null) && "gzip".equals(encoding.getValue())) {
+                in = new GZIPInputStream(in);
+            } else {
+                in = new BufferedInputStream(in);
+            }
+            resultProcessor.process(in, httpResult);
         }
-        resultProcessor.process(in);
     }
 
     /**
@@ -640,29 +593,20 @@ public final class Http {
      */
     private static final class StringStreamProcessor implements StreamProcessor {
 
-        /** result as String */
-        private String result = null;
-
         /**
          * Process the given input stream and CLOSE it anyway (try/finally)
          * @param in input stream to process
+         * @param httpResult http result to use
          * @throws IOException if any IO error occurs
          */
         @Override
-        public void process(final InputStream in) throws IOException {
+        public void process(final InputStream in, final HttpResult httpResult) throws IOException {
             // TODO check if we can get response size from HTTP headers
-            result = FileUtils.readStream(in);
+            final String result = FileUtils.readStream(in);
             if (_logger.isDebugEnabled()) {
-                _logger.debug("String stored in memory ({} chars).", result.length());
+                _logger.debug("String stored in memory ({} chars):\n{}", (result != null) ? result.length() : -1, result);
             }
-        }
-
-        /**
-         * Return the result as String
-         * @return result as String or null
-         */
-        String getResult() {
-            return result;
+            httpResult.setResponse(result);
         }
     }
 }

@@ -66,6 +66,8 @@ public final class StringUtils {
     private final static Pattern PATTERN_NON_NUM = Pattern.compile("[^0-9]+");
     /** RegExp expression to match carriage return */
     private final static Pattern PATTERN_LF = Pattern.compile(STRING_LF);
+    /** RegExp expression to match carriage return (1..n) */
+    private final static Pattern PATTERN_LF_MULTIPLE = Pattern.compile(STRING_LF + "+");
     /** RegExp expression to match tags */
     private final static Pattern PATTERN_TAGS = Pattern.compile("\\<.*?\\>");
     /** RegExp expression to match &nbsp; */
@@ -277,6 +279,18 @@ public final class StringUtils {
     }
 
     /**
+     * Trim and remove redundant carriage return characters
+     * @param value input value
+     * @return string value
+     */
+    public static String cleanCRs(final String value) {
+        if ((value != null) && (value.contains(STRING_LF))) {
+            return PATTERN_LF_MULTIPLE.matcher(value).replaceAll(STRING_LF);
+        }
+        return value;
+    }
+
+    /**
      * Remove any tag and replace '&nbsp;' by ' '
      * @param value input value
      * @return string value
@@ -292,7 +306,7 @@ public final class StringUtils {
         if (out.contains(STRING_AMPERSAND)) {
             out = PATTERN_NBSP.matcher(out).replaceAll(STRING_SPACE);
         }
-        return out;
+        return cleanCRs(out);
     }
 
     /**

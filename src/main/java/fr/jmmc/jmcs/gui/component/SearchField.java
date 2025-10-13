@@ -35,6 +35,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -645,10 +646,11 @@ public class SearchField extends JTextField {
          * @return true if any armed flag changed
          */
         private boolean isOverButtons(final MouseEvent me) {
+            final Point p = me.getPoint();
             boolean changed = false;
             // If the button is down, we might be outside the component
             // without having had mouseExited invoked.
-            if (!_roundedInnerArea.contains(me.getPoint())) {
+            if (!_roundedInnerArea.contains(p)) {
                 changed = _armedCancelButton || _armedOptionsButton;
                 // reset:
                 _armedCancelButton = false;
@@ -660,12 +662,12 @@ public class SearchField extends JTextField {
             // check if the mouse is over the search button:
             boolean armedSearchButton = false;
             if (_searchButtonShape != null) {
-                armedSearchButton = _searchButtonShape.contains(me.getPoint());
+                armedSearchButton = _searchButtonShape.contains(p);
             }
 
             // check if the mouse is over the cancel button:
             if (_cancelButtonShape != null) {
-                final boolean armed = _cancelButtonShape.contains(me.getPoint());
+                final boolean armed = _cancelButtonShape.contains(p);
 
                 if (armed != _armedCancelButton) {
                     _armedCancelButton = armed;
@@ -675,7 +677,7 @@ public class SearchField extends JTextField {
 
             // check if the mouse is over the options button:
             if (_optionsButtonShape != null) {
-                final boolean armed = _optionsButtonShape.contains(me.getPoint());
+                final boolean armed = _optionsButtonShape.contains(p);
 
                 if (armed != _armedOptionsButton) {
                     _armedOptionsButton = armed;
@@ -726,18 +728,20 @@ public class SearchField extends JTextField {
 
         @Override
         public void mouseReleased(final MouseEvent me) {
-            isOverButtons(me);
+            // reset before isOverButtons:
+            _armedCancelButton = false;
+            _armedOptionsButton = false;
 
             // enable actions only if the text field is enabled:
-            if (SwingUtilities.isLeftMouseButton(me)) {
+            if (SwingUtilities.isLeftMouseButton(me) && isOverButtons(me)) {
                 if (_armedCancelButton) {
                     handleCancelEdit();
                 }
                 if (_armedOptionsButton && isEnabled()) {
                     handleShowOptions(me);
                 }
+                repaint();
             }
-            repaint();
         }
     }
 
